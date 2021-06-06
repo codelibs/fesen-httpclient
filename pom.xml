@@ -32,8 +32,8 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<fesen.version>0.13.0-SNAPSHOT</fesen.version>
-		<fesen.runner.version>0.13.0-SNAPSHOT</fesen.runner.version>
+		<fesen.version>0.13.0</fesen.version>
+		<fesen.runner.version>0.13.0</fesen.runner.version>
 		<elasticsearch.version>7.10.2</elasticsearch.version>
 		<junit.jupiter.version>5.7.0</junit.jupiter.version>
 	</properties>
