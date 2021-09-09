@@ -15,7 +15,7 @@
  */
 package org.codelibs.fesen.client;
 
-import static org.codelibs.fesen.runner.FesenRunner.newConfigs;
+import static org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner.newConfigs;
 import static org.codelibs.fesen.action.ActionListener.wrap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,8 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.codelibs.fesen.client.action.HttpNodesStatsAction;
-import org.codelibs.fesen.runner.FesenRunner;
+import org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner;
 import org.codelibs.fesen.action.DocWriteResponse.Result;
 import org.codelibs.fesen.action.admin.cluster.health.ClusterHealthResponse;
 import org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsResponse;
@@ -87,6 +86,7 @@ import org.codelibs.fesen.action.search.SearchResponse;
 import org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy;
 import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
 import org.codelibs.fesen.action.update.UpdateResponse;
+import org.codelibs.fesen.client.action.HttpNodesStatsAction;
 import org.codelibs.fesen.cluster.metadata.MappingMetadata;
 import org.codelibs.fesen.common.bytes.BytesArray;
 import org.codelibs.fesen.common.bytes.BytesReference;
@@ -110,10 +110,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class HttpClientTest {
-    static final Logger logger = Logger.getLogger(HttpClientTest.class.getName());
+public class ElasticsearchClientTest {
+    static final Logger logger = Logger.getLogger(ElasticsearchClientTest.class.getName());
 
-    static FesenRunner runner;
+    static ElasticsearchClusterRunner runner;
 
     static String clusterName;
 
@@ -121,14 +121,18 @@ public class HttpClientTest {
 
     @BeforeAll
     static void setUpAll() {
-        clusterName = "fesen-cl-run-" + System.currentTimeMillis();
+        System.setProperty("es.set.netty.runtime.available.processors", "false");
+
+        clusterName = "es-cl-run-" + System.currentTimeMillis();
+        logger.info("Starting" + clusterName);
         // create runner instance
-        runner = new FesenRunner();
+        runner = new ElasticsearchClusterRunner();
         // create ES nodes
         runner.onBuild((number, settingsBuilder) -> {
             settingsBuilder.put("http.cors.enabled", true);
             settingsBuilder.put("http.cors.allow-origin", "*");
             settingsBuilder.put("discovery.type", "single-node");
+            settingsBuilder.put("http.port", "9220-9229");
         }).build(newConfigs().clusterName(clusterName).numOfNode(1));
 
         // wait for yellow status
@@ -146,17 +150,19 @@ public class HttpClientTest {
 
     @BeforeEach
     void setUp() {
-        final Settings settings = Settings.builder().putList("http.hosts", "localhost:9201").put("http.compression", true).build();
+        final Settings settings = Settings.builder().putList("http.hosts", "localhost:9220").put("http.compression", true).build();
         client = new HttpClient(settings, null);
     }
 
     @AfterEach
     void tearDown() {
+        logger.info("Closing client");
         client.close();
     }
 
     @AfterAll
     static void tearDownAll() {
+        logger.info("Closing runner");
         // close runner
         try {
             runner.close();

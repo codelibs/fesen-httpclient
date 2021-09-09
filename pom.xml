@@ -32,9 +32,9 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<fesen.version>0.14.0</fesen.version>
-		<fesen.runner.version>0.14.0</fesen.runner.version>
-		<elasticsearch.version>7.10.2</elasticsearch.version>
+		<fesen.version>0.14.1-SNAPSHOT</fesen.version>
+		<fesen.runner.version>0.14.1-SNAPSHOT</fesen.runner.version>
+		<elasticsearch.version>7.14.1</elasticsearch.version>
 		<junit.jupiter.version>5.7.0</junit.jupiter.version>
 	</properties>
 	<build>
@@ -152,6 +152,12 @@
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
 			<version>1.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codelibs</groupId>
+			<artifactId>elasticsearch-cluster-runner</artifactId>
+			<version>${elasticsearch.version}.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
