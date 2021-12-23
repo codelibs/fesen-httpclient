@@ -19,17 +19,17 @@ import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.search.SearchAction;
-import org.codelibs.fesen.action.search.SearchRequest;
-import org.codelibs.fesen.action.search.SearchResponse;
-import org.codelibs.fesen.action.search.SearchType;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentHelper;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.search.builder.SearchSourceBuilder;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.search.SearchAction;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.action.search.SearchType;
+import org.opensearch.common.xcontent.ToXContent;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 public class HttpSearchAction extends HttpAction {
 
@@ -45,14 +45,14 @@ public class HttpSearchAction extends HttpAction {
             try (final XContentParser parser = createParser(response)) {
                 final SearchResponse searchResponse = SearchResponse.fromXContent(parser);
                 if (searchResponse.getHits() == null) {
-                    listener.onFailure(toFesenException(response, new FesenException("hits is null.")));
+                    listener.onFailure(toOpenSearchException(response, new OpenSearchException("hits is null.")));
                 } else {
                     listener.onResponse(searchResponse);
                 }
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected String getQuerySource(final SearchRequest request) {
@@ -61,7 +61,7 @@ public class HttpSearchAction extends HttpAction {
             try {
                 return XContentHelper.toXContent(source, XContentType.JSON, ToXContent.EMPTY_PARAMS, false).utf8ToString();
             } catch (final IOException e) {
-                throw new FesenException(e);
+                throw new OpenSearchException(e);
             }
         }
         return null;

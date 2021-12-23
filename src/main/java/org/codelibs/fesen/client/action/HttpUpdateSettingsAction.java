@@ -19,16 +19,16 @@ import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.settings.put.UpdateSettingsAction;
-import org.codelibs.fesen.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
+import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ToXContent;
+import org.opensearch.common.xcontent.XContentBuilder;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.json.JsonXContent;
 
 public class HttpUpdateSettingsAction extends HttpAction {
 
@@ -45,16 +45,16 @@ public class HttpUpdateSettingsAction extends HttpAction {
             builder.flush();
             source = BytesReference.bytes(builder).utf8ToString();
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final AcknowledgedResponse updateSettingsResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(updateSettingsResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final UpdateSettingsRequest request) {

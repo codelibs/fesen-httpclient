@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.repositories.verify.VerifyRepositoryAction;
-import org.codelibs.fesen.action.admin.cluster.repositories.verify.VerifyRepositoryRequest;
-import org.codelibs.fesen.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryAction;
+import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryRequest;
+import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpVerifyRepositoryAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpVerifyRepositoryAction extends HttpAction {
                 final VerifyRepositoryResponse verifyRepositoryResponse = VerifyRepositoryResponse.fromXContent(parser);
                 listener.onResponse(verifyRepositoryResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final VerifyRepositoryRequest request) {

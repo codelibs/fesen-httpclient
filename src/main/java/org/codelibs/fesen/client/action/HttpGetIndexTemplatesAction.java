@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.template.get.GetIndexTemplatesAction;
-import org.codelibs.fesen.action.admin.indices.template.get.GetIndexTemplatesRequest;
-import org.codelibs.fesen.action.admin.indices.template.get.GetIndexTemplatesResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
+import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
+import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetIndexTemplatesAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpGetIndexTemplatesAction extends HttpAction {
                 final GetIndexTemplatesResponse getIndexTemplatesResponse = GetIndexTemplatesResponse.fromXContent(parser);
                 listener.onResponse(getIndexTemplatesResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetIndexTemplatesRequest request) {

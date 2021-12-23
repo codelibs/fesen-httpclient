@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.shrink.ResizeRequest;
-import org.codelibs.fesen.action.admin.indices.shrink.ResizeResponse;
-import org.codelibs.fesen.action.admin.indices.shrink.ShrinkAction;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.shrink.ResizeRequest;
+import org.opensearch.action.admin.indices.shrink.ResizeResponse;
+import org.opensearch.action.admin.indices.shrink.ShrinkAction;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpShrinkAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpShrinkAction extends HttpAction {
                 final ResizeResponse resizeResponse = ResizeResponse.fromXContent(parser);
                 listener.onResponse(resizeResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final ResizeRequest request) {

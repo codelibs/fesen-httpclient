@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.repositories.get.GetRepositoriesAction;
-import org.codelibs.fesen.action.admin.cluster.repositories.get.GetRepositoriesRequest;
-import org.codelibs.fesen.action.admin.cluster.repositories.get.GetRepositoriesResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
+import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
+import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetRepositoriesAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpGetRepositoriesAction extends HttpAction {
                 final GetRepositoriesResponse getRepositoriesResponse = GetRepositoriesResponse.fromXContent(parser);
                 listener.onResponse(getRepositoriesResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetRepositoriesRequest request) {

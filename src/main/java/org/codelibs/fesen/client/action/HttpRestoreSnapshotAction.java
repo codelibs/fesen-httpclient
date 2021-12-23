@@ -5,16 +5,16 @@ import java.io.IOException;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
-import org.codelibs.fesen.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
-import org.codelibs.fesen.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
+import org.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
+import org.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ToXContent;
+import org.opensearch.common.xcontent.XContentBuilder;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.json.JsonXContent;
 
 public class HttpRestoreSnapshotAction extends HttpAction {
 
@@ -31,16 +31,16 @@ public class HttpRestoreSnapshotAction extends HttpAction {
             builder.flush();
             source = BytesReference.bytes(builder).utf8ToString();
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final RestoreSnapshotResponse restoreSnapshotResponse = RestoreSnapshotResponse.fromXContent(parser);
                 listener.onResponse(restoreSnapshotResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final RestoreSnapshotRequest request) {

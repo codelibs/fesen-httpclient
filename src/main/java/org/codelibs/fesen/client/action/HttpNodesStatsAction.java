@@ -16,59 +16,61 @@ import java.util.stream.Collectors;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
-import org.codelibs.fesen.Version;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.node.stats.NodeStats;
-import org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsAction;
-import org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsRequest;
-import org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsResponse;
-import org.codelibs.fesen.action.admin.indices.stats.CommonStats;
-import org.codelibs.fesen.action.admin.indices.stats.CommonStatsFlags;
-import org.codelibs.fesen.action.admin.indices.stats.CommonStatsFlags.Flag;
-import org.codelibs.fesen.action.admin.indices.stats.IndexShardStats;
-import org.codelibs.fesen.cluster.ClusterName;
-import org.codelibs.fesen.cluster.DiskUsage;
-import org.codelibs.fesen.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.cluster.node.DiscoveryNodeRole;
-import org.codelibs.fesen.common.io.stream.InputStreamStreamInput;
-import org.codelibs.fesen.common.io.stream.StreamInput;
-import org.codelibs.fesen.common.transport.TransportAddress;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.discovery.DiscoveryStats;
-import org.codelibs.fesen.discovery.zen.PendingClusterStateStats;
-import org.codelibs.fesen.discovery.zen.PublishClusterStateStats;
-import org.codelibs.fesen.http.HttpStats;
-import org.codelibs.fesen.index.Index;
-import org.codelibs.fesen.index.cache.query.QueryCacheStats;
-import org.codelibs.fesen.index.cache.request.RequestCacheStats;
-import org.codelibs.fesen.index.engine.SegmentsStats;
-import org.codelibs.fesen.index.fielddata.FieldDataStats;
-import org.codelibs.fesen.index.flush.FlushStats;
-import org.codelibs.fesen.index.get.GetStats;
-import org.codelibs.fesen.index.merge.MergeStats;
-import org.codelibs.fesen.index.recovery.RecoveryStats;
-import org.codelibs.fesen.index.refresh.RefreshStats;
-import org.codelibs.fesen.index.search.stats.SearchStats;
-import org.codelibs.fesen.index.shard.DocsStats;
-import org.codelibs.fesen.index.shard.IndexingStats;
-import org.codelibs.fesen.index.stats.IndexingPressureStats;
-import org.codelibs.fesen.index.store.StoreStats;
-import org.codelibs.fesen.index.translog.TranslogStats;
-import org.codelibs.fesen.index.warmer.WarmerStats;
-import org.codelibs.fesen.indices.NodeIndicesStats;
-import org.codelibs.fesen.indices.breaker.AllCircuitBreakerStats;
-import org.codelibs.fesen.indices.breaker.CircuitBreakerStats;
-import org.codelibs.fesen.ingest.IngestStats;
-import org.codelibs.fesen.monitor.fs.FsInfo;
-import org.codelibs.fesen.monitor.jvm.JvmStats;
-import org.codelibs.fesen.monitor.os.OsStats;
-import org.codelibs.fesen.monitor.process.ProcessStats;
-import org.codelibs.fesen.node.AdaptiveSelectionStats;
-import org.codelibs.fesen.script.ScriptCacheStats;
-import org.codelibs.fesen.script.ScriptStats;
-import org.codelibs.fesen.search.suggest.completion.CompletionStats;
-import org.codelibs.fesen.threadpool.ThreadPoolStats;
-import org.codelibs.fesen.transport.TransportStats;
+import org.opensearch.Version;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.node.stats.NodeStats;
+import org.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
+import org.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
+import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.opensearch.action.admin.indices.stats.CommonStats;
+import org.opensearch.action.admin.indices.stats.CommonStatsFlags;
+import org.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
+import org.opensearch.action.admin.indices.stats.IndexShardStats;
+import org.opensearch.cluster.ClusterName;
+import org.opensearch.cluster.DiskUsage;
+import org.opensearch.cluster.node.DiscoveryNode;
+import org.opensearch.cluster.node.DiscoveryNodeRole;
+import org.opensearch.common.io.stream.InputStreamStreamInput;
+import org.opensearch.common.io.stream.StreamInput;
+import org.opensearch.common.transport.TransportAddress;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.discovery.DiscoveryStats;
+import org.opensearch.discovery.zen.PendingClusterStateStats;
+import org.opensearch.discovery.zen.PublishClusterStateStats;
+import org.opensearch.http.HttpStats;
+import org.opensearch.index.Index;
+import org.opensearch.index.cache.query.QueryCacheStats;
+import org.opensearch.index.cache.request.RequestCacheStats;
+import org.opensearch.index.engine.SegmentsStats;
+import org.opensearch.index.fielddata.FieldDataStats;
+import org.opensearch.index.flush.FlushStats;
+import org.opensearch.index.get.GetStats;
+import org.opensearch.index.merge.MergeStats;
+import org.opensearch.index.recovery.RecoveryStats;
+import org.opensearch.index.refresh.RefreshStats;
+import org.opensearch.index.search.stats.SearchStats;
+import org.opensearch.index.shard.DocsStats;
+import org.opensearch.index.shard.IndexingStats;
+import org.opensearch.index.stats.IndexingPressureStats;
+import org.opensearch.index.stats.ShardIndexingPressureStats;
+import org.opensearch.index.store.StoreStats;
+import org.opensearch.index.translog.TranslogStats;
+import org.opensearch.index.warmer.WarmerStats;
+import org.opensearch.indices.NodeIndicesStats;
+import org.opensearch.indices.breaker.AllCircuitBreakerStats;
+import org.opensearch.indices.breaker.CircuitBreakerStats;
+import org.opensearch.ingest.IngestStats;
+import org.opensearch.monitor.fs.FsInfo;
+import org.opensearch.monitor.jvm.JvmStats;
+import org.opensearch.monitor.jvm.JvmStats.MemoryPoolGcStats;
+import org.opensearch.monitor.os.OsStats;
+import org.opensearch.monitor.process.ProcessStats;
+import org.opensearch.node.AdaptiveSelectionStats;
+import org.opensearch.script.ScriptCacheStats;
+import org.opensearch.script.ScriptStats;
+import org.opensearch.search.suggest.completion.CompletionStats;
+import org.opensearch.threadpool.ThreadPoolStats;
+import org.opensearch.transport.TransportStats;
 
 public class HttpNodesStatsAction extends HttpAction {
 
@@ -85,9 +87,9 @@ public class HttpNodesStatsAction extends HttpAction {
                 final NodesStatsResponse nodesStatsResponse = fromXContent(parser);
                 listener.onResponse(nodesStatsResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected NodesStatsResponse fromXContent(final XContentParser parser) throws IOException {
@@ -152,6 +154,7 @@ public class HttpNodesStatsAction extends HttpAction {
         AdaptiveSelectionStats adaptiveSelectionStats = null;
         ScriptCacheStats scriptCacheStats = null;
         IndexingPressureStats indexingPressureStats = null;
+        ShardIndexingPressureStats shardIndexingPressureStats = null;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -190,6 +193,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     scriptCacheStats = parseScriptCacheStats(parser);
                 } else if ("indexing_pressure".equals(fieldName)) {
                     indexingPressureStats = parsesIndexingPressureStats(parser);
+                } else if ("shard_indexing_pressure".equals(fieldName)) {
+                    shardIndexingPressureStats = parsesShardIndexingPressureStats(parser);
                 } else {
                     consumeObject(parser);
                 }
@@ -210,7 +215,7 @@ public class HttpNodesStatsAction extends HttpAction {
         }
         final DiscoveryNode node = new DiscoveryNode(nodeName, nodeId, transportAddress, attributes, roles, Version.CURRENT);
         return new NodeStats(node, timestamp, indices, os, process, jvm, threadPool, fs, transport, http, breaker, scriptStats,
-                discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats);
+                discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats, shardIndexingPressureStats);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
@@ -248,6 +253,11 @@ public class HttpNodesStatsAction extends HttpAction {
     protected IndexingPressureStats parsesIndexingPressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser); // TODO
         return new IndexingPressureStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    }
+
+    protected ShardIndexingPressureStats parsesShardIndexingPressureStats(final XContentParser parser) throws IOException {
+        consumeObject(parser); // TODO
+        return new ShardIndexingPressureStats(Collections.emptyMap(), 0, 0, 0, false, false);
     }
 
     protected IngestStats parseIngestStats(final XContentParser parser) throws IOException {
@@ -814,6 +824,7 @@ public class HttpNodesStatsAction extends HttpAction {
                             long max = 0;
                             long peakUsed = 0;
                             long peakMax = 0;
+                            MemoryPoolGcStats lastGcStats = null;
                             final String name = fieldName;
                             while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
                                 if (token == XContentParser.Token.FIELD_NAME) {
@@ -828,10 +839,32 @@ public class HttpNodesStatsAction extends HttpAction {
                                     } else if ("peak_max_in_bytes".equals(fieldName)) {
                                         peakMax = parser.longValue();
                                     }
+                                } else if (token == XContentParser.Token.START_OBJECT) {
+                                    if ("last_gc_stats".equals(fieldName)) {
+                                        parser.nextToken();
+                                        long lastUsed = 0;
+                                        long lastMax = 0;
+                                        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                                            if (token == XContentParser.Token.FIELD_NAME) {
+                                                fieldName = parser.currentName();
+                                            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                                                if ("used_in_bytes".equals(fieldName)) {
+                                                    lastUsed = parser.longValue();
+                                                } else if ("max_in_bytes".equals(fieldName)) {
+                                                    lastMax = parser.longValue();
+                                                }
+                                            }
+                                            parser.nextToken();
+                                        }
+                                        lastGcStats = new MemoryPoolGcStats(lastUsed, lastMax);
+                                    } else {
+                                        consumeObject(parser);
+                                    }
                                 }
                                 parser.nextToken();
                             }
-                            pools.add(new JvmStats.MemoryPool(name, used, max, peakUsed, peakMax));
+                            pools.add(new JvmStats.MemoryPool(name, used, max, peakUsed, peakMax,
+                                    lastGcStats != null ? lastGcStats : new MemoryPoolGcStats(0, 0)));
                         }
                         parser.nextToken();
                     }

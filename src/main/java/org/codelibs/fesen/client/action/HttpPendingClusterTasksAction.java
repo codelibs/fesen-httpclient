@@ -22,15 +22,15 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.tasks.PendingClusterTasksAction;
-import org.codelibs.fesen.action.admin.cluster.tasks.PendingClusterTasksRequest;
-import org.codelibs.fesen.action.admin.cluster.tasks.PendingClusterTasksResponse;
-import org.codelibs.fesen.cluster.service.PendingClusterTask;
-import org.codelibs.fesen.common.Priority;
-import org.codelibs.fesen.common.text.Text;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
+import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
+import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
+import org.opensearch.cluster.service.PendingClusterTask;
+import org.opensearch.common.Priority;
+import org.opensearch.common.text.Text;
+import org.opensearch.common.xcontent.ConstructingObjectParser;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpPendingClusterTasksAction extends HttpAction {
 
@@ -47,9 +47,9 @@ public class HttpPendingClusterTasksAction extends HttpAction {
                 final PendingClusterTasksResponse pendingClusterTasksResponse = getPendingClusterTasksResponse(parser);
                 listener.onResponse(pendingClusterTasksResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final PendingClusterTasksRequest request) {

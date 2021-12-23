@@ -18,14 +18,14 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.search.MultiSearchAction;
-import org.codelibs.fesen.action.search.MultiSearchRequest;
-import org.codelibs.fesen.action.search.MultiSearchResponse;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.search.MultiSearchAction;
+import org.opensearch.action.search.MultiSearchRequest;
+import org.opensearch.action.search.MultiSearchResponse;
+import org.opensearch.common.xcontent.XContentFactory;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentType;
 
 public class HttpMultiSearchAction extends HttpAction {
 
@@ -41,16 +41,16 @@ public class HttpMultiSearchAction extends HttpAction {
         try {
             source = new String(MultiSearchRequest.writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON)));
         } catch (final Exception e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final MultiSearchResponse multiSearchResponse = MultiSearchResponse.fromXContext(parser);
                 listener.onResponse(multiSearchResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final MultiSearchRequest request) {

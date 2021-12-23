@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.main.MainAction;
-import org.codelibs.fesen.action.main.MainRequest;
-import org.codelibs.fesen.action.main.MainResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.main.MainAction;
+import org.opensearch.action.main.MainRequest;
+import org.opensearch.action.main.MainResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpMainAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpMainAction extends HttpAction {
                 final MainResponse mainResponse = MainResponse.fromXContent(parser);
                 listener.onResponse(mainResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final MainRequest request) {

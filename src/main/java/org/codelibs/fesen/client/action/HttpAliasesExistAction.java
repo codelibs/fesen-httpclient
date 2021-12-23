@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.alias.exists.AliasesExistAction;
-import org.codelibs.fesen.action.admin.indices.alias.exists.AliasesExistResponse;
-import org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesRequest;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.alias.exists.AliasesExistAction;
+import org.opensearch.action.admin.indices.alias.exists.AliasesExistResponse;
+import org.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
 
 public class HttpAliasesExistAction extends HttpAction {
 
@@ -44,15 +44,15 @@ public class HttpAliasesExistAction extends HttpAction {
                 exists = false;
                 break;
             default:
-                throw new FesenException("Unexpected status: " + response.getHttpStatusCode());
+                throw new OpenSearchException("Unexpected status: " + response.getHttpStatusCode());
             }
             try {
                 final AliasesExistResponse aliasesExistResponse = new AliasesExistResponse(exists);
                 listener.onResponse(aliasesExistResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetAliasesRequest request) {

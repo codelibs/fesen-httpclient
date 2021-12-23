@@ -20,14 +20,14 @@ import java.util.Locale;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.delete.DeleteAction;
-import org.codelibs.fesen.action.delete.DeleteRequest;
-import org.codelibs.fesen.action.delete.DeleteResponse;
-import org.codelibs.fesen.action.support.ActiveShardCount;
-import org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.VersionType;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.delete.DeleteAction;
+import org.opensearch.action.delete.DeleteRequest;
+import org.opensearch.action.delete.DeleteResponse;
+import org.opensearch.action.support.ActiveShardCount;
+import org.opensearch.action.support.WriteRequest.RefreshPolicy;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.index.VersionType;
 
 public class HttpDeleteAction extends HttpAction {
 
@@ -44,9 +44,9 @@ public class HttpDeleteAction extends HttpAction {
                 final DeleteResponse deleteResponse = DeleteResponse.fromXContent(parser);
                 listener.onResponse(deleteResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final DeleteRequest request) {

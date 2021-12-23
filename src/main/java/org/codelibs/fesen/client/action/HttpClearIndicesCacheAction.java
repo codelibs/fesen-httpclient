@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.cache.clear.ClearIndicesCacheAction;
-import org.codelibs.fesen.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
-import org.codelibs.fesen.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
+import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
+import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpClearIndicesCacheAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpClearIndicesCacheAction extends HttpAction {
                 final ClearIndicesCacheResponse clearIndicesCacheResponse = ClearIndicesCacheResponse.fromXContent(parser);
                 listener.onResponse(clearIndicesCacheResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final ClearIndicesCacheRequest request) {

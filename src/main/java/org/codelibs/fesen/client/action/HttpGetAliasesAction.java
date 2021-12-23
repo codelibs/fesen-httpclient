@@ -23,16 +23,16 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesAction;
-import org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesRequest;
-import org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesResponse;
-import org.codelibs.fesen.cluster.metadata.AliasMetadata;
-import org.codelibs.fesen.common.collect.ImmutableOpenMap;
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-import org.codelibs.fesen.common.xcontent.XContentParserUtils;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.alias.get.GetAliasesAction;
+import org.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
+import org.opensearch.cluster.metadata.AliasMetadata;
+import org.opensearch.common.collect.ImmutableOpenMap;
+import org.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentParser.Token;
+import org.opensearch.common.xcontent.XContentParserUtils;
 
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
@@ -51,9 +51,9 @@ public class HttpGetAliasesAction extends HttpAction {
                 final GetAliasesResponse getAliasesResponse = getGetAliasesResponse(parser);
                 listener.onResponse(getAliasesResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetAliasesRequest request) {

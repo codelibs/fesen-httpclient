@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.ingest.GetPipelineAction;
-import org.codelibs.fesen.action.ingest.GetPipelineRequest;
-import org.codelibs.fesen.action.ingest.GetPipelineResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.ingest.GetPipelineAction;
+import org.opensearch.action.ingest.GetPipelineRequest;
+import org.opensearch.action.ingest.GetPipelineResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetPipelineAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpGetPipelineAction extends HttpAction {
                 final GetPipelineResponse getPipelineResponse = GetPipelineResponse.fromXContent(parser);
                 listener.onResponse(getPipelineResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetPipelineRequest request) {

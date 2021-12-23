@@ -22,16 +22,16 @@ import java.util.List;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.close.CloseIndexAction;
-import org.codelibs.fesen.action.admin.indices.close.CloseIndexRequest;
-import org.codelibs.fesen.action.admin.indices.close.CloseIndexResponse;
-import org.codelibs.fesen.action.admin.indices.close.CloseIndexResponse.IndexResult;
-import org.codelibs.fesen.action.admin.indices.close.CloseIndexResponse.ShardResult;
-import org.codelibs.fesen.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.Index;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.close.CloseIndexAction;
+import org.opensearch.action.admin.indices.close.CloseIndexRequest;
+import org.opensearch.action.admin.indices.close.CloseIndexResponse;
+import org.opensearch.action.admin.indices.close.CloseIndexResponse.IndexResult;
+import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult;
+import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.index.Index;
 
 public class HttpCloseIndexAction extends HttpAction {
 
@@ -48,9 +48,9 @@ public class HttpCloseIndexAction extends HttpAction {
                 final CloseIndexResponse closeIndexResponse = fromXContent(parser);
                 listener.onResponse(closeIndexResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final CloseIndexRequest request) {
@@ -109,7 +109,7 @@ public class HttpCloseIndexAction extends HttpAction {
 
     protected IndexResult parseIndexResult(final XContentParser parser, final String index) throws IOException {
         boolean closed = false;
-        FesenException eex = null;
+        OpenSearchException eex = null;
         final List<ShardResult> shardResults = new ArrayList<>();
         String fieldName = null;
         XContentParser.Token token;
@@ -119,7 +119,7 @@ public class HttpCloseIndexAction extends HttpAction {
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if ("exception".equals(fieldName)) {
                     parser.nextToken();
-                    eex = FesenException.fromXContent(parser);
+                    eex = OpenSearchException.fromXContent(parser);
                 } else if ("failedShards".equals(fieldName)) {
                     parser.nextToken();
                     shardResults.addAll(parseShardResults(parser));
@@ -183,7 +183,7 @@ public class HttpCloseIndexAction extends HttpAction {
     protected Failure parseFailure(final XContentParser parser) throws IOException {
         int shardId = -1;
         String index = null;
-        FesenException eex = null;
+        OpenSearchException eex = null;
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -192,7 +192,7 @@ public class HttpCloseIndexAction extends HttpAction {
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if ("reason".equals(fieldName)) {
                     parser.nextToken();
-                    eex = FesenException.fromXContent(parser);
+                    eex = OpenSearchException.fromXContent(parser);
                     parser.nextToken();
                 }
             } else if (token == XContentParser.Token.VALUE_STRING) {

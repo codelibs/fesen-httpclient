@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.repositories.put.PutRepositoryAction;
-import org.codelibs.fesen.action.admin.cluster.repositories.put.PutRepositoryRequest;
-import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.repositories.put.PutRepositoryAction;
+import org.opensearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
+import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpPutRepositoryAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpPutRepositoryAction extends HttpAction {
                 final AcknowledgedResponse putRepositoryResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(putRepositoryResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final PutRepositoryRequest request) {

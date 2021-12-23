@@ -15,7 +15,7 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -25,16 +25,16 @@ import java.util.Map;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsAction;
-import org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsResponse;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.ObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsAction;
+import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
+import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ConstructingObjectParser;
+import org.opensearch.common.xcontent.ObjectParser;
+import org.opensearch.common.xcontent.XContentFactory;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetFieldMappingsAction extends HttpAction {
 
@@ -51,9 +51,9 @@ public class HttpGetFieldMappingsAction extends HttpAction {
                 final GetFieldMappingsResponse getFieldMappingsResponse = fromXContent(parser);
                 listener.onResponse(getFieldMappingsResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetFieldMappingsRequest request) {
@@ -135,7 +135,7 @@ public class HttpGetFieldMappingsAction extends HttpAction {
             constructor.setAccessible(true);
             return constructor.newInstance(mappings);
         } catch (final Exception e) {
-            throw new FesenException("Failed to create GetFieldMappingsResponse.", e);
+            throw new OpenSearchException("Failed to create GetFieldMappingsResponse.", e);
         }
     }
 }

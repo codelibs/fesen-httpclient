@@ -23,18 +23,18 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.FesenStatusException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.support.ActiveShardCount;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.XContent;
-import org.codelibs.fesen.common.xcontent.XContentFactory;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.rest.BytesRestResponse;
-import org.codelibs.fesen.rest.RestStatus;
+import org.opensearch.OpenSearchException;
+import org.opensearch.OpenSearchStatusException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.support.ActiveShardCount;
+import org.opensearch.common.ParseField;
+import org.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.opensearch.common.xcontent.XContent;
+import org.opensearch.common.xcontent.XContentFactory;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.rest.BytesRestResponse;
+import org.opensearch.rest.RestStatus;
 
 public class HttpAction {
 
@@ -132,23 +132,24 @@ public class HttpAction {
         return xContent.createParser(client.getNamedXContentRegistry(), LoggingDeprecationHandler.INSTANCE, response.getContentAsStream());
     }
 
-    protected FesenStatusException toFesenException(final CurlResponse response, final Throwable t) {
-        FesenStatusException fesenException;
+    protected OpenSearchStatusException toOpenSearchException(final CurlResponse response, final Throwable t) {
+        OpenSearchStatusException fesenException;
         try (final XContentParser parser = createParser(response)) {
             fesenException = BytesRestResponse.errorFromXContent(parser);
             fesenException.addSuppressed(t);
             fesenException.addSuppressed(new CurlResponseException(response.getContentAsString()));
         } catch (final Exception ex) {
-            fesenException = new FesenStatusException(response.getContentAsString(), RestStatus.fromCode(response.getHttpStatusCode()), t);
+            fesenException =
+                    new OpenSearchStatusException(response.getContentAsString(), RestStatus.fromCode(response.getHttpStatusCode()), t);
             fesenException.addSuppressed(t);
             fesenException.addSuppressed(ex);
         }
         return fesenException;
     }
 
-    protected <T> void unwrapFesenException(final ActionListener<T> listener, final Exception e) {
-        if (e.getCause() instanceof FesenException) {
-            listener.onFailure((FesenException) e.getCause());
+    protected <T> void unwrapOpenSearchException(final ActionListener<T> listener, final Exception e) {
+        if (e.getCause() instanceof OpenSearchException) {
+            listener.onFailure((OpenSearchException) e.getCause());
         } else {
             listener.onFailure(e);
         }
@@ -159,7 +160,7 @@ public class HttpAction {
             activeShardCount.writeTo(out);
             return out.toStreamInput().readInt();
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
     }
 

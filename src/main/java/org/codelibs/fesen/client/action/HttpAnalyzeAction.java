@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.opensearch.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.opensearch.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -27,20 +27,20 @@ import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction;
-import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction.AnalyzeToken;
-import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction.AnalyzeTokenList;
-import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction.CharFilteredText;
-import org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction.DetailAnalyzeResponse;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.Strings;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.analyze.AnalyzeAction;
+import org.opensearch.action.admin.indices.analyze.AnalyzeAction.AnalyzeToken;
+import org.opensearch.action.admin.indices.analyze.AnalyzeAction.AnalyzeTokenList;
+import org.opensearch.action.admin.indices.analyze.AnalyzeAction.CharFilteredText;
+import org.opensearch.action.admin.indices.analyze.AnalyzeAction.DetailAnalyzeResponse;
+import org.opensearch.common.ParseField;
+import org.opensearch.common.Strings;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ConstructingObjectParser;
+import org.opensearch.common.xcontent.XContentBuilder;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.json.JsonXContent;
 
 public class HttpAnalyzeAction extends HttpAction {
 
@@ -57,16 +57,16 @@ public class HttpAnalyzeAction extends HttpAction {
             builder.flush();
             source = BytesReference.bytes(builder).utf8ToString();
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final AnalyzeAction.Response cancelTasksResponse = fromXContent(parser);
                 listener.onResponse(cancelTasksResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final AnalyzeAction.Request request) {

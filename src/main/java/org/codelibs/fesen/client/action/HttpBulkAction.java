@@ -21,25 +21,25 @@ import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.DocWriteRequest;
-import org.codelibs.fesen.action.bulk.BulkAction;
-import org.codelibs.fesen.action.bulk.BulkRequest;
-import org.codelibs.fesen.action.bulk.BulkResponse;
-import org.codelibs.fesen.action.index.IndexRequest;
-import org.codelibs.fesen.action.support.ActiveShardCount;
-import org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy;
-import org.codelibs.fesen.action.update.UpdateRequest;
-import org.codelibs.fesen.common.bytes.BytesReference;
-import org.codelibs.fesen.common.xcontent.ToXContent;
-import org.codelibs.fesen.common.xcontent.XContentBuilder;
-import org.codelibs.fesen.common.xcontent.XContentHelper;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.common.xcontent.json.JsonXContent;
-import org.codelibs.fesen.index.VersionType;
-import org.codelibs.fesen.index.seqno.SequenceNumbers;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.DocWriteRequest;
+import org.opensearch.action.bulk.BulkAction;
+import org.opensearch.action.bulk.BulkRequest;
+import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.action.support.ActiveShardCount;
+import org.opensearch.action.support.WriteRequest.RefreshPolicy;
+import org.opensearch.action.update.UpdateRequest;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ToXContent;
+import org.opensearch.common.xcontent.XContentBuilder;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.common.xcontent.json.JsonXContent;
+import org.opensearch.index.VersionType;
+import org.opensearch.index.seqno.SequenceNumbers;
 
 public class HttpBulkAction extends HttpAction {
 
@@ -87,16 +87,16 @@ public class HttpBulkAction extends HttpAction {
                 }
             }
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
         getCurlRequest(request).body(buf.toString()).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final BulkResponse bulkResponse = BulkResponse.fromXContent(parser);
                 listener.onResponse(bulkResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final BulkRequest request) {

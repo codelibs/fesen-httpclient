@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.snapshots.delete.DeleteSnapshotAction;
-import org.codelibs.fesen.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
-import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotAction;
+import org.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
+import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpDeleteSnapshotAction extends HttpAction {
 
@@ -42,9 +42,9 @@ public class HttpDeleteSnapshotAction extends HttpAction {
                 final AcknowledgedResponse cancelTasksResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(cancelTasksResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final DeleteSnapshotRequest request) {

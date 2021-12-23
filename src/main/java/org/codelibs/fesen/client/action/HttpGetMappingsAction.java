@@ -20,15 +20,15 @@ import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.mapping.get.GetMappingsAction;
-import org.codelibs.fesen.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.codelibs.fesen.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.codelibs.fesen.cluster.metadata.MappingMetadata;
-import org.codelibs.fesen.common.ParseField;
-import org.codelibs.fesen.common.collect.ImmutableOpenMap;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.IndexNotFoundException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
+import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
+import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.opensearch.cluster.metadata.MappingMetadata;
+import org.opensearch.common.ParseField;
+import org.opensearch.common.collect.ImmutableOpenMap;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.index.IndexNotFoundException;
 
 public class HttpGetMappingsAction extends HttpAction {
 
@@ -50,9 +50,9 @@ public class HttpGetMappingsAction extends HttpAction {
                 final GetMappingsResponse getMappingsResponse = /*GetMappingsResponse.*/fromXContent(parser);
                 listener.onResponse(getMappingsResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetMappingsRequest request) {

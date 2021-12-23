@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.flush.FlushAction;
-import org.codelibs.fesen.action.admin.indices.flush.FlushRequest;
-import org.codelibs.fesen.action.admin.indices.flush.FlushResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.flush.FlushAction;
+import org.opensearch.action.admin.indices.flush.FlushRequest;
+import org.opensearch.action.admin.indices.flush.FlushResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpFlushAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpFlushAction extends HttpAction {
                 final FlushResponse flushResponse = FlushResponse.fromXContent(parser);
                 listener.onResponse(flushResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final FlushRequest request) {

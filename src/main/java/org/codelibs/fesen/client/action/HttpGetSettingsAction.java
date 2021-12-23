@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.settings.get.GetSettingsAction;
-import org.codelibs.fesen.action.admin.indices.settings.get.GetSettingsRequest;
-import org.codelibs.fesen.action.admin.indices.settings.get.GetSettingsResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.settings.get.GetSettingsAction;
+import org.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
+import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetSettingsAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpGetSettingsAction extends HttpAction {
                 final GetSettingsResponse getSettingsResponse = GetSettingsResponse.fromXContent(parser);
                 listener.onResponse(getSettingsResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetSettingsRequest request) {

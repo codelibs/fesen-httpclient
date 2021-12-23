@@ -21,18 +21,18 @@ import java.util.Locale;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.DocWriteRequest.OpType;
-import org.codelibs.fesen.action.index.IndexAction;
-import org.codelibs.fesen.action.index.IndexRequest;
-import org.codelibs.fesen.action.index.IndexResponse;
-import org.codelibs.fesen.action.support.ActiveShardCount;
-import org.codelibs.fesen.action.support.WriteRequest.RefreshPolicy;
-import org.codelibs.fesen.common.xcontent.XContentHelper;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentType;
-import org.codelibs.fesen.index.VersionType;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.DocWriteRequest.OpType;
+import org.opensearch.action.index.IndexAction;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.action.index.IndexResponse;
+import org.opensearch.action.support.ActiveShardCount;
+import org.opensearch.action.support.WriteRequest.RefreshPolicy;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.index.VersionType;
 
 public class HttpIndexAction extends HttpAction {
 
@@ -48,16 +48,16 @@ public class HttpIndexAction extends HttpAction {
         try {
             source = XContentHelper.convertToJson(request.source(), false, XContentType.JSON);
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a request.", e);
+            throw new OpenSearchException("Failed to parse a request.", e);
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final IndexResponse indexResponse = IndexResponse.fromXContent(parser);
                 listener.onResponse(indexResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     private CurlRequest getCurlRequest(final IndexRequest request) {

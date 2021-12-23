@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.exists.indices.IndicesExistsAction;
-import org.codelibs.fesen.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.codelibs.fesen.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.exists.indices.IndicesExistsAction;
+import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 
 public class HttpIndicesExistsAction extends HttpAction {
 
@@ -43,15 +43,15 @@ public class HttpIndicesExistsAction extends HttpAction {
                 exists = false;
                 break;
             default:
-                throw new FesenException("Unexpected status: " + response.getHttpStatusCode());
+                throw new OpenSearchException("Unexpected status: " + response.getHttpStatusCode());
             }
             try {
                 final IndicesExistsResponse indicesExistsResponse = new IndicesExistsResponse(exists);
                 listener.onResponse(indicesExistsResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final IndicesExistsRequest request) {

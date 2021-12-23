@@ -2,12 +2,12 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.reroute.ClusterRerouteAction;
-import org.codelibs.fesen.action.admin.cluster.reroute.ClusterRerouteRequest;
-import org.codelibs.fesen.action.admin.cluster.reroute.ClusterRerouteResponse;
-import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
+import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.opensearch.action.admin.cluster.reroute.ClusterRerouteResponse;
+import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpClusterRerouteAction extends HttpAction {
 
@@ -24,9 +24,9 @@ public class HttpClusterRerouteAction extends HttpAction {
                 final AcknowledgedResponse clusterRerouteResponse = ClusterRerouteResponse.fromXContent(parser);
                 listener.onResponse(clusterRerouteResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final ClusterRerouteRequest request) {

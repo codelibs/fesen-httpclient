@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksAction;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksRequest;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksAction;
+import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksRequest;
+import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpListTasksAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpListTasksAction extends HttpAction {
                 final ListTasksResponse listTasksResponse = ListTasksResponse.fromXContent(parser);
                 listener.onResponse(listTasksResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final ListTasksRequest request) {

@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
-import org.codelibs.fesen.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
+import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
+import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpCancelTasksAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpCancelTasksAction extends HttpAction {
                 final CancelTasksResponse cancelTasksResponse = CancelTasksResponse.fromXContent(parser);
                 listener.onResponse(cancelTasksResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final CancelTasksRequest request) {

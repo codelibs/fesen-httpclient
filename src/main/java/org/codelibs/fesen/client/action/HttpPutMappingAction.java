@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.mapping.put.PutMappingAction;
-import org.codelibs.fesen.action.admin.indices.mapping.put.PutMappingRequest;
-import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.mapping.put.PutMappingAction;
+import org.opensearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpPutMappingAction extends HttpAction {
 
@@ -38,9 +38,9 @@ public class HttpPutMappingAction extends HttpAction {
                 final AcknowledgedResponse putMappingResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(putMappingResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final PutMappingRequest request) {

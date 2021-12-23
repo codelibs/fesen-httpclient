@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.opensearch.common.xcontent.ConstructingObjectParser.constructorArg;
+import static org.opensearch.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -33,27 +33,27 @@ import java.util.Set;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.indices.flush.SyncedFlushAction;
-import org.codelibs.fesen.action.admin.indices.flush.SyncedFlushRequest;
-import org.codelibs.fesen.action.admin.indices.flush.SyncedFlushResponse;
-import org.codelibs.fesen.cluster.routing.AllocationId;
-import org.codelibs.fesen.cluster.routing.RecoverySource;
-import org.codelibs.fesen.cluster.routing.ShardRouting;
-import org.codelibs.fesen.cluster.routing.ShardRoutingState;
-import org.codelibs.fesen.cluster.routing.UnassignedInfo;
-import org.codelibs.fesen.common.ParsingException;
-import org.codelibs.fesen.common.joda.Joda;
-import org.codelibs.fesen.common.xcontent.ConstructingObjectParser;
-import org.codelibs.fesen.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.common.xcontent.XContentLocation;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.common.xcontent.XContentParser.Token;
-import org.codelibs.fesen.index.Index;
-import org.codelibs.fesen.index.shard.ShardId;
-import org.codelibs.fesen.indices.flush.ShardsSyncedFlushResult;
-import org.codelibs.fesen.indices.flush.SyncedFlushService;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.flush.SyncedFlushAction;
+import org.opensearch.action.admin.indices.flush.SyncedFlushRequest;
+import org.opensearch.action.admin.indices.flush.SyncedFlushResponse;
+import org.opensearch.cluster.routing.AllocationId;
+import org.opensearch.cluster.routing.RecoverySource;
+import org.opensearch.cluster.routing.ShardRouting;
+import org.opensearch.cluster.routing.ShardRoutingState;
+import org.opensearch.cluster.routing.UnassignedInfo;
+import org.opensearch.common.ParsingException;
+import org.opensearch.common.joda.Joda;
+import org.opensearch.common.xcontent.ConstructingObjectParser;
+import org.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.opensearch.common.xcontent.XContentLocation;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentParser.Token;
+import org.opensearch.index.Index;
+import org.opensearch.index.shard.ShardId;
+import org.opensearch.indices.flush.ShardsSyncedFlushResult;
+import org.opensearch.indices.flush.SyncedFlushService;
 
 public class HttpSyncedFlushAction extends HttpAction {
 
@@ -70,9 +70,9 @@ public class HttpSyncedFlushAction extends HttpAction {
                 final SyncedFlushResponse syncedFlushResponse = getSyncedFlushResponse(parser);
                 listener.onResponse(syncedFlushResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final SyncedFlushRequest request) {
@@ -243,7 +243,7 @@ public class HttpSyncedFlushAction extends HttpAction {
             try {
                 return getUnassignedInfo(p);
             } catch (final Exception e) {
-                throw new FesenException("Failed to create SyncedFlushResponse.", e);
+                throw new OpenSearchException("Failed to create SyncedFlushResponse.", e);
             }
         }, UNASSIGNED_INFO_FIELD);
         objectParser.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> AllocationId.fromXContent(p),

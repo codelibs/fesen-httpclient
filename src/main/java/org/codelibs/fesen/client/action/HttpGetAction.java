@@ -20,13 +20,13 @@ import java.util.Locale;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.get.GetAction;
-import org.codelibs.fesen.action.get.GetRequest;
-import org.codelibs.fesen.action.get.GetResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
-import org.codelibs.fesen.index.IndexNotFoundException;
-import org.codelibs.fesen.index.VersionType;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.get.GetAction;
+import org.opensearch.action.get.GetRequest;
+import org.opensearch.action.get.GetResponse;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.index.IndexNotFoundException;
+import org.opensearch.index.VersionType;
 
 public class HttpGetAction extends HttpAction {
 
@@ -46,10 +46,10 @@ public class HttpGetAction extends HttpAction {
                 if (response.getHttpStatusCode() == 404) {
                     throw new IndexNotFoundException(request.index(), e);
                 } else {
-                    listener.onFailure(toFesenException(response, e));
+                    listener.onFailure(toOpenSearchException(response, e));
                 }
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     private CurlRequest getCurlRequest(final GetRequest request) {

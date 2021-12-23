@@ -20,13 +20,13 @@ import java.io.IOException;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.FesenException;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.ingest.PutPipelineAction;
-import org.codelibs.fesen.action.ingest.PutPipelineRequest;
-import org.codelibs.fesen.action.support.master.AcknowledgedResponse;
-import org.codelibs.fesen.common.xcontent.XContentHelper;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.OpenSearchException;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.ingest.PutPipelineAction;
+import org.opensearch.action.ingest.PutPipelineRequest;
+import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpPutPipelineAction extends HttpAction {
 
@@ -42,16 +42,16 @@ public class HttpPutPipelineAction extends HttpAction {
         try {
             source = XContentHelper.convertToJson(request.getSource(), false, false, request.getXContentType());
         } catch (final IOException e) {
-            throw new FesenException("Failed to parse a reqsuest.", e);
+            throw new OpenSearchException("Failed to parse a reqsuest.", e);
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final AcknowledgedResponse putPipelineResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(putPipelineResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final PutPipelineRequest request) {

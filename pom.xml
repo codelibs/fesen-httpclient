@@ -32,9 +32,9 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<fesen.version>1.0.0-SNAPSHOT</fesen.version>
-		<fesen.runner.version>1.0.0-SNAPSHOT</fesen.runner.version>
-		<elasticsearch.version>7.15.1</elasticsearch.version>
+		<opensearch.version>1.2.2</opensearch.version>
+		<opensearch.runner.version>1.2.2.0</opensearch.runner.version>
+		<elasticsearch.version>7.16.2</elasticsearch.version>
 		<junit.jupiter.version>5.7.0</junit.jupiter.version>
 	</properties>
 	<build>
@@ -75,6 +75,10 @@
 				<version>2.22.1</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
+					<excludes>
+						<!-- workaround: opensearch uses es-http-channel -->
+						<exclude>**/ElasticsearchClientTest.java</exclude>
+					</excludes>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -138,9 +142,9 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.codelibs.fesen</groupId>
-			<artifactId>fesen-engine-server</artifactId>
-			<version>${fesen.version}</version>
+			<groupId>org.opensearch</groupId>
+			<artifactId>opensearch</artifactId>
+			<version>${opensearch.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codelibs</groupId>
@@ -148,9 +152,9 @@
 			<version>1.2.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codelibs.fesen</groupId>
-			<artifactId>fesen-runner</artifactId>
-			<version>${fesen.runner.version}</version>
+			<groupId>org.codelibs.opensearch</groupId>
+			<artifactId>opensearch-runner</artifactId>
+			<version>${opensearch.runner.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.codelibs.fesen.action.ActionListener;
-import org.codelibs.fesen.action.admin.cluster.snapshots.get.GetSnapshotsAction;
-import org.codelibs.fesen.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
-import org.codelibs.fesen.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
-import org.codelibs.fesen.common.xcontent.XContentParser;
+import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
+import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
+import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetSnapshotsAction extends HttpAction {
 
@@ -39,9 +39,9 @@ public class HttpGetSnapshotsAction extends HttpAction {
                 final GetSnapshotsResponse cancelTasksResponse = GetSnapshotsResponse.fromXContent(parser);
                 listener.onResponse(cancelTasksResponse);
             } catch (final Exception e) {
-                listener.onFailure(toFesenException(response, e));
+                listener.onFailure(toOpenSearchException(response, e));
             }
-        }, e -> unwrapFesenException(listener, e));
+        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final GetSnapshotsRequest request) {
