@@ -114,7 +114,9 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearchClientTest {
     static final Logger logger = Logger.getLogger(OpenSearchClientTest.class.getName());
 
-    static final String imageTag = "opensearchproject/opensearch:1.2.4";
+    static final String version = "1.2.4";
+
+    static final String imageTag = "opensearchproject/opensearch:" + version;
 
     static String clusterName = "docker-cluster";
 
@@ -124,7 +126,12 @@ class OpenSearchClientTest {
 
     @BeforeAll
     static void setUpAll() {
-        // logging
+        setupLogger();
+        startServer();
+        waitFor();
+    }
+
+    static void setupLogger() {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.ALL);
@@ -132,18 +139,19 @@ class OpenSearchClientTest {
         handler.setFormatter(new SimpleFormatter());
         handler.setLevel(Level.ALL);
         rootLogger.addHandler(handler);
+    }
 
+    static void startServer() {
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
                 .withEnv("plugins.security.disabled", "true")//
                 .withExposedPorts(9200);
         server.start();
-
-        waitFor();
     }
 
     static void waitFor() {
         final String url = "http://" + server.getHost() + ":" + server.getFirstMappedPort();
+        logger.info("Opensearch " + version + ": " + url);
         for (int i = 0; i < 10; i++) {
             try (CurlResponse response = Curl.get(url).execute()) {
                 if (response.getHttpStatusCode() == 200) {

@@ -114,7 +114,9 @@ import org.testcontainers.utility.DockerImageName;
 class Elasticsearch7ClientTest {
     static final Logger logger = Logger.getLogger(Elasticsearch7ClientTest.class.getName());
 
-    static final String imageTag = "docker.elastic.co/elasticsearch/elasticsearch:7.16.3";
+    static final String version = "7.16.3";
+
+    static final String imageTag = "docker.elastic.co/elasticsearch/elasticsearch:" + version;
 
     static String clusterName = "docker-cluster";
 
@@ -124,7 +126,12 @@ class Elasticsearch7ClientTest {
 
     @BeforeAll
     static void setUpAll() {
-        // logging
+        setupLogger();
+        startServer();
+        waitFor();
+    }
+
+    static void setupLogger() {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.ALL);
@@ -132,16 +139,18 @@ class Elasticsearch7ClientTest {
         handler.setFormatter(new SimpleFormatter());
         handler.setLevel(Level.ALL);
         rootLogger.addHandler(handler);
+    }
 
+    static void startServer() {
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
                 .withExposedPorts(9200);
         server.start();
-        waitFor();
     }
 
     static void waitFor() {
         final String url = "http://" + server.getHost() + ":" + server.getFirstMappedPort();
+        logger.info("Elasticsearch " + version + ": " + url);
         for (int i = 0; i < 10; i++) {
             try (CurlResponse response = Curl.get(url).execute()) {
                 if (response.getHttpStatusCode() == 200) {
