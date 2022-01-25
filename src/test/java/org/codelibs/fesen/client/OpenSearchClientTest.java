@@ -40,6 +40,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.DocWriteResponse.Result;
+import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
@@ -115,7 +116,7 @@ class OpenSearchClientTest {
 
     static final String imageTag = "opensearchproject/opensearch:1.2.4";
 
-    static String clusterName = "opensearch";
+    static String clusterName = "docker-cluster";
 
     static GenericContainer server;
 
@@ -974,14 +975,16 @@ class OpenSearchClientTest {
         }
     }
 
-    /* TODO
     @Test
     void test_cluster_health() throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
-    
+
         client.admin().cluster().prepareHealth().execute(wrap(res -> {
-            assertEquals(res.getClusterName(), clusterName);
-            latch.countDown();
+            try {
+                assertEquals(res.getClusterName(), clusterName);
+            } finally {
+                latch.countDown();
+            }
         }, e -> {
             e.printStackTrace();
             try {
@@ -991,13 +994,12 @@ class OpenSearchClientTest {
             }
         }));
         latch.await();
-    
+
         {
             ClusterHealthResponse custerHealthResponse = client.admin().cluster().prepareHealth().execute().actionGet();
             assertEquals(custerHealthResponse.getClusterName(), clusterName);
         }
     }
-    */
 
     @Test
     void test_aliases_exist() throws Exception {
