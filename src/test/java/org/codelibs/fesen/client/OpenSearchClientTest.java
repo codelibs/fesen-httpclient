@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 CodeLibs Project and the Others.
+ * Copyright 2012-2022 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opensearch.action.ActionListener.wrap;
-import static org.codelibs.opensearch.runner.OpenSearchRunner.newConfigs;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -33,15 +31,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.codelibs.curl.Curl;
+import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.action.HttpNodesStatsAction;
-import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.DocWriteResponse.Result;
-import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
@@ -109,35 +107,22 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.indices.recovery.RecoverySettings;
 import org.opensearch.rest.RestStatus;
 import org.opensearch.search.SearchHit;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerImageName;
 
-public class OpenSearchClientTest {
+class OpenSearchClientTest {
     static final Logger logger = Logger.getLogger(OpenSearchClientTest.class.getName());
 
-    static OpenSearchRunner runner;
+    static final String imageTag = "opensearchproject/opensearch:1.2.4";
 
-    static String clusterName;
+    static String clusterName = "opensearch";
+
+    static GenericContainer server;
 
     private HttpClient client;
 
     @BeforeAll
     static void setUpAll() {
-        System.setProperty("opensearch.set.netty.runtime.available.processors", "false");
-
-        clusterName = "os-run-" + System.currentTimeMillis();
-        logger.info("Starting" + clusterName);
-        // create runner instance
-        runner = new OpenSearchRunner();
-        // create ES nodes
-        runner.onBuild((number, settingsBuilder) -> {
-            settingsBuilder.put("http.cors.enabled", true);
-            settingsBuilder.put("http.cors.allow-origin", "*");
-            settingsBuilder.put("discovery.type", "single-node");
-            settingsBuilder.put("http.port", "9210-9219");
-        }).build(newConfigs().clusterName(clusterName).numOfNode(1));
-
-        // wait for yellow status
-        runner.ensureYellow();
-
         // logging
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
         Logger rootLogger = Logger.getLogger("");
@@ -146,11 +131,40 @@ public class OpenSearchClientTest {
         handler.setFormatter(new SimpleFormatter());
         handler.setLevel(Level.ALL);
         rootLogger.addHandler(handler);
+
+        server = new GenericContainer<>(DockerImageName.parse(imageTag))//
+                .withEnv("discovery.type", "single-node")//
+                .withEnv("plugins.security.disabled", "true")//
+                .withExposedPorts(9200);
+        server.start();
+
+        waitFor();
+    }
+
+    static void waitFor() {
+        final String url = "http://" + server.getHost() + ":" + server.getFirstMappedPort();
+        for (int i = 0; i < 10; i++) {
+            try (CurlResponse response = Curl.get(url).execute()) {
+                if (response.getHttpStatusCode() == 200) {
+                    logger.info(url + " is available.");
+                    break;
+                }
+            } catch (Exception e) {
+                logger.fine(e.getLocalizedMessage());
+            }
+            try {
+                logger.info("Waiting for " + url);
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                // nothing
+            }
+        }
     }
 
     @BeforeEach
     void setUp() {
-        final Settings settings = Settings.builder().putList("http.hosts", "localhost:9210").put("http.compression", true).build();
+        final String host = server.getHost() + ":" + server.getFirstMappedPort();
+        final Settings settings = Settings.builder().putList("http.hosts", host).put("http.compression", true).build();
         client = new HttpClient(settings, null);
     }
 
@@ -162,15 +176,7 @@ public class OpenSearchClientTest {
 
     @AfterAll
     static void tearDownAll() {
-        logger.info("Closing runner");
-        // close runner
-        try {
-            runner.close();
-        } catch (final IOException e) {
-            // ignore
-        }
-        // delete all files
-        runner.clean();
+        server.stop();
     }
 
     @Test
@@ -968,10 +974,11 @@ public class OpenSearchClientTest {
         }
     }
 
+    /* TODO
     @Test
     void test_cluster_health() throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
-
+    
         client.admin().cluster().prepareHealth().execute(wrap(res -> {
             assertEquals(res.getClusterName(), clusterName);
             latch.countDown();
@@ -984,12 +991,13 @@ public class OpenSearchClientTest {
             }
         }));
         latch.await();
-
+    
         {
             ClusterHealthResponse custerHealthResponse = client.admin().cluster().prepareHealth().execute().actionGet();
             assertEquals(custerHealthResponse.getClusterName(), clusterName);
         }
     }
+    */
 
     @Test
     void test_aliases_exist() throws Exception {
