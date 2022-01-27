@@ -17,6 +17,7 @@ package org.codelibs.fesen.client;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.codelibs.curl.Curl;
+import org.codelibs.curl.CurlException;
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.action.HttpAliasesExistAction;
 import org.codelibs.fesen.client.action.HttpAnalyzeAction;
 import org.codelibs.fesen.client.action.HttpBulkAction;
@@ -276,7 +279,9 @@ import org.opensearch.client.support.AbstractClient;
 import org.opensearch.common.ParseField;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.ContextParser;
+import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.NamedXContentRegistry;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.plugins.spi.NamedXContentProvider;
 import org.opensearch.search.aggregations.Aggregation;
 import org.opensearch.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregationBuilder;
@@ -390,6 +395,8 @@ public class HttpClient extends AbstractClient {
     protected final boolean compression;
 
     protected final List<UnaryOperator<CurlRequest>> requestBuilderList = new ArrayList<>();
+
+    private EngineInfo engineInfo;
 
     public enum ContentType {
         JSON("application/json"), X_NDJSON("application/x-ndjson");
@@ -836,6 +843,37 @@ public class HttpClient extends AbstractClient {
 
     }
 
+    public EngineInfo getEngineInfo() {
+        if (engineInfo != null) {
+            return engineInfo;
+        }
+
+        synchronized (this) {
+            if (engineInfo != null) {
+                return engineInfo;
+            }
+            for (String host : hosts) {
+                try (final CurlResponse response = getCurlRequest(Curl::get, "/").execute()) {
+                    if (response.getHttpStatusCode() == 200) {
+                        final Map<String, Object> content = response.getContent(res -> {
+                            try (InputStream is = res.getContentAsStream()) {
+                                return JsonXContent.jsonXContent
+                                        .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, is).map();
+                            } catch (final Exception e) {
+                                throw new CurlException("Failed to access the content.", e);
+                            }
+                        });
+                        engineInfo = new EngineInfo(content);
+                        return engineInfo;
+                    }
+                } catch (Exception e) {
+                    logger.warn("Failed to access {}.", host, e);
+                }
+            }
+        }
+        throw new OpenSearchException("Unknown server info: {}", getHost());
+    }
+
     protected String createBasicAuthentication(final Settings settings) {
         final String username = settings.get("fesen.username");
         final String password = settings.get("fesen.password");
@@ -871,7 +909,7 @@ public class HttpClient extends AbstractClient {
     }
 
     protected String getHost() {
-        return hosts[0];
+        return hosts[0]; // TODO round robin
     }
 
     public CurlRequest getCurlRequest(final Function<String, CurlRequest> method, final String path, final String... indices) {

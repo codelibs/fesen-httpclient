@@ -15,10 +15,13 @@
  */
 package org.codelibs.fesen.client.action;
 
+import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
 import java.io.IOException;
 import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
@@ -27,6 +30,7 @@ import org.opensearch.action.DocWriteRequest.OpType;
 import org.opensearch.action.index.IndexAction;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;
+import org.opensearch.action.index.IndexResponse.Builder;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.common.xcontent.XContentHelper;
@@ -52,7 +56,7 @@ public class HttpIndexAction extends HttpAction {
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final IndexResponse indexResponse = IndexResponse.fromXContent(parser);
+                final IndexResponse indexResponse = fromXContent(parser);
                 listener.onResponse(indexResponse);
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
@@ -60,10 +64,24 @@ public class HttpIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
-    private CurlRequest getCurlRequest(final IndexRequest request) {
+    // IndexResponse.fromXContent(parser);
+    protected IndexResponse fromXContent(XContentParser parser) throws IOException {
+        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
+
+        Builder context = new Builder();
+        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            IndexResponse.parseXContentFields(parser, context);
+        }
+        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+            context.setType("_doc");
+        }
+        return context.build();
+    }
+
+    protected CurlRequest getCurlRequest(final IndexRequest request) {
         // RestIndexAction
         final OpType opType = request.id() == null ? OpType.CREATE : request.opType();
-        final boolean isPutMethod = request.id() != null && OpType.CREATE.equals(opType);
+        final boolean isPutMethod = request.id() != null;
         final StringBuilder pathBuf = new StringBuilder(100).append("/_doc");
         if (request.id() != null) {
             pathBuf.append('/').append(UrlUtils.encode(request.id()));

@@ -15,10 +15,13 @@
  */
 package org.codelibs.fesen.client.action;
 
+import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
 import java.io.IOException;
 import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
@@ -28,6 +31,7 @@ import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.action.update.UpdateAction;
 import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.action.update.UpdateResponse;
+import org.opensearch.action.update.UpdateResponse.Builder;
 import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.XContentBuilder;
@@ -54,12 +58,26 @@ public class HttpUpdateAction extends HttpAction {
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final UpdateResponse updateResponse = UpdateResponse.fromXContent(parser);
+                final UpdateResponse updateResponse = fromXContent(parser);
                 listener.onResponse(updateResponse);
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
             }
         }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    // UpdateResponse.fromXContent(parser)
+    protected UpdateResponse fromXContent(XContentParser parser) throws IOException {
+        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
+
+        Builder context = new Builder();
+        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            UpdateResponse.parseXContentFields(parser, context);
+        }
+        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+            context.setType("_doc");
+        }
+        return context.build();
     }
 
     protected CurlRequest getCurlRequest(final UpdateRequest request) {

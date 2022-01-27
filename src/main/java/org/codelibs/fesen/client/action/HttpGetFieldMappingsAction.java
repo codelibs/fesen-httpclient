@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
@@ -64,7 +65,9 @@ public class HttpGetFieldMappingsAction extends HttpAction {
         }
         final CurlRequest curlRequest = client.getCurlRequest(GET, pathSuffix.toString(), request.indices());
         curlRequest.param("include_defaults", Boolean.toString(request.includeDefaults()));
-        curlRequest.param("local", Boolean.toString(request.local()));
+        if (client.getEngineInfo().getType() != EngineType.ELASTICSEARCH8) {
+            curlRequest.param("local", Boolean.toString(request.local()));
+        }
         return curlRequest;
     }
 

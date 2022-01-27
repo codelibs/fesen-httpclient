@@ -16,8 +16,11 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
+import java.util.Collection;
 
+import org.apache.lucene.search.Explanation;
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
@@ -25,10 +28,13 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.explain.ExplainAction;
 import org.opensearch.action.explain.ExplainRequest;
 import org.opensearch.action.explain.ExplainResponse;
+import org.opensearch.common.ParseField;
 import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ConstructingObjectParser;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.index.get.GetResult;
 
 public class HttpExplainAction extends HttpAction {
 
@@ -50,12 +56,45 @@ public class HttpExplainAction extends HttpAction {
         }
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final ExplainResponse explainResponse = ExplainResponse.fromXContent(parser, true);
+                final ExplainResponse explainResponse = fromXContent(parser, true);
                 listener.onResponse(explainResponse);
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
             }
         }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    // ExplainResponse.fromXContent(parser, true)
+    protected ExplainResponse fromXContent(XContentParser parser, boolean exists) {
+        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+            return getResponseParser().apply(parser, exists);
+        } else {
+            return ExplainResponse.fromXContent(parser, exists);
+        }
+    }
+
+    protected ConstructingObjectParser<ExplainResponse, Boolean> getResponseParser() {
+        // remove _type
+        ConstructingObjectParser<ExplainResponse, Boolean> parser = new ConstructingObjectParser<>("explain", true, (arg, exists) -> {
+            return new ExplainResponse((String) arg[0], "_doc", (String) arg[1], exists, (Explanation) arg[2], (GetResult) arg[3]);
+        });
+        parser.declareString(ConstructingObjectParser.constructorArg(), new ParseField("_index"));
+        parser.declareString(ConstructingObjectParser.constructorArg(), new ParseField("_id"));
+        final ConstructingObjectParser<Explanation, Boolean> explanationParser =
+                new ConstructingObjectParser<>("explanation", true, arg -> {
+                    if ((float) arg[0] > 0) {
+                        return Explanation.match((float) arg[0], (String) arg[1], (Collection<Explanation>) arg[2]);
+                    } else {
+                        return Explanation.noMatch((String) arg[1], (Collection<Explanation>) arg[2]);
+                    }
+                });
+        explanationParser.declareFloat(ConstructingObjectParser.constructorArg(), new ParseField("value"));
+        explanationParser.declareString(ConstructingObjectParser.constructorArg(), new ParseField("description"));
+        explanationParser.declareObjectArray(ConstructingObjectParser.constructorArg(), explanationParser, new ParseField("details"));
+        parser.declareObject(ConstructingObjectParser.optionalConstructorArg(), explanationParser, new ParseField("explanation"));
+        parser.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> GetResult.fromXContentEmbedded(p),
+                new ParseField("get"));
+        return parser;
     }
 
     protected CurlRequest getCurlRequest(final ExplainRequest request) {

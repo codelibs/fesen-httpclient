@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
@@ -58,7 +59,9 @@ public class HttpGetMappingsAction extends HttpAction {
     protected CurlRequest getCurlRequest(final GetMappingsRequest request) {
         // RestGetMappingAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_mapping", request.indices());
-        curlRequest.param("local", Boolean.toString(request.local()));
+        if (client.getEngineInfo().getType() != EngineType.ELASTICSEARCH8) {
+            curlRequest.param("local", Boolean.toString(request.local()));
+        }
         return curlRequest;
     }
 

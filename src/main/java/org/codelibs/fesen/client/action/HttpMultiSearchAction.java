@@ -15,7 +15,12 @@
  */
 package org.codelibs.fesen.client.action;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Locale;
+
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
 import org.opensearch.OpenSearchException;
@@ -23,6 +28,12 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.search.MultiSearchAction;
 import org.opensearch.action.search.MultiSearchRequest;
 import org.opensearch.action.search.MultiSearchResponse;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.support.IndicesOptions.WildcardStates;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.xcontent.ToXContent;
+import org.opensearch.common.xcontent.XContent;
+import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.common.xcontent.XContentParser;
 import org.opensearch.common.xcontent.XContentType;
@@ -39,7 +50,7 @@ public class HttpMultiSearchAction extends HttpAction {
     public void execute(final MultiSearchRequest request, final ActionListener<MultiSearchResponse> listener) {
         String source = null;
         try {
-            source = new String(MultiSearchRequest.writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON)));
+            source = new String(writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON)));
         } catch (final Exception e) {
             throw new OpenSearchException("Failed to parse a request.", e);
         }
@@ -51,6 +62,66 @@ public class HttpMultiSearchAction extends HttpAction {
                 listener.onFailure(toOpenSearchException(response, e));
             }
         }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    // MultiSearchRequest.writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON))
+    protected byte[] writeMultiLineFormat(MultiSearchRequest multiSearchRequest, XContent xContent) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        for (SearchRequest request : multiSearchRequest.requests()) {
+            try (XContentBuilder xContentBuilder = XContentBuilder.builder(xContent)) {
+                writeSearchRequestParams(request, xContentBuilder);
+                BytesReference.bytes(xContentBuilder).writeTo(output);
+            }
+            output.write(xContent.streamSeparator());
+            try (XContentBuilder xContentBuilder = XContentBuilder.builder(xContent)) {
+                if (request.source() != null) {
+                    request.source().toXContent(xContentBuilder, ToXContent.EMPTY_PARAMS);
+                } else {
+                    xContentBuilder.startObject();
+                    xContentBuilder.endObject();
+                }
+                BytesReference.bytes(xContentBuilder).writeTo(output);
+            }
+            output.write(xContent.streamSeparator());
+        }
+        return output.toByteArray();
+    }
+
+    //  MultiSearchRequest.writeSearchRequestParams(request, xContentBuilder)
+    protected void writeSearchRequestParams(SearchRequest request, XContentBuilder xContentBuilder) throws IOException {
+        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+            xContentBuilder.startObject();
+            if (request.indices() != null) {
+                xContentBuilder.field("index", request.indices());
+            }
+            if (request.indicesOptions() != null && request.indicesOptions() != SearchRequest.DEFAULT_INDICES_OPTIONS) {
+                WildcardStates.toXContent(request.indicesOptions().getExpandWildcards(), xContentBuilder);
+                xContentBuilder.field("ignore_unavailable", request.indicesOptions().ignoreUnavailable());
+                xContentBuilder.field("allow_no_indices", request.indicesOptions().allowNoIndices());
+            }
+            if (request.searchType() != null) {
+                xContentBuilder.field("search_type", request.searchType().name().toLowerCase(Locale.ROOT));
+            }
+            xContentBuilder.field("ccs_minimize_roundtrips", request.isCcsMinimizeRoundtrips());
+            if (request.requestCache() != null) {
+                xContentBuilder.field("request_cache", request.requestCache());
+            }
+            if (request.preference() != null) {
+                xContentBuilder.field("preference", request.preference());
+            }
+            if (request.routing() != null) {
+                xContentBuilder.field("routing", request.routing());
+            }
+            if (request.allowPartialSearchResults() != null) {
+                xContentBuilder.field("allow_partial_search_results", request.allowPartialSearchResults());
+            }
+            if (request.getCancelAfterTimeInterval() != null) {
+                xContentBuilder.field("cancel_after_time_interval", request.getCancelAfterTimeInterval().getStringRep());
+            }
+            xContentBuilder.endObject();
+        } else {
+            MultiSearchRequest.writeSearchRequestParams(request, xContentBuilder);
+        }
     }
 
     protected CurlRequest getCurlRequest(final MultiSearchRequest request) {

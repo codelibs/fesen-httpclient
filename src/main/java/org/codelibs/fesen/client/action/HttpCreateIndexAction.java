@@ -117,6 +117,9 @@ public class HttpCreateIndexAction extends HttpAction {
 
         builder.startObject(ALIASES.getPreferredName());
         for (final Alias alias : request.aliases()) {
+            if (alias.writeIndex() == null) {
+                alias.writeIndex(false);
+            }
             alias.toXContent(builder, params);
         }
         builder.endObject();

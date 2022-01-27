@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.opensearch.OpenSearchException;
@@ -65,6 +66,11 @@ public class HttpSyncedFlushAction extends HttpAction {
     }
 
     public void execute(final SyncedFlushRequest request, final ActionListener<SyncedFlushResponse> listener) {
+        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+            listener.onFailure(new OpenSearchException("Synced-flush is deprecated."));
+            return;
+        }
+
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final SyncedFlushResponse syncedFlushResponse = getSyncedFlushResponse(parser);
