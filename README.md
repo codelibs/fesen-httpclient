@@ -1,7 +1,8 @@
-HTTP based Client for Elasticsearch/OpenSearch
+Fesen HttpClient
 [![Java CI with Maven](https://github.com/codelibs/fesen-httpclient/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/fesen-httpclient/actions/workflows/maven.yml)
 ====================
 
+Fesen HttpClient is HTTP Rest Client for Elasticsearch/OpenSearch.
 HttpClient provided by fesen-httpclient is HTTP-based implementation for org.opensearch.client.Client.
 This HttpClient supports Elasticsearch 7.x, 8.x and OpenSearch 1.x.
 
