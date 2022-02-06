@@ -1,4 +1,4 @@
-HttpClient for Fesen
+HTTP based Client for Elasticsearch/OpenSearch
 [![Java CI with Maven](https://github.com/codelibs/fesen-httpclient/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/fesen-httpclient/actions/workflows/maven.yml)
 ====================
 
@@ -35,4 +35,4 @@ client.prepareSearch("testindex").setQuery(QueryBuilders.matchAllQuery()).execut
 }));
 ```
 
-For the more details, see test code in src/test/java.
+For the more details, see test code in [src/test/java](https://github.com/codelibs/fesen-httpclient/tree/main/src/test/java/org/codelibs/fesen/client).

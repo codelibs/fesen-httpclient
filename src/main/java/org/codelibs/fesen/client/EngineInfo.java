@@ -61,17 +61,17 @@ public class EngineInfo {
     }
 
     public EngineType getType() {
-        return switch (distribution) {
-        case "elasticsearch" -> {
+        if (distribution.startsWith("elasticsearch")) {
             if (number.startsWith("7.")) {
-                yield EngineType.ELASTICSEARCH7;
+                return EngineType.ELASTICSEARCH7;
             } else {
-                yield EngineType.ELASTICSEARCH8;
+                return EngineType.ELASTICSEARCH8;
             }
+        } else if (distribution.startsWith("opensearch")) {
+            return EngineType.OPENSEARCH1;
+        } else {
+            return EngineType.UNKNOWN;
         }
-        case "opensearch" -> EngineType.OPENSEARCH1;
-        default -> EngineType.UNKNOWN;
-        };
     }
 
     public enum EngineType {
