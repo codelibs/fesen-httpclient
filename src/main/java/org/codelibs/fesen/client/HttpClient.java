@@ -17,8 +17,12 @@ package org.codelibs.fesen.client;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +37,10 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.codelibs.curl.Curl;
 import org.codelibs.curl.CurlException;
@@ -392,6 +400,8 @@ public class HttpClient extends AbstractClient {
 
     protected final String basicAuth;
 
+    private final SSLSocketFactory sslSocketFactory;
+
     protected final boolean compression;
 
     protected final List<UnaryOperator<CurlRequest>> requestBuilderList = new ArrayList<>();
@@ -430,6 +440,7 @@ public class HttpClient extends AbstractClient {
 
         compression = settings.getAsBoolean("http.compression", true);
         basicAuth = createBasicAuthentication(settings);
+        sslSocketFactory = createSSLSocketFactory(settings);
         this.threadPool = createThreadPool(settings);
 
         namedXContentRegistry = new NamedXContentRegistry(
@@ -884,6 +895,30 @@ public class HttpClient extends AbstractClient {
         return null;
     }
 
+    protected SSLSocketFactory createSSLSocketFactory(final Settings settings) {
+        final String certificateAuthorities = settings.get("http.ssl.certificate_authorities");
+        if (logger.isDebugEnabled()) {
+            logger.debug("http.ssl.certificate_authorities: {}", certificateAuthorities);
+        }
+        try (final InputStream in = new FileInputStream(certificateAuthorities)) {
+            final Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(in);
+
+            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("server", certificate);
+
+            final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keyStore);
+
+            final SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+            return sslContext.getSocketFactory();
+        } catch (final Exception e) {
+            logger.warn("Failed to load {}", certificateAuthorities, e);
+        }
+        return null;
+    }
+
     @Override
     public void close() {
         if (!threadPool.isShutdown()) {
@@ -929,6 +964,9 @@ public class HttpClient extends AbstractClient {
         CurlRequest request = method.apply(buf.toString()).header("Content-Type", contentType.getString()).threadPool(threadPool);
         if (basicAuth != null) {
             request = request.header("Authorization", basicAuth);
+        }
+        if (sslSocketFactory != null) {
+            request.sslSocketFactory(sslSocketFactory);
         }
         if (compression) {
             request.compression("gzip");
