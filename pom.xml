@@ -5,7 +5,7 @@
 	<artifactId>fesen-httpclient</artifactId>
 	<packaging>jar</packaging>
 	<name>fesen-httpclient</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<description />
 	<url>https://github.com/codelibs/fesen-httpclient</url>
 	<inceptionYear>2012</inceptionYear>
