@@ -900,6 +900,9 @@ public class HttpClient extends AbstractClient {
         if (logger.isDebugEnabled()) {
             logger.debug("http.ssl.certificate_authorities: {}", certificateAuthorities);
         }
+        if (certificateAuthorities == null) {
+            return null;
+        }
         try (final InputStream in = new FileInputStream(certificateAuthorities)) {
             final Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(in);
 
