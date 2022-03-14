@@ -60,6 +60,7 @@ import org.opensearch.action.admin.indices.flush.SyncedFlushResponse;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.opensearch.action.admin.indices.get.GetIndexResponse;
 import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
+import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetadata;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
@@ -1179,6 +1180,53 @@ class OpenSearchClientTest {
                     client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
             assertTrue(getFieldMappingsResponse.mappings().size() > 0);
             assertTrue(getFieldMappingsResponse.mappings().containsKey(index));
+        }
+    }
+
+    @Test
+    void test_create_knn_field() throws Exception {
+        final String index = "test_create_knn_field";
+        final String field = "content_vector";
+
+        {
+            final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties")
+                    .startObject("content").field("type", "text").endObject().endObject().endObject();
+            final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
+            client.admin().indices().prepareCreate(index).execute().actionGet();
+            client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
+        }
+
+        {
+            GetFieldMappingsResponse getFieldMappingsResponse =
+                    client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
+            Map<String, Map<String, Map<String, FieldMappingMetadata>>> mappings = getFieldMappingsResponse.mappings();
+            assertTrue(mappings.size() > 0);
+            assertTrue(mappings.containsKey(index));
+            Map<String, Map<String, FieldMappingMetadata>> fieldMappings = mappings.get(index);
+            assertEquals(0, fieldMappings.size());
+        }
+
+        {
+            final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties").startObject(field)
+                    .field("type", "knn_vector").field("dimension", 10).endObject().endObject().endObject();
+            final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
+            AcknowledgedResponse response =
+                    client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
+            assertTrue(response.isAcknowledged());
+        }
+
+        {
+            GetFieldMappingsResponse getFieldMappingsResponse =
+                    client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
+            Map<String, Map<String, Map<String, FieldMappingMetadata>>> mappings = getFieldMappingsResponse.mappings();
+            assertTrue(mappings.size() > 0);
+            assertTrue(mappings.containsKey(index));
+            Map<String, Map<String, FieldMappingMetadata>> fieldMappings = mappings.get(index);
+            assertEquals(1, fieldMappings.size());
+            Map<String, FieldMappingMetadata> fieldMapping = fieldMappings.get(field);
+            assertEquals(1, fieldMapping.size());
+            FieldMappingMetadata fieldMappingMetadata = fieldMapping.get(field);
+            assertEquals(field, fieldMappingMetadata.fullName());
         }
     }
 
