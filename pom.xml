@@ -43,7 +43,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.10.1</version>
 				<configuration>
-					<release>11</release>
+					<release>17</release>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -67,17 +67,6 @@
 					<encoding>UTF-8</encoding>
 					<docencoding>UTF-8</docencoding>
 					<charset>UTF-8</charset>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.2</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Automatic-Module-Name>org.codelibs.fesen.client</Automatic-Module-Name>
-						</manifestEntries>
-					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
