@@ -26,7 +26,6 @@ import org.codelibs.fesen.client.node.Node;
 import org.codelibs.fesen.client.node.NodeIterator;
 import org.codelibs.fesen.client.node.NodeManager;
 import org.codelibs.fesen.client.node.NodeUnavailableException;
-import org.opensearch.OpenSearchException;
 import org.opensearch.index.IndexNotFoundException;
 
 public class FesenRequest extends CurlRequest {
@@ -81,12 +80,12 @@ public class FesenRequest extends CurlRequest {
         return execute(null);
     }
 
-    protected CurlResponse execute(final OpenSearchException previous) {
+    protected CurlResponse execute(final RuntimeException previous) {
         return getNode().map(node -> {
             url = node.getUrl(path);
             try {
                 return super.execute();
-            } catch (final OpenSearchException e) {
+            } catch (final RuntimeException e) {
                 if (!isTargetException(e)) {
                     throw e;
                 }
