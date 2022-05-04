@@ -18,7 +18,12 @@ package org.codelibs.fesen.client.node;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Node {
+
+    private static final Logger logger = LogManager.getLogger(Node.class);
 
     protected String host;
 
@@ -38,6 +43,9 @@ public class Node {
 
     public boolean isAvailable() {
         if (!available.get() && System.currentTimeMillis() - timestamp.get() > heartbeatInterval) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} set \"available\" to true.", this);
+            }
             available.set(true);
         }
         return available.get();
@@ -53,7 +61,7 @@ public class Node {
         return "[" + host + "][" + (available.get() ? "green" : "red") + "]";
     }
 
-    public void setHeartbeatInterval(long heartbeatInterval) {
+    public void setHeartbeatInterval(final long heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
     }
 }
