@@ -16,6 +16,7 @@
 package org.codelibs.fesen.client.node;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Node {
 
@@ -25,7 +26,7 @@ public class Node {
 
     protected long heartbeatInterval = 10 * 1000L; // 10sec
 
-    protected long timestamp;
+    protected AtomicLong timestamp = new AtomicLong();
 
     public Node(final String host) {
         this.host = host;
@@ -36,15 +37,15 @@ public class Node {
     }
 
     public boolean isAvailable() {
-        if (!available.get() && System.currentTimeMillis() - timestamp > heartbeatInterval) {
+        if (!available.get() && System.currentTimeMillis() - timestamp.get() > heartbeatInterval) {
             available.set(true);
         }
         return available.get();
     }
 
     public void setAvailable(final boolean available) {
+        timestamp.set(System.currentTimeMillis());
         this.available.set(available);
-        timestamp = System.currentTimeMillis();
     }
 
     @Override
