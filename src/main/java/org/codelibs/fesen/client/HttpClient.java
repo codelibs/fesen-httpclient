@@ -108,6 +108,8 @@ import org.codelibs.fesen.client.action.HttpUpdateAction;
 import org.codelibs.fesen.client.action.HttpUpdateSettingsAction;
 import org.codelibs.fesen.client.action.HttpValidateQueryAction;
 import org.codelibs.fesen.client.action.HttpVerifyRepositoryAction;
+import org.codelibs.fesen.client.curl.FesenRequest;
+import org.codelibs.fesen.client.node.NodeManager;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.ActionListener;
@@ -390,7 +392,7 @@ public class HttpClient extends AbstractClient {
 
     protected static final Function<String, CurlRequest> HEAD = Curl::head;
 
-    protected String[] hosts;
+    protected NodeManager nodeManager;
 
     protected final Map<ActionType<?>, BiConsumer<ActionRequest, ActionListener<?>>> actions = new HashMap<>();
 
@@ -428,7 +430,7 @@ public class HttpClient extends AbstractClient {
 
     public HttpClient(final Settings settings, final ThreadPool threadPool, final List<NamedXContentRegistry.Entry> namedXContentEntries) {
         super(settings, threadPool);
-        hosts = settings.getAsList("http.hosts").stream().map(s -> {
+        final String[] hosts = settings.getAsList("http.hosts").stream().map(s -> {
             if (!s.startsWith("http:") && !s.startsWith("https:")) {
                 return "http://" + s;
             }
@@ -437,6 +439,8 @@ public class HttpClient extends AbstractClient {
         if (hosts.length == 0) {
             throw new OpenSearchException("http.hosts is empty.");
         }
+        nodeManager = new NodeManager(hosts);
+        nodeManager.setHeartbeatInterval(settings.getAsLong("http.heartbeat_interval", 10000L));
 
         compression = settings.getAsBoolean("http.compression", true);
         basicAuth = createBasicAuthentication(settings);
@@ -863,26 +867,24 @@ public class HttpClient extends AbstractClient {
             if (engineInfo != null) {
                 return engineInfo;
             }
-            for (String host : hosts) {
-                try (final CurlResponse response = getCurlRequest(Curl::get, "/").execute()) {
-                    if (response.getHttpStatusCode() == 200) {
-                        final Map<String, Object> content = response.getContent(res -> {
-                            try (InputStream is = res.getContentAsStream()) {
-                                return JsonXContent.jsonXContent
-                                        .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, is).map();
-                            } catch (final Exception e) {
-                                throw new CurlException("Failed to access the content.", e);
-                            }
-                        });
-                        engineInfo = new EngineInfo(content);
-                        return engineInfo;
-                    }
-                } catch (Exception e) {
-                    logger.warn("Failed to access {}.", host, e);
+            try (final CurlResponse response = getCurlRequest(Curl::get, "/").execute()) {
+                if (response.getHttpStatusCode() == 200) {
+                    final Map<String, Object> content = response.getContent(res -> {
+                        try (InputStream is = res.getContentAsStream()) {
+                            return JsonXContent.jsonXContent
+                                    .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, is).map();
+                        } catch (final Exception e) {
+                            throw new CurlException("Failed to access the content.", e);
+                        }
+                    });
+                    engineInfo = new EngineInfo(content);
+                    return engineInfo;
                 }
+            } catch (Exception e) {
+                logger.warn("Failed to access status.", e);
             }
         }
-        throw new OpenSearchException("Unknown server info: {}", getHost());
+        throw new OpenSearchException("Unknown server info: {}", nodeManager.toNodeString());
     }
 
     protected String createBasicAuthentication(final Settings settings) {
@@ -946,10 +948,6 @@ public class HttpClient extends AbstractClient {
         httpAction.accept(request, listener);
     }
 
-    protected String getHost() {
-        return hosts[0]; // TODO round robin
-    }
-
     public CurlRequest getCurlRequest(final Function<String, CurlRequest> method, final String path, final String... indices) {
         return getCurlRequest(method, ContentType.JSON, path, indices);
     }
@@ -957,14 +955,14 @@ public class HttpClient extends AbstractClient {
     public CurlRequest getCurlRequest(final Function<String, CurlRequest> method, final ContentType contentType, final String path,
             final String... indices) {
         final StringBuilder buf = new StringBuilder(100);
-        buf.append(getHost());
         if (indices.length > 0) {
             buf.append('/').append(UrlUtils.joinAndEncode(",", indices));
         }
         if (path != null) {
             buf.append(path);
         }
-        CurlRequest request = method.apply(buf.toString()).header("Content-Type", contentType.getString()).threadPool(threadPool);
+        CurlRequest request = new FesenRequest(method.apply(null), nodeManager, buf.toString())
+                .header("Content-Type", contentType.getString()).threadPool(threadPool);
         if (basicAuth != null) {
             request = request.header("Authorization", basicAuth);
         }

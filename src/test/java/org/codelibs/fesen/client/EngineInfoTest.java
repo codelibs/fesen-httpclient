@@ -25,7 +25,7 @@ import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.NamedXContentRegistry;
 import org.opensearch.common.xcontent.json.JsonXContent;
 
-public class EngineInfoTest {
+class EngineInfoTest {
 
     @Test
     void test_elasticsearch7() throws Exception {
