@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ import org.codelibs.fesen.client.HttpClient.ContentType;
 
 public class NodeManager {
     private static final Logger logger = LogManager.getLogger(NodeManager.class);
+
+    private static final AtomicInteger nextSerialNumber = new AtomicInteger();
 
     protected final Node[] nodes;
 
@@ -48,7 +51,7 @@ public class NodeManager {
 
         this.requestCreator = requestCreator;
         if (requestCreator != null) {
-            timer = new Timer("FesenNodeManager");
+            timer = new Timer("FesenNodeManager-" + nextSerialNumber.incrementAndGet(), true);
             scheduleNodeChecker();
         }
     }
