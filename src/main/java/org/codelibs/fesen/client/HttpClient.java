@@ -926,6 +926,11 @@ public class HttpClient extends AbstractClient {
 
     @Override
     public void close() {
+        try {
+            nodeManager.close();
+        } catch (final Exception e) {
+            // nothing
+        }
         if (!threadPool.isShutdown()) {
             try {
                 threadPool.shutdown();

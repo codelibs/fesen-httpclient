@@ -19,11 +19,13 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.curl.Curl;
+import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
@@ -33,9 +35,7 @@ public class NodeManager {
 
     protected final Node[] nodes;
 
-    protected String[] hosts;
-
-    protected HttpClient client;
+    protected Function<Node, CurlRequest> requestCreator;
 
     protected long heartbeatInterval = 10 * 1000L; // 10sec;
 
@@ -43,16 +43,24 @@ public class NodeManager {
 
     protected AtomicBoolean isRunning = new AtomicBoolean(true);
 
+    public NodeManager(final String[] hosts, final Function<Node, CurlRequest> requestCreator) {
+        this(hosts);
+
+        this.requestCreator = requestCreator;
+        if (requestCreator != null) {
+            timer = new Timer("FesenNodeManager");
+            scheduleNodeChecker();
+        }
+    }
+
     public NodeManager(final String[] hosts, final HttpClient client) {
-        this.hosts = hosts;
-        this.client = client;
+        this(hosts, node -> client.getPlainCurlRequest(s -> Curl.get(node.getUrl(s)), ContentType.JSON, "/"));
+    }
+
+    NodeManager(final String[] hosts) {
         this.nodes = new Node[hosts.length];
         for (int i = 0; i < hosts.length; i++) {
             this.nodes[i] = new Node(hosts[i]);
-        }
-        if (client != null) {
-            timer = new Timer("FesenNodeManager");
-            scheduleNodeChecker();
         }
     }
 
@@ -109,8 +117,7 @@ public class NodeManager {
             try {
                 for (final Node node : nodes) {
                     if (!node.isAvailable()) {
-                        try (final CurlResponse response =
-                                client.getPlainCurlRequest(s -> Curl.get(node.getUrl(s)), ContentType.JSON, "/").execute()) {
+                        try (final CurlResponse response = requestCreator.apply(node).execute()) {
                             if (response.getHttpStatusCode() == 200) {
                                 node.setAvailable(true);
                                 if (logger.isInfoEnabled()) {

@@ -25,25 +25,25 @@ import org.junit.jupiter.api.Test;
 class NodeManagerTest {
     @Test
     void test_toNodeString_1() {
-        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" }, null);
+        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" });
         assertEquals("[server1:9200][green]", nodeManager.toNodeString());
     }
 
     @Test
     void test_toNodeString_2() {
-        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200" }, null);
+        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200" });
         assertEquals("[server1:9200][green],[server2:9200][green]", nodeManager.toNodeString());
     }
 
     @Test
     void test_toNodeString_3() {
-        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200", "server3:9200" }, null);
+        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200", "server3:9200" });
         assertEquals("[server1:9200][green],[server2:9200][green],[server3:9200][green]", nodeManager.toNodeString());
     }
 
     @Test
     void test_getNodeIterator_1() {
-        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" }, null);
+        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" });
         NodeIterator nodeIterator = nodeManager.getNodeIterator();
         assertTrue(nodeIterator.hasNext());
         Node node1 = nodeIterator.next();
@@ -59,7 +59,7 @@ class NodeManagerTest {
 
     @Test
     void test_getNodeIterator_3() {
-        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200", "server3:9200" }, null);
+        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200", "server3:9200" });
         NodeIterator nodeIterator = nodeManager.getNodeIterator();
         assertTrue(nodeIterator.hasNext());
         Node node1 = nodeIterator.next();
