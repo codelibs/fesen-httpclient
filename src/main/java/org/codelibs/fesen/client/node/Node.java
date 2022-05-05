@@ -16,22 +16,12 @@
 package org.codelibs.fesen.client.node;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Node {
-
-    private static final Logger logger = LogManager.getLogger(Node.class);
 
     protected String host;
 
     protected AtomicBoolean available = new AtomicBoolean(true);
-
-    protected long heartbeatInterval = 10 * 1000L; // 10sec
-
-    protected AtomicLong timestamp = new AtomicLong();
 
     public Node(final String host) {
         this.host = host;
@@ -42,26 +32,15 @@ public class Node {
     }
 
     public boolean isAvailable() {
-        if (!available.get() && System.currentTimeMillis() - timestamp.get() > heartbeatInterval) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} set \"available\" to true.", this);
-            }
-            available.set(true);
-        }
         return available.get();
     }
 
     public void setAvailable(final boolean available) {
-        timestamp.set(System.currentTimeMillis());
         this.available.set(available);
     }
 
     @Override
     public String toString() {
         return "[" + host + "][" + (available.get() ? "green" : "red") + "]";
-    }
-
-    public void setHeartbeatInterval(final long heartbeatInterval) {
-        this.heartbeatInterval = heartbeatInterval;
     }
 }

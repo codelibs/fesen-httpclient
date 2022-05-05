@@ -439,7 +439,7 @@ public class HttpClient extends AbstractClient {
         if (hosts.length == 0) {
             throw new OpenSearchException("http.hosts is empty.");
         }
-        nodeManager = new NodeManager(hosts);
+        nodeManager = new NodeManager(hosts, this);
         nodeManager.setHeartbeatInterval(settings.getAsLong("http.heartbeat_interval", 10000L));
 
         compression = settings.getAsBoolean("http.compression", true);
@@ -954,6 +954,11 @@ public class HttpClient extends AbstractClient {
 
     public CurlRequest getCurlRequest(final Function<String, CurlRequest> method, final ContentType contentType, final String path,
             final String... indices) {
+        return getPlainCurlRequest(s -> new FesenRequest(method.apply(null), nodeManager, s), contentType, path, indices);
+    }
+
+    public CurlRequest getPlainCurlRequest(final Function<String, CurlRequest> requestCreator, final ContentType contentType,
+            final String path, final String... indices) {
         final StringBuilder buf = new StringBuilder(100);
         if (indices.length > 0) {
             buf.append('/').append(UrlUtils.joinAndEncode(",", indices));
@@ -961,8 +966,7 @@ public class HttpClient extends AbstractClient {
         if (path != null) {
             buf.append(path);
         }
-        CurlRequest request = new FesenRequest(method.apply(null), nodeManager, buf.toString())
-                .header("Content-Type", contentType.getString()).threadPool(threadPool);
+        CurlRequest request = requestCreator.apply(buf.toString()).header("Content-Type", contentType.getString()).threadPool(threadPool);
         if (basicAuth != null) {
             request = request.header("Authorization", basicAuth);
         }
