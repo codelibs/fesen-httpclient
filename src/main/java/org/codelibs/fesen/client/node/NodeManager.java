@@ -15,6 +15,8 @@
  */
 package org.codelibs.fesen.client.node;
 
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.curl.Curl;
+import org.codelibs.curl.CurlException;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.HttpClient;
@@ -114,6 +117,25 @@ public class NodeManager {
         return false;
     }
 
+    protected Throwable getCause(final Throwable t) {
+        if (!(t instanceof CurlException)) {
+            return t;
+        }
+
+        int depth = 0;
+        Throwable current = t;
+        while (depth < 10) {
+            final Throwable cause = current.getCause();
+            if (cause instanceof CurlException curlException) {
+                current = curlException;
+            } else {
+                return cause != null ? cause : current;
+            }
+            depth++;
+        }
+        return current;
+    }
+
     class NodeChecker extends TimerTask {
         @Override
         public void run() {
@@ -130,7 +152,16 @@ public class NodeManager {
                                 logger.debug("{} node is still unavailable.", node);
                             }
                         } catch (Exception e) {
-                            logger.warn("{} Failed to access status.", node, e);
+                            final Throwable cause = getCause(e);
+                            if (cause instanceof UnknownHostException || cause instanceof ConnectException) {
+                                if (logger.isDebugEnabled()) {
+                                    logger.warn("{} Failed to access status.", node, e);
+                                } else {
+                                    logger.warn("{} Failed to access status. {}", node, cause.getMessage());
+                                }
+                            } else {
+                                logger.warn("{} Failed to access status.", node, e);
+                            }
                         }
                     } else if (logger.isDebugEnabled()) {
                         logger.debug("{} node status is green.", node);

@@ -16,10 +16,12 @@
 package org.codelibs.fesen.client.node;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import org.codelibs.curl.CurlException;
 import org.junit.jupiter.api.Test;
 
 class NodeManagerTest {
@@ -86,4 +88,18 @@ class NodeManagerTest {
 
     }
 
+    @Test
+    void test_getCause() {
+        NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" });
+        assertNull(nodeManager.getCause(null));
+        assertEquals("aaa", nodeManager.getCause(new RuntimeException("aaa")).getMessage());
+        assertEquals("aaa", nodeManager.getCause(new RuntimeException("aaa", new CurlException("bbb"))).getMessage());
+        assertEquals("aaa", nodeManager.getCause(new CurlException("aaa")).getMessage());
+        assertEquals("bbb", nodeManager.getCause(new CurlException("aaa", new RuntimeException("bbb"))).getMessage());
+        assertEquals("bbb", nodeManager.getCause(new CurlException("aaa", new CurlException("bbb"))).getMessage());
+        assertEquals("ccc",
+                nodeManager.getCause(new CurlException("aaa", new CurlException("bbb", new RuntimeException("ccc")))).getMessage());
+        assertEquals("ccc",
+                nodeManager.getCause(new CurlException("aaa", new CurlException("bbb", new CurlException("ccc")))).getMessage());
+    }
 }
