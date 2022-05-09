@@ -16,6 +16,7 @@
 package org.codelibs.fesen.client.node;
 
 import java.net.ConnectException;
+import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Timer;
@@ -153,11 +154,12 @@ public class NodeManager {
                             }
                         } catch (Exception e) {
                             final Throwable cause = getCause(e);
-                            if (cause instanceof UnknownHostException || cause instanceof ConnectException) {
+                            if (isNetworkException(cause)) {
                                 if (logger.isDebugEnabled()) {
                                     logger.warn("{} Failed to access status.", node, e);
                                 } else {
-                                    logger.warn("{} Failed to access status. {}", node, cause.getMessage());
+                                    logger.warn("{} Failed to access status. ({}: {})", node, cause.getClass().getSimpleName(),
+                                            cause.getMessage());
                                 }
                             } else {
                                 logger.warn("{} Failed to access status.", node, e);
@@ -172,6 +174,9 @@ public class NodeManager {
             }
         }
 
+        private boolean isNetworkException(final Throwable cause) {
+            return cause instanceof UnknownHostException || cause instanceof ConnectException || cause instanceof NoRouteToHostException;
+        }
     }
 
 }
