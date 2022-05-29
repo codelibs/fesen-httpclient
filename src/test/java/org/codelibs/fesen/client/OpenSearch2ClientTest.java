@@ -112,10 +112,10 @@ import org.opensearch.search.SearchHit;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
-class OpenSearchClientTest {
-    static final Logger logger = Logger.getLogger(OpenSearchClientTest.class.getName());
+class OpenSearch2ClientTest {
+    static final Logger logger = Logger.getLogger(OpenSearch2ClientTest.class.getName());
 
-    static final String version = "1.3.2";
+    static final String version = "2.0.0";
 
     static final String imageTag = "opensearchproject/opensearch:" + version;
 

@@ -113,4 +113,33 @@ class EngineInfoTest {
         assertEquals("opensearch", engineInfo.getDistribution());
         assertEquals(EngineType.OPENSEARCH1, engineInfo.getType());
     }
+
+    @Test
+    void test_opensearch2() throws Exception {
+        final String content = "{" //
+                + "  \"name\" : \"2886e8a79cf6\"," //
+                + "  \"cluster_name\" : \"docker-cluster\"," //
+                + "  \"cluster_uuid\" : \"od_Gyr-FTHCIdBvZckUrFw\"," //
+                + "  \"version\" : {" //
+                + "    \"distribution\" : \"opensearch\"," //
+                + "    \"number\" : \"2.0.0\"," //
+                + "    \"build_type\" : \"tar\"," //
+                + "    \"build_hash\" : \"bae3b4e4178c20ac24fece8e82099abe3b2630d0\"," //
+                + "    \"build_date\" : \"2022-05-19T00:26:04.115016552Z\"," //
+                + "    \"build_snapshot\" : false," //
+                + "    \"lucene_version\" : \"9.1.0\"," //
+                + "    \"minimum_wire_compatibility_version\" : \"7.10.0\"," //
+                + "    \"minimum_index_compatibility_version\" : \"7.0.0\"" //
+                + "  }," //
+                + "  \"tagline\" : \"The OpenSearch Project: https://opensearch.org/\"" //
+                + "}";
+        final Map<String, Object> map =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, content).map();
+        final EngineInfo engineInfo = new EngineInfo(map);
+        assertEquals("2886e8a79cf6", engineInfo.getNodeName());
+        assertEquals("docker-cluster", engineInfo.getClusterName());
+        assertEquals("2.0.0", engineInfo.getNumber());
+        assertEquals("opensearch", engineInfo.getDistribution());
+        assertEquals(EngineType.OPENSEARCH2, engineInfo.getType());
+    }
 }

@@ -66,7 +66,8 @@ public class HttpExplainAction extends HttpAction {
 
     // ExplainResponse.fromXContent(parser, true)
     protected ExplainResponse fromXContent(XContentParser parser, boolean exists) {
-        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+        final EngineType engineType = client.getEngineInfo().getType();
+        if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
             return getResponseParser().apply(parser, exists);
         } else {
             return ExplainResponse.fromXContent(parser, exists);

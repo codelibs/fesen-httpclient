@@ -68,13 +68,17 @@ public class EngineInfo {
                 return EngineType.ELASTICSEARCH8;
             }
         } else if (distribution.startsWith("opensearch")) {
-            return EngineType.OPENSEARCH1;
+            if (number.startsWith("1.")) {
+                return EngineType.OPENSEARCH1;
+            } else {
+                return EngineType.OPENSEARCH2;
+            }
         } else {
             return EngineType.UNKNOWN;
         }
     }
 
     public enum EngineType {
-        ELASTICSEARCH7, ELASTICSEARCH8, OPENSEARCH1, UNKNOWN;
+        ELASTICSEARCH7, ELASTICSEARCH8, OPENSEARCH1, OPENSEARCH2, UNKNOWN;
     }
 }

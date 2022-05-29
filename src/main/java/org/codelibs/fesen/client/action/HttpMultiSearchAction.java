@@ -89,7 +89,8 @@ public class HttpMultiSearchAction extends HttpAction {
 
     //  MultiSearchRequest.writeSearchRequestParams(request, xContentBuilder)
     protected void writeSearchRequestParams(SearchRequest request, XContentBuilder xContentBuilder) throws IOException {
-        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+        final EngineType engineType = client.getEngineInfo().getType();
+        if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
             xContentBuilder.startObject();
             if (request.indices() != null) {
                 xContentBuilder.field("index", request.indices());

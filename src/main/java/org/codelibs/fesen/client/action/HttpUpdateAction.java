@@ -74,7 +74,8 @@ public class HttpUpdateAction extends HttpAction {
         while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
             UpdateResponse.parseXContentFields(parser, context);
         }
-        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+        final EngineType engineType = client.getEngineInfo().getType();
+        if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
             context.setType("_doc");
         }
         return context.build();

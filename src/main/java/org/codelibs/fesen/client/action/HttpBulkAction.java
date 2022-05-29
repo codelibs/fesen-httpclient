@@ -215,7 +215,8 @@ public class HttpBulkAction extends HttpAction {
         token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.END_OBJECT, token, parser);
 
-        if (client.getEngineInfo().getType() == EngineType.ELASTICSEARCH8) {
+        final EngineType engineType = client.getEngineInfo().getType();
+        if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
             builder.setType("_doc");
         }
 
