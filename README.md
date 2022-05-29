@@ -4,7 +4,7 @@ Fesen HttpClient
 
 Fesen HttpClient is HTTP Rest Client for Elasticsearch/OpenSearch.
 HttpClient provided by fesen-httpclient is HTTP-based implementation for org.opensearch.client.Client.
-This HttpClient supports Elasticsearch 7.x, 8.x and OpenSearch 1.x.
+This HttpClient supports Elasticsearch 7.x, 8.x and OpenSearch 1.x, 2.x.
 
 Usage
 =====
@@ -15,7 +15,7 @@ Usage
 <dependency>
     <groupId>org.codelibs.fesen.client</groupId>
     <artifactId>fesen-httpclient</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
