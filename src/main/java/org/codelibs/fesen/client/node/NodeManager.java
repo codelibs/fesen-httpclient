@@ -156,9 +156,9 @@ public class NodeManager {
                             final Throwable cause = getCause(e);
                             if (isNetworkException(cause)) {
                                 if (logger.isDebugEnabled()) {
-                                    logger.warn("{} Failed to access status.", node, e);
+                                    logger.warn("{} node is not available.", node, e);
                                 } else {
-                                    logger.warn("{} Failed to access status. ({}: {})", node, cause.getClass().getSimpleName(),
+                                    logger.warn("{} node is not available. ({}: {})", node, cause.getClass().getSimpleName(),
                                             cause.getMessage());
                                 }
                             } else {
