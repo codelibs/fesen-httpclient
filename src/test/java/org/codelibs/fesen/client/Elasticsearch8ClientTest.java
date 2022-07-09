@@ -15,6 +15,7 @@
  */
 package org.codelibs.fesen.client;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.DocWriteResponse.Result;
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
@@ -57,7 +59,6 @@ import org.opensearch.action.admin.indices.close.CloseIndexResponse;
 import org.opensearch.action.admin.indices.create.CreateIndexResponse;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.opensearch.action.admin.indices.flush.FlushResponse;
-import org.opensearch.action.admin.indices.flush.SyncedFlushResponse;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.opensearch.action.admin.indices.get.GetIndexResponse;
 import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
@@ -1327,6 +1328,30 @@ class Elasticsearch8ClientTest {
                 String value = ((ByteArrayOutputStream) out).toString("UTF-8");
                 System.out.println(value);
             }
+        }
+    }
+
+    @Test
+    void test_hotThreads() throws Exception {
+        {
+            NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().execute().actionGet();
+            assertFalse(response.getNodes().isEmpty());
+            response.getNodes().forEach(node -> {
+                System.out.println(node.getNode().toString() + "\n" + node.getHotThreads());
+                assertNotNull(node.getNode());
+                assertNotNull(node.getHotThreads());
+            });
+        }
+
+        {
+            NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().setType("wait").setThreads(10)
+                    .setTimeout("10s").setInterval(TimeValue.timeValueSeconds(5)).execute().actionGet();
+            assertFalse(response.getNodes().isEmpty());
+            response.getNodes().forEach(node -> {
+                System.out.println(node.getNode().toString() + "\n" + node.getHotThreads());
+                assertNotNull(node.getNode());
+                assertNotNull(node.getHotThreads());
+            });
         }
     }
 

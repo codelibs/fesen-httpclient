@@ -87,6 +87,7 @@ import org.codelibs.fesen.client.action.HttpListTasksAction;
 import org.codelibs.fesen.client.action.HttpMainAction;
 import org.codelibs.fesen.client.action.HttpMultiGetAction;
 import org.codelibs.fesen.client.action.HttpMultiSearchAction;
+import org.codelibs.fesen.client.action.HttpNodesHotThreadsAction;
 import org.codelibs.fesen.client.action.HttpNodesStatsAction;
 import org.codelibs.fesen.client.action.HttpOpenIndexAction;
 import org.codelibs.fesen.client.action.HttpPendingClusterTasksAction;
@@ -119,6 +120,9 @@ import org.opensearch.action.ActionType;
 import org.opensearch.action.admin.cluster.health.ClusterHealthAction;
 import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
+import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
+import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
@@ -835,9 +839,14 @@ public class HttpClient extends AbstractClient {
             final ActionListener<NodesStatsResponse> actionListener = (ActionListener<NodesStatsResponse>) listener;
             new HttpNodesStatsAction(this, NodesStatsAction.INSTANCE).execute((NodesStatsRequest) request, actionListener);
         });
+        actions.put(NodesHotThreadsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodesHotThreadsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<NodesHotThreadsResponse> actionListener = (ActionListener<NodesHotThreadsResponse>) listener;
+            new HttpNodesHotThreadsAction(this, NodesHotThreadsAction.INSTANCE).execute((NodesHotThreadsRequest) request, actionListener);
+        });
 
         // org.codelibs.fesen.action.admin.cluster.allocation.ClusterAllocationExplainAction
-        // org.codelibs.fesen.action.admin.cluster.node.hotthreads.NodesHotThreadsAction
         // org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction
         // org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsAction
         // org.codelibs.fesen.action.admin.cluster.node.usage.NodesUsageAction

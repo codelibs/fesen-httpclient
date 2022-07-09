@@ -17,6 +17,7 @@ package org.codelibs.fesen.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opensearch.action.ActionListener.wrap;
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.DocWriteResponse.Result;
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
@@ -1370,6 +1372,30 @@ class OpenSearch1ClientTest {
                 String value = ((ByteArrayOutputStream) out).toString("UTF-8");
                 System.out.println(value);
             }
+        }
+    }
+
+    @Test
+    void test_hotThreads() throws Exception {
+        {
+            NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().execute().actionGet();
+            assertFalse(response.getNodes().isEmpty());
+            response.getNodes().forEach(node -> {
+                System.out.println(node.getNode().toString() + "\n" + node.getHotThreads());
+                assertNotNull(node.getNode());
+                assertNotNull(node.getHotThreads());
+            });
+        }
+
+        {
+            NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().setType("wait").setThreads(10)
+                    .setTimeout("10s").setInterval(TimeValue.timeValueSeconds(5)).execute().actionGet();
+            assertFalse(response.getNodes().isEmpty());
+            response.getNodes().forEach(node -> {
+                System.out.println(node.getNode().toString() + "\n" + node.getHotThreads());
+                assertNotNull(node.getNode());
+                assertNotNull(node.getHotThreads());
+            });
         }
     }
 
