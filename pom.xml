@@ -131,6 +131,7 @@
 							<artifactSet>
 								<includes>
 									<include>org.opensearch:opensearch</include>
+									<include>org.opensearch:opensearch-core</include>
 								</includes>
 							</artifactSet>
 							<filters>
