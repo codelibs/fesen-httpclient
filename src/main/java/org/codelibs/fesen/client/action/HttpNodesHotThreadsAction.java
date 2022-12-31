@@ -71,7 +71,7 @@ public class HttpNodesHotThreadsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
-    protected DiscoveryNode parseDiscoveryNode(String line) {
+    protected DiscoveryNode parseDiscoveryNode(final String line) {
         final List<String> list = new ArrayList<>();
         boolean isTarget = false;
         final StringBuilder buf = new StringBuilder();
@@ -91,7 +91,7 @@ public class HttpNodesHotThreadsAction extends HttpAction {
             try {
                 return new DiscoveryNode(list.get(0), list.get(1), list.get(2), list.get(3), list.get(4), null, Collections.emptyMap(),
                         Collections.emptySet(), Version.V_EMPTY);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignore
             }
         }
@@ -100,7 +100,7 @@ public class HttpNodesHotThreadsAction extends HttpAction {
             try {
                 return new DiscoveryNode(list.get(0), list.get(1), list.get(2), list.get(3), "0.0.0.0", null, Collections.emptyMap(),
                         Collections.emptySet(), Version.V_EMPTY);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignore
             }
         }

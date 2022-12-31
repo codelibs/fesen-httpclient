@@ -16,20 +16,28 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.ActionListener;
+import org.opensearch.action.admin.indices.alias.Alias;
+import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.action.admin.indices.rollover.Condition;
 import org.opensearch.action.admin.indices.rollover.RolloverAction;
 import org.opensearch.action.admin.indices.rollover.RolloverRequest;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
 import org.opensearch.action.support.ActiveShardCount;
+import org.opensearch.common.ParseField;
+import org.opensearch.common.bytes.BytesArray;
 import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.xcontent.ToXContent;
+import org.opensearch.common.xcontent.ToXContent.Params;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.common.xcontent.json.JsonXContent;
 
 public class HttpRolloverAction extends HttpAction {
@@ -43,7 +51,7 @@ public class HttpRolloverAction extends HttpAction {
 
     public void execute(final RolloverRequest request, final ActionListener<RolloverResponse> listener) {
         String source = null;
-        try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
+        try (final XContentBuilder builder = toXContent(request, JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
             builder.flush();
             source = BytesReference.bytes(builder).utf8ToString();
         } catch (final IOException e) {
@@ -78,5 +86,42 @@ public class HttpRolloverAction extends HttpAction {
                     String.valueOf(getActiveShardsCountValue(request.getCreateIndexRequest().waitForActiveShards())));
         }
         return curlRequest;
+    }
+
+    private static final ParseField CONDITIONS = new ParseField("conditions");
+
+    protected XContentBuilder toXContent(final RolloverRequest request, final XContentBuilder builder, final Params params)
+            throws IOException {
+        builder.startObject();
+
+        final CreateIndexRequest createIndexRequest = request.getCreateIndexRequest();
+        innerToXContent(createIndexRequest, builder, params);
+
+        builder.startObject(CONDITIONS.getPreferredName());
+        for (final Condition<?> condition : request.getConditions().values()) {
+            condition.toXContent(builder, params);
+        }
+        builder.endObject();
+
+        builder.endObject();
+        return builder;
+    }
+
+    protected XContentBuilder innerToXContent(final CreateIndexRequest createIndexRequest, final XContentBuilder builder,
+            final Params params) throws IOException {
+        builder.startObject(CreateIndexRequest.SETTINGS.getPreferredName());
+        createIndexRequest.settings().toXContent(builder, params);
+        builder.endObject();
+
+        try (InputStream stream = new BytesArray(createIndexRequest.mappings()).streamInput()) {
+            builder.rawField(CreateIndexRequest.MAPPINGS.getPreferredName(), stream, XContentType.JSON);
+        }
+
+        builder.startObject(CreateIndexRequest.ALIASES.getPreferredName());
+        for (final Alias alias : createIndexRequest.aliases()) {
+            alias.toXContent(builder, params);
+        }
+        builder.endObject();
+        return builder;
     }
 }

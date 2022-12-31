@@ -58,8 +58,6 @@ public class HttpClearScrollAction extends HttpAction {
     }
 
     protected CurlRequest getCurlRequest(final ClearScrollRequest request) {
-        // RestClearScrollAction
-        final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_search/scroll");
-        return curlRequest;
+        return client.getCurlRequest(DELETE, "/_search/scroll");
     }
 }

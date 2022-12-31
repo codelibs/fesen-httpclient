@@ -65,9 +65,9 @@ public class HttpMultiSearchAction extends HttpAction {
     }
 
     // MultiSearchRequest.writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON))
-    protected byte[] writeMultiLineFormat(MultiSearchRequest multiSearchRequest, XContent xContent) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        for (SearchRequest request : multiSearchRequest.requests()) {
+    protected byte[] writeMultiLineFormat(final MultiSearchRequest multiSearchRequest, final XContent xContent) throws IOException {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        for (final SearchRequest request : multiSearchRequest.requests()) {
             try (XContentBuilder xContentBuilder = XContentBuilder.builder(xContent)) {
                 writeSearchRequestParams(request, xContentBuilder);
                 BytesReference.bytes(xContentBuilder).writeTo(output);
@@ -88,7 +88,7 @@ public class HttpMultiSearchAction extends HttpAction {
     }
 
     //  MultiSearchRequest.writeSearchRequestParams(request, xContentBuilder)
-    protected void writeSearchRequestParams(SearchRequest request, XContentBuilder xContentBuilder) throws IOException {
+    protected void writeSearchRequestParams(final SearchRequest request, final XContentBuilder xContentBuilder) throws IOException {
         final EngineType engineType = client.getEngineInfo().getType();
         if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
             xContentBuilder.startObject();

@@ -44,8 +44,6 @@ public class HttpMainAction extends HttpAction {
     }
 
     protected CurlRequest getCurlRequest(final MainRequest request) {
-        // RestMainAction
-        final CurlRequest curlRequest = client.getCurlRequest(POST, "/_xpack");
-        return curlRequest;
+        return client.getCurlRequest(POST, "/_xpack");
     }
 }

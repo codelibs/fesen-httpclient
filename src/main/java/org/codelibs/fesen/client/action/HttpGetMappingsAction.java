@@ -74,9 +74,9 @@ public class HttpGetMappingsAction extends HttpAction {
         assert parser.currentToken() == XContentParser.Token.START_OBJECT;
         final Map<String, Object> parts = parser.map();
 
-        final ImmutableOpenMap.Builder<String, ImmutableOpenMap<String, MappingMetadata>> builder = new ImmutableOpenMap.Builder<>();
+        ImmutableOpenMap<String, MappingMetadata> mappings = ImmutableOpenMap.of();
         for (final Map.Entry<String, Object> entry : parts.entrySet()) {
-            final String indexName = entry.getKey();
+            entry.getKey();
             assert entry.getValue() instanceof Map : "expected a map as type mapping, but got: " + entry.getValue().getClass();
             final Map<String, Object> mapping = (Map<String, Object>) ((Map) entry.getValue()).get(MAPPINGS.getPreferredName());
 
@@ -92,10 +92,10 @@ public class HttpGetMappingsAction extends HttpAction {
                 final MappingMetadata mmd = new MappingMetadata(typeName, fieldMappings);
                 typeBuilder.put(typeName, mmd);
             }
-            builder.put(indexName, typeBuilder.build());
+            mappings = typeBuilder.build();
         }
 
-        return new GetMappingsResponse(builder.build());
+        return new GetMappingsResponse(mappings);
     }
 
 }

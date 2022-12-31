@@ -34,17 +34,11 @@ public class HttpIndicesExistsAction extends HttpAction {
 
     public void execute(final IndicesExistsRequest request, final ActionListener<IndicesExistsResponse> listener) {
         getCurlRequest(request).execute(response -> {
-            boolean exists = false;
-            switch (response.getHttpStatusCode()) {
-            case 200:
-                exists = true;
-                break;
-            case 404:
-                exists = false;
-                break;
-            default:
-                throw new OpenSearchException("Unexpected status: " + response.getHttpStatusCode());
-            }
+            final boolean exists = switch (response.getHttpStatusCode()) {
+            case 200 -> true;
+            case 404 -> false;
+            default -> throw new OpenSearchException("Unexpected status: " + response.getHttpStatusCode());
+            };
             try {
                 final IndicesExistsResponse indicesExistsResponse = new IndicesExistsResponse(exists);
                 listener.onResponse(indicesExistsResponse);
@@ -55,8 +49,6 @@ public class HttpIndicesExistsAction extends HttpAction {
     }
 
     protected CurlRequest getCurlRequest(final IndicesExistsRequest request) {
-        // RestIndicesExistsAction
-        final CurlRequest curlRequest = client.getCurlRequest(HEAD, null, request.indices());
-        return curlRequest;
+        return client.getCurlRequest(HEAD, null, request.indices());
     }
 }

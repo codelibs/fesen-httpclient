@@ -25,7 +25,6 @@ import static org.opensearch.action.ActionListener.wrap;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -40,7 +39,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opensearch.OpenSearchException;
 import org.opensearch.action.DocWriteResponse.Result;
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
@@ -51,7 +49,6 @@ import org.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsRespons
 import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.opensearch.action.admin.indices.alias.Alias;
-import org.opensearch.action.admin.indices.alias.exists.AliasesExistResponse;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.opensearch.action.admin.indices.analyze.AnalyzeAction;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
@@ -67,9 +64,6 @@ import org.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.opensearch.action.admin.indices.shrink.ResizeRequest;
-import org.opensearch.action.admin.indices.shrink.ResizeResponse;
-import org.opensearch.action.admin.indices.shrink.ShrinkAction;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.opensearch.action.bulk.BulkRequestBuilder;
 import org.opensearch.action.bulk.BulkResponse;
@@ -135,9 +129,9 @@ class Elasticsearch8ClientTest {
 
     static void setupLogger() {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
-        Logger rootLogger = Logger.getLogger("");
+        final Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.ALL);
-        ConsoleHandler handler = new ConsoleHandler();
+        final ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter());
         handler.setLevel(Level.ALL);
         rootLogger.addHandler(handler);
@@ -160,13 +154,13 @@ class Elasticsearch8ClientTest {
                     logger.info(url + " is available.");
                     break;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.fine(e.getLocalizedMessage());
             }
             try {
                 logger.info("Waiting for " + url);
                 Thread.sleep(1000L);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // nothing
             }
         }
@@ -193,7 +187,7 @@ class Elasticsearch8ClientTest {
     @Test
     void test_refresh() throws Exception {
         final String index = "test_refresh";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.admin().indices().prepareRefresh(index).execute(wrap(res -> {
@@ -210,7 +204,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            RefreshResponse refreshResponse = client.admin().indices().prepareRefresh(index).execute().actionGet();
+            final RefreshResponse refreshResponse = client.admin().indices().prepareRefresh(index).execute().actionGet();
             assertEquals(RestStatus.OK, refreshResponse.getStatus());
         }
     }
@@ -218,7 +212,7 @@ class Elasticsearch8ClientTest {
     @Test
     void test_analyze() throws Exception {
         final String index = "test_analyze";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.admin().indices().prepareAnalyze(index, "this is a pen.").setAnalyzer("standard").execute(wrap(res -> {
@@ -235,7 +229,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            AnalyzeAction.Response analyzeResponse =
+            final AnalyzeAction.Response analyzeResponse =
                     client.admin().indices().prepareAnalyze(index, "this is a pen.").setAnalyzer("standard").execute().actionGet();
             assertEquals(4, analyzeResponse.getTokens().size());
         }
@@ -244,7 +238,7 @@ class Elasticsearch8ClientTest {
     @Test
     void test_search() throws Exception {
         final String index = "test_search";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute(wrap(res -> {
@@ -261,7 +255,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+            final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
             assertEquals(0, searchResponse.getHits().getTotalHits().value);
         }
     }
@@ -271,7 +265,7 @@ class Elasticsearch8ClientTest {
         final String index1 = "test_create_index1";
         final String index2 = "test_create_index2";
         final String index3 = "test_create_index3";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         client.admin().indices().prepareCreate(index1).execute(wrap(res -> {
             assertTrue(res.isAcknowledged());
@@ -287,15 +281,15 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            String settingsSource =
+            final String settingsSource =
                     "{\"index\":{\"refresh_interval\":\"10s\",\"number_of_shards\":\"1\",\"auto_expand_replicas\":\"0-1\",\"number_of_replicas\":\"0\"}}";
-            String mappingSource = "{\"_source\":{\"includes\":[\"aaa\"],\"excludes\":[\"111\"]},"
+            final String mappingSource = "{\"_source\":{\"includes\":[\"aaa\"],\"excludes\":[\"111\"]},"
                     //                                + "\"dynamic_templates\":[{\"strings\":{\"mapping\":{\"type\":\"keyword\"},\"match\":\"*\",\"match_mapping_type\":\"string\"}}],"
                     + "\"properties\":{\"@timestamp\":{\"type\":\"date\",\"format\":\"epoch_millis\"},\"docFreq\":{\"type\":\"long\"},\"fields\":{\"type\":\"keyword\"},\"kinds\":{\"type\":\"keyword\"},\"queryFreq\":{\"type\":\"long\"},\"roles\":{\"type\":\"keyword\"},\"languages\":{\"type\":\"keyword\"},\"score\":{\"type\":\"double\"},\"tags\":{\"type\":\"keyword\"},\"text\":{\"type\":\"keyword\"},\"userBoost\":{\"type\":\"double\"}}}";
-            final Map<String, Object> sourceMap = XContentHelper.convertToMap(new BytesArray(mappingSource), false, XContentType.JSON).v2();
-            CreateIndexResponse createIndexResponse =
+            XContentHelper.convertToMap(new BytesArray(mappingSource), false, XContentType.JSON).v2();
+            final CreateIndexResponse createIndexResponse =
                     client.admin().indices().prepareCreate(index2).setSettings(settingsSource, XContentType.JSON)//
-                            .addMapping("_doc", mappingSource, XContentType.JSON)//
+                            .setMapping(mappingSource)//
                             //.addMapping("_doc", sourceMap)//
                             .addAlias(new Alias("fess.test2")).execute().actionGet();
             assertTrue(createIndexResponse.isAcknowledged());
@@ -303,18 +297,18 @@ class Elasticsearch8ClientTest {
         }
 
         {
-            String source = "{\"settings\":"//
-                    + "{\"index\":{\"refresh_interval\":\"10s\",\"number_of_shards\":\"1\",\"auto_expand_replicas\":\"0-1\",\"number_of_replicas\":\"0\"}}"//
-                    + ",\"mappings\":{"//
-                    + "\"_source\":"//
-                    + "{\"includes\":[\"aaa\"],\"excludes\":[\"111\"]}"//
-                    //                    + ",\"dynamic_templates\":"
-                    //                    + "[{\"strings\":{\"mapping\":{\"type\":\"keyword\"},\"match\":\"*\",\"match_mapping_type\":\"string\"}}]"
-                    + ",\"properties\":"
-                    + "{\"@timestamp\":{\"type\":\"date\",\"format\":\"epoch_millis\"},\"docFreq\":{\"type\":\"long\"},\"fields\":{\"type\":\"keyword\"},\"kinds\":{\"type\":\"keyword\"},\"queryFreq\":{\"type\":\"long\"},\"roles\":{\"type\":\"keyword\"},\"languages\":{\"type\":\"keyword\"},\"score\":{\"type\":\"double\"},\"tags\":{\"type\":\"keyword\"},\"text\":{\"type\":\"keyword\"},\"userBoost\":{\"type\":\"double\"}}"
-                    + "}}";
-            CreateIndexResponse createIndexResponse = client.admin().indices().prepareCreate(index3).setSource(source, XContentType.JSON)
-                    .addAlias(new Alias("fess.test3")).execute().actionGet();
+            final String source =
+                    """
+                            {"settings":\
+                            {"index":{"refresh_interval":"10s","number_of_shards":"1","auto_expand_replicas":"0-1","number_of_replicas":"0"}}\
+                            ,"mappings":{\
+                            "_source":\
+                            {"includes":["aaa"],"excludes":["111"]}\
+                            ,"properties":\
+                            {"@timestamp":{"type":"date","format":"epoch_millis"},"docFreq":{"type":"long"},"fields":{"type":"keyword"},"kinds":{"type":"keyword"},"queryFreq":{"type":"long"},"roles":{"type":"keyword"},"languages":{"type":"keyword"},"score":{"type":"double"},"tags":{"type":"keyword"},"text":{"type":"keyword"},"userBoost":{"type":"double"}}\
+                            }}""";
+            final CreateIndexResponse createIndexResponse = client.admin().indices().prepareCreate(index3)
+                    .setSource(source, XContentType.JSON).addAlias(new Alias("fess.test3")).execute().actionGet();
             assertTrue(createIndexResponse.isAcknowledged());
             assertEquals(index3, createIndexResponse.index());
         }
@@ -324,7 +318,7 @@ class Elasticsearch8ClientTest {
     void test_delete_index() throws Exception {
         final String index1 = "test_delete_index1";
         final String index2 = "test_delete_index2";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index1).execute().actionGet();
 
         client.admin().indices().prepareDelete(index1).execute(wrap(res -> {
@@ -342,7 +336,7 @@ class Elasticsearch8ClientTest {
 
         {
             client.admin().indices().prepareCreate(index2).execute().actionGet();
-            AcknowledgedResponse deleteIndexResponse = client.admin().indices().prepareDelete(index2).execute().actionGet();
+            final AcknowledgedResponse deleteIndexResponse = client.admin().indices().prepareDelete(index2).execute().actionGet();
             assertTrue(deleteIndexResponse.isAcknowledged());
         }
     }
@@ -360,17 +354,20 @@ class Elasticsearch8ClientTest {
                 .endObject()//
                 .endObject();
         final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
         client.admin().indices().prepareAliases().addAlias(index, alias).execute().actionGet();
         client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
 
         client.admin().indices().prepareGetIndex().addIndices(index).execute(wrap(res -> {
-            assertEquals(index, res.getIndices()[0]);
-            assertTrue(res.getAliases().containsKey(index));
-            assertTrue(res.getMappings().containsKey(index));
-            assertTrue(res.getSettings().containsKey(index));
-            latch.countDown();
+            try {
+                assertEquals(index, res.getIndices()[0]);
+                assertTrue(res.getAliases().containsKey(index));
+                assertTrue(res.getMappings().containsKey("properties"));
+                assertTrue(res.getSettings().containsKey(index));
+            } finally {
+                latch.countDown();
+            }
         }, e -> {
             e.printStackTrace();
             try {
@@ -382,10 +379,10 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            GetIndexResponse getIndexResponse = client.admin().indices().prepareGetIndex().addIndices(index).execute().actionGet();
+            final GetIndexResponse getIndexResponse = client.admin().indices().prepareGetIndex().addIndices(index).execute().actionGet();
             assertEquals(index, getIndexResponse.getIndices()[0]);
             assertTrue(getIndexResponse.getAliases().containsKey(index));
-            assertTrue(getIndexResponse.getMappings().containsKey(index));
+            assertTrue(getIndexResponse.getMappings().containsKey("properties"));
             assertTrue(getIndexResponse.getSettings().containsKey(index));
         }
     }
@@ -394,7 +391,7 @@ class Elasticsearch8ClientTest {
     void test_open_index() throws Exception {
         final String index1 = "test_open_index1";
         final String index2 = "test_open_index2";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index1).execute().actionGet();
 
         client.admin().indices().prepareOpen(index1).execute(wrap(res -> {
@@ -412,7 +409,7 @@ class Elasticsearch8ClientTest {
 
         {
             client.admin().indices().prepareCreate(index2).execute().actionGet();
-            OpenIndexResponse openIndexResponse = client.admin().indices().prepareOpen(index2).execute().actionGet();
+            final OpenIndexResponse openIndexResponse = client.admin().indices().prepareOpen(index2).execute().actionGet();
             assertTrue(openIndexResponse.isAcknowledged());
         }
     }
@@ -421,7 +418,7 @@ class Elasticsearch8ClientTest {
     void test_close_index() throws Exception {
         final String index1 = "test_close_index1";
         final String index2 = "test_close_index2";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index1).execute().actionGet();
 
         client.admin().indices().prepareClose(index1).execute(wrap(res -> {
@@ -439,13 +436,13 @@ class Elasticsearch8ClientTest {
 
         {
             client.admin().indices().prepareCreate(index2).execute().actionGet();
-            CloseIndexResponse closeIndexResponse = client.admin().indices().prepareClose(index2).execute().actionGet();
+            final CloseIndexResponse closeIndexResponse = client.admin().indices().prepareClose(index2).execute().actionGet();
             assertTrue(closeIndexResponse.isAcknowledged());
             assertTrue(closeIndexResponse.isShardsAcknowledged());
             assertEquals(1, closeIndexResponse.getIndices().size());
         }
         {
-            CloseIndexResponse closeIndexResponse = client.admin().indices().prepareClose(index2).execute().actionGet();
+            final CloseIndexResponse closeIndexResponse = client.admin().indices().prepareClose(index2).execute().actionGet();
             assertTrue(closeIndexResponse.isAcknowledged());
             assertFalse(closeIndexResponse.isShardsAcknowledged());
             assertEquals(0, closeIndexResponse.getIndices().size());
@@ -456,7 +453,7 @@ class Elasticsearch8ClientTest {
     void test_indices_exists() throws Exception {
         final String index1 = "test_indices_exists1";
         final String index2 = "test_indices_exists2";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index1).execute().actionGet();
 
         client.admin().indices().prepareExists(index1).execute(wrap(res -> {
@@ -485,7 +482,7 @@ class Elasticsearch8ClientTest {
         final String index = "test_indices_aliases";
         final String alias1 = "test_alias1";
         final String alias2 = "test_alias2";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.admin().indices().prepareAliases().addAlias(index, alias1).execute(wrap(res -> {
@@ -502,7 +499,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            AcknowledgedResponse indicesAliasesResponse =
+            final AcknowledgedResponse indicesAliasesResponse =
                     client.admin().indices().prepareAliases().addAlias(index, alias2).execute().actionGet();
             assertTrue(indicesAliasesResponse.isAcknowledged());
         }
@@ -516,7 +513,7 @@ class Elasticsearch8ClientTest {
         final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties")
                 .startObject("test_prop").field("type", "text").endObject().endObject().endObject();
         final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index1).execute().actionGet();
 
         client.admin().indices().preparePutMapping(index1).setSource(source, XContentType.JSON).execute(wrap(res -> {
@@ -533,21 +530,21 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            String mappingSource =
+            final String mappingSource =
                     "{\"dynamic_templates\":[{\"strings\":{\"mapping\":{\"type\":\"keyword\"},\"match\":\"*\",\"match_mapping_type\":\"string\"}}],"
                             + "\"properties\":{\"@timestamp\":{\"type\":\"date\",\"format\":\"epoch_millis\"},\"docFreq\":{\"type\":\"long\"},\"fields\":{\"type\":\"keyword\"},\"kinds\":{\"type\":\"keyword\"},\"queryFreq\":{\"type\":\"long\"},\"roles\":{\"type\":\"keyword\"},\"languages\":{\"type\":\"keyword\"},\"score\":{\"type\":\"double\"},\"tags\":{\"type\":\"keyword\"},\"text\":{\"type\":\"keyword\"},\"userBoost\":{\"type\":\"double\"}}}";
             client.admin().indices().prepareCreate(index2).execute().actionGet();
-            AcknowledgedResponse putMappingResponse =
+            final AcknowledgedResponse putMappingResponse =
                     client.admin().indices().preparePutMapping(index2).setSource(mappingSource, XContentType.JSON).execute().actionGet();
             assertTrue(putMappingResponse.isAcknowledged());
         }
 
         {
             client.admin().indices().prepareCreate(index3).execute().actionGet();
-            AcknowledgedResponse putMappingResponse = client
+            final AcknowledgedResponse putMappingResponse = client
                     .admin().indices().preparePutMapping(index3).setSource(XContentFactory.jsonBuilder().startObject()
                             .startObject("properties").startObject("key").field("type", "keyword").endObject().endObject().endObject())
-                    .setType("_doc").execute().actionGet();
+                    .execute().actionGet();
             assertTrue(putMappingResponse.isAcknowledged());
         }
     }
@@ -559,26 +556,25 @@ class Elasticsearch8ClientTest {
         try {
             client.admin().indices().prepareGetMappings("not_exists").execute().actionGet();
             fail();
-        } catch (IndexNotFoundException e) {
+        } catch (final IndexNotFoundException e) {
             // ok
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail();
         }
 
         final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties")
                 .startObject("test_prop").field("type", "text").endObject().endObject().endObject();
-        String source = BytesReference.bytes(mappingBuilder).utf8ToString();
-        Map<String, Object> mappingMap = XContentHelper.convertToMap(BytesReference.bytes(mappingBuilder), true, XContentType.JSON).v2();
-        CountDownLatch latch = new CountDownLatch(1);
+        final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
+        XContentHelper.convertToMap(BytesReference.bytes(mappingBuilder), true, XContentType.JSON).v2();
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
         client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
 
         client.admin().indices().prepareGetMappings(index).execute(wrap(res -> {
             try {
-                ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings = res.getMappings();
-                assertTrue(mappings.containsKey(index));
-                assertTrue(mappings.get(index).containsKey("properties"));
+                final ImmutableOpenMap<String, MappingMetadata> mappings = res.getMappings();
+                assertTrue(mappings.containsKey("properties"));
             } finally {
                 latch.countDown();
             }
@@ -593,25 +589,16 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            GetMappingsResponse getMappingsResponse = client.admin().indices().prepareGetMappings(index).execute().actionGet();
-            ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings = getMappingsResponse.getMappings();
-            assertTrue(mappings.containsKey(index));
-            assertTrue(mappings.get(index).containsKey("properties"));
-        }
-
-        {
-            GetMappingsResponse getMappingsResponse =
-                    client.admin().indices().prepareGetMappings(index).setTypes("not_exists").execute().actionGet();
-            ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings = getMappingsResponse.getMappings();
-            assertTrue(mappings.containsKey(index));
-            assertFalse(mappings.get(index).containsKey("not_exists"));
+            final GetMappingsResponse getMappingsResponse = client.admin().indices().prepareGetMappings(index).execute().actionGet();
+            final ImmutableOpenMap<String, MappingMetadata> mappings = getMappingsResponse.getMappings();
+            assertTrue(mappings.containsKey("properties"));
         }
     }
 
     @Test
     void test_flush() throws Exception {
         final String index = "test_flush";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.admin().indices().prepareFlush(index).execute(wrap(res -> {
@@ -628,7 +615,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            FlushResponse res = client.admin().indices().prepareFlush(index).execute().actionGet();
+            final FlushResponse res = client.admin().indices().prepareFlush(index).execute().actionGet();
             assertEquals(RestStatus.OK, res.getStatus());
         }
     }
@@ -646,7 +633,7 @@ class Elasticsearch8ClientTest {
         client.admin().indices().prepareRefresh(index).execute().actionGet();
         SearchResponse scrollResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).setScroll(new TimeValue(60000))
                 .setSize(1).execute().actionGet();
-        String id = scrollResponse.getScrollId();
+        final String id = scrollResponse.getScrollId();
         SearchHit[] hits = scrollResponse.getHits().getHits();
         while (hits.length != 0) {
             assertEquals(1, hits.length);
@@ -655,7 +642,7 @@ class Elasticsearch8ClientTest {
         }
 
         // Test Clear Scroll API
-        ClearScrollResponse clearScrollResponse = client.prepareClearScroll().addScrollId(id).execute().actionGet();
+        final ClearScrollResponse clearScrollResponse = client.prepareClearScroll().addScrollId(id).execute().actionGet();
         assertTrue(clearScrollResponse.isSucceeded());
     }
 
@@ -663,12 +650,12 @@ class Elasticsearch8ClientTest {
     void test_multi_search() throws Exception {
         final SearchRequestBuilder srb1 = client.prepareSearch().setQuery(QueryBuilders.queryStringQuery("word")).setSize(1);
         final SearchRequestBuilder srb2 = client.prepareSearch().setQuery(QueryBuilders.matchQuery("name", "test")).setSize(1);
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         client.prepareMultiSearch().add(srb1).add(srb2).execute(wrap(res -> {
             long nbHits = 0;
-            for (MultiSearchResponse.Item item : res.getResponses()) {
-                SearchResponse searchResponse = item.getResponse();
+            for (final MultiSearchResponse.Item item : res.getResponses()) {
+                final SearchResponse searchResponse = item.getResponse();
                 nbHits += searchResponse.getHits().getTotalHits().value;
             }
             assertEquals(0, nbHits);
@@ -685,10 +672,10 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            MultiSearchResponse res = client.prepareMultiSearch().add(srb1).add(srb2).execute().actionGet();
+            final MultiSearchResponse res = client.prepareMultiSearch().add(srb1).add(srb2).execute().actionGet();
             long nbHits = 0;
-            for (MultiSearchResponse.Item item : res.getResponses()) {
-                SearchResponse searchResponse = item.getResponse();
+            for (final MultiSearchResponse.Item item : res.getResponses()) {
+                final SearchResponse searchResponse = item.getResponse();
                 nbHits += searchResponse.getHits().getTotalHits().value;
             }
             assertEquals(0, nbHits);
@@ -704,7 +691,7 @@ class Elasticsearch8ClientTest {
         try {
             client.prepareGet().setIndex(index).setId(id).execute().actionGet();
             fail();
-        } catch (IndexNotFoundException e) {
+        } catch (final IndexNotFoundException e) {
             // ok
         }
 
@@ -736,7 +723,7 @@ class Elasticsearch8ClientTest {
         assertEquals(RestStatus.OK, deleteResponse.status());
 
         // make sure the document was deleted
-        GetResponse response = client.prepareGet().setIndex(index).setId(id).execute().actionGet();
+        final GetResponse response = client.prepareGet().setIndex(index).setId(id).execute().actionGet();
         assertFalse(response.isExists());
     }
 
@@ -760,7 +747,7 @@ class Elasticsearch8ClientTest {
         assertEquals(NUM, searchResponse1.getHits().getTotalHits().value);
 
         // Get the documents with MultiGet API
-        MultiGetRequestBuilder mgetRequestBuilder = client.prepareMultiGet();
+        final MultiGetRequestBuilder mgetRequestBuilder = client.prepareMultiGet();
         for (int i = 1; i <= NUM; i++) {
             mgetRequestBuilder.add(new MultiGetRequest.Item(index, String.valueOf(i)));
         }
@@ -792,16 +779,15 @@ class Elasticsearch8ClientTest {
     @Test
     void test_explain() throws Exception {
         final String index = "test_explain";
-        final String type = "test_type";
         final String id = "1";
-        CountDownLatch latch = new CountDownLatch(1);
-        client.prepareIndex(index, type, id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.prepareIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
                         XContentType.JSON)
                 .execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        client.prepareExplain(index, type, id).setQuery(QueryBuilders.termQuery("text", "test")).execute(wrap(res -> {
+        client.prepareExplain(index, id).setQuery(QueryBuilders.termQuery("text", "test")).execute(wrap(res -> {
             assertTrue(res.hasExplanation());
             latch.countDown();
         }, e -> {
@@ -815,8 +801,8 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            ExplainResponse explainResponse =
-                    client.prepareExplain(index, type, id).setQuery(QueryBuilders.termQuery("text", "test")).execute().actionGet();
+            final ExplainResponse explainResponse =
+                    client.prepareExplain(index, id).setQuery(QueryBuilders.termQuery("text", "test")).execute().actionGet();
             assertTrue(explainResponse.hasExplanation());
         }
     }
@@ -828,7 +814,7 @@ class Elasticsearch8ClientTest {
         final String id = "1";
         final String field0 = "user";
         final String field1 = "content";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.prepareIndex().setIndex(index0).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"" + field1 + "\":1" + "}",
                         XContentType.JSON)
@@ -870,7 +856,7 @@ class Elasticsearch8ClientTest {
     void test_update_settings() throws Exception {
         final String index = "test_update_settings";
         final String id = "1";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
                         XContentType.JSON)
@@ -892,7 +878,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            AcknowledgedResponse updateSettingsResponse = client.admin().indices().prepareUpdateSettings(index)
+            final AcknowledgedResponse updateSettingsResponse = client.admin().indices().prepareUpdateSettings(index)
                     .setSettings(Settings.builder().put("index.number_of_replicas", 0)).execute().actionGet();
             assertTrue(updateSettingsResponse.isAcknowledged());
         }
@@ -902,7 +888,7 @@ class Elasticsearch8ClientTest {
     void test_get_settings() throws Exception {
         final String index = "test_get_settings";
         final String id = "1";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
                         XContentType.JSON)
@@ -923,7 +909,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            GetSettingsResponse getSettingsResponse = client.admin().indices().prepareGetSettings(index).execute().actionGet();
+            final GetSettingsResponse getSettingsResponse = client.admin().indices().prepareGetSettings(index).execute().actionGet();
             assertTrue(getSettingsResponse.getSetting(index, "index.number_of_shards") != null);
         }
     }
@@ -932,7 +918,7 @@ class Elasticsearch8ClientTest {
     void test_force_merge() throws Exception {
         final String index = "test_force_merge";
         final String id = "1";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
                         XContentType.JSON)
@@ -953,7 +939,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            ForceMergeResponse forceMergeResponse = client.admin().indices().prepareForceMerge(index).execute().actionGet();
+            final ForceMergeResponse forceMergeResponse = client.admin().indices().prepareForceMerge(index).execute().actionGet();
             assertEquals(RestStatus.OK, forceMergeResponse.getStatus());
         }
     }
@@ -963,7 +949,7 @@ class Elasticsearch8ClientTest {
         final String transientSettingKey = RecoverySettings.INDICES_RECOVERY_MAX_BYTES_PER_SEC_SETTING.getKey();
         final int transientSettingValue = 40000000;
         final Settings transientSettings = Settings.builder().put(transientSettingKey, transientSettingValue, ByteSizeUnit.BYTES).build();
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         client.admin().cluster().prepareUpdateSettings().setTransientSettings(transientSettings).execute(wrap(res -> {
             assertTrue(res.isAcknowledged());
@@ -979,7 +965,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            ClusterUpdateSettingsResponse clusterUpdateSettingsResponse =
+            final ClusterUpdateSettingsResponse clusterUpdateSettingsResponse =
                     client.admin().cluster().prepareUpdateSettings().setTransientSettings(transientSettings).execute().actionGet();
             assertTrue(clusterUpdateSettingsResponse.isAcknowledged());
         }
@@ -987,7 +973,7 @@ class Elasticsearch8ClientTest {
 
     @Test
     void test_cluster_health() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         client.admin().cluster().prepareHealth().execute(wrap(res -> {
             try {
@@ -1006,37 +992,8 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            ClusterHealthResponse custerHealthResponse = client.admin().cluster().prepareHealth().execute().actionGet();
+            final ClusterHealthResponse custerHealthResponse = client.admin().cluster().prepareHealth().execute().actionGet();
             assertEquals(custerHealthResponse.getClusterName(), clusterName);
-        }
-    }
-
-    @Test
-    void test_aliases_exist() throws Exception {
-        final String index = "test_aliases_exist";
-        final String alias1 = "test_alias1";
-        final String alias2 = "test_alias2";
-        CountDownLatch latch = new CountDownLatch(1);
-        client.admin().indices().prepareCreate(index).execute().actionGet();
-
-        client.admin().indices().prepareAliases().addAlias(index, alias1).execute().actionGet();
-        client.admin().indices().prepareAliasesExist(alias1).execute(wrap(res -> {
-            assertTrue(res.isExists());
-            latch.countDown();
-        }, e -> {
-            e.printStackTrace();
-            try {
-                fail();
-            } finally {
-                latch.countDown();
-            }
-        }));
-        latch.await();
-
-        {
-            client.admin().indices().prepareAliases().addAlias(index, alias2).execute().actionGet();
-            AliasesExistResponse aliasesExistResponse = client.admin().indices().prepareAliasesExist(alias2).execute().actionGet();
-            assertTrue(aliasesExistResponse.isExists());
         }
     }
 
@@ -1044,7 +1001,7 @@ class Elasticsearch8ClientTest {
     void test_validate_query() throws Exception {
         final String index = "test_validate_query";
         final String id = "0";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
@@ -1066,7 +1023,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            ValidateQueryResponse validateQueryResponse = client.admin().indices().prepareValidateQuery(index).setExplain(true)
+            final ValidateQueryResponse validateQueryResponse = client.admin().indices().prepareValidateQuery(index).setExplain(true)
                     .setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
             assertTrue(validateQueryResponse.isValid());
         }
@@ -1074,7 +1031,7 @@ class Elasticsearch8ClientTest {
 
     @Test
     void test_pending_cluster_tasks() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         client.admin().cluster().preparePendingClusterTasks().execute(wrap(res -> {
             assertTrue(res.getPendingTasks() != null);
@@ -1090,7 +1047,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            PendingClusterTasksResponse pendingClusterTasksResponse =
+            final PendingClusterTasksResponse pendingClusterTasksResponse =
                     client.admin().cluster().preparePendingClusterTasks().execute().actionGet();
             assertTrue(pendingClusterTasksResponse.getPendingTasks() != null);
         }
@@ -1101,7 +1058,7 @@ class Elasticsearch8ClientTest {
         final String index = "test_get_aliases";
         final String alias1 = "test_alias1";
         final String alias2 = "test_alias2";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
         client.admin().indices().prepareAliases().addAlias(index, alias1).execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
@@ -1121,38 +1078,9 @@ class Elasticsearch8ClientTest {
 
         {
             client.admin().indices().prepareAliases().addAlias(index, alias2).execute().actionGet();
-            GetAliasesResponse getAliasesResponse =
+            final GetAliasesResponse getAliasesResponse =
                     client.admin().indices().prepareGetAliases().setIndices(index).setAliases(alias1).execute().actionGet();
             assertTrue(getAliasesResponse.getAliases().size() == 1);
-        }
-    }
-
-    @Test
-    void test_synced_flush() throws Exception {
-        final String index = "test_synced_flush";
-        CountDownLatch latch = new CountDownLatch(1);
-        client.admin().indices().prepareCreate(index).execute().actionGet();
-
-        client.admin().indices().prepareSyncedFlush(index).execute(wrap(res -> {
-            try {
-                fail();
-            } finally {
-                latch.countDown();
-            }
-        }, e -> {
-            try {
-                assertEquals("Synced-flush is deprecated.", e.getMessage());
-            } finally {
-                latch.countDown();
-            }
-        }));
-        latch.await();
-
-        try {
-            client.admin().indices().prepareSyncedFlush(index).execute().actionGet();
-            fail();
-        } catch (final OpenSearchException e) {
-            assertEquals("Synced-flush is deprecated.", e.getMessage());
         }
     }
 
@@ -1166,7 +1094,7 @@ class Elasticsearch8ClientTest {
         client.admin().indices().prepareCreate(index).execute().actionGet();
         client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute(wrap(res -> {
             assertTrue(res.mappings().size() > 0);
             latch.countDown();
@@ -1181,7 +1109,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            GetFieldMappingsResponse getFieldMappingsResponse =
+            final GetFieldMappingsResponse getFieldMappingsResponse =
                     client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
             assertTrue(getFieldMappingsResponse.mappings().size() > 0);
             assertTrue(getFieldMappingsResponse.mappings().containsKey(index));
@@ -1192,7 +1120,7 @@ class Elasticsearch8ClientTest {
     void test_rollover() throws Exception {
         final String index = "test_rollover";
         final String alias = "test_rollover_alias1";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
         client.admin().indices().prepareAliases().addAlias(index, alias).execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
@@ -1211,7 +1139,7 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            RolloverResponse rolloverResponse =
+            final RolloverResponse rolloverResponse =
                     client.admin().indices().prepareRolloverIndex(alias).setNewIndexName(index + "new2").execute().actionGet();
             assertTrue(rolloverResponse.isShardsAcknowledged());
         }
@@ -1220,7 +1148,7 @@ class Elasticsearch8ClientTest {
     @Test
     void test_clear_cache_indices() throws Exception {
         final String index = "test_clear_cache_indices";
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.admin().indices().prepareClearCache(index).execute(wrap(res -> {
@@ -1237,24 +1165,9 @@ class Elasticsearch8ClientTest {
         latch.await();
 
         {
-            ClearIndicesCacheResponse clearIndicesCacheResponse = client.admin().indices().prepareClearCache(index).execute().actionGet();
+            final ClearIndicesCacheResponse clearIndicesCacheResponse =
+                    client.admin().indices().prepareClearCache(index).execute().actionGet();
             assertTrue(clearIndicesCacheResponse.getFailedShards() == 0);
-        }
-    }
-
-    @Test
-    void test_shrink() throws Exception {
-        final String source = "test_shrink1";
-        final String target = "test_shrink2";
-        client.admin().indices().prepareCreate(source)
-                .setSettings(Settings.builder().put("index.blocks.write", true).put("number_of_shards", 2)).execute().actionGet();
-        client.admin().indices().prepareRefresh(source).execute().actionGet();
-
-        ResizeRequest resizeRequest = new ResizeRequest(target, source);
-        resizeRequest.getTargetIndexRequest().settings(Settings.builder().put("index.number_of_replicas", 0).put("number_of_shards", 1));
-        {
-            ResizeResponse resizeResponse = client.admin().indices().execute(ShrinkAction.INSTANCE, resizeRequest).actionGet();
-            assertTrue(resizeResponse.isAcknowledged());
         }
     }
 
@@ -1264,40 +1177,47 @@ class Elasticsearch8ClientTest {
                 "{\"description\":\"my set of processors\"," + "\"processors\":[{\"set\":{\"field\":\"foo\",\"value\":\"bar\"}}]}";
         final String id = "test_crud_pipeline";
 
-        AcknowledgedResponse putPipelineResponse = client.admin().cluster()
+        final AcknowledgedResponse putPipelineResponse = client.admin().cluster()
                 .preparePutPipeline(id, new BytesArray(source.getBytes(StandardCharsets.UTF_8)), XContentType.JSON).execute().actionGet();
         assertTrue(putPipelineResponse.isAcknowledged());
 
-        GetPipelineResponse getPipelineResponse = client.admin().cluster().prepareGetPipeline(id).execute().actionGet();
+        final GetPipelineResponse getPipelineResponse = client.admin().cluster().prepareGetPipeline(id).execute().actionGet();
         assertTrue(getPipelineResponse.isFound());
 
-        AcknowledgedResponse deletePipelineResponse = client.admin().cluster().prepareDeletePipeline(id).execute().actionGet();
+        final AcknowledgedResponse deletePipelineResponse = client.admin().cluster().prepareDeletePipeline(id).execute().actionGet();
         assertTrue(deletePipelineResponse.isAcknowledged());
     }
 
     @Test
     void test_crud_storedscript() throws Exception {
-        final String source = "{\n" + " \"script\": {\n" + "\"lang\":\"painless\",\n"
-                + "\"source\": \"Math.log(_score * 2) + params.my_modifier\"\n" + " }\n" + "}\n";
+        final String source = """
+                {
+                 "script": {
+                "lang":"painless",
+                "source": "Math.log(_score * 2) + params.my_modifier"
+                 }
+                }
+                """;
         final String id = "test_crud_storedscript";
 
-        AcknowledgedResponse putStoredScriptResponse = client.admin().cluster().preparePutStoredScript().setId(id)
+        final AcknowledgedResponse putStoredScriptResponse = client.admin().cluster().preparePutStoredScript().setId(id)
                 .setContent(new BytesArray(source.getBytes(StandardCharsets.UTF_8)), XContentType.JSON).execute().actionGet();
         assertTrue(putStoredScriptResponse.isAcknowledged());
 
-        GetStoredScriptResponse getStoredScriptResponse = client.admin().cluster().prepareGetStoredScript().setId(id).execute().actionGet();
+        final GetStoredScriptResponse getStoredScriptResponse =
+                client.admin().cluster().prepareGetStoredScript().setId(id).execute().actionGet();
         assertTrue(getStoredScriptResponse.getSource() != null);
 
-        AcknowledgedResponse deleteStoredScriptResponse =
+        final AcknowledgedResponse deleteStoredScriptResponse =
                 client.admin().cluster().prepareDeleteStoredScript().setId(id).execute().actionGet();
         assertTrue(deleteStoredScriptResponse.isAcknowledged());
     }
 
     @Test
     void test_cluster_reroute() throws Exception {
-        ClusterRerouteRequest clusterRerouteRequest = new ClusterRerouteRequest();
+        final ClusterRerouteRequest clusterRerouteRequest = new ClusterRerouteRequest();
         {
-            AcknowledgedResponse clusterRerouteResponse =
+            final AcknowledgedResponse clusterRerouteResponse =
                     client.admin().cluster().execute(ClusterRerouteAction.INSTANCE, clusterRerouteRequest).actionGet();
             assertTrue(clusterRerouteResponse.isAcknowledged());
         }
@@ -1316,12 +1236,12 @@ class Elasticsearch8ClientTest {
         }
 
         {
-            NodesStatsResponse response = client.admin().cluster().prepareNodesStats().execute().actionGet();
+            final NodesStatsResponse response = client.admin().cluster().prepareNodesStats().execute().actionGet();
             assertFalse(response.getNodes().isEmpty());
         }
 
         {
-            NodesStatsResponse response = client.admin().cluster().prepareNodesStats()
+            final NodesStatsResponse response = client.admin().cluster().prepareNodesStats()
                     .addMetrics("fs", "jvm", "os", "process", "thread_pool", "transport").execute().actionGet();
             assertFalse(response.getNodes().isEmpty());
             final XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -1330,7 +1250,7 @@ class Elasticsearch8ClientTest {
             builder.endObject();
             builder.flush();
             try (OutputStream out = builder.getOutputStream()) {
-                String value = ((ByteArrayOutputStream) out).toString("UTF-8");
+                final String value = ((ByteArrayOutputStream) out).toString("UTF-8");
                 System.out.println(value);
             }
         }
@@ -1339,7 +1259,7 @@ class Elasticsearch8ClientTest {
     @Test
     void test_hotThreads() throws Exception {
         {
-            NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().execute().actionGet();
+            final NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().execute().actionGet();
             assertFalse(response.getNodes().isEmpty());
             response.getNodes().forEach(node -> {
                 System.out.println(node.getNode().toString() + "\n" + node.getHotThreads());
@@ -1349,7 +1269,7 @@ class Elasticsearch8ClientTest {
         }
 
         {
-            NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().setType("wait").setThreads(10)
+            final NodesHotThreadsResponse response = client.admin().cluster().prepareNodesHotThreads().setType("wait").setThreads(10)
                     .setTimeout("10s").setInterval(TimeValue.timeValueSeconds(5)).execute().actionGet();
             assertFalse(response.getNodes().isEmpty());
             response.getNodes().forEach(node -> {
@@ -1379,7 +1299,7 @@ class Elasticsearch8ClientTest {
     // TODO @Test
     void test_info() throws Exception {
         {
-            MainResponse mainResponse = client.execute(MainAction.INSTANCE, new MainRequest()).actionGet();
+            final MainResponse mainResponse = client.execute(MainAction.INSTANCE, new MainRequest()).actionGet();
             assertEquals("fesen", mainResponse.getClusterName().value());
         }
     }

@@ -15,13 +15,27 @@
  */
 package org.codelibs.fesen.client.action;
 
+import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.get.GetIndexAction;
 import org.opensearch.action.admin.indices.get.GetIndexRequest;
 import org.opensearch.action.admin.indices.get.GetIndexResponse;
+import org.opensearch.cluster.metadata.AliasMetadata;
+import org.opensearch.cluster.metadata.MappingMetadata;
+import org.opensearch.common.collect.ImmutableOpenMap;
+import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.XContentParser.Token;
 
 public class HttpGetIndexAction extends HttpAction {
 
@@ -35,7 +49,7 @@ public class HttpGetIndexAction extends HttpAction {
     public void execute(final GetIndexRequest request, final ActionListener<GetIndexResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final GetIndexResponse getIndexResponse = GetIndexResponse.fromXContent(parser);
+                final GetIndexResponse getIndexResponse = fromXContent(parser);
                 listener.onResponse(getIndexResponse);
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
@@ -48,5 +62,139 @@ public class HttpGetIndexAction extends HttpAction {
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/", request.indices());
         curlRequest.param("include_defaults", Boolean.toString(request.includeDefaults()));
         return curlRequest;
+    }
+
+    protected static GetIndexResponse fromXContent(final XContentParser parser) throws IOException {
+        ImmutableOpenMap<String, MappingMetadata> mappings = ImmutableOpenMap.of();
+        final ImmutableOpenMap.Builder<String, List<AliasMetadata>> aliases = ImmutableOpenMap.builder();
+        final ImmutableOpenMap.Builder<String, Settings> settings = ImmutableOpenMap.builder();
+        final ImmutableOpenMap.Builder<String, Settings> defaultSettings = ImmutableOpenMap.builder();
+        final ImmutableOpenMap.Builder<String, String> dataStreams = ImmutableOpenMap.builder();
+        final List<String> indices = new ArrayList<>();
+
+        if (parser.currentToken() == null) {
+            parser.nextToken();
+        }
+        ensureExpectedToken(Token.START_OBJECT, parser.currentToken(), parser);
+        parser.nextToken();
+
+        while (!parser.isClosed()) {
+            if (parser.currentToken() == Token.START_OBJECT) {
+                // we assume this is an index entry
+                final String indexName = parser.currentName();
+                indices.add(indexName);
+                final IndexEntry indexEntry = parseIndexEntry(parser);
+                // make the order deterministic
+                CollectionUtil.timSort(indexEntry.indexAliases, Comparator.comparing(AliasMetadata::alias));
+                aliases.put(indexName, Collections.unmodifiableList(indexEntry.indexAliases));
+                mappings = indexEntry.indexMappings;
+                settings.put(indexName, indexEntry.indexSettings);
+                if (!indexEntry.indexDefaultSettings.isEmpty()) {
+                    defaultSettings.put(indexName, indexEntry.indexDefaultSettings);
+                }
+                if (indexEntry.dataStream != null) {
+                    dataStreams.put(indexName, indexEntry.dataStream);
+                }
+            } else if (parser.currentToken() == Token.START_ARRAY) {
+                parser.skipChildren();
+            } else {
+                parser.nextToken();
+            }
+        }
+        return new GetIndexResponse(indices.toArray(new String[0]), mappings, aliases.build(), settings.build(), defaultSettings.build(),
+                dataStreams.build());
+    }
+
+    protected static IndexEntry parseIndexEntry(final XContentParser parser) throws IOException {
+        List<AliasMetadata> indexAliases = null;
+        ImmutableOpenMap<String, MappingMetadata> indexMappings = null;
+        Settings indexSettings = null;
+        Settings indexDefaultSettings = null;
+        String dataStream = null;
+        // We start at START_OBJECT since fromXContent ensures that
+        while (parser.nextToken() != Token.END_OBJECT) {
+            ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
+            parser.nextToken();
+            if (parser.currentToken() == Token.START_OBJECT) {
+                switch (parser.currentName()) {
+                case "aliases":
+                    indexAliases = parseAliases(parser);
+                    break;
+                case "mappings":
+                    indexMappings = parseMappings(parser);
+                    break;
+                case "settings":
+                    indexSettings = Settings.fromXContent(parser);
+                    break;
+                case "defaults":
+                    indexDefaultSettings = Settings.fromXContent(parser);
+                    break;
+                default:
+                    parser.skipChildren();
+                }
+            } else if (parser.currentToken() == Token.VALUE_STRING) {
+                if ("data_stream".equals(parser.currentName())) {
+                    dataStream = parser.text();
+                }
+                parser.skipChildren();
+            } else if (parser.currentToken() == Token.START_ARRAY) {
+                parser.skipChildren();
+            }
+        }
+        return new IndexEntry(indexAliases, indexMappings, indexSettings, indexDefaultSettings, dataStream);
+    }
+
+    protected static List<AliasMetadata> parseAliases(final XContentParser parser) throws IOException {
+        final List<AliasMetadata> indexAliases = new ArrayList<>();
+        // We start at START_OBJECT since parseIndexEntry ensures that
+        while (parser.nextToken() != Token.END_OBJECT) {
+            ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
+            indexAliases.add(AliasMetadata.Builder.fromXContent(parser));
+        }
+        return indexAliases;
+    }
+
+    protected static ImmutableOpenMap<String, MappingMetadata> parseMappings(final XContentParser parser) throws IOException {
+        final ImmutableOpenMap.Builder<String, MappingMetadata> indexMappings = ImmutableOpenMap.builder();
+        // We start at START_OBJECT since parseIndexEntry ensures that
+        while (parser.nextToken() != Token.END_OBJECT) {
+            ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
+            parser.nextToken();
+            if (parser.currentToken() == Token.START_OBJECT) {
+                final String mappingType = parser.currentName();
+                indexMappings.put(mappingType, new MappingMetadata(mappingType, parser.map()));
+            } else if (parser.currentToken() == Token.START_ARRAY) {
+                parser.skipChildren();
+            }
+        }
+        return indexMappings.build();
+    }
+
+    // This is just an internal container to make stuff easier for returning
+    protected static class IndexEntry {
+        List<AliasMetadata> indexAliases = new ArrayList<>();
+        ImmutableOpenMap<String, MappingMetadata> indexMappings = ImmutableOpenMap.of();
+        Settings indexSettings = Settings.EMPTY;
+        Settings indexDefaultSettings = Settings.EMPTY;
+        String dataStream;
+
+        IndexEntry(final List<AliasMetadata> indexAliases, final ImmutableOpenMap<String, MappingMetadata> indexMappings,
+                final Settings indexSettings, final Settings indexDefaultSettings, final String dataStream) {
+            if (indexAliases != null) {
+                this.indexAliases = indexAliases;
+            }
+            if (indexMappings != null) {
+                this.indexMappings = indexMappings;
+            }
+            if (indexSettings != null) {
+                this.indexSettings = indexSettings;
+            }
+            if (indexDefaultSettings != null) {
+                this.indexDefaultSettings = indexDefaultSettings;
+            }
+            if (dataStream != null) {
+                this.dataStream = dataStream;
+            }
+        }
     }
 }

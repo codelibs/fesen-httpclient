@@ -36,7 +36,6 @@ import org.opensearch.common.xcontent.NamedXContentRegistry;
 import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.ToXContent.Params;
 import org.opensearch.common.xcontent.XContentBuilder;
-import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.common.xcontent.XContentParser;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.common.xcontent.json.JsonXContent;
@@ -86,33 +85,22 @@ public class HttpCreateIndexAction extends HttpAction {
         request.settings().toXContent(builder, params);
         builder.endObject();
 
-        final String mappingSource = request.mappings().get("_doc");
-        if (mappingSource != null) {
-            try (final XContentParser createParser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
-                    LoggingDeprecationHandler.INSTANCE, mappingSource)) {
-                final Map<String, Object> mappingMap = createParser.map();
-                if (mappingMap.containsKey("_doc")) {
-                    builder.field(MAPPINGS.getPreferredName(), mappingMap.get("_doc"));
-                } else {
-                    try (InputStream stream = new BytesArray(mappingSource).streamInput()) {
-                        builder.rawField(MAPPINGS.getPreferredName(), stream, XContentType.JSON);
-                    }
+        final String mappingSource = request.mappings();
+        if (mappingSource == null) {
+            throw new UnsupportedOperationException("unknown mapping operation.");
+        }
+        try (final XContentParser createParser =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, mappingSource)) {
+            final Map<String, Object> mappingMap = createParser.map();
+            if (mappingMap.containsKey("_doc")) {
+                builder.startObject(MAPPINGS.getPreferredName());
+                builder.field("properties", mappingMap.get("_doc"));
+                builder.endObject();
+            } else {
+                try (InputStream stream = new BytesArray(mappingSource).streamInput()) {
+                    builder.rawField(MAPPINGS.getPreferredName(), stream, XContentType.JSON);
                 }
             }
-        } else {
-            builder.startObject(MAPPINGS.getPreferredName());
-            for (final Map.Entry<String, String> entry : request.mappings().entrySet()) {
-                if ("properties".equals(entry.getKey()) || "dynamic_templates".equals(entry.getKey()) || "_source".equals(entry.getKey())) {
-                    final Map<String, Object> sourceMap =
-                            XContentHelper.convertToMap(new BytesArray(entry.getValue()), false, XContentType.JSON).v2();
-                    builder.field(entry.getKey(), sourceMap.get(entry.getKey()));
-                } else {
-                    try (InputStream stream = new BytesArray(entry.getValue()).streamInput()) {
-                        builder.rawField(entry.getKey(), stream, XContentType.JSON);
-                    }
-                }
-            }
-            builder.endObject();
         }
 
         builder.startObject(ALIASES.getPreferredName());

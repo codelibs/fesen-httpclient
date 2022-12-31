@@ -24,8 +24,8 @@ import org.opensearch.cluster.node.DiscoveryNode;
 class HttpNodesHotThreadsActionTest {
     @Test
     void test_parseDiscoveryNode() {
-        HttpNodesHotThreadsAction action = new HttpNodesHotThreadsAction(null, NodesHotThreadsAction.INSTANCE);
-        DiscoveryNode discoveryNode = action.parseDiscoveryNode(
+        final HttpNodesHotThreadsAction action = new HttpNodesHotThreadsAction(null, NodesHotThreadsAction.INSTANCE);
+        final DiscoveryNode discoveryNode = action.parseDiscoveryNode(
                 "::: {685b6bd7cd44}{9a9zfqLYS6iTTNmrDsW0TQ}{OL3OXYBTQjSCQf6gJAgrHQ}{685b6bd7cd44}{172.17.0.5}{172.17.0.5:9300}{cdfhilmrstw}{ml.machine_memory=135007109120, ml.max_jvm_size=33285996544, xpack.installed=true}");
         assertEquals("685b6bd7cd44", discoveryNode.getName());
         assertEquals("9a9zfqLYS6iTTNmrDsW0TQ", discoveryNode.getId());

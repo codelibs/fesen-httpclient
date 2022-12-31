@@ -120,38 +120,53 @@ public class HttpClusterHealthAction extends HttpAction {
             new ConstructingObjectParser<>("cluster_health_response", true, parsedObjects -> {
                 int i = 0;
                 // ClusterStateHealth fields
-                int numberOfNodes = (int) parsedObjects[i++];
-                int numberOfDataNodes = (int) parsedObjects[i++];
-                boolean hasDiscoveredMaster = true;//(boolean) parsedObjects[i++];
-                int activeShards = (int) parsedObjects[i++];
-                int relocatingShards = (int) parsedObjects[i++];
-                int activePrimaryShards = (int) parsedObjects[i++];
-                int initializingShards = (int) parsedObjects[i++];
-                int unassignedShards = (int) parsedObjects[i++];
-                double activeShardsPercent = (double) parsedObjects[i++];
-                String statusStr = (String) parsedObjects[i++];
-                ClusterHealthStatus status = ClusterHealthStatus.fromString(statusStr);
+                final int numberOfNodes = (int) parsedObjects[i];
+                i++;
+                final int numberOfDataNodes = (int) parsedObjects[i];
+                i++;
+                final boolean hasDiscoveredMaster = true;//(boolean) parsedObjects[i++];
+                final int activeShards = (int) parsedObjects[i];
+                i++;
+                final int relocatingShards = (int) parsedObjects[i];
+                i++;
+                final int activePrimaryShards = (int) parsedObjects[i];
+                i++;
+                final int initializingShards = (int) parsedObjects[i];
+                i++;
+                final int unassignedShards = (int) parsedObjects[i];
+                i++;
+                final double activeShardsPercent = (double) parsedObjects[i];
+                i++;
+                final String statusStr = (String) parsedObjects[i];
+                i++;
+                final ClusterHealthStatus status = ClusterHealthStatus.fromString(statusStr);
                 @SuppressWarnings("unchecked")
-                List<ClusterIndexHealth> indexList = (List<ClusterIndexHealth>) parsedObjects[i++];
+                final List<ClusterIndexHealth> indexList = (List<ClusterIndexHealth>) parsedObjects[i];
+                i++;
                 final Map<String, ClusterIndexHealth> indices;
                 if (indexList == null || indexList.isEmpty()) {
                     indices = emptyMap();
                 } else {
                     indices = new HashMap<>(indexList.size());
-                    for (ClusterIndexHealth indexHealth : indexList) {
+                    for (final ClusterIndexHealth indexHealth : indexList) {
                         indices.put(indexHealth.getIndex(), indexHealth);
                     }
                 }
-                ClusterStateHealth stateHealth =
+                final ClusterStateHealth stateHealth =
                         new ClusterStateHealth(activePrimaryShards, activeShards, relocatingShards, initializingShards, unassignedShards,
                                 numberOfNodes, numberOfDataNodes, hasDiscoveredMaster, activeShardsPercent, status, indices);
                 // ClusterHealthResponse fields
-                String clusterName = (String) parsedObjects[i++];
-                int numberOfPendingTasks = (int) parsedObjects[i++];
-                int numberOfInFlightFetch = (int) parsedObjects[i++];
-                int delayedUnassignedShards = (int) parsedObjects[i++];
-                long taskMaxWaitingTimeMillis = (long) parsedObjects[i++];
-                boolean timedOut = (boolean) parsedObjects[i];
+                final String clusterName = (String) parsedObjects[i];
+                i++;
+                final int numberOfPendingTasks = (int) parsedObjects[i];
+                i++;
+                final int numberOfInFlightFetch = (int) parsedObjects[i];
+                i++;
+                final int delayedUnassignedShards = (int) parsedObjects[i];
+                i++;
+                final long taskMaxWaitingTimeMillis = (long) parsedObjects[i];
+                i++;
+                final boolean timedOut = (boolean) parsedObjects[i];
                 try (final ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
                     out.writeString(clusterName);
                     out.writeByte(stateHealth.getStatus().value());
@@ -168,7 +183,7 @@ public class HttpClusterHealthAction extends HttpAction {
             });
 
     private static final ObjectParser.NamedObjectParser<ClusterIndexHealth, Void> INDEX_PARSER =
-            (XContentParser parser, Void context, String index) -> ClusterIndexHealth.innerFromXContent(parser, index);
+            (final XContentParser parser, final Void context, final String index) -> ClusterIndexHealth.innerFromXContent(parser, index);
 
     static {
         // ClusterStateHealth fields

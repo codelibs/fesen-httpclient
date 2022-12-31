@@ -65,29 +65,26 @@ public class HttpExplainAction extends HttpAction {
     }
 
     // ExplainResponse.fromXContent(parser, true)
-    protected ExplainResponse fromXContent(XContentParser parser, boolean exists) {
+    protected ExplainResponse fromXContent(final XContentParser parser, final boolean exists) {
         final EngineType engineType = client.getEngineInfo().getType();
         if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
             return getResponseParser().apply(parser, exists);
-        } else {
-            return ExplainResponse.fromXContent(parser, exists);
         }
+        return ExplainResponse.fromXContent(parser, exists);
     }
 
     protected ConstructingObjectParser<ExplainResponse, Boolean> getResponseParser() {
         // remove _type
-        ConstructingObjectParser<ExplainResponse, Boolean> parser = new ConstructingObjectParser<>("explain", true, (arg, exists) -> {
-            return new ExplainResponse((String) arg[0], "_doc", (String) arg[1], exists, (Explanation) arg[2], (GetResult) arg[3]);
-        });
+        final ConstructingObjectParser<ExplainResponse, Boolean> parser = new ConstructingObjectParser<>("explain", true,
+                (arg, exists) -> new ExplainResponse((String) arg[0], (String) arg[1], exists, (Explanation) arg[2], (GetResult) arg[3]));
         parser.declareString(ConstructingObjectParser.constructorArg(), new ParseField("_index"));
         parser.declareString(ConstructingObjectParser.constructorArg(), new ParseField("_id"));
         final ConstructingObjectParser<Explanation, Boolean> explanationParser =
                 new ConstructingObjectParser<>("explanation", true, arg -> {
                     if ((float) arg[0] > 0) {
                         return Explanation.match((float) arg[0], (String) arg[1], (Collection<Explanation>) arg[2]);
-                    } else {
-                        return Explanation.noMatch((String) arg[1], (Collection<Explanation>) arg[2]);
                     }
+                    return Explanation.noMatch((String) arg[1], (Collection<Explanation>) arg[2]);
                 });
         explanationParser.declareFloat(ConstructingObjectParser.constructorArg(), new ParseField("value"));
         explanationParser.declareString(ConstructingObjectParser.constructorArg(), new ParseField("description"));

@@ -16,6 +16,7 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.codelibs.curl.Curl;
@@ -127,7 +128,7 @@ public class HttpAction {
         if (contentType == null) {
             contentType = "application/json";
         }
-        final XContentType xContentType = XContentType.fromMediaTypeOrFormat(contentType);
+        final XContentType xContentType = fromMediaTypeOrFormat(contentType);
         final XContent xContent = XContentFactory.xContent(xContentType);
         return xContent.createParser(client.getNamedXContentRegistry(), LoggingDeprecationHandler.INSTANCE, response.getContentAsStream());
     }
@@ -170,5 +171,35 @@ public class HttpAction {
         CurlResponseException(final String msg) {
             super(msg, null, false, false);
         }
+    }
+
+    /**
+     * Accepts either a format string, which is equivalent to {@link XContentType#shortName()} or a media type that optionally has
+     * parameters and attempts to match the value to an {@link XContentType}. The comparisons are done in lower case format and this method
+     * also supports a wildcard accept for {@code application/*}. This method can be used to parse the {@code Accept} HTTP header or a
+     * format query string parameter. This method will return {@code null} if no match is found
+     */
+    protected static XContentType fromMediaTypeOrFormat(final String mediaType) {
+        if (mediaType == null) {
+            return null;
+        }
+
+        for (final XContentType type : XContentType.values()) {
+            if (isSameMediaTypeOrFormatAs(mediaType, type)) {
+                return type;
+            }
+        }
+        final String lowercaseMediaType = mediaType.toLowerCase(Locale.ROOT);
+        if (lowercaseMediaType.startsWith("application/*")) {
+            return XContentType.JSON;
+        }
+
+        return null;
+    }
+
+    private static boolean isSameMediaTypeOrFormatAs(final String stringType, final XContentType type) {
+        return type.mediaTypeWithoutParameters().equalsIgnoreCase(stringType)
+                || stringType.toLowerCase(Locale.ROOT).startsWith(type.mediaTypeWithoutParameters().toLowerCase(Locale.ROOT) + ";")
+                || type.subtype().equalsIgnoreCase(stringType);
     }
 }

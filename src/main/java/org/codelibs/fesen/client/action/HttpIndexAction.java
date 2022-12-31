@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
-import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
@@ -65,16 +64,12 @@ public class HttpIndexAction extends HttpAction {
     }
 
     // IndexResponse.fromXContent(parser);
-    protected IndexResponse fromXContent(XContentParser parser) throws IOException {
+    protected IndexResponse fromXContent(final XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
 
-        Builder context = new Builder();
+        final Builder context = new Builder();
         while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
             IndexResponse.parseXContentFields(parser, context);
-        }
-        final EngineType engineType = client.getEngineInfo().getType();
-        if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
-            context.setType("_doc");
         }
         return context.build();
     }

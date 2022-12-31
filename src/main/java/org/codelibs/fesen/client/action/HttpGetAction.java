@@ -45,9 +45,8 @@ public class HttpGetAction extends HttpAction {
             } catch (final Exception e) {
                 if (response.getHttpStatusCode() == 404) {
                     throw new IndexNotFoundException(request.index(), e);
-                } else {
-                    listener.onFailure(toOpenSearchException(response, e));
                 }
+                listener.onFailure(toOpenSearchException(response, e));
             }
         }, e -> unwrapOpenSearchException(listener, e));
     }

@@ -127,11 +127,10 @@ public class NodeManager {
         Throwable current = t;
         while (depth < 10) {
             final Throwable cause = current.getCause();
-            if (cause instanceof CurlException curlException) {
-                current = curlException;
-            } else {
+            if (!(cause instanceof final CurlException curlException)) {
                 return cause != null ? cause : current;
             }
+            current = curlException;
             depth++;
         }
         return current;
@@ -152,7 +151,7 @@ public class NodeManager {
                             } else if (logger.isDebugEnabled()) {
                                 logger.debug("{} node is still unavailable.", node);
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             final Throwable cause = getCause(e);
                             if (isNetworkException(cause)) {
                                 if (logger.isDebugEnabled()) {

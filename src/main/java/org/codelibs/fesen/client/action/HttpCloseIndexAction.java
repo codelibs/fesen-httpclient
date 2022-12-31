@@ -124,10 +124,8 @@ public class HttpCloseIndexAction extends HttpAction {
                     parser.nextToken();
                     shardResults.addAll(parseShardResults(parser));
                 }
-            } else if (token == XContentParser.Token.VALUE_BOOLEAN) {
-                if ("closed".equals(fieldName)) {
-                    closed = parser.booleanValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_BOOLEAN) && "closed".equals(fieldName)) {
+                closed = parser.booleanValue();
             }
             parser.nextToken();
         }
@@ -167,12 +165,10 @@ public class HttpCloseIndexAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.START_ARRAY) {
-                if ("failures".equals(fieldName)) {
-                    parser.nextToken();
-                    while ((token = parser.currentToken()) != XContentParser.Token.END_ARRAY) {
-                        failures.add(parseFailure(parser));
-                    }
+            } else if ((token == XContentParser.Token.START_ARRAY) && "failures".equals(fieldName)) {
+                parser.nextToken();
+                while ((token = parser.currentToken()) != XContentParser.Token.END_ARRAY) {
+                    failures.add(parseFailure(parser));
                 }
             }
             parser.nextToken();
@@ -199,12 +195,10 @@ public class HttpCloseIndexAction extends HttpAction {
                 if ("index".equals(fieldName)) {
                     index = parser.text();
                 }
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("shard".equals(fieldName)) {
-                    shardId = parser.intValue();
-                }
-                // TODO status
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "shard".equals(fieldName)) {
+                shardId = parser.intValue();
             }
+            // TODO status
             parser.nextToken();
         }
         return new Failure(index, shardId, eex);

@@ -5,7 +5,7 @@
 	<artifactId>fesen-httpclient</artifactId>
 	<packaging>jar</packaging>
 	<name>fesen-httpclient</name>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<description />
 	<url>https://github.com/codelibs/fesen-httpclient</url>
 	<inceptionYear>2012</inceptionYear>
@@ -32,7 +32,7 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<opensearch.version>1.3.7</opensearch.version>
+		<opensearch.version>2.4.1</opensearch.version>
 		<log4j.version>2.17.1</log4j.version>
 		<junit.jupiter.version>5.8.1</junit.jupiter.version>
 		<testcontainers.version>1.17.2</testcontainers.version>
@@ -116,54 +116,6 @@
 				<configuration>
 					<configFile>https://www.codelibs.org/assets/formatter/eclipse-formatter-1.0.xml</configFile>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.4.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<artifactSet>
-								<includes>
-									<include>org.opensearch:opensearch</include>
-									<include>org.opensearch:opensearch-core</include>
-								</includes>
-							</artifactSet>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/MANIFEST.MF</exclude>
-										<exclude>META-INF/services/**</exclude>
-										<exclude>META-INF/versions/**</exclude>
-										<exclude>config/favicon.ico</exclude>
-										<exclude>modules.txt</exclude>
-										<exclude>plugins.txt</exclude>
-									</excludes>
-								</filter>
-							</filters>
-							<relocations>
-								<relocation>
-									<pattern>org.joda</pattern>
-									<shadedPattern>org.codelibs.fesen.client.joda</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.apache.lucene</pattern>
-									<shadedPattern>org.codelibs.fesen.client.apache.lucene</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.opensearch</pattern>
-									<shadedPattern>org.codelibs.fesen.client.opensearch</shadedPattern>
-								</relocation>
-							</relocations>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

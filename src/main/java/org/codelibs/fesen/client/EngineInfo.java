@@ -41,7 +41,6 @@ public class EngineInfo {
             number = UNKNOWN;
             distribution = UNKNOWN;
         }
-
     }
 
     public String getNodeName() {
@@ -64,18 +63,19 @@ public class EngineInfo {
         if (distribution.startsWith("elasticsearch")) {
             if (number.startsWith("7.")) {
                 return EngineType.ELASTICSEARCH7;
-            } else {
+            }
+            if (number.startsWith("8.")) {
                 return EngineType.ELASTICSEARCH8;
             }
         } else if (distribution.startsWith("opensearch")) {
             if (number.startsWith("1.")) {
                 return EngineType.OPENSEARCH1;
-            } else {
+            }
+            if (number.startsWith("2.")) {
                 return EngineType.OPENSEARCH2;
             }
-        } else {
-            return EngineType.UNKNOWN;
         }
+        return EngineType.UNKNOWN;
     }
 
     public enum EngineType {

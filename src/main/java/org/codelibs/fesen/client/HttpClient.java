@@ -46,7 +46,6 @@ import org.codelibs.curl.Curl;
 import org.codelibs.curl.CurlException;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
-import org.codelibs.fesen.client.action.HttpAliasesExistAction;
 import org.codelibs.fesen.client.action.HttpAnalyzeAction;
 import org.codelibs.fesen.client.action.HttpBulkAction;
 import org.codelibs.fesen.client.action.HttpCancelTasksAction;
@@ -101,10 +100,8 @@ import org.codelibs.fesen.client.action.HttpRestoreSnapshotAction;
 import org.codelibs.fesen.client.action.HttpRolloverAction;
 import org.codelibs.fesen.client.action.HttpSearchAction;
 import org.codelibs.fesen.client.action.HttpSearchScrollAction;
-import org.codelibs.fesen.client.action.HttpShrinkAction;
 import org.codelibs.fesen.client.action.HttpSimulatePipelineAction;
 import org.codelibs.fesen.client.action.HttpSnapshotsStatusAction;
-import org.codelibs.fesen.client.action.HttpSyncedFlushAction;
 import org.codelibs.fesen.client.action.HttpUpdateAction;
 import org.codelibs.fesen.client.action.HttpUpdateSettingsAction;
 import org.codelibs.fesen.client.action.HttpValidateQueryAction;
@@ -173,8 +170,6 @@ import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.opensearch.action.admin.indices.alias.exists.AliasesExistAction;
-import org.opensearch.action.admin.indices.alias.exists.AliasesExistResponse;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesAction;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
@@ -196,9 +191,6 @@ import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.opensearch.action.admin.indices.flush.FlushAction;
 import org.opensearch.action.admin.indices.flush.FlushRequest;
 import org.opensearch.action.admin.indices.flush.FlushResponse;
-import org.opensearch.action.admin.indices.flush.SyncedFlushAction;
-import org.opensearch.action.admin.indices.flush.SyncedFlushRequest;
-import org.opensearch.action.admin.indices.flush.SyncedFlushResponse;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
@@ -227,9 +219,6 @@ import org.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.opensearch.action.admin.indices.shrink.ResizeRequest;
-import org.opensearch.action.admin.indices.shrink.ResizeResponse;
-import org.opensearch.action.admin.indices.shrink.ShrinkAction;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
@@ -341,7 +330,6 @@ import org.opensearch.search.aggregations.bucket.terms.StringTerms;
 import org.opensearch.search.aggregations.metrics.AvgAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.ExtendedStatsAggregationBuilder;
-import org.opensearch.search.aggregations.metrics.GeoBoundsAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.GeoCentroidAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.InternalHDRPercentileRanks;
 import org.opensearch.search.aggregations.metrics.InternalHDRPercentiles;
@@ -352,7 +340,6 @@ import org.opensearch.search.aggregations.metrics.MinAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.ParsedAvg;
 import org.opensearch.search.aggregations.metrics.ParsedCardinality;
 import org.opensearch.search.aggregations.metrics.ParsedExtendedStats;
-import org.opensearch.search.aggregations.metrics.ParsedGeoBounds;
 import org.opensearch.search.aggregations.metrics.ParsedGeoCentroid;
 import org.opensearch.search.aggregations.metrics.ParsedHDRPercentileRanks;
 import org.opensearch.search.aggregations.metrics.ParsedHDRPercentiles;
@@ -419,7 +406,7 @@ public class HttpClient extends AbstractClient {
 
         private final String value;
 
-        private ContentType(final String value) {
+        ContentType(final String value) {
             this.value = value;
         }
 
@@ -638,12 +625,6 @@ public class HttpClient extends AbstractClient {
             final ActionListener<ClusterHealthResponse> actionListener = (ActionListener<ClusterHealthResponse>) listener;
             new HttpClusterHealthAction(this, ClusterHealthAction.INSTANCE).execute((ClusterHealthRequest) request, actionListener);
         });
-        actions.put(AliasesExistAction.INSTANCE, (request, listener) -> {
-            // org.codelibs.fesen.action.admin.indices.alias.exists.AliasesExistAction
-            @SuppressWarnings("unchecked")
-            final ActionListener<AliasesExistResponse> actionListener = (ActionListener<AliasesExistResponse>) listener;
-            new HttpAliasesExistAction(this, AliasesExistAction.INSTANCE).execute((GetAliasesRequest) request, actionListener);
-        });
         actions.put(ValidateQueryAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryAction
             @SuppressWarnings("unchecked")
@@ -662,18 +643,6 @@ public class HttpClient extends AbstractClient {
             @SuppressWarnings("unchecked")
             final ActionListener<GetAliasesResponse> actionListener = (ActionListener<GetAliasesResponse>) listener;
             new HttpGetAliasesAction(this, GetAliasesAction.INSTANCE).execute((GetAliasesRequest) request, actionListener);
-        });
-        actions.put(SyncedFlushAction.INSTANCE, (request, listener) -> {
-            // org.codelibs.fesen.action.admin.indices.flush.SyncedFlushAction
-            @SuppressWarnings("unchecked")
-            final ActionListener<SyncedFlushResponse> actionListener = (ActionListener<SyncedFlushResponse>) listener;
-            new HttpSyncedFlushAction(this, SyncedFlushAction.INSTANCE).execute((SyncedFlushRequest) request, actionListener);
-        });
-        actions.put(ShrinkAction.INSTANCE, (request, listener) -> {
-            // org.codelibs.fesen.action.admin.indices.shrink.ShrinkAction
-            @SuppressWarnings("unchecked")
-            final ActionListener<ResizeResponse> actionListener = (ActionListener<ResizeResponse>) listener;
-            new HttpShrinkAction(this, ShrinkAction.INSTANCE).execute((ResizeRequest) request, actionListener);
         });
         actions.put(RolloverAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.rollover.RolloverAction
@@ -889,7 +858,7 @@ public class HttpClient extends AbstractClient {
                     engineInfo = new EngineInfo(content);
                     return engineInfo;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Failed to access status.", e);
             }
         }
@@ -1025,7 +994,6 @@ public class HttpClient extends AbstractClient {
         map.put(StatsBucketPipelineAggregationBuilder.NAME, (p, c) -> ParsedStatsBucket.fromXContent(p, (String) c));
         map.put(ExtendedStatsAggregationBuilder.NAME, (p, c) -> ParsedExtendedStats.fromXContent(p, (String) c));
         map.put(ExtendedStatsBucketPipelineAggregationBuilder.NAME, (p, c) -> ParsedExtendedStatsBucket.fromXContent(p, (String) c));
-        map.put(GeoBoundsAggregationBuilder.NAME, (p, c) -> ParsedGeoBounds.fromXContent(p, (String) c));
         map.put(GeoCentroidAggregationBuilder.NAME, (p, c) -> ParsedGeoCentroid.fromXContent(p, (String) c));
         map.put(HistogramAggregationBuilder.NAME, (p, c) -> ParsedHistogram.fromXContent(p, (String) c));
         map.put(DateHistogramAggregationBuilder.NAME, (p, c) -> ParsedDateHistogram.fromXContent(p, (String) c));
@@ -1050,16 +1018,16 @@ public class HttpClient extends AbstractClient {
         map.put(IpRangeAggregationBuilder.NAME, (p, c) -> ParsedBinaryRange.fromXContent(p, (String) c));
         map.put(TopHitsAggregationBuilder.NAME, (p, c) -> ParsedTopHits.fromXContent(p, (String) c));
         map.put(CompositeAggregationBuilder.NAME, (p, c) -> ParsedComposite.fromXContent(p, (String) c));
-        final List<NamedXContentRegistry.Entry> entries = map.entrySet().stream()
-                .map(entry -> new NamedXContentRegistry.Entry(Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
-                .collect(Collectors.toList());
+
         //        entries.add(new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField(TermSuggestion.NAME),
         //                (parser, context) -> TermSuggestion.fromXContent(parser, (String) context)));
         //        entries.add(new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField(PhraseSuggestion.NAME),
         //                (parser, context) -> PhraseSuggestion.fromXContent(parser, (String) context)));
         //        entries.add(new NamedXContentRegistry.Entry(Suggest.Suggestion.class, new ParseField(CompletionSuggestion.NAME),
         //                (parser, context) -> CompletionSuggestion.fromXContent(parser, (String) context)));
-        return entries;
+        return map.entrySet().stream()
+                .map(entry -> new NamedXContentRegistry.Entry(Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     protected List<NamedXContentRegistry.Entry> getProvidedNamedXContents() {

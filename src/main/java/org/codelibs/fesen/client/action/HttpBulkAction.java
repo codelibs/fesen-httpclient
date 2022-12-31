@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
-import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.ActionListener;
@@ -122,13 +121,13 @@ public class HttpBulkAction extends HttpAction {
     }
 
     // BulkResponse.fromXContent(parser)
-    protected BulkResponse fromXContent(XContentParser parser) throws IOException {
+    protected BulkResponse fromXContent(final XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
 
         long took = -1L;
         long ingestTook = BulkResponse.NO_INGEST_TOOK;
-        List<BulkItemResponse> items = new ArrayList<>();
+        final List<BulkItemResponse> items = new ArrayList<>();
 
         String currentFieldName = parser.currentName();
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
@@ -139,7 +138,7 @@ public class HttpBulkAction extends HttpAction {
                     took = parser.longValue();
                 } else if (INGEST_TOOK.equals(currentFieldName)) {
                     ingestTook = parser.longValue();
-                } else if (ERRORS.equals(currentFieldName) == false) {
+                } else if (!ERRORS.equals(currentFieldName)) {
                     throwUnknownField(currentFieldName, parser.getTokenLocation());
                 }
             } else if (token == XContentParser.Token.START_ARRAY) {
@@ -158,7 +157,7 @@ public class HttpBulkAction extends HttpAction {
     }
 
     // BulkItemResponse.fromXContent(parser, items.size()))
-    protected BulkItemResponse fromXContent(XContentParser parser, int id) throws IOException {
+    protected BulkItemResponse fromXContent(final XContentParser parser, final int id) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);
 
         XContentParser.Token token = parser.nextToken();
@@ -176,17 +175,17 @@ public class HttpBulkAction extends HttpAction {
         if (opType == OpType.INDEX || opType == OpType.CREATE) {
             final IndexResponse.Builder indexResponseBuilder = new IndexResponse.Builder();
             builder = indexResponseBuilder;
-            itemParser = (indexParser) -> IndexResponse.parseXContentFields(indexParser, indexResponseBuilder);
+            itemParser = indexParser -> IndexResponse.parseXContentFields(indexParser, indexResponseBuilder);
 
         } else if (opType == OpType.UPDATE) {
             final UpdateResponse.Builder updateResponseBuilder = new UpdateResponse.Builder();
             builder = updateResponseBuilder;
-            itemParser = (updateParser) -> UpdateResponse.parseXContentFields(updateParser, updateResponseBuilder);
+            itemParser = updateParser -> UpdateResponse.parseXContentFields(updateParser, updateResponseBuilder);
 
         } else if (opType == OpType.DELETE) {
             final DeleteResponse.Builder deleteResponseBuilder = new DeleteResponse.Builder();
             builder = deleteResponseBuilder;
-            itemParser = (deleteParser) -> DeleteResponse.parseXContentFields(deleteParser, deleteResponseBuilder);
+            itemParser = deleteParser -> DeleteResponse.parseXContentFields(deleteParser, deleteResponseBuilder);
         } else {
             throwUnknownField(currentFieldName, parser.getTokenLocation());
         }
@@ -215,14 +214,9 @@ public class HttpBulkAction extends HttpAction {
         token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.END_OBJECT, token, parser);
 
-        final EngineType engineType = client.getEngineInfo().getType();
-        if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
-            builder.setType("_doc");
-        }
-
         BulkItemResponse bulkItemResponse;
         if (exception != null) {
-            Failure failure = new Failure(builder.getShardId().getIndexName(), builder.getType(), builder.getId(), exception, status);
+            final Failure failure = new Failure(builder.getShardId().getIndexName(), builder.getId(), exception, status);
             bulkItemResponse = new BulkItemResponse(id, opType, failure);
         } else {
             bulkItemResponse = new BulkItemResponse(id, opType, builder.build());
@@ -251,11 +245,6 @@ public class HttpBulkAction extends HttpAction {
         final String opType = request.opType().getLowercase();
         buf.append("{\"").append(opType).append("\":{");
         appendStr(buf, "_index", request.index());
-        if (request.type() != null &&
-        // workaround fix for org.codelibs.fesen.action.index.IndexRequest.type()
-                !request.type().equals("_doc")) {
-            appendStr(buf.append(','), "_type", request.type());
-        }
         if (request.id() != null) {
             appendStr(buf.append(','), "_id", request.id());
         }

@@ -44,8 +44,6 @@ public class HttpRefreshAction extends HttpAction {
     }
 
     protected CurlRequest getCurlRequest(final RefreshRequest request) {
-        // RestRefreshAction
-        final CurlRequest curlRequest = client.getCurlRequest(POST, "/_refresh", request.indices());
-        return curlRequest;
+        return client.getCurlRequest(POST, "/_refresh", request.indices());
     }
 }

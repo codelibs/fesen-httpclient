@@ -70,16 +70,13 @@ public class HttpAnalyzeAction extends HttpAction {
     }
 
     protected CurlRequest getCurlRequest(final AnalyzeAction.Request request) {
-        // RestAnalyzeAction
-        final CurlRequest curlRequest =
-                client.getCurlRequest(POST, "/_analyze", request.index() == null ? new String[0] : request.indices());
-        return curlRequest;
+        return client.getCurlRequest(POST, "/_analyze", request.index() == null ? new String[0] : request.indices());
     }
 
     protected XContentBuilder toXContent(final AnalyzeAction.Request request, final XContentBuilder builder) throws IOException {
         builder.startObject();
         builder.field("text", request.text());
-        if (Strings.isNullOrEmpty(request.analyzer()) == false) {
+        if (!Strings.isNullOrEmpty(request.analyzer())) {
             builder.field("analyzer", request.analyzer());
         }
         if (request.tokenizer() != null) {
@@ -91,7 +88,7 @@ public class HttpAnalyzeAction extends HttpAction {
         if (request.charFilters().size() > 0) {
             builder.field("char_filter", request.charFilters());
         }
-        if (Strings.isNullOrEmpty(request.field()) == false) {
+        if (!Strings.isNullOrEmpty(request.field())) {
             builder.field("field", request.field());
         }
         if (request.explain()) {
@@ -100,7 +97,7 @@ public class HttpAnalyzeAction extends HttpAction {
         if (request.attributes().length > 0) {
             builder.field("attributes", request.attributes());
         }
-        if (Strings.isNullOrEmpty(request.normalizer()) == false) {
+        if (!Strings.isNullOrEmpty(request.normalizer())) {
             builder.field("normalizer", request.normalizer());
         }
         return builder.endObject();
@@ -200,18 +197,16 @@ public class HttpAnalyzeAction extends HttpAction {
                 positionLength = parser.intValue();
             } else if (Fields.TYPE.equals(field)) {
                 type = parser.text();
-            } else {
-                if (t == XContentParser.Token.VALUE_STRING) {
-                    attributes.put(field, parser.text());
-                } else if (t == XContentParser.Token.VALUE_NUMBER) {
-                    attributes.put(field, parser.numberValue());
-                } else if (t == XContentParser.Token.VALUE_BOOLEAN) {
-                    attributes.put(field, parser.booleanValue());
-                } else if (t == XContentParser.Token.START_OBJECT) {
-                    attributes.put(field, parser.map());
-                } else if (t == XContentParser.Token.START_ARRAY) {
-                    attributes.put(field, parser.list());
-                }
+            } else if (t == XContentParser.Token.VALUE_STRING) {
+                attributes.put(field, parser.text());
+            } else if (t == XContentParser.Token.VALUE_NUMBER) {
+                attributes.put(field, parser.numberValue());
+            } else if (t == XContentParser.Token.VALUE_BOOLEAN) {
+                attributes.put(field, parser.booleanValue());
+            } else if (t == XContentParser.Token.START_OBJECT) {
+                attributes.put(field, parser.map());
+            } else if (t == XContentParser.Token.START_ARRAY) {
+                attributes.put(field, parser.list());
             }
         }
         return new AnalyzeToken(term, position, startOffset, endOffset, positionLength, type, attributes);
@@ -221,8 +216,7 @@ public class HttpAnalyzeAction extends HttpAction {
             final CharFilteredText[] charfilters, final AnalyzeTokenList tokenizer, final AnalyzeTokenList[] tokenfilters) {
         if (customAnalyzer) {
             return new DetailAnalyzeResponse(charfilters, tokenizer, tokenfilters);
-        } else {
-            return new DetailAnalyzeResponse(analyzer);
         }
+        return new DetailAnalyzeResponse(analyzer);
     }
 }

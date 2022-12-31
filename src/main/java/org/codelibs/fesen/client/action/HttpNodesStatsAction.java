@@ -43,6 +43,8 @@ import org.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
 import org.opensearch.action.admin.indices.stats.IndexShardStats;
 import org.opensearch.cluster.ClusterName;
 import org.opensearch.cluster.DiskUsage;
+import org.opensearch.cluster.coordination.PendingClusterStateStats;
+import org.opensearch.cluster.coordination.PublishClusterStateStats;
 import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.cluster.node.DiscoveryNodeRole;
 import org.opensearch.common.io.stream.InputStreamStreamInput;
@@ -50,8 +52,6 @@ import org.opensearch.common.io.stream.StreamInput;
 import org.opensearch.common.transport.TransportAddress;
 import org.opensearch.common.xcontent.XContentParser;
 import org.opensearch.discovery.DiscoveryStats;
-import org.opensearch.discovery.zen.PendingClusterStateStats;
-import org.opensearch.discovery.zen.PublishClusterStateStats;
 import org.opensearch.http.HttpStats;
 import org.opensearch.index.Index;
 import org.opensearch.index.cache.query.QueryCacheStats;
@@ -83,6 +83,9 @@ import org.opensearch.monitor.process.ProcessStats;
 import org.opensearch.node.AdaptiveSelectionStats;
 import org.opensearch.script.ScriptCacheStats;
 import org.opensearch.script.ScriptStats;
+import org.opensearch.search.backpressure.settings.SearchBackpressureMode;
+import org.opensearch.search.backpressure.stats.SearchBackpressureStats;
+import org.opensearch.search.backpressure.stats.SearchShardTaskStats;
 import org.opensearch.search.suggest.completion.CompletionStats;
 import org.opensearch.threadpool.ThreadPoolStats;
 import org.opensearch.transport.TransportStats;
@@ -122,10 +125,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     parser.nextToken();
                     nodes = parseNodes(parser);
                 }
-            } else if (token == XContentParser.Token.VALUE_STRING) {
-                if ("cluster_name".equals(fieldName)) {
-                    clusterName = new ClusterName(parser.text());
-                }
+            } else if ((token == XContentParser.Token.VALUE_STRING) && "cluster_name".equals(fieldName)) {
+                clusterName = new ClusterName(parser.text());
             }
             parser.nextToken();
         }
@@ -170,6 +171,7 @@ public class HttpNodesStatsAction extends HttpAction {
         ScriptCacheStats scriptCacheStats = null;
         IndexingPressureStats indexingPressureStats = null;
         ShardIndexingPressureStats shardIndexingPressureStats = null;
+        SearchBackpressureStats searchBackpressureStats = null;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -210,6 +212,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     indexingPressureStats = parsesIndexingPressureStats(parser);
                 } else if ("shard_indexing_pressure".equals(fieldName)) {
                     shardIndexingPressureStats = parsesShardIndexingPressureStats(parser);
+                } else if ("search_backpressure".equals(fieldName)) {
+                    searchBackpressureStats = parsesSearchBackpressureStats(parser);
                 } else {
                     consumeObject(parser);
                 }
@@ -230,7 +234,8 @@ public class HttpNodesStatsAction extends HttpAction {
         }
         final DiscoveryNode node = new DiscoveryNode(nodeName, nodeId, transportAddress, attributes, roles, Version.CURRENT);
         return new NodeStats(node, timestamp, indices, os, process, jvm, threadPool, fs, transport, http, breaker, scriptStats,
-                discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats, shardIndexingPressureStats);
+                discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats, shardIndexingPressureStats,
+                searchBackpressureStats);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
@@ -242,14 +247,13 @@ public class HttpNodesStatsAction extends HttpAction {
                     port = Integer.parseInt(values[1]);
                 }
                 return new TransportAddress(InetAddress.getByName(values[0].replace('[', ' ').replace(']', ' ').trim()), port);
-            } else {
-                final String[] values = addr.split(":");
-                int port = 0;
-                if (values.length > 1) {
-                    port = Integer.parseInt(values[1]);
-                }
-                return new TransportAddress(InetAddress.getByName(values[0]), port);
             }
+            final String[] values = addr.split(":");
+            int port = 0;
+            if (values.length > 1) {
+                port = Integer.parseInt(values[1]);
+            }
+            return new TransportAddress(InetAddress.getByName(values[0]), port);
         } catch (final Exception e) {
             return new TransportAddress(TransportAddress.META_ADDRESS, 0);
         }
@@ -273,6 +277,11 @@ public class HttpNodesStatsAction extends HttpAction {
     protected ShardIndexingPressureStats parsesShardIndexingPressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser); // TODO
         return new ShardIndexingPressureStats(Collections.emptyMap(), 0, 0, 0, false, false);
+    }
+
+    protected SearchBackpressureStats parsesSearchBackpressureStats(final XContentParser parser) throws IOException {
+        consumeObject(parser); // TODO
+        return new SearchBackpressureStats(new SearchShardTaskStats(0, 0, Collections.emptyMap()), SearchBackpressureMode.DISABLED);
     }
 
     protected IngestStats parseIngestStats(final XContentParser parser) throws IOException {
@@ -575,10 +584,8 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else {
                     consumeObject(parser);
                 }
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("timestamp".equals(fieldName)) {
-                    timestamp = parser.longValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "timestamp".equals(fieldName)) {
+                timestamp = parser.longValue();
             }
             parser.nextToken();
         }
@@ -602,10 +609,8 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("available_in_bytes".equals(fieldName)) {
                     freeBytes = parser.longValue();
                 }
-            } else if (token == XContentParser.Token.VALUE_STRING) {
-                if ("path".equals(fieldName)) {
-                    path = parser.text();
-                }
+            } else if ((token == XContentParser.Token.VALUE_STRING) && "path".equals(fieldName)) {
+                path = parser.text();
             }
             parser.nextToken();
         }
@@ -945,10 +950,8 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("total_virtual_in_bytes".equals(fieldName)) {
-                    totalVirtual = parser.longValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "total_virtual_in_bytes".equals(fieldName)) {
+                totalVirtual = parser.longValue();
             }
             parser.nextToken();
         }
@@ -999,10 +1002,8 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else {
                     consumeObject(parser);
                 }
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("timestamp".equals(fieldName)) {
-                    timestamp = parser.longValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "timestamp".equals(fieldName)) {
+                timestamp = parser.longValue();
             }
             parser.nextToken();
         }
@@ -1034,10 +1035,8 @@ public class HttpNodesStatsAction extends HttpAction {
                             if ("control_group".equals(fieldName)) {
                                 cpuAcctControlGroup = parser.text();
                             }
-                        } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                            if ("usage_nanos".equals(fieldName)) {
-                                cpuAcctUsageNanos = parser.longValue();
-                            }
+                        } else if ((token == XContentParser.Token.VALUE_NUMBER) && "usage_nanos".equals(fieldName)) {
+                            cpuAcctUsageNanos = parser.longValue();
                         }
                         parser.nextToken();
                     }
@@ -1175,10 +1174,8 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else {
                     consumeObject(parser);
                 }
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("percent".equals(fieldName)) {
-                    systemCpuPercent = parser.shortValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "percent".equals(fieldName)) {
+                systemCpuPercent = parser.shortValue();
             }
             parser.nextToken();
         }
@@ -1452,10 +1449,8 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("size_in_bytes".equals(fieldName)) {
-                    size = parser.longValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "size_in_bytes".equals(fieldName)) {
+                size = parser.longValue();
             }
             parser.nextToken();
         }
@@ -1639,8 +1634,7 @@ public class HttpNodesStatsAction extends HttpAction {
             out.writeVLong(totalThrottledTimeInMillis);
             out.writeVLong(totalBytesPerSecAutoThrottle);
             try (StreamInput in = new InputStreamStreamInput(new ByteArrayInputStream(out.toByteArray()))) {
-                final MergeStats mergeStats = new MergeStats(in);
-                return mergeStats;
+                return new MergeStats(in);
             }
         }
     }
@@ -1656,6 +1650,9 @@ public class HttpNodesStatsAction extends HttpAction {
         long scrollCount = 0;
         long scrollTimeInMillis = 0;
         long scrollCurrent = 0;
+        long pitCount = 0;
+        long pitTimeInMillis = 0;
+        long pitCurrent = 0;
         long suggestCount = 0;
         long suggestTimeInMillis = 0;
         long suggestCurrent = 0;
@@ -1683,6 +1680,12 @@ public class HttpNodesStatsAction extends HttpAction {
                     scrollTimeInMillis = parser.longValue();
                 } else if ("scroll_current".equals(fieldName)) {
                     scrollCurrent = parser.longValue();
+                } else if ("point_in_time_total".equals(fieldName)) {
+                    pitCount = parser.longValue();
+                } else if ("point_in_time_time_in_millis".equals(fieldName)) {
+                    pitTimeInMillis = parser.longValue();
+                } else if ("point_in_time_current".equals(fieldName)) {
+                    pitCurrent = parser.longValue();
                 } else if ("suggest_total".equals(fieldName)) {
                     suggestCount = parser.longValue();
                 } else if ("suggest_time_in_millis".equals(fieldName)) {
@@ -1696,8 +1699,8 @@ public class HttpNodesStatsAction extends HttpAction {
             parser.nextToken();
         }
         return new SearchStats(new SearchStats.Stats(queryCount, queryTimeInMillis, queryCurrent, fetchCount, fetchTimeInMillis,
-                fetchCurrent, scrollCount, scrollTimeInMillis, scrollCurrent, suggestCount, suggestTimeInMillis, suggestCurrent),
-                openContexts, null);
+                fetchCurrent, scrollCount, scrollTimeInMillis, scrollCurrent, pitCount, pitTimeInMillis, pitCurrent, suggestCount,
+                suggestTimeInMillis, suggestCurrent), openContexts, null);
     }
 
     protected GetStats parseGetStats(final XContentParser parser) throws IOException {
@@ -1773,7 +1776,7 @@ public class HttpNodesStatsAction extends HttpAction {
             parser.nextToken();
         }
         return new IndexingStats(new IndexingStats.Stats(indexCount, indexTimeInMillis, indexCurrent, indexFailedCount, deleteCount,
-                deleteTimeInMillis, deleteCurrent, noopUpdateCount, isThrottled, throttleTimeInMillis), null);
+                deleteTimeInMillis, deleteCurrent, noopUpdateCount, isThrottled, throttleTimeInMillis));
     }
 
     protected StoreStats parseStoreStats(final XContentParser parser) throws IOException {
@@ -1856,9 +1859,8 @@ public class HttpNodesStatsAction extends HttpAction {
         if (request.indices().anySet() && CommonStatsFlags.ALL.getFlags().length != request.indices().getFlags().length) {
             return metrics.stream().collect(Collectors.joining(",")) + "/"
                     + Arrays.stream(request.indices().getFlags()).map(Flag::getRestName).collect(Collectors.joining(","));
-        } else {
-            return metrics.stream().collect(Collectors.joining(","));
         }
+        return metrics.stream().collect(Collectors.joining(","));
     }
 
     protected CurlRequest getCurlRequest(final NodesStatsRequest request) {

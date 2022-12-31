@@ -15,6 +15,10 @@
  */
 package org.codelibs.fesen.client.action;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
@@ -22,6 +26,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
+import org.opensearch.cluster.metadata.IndexTemplateMetadata;
 import org.opensearch.common.xcontent.XContentParser;
 
 public class HttpGetIndexTemplatesAction extends HttpAction {
@@ -36,7 +41,7 @@ public class HttpGetIndexTemplatesAction extends HttpAction {
     public void execute(final GetIndexTemplatesRequest request, final ActionListener<GetIndexTemplatesResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final GetIndexTemplatesResponse getIndexTemplatesResponse = GetIndexTemplatesResponse.fromXContent(parser);
+                final GetIndexTemplatesResponse getIndexTemplatesResponse = fromXContent(parser);
                 listener.onResponse(getIndexTemplatesResponse);
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
@@ -52,5 +57,16 @@ public class HttpGetIndexTemplatesAction extends HttpAction {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
         return curlRequest;
+    }
+
+    private static GetIndexTemplatesResponse fromXContent(final XContentParser parser) throws IOException {
+        final List<IndexTemplateMetadata> templates = new ArrayList<>();
+        for (XContentParser.Token token = parser.nextToken(); token != XContentParser.Token.END_OBJECT; token = parser.nextToken()) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                final IndexTemplateMetadata templateMetadata = IndexTemplateMetadata.Builder.fromXContent(parser, parser.currentName());
+                templates.add(templateMetadata);
+            }
+        }
+        return new GetIndexTemplatesResponse(templates);
     }
 }
