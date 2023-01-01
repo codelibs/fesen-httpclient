@@ -278,7 +278,7 @@ import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.action.update.UpdateAction;
 import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.action.update.UpdateResponse;
-import org.opensearch.client.support.AbstractClient;
+import org.opensearch.client.AdminClient;
 import org.opensearch.common.ParseField;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.ContextParser;
@@ -371,7 +371,7 @@ import org.opensearch.search.aggregations.pipeline.PercentilesBucketPipelineAggr
 import org.opensearch.search.aggregations.pipeline.StatsBucketPipelineAggregationBuilder;
 import org.opensearch.threadpool.ThreadPool;
 
-public class HttpClient extends AbstractClient {
+public class HttpClient extends HttpAbstractClient {
 
     protected static final Function<String, CurlRequest> GET = Curl::get;
 
@@ -834,6 +834,11 @@ public class HttpClient extends AbstractClient {
         // org.codelibs.fesen.action.termvectors.MultiTermVectorsAction
         // org.codelibs.fesen.action.termvectors.TermVectorsAction
 
+    }
+
+    @Override
+    public AdminClient admin() {
+        return new HttpAdminClient(super.admin());
     }
 
     public EngineInfo getEngineInfo() {

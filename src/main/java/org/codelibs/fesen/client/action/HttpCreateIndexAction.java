@@ -16,7 +16,6 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
@@ -29,7 +28,6 @@ import org.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.opensearch.action.admin.indices.create.CreateIndexResponse;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.common.ParseField;
-import org.opensearch.common.bytes.BytesArray;
 import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.NamedXContentRegistry;
@@ -37,7 +35,6 @@ import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.ToXContent.Params;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentParser;
-import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.common.xcontent.json.JsonXContent;
 
 public class HttpCreateIndexAction extends HttpAction {
@@ -91,16 +88,15 @@ public class HttpCreateIndexAction extends HttpAction {
         }
         try (final XContentParser createParser =
                 JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, mappingSource)) {
-            final Map<String, Object> mappingMap = createParser.map();
-            if (mappingMap.containsKey("_doc")) {
-                builder.startObject(MAPPINGS.getPreferredName());
-                builder.field("properties", mappingMap.get("_doc"));
-                builder.endObject();
-            } else {
-                try (InputStream stream = new BytesArray(mappingSource).streamInput()) {
-                    builder.rawField(MAPPINGS.getPreferredName(), stream, XContentType.JSON);
-                }
+            Map<String, Object> mappingMap = createParser.map();
+            if (mappingMap.get("_doc") instanceof final Map map) {
+                mappingMap = map;
             }
+            builder.startObject(MAPPINGS.getPreferredName());
+            for (final Map.Entry<String, Object> e : mappingMap.entrySet()) {
+                builder.field(e.getKey(), e.getValue());
+            }
+            builder.endObject();
         }
 
         builder.startObject(ALIASES.getPreferredName());
