@@ -174,7 +174,7 @@ public class HttpAction {
     }
 
     /**
-     * Accepts either a format string, which is equivalent to {@link XContentType#shortName()} or a media type that optionally has
+     * Accepts either a format string, which is equivalent to a media type that optionally has
      * parameters and attempts to match the value to an {@link XContentType}. The comparisons are done in lower case format and this method
      * also supports a wildcard accept for {@code application/*}. This method can be used to parse the {@code Accept} HTTP header or a
      * format query string parameter. This method will return {@code null} if no match is found
