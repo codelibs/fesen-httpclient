@@ -421,7 +421,6 @@ import org.opensearch.threadpool.ThreadPool;
 /**
  * Base client used to create concrete client implementations
  *
- * @opensearch.internal
  */
 public abstract class HttpAbstractClient implements Client {
 
