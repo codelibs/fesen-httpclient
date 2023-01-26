@@ -176,6 +176,7 @@ public class HttpClusterHealthAction extends HttpAction {
                     out.writeInt(numberOfInFlightFetch);
                     out.writeInt(delayedUnassignedShards);
                     out.writeTimeValue(TimeValue.timeValueMillis(taskMaxWaitingTimeMillis));
+                    out.writeBoolean(false); // ClusterAwarenessHealth
                     return new ClusterHealthResponse(out.toStreamInput());
                 } catch (final IOException e) {
                     throw new UncheckedIOException(e);
