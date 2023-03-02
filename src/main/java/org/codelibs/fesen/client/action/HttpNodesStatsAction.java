@@ -47,6 +47,8 @@ import org.opensearch.cluster.coordination.PendingClusterStateStats;
 import org.opensearch.cluster.coordination.PublishClusterStateStats;
 import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.cluster.node.DiscoveryNodeRole;
+import org.opensearch.cluster.routing.WeightedRoutingStats;
+import org.opensearch.cluster.service.ClusterManagerThrottlingStats;
 import org.opensearch.common.io.stream.InputStreamStreamInput;
 import org.opensearch.common.io.stream.StreamInput;
 import org.opensearch.common.transport.TransportAddress;
@@ -86,6 +88,7 @@ import org.opensearch.script.ScriptStats;
 import org.opensearch.search.backpressure.settings.SearchBackpressureMode;
 import org.opensearch.search.backpressure.stats.SearchBackpressureStats;
 import org.opensearch.search.backpressure.stats.SearchShardTaskStats;
+import org.opensearch.search.backpressure.stats.SearchTaskStats;
 import org.opensearch.search.suggest.completion.CompletionStats;
 import org.opensearch.threadpool.ThreadPoolStats;
 import org.opensearch.transport.TransportStats;
@@ -172,6 +175,8 @@ public class HttpNodesStatsAction extends HttpAction {
         IndexingPressureStats indexingPressureStats = null;
         ShardIndexingPressureStats shardIndexingPressureStats = null;
         SearchBackpressureStats searchBackpressureStats = null;
+        ClusterManagerThrottlingStats clusterManagerThrottlingStats = null;
+        WeightedRoutingStats weightedRoutingStats = null;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -209,11 +214,15 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("script_cache".equals(fieldName)) {
                     scriptCacheStats = parseScriptCacheStats(parser);
                 } else if ("indexing_pressure".equals(fieldName)) {
-                    indexingPressureStats = parsesIndexingPressureStats(parser);
+                    indexingPressureStats = parseIndexingPressureStats(parser);
                 } else if ("shard_indexing_pressure".equals(fieldName)) {
-                    shardIndexingPressureStats = parsesShardIndexingPressureStats(parser);
+                    shardIndexingPressureStats = parseShardIndexingPressureStats(parser);
                 } else if ("search_backpressure".equals(fieldName)) {
-                    searchBackpressureStats = parsesSearchBackpressureStats(parser);
+                    searchBackpressureStats = parseSearchBackpressureStats(parser);
+                } else if ("cluster_manager_throttling".equals(fieldName)) {
+                    clusterManagerThrottlingStats = parseClusterManagerThrottlingStats(parser);
+                } else if ("weighted_routing".equals(fieldName)) {
+                    weightedRoutingStats = parseWeightedRoutingStats(parser);
                 } else {
                     consumeObject(parser);
                 }
@@ -235,7 +244,7 @@ public class HttpNodesStatsAction extends HttpAction {
         final DiscoveryNode node = new DiscoveryNode(nodeName, nodeId, transportAddress, attributes, roles, Version.CURRENT);
         return new NodeStats(node, timestamp, indices, os, process, jvm, threadPool, fs, transport, http, breaker, scriptStats,
                 discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats, shardIndexingPressureStats,
-                searchBackpressureStats);
+                searchBackpressureStats, clusterManagerThrottlingStats, weightedRoutingStats);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
@@ -269,19 +278,30 @@ public class HttpNodesStatsAction extends HttpAction {
         return new ScriptCacheStats(Collections.emptyMap());
     }
 
-    protected IndexingPressureStats parsesIndexingPressureStats(final XContentParser parser) throws IOException {
+    protected IndexingPressureStats parseIndexingPressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser); // TODO
         return new IndexingPressureStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
-    protected ShardIndexingPressureStats parsesShardIndexingPressureStats(final XContentParser parser) throws IOException {
+    protected ShardIndexingPressureStats parseShardIndexingPressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser); // TODO
         return new ShardIndexingPressureStats(Collections.emptyMap(), 0, 0, 0, false, false);
     }
 
-    protected SearchBackpressureStats parsesSearchBackpressureStats(final XContentParser parser) throws IOException {
+    protected SearchBackpressureStats parseSearchBackpressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser); // TODO
-        return new SearchBackpressureStats(new SearchShardTaskStats(0, 0, Collections.emptyMap()), SearchBackpressureMode.DISABLED);
+        return new SearchBackpressureStats(new SearchTaskStats(0, 0, Collections.emptyMap()),
+                new SearchShardTaskStats(0, 0, Collections.emptyMap()), SearchBackpressureMode.DISABLED);
+    }
+
+    protected ClusterManagerThrottlingStats parseClusterManagerThrottlingStats(final XContentParser parser) throws IOException {
+        consumeObject(parser); // TODO
+        return new ClusterManagerThrottlingStats();
+    }
+
+    protected WeightedRoutingStats parseWeightedRoutingStats(final XContentParser parser) throws IOException {
+        consumeObject(parser); // TODO
+        return WeightedRoutingStats.getInstance();
     }
 
     protected IngestStats parseIngestStats(final XContentParser parser) throws IOException {

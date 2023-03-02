@@ -271,6 +271,10 @@ import org.opensearch.action.admin.indices.refresh.RefreshAction;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequestBuilder;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequestBuilder;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
 import org.opensearch.action.admin.indices.resolve.ResolveIndexAction;
 import org.opensearch.action.admin.indices.rollover.RolloverAction;
 import org.opensearch.action.admin.indices.rollover.RolloverRequest;
@@ -1978,6 +1982,22 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public ActionFuture<ResolveIndexAction.Response> resolveIndex(final ResolveIndexAction.Request request) {
             return execute(ResolveIndexAction.INSTANCE, request);
+        }
+
+        @Override
+        public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(SegmentReplicationStatsRequest request) {
+            return execute(SegmentReplicationStatsAction.INSTANCE, request);
+        }
+
+        @Override
+        public void segmentReplicationStats(SegmentReplicationStatsRequest request,
+                ActionListener<SegmentReplicationStatsResponse> listener) {
+            execute(SegmentReplicationStatsAction.INSTANCE, request, listener);
+        }
+
+        @Override
+        public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(String... indices) {
+            return new SegmentReplicationStatsRequestBuilder(this, SegmentReplicationStatsAction.INSTANCE).setIndices(indices);
         }
     }
 
