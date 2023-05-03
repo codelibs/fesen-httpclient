@@ -26,7 +26,7 @@ import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpPutStoredScriptAction extends HttpAction {
 

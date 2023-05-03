@@ -15,12 +15,12 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static java.util.Collections.emptyMap;
-import static org.opensearch.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.opensearch.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.opensearch.core.xcontent.ConstructingObjectParser.constructorArg;
+import static org.opensearch.core.xcontent.ConstructingObjectParser.optionalConstructorArg;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +38,11 @@ import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.cluster.health.ClusterHealthStatus;
 import org.opensearch.cluster.health.ClusterIndexHealth;
 import org.opensearch.cluster.health.ClusterStateHealth;
-import org.opensearch.common.ParseField;
 import org.opensearch.common.unit.TimeValue;
-import org.opensearch.common.xcontent.ConstructingObjectParser;
-import org.opensearch.common.xcontent.ObjectParser;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.ParseField;
+import org.opensearch.core.xcontent.ConstructingObjectParser;
+import org.opensearch.core.xcontent.ObjectParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpClusterHealthAction extends HttpAction {
 
@@ -145,7 +145,7 @@ public class HttpClusterHealthAction extends HttpAction {
                 i++;
                 final Map<String, ClusterIndexHealth> indices;
                 if (indexList == null || indexList.isEmpty()) {
-                    indices = emptyMap();
+                    indices = Collections.emptyMap();
                 } else {
                     indices = new HashMap<>(indexList.size());
                     for (final ClusterIndexHealth indexHealth : indexList) {

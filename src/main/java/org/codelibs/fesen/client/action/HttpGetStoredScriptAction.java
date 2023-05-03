@@ -22,7 +22,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptAction;
 import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequest;
 import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetStoredScriptAction extends HttpAction {
 

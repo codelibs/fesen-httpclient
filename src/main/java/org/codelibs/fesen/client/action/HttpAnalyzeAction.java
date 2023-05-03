@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.opensearch.common.xcontent.ConstructingObjectParser.constructorArg;
-import static org.opensearch.common.xcontent.ConstructingObjectParser.optionalConstructorArg;
 import static org.opensearch.common.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.opensearch.core.xcontent.ConstructingObjectParser.constructorArg;
+import static org.opensearch.core.xcontent.ConstructingObjectParser.optionalConstructorArg;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -34,13 +34,13 @@ import org.opensearch.action.admin.indices.analyze.AnalyzeAction.AnalyzeToken;
 import org.opensearch.action.admin.indices.analyze.AnalyzeAction.AnalyzeTokenList;
 import org.opensearch.action.admin.indices.analyze.AnalyzeAction.CharFilteredText;
 import org.opensearch.action.admin.indices.analyze.AnalyzeAction.DetailAnalyzeResponse;
-import org.opensearch.common.ParseField;
 import org.opensearch.common.Strings;
 import org.opensearch.common.bytes.BytesReference;
-import org.opensearch.common.xcontent.ConstructingObjectParser;
-import org.opensearch.common.xcontent.XContentBuilder;
-import org.opensearch.common.xcontent.XContentParser;
 import org.opensearch.common.xcontent.json.JsonXContent;
+import org.opensearch.core.ParseField;
+import org.opensearch.core.xcontent.ConstructingObjectParser;
+import org.opensearch.core.xcontent.XContentBuilder;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpAnalyzeAction extends HttpAction {
 

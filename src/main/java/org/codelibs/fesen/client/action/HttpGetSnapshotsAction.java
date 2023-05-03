@@ -22,7 +22,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
 import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetSnapshotsAction extends HttpAction {
 

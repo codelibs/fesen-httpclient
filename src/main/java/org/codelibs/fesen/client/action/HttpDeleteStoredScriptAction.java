@@ -22,7 +22,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptAction;
 import org.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpDeleteStoredScriptAction extends HttpAction {
 

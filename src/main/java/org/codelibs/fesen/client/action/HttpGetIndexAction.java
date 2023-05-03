@@ -34,8 +34,7 @@ import org.opensearch.cluster.metadata.AliasMetadata;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.settings.Settings;
-import org.opensearch.common.xcontent.XContentParser;
-import org.opensearch.common.xcontent.XContentParser.Token;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetIndexAction extends HttpAction {
 
@@ -75,11 +74,11 @@ public class HttpGetIndexAction extends HttpAction {
         if (parser.currentToken() == null) {
             parser.nextToken();
         }
-        ensureExpectedToken(Token.START_OBJECT, parser.currentToken(), parser);
+        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);
         parser.nextToken();
 
         while (!parser.isClosed()) {
-            if (parser.currentToken() == Token.START_OBJECT) {
+            if (parser.currentToken() == XContentParser.Token.START_OBJECT) {
                 // we assume this is an index entry
                 final String indexName = parser.currentName();
                 indices.add(indexName);
@@ -95,7 +94,7 @@ public class HttpGetIndexAction extends HttpAction {
                 if (indexEntry.dataStream != null) {
                     dataStreams.put(indexName, indexEntry.dataStream);
                 }
-            } else if (parser.currentToken() == Token.START_ARRAY) {
+            } else if (parser.currentToken() == XContentParser.Token.START_ARRAY) {
                 parser.skipChildren();
             } else {
                 parser.nextToken();
@@ -112,10 +111,10 @@ public class HttpGetIndexAction extends HttpAction {
         Settings indexDefaultSettings = null;
         String dataStream = null;
         // We start at START_OBJECT since fromXContent ensures that
-        while (parser.nextToken() != Token.END_OBJECT) {
-            ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
+        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
             parser.nextToken();
-            if (parser.currentToken() == Token.START_OBJECT) {
+            if (parser.currentToken() == XContentParser.Token.START_OBJECT) {
                 switch (parser.currentName()) {
                 case "aliases":
                     indexAliases = parseAliases(parser);
@@ -132,12 +131,12 @@ public class HttpGetIndexAction extends HttpAction {
                 default:
                     parser.skipChildren();
                 }
-            } else if (parser.currentToken() == Token.VALUE_STRING) {
+            } else if (parser.currentToken() == XContentParser.Token.VALUE_STRING) {
                 if ("data_stream".equals(parser.currentName())) {
                     dataStream = parser.text();
                 }
                 parser.skipChildren();
-            } else if (parser.currentToken() == Token.START_ARRAY) {
+            } else if (parser.currentToken() == XContentParser.Token.START_ARRAY) {
                 parser.skipChildren();
             }
         }
@@ -147,8 +146,8 @@ public class HttpGetIndexAction extends HttpAction {
     protected static List<AliasMetadata> parseAliases(final XContentParser parser) throws IOException {
         final List<AliasMetadata> indexAliases = new ArrayList<>();
         // We start at START_OBJECT since parseIndexEntry ensures that
-        while (parser.nextToken() != Token.END_OBJECT) {
-            ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
+        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
             indexAliases.add(AliasMetadata.Builder.fromXContent(parser));
         }
         return indexAliases;
@@ -157,13 +156,13 @@ public class HttpGetIndexAction extends HttpAction {
     protected static ImmutableOpenMap<String, MappingMetadata> parseMappings(final XContentParser parser) throws IOException {
         final ImmutableOpenMap.Builder<String, MappingMetadata> indexMappings = ImmutableOpenMap.builder();
         // We start at START_OBJECT since parseIndexEntry ensures that
-        while (parser.nextToken() != Token.END_OBJECT) {
-            ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
+        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
             parser.nextToken();
-            if (parser.currentToken() == Token.START_OBJECT) {
+            if (parser.currentToken() == XContentParser.Token.START_OBJECT) {
                 final String mappingType = parser.currentName();
                 indexMappings.put(mappingType, new MappingMetadata(mappingType, parser.map()));
-            } else if (parser.currentToken() == Token.START_ARRAY) {
+            } else if (parser.currentToken() == XContentParser.Token.START_ARRAY) {
                 parser.skipChildren();
             }
         }

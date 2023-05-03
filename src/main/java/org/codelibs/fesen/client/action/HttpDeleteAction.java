@@ -30,7 +30,7 @@ import org.opensearch.action.delete.DeleteResponse;
 import org.opensearch.action.delete.DeleteResponse.Builder;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.VersionType;
 
 public class HttpDeleteAction extends HttpAction {

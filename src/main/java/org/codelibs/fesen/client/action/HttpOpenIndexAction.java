@@ -22,7 +22,7 @@ import org.opensearch.action.admin.indices.open.OpenIndexAction;
 import org.opensearch.action.admin.indices.open.OpenIndexRequest;
 import org.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpOpenIndexAction extends HttpAction {
 

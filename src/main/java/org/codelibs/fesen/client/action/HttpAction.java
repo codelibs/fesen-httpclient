@@ -28,12 +28,12 @@ import org.opensearch.OpenSearchException;
 import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.ActionListener;
 import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.common.ParseField;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.XContent;
 import org.opensearch.common.xcontent.XContentFactory;
-import org.opensearch.common.xcontent.XContentParser;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.core.ParseField;
+import org.opensearch.core.xcontent.XContent;
+import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.rest.BytesRestResponse;
 import org.opensearch.rest.RestStatus;
 

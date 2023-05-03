@@ -30,9 +30,8 @@ import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.opensearch.cluster.metadata.AliasMetadata;
 import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.XContentParser;
-import org.opensearch.common.xcontent.XContentParser.Token;
 import org.opensearch.common.xcontent.XContentParserUtils;
+import org.opensearch.core.xcontent.XContentParser;
 
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
@@ -71,10 +70,10 @@ public class HttpGetAliasesAction extends HttpAction {
         XContentParser.Token token;
         String index = null;
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == Token.FIELD_NAME) {
+            if (token == XContentParser.Token.FIELD_NAME) {
                 index = parser.currentName();
-            } else if (token == Token.START_OBJECT) {
-                while (parser.nextToken() == Token.FIELD_NAME) {
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                while (parser.nextToken() == XContentParser.Token.FIELD_NAME) {
                     final String currentFieldName = parser.currentName();
                     if (ALIASES_FIELD.match(currentFieldName, LoggingDeprecationHandler.INSTANCE)) {
                         aliasesMapBuilder.put(index, getAliases(parser));
@@ -102,12 +101,12 @@ public class HttpGetAliasesAction extends HttpAction {
 
     public static List<AliasMetadata> getAliases(final XContentParser parser) throws IOException {
         final List<AliasMetadata> aliases = new ArrayList<>();
-        Token token = parser.nextToken();
+        XContentParser.Token token = parser.nextToken();
         if (token == null) {
             return aliases;
         }
-        while ((token = parser.nextToken()) != Token.END_OBJECT) {
-            if (token == Token.FIELD_NAME) {
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
                 aliases.add(AliasMetadata.Builder.fromXContent(parser));
             }
         }

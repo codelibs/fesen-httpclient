@@ -21,7 +21,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpClearIndicesCacheAction extends HttpAction {
 

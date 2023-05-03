@@ -21,7 +21,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.main.MainAction;
 import org.opensearch.action.main.MainRequest;
 import org.opensearch.action.main.MainResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpMainAction extends HttpAction {
 

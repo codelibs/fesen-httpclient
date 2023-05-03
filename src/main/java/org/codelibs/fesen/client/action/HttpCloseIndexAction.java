@@ -30,7 +30,7 @@ import org.opensearch.action.admin.indices.close.CloseIndexResponse;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.IndexResult;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.Index;
 
 public class HttpCloseIndexAction extends HttpAction {

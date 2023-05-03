@@ -21,7 +21,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetRepositoriesAction extends HttpAction {
 

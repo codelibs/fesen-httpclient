@@ -27,7 +27,7 @@ import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
 import org.opensearch.cluster.metadata.IndexTemplateMetadata;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetIndexTemplatesAction extends HttpAction {
 

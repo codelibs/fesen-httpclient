@@ -21,7 +21,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.fieldcaps.FieldCapabilitiesAction;
 import org.opensearch.action.fieldcaps.FieldCapabilitiesRequest;
 import org.opensearch.action.fieldcaps.FieldCapabilitiesResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpFieldCapabilitiesAction extends HttpAction {
 

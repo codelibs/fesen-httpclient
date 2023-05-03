@@ -661,17 +661,18 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(SegmentReplicationStatsRequest request) {
+    public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(final SegmentReplicationStatsRequest request) {
         return indicesClient.segmentReplicationStats(request);
     }
 
     @Override
-    public void segmentReplicationStats(SegmentReplicationStatsRequest request, ActionListener<SegmentReplicationStatsResponse> listener) {
+    public void segmentReplicationStats(final SegmentReplicationStatsRequest request,
+            final ActionListener<SegmentReplicationStatsResponse> listener) {
         indicesClient.segmentReplicationStats(request, listener);
     }
 
     @Override
-    public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(String... indices) {
+    public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(final String... indices) {
         return indicesClient.prepareSegmentReplicationStats(indices);
     }
 

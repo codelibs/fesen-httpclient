@@ -26,7 +26,7 @@ import org.opensearch.action.ingest.PutPipelineAction;
 import org.opensearch.action.ingest.PutPipelineRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpPutPipelineAction extends HttpAction {
 

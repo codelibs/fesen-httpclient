@@ -96,11 +96,11 @@ import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.unit.ByteSizeUnit;
 import org.opensearch.common.unit.TimeValue;
-import org.opensearch.common.xcontent.ToXContent;
-import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.core.xcontent.ToXContent;
+import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.index.IndexNotFoundException;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.indices.recovery.RecoverySettings;
@@ -112,7 +112,7 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearch2ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch2ClientTest.class.getName());
 
-    static final String version = "2.6.0";
+    static final String version = "2.7.0";
 
     static final String imageTag = "opensearchproject/opensearch:" + version;
 

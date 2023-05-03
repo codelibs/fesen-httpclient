@@ -26,9 +26,9 @@ import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.ParseField;
 import org.opensearch.common.collect.ImmutableOpenMap;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.ParseField;
+import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.IndexNotFoundException;
 
 public class HttpGetMappingsAction extends HttpAction {

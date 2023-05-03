@@ -379,13 +379,20 @@ import org.opensearch.action.search.CreatePitResponse;
 import org.opensearch.action.search.DeletePitAction;
 import org.opensearch.action.search.DeletePitRequest;
 import org.opensearch.action.search.DeletePitResponse;
+import org.opensearch.action.search.DeleteSearchPipelineAction;
+import org.opensearch.action.search.DeleteSearchPipelineRequest;
 import org.opensearch.action.search.GetAllPitNodesRequest;
 import org.opensearch.action.search.GetAllPitNodesResponse;
 import org.opensearch.action.search.GetAllPitsAction;
+import org.opensearch.action.search.GetSearchPipelineAction;
+import org.opensearch.action.search.GetSearchPipelineRequest;
+import org.opensearch.action.search.GetSearchPipelineResponse;
 import org.opensearch.action.search.MultiSearchAction;
 import org.opensearch.action.search.MultiSearchRequest;
 import org.opensearch.action.search.MultiSearchRequestBuilder;
 import org.opensearch.action.search.MultiSearchResponse;
+import org.opensearch.action.search.PutSearchPipelineAction;
+import org.opensearch.action.search.PutSearchPipelineRequest;
 import org.opensearch.action.search.SearchAction;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchRequestBuilder;
@@ -1446,6 +1453,36 @@ public abstract class HttpAbstractClient implements Client {
         public DeleteDecommissionStateRequestBuilder prepareDeleteDecommissionRequest() {
             return new DeleteDecommissionStateRequestBuilder(this, DeleteDecommissionStateAction.INSTANCE);
         }
+
+        @Override
+        public void putSearchPipeline(final PutSearchPipelineRequest request, final ActionListener<AcknowledgedResponse> listener) {
+            execute(PutSearchPipelineAction.INSTANCE, request, listener);
+        }
+
+        @Override
+        public ActionFuture<AcknowledgedResponse> putSearchPipeline(final PutSearchPipelineRequest request) {
+            return execute(PutSearchPipelineAction.INSTANCE, request);
+        }
+
+        @Override
+        public void getSearchPipeline(final GetSearchPipelineRequest request, final ActionListener<GetSearchPipelineResponse> listener) {
+            execute(GetSearchPipelineAction.INSTANCE, request, listener);
+        }
+
+        @Override
+        public ActionFuture<GetSearchPipelineResponse> getSearchPipeline(final GetSearchPipelineRequest request) {
+            return execute(GetSearchPipelineAction.INSTANCE, request);
+        }
+
+        @Override
+        public void deleteSearchPipeline(final DeleteSearchPipelineRequest request, final ActionListener<AcknowledgedResponse> listener) {
+            execute(DeleteSearchPipelineAction.INSTANCE, request, listener);
+        }
+
+        @Override
+        public ActionFuture<AcknowledgedResponse> deleteSearchPipeline(final DeleteSearchPipelineRequest request) {
+            return execute(DeleteSearchPipelineAction.INSTANCE, request);
+        }
     }
 
     static class IndicesAdmin implements IndicesAdminClient {
@@ -1985,18 +2022,18 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(SegmentReplicationStatsRequest request) {
+        public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(final SegmentReplicationStatsRequest request) {
             return execute(SegmentReplicationStatsAction.INSTANCE, request);
         }
 
         @Override
-        public void segmentReplicationStats(SegmentReplicationStatsRequest request,
-                ActionListener<SegmentReplicationStatsResponse> listener) {
+        public void segmentReplicationStats(final SegmentReplicationStatsRequest request,
+                final ActionListener<SegmentReplicationStatsResponse> listener) {
             execute(SegmentReplicationStatsAction.INSTANCE, request, listener);
         }
 
         @Override
-        public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(String... indices) {
+        public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(final String... indices) {
             return new SegmentReplicationStatsRequestBuilder(this, SegmentReplicationStatsAction.INSTANCE).setIndices(indices);
         }
     }

@@ -22,7 +22,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryAction;
 import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryRequest;
 import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpVerifyRepositoryAction extends HttpAction {
 

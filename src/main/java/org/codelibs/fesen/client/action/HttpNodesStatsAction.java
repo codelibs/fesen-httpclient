@@ -52,7 +52,7 @@ import org.opensearch.cluster.service.ClusterManagerThrottlingStats;
 import org.opensearch.common.io.stream.InputStreamStreamInput;
 import org.opensearch.common.io.stream.StreamInput;
 import org.opensearch.common.transport.TransportAddress;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.discovery.DiscoveryStats;
 import org.opensearch.http.HttpStats;
 import org.opensearch.index.Index;
@@ -71,6 +71,7 @@ import org.opensearch.index.shard.IndexingStats;
 import org.opensearch.index.stats.IndexingPressureStats;
 import org.opensearch.index.stats.ShardIndexingPressureStats;
 import org.opensearch.index.store.StoreStats;
+import org.opensearch.index.store.remote.filecache.FileCacheStats;
 import org.opensearch.index.translog.TranslogStats;
 import org.opensearch.index.warmer.WarmerStats;
 import org.opensearch.indices.NodeIndicesStats;
@@ -177,6 +178,7 @@ public class HttpNodesStatsAction extends HttpAction {
         SearchBackpressureStats searchBackpressureStats = null;
         ClusterManagerThrottlingStats clusterManagerThrottlingStats = null;
         WeightedRoutingStats weightedRoutingStats = null;
+        FileCacheStats fileCacheStats = null;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -223,6 +225,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     clusterManagerThrottlingStats = parseClusterManagerThrottlingStats(parser);
                 } else if ("weighted_routing".equals(fieldName)) {
                     weightedRoutingStats = parseWeightedRoutingStats(parser);
+                } else if ("file_cache".equals(fieldName)) {
+                    fileCacheStats = parseFileCacheStats(parser);
                 } else {
                     consumeObject(parser);
                 }
@@ -244,7 +248,7 @@ public class HttpNodesStatsAction extends HttpAction {
         final DiscoveryNode node = new DiscoveryNode(nodeName, nodeId, transportAddress, attributes, roles, Version.CURRENT);
         return new NodeStats(node, timestamp, indices, os, process, jvm, threadPool, fs, transport, http, breaker, scriptStats,
                 discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats, shardIndexingPressureStats,
-                searchBackpressureStats, clusterManagerThrottlingStats, weightedRoutingStats);
+                searchBackpressureStats, clusterManagerThrottlingStats, weightedRoutingStats, fileCacheStats);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
@@ -302,6 +306,41 @@ public class HttpNodesStatsAction extends HttpAction {
     protected WeightedRoutingStats parseWeightedRoutingStats(final XContentParser parser) throws IOException {
         consumeObject(parser); // TODO
         return WeightedRoutingStats.getInstance();
+    }
+
+    protected FileCacheStats parseFileCacheStats(final XContentParser parser) throws IOException {
+        long timestamp = 0;
+        long active = 0;
+        long total = 0;
+        long used = 0;
+        long evicted = 0;
+        long hits = 0;
+        long misses = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("timestamp".equals(fieldName)) {
+                    timestamp = parser.longValue();
+                } else if ("active_in_bytes".equals(fieldName)) {
+                    active = parser.longValue();
+                } else if ("total_in_bytes".equals(fieldName)) {
+                    total = parser.longValue();
+                } else if ("used_in_bytes".equals(fieldName)) {
+                    used = parser.longValue();
+                } else if ("evictions_in_bytes".equals(fieldName)) {
+                    evicted = parser.longValue();
+                } else if ("hit_count".equals(fieldName)) {
+                    hits = parser.longValue();
+                } else if ("miss_count".equals(fieldName)) {
+                    misses = parser.longValue();
+                }
+            }
+            parser.nextToken();
+        }
+        return new FileCacheStats(timestamp, active, total, used, evicted, hits, misses);
     }
 
     protected IngestStats parseIngestStats(final XContentParser parser) throws IOException {

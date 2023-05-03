@@ -22,7 +22,7 @@ import org.opensearch.action.ActionListener;
 import org.opensearch.action.ingest.DeletePipelineAction;
 import org.opensearch.action.ingest.DeletePipelineRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpDeletePipelineAction extends HttpAction {
 

@@ -29,8 +29,8 @@ import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.opensearch.cluster.service.PendingClusterTask;
 import org.opensearch.common.Priority;
 import org.opensearch.common.text.Text;
-import org.opensearch.common.xcontent.ConstructingObjectParser;
-import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.core.xcontent.ConstructingObjectParser;
+import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpPendingClusterTasksAction extends HttpAction {
 
