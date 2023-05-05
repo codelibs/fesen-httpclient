@@ -19,6 +19,7 @@ import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,6 +35,7 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
+import org.codelibs.fesen.client.util.MaxMapCountCheck;
 
 public class NodeManager {
     private static final Logger logger = LogManager.getLogger(NodeManager.class);
@@ -156,9 +158,15 @@ public class NodeManager {
                             final Throwable cause = getCause(e);
                             if (isNetworkException(cause)) {
                                 if (logger.isDebugEnabled()) {
-                                    logger.warn("{} node is not available.", node, e);
+                                    logger.warn("{} node is not available. {}", //
+                                            node, //
+                                            getValidationMessage(node), //
+                                            e);
                                 } else {
-                                    logger.warn("{} node is not available. ({}: {})", node, cause.getClass().getSimpleName(),
+                                    logger.warn("{} node is not available. {}({}: {})", //
+                                            node, //
+                                            getValidationMessage(node), //
+                                            cause.getClass().getSimpleName(), //
                                             cause.getMessage());
                                 }
                             } else {
@@ -176,6 +184,16 @@ public class NodeManager {
 
         private boolean isNetworkException(final Throwable cause) {
             return cause instanceof UnknownHostException || cause instanceof ConnectException || cause instanceof NoRouteToHostException;
+        }
+
+        private String getValidationMessage(final Node node) {
+            if (MaxMapCountCheck.validate()) {
+                return "";
+            }
+            return String.format(Locale.ROOT, //
+                    "max virtual memory areas vm.max_map_count for [%s] might be too low, increase to at least [%d]. ", //
+                    node.host, //
+                    MaxMapCountCheck.LIMIT);
         }
     }
 
