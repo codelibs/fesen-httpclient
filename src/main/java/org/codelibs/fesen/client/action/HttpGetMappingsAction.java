@@ -71,20 +71,16 @@ public class HttpGetMappingsAction extends HttpAction {
         if (parser.currentToken() == null) {
             parser.nextToken();
         }
-        assert parser.currentToken() == XContentParser.Token.START_OBJECT;
         final Map<String, Object> parts = parser.map();
 
         ImmutableOpenMap<String, MappingMetadata> mappings = ImmutableOpenMap.of();
         for (final Map.Entry<String, Object> entry : parts.entrySet()) {
             entry.getKey();
-            assert entry.getValue() instanceof Map : "expected a map as type mapping, but got: " + entry.getValue().getClass();
             final Map<String, Object> mapping = (Map<String, Object>) ((Map) entry.getValue()).get(MAPPINGS.getPreferredName());
 
             final ImmutableOpenMap.Builder<String, MappingMetadata> typeBuilder = new ImmutableOpenMap.Builder<>();
             for (final Map.Entry<String, Object> typeEntry : mapping.entrySet()) {
                 final String typeName = typeEntry.getKey();
-                assert typeEntry.getValue() instanceof Map
-                        : "expected a map as inner type mapping, but got: " + typeEntry.getValue().getClass();
                 if ("dynamic_templates".equals(typeName)) {
                     continue;
                 }

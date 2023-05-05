@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.SSLContext;
@@ -1032,7 +1031,7 @@ public class HttpClient extends HttpAbstractClient {
         //                (parser, context) -> CompletionSuggestion.fromXContent(parser, (String) context)));
         return map.entrySet().stream()
                 .map(entry -> new NamedXContentRegistry.Entry(Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected List<NamedXContentRegistry.Entry> getProvidedNamedXContents() {
