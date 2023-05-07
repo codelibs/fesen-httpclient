@@ -15,7 +15,7 @@ Usage
 <dependency>
     <groupId>org.codelibs.fesen.client</groupId>
     <artifactId>fesen-httpclient</artifactId>
-    <version>1.2.1</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
