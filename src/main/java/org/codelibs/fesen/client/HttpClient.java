@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -396,6 +398,10 @@ public class HttpClient extends HttpAbstractClient {
 
     protected final boolean compression;
 
+    protected final Proxy proxy;
+
+    protected final String proxyAuth;
+
     protected final List<UnaryOperator<CurlRequest>> requestBuilderList = new ArrayList<>();
 
     private EngineInfo engineInfo;
@@ -435,6 +441,8 @@ public class HttpClient extends HttpAbstractClient {
         compression = settings.getAsBoolean("http.compression", true);
         basicAuth = createBasicAuthentication(settings);
         sslSocketFactory = createSSLSocketFactory(settings);
+        proxy = createProxy(settings);
+        proxyAuth = createProxyAuthentication(settings);
         this.threadPool = createThreadPool(settings);
 
         namedXContentRegistry = new NamedXContentRegistry(
@@ -906,6 +914,37 @@ public class HttpClient extends HttpAbstractClient {
         return null;
     }
 
+    protected Proxy createProxy(final Settings settings) {
+        final String host = getFromSettings(settings, "https.proxy_host", "http.proxy_host");
+        final String port = getFromSettings(settings, "https.proxy_port", "http.proxy_port");
+        if (host != null && port != null) {
+            return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, Integer.parseInt(port)));
+        }
+        return null;
+    }
+
+    protected String createProxyAuthentication(final Settings settings) {
+        final String username = getFromSettings(settings, "https.proxy_username", "http.proxy_username");
+        final String password = getFromSettings(settings, "https.proxy_password", "http.proxy_password");
+        if (username != null && password != null) {
+            final String value = username + ":" + password;
+            return "Basic " + java.util.Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
+        }
+        return null;
+    }
+
+    protected String getFromSettings(final Settings settings, final String key1, final String key2) {
+        final String value1 = settings.get(key1);
+        if (value1 != null) {
+            return value1;
+        }
+        final String value2 = settings.get(key2);
+        if (value2 != null) {
+            return value2;
+        }
+        return null;
+    }
+
     @Override
     public void close() {
         try {
@@ -955,13 +994,19 @@ public class HttpClient extends HttpAbstractClient {
         }
         CurlRequest request = requestCreator.apply(buf.toString()).header("Content-Type", contentType.getString()).threadPool(threadPool);
         if (basicAuth != null) {
-            request = request.header("Authorization", basicAuth);
+            request.header("Authorization", basicAuth);
         }
         if (sslSocketFactory != null) {
             request.sslSocketFactory(sslSocketFactory);
         }
         if (compression) {
             request.compression("gzip");
+        }
+        if (proxy != null) {
+            request.proxy(proxy);
+            if (proxyAuth != null) {
+                request.header("Proxy-Authorization", proxyAuth);
+            }
         }
         for (final UnaryOperator<CurlRequest> builder : requestBuilderList) {
             request = builder.apply(request);
