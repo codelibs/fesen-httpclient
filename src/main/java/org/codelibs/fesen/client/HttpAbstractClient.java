@@ -108,6 +108,10 @@ import org.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
 import org.opensearch.action.admin.cluster.remotestore.restore.RestoreRemoteStoreAction;
 import org.opensearch.action.admin.cluster.remotestore.restore.RestoreRemoteStoreRequest;
 import org.opensearch.action.admin.cluster.remotestore.restore.RestoreRemoteStoreResponse;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequestBuilder;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
 import org.opensearch.action.admin.cluster.repositories.cleanup.CleanupRepositoryAction;
 import org.opensearch.action.admin.cluster.repositories.cleanup.CleanupRepositoryRequest;
 import org.opensearch.action.admin.cluster.repositories.cleanup.CleanupRepositoryRequestBuilder;
@@ -1482,6 +1486,21 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public ActionFuture<AcknowledgedResponse> deleteSearchPipeline(final DeleteSearchPipelineRequest request) {
             return execute(DeleteSearchPipelineAction.INSTANCE, request);
+        }
+
+        @Override
+        public void remoteStoreStats(RemoteStoreStatsRequest request, ActionListener<RemoteStoreStatsResponse> listener) {
+            execute(RemoteStoreStatsAction.INSTANCE, request, listener);
+        }
+
+        @Override
+        public RemoteStoreStatsRequestBuilder prepareRemoteStoreStats(String index, String shardId) {
+            RemoteStoreStatsRequestBuilder remoteStoreStatsRequestBuilder =
+                    new RemoteStoreStatsRequestBuilder(this, RemoteStoreStatsAction.INSTANCE).setIndices(index);
+            if (shardId != null) {
+                remoteStoreStatsRequestBuilder.setShards(shardId);
+            }
+            return remoteStoreStatsRequestBuilder;
         }
     }
 
