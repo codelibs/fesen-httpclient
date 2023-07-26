@@ -17,7 +17,9 @@ package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
@@ -28,12 +30,9 @@ import org.opensearch.action.admin.indices.alias.get.GetAliasesAction;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.opensearch.cluster.metadata.AliasMetadata;
-import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.XContentParserUtils;
 import org.opensearch.core.xcontent.XContentParser;
-
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
 public class HttpGetAliasesAction extends HttpAction {
 
@@ -64,7 +63,7 @@ public class HttpGetAliasesAction extends HttpAction {
     }
 
     protected GetAliasesResponse getGetAliasesResponse(final XContentParser parser) throws IOException {
-        final ImmutableOpenMap.Builder<String, List<AliasMetadata>> aliasesMapBuilder = ImmutableOpenMap.builder();
+        final Map<String, List<AliasMetadata>> aliases = new HashMap<>();
 
         XContentParserUtils.ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
         XContentParser.Token token;
@@ -76,7 +75,7 @@ public class HttpGetAliasesAction extends HttpAction {
                 while (parser.nextToken() == XContentParser.Token.FIELD_NAME) {
                     final String currentFieldName = parser.currentName();
                     if (ALIASES_FIELD.match(currentFieldName, LoggingDeprecationHandler.INSTANCE)) {
-                        aliasesMapBuilder.put(index, getAliases(parser));
+                        aliases.put(index, getAliases(parser));
                     } else {
                         parser.skipChildren();
                     }
@@ -84,14 +83,12 @@ public class HttpGetAliasesAction extends HttpAction {
             }
         }
 
-        final ImmutableOpenMap<String, List<AliasMetadata>> aliases = aliasesMapBuilder.build();
-
         try (final ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
             out.writeVInt(aliases.size());
-            for (final ObjectObjectCursor<String, List<AliasMetadata>> entry : aliases) {
-                out.writeString(entry.key);
-                out.writeVInt(entry.value.size());
-                for (final AliasMetadata aliasMetaData : entry.value) {
+            for (final Map.Entry<String, List<AliasMetadata>> entry : aliases.entrySet()) {
+                out.writeString(entry.getKey());
+                out.writeVInt(entry.getValue().size());
+                for (final AliasMetadata aliasMetaData : entry.getValue()) {
                     aliasMetaData.writeTo(out);
                 }
             }

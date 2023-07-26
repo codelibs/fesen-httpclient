@@ -92,7 +92,6 @@ import org.opensearch.action.update.UpdateResponse;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.bytes.BytesArray;
 import org.opensearch.common.bytes.BytesReference;
-import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.unit.ByteSizeUnit;
 import org.opensearch.common.unit.TimeValue;
@@ -112,7 +111,7 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearch2ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch2ClientTest.class.getName());
 
-    static final String version = "2.7.0";
+    static final String version = "2.9.0";
 
     static final String imageTag = "opensearchproject/opensearch:" + version;
 
@@ -575,7 +574,7 @@ class OpenSearch2ClientTest {
 
         client.admin().indices().prepareGetMappings(index).execute(wrap(res -> {
             try {
-                final ImmutableOpenMap<String, MappingMetadata> mappings = res.getMappings();
+                final Map<String, MappingMetadata> mappings = res.getMappings();
                 assertTrue(mappings.containsKey("properties"));
             } finally {
                 latch.countDown();
@@ -592,7 +591,7 @@ class OpenSearch2ClientTest {
 
         {
             final GetMappingsResponse getMappingsResponse = client.admin().indices().prepareGetMappings(index).execute().actionGet();
-            final ImmutableOpenMap<String, MappingMetadata> mappings = getMappingsResponse.getMappings();
+            final Map<String, MappingMetadata> mappings = getMappingsResponse.getMappings();
             assertTrue(mappings.containsKey("properties"));
         }
     }

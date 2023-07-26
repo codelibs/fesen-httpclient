@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.util.CollectionUtil;
 import org.codelibs.curl.CurlRequest;
@@ -32,7 +34,6 @@ import org.opensearch.action.admin.indices.get.GetIndexRequest;
 import org.opensearch.action.admin.indices.get.GetIndexResponse;
 import org.opensearch.cluster.metadata.AliasMetadata;
 import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.core.xcontent.XContentParser;
 
@@ -64,11 +65,11 @@ public class HttpGetIndexAction extends HttpAction {
     }
 
     protected static GetIndexResponse fromXContent(final XContentParser parser) throws IOException {
-        ImmutableOpenMap<String, MappingMetadata> mappings = ImmutableOpenMap.of();
-        final ImmutableOpenMap.Builder<String, List<AliasMetadata>> aliases = ImmutableOpenMap.builder();
-        final ImmutableOpenMap.Builder<String, Settings> settings = ImmutableOpenMap.builder();
-        final ImmutableOpenMap.Builder<String, Settings> defaultSettings = ImmutableOpenMap.builder();
-        final ImmutableOpenMap.Builder<String, String> dataStreams = ImmutableOpenMap.builder();
+        Map<String, MappingMetadata> mappings = new HashMap<>();
+        final Map<String, List<AliasMetadata>> aliases = new HashMap<>();
+        final Map<String, Settings> settings = new HashMap<>();
+        final Map<String, Settings> defaultSettings = new HashMap<>();
+        final Map<String, String> dataStreams = new HashMap<>();
         final List<String> indices = new ArrayList<>();
 
         if (parser.currentToken() == null) {
@@ -100,13 +101,12 @@ public class HttpGetIndexAction extends HttpAction {
                 parser.nextToken();
             }
         }
-        return new GetIndexResponse(indices.toArray(new String[0]), mappings, aliases.build(), settings.build(), defaultSettings.build(),
-                dataStreams.build());
+        return new GetIndexResponse(indices.toArray(new String[0]), mappings, aliases, settings, defaultSettings, dataStreams);
     }
 
     protected static IndexEntry parseIndexEntry(final XContentParser parser) throws IOException {
         List<AliasMetadata> indexAliases = null;
-        ImmutableOpenMap<String, MappingMetadata> indexMappings = null;
+        Map<String, MappingMetadata> indexMappings = null;
         Settings indexSettings = null;
         Settings indexDefaultSettings = null;
         String dataStream = null;
@@ -153,8 +153,8 @@ public class HttpGetIndexAction extends HttpAction {
         return indexAliases;
     }
 
-    protected static ImmutableOpenMap<String, MappingMetadata> parseMappings(final XContentParser parser) throws IOException {
-        final ImmutableOpenMap.Builder<String, MappingMetadata> indexMappings = ImmutableOpenMap.builder();
+    protected static Map<String, MappingMetadata> parseMappings(final XContentParser parser) throws IOException {
+        final Map<String, MappingMetadata> indexMappings = new HashMap<>();
         // We start at START_OBJECT since parseIndexEntry ensures that
         while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
             ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
@@ -166,19 +166,19 @@ public class HttpGetIndexAction extends HttpAction {
                 parser.skipChildren();
             }
         }
-        return indexMappings.build();
+        return indexMappings;
     }
 
     // This is just an internal container to make stuff easier for returning
     protected static class IndexEntry {
         List<AliasMetadata> indexAliases = new ArrayList<>();
-        ImmutableOpenMap<String, MappingMetadata> indexMappings = ImmutableOpenMap.of();
+        Map<String, MappingMetadata> indexMappings = new HashMap<>();
         Settings indexSettings = Settings.EMPTY;
         Settings indexDefaultSettings = Settings.EMPTY;
         String dataStream;
 
-        IndexEntry(final List<AliasMetadata> indexAliases, final ImmutableOpenMap<String, MappingMetadata> indexMappings,
-                final Settings indexSettings, final Settings indexDefaultSettings, final String dataStream) {
+        IndexEntry(final List<AliasMetadata> indexAliases, final Map<String, MappingMetadata> indexMappings, final Settings indexSettings,
+                final Settings indexDefaultSettings, final String dataStream) {
             if (indexAliases != null) {
                 this.indexAliases = indexAliases;
             }

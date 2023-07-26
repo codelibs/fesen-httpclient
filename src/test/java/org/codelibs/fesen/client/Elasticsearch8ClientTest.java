@@ -25,6 +25,7 @@ import static org.opensearch.action.ActionListener.wrap;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -90,7 +91,6 @@ import org.opensearch.action.update.UpdateResponse;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.bytes.BytesArray;
 import org.opensearch.common.bytes.BytesReference;
-import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.unit.ByteSizeUnit;
 import org.opensearch.common.unit.TimeValue;
@@ -573,7 +573,7 @@ class Elasticsearch8ClientTest {
 
         client.admin().indices().prepareGetMappings(index).execute(wrap(res -> {
             try {
-                final ImmutableOpenMap<String, MappingMetadata> mappings = res.getMappings();
+                final Map<String, MappingMetadata> mappings = res.getMappings();
                 assertTrue(mappings.containsKey("properties"));
             } finally {
                 latch.countDown();
@@ -590,7 +590,7 @@ class Elasticsearch8ClientTest {
 
         {
             final GetMappingsResponse getMappingsResponse = client.admin().indices().prepareGetMappings(index).execute().actionGet();
-            final ImmutableOpenMap<String, MappingMetadata> mappings = getMappingsResponse.getMappings();
+            final Map<String, MappingMetadata> mappings = getMappingsResponse.getMappings();
             assertTrue(mappings.containsKey("properties"));
         }
     }

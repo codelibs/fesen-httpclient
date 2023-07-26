@@ -16,6 +16,7 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
@@ -26,7 +27,6 @@ import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.collect.ImmutableOpenMap;
 import org.opensearch.core.ParseField;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.IndexNotFoundException;
@@ -73,12 +73,12 @@ public class HttpGetMappingsAction extends HttpAction {
         }
         final Map<String, Object> parts = parser.map();
 
-        ImmutableOpenMap<String, MappingMetadata> mappings = ImmutableOpenMap.of();
+        Map<String, MappingMetadata> mappings = new HashMap<>();
         for (final Map.Entry<String, Object> entry : parts.entrySet()) {
             entry.getKey();
             final Map<String, Object> mapping = (Map<String, Object>) ((Map) entry.getValue()).get(MAPPINGS.getPreferredName());
 
-            final ImmutableOpenMap.Builder<String, MappingMetadata> typeBuilder = new ImmutableOpenMap.Builder<>();
+            final Map<String, MappingMetadata> typeBuilder = new HashMap<>();
             for (final Map.Entry<String, Object> typeEntry : mapping.entrySet()) {
                 final String typeName = typeEntry.getKey();
                 if ("dynamic_templates".equals(typeName)) {
@@ -88,7 +88,7 @@ public class HttpGetMappingsAction extends HttpAction {
                 final MappingMetadata mmd = new MappingMetadata(typeName, fieldMappings);
                 typeBuilder.put(typeName, mmd);
             }
-            mappings = typeBuilder.build();
+            mappings = typeBuilder;
         }
 
         return new GetMappingsResponse(mappings);
