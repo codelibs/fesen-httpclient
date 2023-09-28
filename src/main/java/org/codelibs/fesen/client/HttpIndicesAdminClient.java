@@ -16,10 +16,7 @@
 package org.codelibs.fesen.client;
 
 import org.codelibs.fesen.client.action.indices.create.HttpCreateIndexRequrestBuilder;
-import org.opensearch.action.ActionFuture;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.ActionRequest;
-import org.opensearch.action.ActionResponse;
 import org.opensearch.action.ActionType;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
@@ -115,6 +112,9 @@ import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.client.IndicesAdminClient;
 import org.opensearch.cluster.metadata.IndexMetadata.APIBlock;
+import org.opensearch.common.action.ActionFuture;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.action.ActionResponse;
 import org.opensearch.threadpool.ThreadPool;
 
 public class HttpIndicesAdminClient implements IndicesAdminClient {

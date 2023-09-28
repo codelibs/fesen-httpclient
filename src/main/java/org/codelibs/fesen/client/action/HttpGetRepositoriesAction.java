@@ -17,10 +17,10 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetRepositoriesAction extends HttpAction {

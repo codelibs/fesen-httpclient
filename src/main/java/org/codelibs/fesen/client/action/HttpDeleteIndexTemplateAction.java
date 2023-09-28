@@ -18,10 +18,10 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpDeleteIndexTemplateAction extends HttpAction {

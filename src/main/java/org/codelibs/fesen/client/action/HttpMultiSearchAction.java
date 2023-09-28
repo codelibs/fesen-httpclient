@@ -24,15 +24,14 @@ import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
 import org.opensearch.OpenSearchException;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.search.MultiSearchAction;
 import org.opensearch.action.search.MultiSearchRequest;
 import org.opensearch.action.search.MultiSearchResponse;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.support.IndicesOptions.WildcardStates;
-import org.opensearch.common.bytes.BytesReference;
-import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContent;
 import org.opensearch.core.xcontent.XContentBuilder;
@@ -50,7 +49,7 @@ public class HttpMultiSearchAction extends HttpAction {
     public void execute(final MultiSearchRequest request, final ActionListener<MultiSearchResponse> listener) {
         String source = null;
         try {
-            source = new String(writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON)));
+            source = new String(writeMultiLineFormat(request, XContentType.JSON.xContent()));
         } catch (final Exception e) {
             throw new OpenSearchException("Failed to parse a request.", e);
         }

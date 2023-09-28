@@ -17,10 +17,10 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
 import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
 import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpCancelTasksAction extends HttpAction {

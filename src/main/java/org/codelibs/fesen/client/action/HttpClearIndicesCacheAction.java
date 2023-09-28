@@ -17,10 +17,10 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
 import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpClearIndicesCacheAction extends HttpAction {

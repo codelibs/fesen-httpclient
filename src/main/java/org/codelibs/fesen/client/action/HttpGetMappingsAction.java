@@ -22,12 +22,12 @@ import java.util.Map;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.core.ParseField;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.IndexNotFoundException;
 

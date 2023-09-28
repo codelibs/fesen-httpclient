@@ -23,15 +23,15 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.OpenSearchException;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.close.CloseIndexAction;
 import org.opensearch.action.admin.indices.close.CloseIndexRequest;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.IndexResult;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.index.Index;
 import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.Index;
 
 public class HttpCloseIndexAction extends HttpAction {
 

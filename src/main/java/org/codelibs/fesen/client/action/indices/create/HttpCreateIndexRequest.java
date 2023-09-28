@@ -28,19 +28,22 @@ import org.opensearch.action.admin.indices.alias.Alias;
 import org.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.IndicesOptions;
-import org.opensearch.common.bytes.BytesReference;
-import org.opensearch.common.io.stream.StreamOutput;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.settings.Settings.Builder;
-import org.opensearch.common.transport.TransportAddress;
 import org.opensearch.common.unit.TimeValue;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.core.common.bytes.BytesArray;
+import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.common.io.stream.StreamOutput;
+import org.opensearch.core.common.transport.TransportAddress;
+import org.opensearch.core.tasks.TaskId;
 import org.opensearch.core.xcontent.DeprecationHandler;
+import org.opensearch.core.xcontent.MediaType;
+import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.index.mapper.MapperService;
 import org.opensearch.tasks.Task;
-import org.opensearch.tasks.TaskId;
 
 public class HttpCreateIndexRequest extends CreateIndexRequest {
 
@@ -52,13 +55,68 @@ public class HttpCreateIndexRequest extends CreateIndexRequest {
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * Note that the mapping definition should *not* be nested under a type name.
+     */
+    @Override
+    public CreateIndexRequest source(final byte[] source, final MediaType mediaType) {
+        return source(source, 0, source.length, mediaType);
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     */
+    @Override
+    public CreateIndexRequest source(final byte[] source, final int offset, final int length, final MediaType mediaType) {
+        return source(new BytesArray(source, offset, length), mediaType);
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     *
+     * Note that the mapping definition should *not* be nested under a type name.
+     */
+    @Override
+    public CreateIndexRequest source(final String source, final MediaType mediaType) {
+        return source(new BytesArray(source), mediaType);
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     *
+     * @deprecated use {@link #source(byte[], int, int, MediaType)} instead
+     */
+    @Deprecated
+    @Override
+    public CreateIndexRequest source(final byte[] source, final int offset, final int length, final XContentType xContentType) {
+        return source(new BytesArray(source, offset, length), xContentType);
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     */
+    @Override
+    public CreateIndexRequest source(final XContentBuilder source) {
+        return source(BytesReference.bytes(source), source.contentType());
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
      */
     @Override
     public CreateIndexRequest source(final BytesReference source, final XContentType xContentType) {
         Objects.requireNonNull(xContentType);
-        Map<String, Object> sourceAsMap = XContentHelper.convertToMap(source, false, xContentType).v2();
-        sourceAsMap = prepareMappings(sourceAsMap);
-        source(sourceAsMap, LoggingDeprecationHandler.INSTANCE);
+        source(prepareMappings(XContentHelper.convertToMap(source, false, xContentType).v2()), LoggingDeprecationHandler.INSTANCE);
+        return this;
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     */
+    @Override
+    public CreateIndexRequest source(final BytesReference source, final MediaType mediaType) {
+        Objects.requireNonNull(mediaType);
+        source(prepareMappings(XContentHelper.convertToMap(source, false, mediaType).v2()), LoggingDeprecationHandler.INSTANCE);
         return this;
     }
 

@@ -26,16 +26,16 @@ import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.opensearch.OpenSearchException;
 import org.opensearch.OpenSearchStatusException;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.ParseField;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.rest.RestStatus;
+import org.opensearch.core.xcontent.MediaType;
 import org.opensearch.core.xcontent.XContent;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.rest.BytesRestResponse;
-import org.opensearch.rest.RestStatus;
 
 public class HttpAction {
 
@@ -128,8 +128,8 @@ public class HttpAction {
         if (contentType == null) {
             contentType = "application/json";
         }
-        final XContentType xContentType = fromMediaTypeOrFormat(contentType);
-        final XContent xContent = XContentFactory.xContent(xContentType);
+        final MediaType mediaType = fromMediaTypeOrFormat(contentType);
+        final XContent xContent = mediaType.xContent();
         return xContent.createParser(client.getNamedXContentRegistry(), LoggingDeprecationHandler.INSTANCE, response.getContentAsStream());
     }
 
@@ -179,9 +179,9 @@ public class HttpAction {
      * also supports a wildcard accept for {@code application/*}. This method can be used to parse the {@code Accept} HTTP header or a
      * format query string parameter. This method will return {@code null} if no match is found
      */
-    protected static XContentType fromMediaTypeOrFormat(final String mediaType) {
+    protected static MediaType fromMediaTypeOrFormat(final String mediaType) {
         if (mediaType == null) {
-            return null;
+            return XContentType.JSON;
         }
 
         for (final XContentType type : XContentType.values()) {
@@ -202,4 +202,5 @@ public class HttpAction {
                 || stringType.toLowerCase(Locale.ROOT).startsWith(type.mediaTypeWithoutParameters().toLowerCase(Locale.ROOT) + ";")
                 || type.subtype().equalsIgnoreCase(stringType);
     }
+
 }

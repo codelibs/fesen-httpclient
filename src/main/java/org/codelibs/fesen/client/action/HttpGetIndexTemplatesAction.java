@@ -22,11 +22,11 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
 import org.opensearch.cluster.metadata.IndexTemplateMetadata;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpGetIndexTemplatesAction extends HttpAction {

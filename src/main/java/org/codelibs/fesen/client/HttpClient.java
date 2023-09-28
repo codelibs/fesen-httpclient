@@ -111,9 +111,7 @@ import org.codelibs.fesen.client.curl.FesenRequest;
 import org.codelibs.fesen.client.node.NodeManager;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.ActionRequest;
-import org.opensearch.action.ActionResponse;
 import org.opensearch.action.ActionType;
 import org.opensearch.action.admin.cluster.health.ClusterHealthAction;
 import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -284,6 +282,8 @@ import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.ParseField;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.action.ActionResponse;
 import org.opensearch.core.xcontent.ContextParser;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.plugins.spi.NamedXContentProvider;
@@ -938,11 +938,7 @@ public class HttpClient extends HttpAbstractClient {
         if (value1 != null) {
             return value1;
         }
-        final String value2 = settings.get(key2);
-        if (value2 != null) {
-            return value2;
-        }
-        return null;
+        return settings.get(key2);
     }
 
     @Override

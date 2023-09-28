@@ -25,16 +25,14 @@ import org.junit.jupiter.api.Test;
 class MaxMapCountCheckTest {
     @Test
     void test_validate() throws Exception {
-        long maxMapCount = MaxMapCountCheck.getMaxMapCount();
-        if (maxMapCount == -1) {
+        final long maxMapCount = MaxMapCountCheck.getMaxMapCount();
+        if ((maxMapCount == -1) || (maxMapCount >= MaxMapCountCheck.LIMIT)) {
             assertTrue(MaxMapCountCheck.validate());
-        } else if (maxMapCount < MaxMapCountCheck.LIMIT) {
-            assertTrue(!MaxMapCountCheck.validate());
         } else {
-            assertTrue(MaxMapCountCheck.validate());
+            assertTrue(!MaxMapCountCheck.validate());
         }
 
-        String message = String.format(Locale.ROOT, //
+        final String message = String.format(Locale.ROOT, //
                 "max virtual memory areas vm.max_map_count for [%s] might be too low, increase to at least [%d]. ", //
                 "http://localhost:9200", //
                 MaxMapCountCheck.LIMIT);

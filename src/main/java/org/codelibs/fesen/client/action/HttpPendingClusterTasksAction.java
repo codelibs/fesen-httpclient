@@ -22,13 +22,13 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.opensearch.cluster.service.PendingClusterTask;
 import org.opensearch.common.Priority;
-import org.opensearch.common.text.Text;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.text.Text;
 import org.opensearch.core.xcontent.ConstructingObjectParser;
 import org.opensearch.core.xcontent.XContentParser;
 

@@ -20,9 +20,11 @@ import java.util.Map;
 import org.opensearch.action.admin.indices.create.CreateIndexAction;
 import org.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.opensearch.client.OpenSearchClient;
-import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.xcontent.MediaType;
+import org.opensearch.core.xcontent.XContentBuilder;
 
 public class HttpCreateIndexRequrestBuilder extends CreateIndexRequestBuilder {
     private final HttpCreateIndexRequest request;
@@ -50,8 +52,8 @@ public class HttpCreateIndexRequrestBuilder extends CreateIndexRequestBuilder {
      * Sets the settings and mappings as a single source.
      */
     @Override
-    public CreateIndexRequestBuilder setSource(final BytesReference source, final XContentType xContentType) {
-        request.source(source, xContentType);
+    public CreateIndexRequestBuilder setSource(final BytesReference source, final MediaType mediaType) {
+        request.source(source, mediaType);
         return this;
     }
 
@@ -59,8 +61,35 @@ public class HttpCreateIndexRequrestBuilder extends CreateIndexRequestBuilder {
      * Sets the settings and mappings as a single source.
      */
     @Override
-    public CreateIndexRequestBuilder setSource(final String source, final XContentType xContentType) {
-        request.source(source, xContentType);
+    public CreateIndexRequestBuilder setSource(final byte[] source, final MediaType mediaType) {
+        request.source(source, mediaType);
+        return this;
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     */
+    @Override
+    public CreateIndexRequestBuilder setSource(final String source, final MediaType mediaType) {
+        request.source(source, mediaType);
+        return this;
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     */
+    @Override
+    public CreateIndexRequestBuilder setSource(final byte[] source, final int offset, final int length, final XContentType xContentType) {
+        request.source(source, offset, length, xContentType);
+        return this;
+    }
+
+    /**
+     * Sets the settings and mappings as a single source.
+     */
+    @Override
+    public CreateIndexRequestBuilder setSource(final XContentBuilder source) {
+        request.source(source);
         return this;
     }
 }

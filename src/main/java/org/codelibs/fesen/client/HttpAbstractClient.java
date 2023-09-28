@@ -50,10 +50,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.opensearch.action.ActionFuture;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.ActionRequest;
-import org.opensearch.action.ActionResponse;
 import org.opensearch.action.ActionType;
 import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
 import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
@@ -426,11 +423,14 @@ import org.opensearch.client.IndicesAdminClient;
 import org.opensearch.client.OpenSearchClient;
 import org.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.opensearch.common.Nullable;
-import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.action.ActionFuture;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.util.concurrent.ThreadContext;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.tasks.TaskId;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.action.ActionResponse;
+import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.tasks.TaskId;
+import org.opensearch.core.xcontent.MediaType;
 import org.opensearch.threadpool.ThreadPool;
 
 /**
@@ -1206,8 +1206,8 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public PutPipelineRequestBuilder preparePutPipeline(final String id, final BytesReference source, final XContentType xContentType) {
-            return new PutPipelineRequestBuilder(this, PutPipelineAction.INSTANCE, id, source, xContentType);
+        public PutPipelineRequestBuilder preparePutPipeline(final String id, final BytesReference source, final MediaType mediaType) {
+            return new PutPipelineRequestBuilder(this, PutPipelineAction.INSTANCE, id, source, mediaType);
         }
 
         @Override
@@ -1256,8 +1256,8 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public SimulatePipelineRequestBuilder prepareSimulatePipeline(final BytesReference source, final XContentType xContentType) {
-            return new SimulatePipelineRequestBuilder(this, SimulatePipelineAction.INSTANCE, source, xContentType);
+        public SimulatePipelineRequestBuilder prepareSimulatePipeline(final BytesReference source, final MediaType mediaType) {
+            return new SimulatePipelineRequestBuilder(this, SimulatePipelineAction.INSTANCE, source, mediaType);
         }
 
         @Override
@@ -1489,13 +1489,13 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public void remoteStoreStats(RemoteStoreStatsRequest request, ActionListener<RemoteStoreStatsResponse> listener) {
+        public void remoteStoreStats(final RemoteStoreStatsRequest request, final ActionListener<RemoteStoreStatsResponse> listener) {
             execute(RemoteStoreStatsAction.INSTANCE, request, listener);
         }
 
         @Override
-        public RemoteStoreStatsRequestBuilder prepareRemoteStoreStats(String index, String shardId) {
-            RemoteStoreStatsRequestBuilder remoteStoreStatsRequestBuilder =
+        public RemoteStoreStatsRequestBuilder prepareRemoteStoreStats(final String index, final String shardId) {
+            final RemoteStoreStatsRequestBuilder remoteStoreStatsRequestBuilder =
                     new RemoteStoreStatsRequestBuilder(this, RemoteStoreStatsAction.INSTANCE).setIndices(index);
             if (shardId != null) {
                 remoteStoreStatsRequestBuilder.setShards(shardId);

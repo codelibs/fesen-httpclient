@@ -21,11 +21,11 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpPutStoredScriptAction extends HttpAction {
@@ -40,7 +40,7 @@ public class HttpPutStoredScriptAction extends HttpAction {
     public void execute(final PutStoredScriptRequest request, final ActionListener<AcknowledgedResponse> listener) {
         String source = null;
         try {
-            source = XContentHelper.convertToJson(request.content(), true, false, request.xContentType());
+            source = XContentHelper.convertToJson(request.content(), true, false, request.mediaType());
         } catch (final IOException e) {
             throw new OpenSearchException("Failed to parse a reqsuest.", e);
         }

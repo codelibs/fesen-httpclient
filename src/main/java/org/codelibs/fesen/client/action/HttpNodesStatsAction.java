@@ -32,7 +32,6 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.opensearch.Version;
-import org.opensearch.action.ActionListener;
 import org.opensearch.action.admin.cluster.node.stats.NodeStats;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
@@ -49,14 +48,17 @@ import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.cluster.node.DiscoveryNodeRole;
 import org.opensearch.cluster.routing.WeightedRoutingStats;
 import org.opensearch.cluster.service.ClusterManagerThrottlingStats;
-import org.opensearch.common.io.stream.InputStreamStreamInput;
-import org.opensearch.common.io.stream.StreamInput;
 import org.opensearch.common.metrics.OperationStats;
-import org.opensearch.common.transport.TransportAddress;
+import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.io.stream.InputStreamStreamInput;
+import org.opensearch.core.common.io.stream.StreamInput;
+import org.opensearch.core.common.transport.TransportAddress;
+import org.opensearch.core.index.Index;
+import org.opensearch.core.indices.breaker.AllCircuitBreakerStats;
+import org.opensearch.core.indices.breaker.CircuitBreakerStats;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.discovery.DiscoveryStats;
 import org.opensearch.http.HttpStats;
-import org.opensearch.index.Index;
 import org.opensearch.index.cache.query.QueryCacheStats;
 import org.opensearch.index.cache.request.RequestCacheStats;
 import org.opensearch.index.engine.SegmentsStats;
@@ -76,8 +78,6 @@ import org.opensearch.index.store.remote.filecache.FileCacheStats;
 import org.opensearch.index.translog.TranslogStats;
 import org.opensearch.index.warmer.WarmerStats;
 import org.opensearch.indices.NodeIndicesStats;
-import org.opensearch.indices.breaker.AllCircuitBreakerStats;
-import org.opensearch.indices.breaker.CircuitBreakerStats;
 import org.opensearch.ingest.IngestStats;
 import org.opensearch.monitor.fs.FsInfo;
 import org.opensearch.monitor.jvm.JvmStats;
@@ -311,9 +311,7 @@ public class HttpNodesStatsAction extends HttpAction {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("search_task".equals(fieldName)) {
-                    consumeObject(parser); // TODO
-                } else if ("search_shard_task".equals(fieldName)) {
+                if ("search_task".equals(fieldName) || "search_shard_task".equals(fieldName)) {
                     consumeObject(parser); // TODO
                 } else if ("mode".equals(fieldName)) {
                     mode = SearchBackpressureMode.valueOf(parser.text());
@@ -337,14 +335,12 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("stats".equals(fieldName)) {
-                    failOpenCount = parseFailOpenCount(parser);
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "stats".equals(fieldName)) {
+                failOpenCount = parseFailOpenCount(parser);
             }
             parser.nextToken();
         }
-        WeightedRoutingStats stats = WeightedRoutingStats.getInstance();
+        final WeightedRoutingStats stats = WeightedRoutingStats.getInstance();
         stats.resetFailOpenCount();
         for (int i = 0; i < failOpenCount; i++) {
             stats.updateFailOpenCount();
@@ -352,17 +348,15 @@ public class HttpNodesStatsAction extends HttpAction {
         return stats;
     }
 
-    protected int parseFailOpenCount(XContentParser parser) throws IOException {
+    protected int parseFailOpenCount(final XContentParser parser) throws IOException {
         int failOpenCount = 0;
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("fail_open_count".equals(fieldName)) {
-                    failOpenCount = parser.intValue();
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "fail_open_count".equals(fieldName)) {
+                failOpenCount = parser.intValue();
             }
             parser.nextToken();
         }
@@ -411,10 +405,8 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("search_shard_task".equals(fieldName)) {
-                    searchShardTaskCancellationStats = parseSearchShardTaskCancellationStats(parser);
-                }
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "search_shard_task".equals(fieldName)) {
+                searchShardTaskCancellationStats = parseSearchShardTaskCancellationStats(parser);
             }
             parser.nextToken();
         }
@@ -463,7 +455,7 @@ public class HttpNodesStatsAction extends HttpAction {
         return new SearchPipelineStats(totalRequestStats, totalResponseStats, Collections.emptyList(), Collections.emptyMap());
     }
 
-    protected OperationStats parseOperationStats(XContentParser parser) throws IOException {
+    protected OperationStats parseOperationStats(final XContentParser parser) throws IOException {
         long count = 0;
         long totalTimeInMillis = 0;
         long current = 0;
@@ -1850,6 +1842,10 @@ public class HttpNodesStatsAction extends HttpAction {
         long queryCount = 0;
         long queryTimeInMillis = 0;
         long queryCurrent = 0;
+        long concurrentQueryCount = 0;
+        long concurrentQueryTimeInMillis = 0;
+        long concurrentQueryCurrent = 0;
+        double concurrentAvgAliceCount = 0;
         long fetchCount = 0;
         long fetchTimeInMillis = 0;
         long fetchCurrent = 0;
@@ -1874,6 +1870,14 @@ public class HttpNodesStatsAction extends HttpAction {
                     queryTimeInMillis = parser.longValue();
                 } else if ("query_current".equals(fieldName)) {
                     queryCurrent = parser.longValue();
+                } else if ("concurrent_query_total".equals(fieldName)) {
+                    concurrentQueryCount = parser.longValue();
+                } else if ("concurrent_query_time_in_millis".equals(fieldName)) {
+                    concurrentQueryTimeInMillis = parser.longValue();
+                } else if ("concurrent_query_current".equals(fieldName)) {
+                    concurrentQueryCurrent = parser.longValue();
+                } else if ("concurrent_avg_slice_count".equals(fieldName)) {
+                    concurrentAvgAliceCount = parser.doubleValue();
                 } else if ("fetch_total".equals(fieldName)) {
                     fetchCount = parser.longValue();
                 } else if ("fetch_time_in_millis".equals(fieldName)) {
@@ -1904,9 +1908,14 @@ public class HttpNodesStatsAction extends HttpAction {
             }
             parser.nextToken();
         }
-        return new SearchStats(new SearchStats.Stats(queryCount, queryTimeInMillis, queryCurrent, fetchCount, fetchTimeInMillis,
-                fetchCurrent, scrollCount, scrollTimeInMillis, scrollCurrent, pitCount, pitTimeInMillis, pitCurrent, suggestCount,
-                suggestTimeInMillis, suggestCurrent), openContexts, null);
+        long queryConcurrency = 0;
+        if (concurrentQueryCount != 0) {
+            queryConcurrency = (long) (concurrentQueryCount * concurrentAvgAliceCount);
+        }
+        return new SearchStats(new SearchStats.Stats(queryCount, queryTimeInMillis, queryCurrent, concurrentQueryCount,
+                concurrentQueryTimeInMillis, concurrentQueryCurrent, queryConcurrency, fetchCount, fetchTimeInMillis, fetchCurrent,
+                scrollCount, scrollTimeInMillis, scrollCurrent, pitCount, pitTimeInMillis, pitCurrent, suggestCount, suggestTimeInMillis,
+                suggestCurrent), openContexts, null);
     }
 
     protected GetStats parseGetStats(final XContentParser parser) throws IOException {
