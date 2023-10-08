@@ -124,10 +124,7 @@ public class HttpAction {
     }
 
     protected XContentParser createParser(final CurlResponse response) throws IOException {
-        String contentType = response.getHeaderValue("Content-Type");
-        if (contentType == null) {
-            contentType = "application/json";
-        }
+        final String contentType = response.getHeaderValue("Content-Type");
         final MediaType mediaType = fromMediaTypeOrFormat(contentType);
         final XContent xContent = mediaType.xContent();
         return xContent.createParser(client.getNamedXContentRegistry(), LoggingDeprecationHandler.INSTANCE, response.getContentAsStream());
@@ -173,28 +170,15 @@ public class HttpAction {
         }
     }
 
-    /**
-     * Accepts either a format string, which is equivalent to a media type that optionally has
-     * parameters and attempts to match the value to an {@link XContentType}. The comparisons are done in lower case format and this method
-     * also supports a wildcard accept for {@code application/*}. This method can be used to parse the {@code Accept} HTTP header or a
-     * format query string parameter. This method will return {@code null} if no match is found
-     */
     protected static MediaType fromMediaTypeOrFormat(final String mediaType) {
-        if (mediaType == null) {
-            return XContentType.JSON;
-        }
-
-        for (final XContentType type : XContentType.values()) {
-            if (isSameMediaTypeOrFormatAs(mediaType, type)) {
-                return type;
+        if (mediaType != null) {
+            for (final XContentType type : XContentType.values()) {
+                if (isSameMediaTypeOrFormatAs(mediaType, type)) {
+                    return type;
+                }
             }
         }
-        final String lowercaseMediaType = mediaType.toLowerCase(Locale.ROOT);
-        if (lowercaseMediaType.startsWith("application/*")) {
-            return XContentType.JSON;
-        }
-
-        return null;
+        return XContentType.JSON;
     }
 
     private static boolean isSameMediaTypeOrFormatAs(final String stringType, final XContentType type) {
