@@ -39,6 +39,7 @@ import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.indices.stats.CommonStats;
 import org.opensearch.action.admin.indices.stats.CommonStatsFlags;
 import org.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
+import org.opensearch.action.search.SearchRequestStats;
 import org.opensearch.action.admin.indices.stats.IndexShardStats;
 import org.opensearch.cluster.ClusterName;
 import org.opensearch.cluster.DiskUsage;
@@ -71,6 +72,7 @@ import org.opensearch.index.refresh.RefreshStats;
 import org.opensearch.index.search.stats.SearchStats;
 import org.opensearch.index.shard.DocsStats;
 import org.opensearch.index.shard.IndexingStats;
+import org.opensearch.index.shard.IndexingStats.Stats.DocStatusStats;
 import org.opensearch.index.stats.IndexingPressureStats;
 import org.opensearch.index.stats.ShardIndexingPressureStats;
 import org.opensearch.index.store.StoreStats;
@@ -830,6 +832,7 @@ public class HttpNodesStatsAction extends HttpAction {
                 long rejected = 0;
                 int largest = 0;
                 long completed = 0;
+                long waitTimeNanos = 0;
                 final String name = fieldName;
                 while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
                     if (token == XContentParser.Token.FIELD_NAME) {
@@ -847,11 +850,13 @@ public class HttpNodesStatsAction extends HttpAction {
                             largest = parser.intValue();
                         } else if ("completed".equals(fieldName)) {
                             completed = parser.longValue();
+                        } else if ("total_wait_time_in_nanos".equals(fieldName)) {
+                            waitTimeNanos = parser.longValue();
                         }
                     }
                     parser.nextToken();
                 }
-                stats.add(new ThreadPoolStats.Stats(name, threads, queue, active, rejected, largest, completed));
+                stats.add(new ThreadPoolStats.Stats(name, threads, queue, active, rejected, largest, completed, waitTimeNanos));
             }
             parser.nextToken();
         }
@@ -1398,6 +1403,7 @@ public class HttpNodesStatsAction extends HttpAction {
         TranslogStats translog = null;
         RequestCacheStats requestCache = null;
         RecoveryStats recoveryStats = null;
+        SearchRequestStats searchRequestStats = new SearchRequestStats();
         final Map<Index, List<IndexShardStats>> statsByShard = Collections.emptyMap();
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -1462,7 +1468,7 @@ public class HttpNodesStatsAction extends HttpAction {
             out.writeOptionalWriteable(requestCache);
             out.writeOptionalWriteable(recoveryStats);
             try (StreamInput in = new InputStreamStreamInput(new ByteArrayInputStream(out.toByteArray()))) {
-                return new NodeIndicesStats(new CommonStats(in), statsByShard);
+                return new NodeIndicesStats(new CommonStats(in), statsByShard, searchRequestStats);
             }
         }
     }
@@ -1959,6 +1965,7 @@ public class HttpNodesStatsAction extends HttpAction {
         long noopUpdateCount = 0;
         boolean isThrottled = false;
         long throttleTimeInMillis = 0;
+        DocStatusStats docStatusStats = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
@@ -1987,11 +1994,13 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("throttle_time_in_millis".equals(fieldName)) {
                     throttleTimeInMillis = parser.longValue();
                 }
+            } else if ("doc_status".equals(fieldName)) {
+                consumeObject(parser);
             }
             parser.nextToken();
         }
         return new IndexingStats(new IndexingStats.Stats(indexCount, indexTimeInMillis, indexCurrent, indexFailedCount, deleteCount,
-                deleteTimeInMillis, deleteCurrent, noopUpdateCount, isThrottled, throttleTimeInMillis));
+                deleteTimeInMillis, deleteCurrent, noopUpdateCount, isThrottled, throttleTimeInMillis, docStatusStats));
     }
 
     protected StoreStats parseStoreStats(final XContentParser parser) throws IOException {
