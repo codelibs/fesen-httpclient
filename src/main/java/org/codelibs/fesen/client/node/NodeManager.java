@@ -127,8 +127,8 @@ public class NodeManager {
         Throwable current = t;
         while (depth < 10) {
             final Throwable cause = current.getCause();
-            if (cause instanceof CurlException curlException) {
-                current = curlException;
+            if (cause instanceof CurlException) {
+                current = cause;
             } else {
                 return cause != null ? cause : current;
             }
