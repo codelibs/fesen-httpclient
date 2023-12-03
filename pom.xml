@@ -32,7 +32,7 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<opensearch.version>2.11.0</opensearch.version>
+		<opensearch.version>2.11.1</opensearch.version>
 		<log4j.version>2.20.0</log4j.version>
 		<junit.jupiter.version>5.9.3</junit.jupiter.version>
 		<testcontainers.version>1.18.0</testcontainers.version>
