@@ -110,7 +110,7 @@ import org.testcontainers.utility.DockerImageName;
 class Elasticsearch8ClientTest {
     static final Logger logger = Logger.getLogger(Elasticsearch8ClientTest.class.getName());
 
-    static final String version = "8.11.1";
+    static final String version = "8.12.1";
 
     static final String imageTag = "docker.elastic.co/elasticsearch/elasticsearch:" + version;
 
