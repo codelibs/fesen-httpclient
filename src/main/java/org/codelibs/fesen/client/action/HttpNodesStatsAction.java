@@ -39,8 +39,8 @@ import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.indices.stats.CommonStats;
 import org.opensearch.action.admin.indices.stats.CommonStatsFlags;
 import org.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
-import org.opensearch.action.search.SearchRequestStats;
 import org.opensearch.action.admin.indices.stats.IndexShardStats;
+import org.opensearch.action.search.SearchRequestStats;
 import org.opensearch.cluster.ClusterName;
 import org.opensearch.cluster.DiskUsage;
 import org.opensearch.cluster.coordination.PendingClusterStateStats;
@@ -49,7 +49,12 @@ import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.cluster.node.DiscoveryNodeRole;
 import org.opensearch.cluster.routing.WeightedRoutingStats;
 import org.opensearch.cluster.service.ClusterManagerThrottlingStats;
+import org.opensearch.cluster.service.ClusterStateStats;
 import org.opensearch.common.metrics.OperationStats;
+import org.opensearch.common.settings.ClusterSettings;
+import org.opensearch.common.settings.FeatureFlagSettings;
+import org.opensearch.common.settings.IndexScopedSettings;
+import org.opensearch.common.settings.Setting;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.common.io.stream.InputStreamStreamInput;
 import org.opensearch.core.common.io.stream.StreamInput;
@@ -60,6 +65,7 @@ import org.opensearch.core.indices.breaker.CircuitBreakerStats;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.discovery.DiscoveryStats;
 import org.opensearch.http.HttpStats;
+import org.opensearch.index.SegmentReplicationRejectionStats;
 import org.opensearch.index.cache.query.QueryCacheStats;
 import org.opensearch.index.cache.request.RequestCacheStats;
 import org.opensearch.index.engine.SegmentsStats;
@@ -87,6 +93,9 @@ import org.opensearch.monitor.jvm.JvmStats.MemoryPoolGcStats;
 import org.opensearch.monitor.os.OsStats;
 import org.opensearch.monitor.process.ProcessStats;
 import org.opensearch.node.AdaptiveSelectionStats;
+import org.opensearch.node.NodesResourceUsageStats;
+import org.opensearch.ratelimitting.admissioncontrol.stats.AdmissionControlStats;
+import org.opensearch.repositories.RepositoriesStats;
 import org.opensearch.script.ScriptCacheStats;
 import org.opensearch.script.ScriptStats;
 import org.opensearch.search.backpressure.settings.SearchBackpressureMode;
@@ -104,9 +113,28 @@ public class HttpNodesStatsAction extends HttpAction {
 
     protected NodesStatsAction action;
 
+    protected ClusterSettings clusterSettings;
+
     public HttpNodesStatsAction(final HttpClient client, final NodesStatsAction action) {
         super(client);
         this.action = action;
+        final Map<String, Setting<?>> nodeSettings = new HashMap<>();
+        for (Setting<?> setting : ClusterSettings.BUILT_IN_CLUSTER_SETTINGS) {
+            if (setting.hasNodeScope()) {
+                nodeSettings.put(setting.getKey(), setting);
+            }
+        }
+        for (Setting<?> setting : IndexScopedSettings.BUILT_IN_INDEX_SETTINGS) {
+            if (setting.hasNodeScope()) {
+                nodeSettings.put(setting.getKey(), setting);
+            }
+        }
+        for (Setting<?> setting : FeatureFlagSettings.BUILT_IN_FEATURE_FLAGS) {
+            if (setting.hasNodeScope()) {
+                nodeSettings.put(setting.getKey(), setting);
+            }
+        }
+        this.clusterSettings = new ClusterSettings(client.settings(), new HashSet<>(nodeSettings.values()), Collections.emptySet());
     }
 
     public void execute(final NodesStatsRequest request, final ActionListener<NodesStatsResponse> listener) {
@@ -178,6 +206,7 @@ public class HttpNodesStatsAction extends HttpAction {
         DiscoveryStats discoveryStats = null;
         IngestStats ingestStats = null;
         AdaptiveSelectionStats adaptiveSelectionStats = null;
+        NodesResourceUsageStats resourceUsageStats = null;
         ScriptCacheStats scriptCacheStats = null;
         IndexingPressureStats indexingPressureStats = null;
         ShardIndexingPressureStats shardIndexingPressureStats = null;
@@ -187,6 +216,9 @@ public class HttpNodesStatsAction extends HttpAction {
         FileCacheStats fileCacheStats = null;
         TaskCancellationStats taskCancellationStats = null;
         SearchPipelineStats searchPipelineStats = null;
+        SegmentReplicationRejectionStats segmentReplicationRejectionStats = null; // TODO
+        RepositoriesStats repositoriesStats = null; // TODO
+        AdmissionControlStats admissionControlStats = null; // TODO
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -258,10 +290,34 @@ public class HttpNodesStatsAction extends HttpAction {
             parser.nextToken();
         }
         final DiscoveryNode node = new DiscoveryNode(nodeName, nodeId, transportAddress, attributes, roles, Version.CURRENT);
-        return new NodeStats(node, timestamp, indices, os, process, jvm, threadPool, fs, transport, http, breaker, scriptStats,
-                discoveryStats, ingestStats, adaptiveSelectionStats, scriptCacheStats, indexingPressureStats, shardIndexingPressureStats,
-                searchBackpressureStats, clusterManagerThrottlingStats, weightedRoutingStats, fileCacheStats, taskCancellationStats,
-                searchPipelineStats);
+        return new NodeStats(node, //
+                timestamp, //
+                indices, //
+                os, //
+                process, //
+                jvm, //
+                threadPool, //
+                fs, //
+                transport, //
+                http, //
+                breaker, //
+                scriptStats, //
+                discoveryStats, //
+                ingestStats, //
+                adaptiveSelectionStats, //
+                resourceUsageStats, //
+                scriptCacheStats, //
+                indexingPressureStats, //
+                shardIndexingPressureStats, //
+                searchBackpressureStats, //
+                clusterManagerThrottlingStats, //
+                weightedRoutingStats, //
+                fileCacheStats, //
+                taskCancellationStats, //
+                searchPipelineStats, //
+                segmentReplicationRejectionStats, //
+                repositoriesStats, //
+                admissionControlStats);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
@@ -560,6 +616,7 @@ public class HttpNodesStatsAction extends HttpAction {
         String fieldName = null;
         PendingClusterStateStats queueStats = null;
         PublishClusterStateStats publishStats = null;
+        ClusterStateStats clusterStateStats = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
@@ -570,13 +627,58 @@ public class HttpNodesStatsAction extends HttpAction {
                     queueStats = parsePendingClusterStateStats(parser);
                 } else if ("published_cluster_states".equals(fieldName)) {
                     publishStats = parsePublishClusterStateStats(parser);
+                } else if ("cluster_state_stats".equals(fieldName)) {
+                    clusterStateStats = parseClusterStateStats(parser);
                 } else {
                     consumeObject(parser);
                 }
             }
             parser.nextToken();
         }
-        return new DiscoveryStats(queueStats, publishStats);
+        return new DiscoveryStats(queueStats, publishStats, clusterStateStats);
+    }
+
+    protected ClusterStateStats parseClusterStateStats(XContentParser parser) throws IOException {
+        String fieldName = null;
+        long updateSuccess = 0;
+        long updateTotalTimeInMillis = 0;
+        long updateFailed = 0;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("overall".equals(fieldName)) {
+                    while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (token == XContentParser.Token.FIELD_NAME) {
+                            fieldName = parser.currentName();
+                        } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                            if ("update_count".equals(fieldName)) {
+                                updateSuccess = parser.longValue();
+                            } else if ("total_time_in_millis".equals(fieldName)) {
+                                updateTotalTimeInMillis = parser.longValue();
+                            } else if ("failed_count".equals(fieldName)) {
+                                updateFailed = parser.longValue();
+                            }
+                        }
+                        parser.nextToken();
+                    }
+                } else {
+                    consumeObject(parser);
+                }
+            }
+            parser.nextToken();
+        }
+        try (ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
+            out.writeLong(updateSuccess);
+            out.writeLong(updateTotalTimeInMillis);
+            out.writeLong(updateFailed);
+            out.writeInt(0); // PersistedStateStats
+            try (StreamInput in = new InputStreamStreamInput(new ByteArrayInputStream(out.toByteArray()))) {
+                return new ClusterStateStats(in);
+            }
+        }
     }
 
     protected PublishClusterStateStats parsePublishClusterStateStats(final XContentParser parser) throws IOException {
@@ -1403,7 +1505,7 @@ public class HttpNodesStatsAction extends HttpAction {
         TranslogStats translog = null;
         RequestCacheStats requestCache = null;
         RecoveryStats recoveryStats = null;
-        SearchRequestStats searchRequestStats = new SearchRequestStats();
+        SearchRequestStats searchRequestStats = new SearchRequestStats(clusterSettings);
         final Map<Index, List<IndexShardStats>> statsByShard = Collections.emptyMap();
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {

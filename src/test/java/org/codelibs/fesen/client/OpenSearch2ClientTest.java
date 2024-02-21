@@ -106,12 +106,13 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.indices.recovery.RecoverySettings;
 import org.opensearch.search.SearchHit;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import org.testcontainers.utility.DockerImageName;
 
 class OpenSearch2ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch2ClientTest.class.getName());
 
-    static final String version = "2.11.1";
+    static final String version = "2.12.0";
 
     static final String imageTag = "opensearchproject/opensearch:" + version;
 
@@ -139,9 +140,11 @@ class OpenSearch2ClientTest {
     }
 
     static void startServer() {
+        final String initialAdminPassword = RandomStringUtils.random(10, true, true);
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
                 .withEnv("plugins.security.disabled", "true")//
+                .withEnv("OPENSEARCH_INITIAL_ADMIN_PASSWORD", initialAdminPassword)//
                 .withExposedPorts(9200);
         server.start();
     }
