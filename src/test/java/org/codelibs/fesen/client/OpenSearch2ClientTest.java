@@ -781,6 +781,34 @@ class OpenSearch2ClientTest {
     }
 
     @Test
+    void test_crud_index_and_update_doc() throws Exception {
+        final String index = "test_crud_index2";
+        final String id = "1";
+
+        // Get the document
+        try {
+            client.prepareGet().setIndex(index).setId(id).execute().actionGet();
+            fail();
+        } catch (final IndexNotFoundException e) {
+            // ok
+        }
+
+        // Create a document
+        final IndexResponse indexResponse = client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        assertTrue((Result.CREATED == indexResponse.getResult()) || (Result.UPDATED == indexResponse.getResult()));
+
+        // Update the same document
+        final IndexResponse indexResponse2 = client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2024-04-04\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        assertTrue(Result.UPDATED == indexResponse2.getResult());
+    }
+
+    @Test
     void test_explain() throws Exception {
         final String index = "test_explain";
         final String id = "1";
