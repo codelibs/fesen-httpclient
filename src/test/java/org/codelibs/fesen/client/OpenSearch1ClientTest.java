@@ -110,7 +110,7 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearch1ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch1ClientTest.class.getName());
 
-    static final String version = "1.3.15";
+    static final String version = "1.3.18";
 
     static final String imageTag = "opensearchproject/opensearch:" + version;
 
