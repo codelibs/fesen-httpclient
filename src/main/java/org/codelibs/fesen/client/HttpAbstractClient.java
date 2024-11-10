@@ -195,6 +195,9 @@ import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequestBuilder;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
+import org.opensearch.action.admin.cluster.wlm.WlmStatsAction;
+import org.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
+import org.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
@@ -1501,6 +1504,11 @@ public abstract class HttpAbstractClient implements Client {
                 remoteStoreStatsRequestBuilder.setShards(shardId);
             }
             return remoteStoreStatsRequestBuilder;
+        }
+
+        @Override
+        public void wlmStats(WlmStatsRequest request, ActionListener<WlmStatsResponse> listener) {
+            execute(WlmStatsAction.INSTANCE, request, listener);
         }
     }
 

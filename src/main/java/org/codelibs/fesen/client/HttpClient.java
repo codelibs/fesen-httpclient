@@ -840,7 +840,7 @@ public class HttpClient extends HttpAbstractClient {
         // org.codelibs.fesen.action.admin.indices.upgrade.post.UpgradeSettingsAction
         // org.codelibs.fesen.action.termvectors.MultiTermVectorsAction
         // org.codelibs.fesen.action.termvectors.TermVectorsAction
-
+        // org.opensearch.action.admin.cluster.wlm.WlmStatsAction
     }
 
     @Override

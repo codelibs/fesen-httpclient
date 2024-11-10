@@ -95,6 +95,7 @@ import org.opensearch.monitor.os.OsStats;
 import org.opensearch.monitor.process.ProcessStats;
 import org.opensearch.node.AdaptiveSelectionStats;
 import org.opensearch.node.NodesResourceUsageStats;
+import org.opensearch.node.remotestore.RemoteStoreNodeStats;
 import org.opensearch.ratelimitting.admissioncontrol.stats.AdmissionControlStats;
 import org.opensearch.repositories.RepositoriesStats;
 import org.opensearch.script.ScriptCacheStats;
@@ -221,6 +222,7 @@ public class HttpNodesStatsAction extends HttpAction {
         RepositoriesStats repositoriesStats = null; // TODO
         AdmissionControlStats admissionControlStats = null; // TODO
         NodeCacheStats nodeCacheStats = null; // TODO
+        RemoteStoreNodeStats remoteStoreNodeStats = null; // TODO
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -320,7 +322,8 @@ public class HttpNodesStatsAction extends HttpAction {
                 segmentReplicationRejectionStats, //
                 repositoriesStats, //
                 admissionControlStats, //
-                nodeCacheStats);
+                nodeCacheStats, //
+                remoteStoreNodeStats);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
