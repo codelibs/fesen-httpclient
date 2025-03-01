@@ -112,7 +112,7 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearch2ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch2ClientTest.class.getName());
 
-    static final String version = "2.18.0";
+    static final String version = "2.19.1";
 
     static final String imageTag = "opensearchproject/opensearch:" + version;
 
@@ -140,11 +140,10 @@ class OpenSearch2ClientTest {
     }
 
     static void startServer() {
-        final String initialAdminPassword = RandomStringUtils.random(10, true, true);
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
-                .withEnv("plugins.security.disabled", "true")//
-                .withEnv("OPENSEARCH_INITIAL_ADMIN_PASSWORD", initialAdminPassword)//
+                .withEnv("DISABLE_INSTALL_DEMO_CONFIG", "true")//
+                .withEnv("DISABLE_SECURITY_PLUGIN", "true")//
                 .withExposedPorts(9200);
         server.start();
     }
