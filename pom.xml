@@ -20,6 +20,15 @@
 		<name>CodeLibs Project</name>
 		<url>https://www.codelibs.org/</url>
 	</organization>
+	<developers>
+		<developer>
+			<id>shinsuke</id>
+			<name>Shinsuke Sugaya</name>
+			<email>shinsuke.sugaya@codelibs.co</email>
+			<organization>CodeLibs Inc.</organization>
+			<organizationUrl>https://codelibs.co</organizationUrl>
+		</developer>
+	</developers>
 	<scm>
 		<connection>scm:git:git@github.com:codelibs/fesen-httpclient.git</connection>
 		<url>scm:git:git@github.com:codelibs/fesen-httpclient.git</url>
@@ -36,7 +45,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
+				<version>3.14.0</version>
 				<configuration>
 					<release>17</release>
 					<encoding>UTF-8</encoding>
@@ -57,7 +66,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.11.2</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<docencoding>UTF-8</docencoding>
@@ -67,7 +76,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.5.3</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
@@ -75,7 +84,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.12</version>
+				<version>0.8.13</version>
 				<executions>
 					<execution>
 						<goals>
@@ -94,11 +103,11 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>4.5</version>
+				<version>5.0.0</version>
 				<configuration>
 					<header>https://www.codelibs.org/assets/license/header.txt</header>
 					<properties>
-						<year>2023</year>
+						<year>2025</year>
 					</properties>
 					<includes>
 						<include>src/**/*.java</include>
@@ -112,7 +121,7 @@
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>
 				<artifactId>formatter-maven-plugin</artifactId>
-				<version>2.24.1</version>
+				<version>2.26.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -151,10 +160,10 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>central</id>
-			<url>https://repo1.maven.org/maven2</url>
+			<id>snapshots.central.sonatype.com</id>
+			<url>https://central.sonatype.com/repository/maven-snapshots</url>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
@@ -192,7 +201,7 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.10.2</version>
+			<version>1.11.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
