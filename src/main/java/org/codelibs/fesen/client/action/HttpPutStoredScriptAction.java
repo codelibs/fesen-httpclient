@@ -23,7 +23,7 @@ import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
-import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;

@@ -86,7 +86,7 @@ import org.opensearch.action.search.MultiSearchResponse;
 import org.opensearch.action.search.SearchRequestBuilder;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
-import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.action.update.UpdateResponse;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.settings.Settings;
@@ -107,6 +107,7 @@ import org.opensearch.search.SearchHit;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@Deprecated
 class OpenSearch1ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch1ClientTest.class.getName());
 
@@ -242,7 +243,7 @@ class OpenSearch1ClientTest {
         client.admin().indices().prepareCreate(index).execute().actionGet();
 
         client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute(wrap(res -> {
-            assertEquals(0, res.getHits().getTotalHits().value);
+            assertEquals(0, res.getHits().getTotalHits().value());
             latch.countDown();
         }, e -> {
             e.printStackTrace();
@@ -256,7 +257,7 @@ class OpenSearch1ClientTest {
 
         {
             final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
-            assertEquals(0, searchResponse.getHits().getTotalHits().value);
+            assertEquals(0, searchResponse.getHits().getTotalHits().value());
         }
     }
 
@@ -656,7 +657,7 @@ class OpenSearch1ClientTest {
             long nbHits = 0;
             for (final MultiSearchResponse.Item item : res.getResponses()) {
                 final SearchResponse searchResponse = item.getResponse();
-                nbHits += searchResponse.getHits().getTotalHits().value;
+                nbHits += searchResponse.getHits().getTotalHits().value();
             }
             assertEquals(0, nbHits);
             latch.countDown();
@@ -676,7 +677,7 @@ class OpenSearch1ClientTest {
             long nbHits = 0;
             for (final MultiSearchResponse.Item item : res.getResponses()) {
                 final SearchResponse searchResponse = item.getResponse();
-                nbHits += searchResponse.getHits().getTotalHits().value;
+                nbHits += searchResponse.getHits().getTotalHits().value();
             }
             assertEquals(0, nbHits);
         }
@@ -708,7 +709,7 @@ class OpenSearch1ClientTest {
         // Search the document
         final SearchResponse searchResponse =
                 client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).setSize(0).execute().actionGet();
-        assertEquals(1, searchResponse.getHits().getTotalHits().value);
+        assertEquals(1, searchResponse.getHits().getTotalHits().value());
 
         // Get the document
         final GetResponse getResponse2 = client.prepareGet().setIndex(index).setId(id).execute().actionGet();
@@ -744,7 +745,7 @@ class OpenSearch1ClientTest {
 
         // Search the documents
         final SearchResponse searchResponse1 = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
-        assertEquals(NUM, searchResponse1.getHits().getTotalHits().value);
+        assertEquals(NUM, searchResponse1.getHits().getTotalHits().value());
 
         // Get the documents with MultiGet API
         final MultiGetRequestBuilder mgetRequestBuilder = client.prepareMultiGet();
@@ -761,7 +762,7 @@ class OpenSearch1ClientTest {
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
         final SearchResponse searchResponse2 = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
-        assertEquals(NUM - 1, searchResponse2.getHits().getTotalHits().value);
+        assertEquals(NUM - 1, searchResponse2.getHits().getTotalHits().value());
 
         // Delete all the documents with Bulk API
         final BulkRequestBuilder bulkRequestBuilder2 = client.prepareBulk();
@@ -773,7 +774,7 @@ class OpenSearch1ClientTest {
 
         // Search the documents
         final SearchResponse searchResponse3 = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
-        assertEquals(0, searchResponse3.getHits().getTotalHits().value);
+        assertEquals(0, searchResponse3.getHits().getTotalHits().value());
     }
 
     @Test

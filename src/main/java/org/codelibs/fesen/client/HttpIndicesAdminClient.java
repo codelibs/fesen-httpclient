@@ -76,6 +76,7 @@ import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRe
 import org.opensearch.action.admin.indices.rollover.RolloverRequest;
 import org.opensearch.action.admin.indices.rollover.RolloverRequestBuilder;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
+import org.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
 import org.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
 import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
 import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequestBuilder;
@@ -93,6 +94,12 @@ import org.opensearch.action.admin.indices.shrink.ResizeResponse;
 import org.opensearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.opensearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
 import org.opensearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequestBuilder;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
@@ -109,13 +116,13 @@ import org.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryRequestBuilder;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
-import org.opensearch.action.support.master.AcknowledgedResponse;
-import org.opensearch.client.IndicesAdminClient;
+import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.opensearch.common.action.ActionFuture;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.ActionResponse;
 import org.opensearch.threadpool.ThreadPool;
+import org.opensearch.transport.client.IndicesAdminClient;
 
 public class HttpIndicesAdminClient implements IndicesAdminClient {
 
@@ -676,4 +683,85 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
         return indicesClient.prepareSegmentReplicationStats(indices);
     }
 
+    @Override
+    public void createView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
+            ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> createView(
+            org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void getView(org.opensearch.action.admin.indices.view.GetViewAction.Request request,
+            ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> getView(
+            org.opensearch.action.admin.indices.view.GetViewAction.Request request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request,
+            ActionListener<AcknowledgedResponse> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<AcknowledgedResponse> deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void updateView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
+            ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> updateView(
+            org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<PauseIngestionResponse> pauseIngestion(PauseIngestionRequest request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void pauseIngestion(PauseIngestionRequest request, ActionListener<PauseIngestionResponse> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<ResumeIngestionResponse> resumeIngestion(ResumeIngestionRequest request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void resumeIngestion(ResumeIngestionRequest request, ActionListener<ResumeIngestionResponse> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<GetIngestionStateResponse> getIngestionState(GetIngestionStateRequest request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void getIngestionState(GetIngestionStateRequest request, ActionListener<GetIngestionStateResponse> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }
