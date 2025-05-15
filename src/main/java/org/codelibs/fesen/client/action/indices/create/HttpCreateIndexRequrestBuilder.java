@@ -19,12 +19,12 @@ import java.util.Map;
 
 import org.opensearch.action.admin.indices.create.CreateIndexAction;
 import org.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.opensearch.client.OpenSearchClient;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.MediaType;
 import org.opensearch.core.xcontent.XContentBuilder;
+import org.opensearch.transport.client.OpenSearchClient;
 
 public class HttpCreateIndexRequrestBuilder extends CreateIndexRequestBuilder {
     private final HttpCreateIndexRequest request;

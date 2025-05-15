@@ -284,6 +284,7 @@ import org.opensearch.action.admin.indices.rollover.RolloverAction;
 import org.opensearch.action.admin.indices.rollover.RolloverRequest;
 import org.opensearch.action.admin.indices.rollover.RolloverRequestBuilder;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
+import org.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
 import org.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
 import org.opensearch.action.admin.indices.segments.IndicesSegmentsAction;
 import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
@@ -309,6 +310,12 @@ import org.opensearch.action.admin.indices.stats.IndicesStatsAction;
 import org.opensearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.opensearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
 import org.opensearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequestBuilder;
@@ -405,7 +412,7 @@ import org.opensearch.action.search.SearchScrollAction;
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.action.search.SearchScrollRequestBuilder;
 import org.opensearch.action.support.PlainActionFuture;
-import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.action.termvectors.MultiTermVectorsAction;
 import org.opensearch.action.termvectors.MultiTermVectorsRequest;
 import org.opensearch.action.termvectors.MultiTermVectorsRequestBuilder;
@@ -418,12 +425,6 @@ import org.opensearch.action.update.UpdateAction;
 import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.action.update.UpdateRequestBuilder;
 import org.opensearch.action.update.UpdateResponse;
-import org.opensearch.client.AdminClient;
-import org.opensearch.client.Client;
-import org.opensearch.client.ClusterAdminClient;
-import org.opensearch.client.FilterClient;
-import org.opensearch.client.IndicesAdminClient;
-import org.opensearch.client.OpenSearchClient;
 import org.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.opensearch.common.Nullable;
 import org.opensearch.common.action.ActionFuture;
@@ -435,6 +436,12 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.tasks.TaskId;
 import org.opensearch.core.xcontent.MediaType;
 import org.opensearch.threadpool.ThreadPool;
+import org.opensearch.transport.client.AdminClient;
+import org.opensearch.transport.client.Client;
+import org.opensearch.transport.client.ClusterAdminClient;
+import org.opensearch.transport.client.FilterClient;
+import org.opensearch.transport.client.IndicesAdminClient;
+import org.opensearch.transport.client.OpenSearchClient;
 
 /**
  * Base client used to create concrete client implementations
@@ -2062,6 +2069,88 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(final String... indices) {
             return new SegmentReplicationStatsRequestBuilder(this, SegmentReplicationStatsAction.INSTANCE).setIndices(indices);
+        }
+
+        @Override
+        public void createView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
+                ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> createView(
+                org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public void getView(org.opensearch.action.admin.indices.view.GetViewAction.Request request,
+                ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> getView(
+                org.opensearch.action.admin.indices.view.GetViewAction.Request request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public void deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request,
+                ActionListener<AcknowledgedResponse> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<AcknowledgedResponse> deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public void updateView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
+                ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> updateView(
+                org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<PauseIngestionResponse> pauseIngestion(PauseIngestionRequest request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public void pauseIngestion(PauseIngestionRequest request, ActionListener<PauseIngestionResponse> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<ResumeIngestionResponse> resumeIngestion(ResumeIngestionRequest request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public void resumeIngestion(ResumeIngestionRequest request, ActionListener<ResumeIngestionResponse> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ActionFuture<GetIngestionStateResponse> getIngestionState(GetIngestionStateRequest request) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public void getIngestionState(GetIngestionStateRequest request, ActionListener<GetIngestionStateResponse> listener) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly) {
+            throw new UnsupportedOperationException("Not implemented yet");
         }
     }
 

@@ -273,11 +273,11 @@ import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.search.SearchScrollAction;
 import org.opensearch.action.search.SearchScrollRequest;
-import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.action.update.UpdateAction;
 import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.action.update.UpdateResponse;
-import org.opensearch.client.AdminClient;
+import org.opensearch.common.action.ActionFuture;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.json.JsonXContent;
@@ -371,6 +371,7 @@ import org.opensearch.search.aggregations.pipeline.ParsedStatsBucket;
 import org.opensearch.search.aggregations.pipeline.PercentilesBucketPipelineAggregationBuilder;
 import org.opensearch.search.aggregations.pipeline.StatsBucketPipelineAggregationBuilder;
 import org.opensearch.threadpool.ThreadPool;
+import org.opensearch.transport.client.AdminClient;
 
 public class HttpClient extends HttpAbstractClient {
 
@@ -1096,5 +1097,28 @@ public class HttpClient extends HttpAbstractClient {
             super(pool);
             setName("eshttp");
         }
+    }
+
+    @Override
+    public void searchView(org.opensearch.action.admin.indices.view.SearchViewAction.Request request,
+            ActionListener<SearchResponse> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<SearchResponse> searchView(org.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void listViewNames(org.opensearch.action.admin.indices.view.ListViewNamesAction.Request request,
+            ActionListener<org.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listener) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public ActionFuture<org.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listViewNames(
+            org.opensearch.action.admin.indices.view.ListViewNamesAction.Request request) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

@@ -107,6 +107,7 @@ import org.opensearch.search.backpressure.stats.SearchTaskStats;
 import org.opensearch.search.pipeline.SearchPipelineStats;
 import org.opensearch.search.suggest.completion.CompletionStats;
 import org.opensearch.tasks.SearchShardTaskCancellationStats;
+import org.opensearch.tasks.SearchTaskCancellationStats;
 import org.opensearch.tasks.TaskCancellationStats;
 import org.opensearch.threadpool.ThreadPoolStats;
 import org.opensearch.transport.TransportStats;
@@ -383,8 +384,8 @@ public class HttpNodesStatsAction extends HttpAction {
             }
             parser.nextToken();
         }
-        return new SearchBackpressureStats(new SearchTaskStats(0, 0, Collections.emptyMap()),
-                new SearchShardTaskStats(0, 0, Collections.emptyMap()), mode);
+        return new SearchBackpressureStats(new SearchTaskStats(0, 0, 0, Collections.emptyMap()),
+                new SearchShardTaskStats(0, 0, 0, Collections.emptyMap()), mode);
     }
 
     protected ClusterManagerThrottlingStats parseClusterManagerThrottlingStats(final XContentParser parser) throws IOException {
@@ -463,18 +464,41 @@ public class HttpNodesStatsAction extends HttpAction {
     }
 
     protected TaskCancellationStats parseTaskCancellationStats(final XContentParser parser) throws IOException {
+        SearchTaskCancellationStats searchTaskCancellationStats = null;
         SearchShardTaskCancellationStats searchShardTaskCancellationStats = null;
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
+            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "search_task".equals(fieldName)) {
+                searchTaskCancellationStats = parseSearchTaskCancellationStats(parser);
             } else if ((token == XContentParser.Token.VALUE_NUMBER) && "search_shard_task".equals(fieldName)) {
                 searchShardTaskCancellationStats = parseSearchShardTaskCancellationStats(parser);
             }
             parser.nextToken();
         }
-        return new TaskCancellationStats(searchShardTaskCancellationStats);
+        return new TaskCancellationStats(searchTaskCancellationStats, searchShardTaskCancellationStats);
+    }
+
+    protected SearchTaskCancellationStats parseSearchTaskCancellationStats(final XContentParser parser) throws IOException {
+        long currentLongRunningCancelledTaskCount = 0;
+        long totalLongRunningCancelledTaskCount = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("current_count_post_cancel".equals(fieldName)) {
+                    currentLongRunningCancelledTaskCount = parser.longValue();
+                } else if ("total_count_post_cancel".equals(fieldName)) {
+                    totalLongRunningCancelledTaskCount = parser.longValue();
+                }
+            }
+            parser.nextToken();
+        }
+        return new SearchTaskCancellationStats(currentLongRunningCancelledTaskCount, totalLongRunningCancelledTaskCount);
     }
 
     protected SearchShardTaskCancellationStats parseSearchShardTaskCancellationStats(final XContentParser parser) throws IOException {

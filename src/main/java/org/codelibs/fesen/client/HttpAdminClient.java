@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client;
 
-import org.opensearch.client.AdminClient;
-import org.opensearch.client.ClusterAdminClient;
-import org.opensearch.client.IndicesAdminClient;
+import org.opensearch.transport.client.AdminClient;
+import org.opensearch.transport.client.ClusterAdminClient;
+import org.opensearch.transport.client.IndicesAdminClient;
 
 public class HttpAdminClient implements AdminClient {
 

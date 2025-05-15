@@ -22,7 +22,7 @@ import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.opensearch.action.support.master.AcknowledgedResponse;
+import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.common.bytes.BytesReference;

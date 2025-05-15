@@ -32,6 +32,7 @@ import org.opensearch.action.admin.indices.get.GetIndexAction;
 import org.opensearch.action.admin.indices.get.GetIndexRequest;
 import org.opensearch.action.admin.indices.get.GetIndexResponse;
 import org.opensearch.cluster.metadata.AliasMetadata;
+import org.opensearch.cluster.metadata.Context;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.core.action.ActionListener;
@@ -70,6 +71,7 @@ public class HttpGetIndexAction extends HttpAction {
         final Map<String, Settings> settings = new HashMap<>();
         final Map<String, Settings> defaultSettings = new HashMap<>();
         final Map<String, String> dataStreams = new HashMap<>();
+        final Map<String, Context> contexts = new HashMap<String, Context>();
         final List<String> indices = new ArrayList<>();
 
         if (parser.currentToken() == null) {
@@ -95,13 +97,14 @@ public class HttpGetIndexAction extends HttpAction {
                 if (indexEntry.dataStream != null) {
                     dataStreams.put(indexName, indexEntry.dataStream);
                 }
+                // TODO contexts
             } else if (parser.currentToken() == XContentParser.Token.START_ARRAY) {
                 parser.skipChildren();
             } else {
                 parser.nextToken();
             }
         }
-        return new GetIndexResponse(indices.toArray(new String[0]), mappings, aliases, settings, defaultSettings, dataStreams);
+        return new GetIndexResponse(indices.toArray(new String[0]), mappings, aliases, settings, defaultSettings, dataStreams, contexts);
     }
 
     protected static IndexEntry parseIndexEntry(final XContentParser parser) throws IOException {

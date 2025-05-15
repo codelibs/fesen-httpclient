@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opensearch.core.action.ActionListener.wrap;
@@ -60,6 +60,7 @@ import org.opensearch.action.admin.indices.flush.FlushResponse;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.opensearch.action.admin.indices.get.GetIndexResponse;
 import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
+import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetadata;
 import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
@@ -107,12 +108,12 @@ import org.opensearch.search.SearchHit;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
-class Elasticsearch8ClientTest {
-    static final Logger logger = Logger.getLogger(Elasticsearch8ClientTest.class.getName());
+class OpenSearch3ClientTest {
+    static final Logger logger = Logger.getLogger(OpenSearch3ClientTest.class.getName());
 
-    static final String version = "8.17.4";
+    static final String version = "3.0.0";
 
-    static final String imageTag = "docker.elastic.co/elasticsearch/elasticsearch:" + version;
+    static final String imageTag = "opensearchproject/opensearch:" + version;
 
     static String clusterName = "docker-cluster";
 
@@ -140,14 +141,15 @@ class Elasticsearch8ClientTest {
     static void startServer() {
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
-                .withEnv("xpack.security.enabled", "false")//
+                .withEnv("DISABLE_INSTALL_DEMO_CONFIG", "true")//
+                .withEnv("DISABLE_SECURITY_PLUGIN", "true")//
                 .withExposedPorts(9200);
         server.start();
     }
 
     static void waitFor() {
         final String url = "http://" + server.getHost() + ":" + server.getFirstMappedPort();
-        logger.info("Elasticsearch " + version + ": " + url);
+        logger.info("Opensearch " + version + ": " + url);
         for (int i = 0; i < 10; i++) {
             try (CurlResponse response = Curl.get(url).execute()) {
                 if (response.getHttpStatusCode() == 200) {
@@ -777,6 +779,34 @@ class Elasticsearch8ClientTest {
     }
 
     @Test
+    void test_crud_index_and_update_doc() throws Exception {
+        final String index = "test_crud_index2";
+        final String id = "1";
+
+        // Get the document
+        try {
+            client.prepareGet().setIndex(index).setId(id).execute().actionGet();
+            fail();
+        } catch (final IndexNotFoundException e) {
+            // ok
+        }
+
+        // Create a document
+        final IndexResponse indexResponse = client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        assertTrue((Result.CREATED == indexResponse.getResult()) || (Result.UPDATED == indexResponse.getResult()));
+
+        // Update the same document
+        final IndexResponse indexResponse2 = client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2024-04-04\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        assertTrue(Result.UPDATED == indexResponse2.getResult());
+    }
+
+    @Test
     void test_explain() throws Exception {
         final String index = "test_explain";
         final String id = "1";
@@ -1117,6 +1147,49 @@ class Elasticsearch8ClientTest {
     }
 
     @Test
+    void test_create_knn_field() throws Exception {
+        final String index = "test_create_knn_field";
+        final String field = "content_vector";
+
+        {
+            final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties")
+                    .startObject("content").field("type", "text").endObject().endObject().endObject();
+            final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
+            client.admin().indices().prepareCreate(index).execute().actionGet();
+            client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
+        }
+
+        {
+            final GetFieldMappingsResponse getFieldMappingsResponse =
+                    client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
+            final Map<String, Map<String, FieldMappingMetadata>> mappings = getFieldMappingsResponse.mappings();
+            assertEquals(1, mappings.size());
+        }
+
+        {
+            final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties").startObject(field)
+                    .field("type", "knn_vector").field("dimension", 10).endObject().endObject().endObject();
+            final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
+            final AcknowledgedResponse response =
+                    client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
+            assertTrue(response.isAcknowledged());
+        }
+
+        {
+            final GetFieldMappingsResponse getFieldMappingsResponse =
+                    client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
+            final Map<String, Map<String, FieldMappingMetadata>> mappings = getFieldMappingsResponse.mappings();
+            assertTrue(mappings.size() > 0);
+            assertTrue(mappings.containsKey(index));
+            final Map<String, FieldMappingMetadata> fieldMappings = mappings.get(index);
+            assertEquals(1, fieldMappings.size());
+            // TODO unnamed module
+            // FieldMappingMetadata fieldMappingMetadata = fieldMappings.get(field);
+            // assertEquals(field, fieldMappingMetadata.fullName());
+        }
+    }
+
+    @Test
     void test_rollover() throws Exception {
         final String index = "test_rollover";
         final String alias = "test_rollover_alias1";
@@ -1229,11 +1302,6 @@ class Elasticsearch8ClientTest {
         assertEquals("1.1.1.1:9300", HttpNodesStatsAction.parseTransportAddress("1.1.1.1:9300").toString());
         assertEquals("[::1]:0", HttpNodesStatsAction.parseTransportAddress("[::1]").toString());
         assertEquals("[::1]:9300", HttpNodesStatsAction.parseTransportAddress("[::1]:9300").toString());
-
-        // workaround
-        if (version.startsWith("8.5")) {
-            return;
-        }
 
         {
             final NodesStatsResponse response = client.admin().cluster().prepareNodesStats().execute().actionGet();
