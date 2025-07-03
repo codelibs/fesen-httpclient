@@ -67,6 +67,8 @@ public class HttpAction {
 
     protected static final ParseField TIME_IN_QUEUE_MILLIS_FIELD = new ParseField("time_in_queue_millis");
 
+    protected static final ParseField TIME_IN_EXECUTION_MILLIS_FIELD = new ParseField("time_in_execution_millis");
+
     protected static final ParseField EXECUTING_FIELD = new ParseField("executing");
 
     protected static final ParseField TOTAL_FIELD = new ParseField("total");

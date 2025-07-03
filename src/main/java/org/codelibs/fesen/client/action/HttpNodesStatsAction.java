@@ -83,7 +83,9 @@ import org.opensearch.index.shard.IndexingStats.Stats.DocStatusStats;
 import org.opensearch.index.stats.IndexingPressureStats;
 import org.opensearch.index.stats.ShardIndexingPressureStats;
 import org.opensearch.index.store.StoreStats;
+import org.opensearch.index.store.remote.filecache.AggregateFileCacheStats;
 import org.opensearch.index.store.remote.filecache.FileCacheStats;
+import org.opensearch.index.store.remote.filecache.AggregateFileCacheStats.FileCacheStatsType;
 import org.opensearch.index.translog.TranslogStats;
 import org.opensearch.index.warmer.WarmerStats;
 import org.opensearch.indices.NodeIndicesStats;
@@ -216,7 +218,7 @@ public class HttpNodesStatsAction extends HttpAction {
         SearchBackpressureStats searchBackpressureStats = null;
         ClusterManagerThrottlingStats clusterManagerThrottlingStats = null;
         WeightedRoutingStats weightedRoutingStats = null;
-        FileCacheStats fileCacheStats = null;
+        AggregateFileCacheStats fileCacheStats = null;
         TaskCancellationStats taskCancellationStats = null;
         SearchPipelineStats searchPipelineStats = null;
         SegmentReplicationRejectionStats segmentReplicationRejectionStats = null; // TODO
@@ -271,7 +273,7 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("weighted_routing".equals(fieldName)) {
                     weightedRoutingStats = parseWeightedRoutingStats(parser);
                 } else if ("file_cache".equals(fieldName)) {
-                    fileCacheStats = parseFileCacheStats(parser);
+                    fileCacheStats = parseAggregateFileCacheStats(parser);
                 } else if ("task_cancellation".equals(fieldName)) {
                     taskCancellationStats = parseTaskCancellationStats(parser);
                 } else if ("search_pipeline".equals(fieldName)) {
@@ -428,11 +430,11 @@ public class HttpNodesStatsAction extends HttpAction {
         return failOpenCount;
     }
 
-    protected FileCacheStats parseFileCacheStats(final XContentParser parser) throws IOException {
-        long timestamp = 0;
+    protected FileCacheStats parseFileCacheStats(final XContentParser parser, final FileCacheStatsType statsType) throws IOException {
         long active = 0;
         long total = 0;
         long used = 0;
+        long pinned = 0;
         long evicted = 0;
         long hits = 0;
         long misses = 0;
@@ -442,9 +444,7 @@ public class HttpNodesStatsAction extends HttpAction {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("timestamp".equals(fieldName)) {
-                    timestamp = parser.longValue();
-                } else if ("active_in_bytes".equals(fieldName)) {
+                if ("active_in_bytes".equals(fieldName)) {
                     active = parser.longValue();
                 } else if ("total_in_bytes".equals(fieldName)) {
                     total = parser.longValue();
@@ -456,11 +456,56 @@ public class HttpNodesStatsAction extends HttpAction {
                     hits = parser.longValue();
                 } else if ("miss_count".equals(fieldName)) {
                     misses = parser.longValue();
+                } else if ("pinned".equals(fieldName)) {
+                    pinned = parser.longValue();
                 }
             }
             parser.nextToken();
         }
-        return new FileCacheStats(timestamp, active, total, used, evicted, hits, misses);
+        return new FileCacheStats(active, total, used, pinned, evicted, hits, misses, statsType);
+    }
+
+    protected AggregateFileCacheStats parseAggregateFileCacheStats(final XContentParser parser) throws IOException {
+        long timestamp = 0;
+        FileCacheStats fullFileStats = null;
+        FileCacheStats blockFileStats = null;
+        FileCacheStats overAllStats = null;
+        FileCacheStats pinnedFileStats = null;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("timestamp".equals(fieldName)) {
+                    timestamp = parser.longValue();
+                }
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                if ("full_file_stats".equals(fieldName)) {
+                    fullFileStats = parseFileCacheStats(parser, FileCacheStatsType.FULL_FILE_STATS);
+                } else if ("block_file_stats".equals(fieldName)) {
+                    blockFileStats = parseFileCacheStats(parser, FileCacheStatsType.BLOCK_FILE_STATS);
+                } else if ("over_all_stats".equals(fieldName)) {
+                    overAllStats = parseFileCacheStats(parser, FileCacheStatsType.OVER_ALL_STATS);
+                } else if ("pinned_file_stats".equals(fieldName)) {
+                    pinnedFileStats = parseFileCacheStats(parser, FileCacheStatsType.PINNED_FILE_STATS);
+                }
+            }
+            parser.nextToken();
+        }
+        if (fullFileStats == null) {
+            fullFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.FULL_FILE_STATS);
+        }
+        if (blockFileStats == null) {
+            blockFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.BLOCK_FILE_STATS);
+        }
+        if (overAllStats == null) {
+            overAllStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.OVER_ALL_STATS);
+        }
+        if (pinnedFileStats == null) {
+            pinnedFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.PINNED_FILE_STATS);
+        }
+        return new AggregateFileCacheStats(timestamp, overAllStats, fullFileStats, blockFileStats, pinnedFileStats);
     }
 
     protected TaskCancellationStats parseTaskCancellationStats(final XContentParser parser) throws IOException {
