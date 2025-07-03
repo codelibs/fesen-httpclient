@@ -88,7 +88,7 @@ public class HttpPendingClusterTasksAction extends HttpAction {
     protected ConstructingObjectParser<PendingClusterTask, Void> getPendingClusterTaskParser() {
         final ConstructingObjectParser<PendingClusterTask, Void> objectParser =
                 new ConstructingObjectParser<>("tasks", true, a -> new PendingClusterTask((long) a[0], Priority.valueOf((String) a[1]),
-                        new Text((String) a[2]), (long) a[3], (a[4] != null ? (Boolean) a[4] : false)));
+                        new Text((String) a[2]), (long) a[3], (a[4] != null ? (Boolean) a[4] : false), (long) a[5]));
 
         objectParser.declareLong(ConstructingObjectParser.constructorArg(), INSERT_ORDER_FIELD);
         objectParser.declareString(ConstructingObjectParser.constructorArg(), PRIORITY_FIELD);
