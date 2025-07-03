@@ -95,6 +95,7 @@ public class HttpPendingClusterTasksAction extends HttpAction {
         objectParser.declareString(ConstructingObjectParser.constructorArg(), SOURCE_FIELD);
         objectParser.declareLong(ConstructingObjectParser.constructorArg(), TIME_IN_QUEUE_MILLIS_FIELD);
         objectParser.declareBoolean(ConstructingObjectParser.constructorArg(), EXECUTING_FIELD);
+        objectParser.declareLong(ConstructingObjectParser.constructorArg(), TIME_IN_EXECUTION_MILLIS_FIELD);
 
         return objectParser;
     }
