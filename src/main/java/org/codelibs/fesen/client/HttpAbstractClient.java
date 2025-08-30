@@ -102,6 +102,7 @@ import org.opensearch.action.admin.cluster.node.usage.NodesUsageAction;
 import org.opensearch.action.admin.cluster.node.usage.NodesUsageRequest;
 import org.opensearch.action.admin.cluster.node.usage.NodesUsageRequestBuilder;
 import org.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
+import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequestBuilder;
 import org.opensearch.action.admin.cluster.remotestore.restore.RestoreRemoteStoreAction;
 import org.opensearch.action.admin.cluster.remotestore.restore.RestoreRemoteStoreRequest;
 import org.opensearch.action.admin.cluster.remotestore.restore.RestoreRemoteStoreResponse;
@@ -1517,6 +1518,18 @@ public abstract class HttpAbstractClient implements Client {
         public void wlmStats(WlmStatsRequest request, ActionListener<WlmStatsResponse> listener) {
             execute(WlmStatsAction.INSTANCE, request, listener);
         }
+
+        @Override
+        public RemoteStoreMetadataRequestBuilder prepareRemoteStoreMetadata(final String clusterUUID, final String clusterName) {
+            throw new UnsupportedOperationException("prepareRemoteStoreMetadata is not supported");
+        }
+
+        @Override
+        public void remoteStoreMetadata(org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequest request,
+                org.opensearch.core.action.ActionListener<org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse> listener) {
+            throw new UnsupportedOperationException("remoteStoreMetadata is not supported");
+        }
+
     }
 
     static class IndicesAdmin implements IndicesAdminClient {
@@ -2152,6 +2165,7 @@ public abstract class HttpAbstractClient implements Client {
         public ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
+
     }
 
     @Override
