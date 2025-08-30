@@ -270,6 +270,7 @@ import org.opensearch.action.search.MultiSearchRequest;
 import org.opensearch.action.search.MultiSearchResponse;
 import org.opensearch.action.search.SearchAction;
 import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchRequestBuilder;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.search.SearchScrollAction;
 import org.opensearch.action.search.SearchScrollRequest;
@@ -1121,4 +1122,10 @@ public class HttpClient extends HttpAbstractClient {
             org.opensearch.action.admin.indices.view.ListViewNamesAction.Request request) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
+
+    @Override
+    public SearchRequestBuilder prepareStreamSearch(final String... indices) {
+        throw new UnsupportedOperationException("prepareStreamSearch is not supported");
+    }
+
 }
