@@ -5,7 +5,7 @@
 	<artifactId>fesen-httpclient</artifactId>
 	<packaging>jar</packaging>
 	<name>fesen-httpclient</name>
-	<version>3.2.0</version>
+	<version>3.2.1-SNAPSHOT</version>
 	<description>HTTP client for OpenSearch</description>
 	<url>https://github.com/codelibs/fesen-httpclient</url>
 	<inceptionYear>2012</inceptionYear>
@@ -33,7 +33,7 @@
 		<connection>scm:git:git@github.com:codelibs/fesen-httpclient.git</connection>
 		<url>scm:git:git@github.com:codelibs/fesen-httpclient.git</url>
 		<developerConnection>scm:git:git@github.com:codelibs/fesen-httpclient.git</developerConnection>
-	  <tag>fesen-httpclient-3.2.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
