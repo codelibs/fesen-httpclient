@@ -619,7 +619,6 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 - **GitHub Issues**: [Report bugs or request features](https://github.com/codelibs/fesen-httpclient/issues)
 - **Organization**: [CodeLibs Project](https://www.codelibs.org/)
-- **Email**: For commercial support, contact [CodeLibs Inc.](https://codelibs.co)
 
 ## 🔗 Related Projects
 
