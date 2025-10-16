@@ -88,14 +88,14 @@ public class HttpPendingClusterTasksAction extends HttpAction {
     protected ConstructingObjectParser<PendingClusterTask, Void> getPendingClusterTaskParser() {
         final ConstructingObjectParser<PendingClusterTask, Void> objectParser =
                 new ConstructingObjectParser<>("tasks", true, a -> new PendingClusterTask((long) a[0], Priority.valueOf((String) a[1]),
-                        new Text((String) a[2]), (long) a[3], (a[4] != null ? (Boolean) a[4] : false), (long) a[5]));
+                        new Text((String) a[2]), (long) a[3], (a[4] != null ? (Boolean) a[4] : false), (a[5] != null ? (Long) a[5] : 0L)));
 
         objectParser.declareLong(ConstructingObjectParser.constructorArg(), INSERT_ORDER_FIELD);
         objectParser.declareString(ConstructingObjectParser.constructorArg(), PRIORITY_FIELD);
         objectParser.declareString(ConstructingObjectParser.constructorArg(), SOURCE_FIELD);
         objectParser.declareLong(ConstructingObjectParser.constructorArg(), TIME_IN_QUEUE_MILLIS_FIELD);
-        objectParser.declareBoolean(ConstructingObjectParser.constructorArg(), EXECUTING_FIELD);
-        objectParser.declareLong(ConstructingObjectParser.constructorArg(), TIME_IN_EXECUTION_MILLIS_FIELD);
+        objectParser.declareBoolean(ConstructingObjectParser.optionalConstructorArg(), EXECUTING_FIELD);
+        objectParser.declareLong(ConstructingObjectParser.optionalConstructorArg(), TIME_IN_EXECUTION_MILLIS_FIELD);
 
         return objectParser;
     }

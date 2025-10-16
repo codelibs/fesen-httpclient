@@ -585,7 +585,7 @@ public class HttpNodesStatsAction extends HttpAction {
             }
             parser.nextToken();
         }
-        return new SearchPipelineStats(totalRequestStats, totalResponseStats, Collections.emptyList(), Collections.emptyMap());
+        return new SearchPipelineStats(totalRequestStats, totalResponseStats, Collections.emptyList(), Collections.emptyMap(), null, null);
     }
 
     protected OperationStats parseOperationStats(final XContentParser parser) throws IOException {
