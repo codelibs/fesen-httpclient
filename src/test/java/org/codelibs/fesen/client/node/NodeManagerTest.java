@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2022 CodeLibs Project and the Others.
+ * Copyright 2012-2025 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,5 +101,54 @@ class NodeManagerTest {
                 nodeManager.getCause(new CurlException("aaa", new CurlException("bbb", new RuntimeException("ccc")))).getMessage());
         assertEquals("ccc",
                 nodeManager.getCause(new CurlException("aaa", new CurlException("bbb", new CurlException("ccc")))).getMessage());
+    }
+
+    @Test
+    void test_close_withNullTimer() {
+        // Create NodeManager without requestCreator (timer will be null)
+        final NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" });
+        // This should not throw NullPointerException
+        nodeManager.close();
+        // Verify that the manager is closed
+        assertFalse(nodeManager.isRunning.get());
+    }
+
+    @Test
+    void test_close_withTimer() throws InterruptedException {
+        // Create NodeManager with requestCreator (timer will be initialized)
+        final NodeManager nodeManager = new NodeManager(new String[] { "server1:9200" }, node -> null);
+        assertTrue(nodeManager.isRunning.get());
+
+        // Close the manager
+        nodeManager.close();
+
+        // Verify that the manager is closed
+        assertFalse(nodeManager.isRunning.get());
+
+        // Wait a bit to ensure timer is actually cancelled
+        Thread.sleep(100);
+
+        // Calling close again should not throw any exception
+        nodeManager.close();
+    }
+
+    @Test
+    void test_nodeIterator_allNodesUnavailable() {
+        final NodeManager nodeManager = new NodeManager(new String[] { "server1:9200", "server2:9200" });
+
+        // Mark all nodes as unavailable
+        final NodeIterator iter1 = nodeManager.getNodeIterator();
+        while (iter1.hasNext()) {
+            iter1.next().setAvailable(false);
+        }
+
+        // When getting new iterator, all nodes should be set back to available
+        final NodeIterator iter2 = nodeManager.getNodeIterator();
+        assertTrue(iter2.hasNext());
+        final Node node1 = iter2.next();
+        assertTrue(node1.isAvailable());
+        assertTrue(iter2.hasNext());
+        final Node node2 = iter2.next();
+        assertTrue(node2.isAvailable());
     }
 }
