@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.codelibs.curl.Curl;
@@ -31,7 +32,7 @@ class FesenRequestTest {
 
     @Test
     void test_getNode_withAvailableNodes() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200", "http://server2:9200" });
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200", "http://server2:9200" }, node -> null);
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
         final Optional<Node> node1 = request.getNode();
@@ -45,12 +46,17 @@ class FesenRequestTest {
     }
 
     @Test
-    void test_getNode_withAllNodesUnavailable() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200", "http://server2:9200" });
+    void test_getNode_withAllNodesUnavailable() throws Exception {
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200", "http://server2:9200" }, node -> null);
+
+        // Use reflection to access protected nodes field
+        final Field nodesField = NodeManager.class.getDeclaredField("nodes");
+        nodesField.setAccessible(true);
+        final Node[] nodes = (Node[]) nodesField.get(nodeManager);
 
         // Mark all nodes as unavailable
-        nodeManager.nodes[0].setAvailable(false);
-        nodeManager.nodes[1].setAvailable(false);
+        nodes[0].setAvailable(false);
+        nodes[1].setAvailable(false);
 
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
@@ -60,17 +66,22 @@ class FesenRequestTest {
     }
 
     @Test
-    void test_getNode_iteratesWithoutRecursion() {
+    void test_getNode_iteratesWithoutRecursion() throws Exception {
         // Test with many nodes to ensure iteration works without stack overflow
         final String[] hosts = new String[100];
         for (int i = 0; i < 100; i++) {
             hosts[i] = "http://server" + i + ":9200";
         }
-        final NodeManager nodeManager = new NodeManager(hosts);
+        final NodeManager nodeManager = new NodeManager(hosts, node -> null);
+
+        // Use reflection to access protected nodes field
+        final Field nodesField = NodeManager.class.getDeclaredField("nodes");
+        nodesField.setAccessible(true);
+        final Node[] nodes = (Node[]) nodesField.get(nodeManager);
 
         // Mark first 99 nodes as unavailable
         for (int i = 0; i < 99; i++) {
-            nodeManager.nodes[i].setAvailable(false);
+            nodes[i].setAvailable(false);
         }
 
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
@@ -83,7 +94,7 @@ class FesenRequestTest {
 
     @Test
     void test_isTargetException_withIndexNotFoundException() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" });
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" }, node -> null);
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
         // IndexNotFoundException should not be a target for retry
@@ -93,7 +104,7 @@ class FesenRequestTest {
 
     @Test
     void test_isTargetException_withOtherExceptions() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" });
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" }, node -> null);
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
         // Other exceptions should be target for retry
@@ -103,7 +114,7 @@ class FesenRequestTest {
 
     @Test
     void test_isTargetException_withWrappedIndexNotFoundException() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" });
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" }, node -> null);
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
         // Wrapped IndexNotFoundException should not be a target for retry
@@ -113,7 +124,7 @@ class FesenRequestTest {
 
     @Test
     void test_isTargetException_withDeeplyNestedIndexNotFoundException() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" });
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" }, node -> null);
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
         // Deeply nested IndexNotFoundException should not be a target for retry
@@ -126,7 +137,7 @@ class FesenRequestTest {
 
     @Test
     void test_isTargetException_withDeepNesting_stopsAt10Levels() {
-        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" });
+        final NodeManager nodeManager = new NodeManager(new String[] { "http://server1:9200" }, node -> null);
         final FesenRequest request = new FesenRequest(Curl.get(null), nodeManager, "/test");
 
         // Create a chain of 15 exceptions with IndexNotFoundException at the bottom

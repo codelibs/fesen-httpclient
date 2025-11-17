@@ -18,6 +18,10 @@ package org.codelibs.fesen.client;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Field;
+import java.util.concurrent.ForkJoinPool;
+
+import org.codelibs.fesen.client.node.NodeManager;
 import org.junit.jupiter.api.Test;
 import org.opensearch.common.settings.Settings;
 
@@ -27,64 +31,92 @@ import org.opensearch.common.settings.Settings;
 class HttpClientCloseTest {
 
     @Test
-    void test_close_normalShutdown() {
+    void test_close_normalShutdown() throws Exception {
         final Settings settings = Settings.builder().putList("http.hosts", "http://localhost:9200").build();
 
         final HttpClient client = new HttpClient(settings, null);
-        assertFalse(client.threadPool.isShutdown());
+
+        // Use reflection to access protected threadPool field
+        final Field threadPoolField = HttpClient.class.getDeclaredField("threadPool");
+        threadPoolField.setAccessible(true);
+        final ForkJoinPool threadPool = (ForkJoinPool) threadPoolField.get(client);
+
+        assertFalse(threadPool.isShutdown());
 
         // Close should shutdown the thread pool gracefully
         client.close();
 
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
     }
 
     @Test
-    void test_close_multipleCalls() {
+    void test_close_multipleCalls() throws Exception {
         final Settings settings = Settings.builder().putList("http.hosts", "http://localhost:9200").build();
 
         final HttpClient client = new HttpClient(settings, null);
 
+        // Use reflection to access protected threadPool field
+        final Field threadPoolField = HttpClient.class.getDeclaredField("threadPool");
+        threadPoolField.setAccessible(true);
+        final ForkJoinPool threadPool = (ForkJoinPool) threadPoolField.get(client);
+
         // First close
         client.close();
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
 
         // Second close should not throw exception
         client.close();
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
     }
 
     @Test
-    void test_close_withCustomThreadPoolSize() {
+    void test_close_withCustomThreadPoolSize() throws Exception {
         final Settings settings =
                 Settings.builder().putList("http.hosts", "http://localhost:9200").put("thread_pool.http.size", 4).build();
 
         final HttpClient client = new HttpClient(settings, null);
-        assertFalse(client.threadPool.isShutdown());
+
+        // Use reflection to access protected threadPool field
+        final Field threadPoolField = HttpClient.class.getDeclaredField("threadPool");
+        threadPoolField.setAccessible(true);
+        final ForkJoinPool threadPool = (ForkJoinPool) threadPoolField.get(client);
+
+        assertFalse(threadPool.isShutdown());
 
         client.close();
 
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
     }
 
     @Test
-    void test_close_withAsyncThreadPool() {
+    void test_close_withAsyncThreadPool() throws Exception {
         final Settings settings =
                 Settings.builder().putList("http.hosts", "http://localhost:9200").put("thread_pool.http.async", true).build();
 
         final HttpClient client = new HttpClient(settings, null);
-        assertFalse(client.threadPool.isShutdown());
+
+        // Use reflection to access protected threadPool field
+        final Field threadPoolField = HttpClient.class.getDeclaredField("threadPool");
+        threadPoolField.setAccessible(true);
+        final ForkJoinPool threadPool = (ForkJoinPool) threadPoolField.get(client);
+
+        assertFalse(threadPool.isShutdown());
 
         client.close();
 
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
     }
 
     @Test
-    void test_close_interruptedThread() throws InterruptedException {
+    void test_close_interruptedThread() throws Exception {
         final Settings settings = Settings.builder().putList("http.hosts", "http://localhost:9200").build();
 
         final HttpClient client = new HttpClient(settings, null);
+
+        // Use reflection to access protected threadPool field
+        final Field threadPoolField = HttpClient.class.getDeclaredField("threadPool");
+        threadPoolField.setAccessible(true);
+        final ForkJoinPool threadPool = (ForkJoinPool) threadPoolField.get(client);
 
         // Create a thread that will interrupt itself while closing
         final Thread thread = new Thread(() -> {
@@ -102,21 +134,30 @@ class HttpClientCloseTest {
         thread.join(5000); // Wait up to 5 seconds
 
         assertFalse(thread.isAlive(), "Thread should have completed");
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
     }
 
     @Test
-    void test_close_nodeManagerAlreadyClosed() {
-        final Settings settings = Settings.builder().putList("http.hosts", "http://localhost:9200").build();
+    void test_close_nodeManagerAlreadyClosed() throws Exception {
+        final Settings settings = Settings.builder().putList("http://localhost:9200").build();
 
         final HttpClient client = new HttpClient(settings, null);
 
+        // Use reflection to access protected nodeManager and threadPool fields
+        final Field nodeManagerField = HttpClient.class.getDeclaredField("nodeManager");
+        nodeManagerField.setAccessible(true);
+        final NodeManager nodeManager = (NodeManager) nodeManagerField.get(client);
+
+        final Field threadPoolField = HttpClient.class.getDeclaredField("threadPool");
+        threadPoolField.setAccessible(true);
+        final ForkJoinPool threadPool = (ForkJoinPool) threadPoolField.get(client);
+
         // Close node manager first
-        client.nodeManager.close();
+        nodeManager.close();
 
         // Close should not throw exception even if node manager is already closed
         client.close();
 
-        assertTrue(client.threadPool.isShutdown());
+        assertTrue(threadPool.isShutdown());
     }
 }
