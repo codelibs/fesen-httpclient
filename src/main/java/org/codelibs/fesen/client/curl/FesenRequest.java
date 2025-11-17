@@ -118,7 +118,7 @@ public class FesenRequest extends CurlRequest {
     }
 
     protected Optional<Node> getNode() {
-        if (nodeIter.hasNext()) {
+        while (nodeIter.hasNext()) {
             final Node node = nodeIter.next();
             if (node.isAvailable()) {
                 return Optional.of(node);
@@ -127,7 +127,6 @@ public class FesenRequest extends CurlRequest {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} is not available.", node);
             }
-            return getNode();
         }
         return Optional.empty();
     }

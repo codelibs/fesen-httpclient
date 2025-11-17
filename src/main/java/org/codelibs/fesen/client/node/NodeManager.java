@@ -87,13 +87,15 @@ public class NodeManager {
             logger.debug("{} closing node manager.", this.toNodeString());
         }
         isRunning.set(false);
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     public NodeIterator getNodeIterator() {
         if (!hasAliveNode()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("No available ndoes. Setting \"available\" to true.");
+                logger.debug("No available nodes. Setting \"available\" to true.");
             }
             for (final Node node : nodes) {
                 node.setAvailable(true);
