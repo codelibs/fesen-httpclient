@@ -139,7 +139,7 @@ class HttpClientCloseTest {
 
     @Test
     void test_close_nodeManagerAlreadyClosed() throws Exception {
-        final Settings settings = Settings.builder().putList("http://localhost:9200").build();
+        final Settings settings = Settings.builder().putList("http.hosts", "http://localhost:9200").build();
 
         final HttpClient client = new HttpClient(settings, null);
 
