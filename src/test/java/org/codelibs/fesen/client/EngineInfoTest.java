@@ -146,4 +146,64 @@ class EngineInfoTest {
         assertEquals("opensearch", engineInfo.getDistribution());
         assertEquals(EngineType.OPENSEARCH2, engineInfo.getType());
     }
+
+    @Test
+    void test_opensearch3() throws Exception {
+        final String content = """
+                {\
+                  "name" : "a9b8c7d6e5f4",\
+                  "cluster_name" : "opensearch-cluster",\
+                  "cluster_uuid" : "Xy_ZaBc-DeFgHiJkLmNoPq",\
+                  "version" : {\
+                    "distribution" : "opensearch",\
+                    "number" : "3.3.2",\
+                    "build_type" : "tar",\
+                    "build_hash" : "abc123def456ghi789jkl012mno345pqr678stu",\
+                    "build_date" : "2025-01-15T10:30:00.123456789Z",\
+                    "build_snapshot" : false,\
+                    "lucene_version" : "9.12.0",\
+                    "minimum_wire_compatibility_version" : "7.10.0",\
+                    "minimum_index_compatibility_version" : "7.0.0"\
+                  },\
+                  "tagline" : "The OpenSearch Project: https://opensearch.org/"\
+                }""";
+        final Map<String, Object> map =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, content).map();
+        final EngineInfo engineInfo = new EngineInfo(map);
+        assertEquals("a9b8c7d6e5f4", engineInfo.getNodeName());
+        assertEquals("opensearch-cluster", engineInfo.getClusterName());
+        assertEquals("3.3.2", engineInfo.getNumber());
+        assertEquals("opensearch", engineInfo.getDistribution());
+        assertEquals(EngineType.OPENSEARCH3, engineInfo.getType());
+    }
+
+    @Test
+    void test_unknownVersion() throws Exception {
+        final String content = """
+                {\
+                  "name" : "test-node",\
+                  "cluster_name" : "test-cluster",\
+                  "cluster_uuid" : "test-uuid",\
+                  "version" : {\
+                    "distribution" : "opensearch",\
+                    "number" : "9.9.9",\
+                    "build_type" : "tar",\
+                    "build_hash" : "test-hash",\
+                    "build_date" : "2025-01-01T00:00:00.000000000Z",\
+                    "build_snapshot" : false,\
+                    "lucene_version" : "10.0.0",\
+                    "minimum_wire_compatibility_version" : "7.10.0",\
+                    "minimum_index_compatibility_version" : "7.0.0"\
+                  },\
+                  "tagline" : "Test"\
+                }""";
+        final Map<String, Object> map =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, content).map();
+        final EngineInfo engineInfo = new EngineInfo(map);
+        assertEquals("test-node", engineInfo.getNodeName());
+        assertEquals("test-cluster", engineInfo.getClusterName());
+        assertEquals("9.9.9", engineInfo.getNumber());
+        assertEquals("opensearch", engineInfo.getDistribution());
+        assertEquals(EngineType.UNKNOWN, engineInfo.getType());
+    }
 }

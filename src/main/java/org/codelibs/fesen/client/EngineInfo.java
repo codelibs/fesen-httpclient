@@ -74,11 +74,14 @@ public class EngineInfo {
             if (number.startsWith("2.")) {
                 return EngineType.OPENSEARCH2;
             }
+            if (number.startsWith("3.")) {
+                return EngineType.OPENSEARCH3;
+            }
         }
         return EngineType.UNKNOWN;
     }
 
     public enum EngineType {
-        ELASTICSEARCH7, ELASTICSEARCH8, OPENSEARCH1, OPENSEARCH2, UNKNOWN;
+        ELASTICSEARCH7, ELASTICSEARCH8, OPENSEARCH1, OPENSEARCH2, OPENSEARCH3, UNKNOWN;
     }
 }

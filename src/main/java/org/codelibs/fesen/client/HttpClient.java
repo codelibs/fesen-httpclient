@@ -948,14 +948,23 @@ public class HttpClient extends HttpAbstractClient {
         try {
             nodeManager.close();
         } catch (final Exception e) {
-            // nothing
+            if (logger.isDebugEnabled()) {
+                logger.debug("Failed to close node manager.", e);
+            }
         }
         if (!threadPool.isShutdown()) {
             try {
                 threadPool.shutdown();
-                threadPool.awaitTermination(60, TimeUnit.SECONDS);
+                if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("Thread pool did not terminate within 60 seconds. Forcing shutdown.");
+                    }
+                }
             } catch (final InterruptedException e) {
-                // nothing
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Thread pool shutdown interrupted.", e);
+                }
+                Thread.currentThread().interrupt();
             } finally {
                 threadPool.shutdownNow();
             }
