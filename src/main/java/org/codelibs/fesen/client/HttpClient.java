@@ -87,9 +87,15 @@ import org.codelibs.fesen.client.action.HttpListTasksAction;
 import org.codelibs.fesen.client.action.HttpMainAction;
 import org.codelibs.fesen.client.action.HttpMultiGetAction;
 import org.codelibs.fesen.client.action.HttpMultiSearchAction;
+import org.codelibs.fesen.client.action.HttpClusterStatsAction;
+import org.codelibs.fesen.client.action.HttpDataStreamsStatsAction;
+import org.codelibs.fesen.client.action.HttpIndicesStatsAction;
 import org.codelibs.fesen.client.action.HttpNodesHotThreadsAction;
 import org.codelibs.fesen.client.action.HttpNodesStatsAction;
 import org.codelibs.fesen.client.action.HttpOpenIndexAction;
+import org.codelibs.fesen.client.action.HttpRemoteStoreStatsAction;
+import org.codelibs.fesen.client.action.HttpSegmentReplicationStatsAction;
+import org.codelibs.fesen.client.action.HttpWlmStatsAction;
 import org.codelibs.fesen.client.action.HttpPendingClusterTasksAction;
 import org.codelibs.fesen.client.action.HttpPutIndexTemplateAction;
 import org.codelibs.fesen.client.action.HttpPutMappingAction;
@@ -164,9 +170,18 @@ import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequest;
 import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
 import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
+import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
+import org.opensearch.action.admin.cluster.stats.ClusterStatsAction;
+import org.opensearch.action.admin.cluster.stats.ClusterStatsRequest;
+import org.opensearch.action.admin.cluster.stats.ClusterStatsResponse;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
+import org.opensearch.action.admin.cluster.wlm.WlmStatsAction;
+import org.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
+import org.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesAction;
@@ -225,6 +240,13 @@ import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
 import org.opensearch.action.admin.indices.template.put.PutIndexTemplateAction;
 import org.opensearch.action.admin.indices.template.put.PutIndexTemplateRequest;
+import org.opensearch.action.admin.indices.datastream.DataStreamsStatsAction;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
+import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
+import org.opensearch.action.admin.indices.stats.IndicesStatsAction;
+import org.opensearch.action.admin.indices.stats.IndicesStatsRequest;
+import org.opensearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryAction;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
@@ -822,6 +844,47 @@ public class HttpClient extends HttpAbstractClient {
             @SuppressWarnings("unchecked")
             final ActionListener<NodesHotThreadsResponse> actionListener = (ActionListener<NodesHotThreadsResponse>) listener;
             new HttpNodesHotThreadsAction(this, NodesHotThreadsAction.INSTANCE).execute((NodesHotThreadsRequest) request, actionListener);
+        });
+        actions.put(ClusterStatsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.cluster.stats.ClusterStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterStatsResponse> actionListener = (ActionListener<ClusterStatsResponse>) listener;
+            new HttpClusterStatsAction(this, ClusterStatsAction.INSTANCE).execute((ClusterStatsRequest) request, actionListener);
+        });
+        actions.put(IndicesStatsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.indices.stats.IndicesStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<IndicesStatsResponse> actionListener = (ActionListener<IndicesStatsResponse>) listener;
+            new HttpIndicesStatsAction(this, IndicesStatsAction.INSTANCE).execute((IndicesStatsRequest) request, actionListener);
+        });
+        actions.put(DataStreamsStatsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.indices.datastream.DataStreamsStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<DataStreamsStatsAction.Response> actionListener =
+                    (ActionListener<DataStreamsStatsAction.Response>) listener;
+            new HttpDataStreamsStatsAction(this, DataStreamsStatsAction.INSTANCE).execute((DataStreamsStatsAction.Request) request,
+                    actionListener);
+        });
+        actions.put(RemoteStoreStatsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<RemoteStoreStatsResponse> actionListener = (ActionListener<RemoteStoreStatsResponse>) listener;
+            new HttpRemoteStoreStatsAction(this, RemoteStoreStatsAction.INSTANCE).execute((RemoteStoreStatsRequest) request,
+                    actionListener);
+        });
+        actions.put(SegmentReplicationStatsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<SegmentReplicationStatsResponse> actionListener =
+                    (ActionListener<SegmentReplicationStatsResponse>) listener;
+            new HttpSegmentReplicationStatsAction(this, SegmentReplicationStatsAction.INSTANCE)
+                    .execute((SegmentReplicationStatsRequest) request, actionListener);
+        });
+        actions.put(WlmStatsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.cluster.wlm.WlmStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<WlmStatsResponse> actionListener = (ActionListener<WlmStatsResponse>) listener;
+            new HttpWlmStatsAction(this, WlmStatsAction.INSTANCE).execute((WlmStatsRequest) request, actionListener);
         });
 
         // org.codelibs.fesen.action.admin.cluster.allocation.ClusterAllocationExplainAction
