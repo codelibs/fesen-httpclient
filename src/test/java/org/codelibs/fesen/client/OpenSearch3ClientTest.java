@@ -1371,4 +1371,293 @@ class OpenSearch3ClientTest {
             assertEquals("fesen", mainResponse.getClusterName().value());
         }
     }
+
+    @Test
+    void test_clusterStats() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareClusterStats().execute(wrap(response -> {
+            logger.info("ClusterStats response received");
+            assertNotNull(response);
+            assertNotNull(response.getClusterName());
+            assertEquals(clusterName, response.getClusterName().value());
+            assertNotNull(response.getClusterUUID());
+            assertFalse(response.getClusterUUID().isEmpty());
+            assertTrue(response.getTimestamp() > 0);
+            logger.info("ClusterStats - clusterName: " + response.getClusterName().value() + ", clusterUUID: " + response.getClusterUUID()
+                    + ", timestamp: " + response.getTimestamp());
+            latch.countDown();
+        }, e -> {
+            logger.severe("ClusterStats failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+    }
+
+    @Test
+    void test_clusterStats_withNodeFilter() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        // Test with specific node filter (using _local to get local node stats)
+        client.admin().cluster().prepareClusterStats().setNodesIds("_local").execute(wrap(response -> {
+            logger.info("ClusterStats with node filter response received");
+            assertNotNull(response);
+            assertNotNull(response.getClusterName());
+            latch.countDown();
+        }, e -> {
+            logger.severe("ClusterStats with node filter failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+    }
+
+    @Test
+    void test_indicesStats() throws Exception {
+        final String index = "test_indices_stats";
+
+        // Create index first
+        final CreateIndexResponse createIndexResponse = client.admin().indices().prepareCreate(index).execute().actionGet();
+        assertTrue(createIndexResponse.isAcknowledged());
+
+        // Wait for index to be ready
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareStats(index).execute(wrap(response -> {
+            logger.info("IndicesStats response received");
+            assertNotNull(response);
+            assertTrue(response.getTotalShards() > 0);
+            assertTrue(response.getSuccessfulShards() >= 0);
+            assertTrue(response.getFailedShards() >= 0);
+            logger.info("IndicesStats - totalShards: " + response.getTotalShards() + ", successfulShards: " + response.getSuccessfulShards()
+                    + ", failedShards: " + response.getFailedShards());
+            latch.countDown();
+        }, e -> {
+            logger.severe("IndicesStats failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+
+        // Cleanup
+        client.admin().indices().prepareDelete(index).execute().actionGet();
+    }
+
+    @Test
+    void test_indicesStats_allIndices() throws Exception {
+        // Test stats for all indices
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareStats().execute(wrap(response -> {
+            logger.info("IndicesStats (all) response received");
+            assertNotNull(response);
+            // In a cluster there should be at least some shards
+            assertTrue(response.getTotalShards() >= 0);
+            logger.info("IndicesStats (all) - totalShards: " + response.getTotalShards());
+            latch.countDown();
+        }, e -> {
+            logger.severe("IndicesStats (all) failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+    }
+
+    @Test
+    void test_indicesStats_withDocuments() throws Exception {
+        final String index = "test_indices_stats_docs";
+
+        // Create index
+        final CreateIndexResponse createIndexResponse = client.admin().indices().prepareCreate(index).execute().actionGet();
+        assertTrue(createIndexResponse.isAcknowledged());
+
+        // Index some documents
+        for (int i = 0; i < 5; i++) {
+            client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{\"message\": \"test document " + i + "\"}", XContentType.JSON).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                    .execute().actionGet();
+        }
+
+        // Wait for refresh
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareStats(index).execute(wrap(response -> {
+            logger.info("IndicesStats with documents response received");
+            assertNotNull(response);
+            assertTrue(response.getTotalShards() > 0);
+            assertTrue(response.getSuccessfulShards() > 0);
+            logger.info("IndicesStats with docs - totalShards: " + response.getTotalShards() + ", successfulShards: "
+                    + response.getSuccessfulShards());
+            latch.countDown();
+        }, e -> {
+            logger.severe("IndicesStats with documents failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+
+        // Cleanup
+        client.admin().indices().prepareDelete(index).execute().actionGet();
+    }
+
+    @Test
+    void test_dataStreamsStats() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.execute(org.opensearch.action.admin.indices.datastream.DataStreamsStatsAction.INSTANCE,
+                new org.opensearch.action.admin.indices.datastream.DataStreamsStatsAction.Request(), wrap(response -> {
+                    logger.info("DataStreamsStats response received");
+                    assertNotNull(response);
+                    // Even with no data streams, these values should be valid
+                    assertTrue(response.getTotalShards() >= 0);
+                    assertTrue(response.getSuccessfulShards() >= 0);
+                    assertTrue(response.getFailedShards() >= 0);
+                    assertTrue(response.getDataStreamCount() >= 0);
+                    assertTrue(response.getBackingIndices() >= 0);
+                    assertNotNull(response.getTotalStoreSize());
+                    logger.info("DataStreamsStats - totalShards: " + response.getTotalShards() + ", dataStreamCount: "
+                            + response.getDataStreamCount() + ", backingIndices: " + response.getBackingIndices() + ", totalStoreSize: "
+                            + response.getTotalStoreSize());
+                    latch.countDown();
+                }, e -> {
+                    logger.severe("DataStreamsStats failed: " + e.getMessage());
+                    e.printStackTrace();
+                    fail();
+                }));
+        latch.await();
+    }
+
+    @Test
+    void test_remoteStoreStats() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.execute(org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction.INSTANCE,
+                new org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest(), wrap(response -> {
+                    logger.info("RemoteStoreStats response received");
+                    assertNotNull(response);
+                    // Verify basic response structure
+                    assertTrue(response.getTotalShards() >= 0);
+                    assertTrue(response.getSuccessfulShards() >= 0);
+                    assertTrue(response.getFailedShards() >= 0);
+                    logger.info("RemoteStoreStats - totalShards: " + response.getTotalShards() + ", successfulShards: "
+                            + response.getSuccessfulShards() + ", failedShards: " + response.getFailedShards());
+                    latch.countDown();
+                }, e -> {
+                    logger.severe("RemoteStoreStats failed: " + e.getMessage());
+                    e.printStackTrace();
+                    fail();
+                }));
+        latch.await();
+    }
+
+    @Test
+    void test_remoteStoreStats_withIndex() throws Exception {
+        final String index = "test_remote_store_stats";
+
+        // Create index first
+        final CreateIndexResponse createIndexResponse = client.admin().indices().prepareCreate(index).execute().actionGet();
+        assertTrue(createIndexResponse.isAcknowledged());
+
+        // Wait for index to be ready
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest request =
+                new org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest();
+        request.indices(index);
+        client.execute(org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction.INSTANCE, request, wrap(response -> {
+            logger.info("RemoteStoreStats with index response received");
+            assertNotNull(response);
+            assertTrue(response.getTotalShards() >= 0);
+            logger.info("RemoteStoreStats with index - totalShards: " + response.getTotalShards());
+            latch.countDown();
+        }, e -> {
+            logger.severe("RemoteStoreStats with index failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+
+        // Cleanup
+        client.admin().indices().prepareDelete(index).execute().actionGet();
+    }
+
+    @Test
+    void test_segmentReplicationStats() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.execute(org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction.INSTANCE,
+                new org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest(), wrap(response -> {
+                    logger.info("SegmentReplicationStats response received");
+                    assertNotNull(response);
+                    // Verify basic response structure
+                    assertTrue(response.getTotalShards() >= 0);
+                    assertTrue(response.getSuccessfulShards() >= 0);
+                    assertTrue(response.getFailedShards() >= 0);
+                    logger.info("SegmentReplicationStats - totalShards: " + response.getTotalShards() + ", successfulShards: "
+                            + response.getSuccessfulShards() + ", failedShards: " + response.getFailedShards());
+                    latch.countDown();
+                }, e -> {
+                    logger.severe("SegmentReplicationStats failed: " + e.getMessage());
+                    e.printStackTrace();
+                    fail();
+                }));
+        latch.await();
+    }
+
+    @Test
+    void test_segmentReplicationStats_withOptions() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest request =
+                new org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest();
+        request.detailed(true);
+        request.activeOnly(false);
+        client.execute(org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction.INSTANCE, request, wrap(response -> {
+            logger.info("SegmentReplicationStats with options response received");
+            assertNotNull(response);
+            assertTrue(response.getTotalShards() >= 0);
+            logger.info("SegmentReplicationStats with options - totalShards: " + response.getTotalShards());
+            latch.countDown();
+        }, e -> {
+            logger.severe("SegmentReplicationStats with options failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+    }
+
+    @Test
+    void test_wlmStats() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.execute(org.opensearch.action.admin.cluster.wlm.WlmStatsAction.INSTANCE,
+                new org.opensearch.action.admin.cluster.wlm.WlmStatsRequest(), wrap(response -> {
+                    logger.info("WlmStats response received");
+                    assertNotNull(response);
+                    assertNotNull(response.getClusterName());
+                    logger.info("WlmStats - clusterName: " + response.getClusterName().value());
+                    latch.countDown();
+                }, e -> {
+                    logger.severe("WlmStats failed: " + e.getMessage());
+                    e.printStackTrace();
+                    fail();
+                }));
+        latch.await();
+    }
+
+    @Test
+    void test_wlmStats_withNodeFilter() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        // Use constructor to specify node filter
+        org.opensearch.action.admin.cluster.wlm.WlmStatsRequest request = new org.opensearch.action.admin.cluster.wlm.WlmStatsRequest(
+                new String[] { "_local" }, java.util.Collections.emptySet(), false);
+        client.execute(org.opensearch.action.admin.cluster.wlm.WlmStatsAction.INSTANCE, request, wrap(response -> {
+            logger.info("WlmStats with node filter response received");
+            assertNotNull(response);
+            assertNotNull(response.getClusterName());
+            logger.info("WlmStats with node filter - clusterName: " + response.getClusterName().value());
+            latch.countDown();
+        }, e -> {
+            logger.severe("WlmStats with node filter failed: " + e.getMessage());
+            e.printStackTrace();
+            fail();
+        }));
+        latch.await();
+    }
 }
