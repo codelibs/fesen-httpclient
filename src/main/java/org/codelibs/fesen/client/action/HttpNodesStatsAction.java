@@ -436,6 +436,7 @@ public class HttpNodesStatsAction extends HttpAction {
         long used = 0;
         long pinned = 0;
         long evicted = 0;
+        long removed = 0;
         long hits = 0;
         long misses = 0;
         String fieldName = null;
@@ -452,6 +453,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     used = parser.longValue();
                 } else if ("evictions_in_bytes".equals(fieldName)) {
                     evicted = parser.longValue();
+                } else if ("removed_in_bytes".equals(fieldName)) {
+                    removed = parser.longValue();
                 } else if ("hit_count".equals(fieldName)) {
                     hits = parser.longValue();
                 } else if ("miss_count".equals(fieldName)) {
@@ -462,7 +465,7 @@ public class HttpNodesStatsAction extends HttpAction {
             }
             parser.nextToken();
         }
-        return new FileCacheStats(active, total, used, pinned, evicted, hits, misses, statsType);
+        return new FileCacheStats(active, total, used, pinned, evicted, removed, hits, misses, statsType);
     }
 
     protected AggregateFileCacheStats parseAggregateFileCacheStats(final XContentParser parser) throws IOException {
@@ -494,16 +497,16 @@ public class HttpNodesStatsAction extends HttpAction {
             parser.nextToken();
         }
         if (fullFileStats == null) {
-            fullFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.FULL_FILE_STATS);
+            fullFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.FULL_FILE_STATS);
         }
         if (blockFileStats == null) {
-            blockFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.BLOCK_FILE_STATS);
+            blockFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.BLOCK_FILE_STATS);
         }
         if (overAllStats == null) {
-            overAllStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.OVER_ALL_STATS);
+            overAllStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.OVER_ALL_STATS);
         }
         if (pinnedFileStats == null) {
-            pinnedFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.PINNED_FILE_STATS);
+            pinnedFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.PINNED_FILE_STATS);
         }
         return new AggregateFileCacheStats(timestamp, overAllStats, fullFileStats, blockFileStats, pinnedFileStats);
     }

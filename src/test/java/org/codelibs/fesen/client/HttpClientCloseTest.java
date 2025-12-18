@@ -71,8 +71,7 @@ class HttpClientCloseTest {
 
     @Test
     void test_close_withCustomThreadPoolSize() throws Exception {
-        final Settings settings =
-                Settings.builder().putList("http.hosts", "http://localhost:9200").put("thread_pool.http.size", 4).build();
+        final Settings settings = Settings.builder().putList("http.hosts", "http://localhost:9200").put("thread_pool.http.size", 4).build();
 
         final HttpClient client = new HttpClient(settings, null);
 
