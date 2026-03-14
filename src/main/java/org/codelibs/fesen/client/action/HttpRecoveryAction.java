@@ -58,16 +58,38 @@ public class HttpRecoveryAction extends HttpAction {
         }
 
         // The recovery response JSON is {"indexName":{"shards":[{...}]}} with no _shards header.
-        // RecoveryState is complex to parse, so we consume the entire JSON and return an empty response.
+        // RecoveryState is complex to parse, so we count shards and consume the rest.
+        int totalShards = 0;
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 // index name
             } else if (token == XContentParser.Token.START_OBJECT) {
-                consumeObject(parser);
+                totalShards += countShardsAndConsume(parser);
             }
         }
 
-        return new RecoveryResponse(0, 0, 0, Collections.emptyMap(), new ArrayList<>());
+        return new RecoveryResponse(totalShards, totalShards, 0, Collections.emptyMap(), new ArrayList<>());
+    }
+
+    protected int countShardsAndConsume(final XContentParser parser) throws IOException {
+        int shardCount = 0;
+        XContentParser.Token token;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME && "shards".equals(parser.currentName())) {
+                token = parser.nextToken(); // START_ARRAY
+                if (token == XContentParser.Token.START_ARRAY) {
+                    while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
+                        shardCount++;
+                        consumeObject(parser);
+                    }
+                }
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                consumeObject(parser);
+            } else if (token == XContentParser.Token.START_ARRAY) {
+                consumeObject(parser);
+            }
+        }
+        return shardCount;
     }
 
     protected void consumeObject(final XContentParser parser) throws IOException {

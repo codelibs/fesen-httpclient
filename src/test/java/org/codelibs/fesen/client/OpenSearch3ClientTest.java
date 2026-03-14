@@ -1522,15 +1522,15 @@ class OpenSearch3ClientTest {
         final String index = "test_term_vectors";
         final String id = "1";
 
-        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"text\":{\"type\":\"text\",\"term_vector\":\"yes\"}}}",
-                XContentType.JSON).execute().actionGet();
+        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"text\":{\"type\":\"text\",\"term_vector\":\"yes\"}}}")
+                .execute().actionGet();
         client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{\"text\":\"this is a test document for term vectors\"}", XContentType.JSON).execute().actionGet();
 
         final CountDownLatch latch = new CountDownLatch(1);
-        client.prepareTermVectors(index, id).setFields("text").execute(wrap(res -> {
+        client.prepareTermVectors(index, id).setSelectedFields("text").execute(wrap(res -> {
             assertNotNull(res);
-            assertTrue(res.getIndex().equals(index));
+            assertEquals(index, ((org.opensearch.action.termvectors.TermVectorsResponse) res).getIndex());
             latch.countDown();
         }, e -> {
             e.printStackTrace();
@@ -1544,7 +1544,7 @@ class OpenSearch3ClientTest {
 
         {
             final org.opensearch.action.termvectors.TermVectorsResponse termVectorsResponse =
-                    client.prepareTermVectors(index, id).setFields("text").execute().actionGet();
+                    client.prepareTermVectors(index, id).setSelectedFields("text").execute().actionGet();
             assertNotNull(termVectorsResponse);
             assertEquals(index, termVectorsResponse.getIndex());
             assertEquals(id, termVectorsResponse.getId());
@@ -1555,8 +1555,8 @@ class OpenSearch3ClientTest {
     void test_multi_term_vectors() throws Exception {
         final String index = "test_multi_term_vectors";
 
-        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"text\":{\"type\":\"text\",\"term_vector\":\"yes\"}}}",
-                XContentType.JSON).execute().actionGet();
+        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"text\":{\"type\":\"text\",\"term_vector\":\"yes\"}}}")
+                .execute().actionGet();
 
         for (int i = 1; i <= 3; i++) {
             client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
@@ -1623,12 +1623,12 @@ class OpenSearch3ClientTest {
 
     @Test
     void test_simulate_pipeline() throws Exception {
-        final String pipelineSource = "{\"pipeline\":{\"description\":\"test\",\"processors\":[{\"set\":{\"field\":\"foo\",\"value\":\"bar\"}}]},"
-                + "\"docs\":[{\"_index\":\"index\",\"_id\":\"id\",\"_source\":{\"foo\":\"baz\"}}]}";
+        final String pipelineSource =
+                "{\"pipeline\":{\"description\":\"test\",\"processors\":[{\"set\":{\"field\":\"foo\",\"value\":\"bar\"}}]},"
+                        + "\"docs\":[{\"_index\":\"index\",\"_id\":\"id\",\"_source\":{\"foo\":\"baz\"}}]}";
 
         final CountDownLatch latch = new CountDownLatch(1);
-        client.admin().cluster()
-                .prepareSimulatePipeline(new BytesArray(pipelineSource.getBytes(StandardCharsets.UTF_8)), XContentType.JSON)
+        client.admin().cluster().prepareSimulatePipeline(new BytesArray(pipelineSource.getBytes(StandardCharsets.UTF_8)), XContentType.JSON)
                 .execute(wrap(res -> {
                     assertNotNull(res);
                     assertNotNull(res.getResults());
@@ -1747,26 +1747,23 @@ class OpenSearch3ClientTest {
                 .setSource("{\"title\":\"cooking recipe\",\"category\":\"food\"}", XContentType.JSON).execute().actionGet();
 
         {
-            final SearchResponse searchResponse = client.prepareSearch(index)
-                    .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("category", "tech"))
-                            .must(QueryBuilders.matchQuery("title", "java")))
-                    .execute().actionGet();
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("category", "tech"))
+                            .must(QueryBuilders.matchQuery("title", "java"))).execute().actionGet();
             assertEquals(1, searchResponse.getHits().getTotalHits().value());
         }
 
         {
-            final SearchResponse searchResponse = client.prepareSearch(index)
-                    .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("category", "tech"))
-                            .mustNot(QueryBuilders.matchQuery("title", "java")))
-                    .execute().actionGet();
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("category", "tech"))
+                            .mustNot(QueryBuilders.matchQuery("title", "java"))).execute().actionGet();
             assertEquals(1, searchResponse.getHits().getTotalHits().value());
         }
 
         {
-            final SearchResponse searchResponse = client.prepareSearch(index)
-                    .setQuery(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("title", "java"))
-                            .should(QueryBuilders.matchQuery("title", "cooking")).minimumShouldMatch(1))
-                    .execute().actionGet();
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("title", "java"))
+                            .should(QueryBuilders.matchQuery("title", "cooking")).minimumShouldMatch(1)).execute().actionGet();
             assertEquals(2, searchResponse.getHits().getTotalHits().value());
         }
     }
@@ -1805,8 +1802,8 @@ class OpenSearch3ClientTest {
                 .setSource("{\"name\":\"bob\",\"age\":35}", XContentType.JSON).execute().actionGet();
 
         {
-            final SearchResponse searchResponse =
-                    client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).addSort("age", org.opensearch.search.sort.SortOrder.ASC).execute().actionGet();
+            final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery())
+                    .addSort("age", org.opensearch.search.sort.SortOrder.ASC).execute().actionGet();
             assertEquals(3, searchResponse.getHits().getTotalHits().value());
             final SearchHit[] hits = searchResponse.getHits().getHits();
             assertEquals(3, hits.length);
@@ -1833,8 +1830,8 @@ class OpenSearch3ClientTest {
         // First, create some documents
         final BulkRequestBuilder bulkCreate = client.prepareBulk();
         for (int i = 1; i <= 3; i++) {
-            bulkCreate.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
-                    .setSource("{\"value\":" + i + "}", XContentType.JSON));
+            bulkCreate.add(
+                    client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}", XContentType.JSON));
         }
         final BulkResponse createResponse = bulkCreate.setRefreshPolicy(RefreshPolicy.IMMEDIATE).execute().actionGet();
         assertFalse(createResponse.hasFailures());
@@ -1849,8 +1846,7 @@ class OpenSearch3ClientTest {
         assertEquals(3, mixedResponse.getItems().length);
 
         // Verify results
-        final SearchResponse searchResponse =
-                client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
         assertEquals(3, searchResponse.getHits().getTotalHits().value());
 
         final GetResponse getResponse1 = client.prepareGet().setIndex(index).setId("1").execute().actionGet();
@@ -1913,8 +1909,8 @@ class OpenSearch3ClientTest {
     @Test
     void test_search_with_prefix_query() throws Exception {
         final String index = "test_search_prefix_query";
-        client.admin().indices().prepareCreate(index)
-                .setMapping("{\"properties\":{\"name\":{\"type\":\"keyword\"}}}", XContentType.JSON).execute().actionGet();
+        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"name\":{\"type\":\"keyword\"}}}").execute()
+                .actionGet();
         client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
                 .setSource("{\"name\":\"opensearch\"}", XContentType.JSON).execute().actionGet();
         client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
@@ -1960,10 +1956,10 @@ class OpenSearch3ClientTest {
 
         {
             final MultiGetRequestBuilder mgetBuilder = client.prepareMultiGet();
-            mgetBuilder.add(new MultiGetRequest.Item(index, "1").fetchSourceContext(
-                    new org.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "user" }, null)));
-            mgetBuilder.add(new MultiGetRequest.Item(index, "2").fetchSourceContext(
-                    new org.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "score" }, null)));
+            mgetBuilder.add(new MultiGetRequest.Item(index, "1")
+                    .fetchSourceContext(new org.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "user" }, null)));
+            mgetBuilder.add(new MultiGetRequest.Item(index, "2")
+                    .fetchSourceContext(new org.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "score" }, null)));
             final MultiGetResponse multiGetResponse = mgetBuilder.execute().actionGet();
             assertEquals(2, multiGetResponse.getResponses().length);
             assertTrue(multiGetResponse.getResponses()[0].getResponse().isExists());

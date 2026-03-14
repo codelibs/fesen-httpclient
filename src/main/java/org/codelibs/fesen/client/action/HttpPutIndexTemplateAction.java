@@ -69,9 +69,7 @@ public class HttpPutIndexTemplateAction extends HttpAction {
         if (request.cause() != null) {
             curlRequest.param("cause", "");
         }
-        if (request.patterns() != null) {
-            curlRequest.param("index_pattern", String.join(",", request.patterns()));
-        }
+        // patterns are included in the request body via toXContent()
         return curlRequest;
     }
 }

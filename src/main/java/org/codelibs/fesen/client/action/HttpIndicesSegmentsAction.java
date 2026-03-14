@@ -90,9 +90,9 @@ public class HttpIndicesSegmentsAction extends HttpAction {
         // BroadcastResponse wire format: totalShards(int), successfulShards(int), failedShards(int), shardFailures(vint size)
         // Then IndicesSegmentResponse reads: ShardSegments array(vint size)
         try (final ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
-            out.writeInt(totalShards);
-            out.writeInt(successfulShards);
-            out.writeInt(failedShards);
+            out.writeVInt(totalShards);
+            out.writeVInt(successfulShards);
+            out.writeVInt(failedShards);
             out.writeVInt(0); // no shard failures
             out.writeVInt(0); // no ShardSegments
             return action.getResponseReader().read(out.toStreamInput());
