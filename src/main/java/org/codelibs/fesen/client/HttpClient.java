@@ -96,6 +96,20 @@ import org.codelibs.fesen.client.action.HttpOpenIndexAction;
 import org.codelibs.fesen.client.action.HttpRemoteStoreStatsAction;
 import org.codelibs.fesen.client.action.HttpSegmentReplicationStatsAction;
 import org.codelibs.fesen.client.action.HttpWlmStatsAction;
+import org.codelibs.fesen.client.action.HttpClusterAllocationExplainAction;
+import org.codelibs.fesen.client.action.HttpClusterSearchShardsAction;
+import org.codelibs.fesen.client.action.HttpClusterStateAction;
+import org.codelibs.fesen.client.action.HttpGetTaskAction;
+import org.codelibs.fesen.client.action.HttpIndicesSegmentsAction;
+import org.codelibs.fesen.client.action.HttpIndicesShardStoresAction;
+import org.codelibs.fesen.client.action.HttpMultiTermVectorsAction;
+import org.codelibs.fesen.client.action.HttpNodesInfoAction;
+import org.codelibs.fesen.client.action.HttpNodesUsageAction;
+import org.codelibs.fesen.client.action.HttpRecoveryAction;
+import org.codelibs.fesen.client.action.HttpRemoteInfoAction;
+import org.codelibs.fesen.client.action.HttpTermVectorsAction;
+import org.codelibs.fesen.client.action.HttpUpgradeAction;
+import org.codelibs.fesen.client.action.HttpUpgradeStatusAction;
 import org.codelibs.fesen.client.action.HttpPendingClusterTasksAction;
 import org.codelibs.fesen.client.action.HttpPutIndexTemplateAction;
 import org.codelibs.fesen.client.action.HttpPutMappingAction;
@@ -125,15 +139,36 @@ import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
 import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
 import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
+import org.opensearch.action.admin.cluster.node.info.NodesInfoAction;
+import org.opensearch.action.admin.cluster.node.info.NodesInfoRequest;
+import org.opensearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
 import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
 import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
+import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
+import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
 import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksAction;
 import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksRequest;
 import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksResponse;
+import org.opensearch.action.admin.cluster.node.usage.NodesUsageAction;
+import org.opensearch.action.admin.cluster.node.usage.NodesUsageRequest;
+import org.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
+import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
+import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
+import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
+import org.opensearch.action.admin.cluster.remote.RemoteInfoAction;
+import org.opensearch.action.admin.cluster.remote.RemoteInfoRequest;
+import org.opensearch.action.admin.cluster.remote.RemoteInfoResponse;
+import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsAction;
+import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequest;
+import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse;
+import org.opensearch.action.admin.cluster.state.ClusterStateAction;
+import org.opensearch.action.admin.cluster.state.ClusterStateRequest;
+import org.opensearch.action.admin.cluster.state.ClusterStateResponse;
 import org.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryAction;
 import org.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
 import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
@@ -244,9 +279,24 @@ import org.opensearch.action.admin.indices.datastream.DataStreamsStatsAction;
 import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
 import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
 import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
+import org.opensearch.action.admin.indices.recovery.RecoveryAction;
+import org.opensearch.action.admin.indices.recovery.RecoveryRequest;
+import org.opensearch.action.admin.indices.recovery.RecoveryResponse;
+import org.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
+import org.opensearch.action.admin.indices.segments.IndicesSegmentsAction;
+import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
+import org.opensearch.action.admin.indices.shards.IndicesShardStoresAction;
+import org.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
+import org.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
 import org.opensearch.action.admin.indices.stats.IndicesStatsAction;
 import org.opensearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.opensearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusAction;
+import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
+import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
+import org.opensearch.action.admin.indices.upgrade.post.UpgradeAction;
+import org.opensearch.action.admin.indices.upgrade.post.UpgradeRequest;
+import org.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryAction;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
@@ -297,6 +347,12 @@ import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.search.SearchScrollAction;
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.opensearch.action.termvectors.MultiTermVectorsAction;
+import org.opensearch.action.termvectors.MultiTermVectorsRequest;
+import org.opensearch.action.termvectors.MultiTermVectorsResponse;
+import org.opensearch.action.termvectors.TermVectorsAction;
+import org.opensearch.action.termvectors.TermVectorsRequest;
+import org.opensearch.action.termvectors.TermVectorsResponse;
 import org.opensearch.action.update.UpdateAction;
 import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.action.update.UpdateResponse;
@@ -887,25 +943,81 @@ public class HttpClient extends HttpAbstractClient {
             new HttpWlmStatsAction(this, WlmStatsAction.INSTANCE).execute((WlmStatsRequest) request, actionListener);
         });
 
-        // org.codelibs.fesen.action.admin.cluster.allocation.ClusterAllocationExplainAction
-        // org.codelibs.fesen.action.admin.cluster.node.tasks.get.GetTaskAction
-        // org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsAction
-        // org.codelibs.fesen.action.admin.cluster.node.usage.NodesUsageAction
-        // org.codelibs.fesen.action.admin.cluster.node.info.NodesInfoAction
-        // org.codelibs.fesen.action.admin.cluster.remote.RemoteInfoAction
-        // org.codelibs.fesen.action.admin.cluster.shards.ClusterSearchShardsAction
-        // org.codelibs.fesen.action.admin.cluster.state.ClusterStateAction
-        // org.codelibs.fesen.action.admin.cluster.stats.ClusterStatsAction
-        // org.codelibs.fesen.action.admin.indices.recovery.RecoveryAction
-        // org.codelibs.fesen.action.admin.indices.segments.IndicesSegmentsAction
-        // org.codelibs.fesen.action.admin.indices.shards.IndicesShardStoresActions
-        // org.codelibs.fesen.action.admin.indices.stats.IndicesStatsAction
-        // org.codelibs.fesen.action.admin.indices.upgrade.get.UpgradeStatusAction
-        // org.codelibs.fesen.action.admin.indices.upgrade.post.UpgradeAction
-        // org.codelibs.fesen.action.admin.indices.upgrade.post.UpgradeSettingsAction
-        // org.codelibs.fesen.action.termvectors.MultiTermVectorsAction
-        // org.codelibs.fesen.action.termvectors.TermVectorsAction
-        // org.opensearch.action.admin.cluster.wlm.WlmStatsAction
+        actions.put(GetTaskAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetTaskResponse> actionListener = (ActionListener<GetTaskResponse>) listener;
+            new HttpGetTaskAction(this, GetTaskAction.INSTANCE).execute((GetTaskRequest) request, actionListener);
+        });
+        actions.put(NodesUsageAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<NodesUsageResponse> actionListener = (ActionListener<NodesUsageResponse>) listener;
+            new HttpNodesUsageAction(this, NodesUsageAction.INSTANCE).execute((NodesUsageRequest) request, actionListener);
+        });
+        actions.put(NodesInfoAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<NodesInfoResponse> actionListener = (ActionListener<NodesInfoResponse>) listener;
+            new HttpNodesInfoAction(this, NodesInfoAction.INSTANCE).execute((NodesInfoRequest) request, actionListener);
+        });
+        actions.put(RemoteInfoAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<RemoteInfoResponse> actionListener = (ActionListener<RemoteInfoResponse>) listener;
+            new HttpRemoteInfoAction(this, RemoteInfoAction.INSTANCE).execute((RemoteInfoRequest) request, actionListener);
+        });
+        actions.put(ClusterAllocationExplainAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterAllocationExplainResponse> actionListener =
+                    (ActionListener<ClusterAllocationExplainResponse>) listener;
+            new HttpClusterAllocationExplainAction(this, ClusterAllocationExplainAction.INSTANCE)
+                    .execute((ClusterAllocationExplainRequest) request, actionListener);
+        });
+        actions.put(ClusterSearchShardsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterSearchShardsResponse> actionListener = (ActionListener<ClusterSearchShardsResponse>) listener;
+            new HttpClusterSearchShardsAction(this, ClusterSearchShardsAction.INSTANCE).execute((ClusterSearchShardsRequest) request,
+                    actionListener);
+        });
+        actions.put(ClusterStateAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterStateResponse> actionListener = (ActionListener<ClusterStateResponse>) listener;
+            new HttpClusterStateAction(this, ClusterStateAction.INSTANCE).execute((ClusterStateRequest) request, actionListener);
+        });
+        actions.put(RecoveryAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<RecoveryResponse> actionListener = (ActionListener<RecoveryResponse>) listener;
+            new HttpRecoveryAction(this, RecoveryAction.INSTANCE).execute((RecoveryRequest) request, actionListener);
+        });
+        actions.put(IndicesSegmentsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<IndicesSegmentResponse> actionListener = (ActionListener<IndicesSegmentResponse>) listener;
+            new HttpIndicesSegmentsAction(this, IndicesSegmentsAction.INSTANCE).execute((IndicesSegmentsRequest) request, actionListener);
+        });
+        actions.put(IndicesShardStoresAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<IndicesShardStoresResponse> actionListener = (ActionListener<IndicesShardStoresResponse>) listener;
+            new HttpIndicesShardStoresAction(this, IndicesShardStoresAction.INSTANCE).execute((IndicesShardStoresRequest) request,
+                    actionListener);
+        });
+        actions.put(UpgradeStatusAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<UpgradeStatusResponse> actionListener = (ActionListener<UpgradeStatusResponse>) listener;
+            new HttpUpgradeStatusAction(this, UpgradeStatusAction.INSTANCE).execute((UpgradeStatusRequest) request, actionListener);
+        });
+        actions.put(UpgradeAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<UpgradeResponse> actionListener = (ActionListener<UpgradeResponse>) listener;
+            new HttpUpgradeAction(this, UpgradeAction.INSTANCE).execute((UpgradeRequest) request, actionListener);
+        });
+        actions.put(TermVectorsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<TermVectorsResponse> actionListener = (ActionListener<TermVectorsResponse>) listener;
+            new HttpTermVectorsAction(this, TermVectorsAction.INSTANCE).execute((TermVectorsRequest) request, actionListener);
+        });
+        actions.put(MultiTermVectorsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<MultiTermVectorsResponse> actionListener = (ActionListener<MultiTermVectorsResponse>) listener;
+            new HttpMultiTermVectorsAction(this, MultiTermVectorsAction.INSTANCE).execute((MultiTermVectorsRequest) request,
+                    actionListener);
+        });
     }
 
     @Override
@@ -1093,7 +1205,8 @@ public class HttpClient extends HttpAbstractClient {
     }
 
     protected List<NamedXContentRegistry.Entry> getDefaultNamedXContents() {
-        // TODO check SearchModule
+        // SearchModule.getNamedXContents() requires too many dependencies to instantiate.
+        // Maintain the aggregation parser mappings manually.
         final Map<String, ContextParser<Object, ? extends Aggregation>> map = new HashMap<>();
         map.put(CardinalityAggregationBuilder.NAME, (p, c) -> ParsedCardinality.fromXContent(p, (String) c));
         map.put(InternalHDRPercentiles.NAME, (p, c) -> ParsedHDRPercentiles.fromXContent(p, (String) c));
