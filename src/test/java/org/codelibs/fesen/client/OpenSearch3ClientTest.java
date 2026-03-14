@@ -1348,6 +1348,659 @@ class OpenSearch3ClientTest {
         }
     }
 
+    @Test
+    void test_cluster_allocation_explain() throws Exception {
+        final String index = "test_cluster_allocation_explain";
+        client.admin().indices().prepareCreate(index)
+                .setSettings(Settings.builder().put("index.number_of_shards", 1).put("index.number_of_replicas", 0)).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareAllocationExplain().setIndex(index).setShard(0).setPrimary(true).execute(wrap(res -> {
+            assertNotNull(res);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+    }
+
+    @Test
+    void test_search_shards() throws Exception {
+        final String index = "test_search_shards";
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareSearchShards(index).execute(wrap(res -> {
+            assertNotNull(res);
+            assertNotNull(res.getGroups());
+            assertNotNull(res.getNodes());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse searchShardsResponse =
+                    client.admin().cluster().prepareSearchShards(index).execute().actionGet();
+            assertNotNull(searchShardsResponse);
+            assertNotNull(searchShardsResponse.getGroups());
+            assertNotNull(searchShardsResponse.getNodes());
+        }
+    }
+
+    @Test
+    void test_cluster_state() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareState().execute(wrap(res -> {
+            assertNotNull(res);
+            assertNotNull(res.getState());
+            assertNotNull(res.getState().getClusterName());
+            assertEquals(clusterName, res.getState().getClusterName().value());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.admin.cluster.state.ClusterStateResponse clusterStateResponse =
+                    client.admin().cluster().prepareState().execute().actionGet();
+            assertNotNull(clusterStateResponse);
+            assertNotNull(clusterStateResponse.getState());
+            assertEquals(clusterName, clusterStateResponse.getState().getClusterName().value());
+        }
+    }
+
+    @Test
+    void test_indices_segments() throws Exception {
+        final String index = "test_indices_segments";
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"text\":\"test\"}", XContentType.JSON).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareSegments(index).execute(wrap(res -> {
+            assertNotNull(res);
+            assertTrue(res.getTotalShards() > 0);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.admin.indices.segments.IndicesSegmentResponse segmentsResponse =
+                    client.admin().indices().prepareSegments(index).execute().actionGet();
+            assertNotNull(segmentsResponse);
+            assertTrue(segmentsResponse.getTotalShards() > 0);
+        }
+    }
+
+    @Test
+    void test_indices_shard_stores() throws Exception {
+        final String index = "test_indices_shard_stores";
+        client.admin().indices().prepareCreate(index)
+                .setSettings(Settings.builder().put("index.number_of_shards", 1).put("index.number_of_replicas", 0)).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareShardStores(index).execute(wrap(res -> {
+            assertNotNull(res);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.admin.indices.shards.IndicesShardStoresResponse shardStoresResponse =
+                    client.admin().indices().prepareShardStores(index).execute().actionGet();
+            assertNotNull(shardStoresResponse);
+        }
+    }
+
+    @Test
+    void test_recovery() throws Exception {
+        final String index = "test_recovery";
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"text\":\"test\"}", XContentType.JSON).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareRecoveries(index).execute(wrap(res -> {
+            assertNotNull(res);
+            assertTrue(res.getTotalShards() > 0);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.admin.indices.recovery.RecoveryResponse recoveryResponse =
+                    client.admin().indices().prepareRecoveries(index).execute().actionGet();
+            assertNotNull(recoveryResponse);
+            assertTrue(recoveryResponse.getTotalShards() > 0);
+        }
+    }
+
+    @Test
+    void test_term_vectors() throws Exception {
+        final String index = "test_term_vectors";
+        final String id = "1";
+
+        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"text\":{\"type\":\"text\",\"term_vector\":\"yes\"}}}",
+                XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"text\":\"this is a test document for term vectors\"}", XContentType.JSON).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.prepareTermVectors(index, id).setFields("text").execute(wrap(res -> {
+            assertNotNull(res);
+            assertTrue(res.getIndex().equals(index));
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.termvectors.TermVectorsResponse termVectorsResponse =
+                    client.prepareTermVectors(index, id).setFields("text").execute().actionGet();
+            assertNotNull(termVectorsResponse);
+            assertEquals(index, termVectorsResponse.getIndex());
+            assertEquals(id, termVectorsResponse.getId());
+        }
+    }
+
+    @Test
+    void test_multi_term_vectors() throws Exception {
+        final String index = "test_multi_term_vectors";
+
+        client.admin().indices().prepareCreate(index).setMapping("{\"properties\":{\"text\":{\"type\":\"text\",\"term_vector\":\"yes\"}}}",
+                XContentType.JSON).execute().actionGet();
+
+        for (int i = 1; i <= 3; i++) {
+            client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                    .setSource("{\"text\":\"test document " + i + "\"}", XContentType.JSON).execute().actionGet();
+        }
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        final org.opensearch.action.termvectors.MultiTermVectorsRequestBuilder mtvBuilder = client.prepareMultiTermVectors();
+        mtvBuilder.add(new org.opensearch.action.termvectors.TermVectorsRequest(index, "1").selectedFields("text"));
+        mtvBuilder.add(new org.opensearch.action.termvectors.TermVectorsRequest(index, "2").selectedFields("text"));
+        mtvBuilder.execute(wrap(res -> {
+            assertNotNull(res);
+            assertEquals(2, res.getResponses().length);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.termvectors.MultiTermVectorsRequestBuilder syncBuilder = client.prepareMultiTermVectors();
+            syncBuilder.add(new org.opensearch.action.termvectors.TermVectorsRequest(index, "1").selectedFields("text"));
+            syncBuilder.add(new org.opensearch.action.termvectors.TermVectorsRequest(index, "2").selectedFields("text"));
+            syncBuilder.add(new org.opensearch.action.termvectors.TermVectorsRequest(index, "3").selectedFields("text"));
+            final org.opensearch.action.termvectors.MultiTermVectorsResponse multiTermVectorsResponse = syncBuilder.execute().actionGet();
+            assertNotNull(multiTermVectorsResponse);
+            assertEquals(3, multiTermVectorsResponse.getResponses().length);
+        }
+    }
+
+    @Test
+    void test_nodes_info() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareNodesInfo().execute(wrap(res -> {
+            assertNotNull(res);
+            assertFalse(res.getNodes().isEmpty());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final org.opensearch.action.admin.cluster.node.info.NodesInfoResponse nodesInfoResponse =
+                    client.admin().cluster().prepareNodesInfo().execute().actionGet();
+            assertNotNull(nodesInfoResponse);
+            assertFalse(nodesInfoResponse.getNodes().isEmpty());
+            nodesInfoResponse.getNodes().forEach(node -> {
+                assertNotNull(node.getNode());
+                assertNotNull(node.getNode().getName());
+            });
+        }
+    }
+
+    @Test
+    void test_simulate_pipeline() throws Exception {
+        final String pipelineSource = "{\"pipeline\":{\"description\":\"test\",\"processors\":[{\"set\":{\"field\":\"foo\",\"value\":\"bar\"}}]},"
+                + "\"docs\":[{\"_index\":\"index\",\"_id\":\"id\",\"_source\":{\"foo\":\"baz\"}}]}";
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster()
+                .prepareSimulatePipeline(new BytesArray(pipelineSource.getBytes(StandardCharsets.UTF_8)), XContentType.JSON)
+                .execute(wrap(res -> {
+                    assertNotNull(res);
+                    assertNotNull(res.getResults());
+                    assertFalse(res.getResults().isEmpty());
+                    latch.countDown();
+                }, e -> {
+                    e.printStackTrace();
+                    try {
+                        fail();
+                    } finally {
+                        latch.countDown();
+                    }
+                }));
+        latch.await();
+
+        {
+            final org.opensearch.action.ingest.SimulatePipelineResponse simulatePipelineResponse = client.admin().cluster()
+                    .prepareSimulatePipeline(new BytesArray(pipelineSource.getBytes(StandardCharsets.UTF_8)), XContentType.JSON).execute()
+                    .actionGet();
+            assertNotNull(simulatePipelineResponse);
+            assertNotNull(simulatePipelineResponse.getResults());
+            assertFalse(simulatePipelineResponse.getResults().isEmpty());
+        }
+    }
+
+    @Test
+    void test_crud_index_template() throws Exception {
+        final String templateName = "test_template";
+        final String indexPattern = "test_template_*";
+
+        // Create index template
+        final AcknowledgedResponse putTemplateResponse = client.admin().indices().preparePutTemplate(templateName)
+                .setPatterns(java.util.List.of(indexPattern))
+                .setSettings(Settings.builder().put("index.number_of_shards", 1).put("index.number_of_replicas", 0)).execute().actionGet();
+        assertTrue(putTemplateResponse.isAcknowledged());
+
+        // Get index template
+        final org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse getTemplatesResponse =
+                client.admin().indices().prepareGetTemplates(templateName).execute().actionGet();
+        assertNotNull(getTemplatesResponse);
+        assertFalse(getTemplatesResponse.getIndexTemplates().isEmpty());
+        assertEquals(templateName, getTemplatesResponse.getIndexTemplates().get(0).getName());
+
+        // Delete index template
+        final AcknowledgedResponse deleteTemplateResponse =
+                client.admin().indices().prepareDeleteTemplate(templateName).execute().actionGet();
+        assertTrue(deleteTemplateResponse.isAcknowledged());
+
+        // Verify template is deleted
+        final org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse verifyResponse =
+                client.admin().indices().prepareGetTemplates(templateName).execute().actionGet();
+        assertTrue(verifyResponse.getIndexTemplates().isEmpty());
+    }
+
+    @Test
+    void test_search_with_source_filtering() throws Exception {
+        final String index = "test_search_source_filter";
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"user\":\"user1\",\"text\":\"test\",\"score\":100}", XContentType.JSON).execute().actionGet();
+
+        {
+            final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery())
+                    .setFetchSource(new String[] { "user", "score" }, null).execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+            final SearchHit hit = searchResponse.getHits().getHits()[0];
+            assertTrue(hit.getSourceAsMap().containsKey("user"));
+            assertTrue(hit.getSourceAsMap().containsKey("score"));
+            assertFalse(hit.getSourceAsMap().containsKey("text"));
+        }
+
+        {
+            final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery())
+                    .setFetchSource(null, new String[] { "score" }).execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+            final SearchHit hit = searchResponse.getHits().getHits()[0];
+            assertTrue(hit.getSourceAsMap().containsKey("user"));
+            assertFalse(hit.getSourceAsMap().containsKey("score"));
+        }
+    }
+
+    @Test
+    void test_search_with_term_query() throws Exception {
+        final String index = "test_search_term_query";
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"status\":\"active\",\"count\":10}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"status\":\"inactive\",\"count\":20}", XContentType.JSON).execute().actionGet();
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.termQuery("status", "active")).execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+        }
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.rangeQuery("count").gte(15)).execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+        }
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.rangeQuery("count").gte(5).lte(25)).execute().actionGet();
+            assertEquals(2, searchResponse.getHits().getTotalHits().value());
+        }
+    }
+
+    @Test
+    void test_search_with_bool_query() throws Exception {
+        final String index = "test_search_bool_query";
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"title\":\"java programming\",\"category\":\"tech\"}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"title\":\"python programming\",\"category\":\"tech\"}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("3").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"title\":\"cooking recipe\",\"category\":\"food\"}", XContentType.JSON).execute().actionGet();
+
+        {
+            final SearchResponse searchResponse = client.prepareSearch(index)
+                    .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("category", "tech"))
+                            .must(QueryBuilders.matchQuery("title", "java")))
+                    .execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+        }
+
+        {
+            final SearchResponse searchResponse = client.prepareSearch(index)
+                    .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("category", "tech"))
+                            .mustNot(QueryBuilders.matchQuery("title", "java")))
+                    .execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+        }
+
+        {
+            final SearchResponse searchResponse = client.prepareSearch(index)
+                    .setQuery(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("title", "java"))
+                            .should(QueryBuilders.matchQuery("title", "cooking")).minimumShouldMatch(1))
+                    .execute().actionGet();
+            assertEquals(2, searchResponse.getHits().getTotalHits().value());
+        }
+    }
+
+    @Test
+    void test_search_with_size_and_from() throws Exception {
+        final String index = "test_search_size_from";
+        for (int i = 1; i <= 5; i++) {
+            client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                    .setSource("{\"num\":" + i + "}", XContentType.JSON).execute().actionGet();
+        }
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).setSize(2).execute().actionGet();
+            assertEquals(5, searchResponse.getHits().getTotalHits().value());
+            assertEquals(2, searchResponse.getHits().getHits().length);
+        }
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).setFrom(3).setSize(10).execute().actionGet();
+            assertEquals(5, searchResponse.getHits().getTotalHits().value());
+            assertEquals(2, searchResponse.getHits().getHits().length);
+        }
+    }
+
+    @Test
+    void test_search_with_sort() throws Exception {
+        final String index = "test_search_sort";
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"name\":\"charlie\",\"age\":30}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"name\":\"alice\",\"age\":25}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("3").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"name\":\"bob\",\"age\":35}", XContentType.JSON).execute().actionGet();
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).addSort("age", org.opensearch.search.sort.SortOrder.ASC).execute().actionGet();
+            assertEquals(3, searchResponse.getHits().getTotalHits().value());
+            final SearchHit[] hits = searchResponse.getHits().getHits();
+            assertEquals(3, hits.length);
+            assertEquals("2", hits[0].getId());
+            assertEquals("1", hits[1].getId());
+            assertEquals("3", hits[2].getId());
+        }
+
+        {
+            final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery())
+                    .addSort("age", org.opensearch.search.sort.SortOrder.DESC).execute().actionGet();
+            assertEquals(3, searchResponse.getHits().getTotalHits().value());
+            final SearchHit[] hits = searchResponse.getHits().getHits();
+            assertEquals("3", hits[0].getId());
+            assertEquals("1", hits[1].getId());
+            assertEquals("2", hits[2].getId());
+        }
+    }
+
+    @Test
+    void test_bulk_with_mixed_operations() throws Exception {
+        final String index = "test_bulk_mixed";
+
+        // First, create some documents
+        final BulkRequestBuilder bulkCreate = client.prepareBulk();
+        for (int i = 1; i <= 3; i++) {
+            bulkCreate.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{\"value\":" + i + "}", XContentType.JSON));
+        }
+        final BulkResponse createResponse = bulkCreate.setRefreshPolicy(RefreshPolicy.IMMEDIATE).execute().actionGet();
+        assertFalse(createResponse.hasFailures());
+
+        // Mixed bulk: update + delete + index
+        final BulkRequestBuilder bulkMixed = client.prepareBulk();
+        bulkMixed.add(client.prepareUpdate().setIndex(index).setId("1").setDoc("value", 100));
+        bulkMixed.add(client.prepareDelete().setIndex(index).setId("2"));
+        bulkMixed.add(client.prepareIndex().setIndex(index).setId("4").setSource("{\"value\":4}", XContentType.JSON));
+        final BulkResponse mixedResponse = bulkMixed.setRefreshPolicy(RefreshPolicy.IMMEDIATE).execute().actionGet();
+        assertFalse(mixedResponse.hasFailures());
+        assertEquals(3, mixedResponse.getItems().length);
+
+        // Verify results
+        final SearchResponse searchResponse =
+                client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(3, searchResponse.getHits().getTotalHits().value());
+
+        final GetResponse getResponse1 = client.prepareGet().setIndex(index).setId("1").execute().actionGet();
+        assertTrue(getResponse1.isExists());
+        assertEquals(100, getResponse1.getSourceAsMap().get("value"));
+
+        final GetResponse getResponse2 = client.prepareGet().setIndex(index).setId("2").execute().actionGet();
+        assertFalse(getResponse2.isExists());
+    }
+
+    @Test
+    void test_cluster_health_with_index() throws Exception {
+        final String index = "test_cluster_health_idx";
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareHealth(index).execute(wrap(res -> {
+            try {
+                assertNotNull(res);
+                assertEquals(clusterName, res.getClusterName());
+                assertTrue(res.getActiveShards() > 0);
+                assertTrue(res.getActivePrimaryShards() > 0);
+            } finally {
+                latch.countDown();
+            }
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ClusterHealthResponse clusterHealthResponse = client.admin().cluster().prepareHealth(index).execute().actionGet();
+            assertNotNull(clusterHealthResponse);
+            assertEquals(clusterName, clusterHealthResponse.getClusterName());
+            assertTrue(clusterHealthResponse.getActiveShards() > 0);
+        }
+    }
+
+    @Test
+    void test_search_with_exists_query() throws Exception {
+        final String index = "test_search_exists_query";
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"title\":\"test\",\"description\":\"desc\"}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"title\":\"test2\"}", XContentType.JSON).execute().actionGet();
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.existsQuery("description")).execute().actionGet();
+            assertEquals(1, searchResponse.getHits().getTotalHits().value());
+        }
+    }
+
+    @Test
+    void test_search_with_prefix_query() throws Exception {
+        final String index = "test_search_prefix_query";
+        client.admin().indices().prepareCreate(index)
+                .setMapping("{\"properties\":{\"name\":{\"type\":\"keyword\"}}}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"name\":\"opensearch\"}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"name\":\"opentelemetry\"}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("3").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"name\":\"elasticsearch\"}", XContentType.JSON).execute().actionGet();
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.prefixQuery("name", "open")).execute().actionGet();
+            assertEquals(2, searchResponse.getHits().getTotalHits().value());
+        }
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.wildcardQuery("name", "*search")).execute().actionGet();
+            assertEquals(2, searchResponse.getHits().getTotalHits().value());
+        }
+    }
+
+    @Test
+    void test_search_with_ids_query() throws Exception {
+        final String index = "test_search_ids_query";
+        for (int i = 1; i <= 5; i++) {
+            client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                    .setSource("{\"num\":" + i + "}", XContentType.JSON).execute().actionGet();
+        }
+
+        {
+            final SearchResponse searchResponse =
+                    client.prepareSearch(index).setQuery(QueryBuilders.idsQuery().addIds("1", "3", "5")).execute().actionGet();
+            assertEquals(3, searchResponse.getHits().getTotalHits().value());
+        }
+    }
+
+    @Test
+    void test_multi_get_with_source_filtering() throws Exception {
+        final String index = "test_mget_source_filter";
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"user\":\"user1\",\"text\":\"test\",\"score\":100}", XContentType.JSON).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("2").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"user\":\"user2\",\"text\":\"test2\",\"score\":200}", XContentType.JSON).execute().actionGet();
+
+        {
+            final MultiGetRequestBuilder mgetBuilder = client.prepareMultiGet();
+            mgetBuilder.add(new MultiGetRequest.Item(index, "1").fetchSourceContext(
+                    new org.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "user" }, null)));
+            mgetBuilder.add(new MultiGetRequest.Item(index, "2").fetchSourceContext(
+                    new org.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "score" }, null)));
+            final MultiGetResponse multiGetResponse = mgetBuilder.execute().actionGet();
+            assertEquals(2, multiGetResponse.getResponses().length);
+            assertTrue(multiGetResponse.getResponses()[0].getResponse().isExists());
+            assertTrue(multiGetResponse.getResponses()[1].getResponse().isExists());
+        }
+    }
+
+    @Test
+    void test_indicesStats_sync() throws Exception {
+        final String index = "test_indices_stats_sync";
+
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        {
+            final org.opensearch.action.admin.indices.stats.IndicesStatsResponse response =
+                    client.admin().indices().prepareStats(index).execute().actionGet();
+            assertNotNull(response);
+            assertTrue(response.getTotalShards() > 0);
+            assertTrue(response.getSuccessfulShards() >= 0);
+        }
+    }
+
+    @Test
+    void test_clusterStats_sync() throws Exception {
+        {
+            final org.opensearch.action.admin.cluster.stats.ClusterStatsResponse response =
+                    client.admin().cluster().prepareClusterStats().execute().actionGet();
+            assertNotNull(response);
+            assertNotNull(response.getClusterName());
+            assertEquals(clusterName, response.getClusterName().value());
+            assertNotNull(response.getClusterUUID());
+            assertFalse(response.getClusterUUID().isEmpty());
+            assertTrue(response.getTimestamp() > 0);
+        }
+    }
+
     // TODO PutIndexTemplateAction
     // TODO GetIndexTemplatesAction
     // TODO DeleteIndexTemplateAction
