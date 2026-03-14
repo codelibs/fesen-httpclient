@@ -39,7 +39,7 @@ import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpNodesInfoAction extends HttpAction {
 
-    protected NodesInfoAction action;
+    protected final NodesInfoAction action;
 
     public HttpNodesInfoAction(final HttpClient client, final NodesInfoAction action) {
         super(client);

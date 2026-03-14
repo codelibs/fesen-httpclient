@@ -37,7 +37,7 @@ import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpNodesUsageAction extends HttpAction {
 
-    protected NodesUsageAction action;
+    protected final NodesUsageAction action;
 
     public HttpNodesUsageAction(final HttpClient client, final NodesUsageAction action) {
         super(client);

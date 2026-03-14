@@ -23,7 +23,12 @@ import org.codelibs.fesen.client.util.UrlUtils;
 import org.opensearch.action.termvectors.TermVectorsAction;
 import org.opensearch.action.termvectors.TermVectorsRequest;
 import org.opensearch.action.termvectors.TermVectorsResponse;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.xcontent.DeprecationHandler;
+import org.opensearch.core.xcontent.NamedXContentRegistry;
+import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
 public class HttpTermVectorsAction extends HttpAction {
@@ -109,7 +114,23 @@ public class HttpTermVectorsAction extends HttpAction {
         if (request.id() != null && !request.id().isEmpty()) {
             buf.append('/').append(UrlUtils.encode(request.id()));
         }
-        final CurlRequest curlRequest = client.getCurlRequest(GET, buf.toString());
+        final boolean hasDoc = request.doc() != null;
+        final CurlRequest curlRequest = client.getCurlRequest(hasDoc ? POST : GET, buf.toString());
+        if (hasDoc) {
+            try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
+                builder.startObject();
+                final BytesReference docBytes = request.doc();
+                try (final XContentParser docParser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
+                        DeprecationHandler.THROW_UNSUPPORTED_OPERATION, BytesReference.toBytes(docBytes))) {
+                    builder.field("doc");
+                    builder.copyCurrentStructure(docParser);
+                }
+                builder.endObject();
+                curlRequest.body(builder.toString());
+            } catch (final IOException e) {
+                throw new RuntimeException("Failed to build request body", e);
+            }
+        }
         if (request.selectedFields() != null && request.selectedFields().size() > 0) {
             curlRequest.param("fields", String.join(",", request.selectedFields()));
         }

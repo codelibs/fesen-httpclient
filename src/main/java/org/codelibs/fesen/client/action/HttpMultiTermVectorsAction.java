@@ -164,6 +164,24 @@ public class HttpMultiTermVectorsAction extends HttpAction {
                 if (tvRequest.id() != null) {
                     builder.field("_id", tvRequest.id());
                 }
+                if (tvRequest.selectedFields() != null && tvRequest.selectedFields().size() > 0) {
+                    builder.field("fields", tvRequest.selectedFields());
+                }
+                if (!tvRequest.offsets()) {
+                    builder.field("offsets", false);
+                }
+                if (!tvRequest.positions()) {
+                    builder.field("positions", false);
+                }
+                if (!tvRequest.payloads()) {
+                    builder.field("payloads", false);
+                }
+                if (tvRequest.termStatistics()) {
+                    builder.field("term_statistics", true);
+                }
+                if (!tvRequest.fieldStatistics()) {
+                    builder.field("field_statistics", false);
+                }
                 builder.endObject();
             }
             builder.endArray();
