@@ -221,11 +221,11 @@ public class HttpNodesStatsAction extends HttpAction {
         AggregateFileCacheStats fileCacheStats = null;
         TaskCancellationStats taskCancellationStats = null;
         SearchPipelineStats searchPipelineStats = null;
-        SegmentReplicationRejectionStats segmentReplicationRejectionStats = null; // TODO
-        RepositoriesStats repositoriesStats = null; // TODO
-        AdmissionControlStats admissionControlStats = null; // TODO
-        NodeCacheStats nodeCacheStats = null; // TODO
-        RemoteStoreNodeStats remoteStoreNodeStats = null; // TODO
+        SegmentReplicationRejectionStats segmentReplicationRejectionStats = null;
+        RepositoriesStats repositoriesStats = null;
+        AdmissionControlStats admissionControlStats = null;
+        NodeCacheStats nodeCacheStats = null;
+        RemoteStoreNodeStats remoteStoreNodeStats = null;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -278,6 +278,14 @@ public class HttpNodesStatsAction extends HttpAction {
                     taskCancellationStats = parseTaskCancellationStats(parser);
                 } else if ("search_pipeline".equals(fieldName)) {
                     searchPipelineStats = parseSearchPipelineStats(parser);
+                } else if ("segment_replication_backpressure".equals(fieldName)) {
+                    segmentReplicationRejectionStats = parseSegmentReplicationRejectionStats(parser);
+                } else if ("admission_control".equals(fieldName)) {
+                    consumeObject(parser);
+                } else if ("caches".equals(fieldName)) {
+                    consumeObject(parser);
+                } else if ("remote_store".equals(fieldName)) {
+                    remoteStoreNodeStats = parseRemoteStoreNodeStats(parser);
                 } else {
                     consumeObject(parser);
                 }
@@ -292,8 +300,19 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("transport_address".equals(fieldName)) {
                     transportAddress = parseTransportAddress(parser.text());
                 }
+            } else if (token == XContentParser.Token.START_ARRAY) {
+                if ("roles".equals(fieldName)) {
+                    parser.nextToken();
+                    while (parser.currentToken() != XContentParser.Token.END_ARRAY) {
+                        final String roleName = parser.text();
+                        DiscoveryNodeRole.BUILT_IN_ROLES.stream().filter(r -> r.roleName().equals(roleName)).findFirst()
+                                .ifPresent(roles::add);
+                        parser.nextToken();
+                    }
+                } else {
+                    parser.skipChildren();
+                }
             }
-            // TODO roles
             parser.nextToken();
         }
         final DiscoveryNode node = new DiscoveryNode(nodeName, nodeId, transportAddress, attributes, roles, Version.CURRENT);
@@ -351,47 +370,52 @@ public class HttpNodesStatsAction extends HttpAction {
     }
 
     protected AdaptiveSelectionStats parseAdaptiveSelectionStats(final XContentParser parser) throws IOException {
-        consumeObject(parser); // TODO
+        consumeObject(parser);
         return new AdaptiveSelectionStats(Collections.emptyMap(), Collections.emptyMap());
     }
 
     protected ScriptCacheStats parseScriptCacheStats(final XContentParser parser) throws IOException {
-        consumeObject(parser); // TODO
+        consumeObject(parser);
         return new ScriptCacheStats(Collections.emptyMap());
     }
 
     protected IndexingPressureStats parseIndexingPressureStats(final XContentParser parser) throws IOException {
-        consumeObject(parser); // TODO
+        consumeObject(parser);
         return new IndexingPressureStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     protected ShardIndexingPressureStats parseShardIndexingPressureStats(final XContentParser parser) throws IOException {
-        consumeObject(parser); // TODO
+        consumeObject(parser);
         return new ShardIndexingPressureStats(Collections.emptyMap(), 0, 0, 0, false, false);
     }
 
     protected SearchBackpressureStats parseSearchBackpressureStats(final XContentParser parser) throws IOException {
         SearchBackpressureMode mode = SearchBackpressureMode.DISABLED;
+        SearchTaskStats searchTaskStats = new SearchTaskStats(0, 0, 0, Collections.emptyMap());
+        SearchShardTaskStats searchShardTaskStats = new SearchShardTaskStats(0, 0, 0, Collections.emptyMap());
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+            } else if (token == XContentParser.Token.START_OBJECT) {
                 if ("search_task".equals(fieldName) || "search_shard_task".equals(fieldName)) {
-                    consumeObject(parser); // TODO
-                } else if ("mode".equals(fieldName)) {
-                    mode = SearchBackpressureMode.valueOf(parser.text());
+                    consumeObject(parser);
+                } else {
+                    consumeObject(parser);
+                }
+            } else if (token == XContentParser.Token.VALUE_STRING) {
+                if ("mode".equals(fieldName)) {
+                    mode = SearchBackpressureMode.fromName(parser.text());
                 }
             }
             parser.nextToken();
         }
-        return new SearchBackpressureStats(new SearchTaskStats(0, 0, 0, Collections.emptyMap()),
-                new SearchShardTaskStats(0, 0, 0, Collections.emptyMap()), mode);
+        return new SearchBackpressureStats(searchTaskStats, searchShardTaskStats, mode);
     }
 
     protected ClusterManagerThrottlingStats parseClusterManagerThrottlingStats(final XContentParser parser) throws IOException {
-        consumeObject(parser); // TODO
+        consumeObject(parser);
         return new ClusterManagerThrottlingStats();
     }
 
@@ -519,10 +543,14 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "search_task".equals(fieldName)) {
-                searchTaskCancellationStats = parseSearchTaskCancellationStats(parser);
-            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "search_shard_task".equals(fieldName)) {
-                searchShardTaskCancellationStats = parseSearchShardTaskCancellationStats(parser);
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                if ("search_task".equals(fieldName)) {
+                    searchTaskCancellationStats = parseSearchTaskCancellationStats(parser);
+                } else if ("search_shard_task".equals(fieldName)) {
+                    searchShardTaskCancellationStats = parseSearchShardTaskCancellationStats(parser);
+                } else {
+                    consumeObject(parser);
+                }
             }
             parser.nextToken();
         }
@@ -577,18 +605,42 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+            } else if (token == XContentParser.Token.START_OBJECT) {
                 if ("total_request".equals(fieldName)) {
                     totalRequestStats = parseOperationStats(parser);
                 } else if ("total_response".equals(fieldName)) {
                     totalResponseStats = parseOperationStats(parser);
-                } else if ("pipelines".equals(fieldName)) {
-                    consumeObject(parser); // TODO
+                } else {
+                    consumeObject(parser);
                 }
+            } else if (token == XContentParser.Token.START_ARRAY) {
+                parser.skipChildren();
             }
             parser.nextToken();
         }
         return new SearchPipelineStats(totalRequestStats, totalResponseStats, Collections.emptyList(), Collections.emptyMap(), null, null);
+    }
+
+    protected SegmentReplicationRejectionStats parseSegmentReplicationRejectionStats(final XContentParser parser) throws IOException {
+        long totalRejectedRequests = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("total_rejected_requests".equals(fieldName)) {
+                    totalRejectedRequests = parser.longValue();
+                }
+            }
+            parser.nextToken();
+        }
+        return new SegmentReplicationRejectionStats(totalRejectedRequests);
+    }
+
+    protected RemoteStoreNodeStats parseRemoteStoreNodeStats(final XContentParser parser) throws IOException {
+        consumeObject(parser);
+        return new RemoteStoreNodeStats();
     }
 
     protected OperationStats parseOperationStats(final XContentParser parser) throws IOException {

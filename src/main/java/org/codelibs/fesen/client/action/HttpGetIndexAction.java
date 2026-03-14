@@ -97,7 +97,9 @@ public class HttpGetIndexAction extends HttpAction {
                 if (indexEntry.dataStream != null) {
                     dataStreams.put(indexName, indexEntry.dataStream);
                 }
-                // TODO contexts
+                if (indexEntry.context != null) {
+                    contexts.put(indexName, indexEntry.context);
+                }
             } else if (parser.currentToken() == XContentParser.Token.START_ARRAY) {
                 parser.skipChildren();
             } else {
@@ -113,6 +115,7 @@ public class HttpGetIndexAction extends HttpAction {
         Settings indexSettings = null;
         Settings indexDefaultSettings = null;
         String dataStream = null;
+        Context context = null;
         // We start at START_OBJECT since fromXContent ensures that
         while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
             ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
@@ -131,6 +134,9 @@ public class HttpGetIndexAction extends HttpAction {
                 case "defaults":
                     indexDefaultSettings = Settings.fromXContent(parser);
                     break;
+                case "context":
+                    context = Context.fromXContent(parser);
+                    break;
                 default:
                     parser.skipChildren();
                 }
@@ -143,7 +149,7 @@ public class HttpGetIndexAction extends HttpAction {
                 parser.skipChildren();
             }
         }
-        return new IndexEntry(indexAliases, indexMappings, indexSettings, indexDefaultSettings, dataStream);
+        return new IndexEntry(indexAliases, indexMappings, indexSettings, indexDefaultSettings, dataStream, context);
     }
 
     protected static List<AliasMetadata> parseAliases(final XContentParser parser) throws IOException {
@@ -179,9 +185,10 @@ public class HttpGetIndexAction extends HttpAction {
         Settings indexSettings = Settings.EMPTY;
         Settings indexDefaultSettings = Settings.EMPTY;
         String dataStream;
+        Context context;
 
         IndexEntry(final List<AliasMetadata> indexAliases, final Map<String, MappingMetadata> indexMappings, final Settings indexSettings,
-                final Settings indexDefaultSettings, final String dataStream) {
+                final Settings indexDefaultSettings, final String dataStream, final Context context) {
             if (indexAliases != null) {
                 this.indexAliases = indexAliases;
             }
@@ -197,6 +204,7 @@ public class HttpGetIndexAction extends HttpAction {
             if (dataStream != null) {
                 this.dataStream = dataStream;
             }
+            this.context = context;
         }
     }
 }

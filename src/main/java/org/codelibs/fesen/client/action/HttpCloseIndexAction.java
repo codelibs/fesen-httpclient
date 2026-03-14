@@ -179,6 +179,7 @@ public class HttpCloseIndexAction extends HttpAction {
     protected Failure parseFailure(final XContentParser parser) throws IOException {
         int shardId = -1;
         String index = null;
+        String nodeId = null;
         OpenSearchException eex = null;
         String fieldName = null;
         XContentParser.Token token;
@@ -194,13 +195,14 @@ public class HttpCloseIndexAction extends HttpAction {
             } else if (token == XContentParser.Token.VALUE_STRING) {
                 if ("index".equals(fieldName)) {
                     index = parser.text();
+                } else if ("node_id".equals(fieldName)) {
+                    nodeId = parser.text();
                 }
             } else if ((token == XContentParser.Token.VALUE_NUMBER) && "shard".equals(fieldName)) {
                 shardId = parser.intValue();
             }
-            // TODO status
             parser.nextToken();
         }
-        return new Failure(index, shardId, eex);
+        return new Failure(index, shardId, eex, nodeId);
     }
 }

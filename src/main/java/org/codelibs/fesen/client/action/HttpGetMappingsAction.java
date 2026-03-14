@@ -65,8 +65,8 @@ public class HttpGetMappingsAction extends HttpAction {
         return curlRequest;
     }
 
-    // TODO replace with GetMappingsResonse#fromXContent, but it cannot parse dynamic_templates in 7.0.0-beta1.
-    // from GetMappingsResponse
+    // GetMappingsResponse does not provide fromXContent.
+    // This custom implementation skips dynamic_templates for compatibility with older versions.
     public static GetMappingsResponse fromXContent(final XContentParser parser) throws IOException {
         if (parser.currentToken() == null) {
             parser.nextToken();
