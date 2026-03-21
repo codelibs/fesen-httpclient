@@ -17,7 +17,6 @@ package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -31,10 +30,12 @@ class HttpSearchActionTest {
     private final HttpSearchAction action = new HttpSearchAction(null, SearchAction.INSTANCE);
 
     @Test
-    void test_getQuerySource_withNullSource() {
+    void test_getQuerySource_withDefaultSource() {
         final SearchRequest request = new SearchRequest("test-index");
         final String result = action.getQuerySource(request);
-        assertNull(result);
+        // SearchRequest initializes with a default SearchSourceBuilder, so result is not null
+        assertNotNull(result);
+        assertEquals("{}", result);
     }
 
     @Test
