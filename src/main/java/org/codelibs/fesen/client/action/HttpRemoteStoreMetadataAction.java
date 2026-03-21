@@ -17,7 +17,9 @@ package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
@@ -56,6 +58,7 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
         int successfulShards = 0;
         int failedShards = 0;
         final List<DefaultShardOperationFailedException> shardFailures = new ArrayList<>();
+        final List<RemoteStoreShardMetadata> metadataList = new ArrayList<>();
 
         // Initialize parser - move to START_OBJECT
         XContentParser.Token token = parser.nextToken();
@@ -83,16 +86,94 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
                         }
                     }
                 } else if ("indices".equals(fieldName)) {
-                    // Skip indices section - complex to parse
-                    consumeObject(parser);
+                    parseIndices(parser, metadataList);
                 } else {
                     consumeObject(parser);
                 }
             }
         }
 
-        // Build RemoteStoreMetadataResponse with empty RemoteStoreShardMetadata array
-        return new RemoteStoreMetadataResponse(new RemoteStoreShardMetadata[0], totalShards, successfulShards, failedShards, shardFailures);
+        return new RemoteStoreMetadataResponse(metadataList.toArray(new RemoteStoreShardMetadata[0]), totalShards, successfulShards,
+                failedShards, shardFailures);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void parseIndices(final XContentParser parser, final List<RemoteStoreShardMetadata> metadataList) throws IOException {
+        // indices: { "index_name": { "shards": { "0": [ {shard metadata...} ] } } }
+        XContentParser.Token token;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                final String indexName = parser.currentName();
+                parser.nextToken(); // START_OBJECT for index
+                while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+                    if (token == XContentParser.Token.FIELD_NAME && "shards".equals(parser.currentName())) {
+                        parser.nextToken(); // START_OBJECT for shards
+                        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+                            if (token == XContentParser.Token.FIELD_NAME) {
+                                final int shardId = Integer.parseInt(parser.currentName());
+                                parser.nextToken(); // START_ARRAY
+                                while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
+                                    if (token == XContentParser.Token.START_OBJECT) {
+                                        metadataList.add(parseShardMetadata(parser, indexName, shardId));
+                                    }
+                                }
+                            }
+                        }
+                    } else if (token == XContentParser.Token.START_OBJECT || token == XContentParser.Token.START_ARRAY) {
+                        consumeObject(parser);
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected RemoteStoreShardMetadata parseShardMetadata(final XContentParser parser, final String indexName, final int shardId)
+            throws IOException {
+        String latestSegmentMetadataFileName = null;
+        String latestTranslogMetadataFileName = null;
+        Map<String, Map<String, Object>> segmentMetadataFiles = new HashMap<>();
+        Map<String, Map<String, Object>> translogMetadataFiles = new HashMap<>();
+
+        XContentParser.Token token;
+        String fieldName = null;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_STRING) {
+                if ("latest_segment_metadata_filename".equals(fieldName)) {
+                    latestSegmentMetadataFileName = parser.text();
+                } else if ("latest_translog_metadata_filename".equals(fieldName)) {
+                    latestTranslogMetadataFileName = parser.text();
+                }
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                if ("available_segment_metadata_files".equals(fieldName)) {
+                    segmentMetadataFiles = parseMetadataFiles(parser);
+                } else if ("available_translog_metadata_files".equals(fieldName)) {
+                    translogMetadataFiles = parseMetadataFiles(parser);
+                } else {
+                    consumeObject(parser);
+                }
+            } else if (token == XContentParser.Token.START_ARRAY) {
+                consumeObject(parser);
+            }
+        }
+
+        return new RemoteStoreShardMetadata(indexName, shardId, segmentMetadataFiles, translogMetadataFiles, latestSegmentMetadataFileName,
+                latestTranslogMetadataFileName);
+    }
+
+    protected Map<String, Map<String, Object>> parseMetadataFiles(final XContentParser parser) throws IOException {
+        final Map<String, Map<String, Object>> files = new HashMap<>();
+        XContentParser.Token token;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                final String fileName = parser.currentName();
+                parser.nextToken(); // START_OBJECT
+                files.put(fileName, parser.map());
+            }
+        }
+        return files;
     }
 
     protected void consumeObject(final XContentParser parser) throws IOException {

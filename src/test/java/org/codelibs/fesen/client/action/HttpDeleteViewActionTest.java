@@ -15,8 +15,10 @@
  */
 package org.codelibs.fesen.client.action;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.codelibs.fesen.client.util.UrlUtils;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.admin.indices.view.DeleteViewAction;
 
@@ -32,5 +34,27 @@ class HttpDeleteViewActionTest {
     void test_actionFieldIsSet() {
         final HttpDeleteViewAction action = new HttpDeleteViewAction(null, DeleteViewAction.INSTANCE);
         assertNotNull(action.action);
+    }
+
+    @Test
+    void test_urlPath_simpleViewName() {
+        // Verify the URL path pattern used by getCurlRequest: /views/{encoded_name}
+        final String viewName = "my-test-view";
+        final String path = "/views/" + UrlUtils.encode(viewName);
+        assertEquals("/views/my-test-view", path);
+    }
+
+    @Test
+    void test_urlPath_viewNameWithSpecialCharacters() {
+        final String viewName = "view with spaces";
+        final String path = "/views/" + UrlUtils.encode(viewName);
+        assertEquals("/views/view+with+spaces", path);
+    }
+
+    @Test
+    void test_urlPath_viewNameWithSlash() {
+        final String viewName = "ns/view";
+        final String path = "/views/" + UrlUtils.encode(viewName);
+        assertEquals("/views/ns%2Fview", path);
     }
 }

@@ -36,10 +36,13 @@ public class HttpScaleIndexAction extends HttpAction {
     }
 
     public void execute(final ActionRequest request, final ActionListener<AcknowledgedResponse> listener) {
-        // Use reflection to access package-private ScaleIndexRequest fields
+        // ScaleIndexRequest is package-private in OpenSearch, so reflection is the only way
+        // to access getIndex() and isScaleDown() from outside the package.
         try {
             final Method getIndexMethod = request.getClass().getMethod("getIndex");
+            getIndexMethod.setAccessible(true);
             final Method isScaleDownMethod = request.getClass().getMethod("isScaleDown");
+            isScaleDownMethod.setAccessible(true);
             final String index = (String) getIndexMethod.invoke(request);
             final boolean scaleDown = (boolean) isScaleDownMethod.invoke(request);
 

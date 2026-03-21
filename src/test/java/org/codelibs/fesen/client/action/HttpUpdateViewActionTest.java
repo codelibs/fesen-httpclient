@@ -19,30 +19,27 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.admin.indices.view.CreateViewAction;
 import org.opensearch.action.admin.indices.view.UpdateViewAction;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.xcontent.XContentBuilder;
 
 class HttpUpdateViewActionTest {
 
+    private final HttpUpdateViewAction action = new HttpUpdateViewAction(null, UpdateViewAction.INSTANCE);
+
     @Test
     void test_construction_withNullClient() {
-        final HttpUpdateViewAction action = new HttpUpdateViewAction(null, UpdateViewAction.INSTANCE);
         assertNotNull(action);
     }
 
     @Test
-    void test_bodyBuild_doesNotContainName() throws IOException {
+    void test_buildRequestBody_doesNotContainName() {
         final List<CreateViewAction.Request.Target> targets = List.of(new CreateViewAction.Request.Target("logs-*"));
         final CreateViewAction.Request request = new CreateViewAction.Request("my-view", "Updated description", targets);
 
-        final String source = buildUpdateBody(request);
+        final String source = action.buildRequestBody(request);
 
         // Update body should NOT contain name (name is in the URL path)
         assertFalse(source.contains("\"name\""));
@@ -51,12 +48,12 @@ class HttpUpdateViewActionTest {
     }
 
     @Test
-    void test_bodyBuild_withMultipleTargets() throws IOException {
+    void test_buildRequestBody_withMultipleTargets() {
         final List<CreateViewAction.Request.Target> targets =
                 List.of(new CreateViewAction.Request.Target("logs-*"), new CreateViewAction.Request.Target("events-*"));
         final CreateViewAction.Request request = new CreateViewAction.Request("my-view", "Multi-target update", targets);
 
-        final String source = buildUpdateBody(request);
+        final String source = action.buildRequestBody(request);
 
         assertTrue(source.contains("\"description\":\"Multi-target update\""));
         assertTrue(source.contains("\"index_pattern\":\"logs-*\""));
@@ -64,34 +61,13 @@ class HttpUpdateViewActionTest {
     }
 
     @Test
-    void test_bodyBuild_withEmptyDescription() throws IOException {
+    void test_buildRequestBody_withEmptyDescription() {
         final List<CreateViewAction.Request.Target> targets = List.of(new CreateViewAction.Request.Target("data-*"));
         final CreateViewAction.Request request = new CreateViewAction.Request("my-view", null, targets);
 
-        final String source = buildUpdateBody(request);
+        final String source = action.buildRequestBody(request);
 
         // null description defaults to empty string
         assertTrue(source.contains("\"description\":\"\""));
-    }
-
-    /**
-     * Reproduces the body-building logic from HttpUpdateViewAction.execute()
-     * (no name field, unlike create).
-     */
-    private String buildUpdateBody(final CreateViewAction.Request request) throws IOException {
-        try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
-            builder.startObject();
-            builder.field("description", request.getDescription());
-            builder.startArray("targets");
-            for (final CreateViewAction.Request.Target target : request.getTargets()) {
-                builder.startObject();
-                builder.field("index_pattern", target.getIndexPattern());
-                builder.endObject();
-            }
-            builder.endArray();
-            builder.endObject();
-            builder.flush();
-            return BytesReference.bytes(builder).utf8ToString();
-        }
     }
 }

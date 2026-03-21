@@ -15,6 +15,7 @@
  */
 package org.codelibs.fesen.client.action;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,16 +37,7 @@ public class HttpListViewNamesAction extends HttpAction {
     public void execute(final ListViewNamesAction.Request request, final ActionListener<ListViewNamesAction.Response> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final List<String> viewNames = new ArrayList<>();
-                XContentParser.Token token = parser.nextToken();
-                while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                    if (token == XContentParser.Token.FIELD_NAME && "views".equals(parser.currentName())) {
-                        parser.nextToken(); // START_ARRAY
-                        while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
-                            viewNames.add(parser.text());
-                        }
-                    }
-                }
+                final List<String> viewNames = parseViewNames(parser);
                 listener.onResponse(new ListViewNamesAction.Response(viewNames));
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
@@ -53,8 +45,22 @@ public class HttpListViewNamesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    protected List<String> parseViewNames(final XContentParser parser) throws IOException {
+        final List<String> viewNames = new ArrayList<>();
+        XContentParser.Token token = parser.nextToken();
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME && "views".equals(parser.currentName())) {
+                parser.nextToken(); // START_ARRAY
+                while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
+                    viewNames.add(parser.text());
+                }
+            }
+        }
+        return viewNames;
+    }
+
     protected CurlRequest getCurlRequest(final ListViewNamesAction.Request request) {
         // RestViewAction
-        return client.getCurlRequest(GET, "/views/");
+        return client.getCurlRequest(GET, "/views");
     }
 }

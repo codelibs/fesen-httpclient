@@ -38,7 +38,18 @@ public class HttpCreateViewAction extends HttpAction {
     }
 
     public void execute(final CreateViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
-        String source = null;
+        final String source = buildRequestBody(request);
+        getCurlRequest(request).body(source).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final GetViewAction.Response getViewResponse = GetViewAction.Response.fromXContent(parser);
+                listener.onResponse(getViewResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    protected String buildRequestBody(final CreateViewAction.Request request) {
         try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
             builder.startObject();
             builder.field("name", request.getName());
@@ -52,18 +63,10 @@ public class HttpCreateViewAction extends HttpAction {
             builder.endArray();
             builder.endObject();
             builder.flush();
-            source = BytesReference.bytes(builder).utf8ToString();
+            return BytesReference.bytes(builder).utf8ToString();
         } catch (final IOException e) {
             throw new OpenSearchException("Failed to parse a request.", e);
         }
-        getCurlRequest(request).body(source).execute(response -> {
-            try (final XContentParser parser = createParser(response)) {
-                final GetViewAction.Response getViewResponse = GetViewAction.Response.fromXContent(parser);
-                listener.onResponse(getViewResponse);
-            } catch (final Exception e) {
-                listener.onFailure(toOpenSearchException(response, e));
-            }
-        }, e -> unwrapOpenSearchException(listener, e));
     }
 
     protected CurlRequest getCurlRequest(final CreateViewAction.Request request) {

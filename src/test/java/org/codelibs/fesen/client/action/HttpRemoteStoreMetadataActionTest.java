@@ -16,13 +16,19 @@
 package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataAction;
 import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse;
+import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreShardMetadata;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.xcontent.DeprecationHandler;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
@@ -59,14 +65,64 @@ class HttpRemoteStoreMetadataActionTest {
     }
 
     @Test
-    void test_fromXContent_withIndicesSkipped() throws IOException {
-        final String json = "{\"_shards\": {\"total\": 3, \"successful\": 3, \"failed\": 0}, "
-                + "\"indices\": {\"my_index\": {\"shards\": {\"0\": {\"segment\": {}}}}}}";
+    void test_fromXContent_withIndicesParsed() throws IOException {
+        final String json =
+                "{\"_shards\": {\"total\": 1, \"successful\": 1, \"failed\": 0}, " + "\"indices\": {\"my_index\": {\"shards\": {\"0\": [{"
+                        + "\"index\": \"my_index\", \"shard\": 0, " + "\"latest_segment_metadata_filename\": \"seg_meta_001\", "
+                        + "\"latest_translog_metadata_filename\": \"translog_meta_001\", "
+                        + "\"available_segment_metadata_files\": {\"file1\": {\"size\": 1024}}, "
+                        + "\"available_translog_metadata_files\": {\"tfile1\": {\"size\": 512}}" + "}]}}}}";
         try (XContentParser parser = createParser(json)) {
             final RemoteStoreMetadataResponse response = action.fromXContent(parser);
-            assertEquals(3, response.getTotalShards());
-            assertEquals(3, response.getSuccessfulShards());
-            assertEquals(0, response.getFailedShards());
+            assertEquals(1, response.getTotalShards());
+
+            final Map<String, Map<Integer, List<RemoteStoreShardMetadata>>> grouped = response.groupByIndexAndShards();
+            assertNotNull(grouped);
+            assertTrue(grouped.containsKey("my_index"));
+
+            final List<RemoteStoreShardMetadata> shardMetadata = grouped.get("my_index").get(0);
+            assertNotNull(shardMetadata);
+            assertEquals(1, shardMetadata.size());
+
+            final RemoteStoreShardMetadata metadata = shardMetadata.get(0);
+            assertEquals("my_index", metadata.getIndexName());
+            assertEquals(0, metadata.getShardId());
+            assertEquals("seg_meta_001", metadata.getLatestSegmentMetadataFileName());
+            assertEquals("translog_meta_001", metadata.getLatestTranslogMetadataFileName());
+            assertNotNull(metadata.getSegmentMetadataFiles());
+            assertTrue(metadata.getSegmentMetadataFiles().containsKey("file1"));
+            assertNotNull(metadata.getTranslogMetadataFiles());
+            assertTrue(metadata.getTranslogMetadataFiles().containsKey("tfile1"));
+        }
+    }
+
+    @Test
+    void test_fromXContent_withMultipleIndicesAndShards() throws IOException {
+        final String json = "{\"_shards\": {\"total\": 2, \"successful\": 2, \"failed\": 0}, " + "\"indices\": {"
+                + "\"index_a\": {\"shards\": {" + "\"0\": [{\"index\": \"index_a\", \"shard\": 0, "
+                + "\"available_segment_metadata_files\": {}, \"available_translog_metadata_files\": {}}]" + "}},"
+                + "\"index_b\": {\"shards\": {" + "\"0\": [{\"index\": \"index_b\", \"shard\": 0, "
+                + "\"available_segment_metadata_files\": {}, \"available_translog_metadata_files\": {}}]" + "}}" + "}}";
+        try (XContentParser parser = createParser(json)) {
+            final RemoteStoreMetadataResponse response = action.fromXContent(parser);
+            final Map<String, Map<Integer, List<RemoteStoreShardMetadata>>> grouped = response.groupByIndexAndShards();
+            assertEquals(2, grouped.size());
+            assertTrue(grouped.containsKey("index_a"));
+            assertTrue(grouped.containsKey("index_b"));
+        }
+    }
+
+    @Test
+    void test_fromXContent_withoutMetadataFileNames() throws IOException {
+        final String json = "{\"_shards\": {\"total\": 1, \"successful\": 1, \"failed\": 0}, "
+                + "\"indices\": {\"my_index\": {\"shards\": {\"0\": [{" + "\"index\": \"my_index\", \"shard\": 0, "
+                + "\"available_segment_metadata_files\": {}, " + "\"available_translog_metadata_files\": {}" + "}]}}}}";
+        try (XContentParser parser = createParser(json)) {
+            final RemoteStoreMetadataResponse response = action.fromXContent(parser);
+            final Map<String, Map<Integer, List<RemoteStoreShardMetadata>>> grouped = response.groupByIndexAndShards();
+            final RemoteStoreShardMetadata metadata = grouped.get("my_index").get(0).get(0);
+            assertNull(metadata.getLatestSegmentMetadataFileName());
+            assertNull(metadata.getLatestTranslogMetadataFileName());
         }
     }
 

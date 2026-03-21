@@ -56,7 +56,9 @@ public class HttpGetIngestionStateAction extends HttpAction {
         int totalShards = 0;
         int successfulShards = 0;
         int failedShards = 0;
+        String nextPageToken = null;
         final List<DefaultShardOperationFailedException> shardFailures = new ArrayList<>();
+        final List<ShardIngestionState> shardStates = new ArrayList<>();
 
         XContentParser.Token token = parser.nextToken();
         if (token != XContentParser.Token.START_OBJECT) {
@@ -66,6 +68,10 @@ public class HttpGetIngestionStateAction extends HttpAction {
         while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_STRING) {
+                if ("next_page_token".equals(fieldName)) {
+                    nextPageToken = parser.text();
+                }
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if ("_shards".equals(fieldName)) {
                     while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
@@ -81,6 +87,8 @@ public class HttpGetIngestionStateAction extends HttpAction {
                             }
                         }
                     }
+                } else if ("ingestion_state".equals(fieldName)) {
+                    parseIngestionState(parser, shardStates);
                 } else {
                     consumeObject(parser);
                 }
@@ -89,7 +97,72 @@ public class HttpGetIngestionStateAction extends HttpAction {
             }
         }
 
-        return new GetIngestionStateResponse(new ShardIngestionState[0], totalShards, successfulShards, failedShards, null, shardFailures);
+        return new GetIngestionStateResponse(shardStates.toArray(new ShardIngestionState[0]), totalShards, successfulShards, failedShards,
+                nextPageToken, shardFailures);
+    }
+
+    protected void parseIngestionState(final XContentParser parser, final List<ShardIngestionState> shardStates) throws IOException {
+        // ingestion_state: { "index_name": [ {shard fields...}, ... ], ... }
+        XContentParser.Token token;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                final String indexName = parser.currentName();
+                token = parser.nextToken(); // START_ARRAY
+                if (token == XContentParser.Token.START_ARRAY) {
+                    while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
+                        if (token == XContentParser.Token.START_OBJECT) {
+                            shardStates.add(parseShardIngestionState(parser, indexName));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected ShardIngestionState parseShardIngestionState(final XContentParser parser, final String indexName) throws IOException {
+        int shardId = -1;
+        String pollerState = null;
+        String errorPolicy = null;
+        boolean pollerPaused = false;
+        boolean writeBlockEnabled = false;
+        String batchStartPointer = "";
+        boolean isPrimary = true;
+        String nodeName = "";
+
+        XContentParser.Token token;
+        String fieldName = null;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("shard".equals(fieldName)) {
+                    shardId = parser.intValue();
+                }
+            } else if (token == XContentParser.Token.VALUE_STRING) {
+                if ("poller_state".equals(fieldName)) {
+                    pollerState = parser.text();
+                } else if ("error_policy".equals(fieldName)) {
+                    errorPolicy = parser.text();
+                } else if ("batch_start_pointer".equals(fieldName)) {
+                    batchStartPointer = parser.text();
+                } else if ("node".equals(fieldName)) {
+                    nodeName = parser.text();
+                }
+            } else if (token == XContentParser.Token.VALUE_BOOLEAN) {
+                if ("poller_paused".equals(fieldName)) {
+                    pollerPaused = parser.booleanValue();
+                } else if ("write_block_enabled".equals(fieldName)) {
+                    writeBlockEnabled = parser.booleanValue();
+                } else if ("is_primary".equals(fieldName)) {
+                    isPrimary = parser.booleanValue();
+                }
+            } else if (token == XContentParser.Token.START_OBJECT || token == XContentParser.Token.START_ARRAY) {
+                consumeObject(parser);
+            }
+        }
+
+        return new ShardIngestionState(indexName, shardId, pollerState, errorPolicy, pollerPaused, writeBlockEnabled, batchStartPointer,
+                isPrimary, nodeName);
     }
 
     protected void consumeObject(final XContentParser parser) throws IOException {

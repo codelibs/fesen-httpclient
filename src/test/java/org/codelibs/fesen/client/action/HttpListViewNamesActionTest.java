@@ -20,21 +20,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.admin.indices.view.ListViewNamesAction;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.json.JsonXContent;
+import org.opensearch.core.xcontent.DeprecationHandler;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.XContentParser;
 
 class HttpListViewNamesActionTest {
 
+    private final HttpListViewNamesAction action = new HttpListViewNamesAction(null, ListViewNamesAction.INSTANCE);
+
     @Test
     void test_construction_withNullClient() {
-        final HttpListViewNamesAction action = new HttpListViewNamesAction(null, ListViewNamesAction.INSTANCE);
         assertNotNull(action);
     }
 
@@ -43,7 +43,7 @@ class HttpListViewNamesActionTest {
         final String json = """
                 {"views": ["view1", "view2", "view3"]}""";
 
-        final List<String> viewNames = parseViewNames(json);
+        final List<String> viewNames = parseWithProductionCode(json);
 
         assertEquals(3, viewNames.size());
         assertEquals("view1", viewNames.get(0));
@@ -56,7 +56,7 @@ class HttpListViewNamesActionTest {
         final String json = """
                 {"views": []}""";
 
-        final List<String> viewNames = parseViewNames(json);
+        final List<String> viewNames = parseWithProductionCode(json);
 
         assertNotNull(viewNames);
         assertTrue(viewNames.isEmpty());
@@ -67,7 +67,7 @@ class HttpListViewNamesActionTest {
         final String json = """
                 {"views": ["only-view"]}""";
 
-        final List<String> viewNames = parseViewNames(json);
+        final List<String> viewNames = parseWithProductionCode(json);
 
         assertEquals(1, viewNames.size());
         assertEquals("only-view", viewNames.get(0));
@@ -78,7 +78,7 @@ class HttpListViewNamesActionTest {
         final String json = """
                 {"views": ["my-view-1", "view_with_underscores", "view.with.dots"]}""";
 
-        final List<String> viewNames = parseViewNames(json);
+        final List<String> viewNames = parseWithProductionCode(json);
 
         assertEquals(3, viewNames.size());
         assertEquals("my-view-1", viewNames.get(0));
@@ -91,31 +91,17 @@ class HttpListViewNamesActionTest {
         final String json = """
                 {"views": ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]}""";
 
-        final List<String> viewNames = parseViewNames(json);
+        final List<String> viewNames = parseWithProductionCode(json);
 
         assertEquals(10, viewNames.size());
         assertEquals("v1", viewNames.get(0));
         assertEquals("v10", viewNames.get(9));
     }
 
-    /**
-     * Reproduces the parsing logic from HttpListViewNamesAction.execute()
-     * to verify the custom fromXContent parser without needing an HTTP connection.
-     */
-    private List<String> parseViewNames(final String json) throws IOException {
+    private List<String> parseWithProductionCode(final String json) throws IOException {
         try (final XContentParser parser =
-                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, json)) {
-            final List<String> viewNames = new ArrayList<>();
-            XContentParser.Token token = parser.nextToken();
-            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (token == XContentParser.Token.FIELD_NAME && "views".equals(parser.currentName())) {
-                    parser.nextToken(); // START_ARRAY
-                    while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
-                        viewNames.add(parser.text());
-                    }
-                }
-            }
-            return viewNames;
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
+            return action.parseViewNames(parser);
         }
     }
 }
