@@ -36,7 +36,8 @@ class HttpDeleteActionTest {
     void test_fromXContent_deleted() throws IOException {
         final String json = "{\"_index\":\"test\",\"_id\":\"1\",\"_version\":2,\"result\":\"deleted\","
                 + "\"_shards\":{\"total\":2,\"successful\":1,\"failed\":0}," + "\"_seq_no\":1,\"_primary_term\":1}";
-        try (final XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
+        try (final XContentParser parser =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
             final DeleteResponse response = action.fromXContent(parser);
             assertNotNull(response);
             assertEquals("test", response.getIndex());
@@ -50,7 +51,8 @@ class HttpDeleteActionTest {
     void test_fromXContent_notFound() throws IOException {
         final String json = "{\"_index\":\"test\",\"_id\":\"1\",\"_version\":1,\"result\":\"not_found\","
                 + "\"_shards\":{\"total\":2,\"successful\":1,\"failed\":0}," + "\"_seq_no\":2,\"_primary_term\":1}";
-        try (final XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
+        try (final XContentParser parser =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
             final DeleteResponse response = action.fromXContent(parser);
             assertNotNull(response);
             assertEquals("not_found", response.getResult().getLowercase());

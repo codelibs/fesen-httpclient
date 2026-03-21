@@ -36,7 +36,8 @@ class HttpIndexActionTest {
     void test_fromXContent_created() throws IOException {
         final String json = "{\"_index\":\"test\",\"_id\":\"1\",\"_version\":1,\"result\":\"created\","
                 + "\"_shards\":{\"total\":2,\"successful\":1,\"failed\":0}," + "\"_seq_no\":0,\"_primary_term\":1}";
-        try (final XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
+        try (final XContentParser parser =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
             final IndexResponse response = action.fromXContent(parser);
             assertNotNull(response);
             assertEquals("test", response.getIndex());
@@ -50,7 +51,8 @@ class HttpIndexActionTest {
     void test_fromXContent_updated() throws IOException {
         final String json = "{\"_index\":\"test\",\"_id\":\"1\",\"_version\":2,\"result\":\"updated\","
                 + "\"_shards\":{\"total\":2,\"successful\":1,\"failed\":0}," + "\"_seq_no\":1,\"_primary_term\":1}";
-        try (final XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
+        try (final XContentParser parser =
+                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)) {
             final IndexResponse response = action.fromXContent(parser);
             assertNotNull(response);
             assertEquals(2, response.getVersion());
