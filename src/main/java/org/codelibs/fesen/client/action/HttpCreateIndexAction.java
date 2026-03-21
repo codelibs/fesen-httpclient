@@ -83,20 +83,19 @@ public class HttpCreateIndexAction extends HttpAction {
         builder.endObject();
 
         final String mappingSource = request.mappings();
-        if (mappingSource == null) {
-            throw new UnsupportedOperationException("unknown mapping operation.");
-        }
-        try (final XContentParser createParser =
-                JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, mappingSource)) {
-            Map<String, Object> mappingMap = createParser.map();
-            if (mappingMap.get("_doc") instanceof final Map map) {
-                mappingMap = map;
+        if (mappingSource != null) {
+            try (final XContentParser createParser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
+                    LoggingDeprecationHandler.INSTANCE, mappingSource)) {
+                Map<String, Object> mappingMap = createParser.map();
+                if (mappingMap.get("_doc") instanceof final Map map) {
+                    mappingMap = map;
+                }
+                builder.startObject(MAPPINGS.getPreferredName());
+                for (final Map.Entry<String, Object> e : mappingMap.entrySet()) {
+                    builder.field(e.getKey(), e.getValue());
+                }
+                builder.endObject();
             }
-            builder.startObject(MAPPINGS.getPreferredName());
-            for (final Map.Entry<String, Object> e : mappingMap.entrySet()) {
-                builder.field(e.getKey(), e.getValue());
-            }
-            builder.endObject();
         }
 
         builder.startObject(ALIASES.getPreferredName());
