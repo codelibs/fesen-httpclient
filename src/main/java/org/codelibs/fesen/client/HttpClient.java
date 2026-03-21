@@ -105,6 +105,17 @@ import org.codelibs.fesen.client.action.HttpIndicesShardStoresAction;
 import org.codelibs.fesen.client.action.HttpMultiTermVectorsAction;
 import org.codelibs.fesen.client.action.HttpNodesInfoAction;
 import org.codelibs.fesen.client.action.HttpNodesUsageAction;
+import org.codelibs.fesen.client.action.HttpCreateViewAction;
+import org.codelibs.fesen.client.action.HttpGetViewAction;
+import org.codelibs.fesen.client.action.HttpDeleteViewAction;
+import org.codelibs.fesen.client.action.HttpUpdateViewAction;
+import org.codelibs.fesen.client.action.HttpSearchViewAction;
+import org.codelibs.fesen.client.action.HttpListViewNamesAction;
+import org.codelibs.fesen.client.action.HttpPauseIngestionAction;
+import org.codelibs.fesen.client.action.HttpResumeIngestionAction;
+import org.codelibs.fesen.client.action.HttpGetIngestionStateAction;
+import org.codelibs.fesen.client.action.HttpScaleIndexAction;
+import org.codelibs.fesen.client.action.HttpRemoteStoreMetadataAction;
 import org.codelibs.fesen.client.action.HttpRecoveryAction;
 import org.codelibs.fesen.client.action.HttpRemoteInfoAction;
 import org.codelibs.fesen.client.action.HttpTermVectorsAction;
@@ -217,6 +228,25 @@ import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.opensearch.action.admin.cluster.wlm.WlmStatsAction;
 import org.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
 import org.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
+import org.opensearch.action.admin.indices.view.CreateViewAction;
+import org.opensearch.action.admin.indices.view.GetViewAction;
+import org.opensearch.action.admin.indices.view.DeleteViewAction;
+import org.opensearch.action.admin.indices.view.UpdateViewAction;
+import org.opensearch.action.admin.indices.view.SearchViewAction;
+import org.opensearch.action.admin.indices.view.ListViewNamesAction;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionAction;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
+import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionAction;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
+import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateAction;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
+import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
+import org.opensearch.action.admin.indices.scale.searchonly.ScaleIndexAction;
+import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataAction;
+import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequest;
+import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.opensearch.action.admin.indices.alias.get.GetAliasesAction;
@@ -1018,6 +1048,57 @@ public class HttpClient extends HttpAbstractClient {
             new HttpMultiTermVectorsAction(this, MultiTermVectorsAction.INSTANCE).execute((MultiTermVectorsRequest) request,
                     actionListener);
         });
+
+        // View API
+        actions.put(CreateViewAction.INSTANCE, (request, listener) -> {
+            new HttpCreateViewAction(this, CreateViewAction.INSTANCE).execute((CreateViewAction.Request) request,
+                    (ActionListener<GetViewAction.Response>) listener);
+        });
+        actions.put(GetViewAction.INSTANCE, (request, listener) -> {
+            new HttpGetViewAction(this, GetViewAction.INSTANCE).execute((GetViewAction.Request) request,
+                    (ActionListener<GetViewAction.Response>) listener);
+        });
+        actions.put(DeleteViewAction.INSTANCE, (request, listener) -> {
+            new HttpDeleteViewAction(this, DeleteViewAction.INSTANCE).execute((DeleteViewAction.Request) request,
+                    (ActionListener<AcknowledgedResponse>) listener);
+        });
+        actions.put(UpdateViewAction.INSTANCE, (request, listener) -> {
+            new HttpUpdateViewAction(this, UpdateViewAction.INSTANCE).execute((CreateViewAction.Request) request,
+                    (ActionListener<GetViewAction.Response>) listener);
+        });
+        actions.put(SearchViewAction.INSTANCE, (request, listener) -> {
+            new HttpSearchViewAction(this, SearchViewAction.INSTANCE).execute((SearchViewAction.Request) request,
+                    (ActionListener<SearchResponse>) listener);
+        });
+        actions.put(ListViewNamesAction.INSTANCE, (request, listener) -> {
+            new HttpListViewNamesAction(this, ListViewNamesAction.INSTANCE).execute((ListViewNamesAction.Request) request,
+                    (ActionListener<ListViewNamesAction.Response>) listener);
+        });
+
+        // Streaming Ingestion API
+        actions.put(PauseIngestionAction.INSTANCE, (request, listener) -> {
+            new HttpPauseIngestionAction(this, PauseIngestionAction.INSTANCE).execute((PauseIngestionRequest) request,
+                    (ActionListener<PauseIngestionResponse>) listener);
+        });
+        actions.put(ResumeIngestionAction.INSTANCE, (request, listener) -> {
+            new HttpResumeIngestionAction(this, ResumeIngestionAction.INSTANCE).execute((ResumeIngestionRequest) request,
+                    (ActionListener<ResumeIngestionResponse>) listener);
+        });
+        actions.put(GetIngestionStateAction.INSTANCE, (request, listener) -> {
+            new HttpGetIngestionStateAction(this, GetIngestionStateAction.INSTANCE).execute((GetIngestionStateRequest) request,
+                    (ActionListener<GetIngestionStateResponse>) listener);
+        });
+
+        // Scale (Search-Only) API
+        actions.put(ScaleIndexAction.INSTANCE, (request, listener) -> {
+            new HttpScaleIndexAction(this, ScaleIndexAction.INSTANCE).execute(request, (ActionListener<AcknowledgedResponse>) listener);
+        });
+
+        // Remote Store Metadata API
+        actions.put(RemoteStoreMetadataAction.INSTANCE, (request, listener) -> {
+            new HttpRemoteStoreMetadataAction(this, RemoteStoreMetadataAction.INSTANCE).execute((RemoteStoreMetadataRequest) request,
+                    (ActionListener<RemoteStoreMetadataResponse>) listener);
+        });
     }
 
     @Override
@@ -1288,29 +1369,29 @@ public class HttpClient extends HttpAbstractClient {
     @Override
     public void searchView(org.opensearch.action.admin.indices.view.SearchViewAction.Request request,
             ActionListener<SearchResponse> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        execute(SearchViewAction.INSTANCE, request, listener);
     }
 
     @Override
     public ActionFuture<SearchResponse> searchView(org.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return execute(SearchViewAction.INSTANCE, request);
     }
 
     @Override
     public void listViewNames(org.opensearch.action.admin.indices.view.ListViewNamesAction.Request request,
             ActionListener<org.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        execute(ListViewNamesAction.INSTANCE, request, listener);
     }
 
     @Override
     public ActionFuture<org.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listViewNames(
             org.opensearch.action.admin.indices.view.ListViewNamesAction.Request request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return execute(ListViewNamesAction.INSTANCE, request);
     }
 
     @Override
     public SearchRequestBuilder prepareStreamSearch(final String... indices) {
-        throw new UnsupportedOperationException("prepareStreamSearch is not supported");
+        return new SearchRequestBuilder(this, SearchAction.INSTANCE).setIndices(indices);
     }
 
 }

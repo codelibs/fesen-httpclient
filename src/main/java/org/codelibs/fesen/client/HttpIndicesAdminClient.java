@@ -686,82 +686,82 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     @Override
     public void createView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
             ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.createView(request, listener);
     }
 
     @Override
     public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> createView(
             org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.createView(request);
     }
 
     @Override
     public void getView(org.opensearch.action.admin.indices.view.GetViewAction.Request request,
             ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.getView(request, listener);
     }
 
     @Override
     public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> getView(
             org.opensearch.action.admin.indices.view.GetViewAction.Request request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.getView(request);
     }
 
     @Override
     public void deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request,
             ActionListener<AcknowledgedResponse> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.deleteView(request, listener);
     }
 
     @Override
     public ActionFuture<AcknowledgedResponse> deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.deleteView(request);
     }
 
     @Override
     public void updateView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
             ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.updateView(request, listener);
     }
 
     @Override
     public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> updateView(
             org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.updateView(request);
     }
 
     @Override
     public ActionFuture<PauseIngestionResponse> pauseIngestion(PauseIngestionRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.pauseIngestion(request);
     }
 
     @Override
     public void pauseIngestion(PauseIngestionRequest request, ActionListener<PauseIngestionResponse> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.pauseIngestion(request, listener);
     }
 
     @Override
     public ActionFuture<ResumeIngestionResponse> resumeIngestion(ResumeIngestionRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.resumeIngestion(request);
     }
 
     @Override
     public void resumeIngestion(ResumeIngestionRequest request, ActionListener<ResumeIngestionResponse> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.resumeIngestion(request, listener);
     }
 
     @Override
     public ActionFuture<GetIngestionStateResponse> getIngestionState(GetIngestionStateRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.getIngestionState(request);
     }
 
     @Override
     public void getIngestionState(GetIngestionStateRequest request, ActionListener<GetIngestionStateResponse> listener) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        indicesClient.getIngestionState(request, listener);
     }
 
     @Override
     public ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return indicesClient.prepareScaleSearchOnly(index, searchOnly);
     }
 }

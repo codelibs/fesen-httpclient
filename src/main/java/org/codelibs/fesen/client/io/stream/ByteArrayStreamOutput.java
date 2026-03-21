@@ -52,7 +52,7 @@ public class ByteArrayStreamOutput extends StreamOutput {
 
     @Override
     public void reset() throws IOException {
-        throw new UnsupportedOperationException();
+        out.reset();
     }
 
     public byte[] toByteArray() {
