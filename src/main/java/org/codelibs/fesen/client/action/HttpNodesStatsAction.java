@@ -157,6 +157,9 @@ public class HttpNodesStatsAction extends HttpAction {
         List<NodeStats> nodes = Collections.emptyList();
         String fieldName = null;
         ClusterName clusterName = ClusterName.DEFAULT;
+        if (parser.currentToken() == null) {
+            parser.nextToken();
+        }
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == null) {
