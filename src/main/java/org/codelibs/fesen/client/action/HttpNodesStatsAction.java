@@ -157,8 +157,14 @@ public class HttpNodesStatsAction extends HttpAction {
         List<NodeStats> nodes = Collections.emptyList();
         String fieldName = null;
         ClusterName clusterName = ClusterName.DEFAULT;
+        if (parser.currentToken() == null) {
+            parser.nextToken();
+        }
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == null) {
+                throw new IOException("Unexpected end of JSON stream while parsing NodesStatsResponse");
+            }
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
@@ -181,6 +187,9 @@ public class HttpNodesStatsAction extends HttpAction {
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == null) {
+                throw new IOException("Unexpected end of JSON stream while parsing nodes");
+            }
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
@@ -193,7 +202,6 @@ public class HttpNodesStatsAction extends HttpAction {
     }
 
     protected NodeStats parseNodeStats(final XContentParser parser, final String nodeId) throws IOException {
-        new ArrayList<>();
         String fieldName = null;
         String nodeName = "";
         long timestamp = 0;
@@ -230,6 +238,9 @@ public class HttpNodesStatsAction extends HttpAction {
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == null) {
+                throw new IOException("Unexpected end of JSON stream while parsing node stats for " + nodeId);
+            }
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
@@ -399,6 +410,7 @@ public class HttpNodesStatsAction extends HttpAction {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
                 if ("search_task".equals(fieldName) || "search_shard_task".equals(fieldName)) {
                     consumeObject(parser);
                 } else {
@@ -544,6 +556,7 @@ public class HttpNodesStatsAction extends HttpAction {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
                 if ("search_task".equals(fieldName)) {
                     searchTaskCancellationStats = parseSearchTaskCancellationStats(parser);
                 } else if ("search_shard_task".equals(fieldName)) {
@@ -606,6 +619,7 @@ public class HttpNodesStatsAction extends HttpAction {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
                 if ("total_request".equals(fieldName)) {
                     totalRequestStats = parseOperationStats(parser);
                 } else if ("total_response".equals(fieldName)) {
@@ -2322,9 +2336,14 @@ public class HttpNodesStatsAction extends HttpAction {
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == null) {
+                throw new IOException("Unexpected end of JSON stream while consuming object");
+            }
             if (token == XContentParser.Token.START_OBJECT) {
                 parser.nextToken();
                 consumeObject(parser);
+            } else if (token == XContentParser.Token.START_ARRAY) {
+                parser.skipChildren();
             }
             parser.nextToken();
         }

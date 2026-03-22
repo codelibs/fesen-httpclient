@@ -131,10 +131,10 @@ class OpenSearch3ClientTest {
     static void setupLogger() {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
         final Logger rootLogger = Logger.getLogger("");
-        rootLogger.setLevel(Level.ALL);
+        rootLogger.setLevel(Level.INFO);
         final ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter());
-        handler.setLevel(Level.ALL);
+        handler.setLevel(Level.INFO);
         rootLogger.addHandler(handler);
     }
 
