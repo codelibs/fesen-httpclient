@@ -113,7 +113,7 @@ class OpenSearch3ClientTest {
 
     static final String version = "3.5.0";
 
-    static final String imageTag = "opensearchproject/opensearch:" + version;
+    static final String imageTag = "public.ecr.aws/opensearchproject/opensearch:" + version;
 
     static String clusterName = "docker-cluster";
 
