@@ -24,15 +24,31 @@ import org.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusRespo
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the snapshots status API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpSnapshotsStatusAction extends HttpAction {
 
+    /** The snapshots status action definition. */
     protected final SnapshotsStatusAction action;
 
+    /**
+     * Creates a new HTTP snapshots status action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the snapshots status action definition
+     */
     public HttpSnapshotsStatusAction(final HttpClient client, final SnapshotsStatusAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the snapshots status request and notifies the listener with the response.
+     *
+     * @param request the snapshots status request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final SnapshotsStatusRequest request, final ActionListener<SnapshotsStatusResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpSnapshotsStatusAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the snapshots status API.
+     *
+     * @param request the snapshots status request
+     * @return the curl request for the snapshot status endpoint
+     */
     protected CurlRequest getCurlRequest(final SnapshotsStatusRequest request) {
         // RestSnapshotsStatusAction
         final StringBuilder pathBuf = new StringBuilder(100).append("/_snapshot");

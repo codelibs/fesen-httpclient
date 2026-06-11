@@ -32,15 +32,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the remote store metadata API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRemoteStoreMetadataAction extends HttpAction {
 
+    /** The remote store metadata action. */
     protected RemoteStoreMetadataAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the remote store metadata action
+     */
     public HttpRemoteStoreMetadataAction(final HttpClient client, final RemoteStoreMetadataAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the remote store metadata request and notifies the listener with the response.
+     *
+     * @param request the remote store metadata request
+     * @param listener the listener to be notified with the remote store metadata response or a failure
+     */
     public void execute(final RemoteStoreMetadataRequest request, final ActionListener<RemoteStoreMetadataResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -52,6 +68,13 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a remote store metadata response from the given parser.
+     *
+     * @param parser the content parser
+     * @return the parsed remote store metadata response
+     * @throws IOException if parsing fails
+     */
     protected RemoteStoreMetadataResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -97,6 +120,13 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
                 failedShards, shardFailures);
     }
 
+    /**
+     * Parses the indices section of the response and collects shard metadata entries.
+     *
+     * @param parser the content parser positioned at the start of the indices object
+     * @param metadataList the list to which parsed shard metadata is added
+     * @throws IOException if parsing fails
+     */
     @SuppressWarnings("unchecked")
     protected void parseIndices(final XContentParser parser, final List<RemoteStoreShardMetadata> metadataList) throws IOException {
         // indices: { "index_name": { "shards": { "0": [ {shard metadata...} ] } } }
@@ -127,6 +157,15 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses a single shard metadata object from the response.
+     *
+     * @param parser the content parser positioned inside a shard metadata object
+     * @param indexName the index name the shard belongs to
+     * @param shardId the shard identifier
+     * @return the parsed shard metadata
+     * @throws IOException if parsing fails
+     */
     @SuppressWarnings("unchecked")
     protected RemoteStoreShardMetadata parseShardMetadata(final XContentParser parser, final String indexName, final int shardId)
             throws IOException {
@@ -163,6 +202,13 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
                 latestTranslogMetadataFileName);
     }
 
+    /**
+     * Parses a metadata files object, mapping file names to their metadata.
+     *
+     * @param parser the content parser positioned inside a metadata files object
+     * @return a map of file name to metadata values
+     * @throws IOException if parsing fails
+     */
     protected Map<String, Map<String, Object>> parseMetadataFiles(final XContentParser parser) throws IOException {
         final Map<String, Map<String, Object>> files = new HashMap<>();
         XContentParser.Token token;
@@ -176,6 +222,12 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
         return files;
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -189,6 +241,12 @@ public class HttpRemoteStoreMetadataAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds a curl request for the remote store metadata request.
+     *
+     * @param request the remote store metadata request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RemoteStoreMetadataRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_remotestore/metadata");

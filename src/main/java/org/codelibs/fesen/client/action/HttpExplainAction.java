@@ -36,15 +36,31 @@ import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.get.GetResult;
 
+/**
+ * Handles the explain API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpExplainAction extends HttpAction {
 
+    /** The explain action definition. */
     protected final ExplainAction action;
 
+    /**
+     * Creates a new HttpExplainAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the explain action definition
+     */
     public HttpExplainAction(final HttpClient client, final ExplainAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the explain request asynchronously and notifies the listener with the result.
+     *
+     * @param request the explain request
+     * @param listener the listener to notify with the explain response or a failure
+     */
     public void execute(final ExplainRequest request, final ActionListener<ExplainResponse> listener) {
         String source = null;
         try (final XContentBuilder builder =
@@ -65,6 +81,14 @@ public class HttpExplainAction extends HttpAction {
     }
 
     // ExplainResponse.fromXContent(parser, true)
+    /**
+     * Parses an explain response from the given XContent parser, using an engine-specific
+     * parser for Elasticsearch 8 and OpenSearch 2 backends.
+     *
+     * @param parser the parser positioned at the response body
+     * @param exists whether the document exists
+     * @return the parsed explain response
+     */
     protected ExplainResponse fromXContent(final XContentParser parser, final boolean exists) {
         final EngineType engineType = client.getEngineInfo().getType();
         if (engineType == EngineType.ELASTICSEARCH8 || engineType == EngineType.OPENSEARCH2) {
@@ -73,6 +97,11 @@ public class HttpExplainAction extends HttpAction {
         return ExplainResponse.fromXContent(parser, exists);
     }
 
+    /**
+     * Creates a response parser for explain responses that do not contain the _type field.
+     *
+     * @return the explain response parser
+     */
     protected ConstructingObjectParser<ExplainResponse, Boolean> getResponseParser() {
         // remove _type
         final ConstructingObjectParser<ExplainResponse, Boolean> parser = new ConstructingObjectParser<>("explain", true,
@@ -95,6 +124,12 @@ public class HttpExplainAction extends HttpAction {
         return parser;
     }
 
+    /**
+     * Builds the HTTP request for the explain request.
+     *
+     * @param request the explain request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final ExplainRequest request) {
         // RestExplainAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_explain/" + UrlUtils.encode(request.id()), request.index());

@@ -33,15 +33,32 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.index.Index;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Close Index API over HTTP for OpenSearch/Elasticsearch, closing one or
+ * more indices.
+ */
 public class HttpCloseIndexAction extends HttpAction {
 
+    /** The close index action definition. */
     protected final CloseIndexAction action;
 
+    /**
+     * Creates a new HTTP close index action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the close index action definition
+     */
     public HttpCloseIndexAction(final HttpClient client, final CloseIndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the close index request and notifies the listener with the response.
+     *
+     * @param request the close index request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final CloseIndexRequest request, final ActionListener<CloseIndexResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -53,6 +70,12 @@ public class HttpCloseIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the close index API endpoint.
+     *
+     * @param request the close index request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final CloseIndexRequest request) {
         // RestCloseIndexAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_close", request.indices());
@@ -65,6 +88,13 @@ public class HttpCloseIndexAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Parses a close index response from XContent.
+     *
+     * @param parser the parser positioned at the response
+     * @return the parsed close index response
+     * @throws IOException if parsing fails
+     */
     protected CloseIndexResponse fromXContent(final XContentParser parser) throws IOException {
         List<IndexResult> indices = Collections.emptyList();
         boolean shardsAcknowledged = false;
@@ -91,6 +121,13 @@ public class HttpCloseIndexAction extends HttpAction {
         return new CloseIndexResponse(acknowledged, shardsAcknowledged, indices);
     }
 
+    /**
+     * Parses the "indices" object of a close index response into a list of index results.
+     *
+     * @param parser the parser positioned at the indices object
+     * @return the parsed index results
+     * @throws IOException if parsing fails
+     */
     protected List<IndexResult> parseIndices(final XContentParser parser) throws IOException {
         final List<IndexResult> list = new ArrayList<>();
         String fieldName = null;
@@ -107,6 +144,14 @@ public class HttpCloseIndexAction extends HttpAction {
         return list;
     }
 
+    /**
+     * Parses the result for a single index from a close index response.
+     *
+     * @param parser the parser positioned at the index result object
+     * @param index the name of the index
+     * @return the parsed index result
+     * @throws IOException if parsing fails
+     */
     protected IndexResult parseIndexResult(final XContentParser parser, final String index) throws IOException {
         boolean closed = false;
         OpenSearchException eex = null;
@@ -142,6 +187,13 @@ public class HttpCloseIndexAction extends HttpAction {
         return new IndexResult(idx);
     }
 
+    /**
+     * Parses the "failedShards" object of an index result into a list of shard results.
+     *
+     * @param parser the parser positioned at the failed shards object
+     * @return the parsed shard results
+     * @throws IOException if parsing fails
+     */
     protected List<ShardResult> parseShardResults(final XContentParser parser) throws IOException {
         final List<ShardResult> list = new ArrayList<>();
         String fieldName = null;
@@ -158,6 +210,15 @@ public class HttpCloseIndexAction extends HttpAction {
         return list;
     }
 
+    /**
+     * Parses the result for a single shard, including its failures, from a close index
+     * response.
+     *
+     * @param parser the parser positioned at the shard result object
+     * @param id the shard ID
+     * @return the parsed shard result
+     * @throws IOException if parsing fails
+     */
     protected ShardResult parseShardResult(final XContentParser parser, final int id) throws IOException {
         final List<Failure> failures = new ArrayList<>();
         String fieldName = null;
@@ -176,6 +237,13 @@ public class HttpCloseIndexAction extends HttpAction {
         return new ShardResult(id, failures.toArray(new Failure[failures.size()]));
     }
 
+    /**
+     * Parses a single shard failure from a close index response.
+     *
+     * @param parser the parser positioned at the failure object
+     * @return the parsed failure
+     * @throws IOException if parsing fails
+     */
     protected Failure parseFailure(final XContentParser parser) throws IOException {
         int shardId = -1;
         String index = null;

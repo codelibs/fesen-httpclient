@@ -29,15 +29,31 @@ import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the cluster search shards API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpClusterSearchShardsAction extends HttpAction {
 
+    /** The cluster search shards action. */
     protected final ClusterSearchShardsAction action;
 
+    /**
+     * Creates a new HTTP cluster search shards action.
+     *
+     * @param client the HTTP client
+     * @param action the cluster search shards action
+     */
     public HttpClusterSearchShardsAction(final HttpClient client, final ClusterSearchShardsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cluster search shards request asynchronously.
+     *
+     * @param request the cluster search shards request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClusterSearchShardsRequest request, final ActionListener<ClusterSearchShardsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -49,6 +65,15 @@ public class HttpClusterSearchShardsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a cluster search shards response from the given parser. The response body is consumed
+     * and a response with empty groups, nodes, and alias filters is returned because the internal
+     * structures cannot be reconstructed from JSON.
+     *
+     * @param parser the parser positioned at the response body
+     * @return the cluster search shards response
+     * @throws IOException if parsing fails
+     */
     protected ClusterSearchShardsResponse fromXContent(final XContentParser parser) throws IOException {
         // ClusterSearchShardsResponse contains complex internal structures
         // (ShardRouting, AliasFilter) that are difficult to construct from JSON.
@@ -60,6 +85,12 @@ public class HttpClusterSearchShardsAction extends HttpAction {
         return new ClusterSearchShardsResponse(new ClusterSearchShardsGroup[0], new DiscoveryNode[0], Collections.emptyMap());
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -73,6 +104,12 @@ public class HttpClusterSearchShardsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the cluster search shards API.
+     *
+     * @param request the cluster search shards request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ClusterSearchShardsRequest request) {
         // RestClusterSearchShardsAction
         final StringBuilder buf = new StringBuilder();

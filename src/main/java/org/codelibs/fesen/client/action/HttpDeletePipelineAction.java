@@ -24,15 +24,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete ingest pipeline API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeletePipelineAction extends HttpAction {
 
+    /** The delete pipeline action definition. */
     protected final DeletePipelineAction action;
 
+    /**
+     * Creates a new HttpDeletePipelineAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete pipeline action definition
+     */
     public HttpDeletePipelineAction(final HttpClient client, final DeletePipelineAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete pipeline request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete pipeline request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeletePipelineRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpDeletePipelineAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete pipeline request.
+     *
+     * @param request the delete pipeline request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeletePipelineRequest request) {
         // RestDeletePipelineAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_ingest/pipeline/" + UrlUtils.encode(request.getId()));

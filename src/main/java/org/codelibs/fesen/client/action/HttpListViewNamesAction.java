@@ -25,15 +25,31 @@ import org.opensearch.action.admin.indices.view.ListViewNamesAction;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the List View Names API over HTTP for OpenSearch.
+ */
 public class HttpListViewNamesAction extends HttpAction {
 
+    /** The list view names action definition. */
     protected final ListViewNamesAction action;
 
+    /**
+     * Creates a new HTTP list view names action.
+     *
+     * @param client the HTTP client
+     * @param action the list view names action definition
+     */
     public HttpListViewNamesAction(final HttpClient client, final ListViewNamesAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the list view names request and notifies the listener with the response.
+     *
+     * @param request the list view names request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final ListViewNamesAction.Request request, final ActionListener<ListViewNamesAction.Response> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -45,6 +61,13 @@ public class HttpListViewNamesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the view names from the response body.
+     *
+     * @param parser the XContent parser positioned at the response body
+     * @return the list of view names
+     * @throws IOException if parsing fails
+     */
     protected List<String> parseViewNames(final XContentParser parser) throws IOException {
         final List<String> viewNames = new ArrayList<>();
         XContentParser.Token token = parser.nextToken();
@@ -59,6 +82,12 @@ public class HttpListViewNamesAction extends HttpAction {
         return viewNames;
     }
 
+    /**
+     * Builds the curl request for the list view names API.
+     *
+     * @param request the list view names request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ListViewNamesAction.Request request) {
         // RestViewAction
         return client.getCurlRequest(GET, "/views");

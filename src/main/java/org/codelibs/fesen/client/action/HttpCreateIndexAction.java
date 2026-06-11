@@ -37,19 +37,40 @@ import org.opensearch.core.xcontent.ToXContent.Params;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the create index API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpCreateIndexAction extends HttpAction {
 
+    /** The field name for index mappings. */
     protected static final ParseField MAPPINGS = new ParseField("mappings");
+
+    /** The field name for index settings. */
     protected static final ParseField SETTINGS = new ParseField("settings");
+
+    /** The field name for index aliases. */
     protected static final ParseField ALIASES = new ParseField("aliases");
 
+    /** The create index action. */
     protected final CreateIndexAction action;
 
+    /**
+     * Creates a new HTTP create index action.
+     *
+     * @param client the HTTP client
+     * @param action the create index action
+     */
     public HttpCreateIndexAction(final HttpClient client, final CreateIndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the create index request asynchronously.
+     *
+     * @param request the create index request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final CreateIndexRequest request, final ActionListener<CreateIndexResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = toXContent(request, JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -68,6 +89,15 @@ public class HttpCreateIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Serializes the create index request to the given builder as a JSON object.
+     *
+     * @param request the create index request
+     * @param builder the content builder to write to
+     * @param params the serialization parameters
+     * @return the builder
+     * @throws IOException if writing fails
+     */
     protected XContentBuilder toXContent(final CreateIndexRequest request, final XContentBuilder builder, final Params params)
             throws IOException {
         builder.startObject();
@@ -76,6 +106,15 @@ public class HttpCreateIndexAction extends HttpAction {
         return builder;
     }
 
+    /**
+     * Writes the settings, mappings, and aliases of the create index request to the given builder.
+     *
+     * @param request the create index request
+     * @param builder the content builder to write to
+     * @param params the serialization parameters
+     * @return the builder
+     * @throws IOException if writing fails
+     */
     protected XContentBuilder innerToXContent(final CreateIndexRequest request, final XContentBuilder builder, final Params params)
             throws IOException {
         builder.startObject(SETTINGS.getPreferredName());
@@ -109,6 +148,12 @@ public class HttpCreateIndexAction extends HttpAction {
         return builder;
     }
 
+    /**
+     * Builds the curl request for the create index API.
+     *
+     * @param request the create index request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final CreateIndexRequest request) {
         // RestCreateIndexAction
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/", request.index());

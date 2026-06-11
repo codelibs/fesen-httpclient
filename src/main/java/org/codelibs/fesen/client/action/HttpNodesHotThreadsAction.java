@@ -33,15 +33,32 @@ import org.opensearch.cluster.ClusterName;
 import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.core.action.ActionListener;
 
+/**
+ * Handles the Nodes Hot Threads API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpNodesHotThreadsAction extends HttpAction {
 
+    /** The nodes hot threads action definition. */
     protected NodesHotThreadsAction action;
 
+    /**
+     * Creates a new HTTP nodes hot threads action.
+     *
+     * @param client the HTTP client
+     * @param action the nodes hot threads action definition
+     */
     public HttpNodesHotThreadsAction(final HttpClient client, final NodesHotThreadsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the nodes hot threads request and notifies the listener with the response
+     * parsed from the plain-text hot threads output.
+     *
+     * @param request the nodes hot threads request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final NodesHotThreadsRequest request, final ActionListener<NodesHotThreadsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.getContentAsStream(), StandardCharsets.UTF_8))) {
@@ -71,6 +88,13 @@ public class HttpNodesHotThreadsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a discovery node from a hot threads node header line (starting with ":::"),
+     * extracting the values enclosed in curly braces. Missing values are replaced with defaults.
+     *
+     * @param line the node header line
+     * @return the parsed discovery node
+     */
     protected DiscoveryNode parseDiscoveryNode(final String line) {
         final List<String> list = new ArrayList<>();
         boolean isTarget = false;
@@ -119,6 +143,12 @@ public class HttpNodesHotThreadsAction extends HttpAction {
                 Collections.emptySet(), Version.V_EMPTY);
     }
 
+    /**
+     * Builds the curl request for the nodes hot threads API.
+     *
+     * @param request the nodes hot threads request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final NodesHotThreadsRequest request) {
         // RestNodesHotThreadsAction
         final StringBuilder buf = new StringBuilder();

@@ -23,15 +23,31 @@ import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the indices refresh API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRefreshAction extends HttpAction {
 
+    /** The refresh action. */
     protected final RefreshAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the refresh action
+     */
     public HttpRefreshAction(final HttpClient client, final RefreshAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the refresh request and notifies the listener with the response.
+     *
+     * @param request the refresh request
+     * @param listener the listener to be notified with the refresh response or a failure
+     */
     public void execute(final RefreshRequest request, final ActionListener<RefreshResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpRefreshAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds a curl request for the refresh request.
+     *
+     * @param request the refresh request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RefreshRequest request) {
         return client.getCurlRequest(POST, "/_refresh", request.indices());
     }

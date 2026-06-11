@@ -26,15 +26,31 @@ import org.opensearch.action.admin.cluster.remote.RemoteInfoResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the remote cluster info API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRemoteInfoAction extends HttpAction {
 
+    /** The remote info action. */
     protected final RemoteInfoAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the remote info action
+     */
     public HttpRemoteInfoAction(final HttpClient client, final RemoteInfoAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the remote info request and notifies the listener with the response.
+     *
+     * @param request the remote info request
+     * @param listener the listener to be notified with the remote info response or a failure
+     */
     public void execute(final RemoteInfoRequest request, final ActionListener<RemoteInfoResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -46,6 +62,14 @@ public class HttpRemoteInfoAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a remote info response from the given parser. The response body is consumed and an
+     * empty connection list is returned because RemoteConnectionInfo cannot be constructed externally.
+     *
+     * @param parser the content parser
+     * @return a remote info response with an empty connection list
+     * @throws IOException if parsing fails
+     */
     protected RemoteInfoResponse fromXContent(final XContentParser parser) throws IOException {
         // RemoteConnectionInfo requires complex ModeInfo construction
         // Return empty list - callers can use the REST API directly for full details
@@ -56,6 +80,12 @@ public class HttpRemoteInfoAction extends HttpAction {
         return new RemoteInfoResponse(Collections.emptyList());
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -69,6 +99,12 @@ public class HttpRemoteInfoAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds a curl request for the remote info request.
+     *
+     * @param request the remote info request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RemoteInfoRequest request) {
         return client.getCurlRequest(GET, "/_remote/info");
     }

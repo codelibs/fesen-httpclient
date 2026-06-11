@@ -31,15 +31,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the create snapshot API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpCreateSnapshotAction extends HttpAction {
 
+    /** The create snapshot action. */
     protected final CreateSnapshotAction action;
 
+    /**
+     * Creates a new HTTP create snapshot action.
+     *
+     * @param client the HTTP client
+     * @param action the create snapshot action
+     */
     public HttpCreateSnapshotAction(final HttpClient client, final CreateSnapshotAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the create snapshot request asynchronously.
+     *
+     * @param request the create snapshot request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final CreateSnapshotRequest request, final ActionListener<CreateSnapshotResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -58,6 +74,12 @@ public class HttpCreateSnapshotAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the create snapshot API.
+     *
+     * @param request the create snapshot request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final CreateSnapshotRequest request) {
         // RestCreateSnapshotAction
         final StringBuilder pathBuf = new StringBuilder(100).append("/_snapshot");

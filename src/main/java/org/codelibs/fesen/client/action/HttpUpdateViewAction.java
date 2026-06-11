@@ -30,15 +30,31 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the update view API over HTTP for OpenSearch.
+ */
 public class HttpUpdateViewAction extends HttpAction {
 
+    /** The update view action definition. */
     protected final UpdateViewAction action;
 
+    /**
+     * Creates a new HTTP update view action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the update view action definition
+     */
     public HttpUpdateViewAction(final HttpClient client, final UpdateViewAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the update view request and notifies the listener with the response.
+     *
+     * @param request the view request containing the view definition to update
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final CreateViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
         final String source = buildRequestBody(request);
         getCurlRequest(request).body(source).execute(response -> {
@@ -51,6 +67,12 @@ public class HttpUpdateViewAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the JSON request body containing the view description and targets.
+     *
+     * @param request the view request
+     * @return the JSON request body as a string
+     */
     protected String buildRequestBody(final CreateViewAction.Request request) {
         try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
             builder.startObject();
@@ -70,6 +92,12 @@ public class HttpUpdateViewAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the update view API.
+     *
+     * @param request the view request
+     * @return the curl request for the views endpoint
+     */
     protected CurlRequest getCurlRequest(final CreateViewAction.Request request) {
         // RestViewAction
         return client.getCurlRequest(PUT, "/views/" + UrlUtils.encode(request.getName()));

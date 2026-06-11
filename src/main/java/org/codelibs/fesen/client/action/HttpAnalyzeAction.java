@@ -42,15 +42,32 @@ import org.opensearch.core.xcontent.ConstructingObjectParser;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Analyze API over HTTP for OpenSearch/Elasticsearch, performing text
+ * analysis with analyzers, tokenizers, and filters.
+ */
 public class HttpAnalyzeAction extends HttpAction {
 
+    /** The analyze action definition. */
     protected final AnalyzeAction action;
 
+    /**
+     * Creates a new HTTP analyze action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the analyze action definition
+     */
     public HttpAnalyzeAction(final HttpClient client, final AnalyzeAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the analyze request and notifies the listener with the response.
+     *
+     * @param request the analyze request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final AnalyzeAction.Request request, final ActionListener<AnalyzeAction.Response> listener) {
         String source = null;
         try (final XContentBuilder builder = toXContent(request, JsonXContent.contentBuilder())) {
@@ -69,10 +86,24 @@ public class HttpAnalyzeAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the analyze API endpoint.
+     *
+     * @param request the analyze request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final AnalyzeAction.Request request) {
         return client.getCurlRequest(POST, "/_analyze", request.index() == null ? new String[0] : request.indices());
     }
 
+    /**
+     * Serializes the analyze request to XContent for use as a request body.
+     *
+     * @param request the analyze request
+     * @param builder the builder to write to
+     * @return the builder with the serialized request
+     * @throws IOException if writing to the builder fails
+     */
     protected XContentBuilder toXContent(final AnalyzeAction.Request request, final XContentBuilder builder) throws IOException {
         builder.startObject();
         builder.field("text", request.text());
@@ -166,10 +197,25 @@ public class HttpAnalyzeAction extends HttpAction {
         PARSER.declareObject(optionalConstructorArg(), DETAIL_PARSER, new ParseField(Fields.DETAIL));
     }
 
+    /**
+     * Parses an analyze response from XContent.
+     *
+     * @param parser the parser positioned at the response
+     * @return the parsed analyze response
+     * @throws IOException if parsing fails
+     */
     public static AnalyzeAction.Response fromXContent(final XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }
 
+    /**
+     * Parses a single analyze token object from XContent, collecting unknown fields as
+     * token attributes.
+     *
+     * @param parser the parser positioned at the token object
+     * @return the parsed analyze token
+     * @throws IOException if parsing fails
+     */
     protected static AnalyzeToken getAnalyzeTokenFromXContent(final XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);
         String field = null;

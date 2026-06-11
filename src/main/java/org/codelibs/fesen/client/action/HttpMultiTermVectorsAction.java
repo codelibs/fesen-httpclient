@@ -33,15 +33,31 @@ import org.opensearch.action.termvectors.TermVectorsResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Multi Term Vectors API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpMultiTermVectorsAction extends HttpAction {
 
+    /** The multi term vectors action definition. */
     protected final MultiTermVectorsAction action;
 
+    /**
+     * Creates a new HTTP multi term vectors action.
+     *
+     * @param client the HTTP client
+     * @param action the multi term vectors action definition
+     */
     public HttpMultiTermVectorsAction(final HttpClient client, final MultiTermVectorsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the multi term vectors request and notifies the listener with the response.
+     *
+     * @param request the multi term vectors request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final MultiTermVectorsRequest request, final ActionListener<MultiTermVectorsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -53,6 +69,13 @@ public class HttpMultiTermVectorsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the multi term vectors response from the XContent parser.
+     *
+     * @param parser the XContent parser positioned at the response body
+     * @return the parsed multi term vectors response
+     * @throws IOException if parsing fails
+     */
     protected MultiTermVectorsResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         final List<MultiTermVectorsItemResponse> items = new ArrayList<>();
@@ -79,6 +102,13 @@ public class HttpMultiTermVectorsAction extends HttpAction {
         return new MultiTermVectorsResponse(items.toArray(new MultiTermVectorsItemResponse[0]));
     }
 
+    /**
+     * Parses a single item from the docs array of the multi term vectors response.
+     *
+     * @param parser the XContent parser positioned at the item object
+     * @return the parsed item response
+     * @throws IOException if parsing fails
+     */
     protected MultiTermVectorsItemResponse parseItem(final XContentParser parser) throws IOException {
         String fieldName = null;
         String index = "";
@@ -119,6 +149,12 @@ public class HttpMultiTermVectorsAction extends HttpAction {
         return new MultiTermVectorsItemResponse(tvResponse, null);
     }
 
+    /**
+     * Consumes and discards the current JSON object or array, including nested structures.
+     *
+     * @param parser the XContent parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -132,6 +168,12 @@ public class HttpMultiTermVectorsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the multi term vectors API, including the request body.
+     *
+     * @param request the multi term vectors request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final MultiTermVectorsRequest request) {
         // Determine common index if all requests share the same index
         final List<TermVectorsRequest> requests = request.getRequests();

@@ -34,15 +34,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.core.xcontent.XContentParserUtils;
 
+/**
+ * Handles the Get Aliases API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetAliasesAction extends HttpAction {
 
+    /** The get aliases action definition. */
     protected final GetAliasesAction action;
 
+    /**
+     * Creates a new HTTP get aliases action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get aliases action definition
+     */
     public HttpGetAliasesAction(final HttpClient client, final GetAliasesAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get aliases request asynchronously.
+     *
+     * @param request the get aliases request
+     * @param listener the listener notified with the get aliases response or a failure
+     */
     public void execute(final GetAliasesRequest request, final ActionListener<GetAliasesResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -54,6 +70,12 @@ public class HttpGetAliasesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get aliases API.
+     *
+     * @param request the get aliases request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetAliasesRequest request) {
         // RestGetAliasesAction
         final CurlRequest curlRequest =
@@ -62,6 +84,13 @@ public class HttpGetAliasesAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Parses the HTTP response body into a {@link GetAliasesResponse}.
+     *
+     * @param parser the content parser for the response body
+     * @return the parsed get aliases response
+     * @throws IOException if parsing fails
+     */
     protected GetAliasesResponse getGetAliasesResponse(final XContentParser parser) throws IOException {
         final Map<String, List<AliasMetadata>> aliases = new HashMap<>();
 
@@ -96,6 +125,13 @@ public class HttpGetAliasesAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses a list of alias metadata entries from the parser.
+     *
+     * @param parser the content parser positioned at an aliases object
+     * @return the list of parsed alias metadata
+     * @throws IOException if parsing fails
+     */
     public static List<AliasMetadata> getAliases(final XContentParser parser) throws IOException {
         final List<AliasMetadata> aliases = new ArrayList<>();
         XContentParser.Token token = parser.nextToken();

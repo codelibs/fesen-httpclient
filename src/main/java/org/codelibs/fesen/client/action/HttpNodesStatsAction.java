@@ -117,12 +117,23 @@ import org.opensearch.tasks.TaskCancellationStats;
 import org.opensearch.threadpool.ThreadPoolStats;
 import org.opensearch.transport.TransportStats;
 
+/**
+ * Handles the nodes stats API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpNodesStatsAction extends HttpAction {
 
+    /** The nodes stats action definition. */
     protected NodesStatsAction action;
 
+    /** Node-scoped cluster settings used when constructing parsed statistics. */
     protected ClusterSettings clusterSettings;
 
+    /**
+     * Creates a new HttpNodesStatsAction and initializes node-scoped cluster settings used for parsing.
+     *
+     * @param client the HTTP client
+     * @param action the nodes stats action
+     */
     public HttpNodesStatsAction(final HttpClient client, final NodesStatsAction action) {
         super(client);
         this.action = action;
@@ -145,6 +156,12 @@ public class HttpNodesStatsAction extends HttpAction {
         this.clusterSettings = new ClusterSettings(client.settings(), new HashSet<>(nodeSettings.values()), Collections.emptySet());
     }
 
+    /**
+     * Executes the nodes stats request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the nodes stats request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final NodesStatsRequest request, final ActionListener<NodesStatsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -156,6 +173,13 @@ public class HttpNodesStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a nodes stats response from the response content.
+     *
+     * @param parser the content parser
+     * @return the nodes stats response
+     * @throws IOException if parsing fails
+     */
     protected NodesStatsResponse fromXContent(final XContentParser parser) throws IOException {
         List<NodeStats> nodes = Collections.emptyList();
         String fieldName = null;
@@ -185,6 +209,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new NodesStatsResponse(clusterName, nodes, Collections.emptyList());
     }
 
+    /**
+     * Parses the nodes section into a list of node statistics.
+     *
+     * @param parser the content parser
+     * @return the list of node statistics
+     * @throws IOException if parsing fails
+     */
     protected List<NodeStats> parseNodes(final XContentParser parser) throws IOException {
         final List<NodeStats> list = new ArrayList<>();
         String fieldName = null;
@@ -204,6 +235,14 @@ public class HttpNodesStatsAction extends HttpAction {
         return list;
     }
 
+    /**
+     * Parses statistics for a single node.
+     *
+     * @param parser the content parser
+     * @param nodeId the node identifier
+     * @return the node statistics
+     * @throws IOException if parsing fails
+     */
     protected NodeStats parseNodeStats(final XContentParser parser, final String nodeId) throws IOException {
         String fieldName = null;
         String nodeName = "";
@@ -398,6 +437,12 @@ public class HttpNodesStatsAction extends HttpAction {
                 totalEstimatedNativeBytes);
     }
 
+    /**
+     * Parses a transport address string such as host:port into a transport address. Returns a placeholder address if parsing fails.
+     *
+     * @param addr the transport address string
+     * @return the parsed transport address
+     */
     public static TransportAddress parseTransportAddress(final String addr) {
         try {
             if (addr.startsWith("[")) {
@@ -419,26 +464,61 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Consumes the adaptive selection section and returns empty adaptive selection statistics.
+     *
+     * @param parser the content parser
+     * @return the adaptive selection statistics
+     * @throws IOException if parsing fails
+     */
     protected AdaptiveSelectionStats parseAdaptiveSelectionStats(final XContentParser parser) throws IOException {
         consumeObject(parser);
         return new AdaptiveSelectionStats(Collections.emptyMap(), Collections.emptyMap());
     }
 
+    /**
+     * Consumes the script cache section and returns empty script cache statistics.
+     *
+     * @param parser the content parser
+     * @return the script cache statistics
+     * @throws IOException if parsing fails
+     */
     protected ScriptCacheStats parseScriptCacheStats(final XContentParser parser) throws IOException {
         consumeObject(parser);
         return new ScriptCacheStats(Collections.emptyMap());
     }
 
+    /**
+     * Consumes the indexing pressure section and returns empty indexing pressure statistics.
+     *
+     * @param parser the content parser
+     * @return the indexing pressure statistics
+     * @throws IOException if parsing fails
+     */
     protected IndexingPressureStats parseIndexingPressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser);
         return new IndexingPressureStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
+    /**
+     * Consumes the shard indexing pressure section and returns empty shard indexing pressure statistics.
+     *
+     * @param parser the content parser
+     * @return the shard indexing pressure statistics
+     * @throws IOException if parsing fails
+     */
     protected ShardIndexingPressureStats parseShardIndexingPressureStats(final XContentParser parser) throws IOException {
         consumeObject(parser);
         return new ShardIndexingPressureStats(Collections.emptyMap(), 0, 0, 0, false, false);
     }
 
+    /**
+     * Parses search backpressure statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the search backpressure statistics
+     * @throws IOException if parsing fails
+     */
     protected SearchBackpressureStats parseSearchBackpressureStats(final XContentParser parser) throws IOException {
         SearchBackpressureMode mode = SearchBackpressureMode.DISABLED;
         SearchTaskStats searchTaskStats = new SearchTaskStats(0, 0, 0, Collections.emptyMap());
@@ -465,11 +545,25 @@ public class HttpNodesStatsAction extends HttpAction {
         return new SearchBackpressureStats(searchTaskStats, searchShardTaskStats, mode);
     }
 
+    /**
+     * Consumes the cluster manager throttling section and returns empty throttling statistics.
+     *
+     * @param parser the content parser
+     * @return the cluster manager throttling statistics
+     * @throws IOException if parsing fails
+     */
     protected ClusterManagerThrottlingStats parseClusterManagerThrottlingStats(final XContentParser parser) throws IOException {
         consumeObject(parser);
         return new ClusterManagerThrottlingStats();
     }
 
+    /**
+     * Parses weighted routing statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the weighted routing statistics
+     * @throws IOException if parsing fails
+     */
     protected WeightedRoutingStats parseWeightedRoutingStats(final XContentParser parser) throws IOException {
         int failOpenCount = 0;
         String fieldName = null;
@@ -490,6 +584,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return stats;
     }
 
+    /**
+     * Parses the fail open count from the weighted routing stats section.
+     *
+     * @param parser the content parser
+     * @return the fail open count
+     * @throws IOException if parsing fails
+     */
     protected int parseFailOpenCount(final XContentParser parser) throws IOException {
         int failOpenCount = 0;
         String fieldName = null;
@@ -505,6 +606,14 @@ public class HttpNodesStatsAction extends HttpAction {
         return failOpenCount;
     }
 
+    /**
+     * Parses file cache statistics from the response content.
+     *
+     * @param parser the content parser
+     * @param statsType the file cache stats type
+     * @return the file cache statistics
+     * @throws IOException if parsing fails
+     */
     protected FileCacheStats parseFileCacheStats(final XContentParser parser, final FileCacheStatsType statsType) throws IOException {
         long active = 0;
         long total = 0;
@@ -543,6 +652,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new FileCacheStats(active, total, used, pinned, evicted, removed, hits, misses, statsType);
     }
 
+    /**
+     * Parses aggregate file cache statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the aggregate file cache statistics
+     * @throws IOException if parsing fails
+     */
     protected AggregateFileCacheStats parseAggregateFileCacheStats(final XContentParser parser) throws IOException {
         long timestamp = 0;
         FileCacheStats fullFileStats = null;
@@ -586,6 +702,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new AggregateFileCacheStats(timestamp, overAllStats, fullFileStats, blockFileStats, pinnedFileStats);
     }
 
+    /**
+     * Parses block cache statistics from the over_all_stats section of the response content.
+     *
+     * @param parser the content parser
+     * @return the block cache statistics
+     * @throws IOException if parsing fails
+     */
     protected BlockCacheStats parseBlockCacheStats(final XContentParser parser) throws IOException {
         // Parse from over_all_stats sub-object; consume the other 3 sub-objects.
         // JSON fields available in over_all_stats:
@@ -640,6 +763,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new BlockCacheStats(hits, misses, 0L, 0L, 0L, evictionBytes, 0L, removedBytes, memoryBytesUsed, 0L, 0L, activeInBytes);
     }
 
+    /**
+     * Parses analytics backend native memory statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the analytics backend native memory statistics
+     * @throws IOException if parsing fails
+     */
     protected AnalyticsBackendNativeMemoryStats parseAnalyticsBackendNativeMemoryStats(final XContentParser parser) throws IOException {
         long allocatedBytes = 0;
         long residentBytes = 0;
@@ -660,6 +790,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new AnalyticsBackendNativeMemoryStats(allocatedBytes, residentBytes);
     }
 
+    /**
+     * Parses native allocator pool statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the native allocator pool statistics
+     * @throws IOException if parsing fails
+     */
     protected NativeAllocatorPoolStats parseNativeAllocatorPoolStats(final XContentParser parser) throws IOException {
         long rootAllocatedBytes = 0;
         long rootPeakBytes = 0;
@@ -730,6 +867,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new NativeAllocatorPoolStats(rootAllocatedBytes, rootPeakBytes, rootLimitBytes, pools);
     }
 
+    /**
+     * Parses task cancellation statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the task cancellation statistics
+     * @throws IOException if parsing fails
+     */
     protected TaskCancellationStats parseTaskCancellationStats(final XContentParser parser) throws IOException {
         SearchTaskCancellationStats searchTaskCancellationStats = null;
         SearchShardTaskCancellationStats searchShardTaskCancellationStats = null;
@@ -753,6 +897,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new TaskCancellationStats(searchTaskCancellationStats, searchShardTaskCancellationStats);
     }
 
+    /**
+     * Parses search task cancellation statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the search task cancellation statistics
+     * @throws IOException if parsing fails
+     */
     protected SearchTaskCancellationStats parseSearchTaskCancellationStats(final XContentParser parser) throws IOException {
         long currentLongRunningCancelledTaskCount = 0;
         long totalLongRunningCancelledTaskCount = 0;
@@ -773,6 +924,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new SearchTaskCancellationStats(currentLongRunningCancelledTaskCount, totalLongRunningCancelledTaskCount);
     }
 
+    /**
+     * Parses search shard task cancellation statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the search shard task cancellation statistics
+     * @throws IOException if parsing fails
+     */
     protected SearchShardTaskCancellationStats parseSearchShardTaskCancellationStats(final XContentParser parser) throws IOException {
         long currentLongRunningCancelledTaskCount = 0;
         long totalLongRunningCancelledTaskCount = 0;
@@ -793,6 +951,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new SearchShardTaskCancellationStats(currentLongRunningCancelledTaskCount, totalLongRunningCancelledTaskCount);
     }
 
+    /**
+     * Parses search pipeline statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the search pipeline statistics
+     * @throws IOException if parsing fails
+     */
     protected SearchPipelineStats parseSearchPipelineStats(final XContentParser parser) throws IOException {
         OperationStats totalRequestStats = null;
         OperationStats totalResponseStats = null;
@@ -818,6 +983,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new SearchPipelineStats(totalRequestStats, totalResponseStats, Collections.emptyList(), Collections.emptyMap(), null, null);
     }
 
+    /**
+     * Parses segment replication rejection statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the segment replication rejection statistics
+     * @throws IOException if parsing fails
+     */
     protected SegmentReplicationRejectionStats parseSegmentReplicationRejectionStats(final XContentParser parser) throws IOException {
         long totalRejectedRequests = 0;
         String fieldName = null;
@@ -835,11 +1007,25 @@ public class HttpNodesStatsAction extends HttpAction {
         return new SegmentReplicationRejectionStats(totalRejectedRequests);
     }
 
+    /**
+     * Consumes the remote store section and returns empty remote store node statistics.
+     *
+     * @param parser the content parser
+     * @return the remote store node statistics
+     * @throws IOException if parsing fails
+     */
     protected RemoteStoreNodeStats parseRemoteStoreNodeStats(final XContentParser parser) throws IOException {
         consumeObject(parser);
         return new RemoteStoreNodeStats();
     }
 
+    /**
+     * Parses operation statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the operation statistics
+     * @throws IOException if parsing fails
+     */
     protected OperationStats parseOperationStats(final XContentParser parser) throws IOException {
         long count = 0;
         long totalTimeInMillis = 0;
@@ -866,6 +1052,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new OperationStats(count, totalTimeInMillis, current, failedCount);
     }
 
+    /**
+     * Parses ingest statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the ingest statistics
+     * @throws IOException if parsing fails
+     */
     protected IngestStats parseIngestStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         OperationStats totalStats = null;
@@ -939,6 +1132,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new IngestStats(totalStats, pipelineStats, Collections.emptyMap());
     }
 
+    /**
+     * Parses discovery statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the discovery statistics
+     * @throws IOException if parsing fails
+     */
     protected DiscoveryStats parseDiscoveryStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         PendingClusterStateStats queueStats = null;
@@ -965,6 +1165,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new DiscoveryStats(queueStats, publishStats, clusterStateStats);
     }
 
+    /**
+     * Parses cluster state statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the cluster state statistics
+     * @throws IOException if parsing fails
+     */
     protected ClusterStateStats parseClusterStateStats(XContentParser parser) throws IOException {
         String fieldName = null;
         long updateSuccess = 0;
@@ -1008,6 +1215,13 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses published cluster state statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the published cluster state statistics
+     * @throws IOException if parsing fails
+     */
     protected PublishClusterStateStats parsePublishClusterStateStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long fullClusterStateReceivedCount = 0;
@@ -1032,6 +1246,13 @@ public class HttpNodesStatsAction extends HttpAction {
                 compatibleClusterStateDiffReceivedCount);
     }
 
+    /**
+     * Parses pending cluster state statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the pending cluster state statistics
+     * @throws IOException if parsing fails
+     */
     protected PendingClusterStateStats parsePendingClusterStateStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         int total = 0;
@@ -1055,6 +1276,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new PendingClusterStateStats(total, pending, committed);
     }
 
+    /**
+     * Parses script statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the script statistics
+     * @throws IOException if parsing fails
+     */
     protected ScriptStats parseScriptStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long compilations = 0;
@@ -1078,6 +1306,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new ScriptStats(compilations, cacheEvictions, compilationLimitTriggered);
     }
 
+    /**
+     * Parses circuit breaker statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the circuit breaker statistics
+     * @throws IOException if parsing fails
+     */
     protected AllCircuitBreakerStats parseAllCircuitBreakerStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         final List<CircuitBreakerStats> allStats = new ArrayList<>();
@@ -1115,6 +1350,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new AllCircuitBreakerStats(allStats.toArray(new CircuitBreakerStats[allStats.size()]));
     }
 
+    /**
+     * Parses HTTP statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the HTTP statistics
+     * @throws IOException if parsing fails
+     */
     protected HttpStats parseHttpStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long serverOpen = 0;
@@ -1135,6 +1377,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new HttpStats(serverOpen, totalOpened);
     }
 
+    /**
+     * Parses transport statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the transport statistics
+     * @throws IOException if parsing fails
+     */
     protected TransportStats parseTransportStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long serverOpen = 0;
@@ -1167,6 +1416,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new TransportStats(serverOpen, totalOutboundConnections, rxCount, rxSize, txCount, txSize);
     }
 
+    /**
+     * Parses file system information from the response content.
+     *
+     * @param parser the content parser
+     * @return the file system information
+     * @throws IOException if parsing fails
+     */
     protected FsInfo parseFsInfo(final XContentParser parser) throws IOException {
         String fieldName = null;
         long timestamp = 0;
@@ -1221,6 +1477,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new FsInfo(timestamp, ioStats, paths.toArray(new FsInfo.Path[paths.size()]));
     }
 
+    /**
+     * Parses disk usage information from the response content.
+     *
+     * @param parser the content parser
+     * @return the disk usage
+     * @throws IOException if parsing fails
+     */
     protected DiskUsage parseFsInfoIskUsage(final XContentParser parser) throws IOException {
         String fieldName = null;
         final String nodeId = "";
@@ -1246,6 +1509,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new DiskUsage(nodeId, nodeName, path, totalBytes, freeBytes);
     }
 
+    /**
+     * Parses thread pool statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the thread pool statistics
+     * @throws IOException if parsing fails
+     */
     protected ThreadPoolStats parseThreadPoolStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         final List<ThreadPoolStats.Stats> stats = new ArrayList<>();
@@ -1292,6 +1562,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new ThreadPoolStats(stats);
     }
 
+    /**
+     * Parses JVM statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the JVM statistics
+     * @throws IOException if parsing fails
+     */
     protected JvmStats parseJvmStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long timestamp = 0;
@@ -1332,6 +1609,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new JvmStats(timestamp, uptime, mem, threads, gc, bufferPools, classes);
     }
 
+    /**
+     * Parses JVM class loading statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the JVM class loading statistics
+     * @throws IOException if parsing fails
+     */
     protected JvmStats.Classes parseJvmStatsClasses(final XContentParser parser) throws IOException {
         String fieldName = null;
         long loadedClassCount = 0;
@@ -1355,6 +1639,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new JvmStats.Classes(loadedClassCount, totalLoadedClassCount, unloadedClassCount);
     }
 
+    /**
+     * Parses JVM buffer pool statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the list of JVM buffer pool statistics
+     * @throws IOException if parsing fails
+     */
     protected List<JvmStats.BufferPool> parseJvmStatsBufferPools(final XContentParser parser) throws IOException {
         String fieldName = null;
         final List<JvmStats.BufferPool> bufferPools = new ArrayList<>();
@@ -1389,6 +1680,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return bufferPools;
     }
 
+    /**
+     * Parses JVM garbage collector statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the JVM garbage collector statistics
+     * @throws IOException if parsing fails
+     */
     protected JvmStats.GarbageCollectors parseJvmStatsGc(final XContentParser parser) throws IOException {
         String fieldName = null;
         final List<JvmStats.GarbageCollector> collectors = new ArrayList<>();
@@ -1432,6 +1730,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new JvmStats.GarbageCollectors(collectors.toArray(new JvmStats.GarbageCollector[collectors.size()]));
     }
 
+    /**
+     * Parses JVM thread statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the JVM thread statistics
+     * @throws IOException if parsing fails
+     */
     protected JvmStats.Threads parseJvmStatsThreads(final XContentParser parser) throws IOException {
         String fieldName = null;
         int count = 0;
@@ -1452,6 +1757,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new JvmStats.Threads(count, peakCount);
     }
 
+    /**
+     * Parses JVM memory statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the JVM memory statistics
+     * @throws IOException if parsing fails
+     */
     protected JvmStats.Mem parseJvmStatsMem(final XContentParser parser) throws IOException {
         String fieldName = null;
         long heapCommitted = 0;
@@ -1541,6 +1853,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new JvmStats.Mem(heapCommitted, heapUsed, heapMax, nonHeapCommitted, nonHeapUsed, pools);
     }
 
+    /**
+     * Parses process statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the process statistics
+     * @throws IOException if parsing fails
+     */
     protected ProcessStats parseProcessStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long timestamp = 0;
@@ -1575,6 +1894,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new ProcessStats(timestamp, openFileDescriptors, maxFileDescriptors, cpu, mem);
     }
 
+    /**
+     * Parses process memory statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the process memory statistics
+     * @throws IOException if parsing fails
+     */
     protected ProcessStats.Mem parseProcessStatsMem(final XContentParser parser) throws IOException {
         String fieldName = null;
         long totalVirtual = 0;
@@ -1590,6 +1916,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new ProcessStats.Mem(totalVirtual);
     }
 
+    /**
+     * Parses process CPU statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the process CPU statistics
+     * @throws IOException if parsing fails
+     */
     protected ProcessStats.Cpu parseProcessStatsCpu(final XContentParser parser) throws IOException {
         String fieldName = null;
         short percent = 0;
@@ -1610,6 +1943,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new ProcessStats.Cpu(percent, total);
     }
 
+    /**
+     * Parses operating system statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the operating system statistics
+     * @throws IOException if parsing fails
+     */
     protected OsStats parseOsStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long timestamp = 0;
@@ -1642,6 +1982,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new OsStats(timestamp, cpu, mem, swap, cgroup);
     }
 
+    /**
+     * Parses cgroup statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the cgroup statistics
+     * @throws IOException if parsing fails
+     */
     protected OsStats.Cgroup parseOsStatsCgroup(final XContentParser parser) throws IOException {
         String fieldName = null;
         String cpuAcctControlGroup = null;
@@ -1738,6 +2085,13 @@ public class HttpNodesStatsAction extends HttpAction {
                 memoryControlGroup, memoryLimitInBytes, memoryUsageInBytes);
     }
 
+    /**
+     * Parses swap statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the swap statistics
+     * @throws IOException if parsing fails
+     */
     protected OsStats.Swap parseOsStatsSwap(final XContentParser parser) throws IOException {
         String fieldName = null;
         long total = 0;
@@ -1758,6 +2112,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new OsStats.Swap(total, free);
     }
 
+    /**
+     * Parses operating system memory statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the operating system memory statistics
+     * @throws IOException if parsing fails
+     */
     protected OsStats.Mem parseOsStatsMem(final XContentParser parser) throws IOException {
         String fieldName = null;
         long total = 0;
@@ -1778,6 +2139,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new OsStats.Mem(total, free);
     }
 
+    /**
+     * Parses operating system CPU statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the operating system CPU statistics
+     * @throws IOException if parsing fails
+     */
     protected OsStats.Cpu parseOsStatsCpu(final XContentParser parser) throws IOException {
         String fieldName = null;
         short systemCpuPercent = 0;
@@ -1814,6 +2182,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new OsStats.Cpu(systemCpuPercent, systemLoadAverage);
     }
 
+    /**
+     * Parses node indices statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the node indices statistics
+     * @throws IOException if parsing fails
+     */
     protected NodeIndicesStats parseNodeIndicesStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         DocsStats docs = null;
@@ -1902,6 +2277,13 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses recovery statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the recovery statistics
+     * @throws IOException if parsing fails
+     */
     protected RecoveryStats parseRecoveryStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         int currentAsSource = 0;
@@ -1932,6 +2314,13 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses request cache statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the request cache statistics
+     * @throws IOException if parsing fails
+     */
     protected RequestCacheStats parseRequestCacheStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long memorySize = 0;
@@ -1958,6 +2347,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new RequestCacheStats(memorySize, evictions, hitCount, missCount);
     }
 
+    /**
+     * Parses translog statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the translog statistics
+     * @throws IOException if parsing fails
+     */
     protected TranslogStats parseTranslogStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         int numberOfOperations = 0;
@@ -1988,6 +2384,13 @@ public class HttpNodesStatsAction extends HttpAction {
                 earliestLastModifiedAge);
     }
 
+    /**
+     * Parses segment statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the segment statistics
+     * @throws IOException if parsing fails
+     */
     protected SegmentsStats parseSegmentsStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long count = 0;
@@ -2075,6 +2478,13 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses completion statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the completion statistics
+     * @throws IOException if parsing fails
+     */
     protected CompletionStats parseCompletionStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long size = 0;
@@ -2090,6 +2500,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new CompletionStats(size, null);
     }
 
+    /**
+     * Parses field data statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the field data statistics
+     * @throws IOException if parsing fails
+     */
     protected FieldDataStats parseFieldDataStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long memorySize = 0;
@@ -2110,6 +2527,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new FieldDataStats(memorySize, evictions, null);
     }
 
+    /**
+     * Parses query cache statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the query cache statistics
+     * @throws IOException if parsing fails
+     */
     protected QueryCacheStats parseQueryCacheStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long ramBytesUsed = 0;
@@ -2139,6 +2563,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new QueryCacheStats(ramBytesUsed, hitCount, missCount, cacheCount, cacheSize);
     }
 
+    /**
+     * Parses warmer statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the warmer statistics
+     * @throws IOException if parsing fails
+     */
     protected WarmerStats parseWarmerStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long current = 0;
@@ -2162,6 +2593,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new WarmerStats(current, total, totalTimeInMillis);
     }
 
+    /**
+     * Parses flush statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the flush statistics
+     * @throws IOException if parsing fails
+     */
     protected FlushStats parseFlushStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long total = 0;
@@ -2185,6 +2623,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new FlushStats(total, periodic, totalTimeInMillis);
     }
 
+    /**
+     * Parses refresh statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the refresh statistics
+     * @throws IOException if parsing fails
+     */
     protected RefreshStats parseRefreshStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long total = 0;
@@ -2214,6 +2659,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new RefreshStats(total, totalTimeInMillis, externalTotal, externalTotalTimeInMillis, listeners);
     }
 
+    /**
+     * Parses merge statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the merge statistics
+     * @throws IOException if parsing fails
+     */
     protected MergeStats parseMergeStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long total = 0;
@@ -2272,6 +2724,13 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses search statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the search statistics
+     * @throws IOException if parsing fails
+     */
     protected SearchStats parseSearchStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long queryCount = 0;
@@ -2373,6 +2832,13 @@ public class HttpNodesStatsAction extends HttpAction {
                 searchIdleReactivateCount), openContexts, null);
     }
 
+    /**
+     * Parses get statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the get statistics
+     * @throws IOException if parsing fails
+     */
     protected GetStats parseGetStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long existsCount = 0;
@@ -2402,6 +2868,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new GetStats(existsCount, existsTimeInMillis, missingCount, missingTimeInMillis, current);
     }
 
+    /**
+     * Parses indexing statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the indexing statistics
+     * @throws IOException if parsing fails
+     */
     protected IndexingStats parseIndexingStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long indexCount = 0;
@@ -2452,6 +2925,13 @@ public class HttpNodesStatsAction extends HttpAction {
                 deleteTimeInMillis, deleteCurrent, noopUpdateCount, isThrottled, throttleTimeInMillis, docStatusStats));
     }
 
+    /**
+     * Parses store statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the store statistics
+     * @throws IOException if parsing fails
+     */
     protected StoreStats parseStoreStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long sizeInBytes = 0;
@@ -2472,6 +2952,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new StoreStats(sizeInBytes, reservedSize);
     }
 
+    /**
+     * Parses document statistics from the response content.
+     *
+     * @param parser the content parser
+     * @return the document statistics
+     * @throws IOException if parsing fails
+     */
     protected DocsStats parseDocsStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long count = 0;
@@ -2495,6 +2982,13 @@ public class HttpNodesStatsAction extends HttpAction {
         return new DocsStats(count, deleted, totalSizeInBytes);
     }
 
+    /**
+     * Parses the _nodes result counts from the response content.
+     *
+     * @param parser the content parser
+     * @return an array containing total, successful, and failed node counts
+     * @throws IOException if parsing fails
+     */
     protected int[] parseNodeResults(final XContentParser parser) throws IOException {
         final int results[] = new int[3];
         String fieldName = null;
@@ -2516,6 +3010,12 @@ public class HttpNodesStatsAction extends HttpAction {
         return results;
     }
 
+    /**
+     * Consumes and discards the current object, including any nested objects and arrays.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -2532,6 +3032,12 @@ public class HttpNodesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the metric path segment for the nodes stats endpoint from the requested metrics.
+     *
+     * @param request the nodes stats request
+     * @return the metric path segment
+     */
     protected String getMetric(final NodesStatsRequest request) {
         final Set<String> metrics = request.requestedMetrics();
         if (request.indices().anySet() && CommonStatsFlags.ALL.getFlags().length != request.indices().getFlags().length) {
@@ -2541,6 +3047,12 @@ public class HttpNodesStatsAction extends HttpAction {
         return metrics.stream().collect(Collectors.joining(","));
     }
 
+    /**
+     * Builds the CURL request for the nodes stats request.
+     *
+     * @param request the nodes stats request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final NodesStatsRequest request) {
         // RestNodesStatsAction
         final StringBuilder buf = new StringBuilder();

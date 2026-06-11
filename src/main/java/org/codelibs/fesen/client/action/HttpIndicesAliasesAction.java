@@ -30,15 +30,32 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the indices aliases API over HTTP for OpenSearch/Elasticsearch,
+ * adding or removing index aliases.
+ */
 public class HttpIndicesAliasesAction extends HttpAction {
 
+    /** The indices aliases action. */
     protected final IndicesAliasesAction action;
 
+    /**
+     * Creates a new HttpIndicesAliasesAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the indices aliases action
+     */
     public HttpIndicesAliasesAction(final HttpClient client, final IndicesAliasesAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the indices aliases request and notifies the listener with the response.
+     *
+     * @param request the indices aliases request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final IndicesAliasesRequest request, final ActionListener<AcknowledgedResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startArray("actions")) {
@@ -73,6 +90,12 @@ public class HttpIndicesAliasesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the indices aliases API.
+     *
+     * @param request the indices aliases request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final IndicesAliasesRequest request) {
         // RestIndicesAliasesAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_aliases");

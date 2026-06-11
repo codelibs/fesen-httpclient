@@ -37,15 +37,32 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.VersionType;
 
+/**
+ * Handles the index API over HTTP for OpenSearch/Elasticsearch,
+ * indexing a document into an index.
+ */
 public class HttpIndexAction extends HttpAction {
 
+    /** The index action. */
     protected final IndexAction action;
 
+    /**
+     * Creates a new HttpIndexAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the index action
+     */
     public HttpIndexAction(final HttpClient client, final IndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the index request and notifies the listener with the response.
+     *
+     * @param request the index request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final IndexRequest request, final ActionListener<IndexResponse> listener) {
         String source = null;
         try {
@@ -63,6 +80,13 @@ public class HttpIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses an index response from the given parser.
+     *
+     * @param parser the parser for the response body
+     * @return the parsed index response
+     * @throws IOException if the response cannot be parsed
+     */
     // IndexResponse.fromXContent(parser);
     protected IndexResponse fromXContent(final XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
@@ -74,6 +98,12 @@ public class HttpIndexAction extends HttpAction {
         return context.build();
     }
 
+    /**
+     * Builds the curl request for the index API.
+     *
+     * @param request the index request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final IndexRequest request) {
         // RestIndexAction
         final OpType opType = request.id() == null ? OpType.CREATE : request.opType();

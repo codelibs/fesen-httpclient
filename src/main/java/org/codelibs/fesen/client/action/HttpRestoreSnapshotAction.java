@@ -31,15 +31,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the restore snapshot API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRestoreSnapshotAction extends HttpAction {
 
+    /** The restore snapshot action. */
     protected final RestoreSnapshotAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the restore snapshot action
+     */
     public HttpRestoreSnapshotAction(final HttpClient client, final RestoreSnapshotAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the restore snapshot request and notifies the listener with the response.
+     *
+     * @param request the restore snapshot request
+     * @param listener the listener to be notified with the restore snapshot response or a failure
+     */
     public void execute(final RestoreSnapshotRequest request, final ActionListener<RestoreSnapshotResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -58,6 +74,12 @@ public class HttpRestoreSnapshotAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds a curl request for the restore snapshot request.
+     *
+     * @param request the restore snapshot request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RestoreSnapshotRequest request) {
         // RestRestoreSnapshotAction
         final StringBuilder pathBuf = new StringBuilder(100).append("/_snapshot");

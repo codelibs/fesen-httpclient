@@ -26,14 +26,31 @@ import org.opensearch.core.xcontent.MediaType;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.transport.client.OpenSearchClient;
 
+/**
+ * A {@link CreateIndexRequestBuilder} for HTTP-based clients that delegates source handling
+ * to {@link HttpCreateIndexRequest} so mappings are prepared for the HTTP API.
+ */
 public class HttpCreateIndexRequrestBuilder extends CreateIndexRequestBuilder {
     private final HttpCreateIndexRequest request;
 
+    /**
+     * Creates a new HTTP create index request builder.
+     *
+     * @param client the client used to execute the request
+     * @param action the create index action definition
+     */
     public HttpCreateIndexRequrestBuilder(final OpenSearchClient client, final CreateIndexAction action) {
         super(client, action);
         request = new HttpCreateIndexRequest(request());
     }
 
+    /**
+     * Creates a new HTTP create index request builder for the given index.
+     *
+     * @param client the client used to execute the request
+     * @param action the create index action definition
+     * @param index the name of the index to create
+     */
     public HttpCreateIndexRequrestBuilder(final OpenSearchClient client, final CreateIndexAction action, final String index) {
         super(client, action, index);
         request = new HttpCreateIndexRequest(request());

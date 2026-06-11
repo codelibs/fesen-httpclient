@@ -482,42 +482,68 @@ import org.opensearch.search.aggregations.pipeline.StatsBucketPipelineAggregatio
 import org.opensearch.threadpool.ThreadPool;
 import org.opensearch.transport.client.AdminClient;
 
+/**
+ * An OpenSearch/Elasticsearch client implementation that communicates with the
+ * search engine over HTTP. It maps OpenSearch action types to HTTP-based action
+ * implementations and supports features such as basic authentication, SSL,
+ * compression, and HTTP proxies.
+ */
 public class HttpClient extends HttpAbstractClient {
 
+    /** A factory that creates a curl request using the HTTP GET method. */
     protected static final Function<String, CurlRequest> GET = Curl::get;
 
+    /** A factory that creates a curl request using the HTTP POST method. */
     protected static final Function<String, CurlRequest> POST = Curl::post;
 
+    /** A factory that creates a curl request using the HTTP PUT method. */
     protected static final Function<String, CurlRequest> PUT = Curl::put;
 
+    /** A factory that creates a curl request using the HTTP DELETE method. */
     protected static final Function<String, CurlRequest> DELETE = Curl::delete;
 
+    /** A factory that creates a curl request using the HTTP HEAD method. */
     protected static final Function<String, CurlRequest> HEAD = Curl::head;
 
+    /** The manager that tracks the availability of the configured engine nodes. */
     protected NodeManager nodeManager;
 
+    /** A mapping from action types to their HTTP-based action executors. */
     protected final Map<ActionType<?>, BiConsumer<ActionRequest, ActionListener<?>>> actions = new HashMap<>();
 
+    /** The registry of named XContent parsers used to parse responses. */
     protected final NamedXContentRegistry namedXContentRegistry;
 
+    /** The thread pool used to execute HTTP requests. */
     protected final ForkJoinPool threadPool;
 
+    /** The Basic authentication header value, or null if not configured. */
     protected final String basicAuth;
 
     private final SSLSocketFactory sslSocketFactory;
 
+    /** Whether gzip compression is enabled for HTTP requests. */
     protected final boolean compression;
 
+    /** The HTTP proxy to use for requests, or null if not configured. */
     protected final Proxy proxy;
 
+    /** The Proxy-Authorization header value, or null if not configured. */
     protected final String proxyAuth;
 
+    /** Operators applied to each curl request before it is sent, allowing request customization. */
     protected final List<UnaryOperator<CurlRequest>> requestBuilderList = new ArrayList<>();
 
     private EngineInfo engineInfo;
 
+    /**
+     * The content type of an HTTP request body.
+     */
     public enum ContentType {
-        JSON("application/json"), X_NDJSON("application/x-ndjson");
+        /** The application/json content type. */
+        JSON("application/json"),
+        /** The application/x-ndjson content type, used for bulk requests. */
+        X_NDJSON("application/x-ndjson");
 
         private final String value;
 
@@ -525,15 +551,35 @@ public class HttpClient extends HttpAbstractClient {
             this.value = value;
         }
 
+        /**
+         * Returns the MIME type string of this content type.
+         *
+         * @return the MIME type string
+         */
         public String getString() {
             return this.value;
         }
     }
 
+    /**
+     * Creates a new HTTP client with the given settings and thread pool.
+     *
+     * @param settings the client settings, including http.hosts and authentication options
+     * @param threadPool the thread pool passed to the underlying client
+     */
     public HttpClient(final Settings settings, final ThreadPool threadPool) {
         this(settings, threadPool, Collections.emptyList());
     }
 
+    /**
+     * Creates a new HTTP client with the given settings, thread pool, and
+     * additional named XContent entries used to parse responses.
+     *
+     * @param settings the client settings, including http.hosts and authentication options
+     * @param threadPool the thread pool passed to the underlying client
+     * @param namedXContentEntries additional named XContent entries to register
+     * @throws OpenSearchException if http.hosts is empty
+     */
     public HttpClient(final Settings settings, final ThreadPool threadPool, final List<NamedXContentRegistry.Entry> namedXContentEntries) {
         super(settings, threadPool);
         final String[] hosts = settings.getAsList("http.hosts").stream().map(s -> {
@@ -1106,6 +1152,13 @@ public class HttpClient extends HttpAbstractClient {
         return new HttpAdminClient(super.admin());
     }
 
+    /**
+     * Returns information about the backend engine by accessing the root
+     * endpoint. The result is cached after the first successful call.
+     *
+     * @return the engine information
+     * @throws OpenSearchException if the engine information cannot be retrieved
+     */
     public EngineInfo getEngineInfo() {
         if (engineInfo != null) {
             return engineInfo;
@@ -1135,6 +1188,13 @@ public class HttpClient extends HttpAbstractClient {
         throw new OpenSearchException("Unknown server info: {}", nodeManager.toNodeString());
     }
 
+    /**
+     * Creates a Basic authentication header value from the fesen.username and
+     * fesen.password settings.
+     *
+     * @param settings the client settings
+     * @return the Basic authentication header value, or null if the username or password is not set
+     */
     protected String createBasicAuthentication(final Settings settings) {
         final String username = settings.get("fesen.username");
         final String password = settings.get("fesen.password");
@@ -1145,6 +1205,13 @@ public class HttpClient extends HttpAbstractClient {
         return null;
     }
 
+    /**
+     * Creates an SSL socket factory that trusts the certificate specified by
+     * the http.ssl.certificate_authorities setting.
+     *
+     * @param settings the client settings
+     * @return the SSL socket factory, or null if the setting is not configured or the certificate cannot be loaded
+     */
     protected SSLSocketFactory createSSLSocketFactory(final Settings settings) {
         final String certificateAuthorities = settings.get("http.ssl.certificate_authorities");
         if (logger.isDebugEnabled()) {
@@ -1172,6 +1239,13 @@ public class HttpClient extends HttpAbstractClient {
         return null;
     }
 
+    /**
+     * Creates an HTTP proxy from the https.proxy_host/https.proxy_port or
+     * http.proxy_host/http.proxy_port settings.
+     *
+     * @param settings the client settings
+     * @return the proxy, or null if the proxy host or port is not configured
+     */
     protected Proxy createProxy(final Settings settings) {
         final String host = getFromSettings(settings, "https.proxy_host", "http.proxy_host");
         final String port = getFromSettings(settings, "https.proxy_port", "http.proxy_port");
@@ -1181,6 +1255,14 @@ public class HttpClient extends HttpAbstractClient {
         return null;
     }
 
+    /**
+     * Creates a Proxy-Authorization header value from the
+     * https.proxy_username/https.proxy_password or
+     * http.proxy_username/http.proxy_password settings.
+     *
+     * @param settings the client settings
+     * @return the proxy authentication header value, or null if the username or password is not set
+     */
     protected String createProxyAuthentication(final Settings settings) {
         final String username = getFromSettings(settings, "https.proxy_username", "http.proxy_username");
         final String password = getFromSettings(settings, "https.proxy_password", "http.proxy_password");
@@ -1191,6 +1273,15 @@ public class HttpClient extends HttpAbstractClient {
         return null;
     }
 
+    /**
+     * Returns the value of the first setting key if present, otherwise the
+     * value of the second setting key.
+     *
+     * @param settings the client settings
+     * @param key1 the preferred setting key
+     * @param key2 the fallback setting key
+     * @return the setting value, or null if neither key is set
+     */
     protected String getFromSettings(final Settings settings, final String key1, final String key2) {
         final String value1 = settings.get(key1);
         if (value1 != null) {
@@ -1237,15 +1328,45 @@ public class HttpClient extends HttpAbstractClient {
         httpAction.accept(request, listener);
     }
 
+    /**
+     * Creates a curl request for the given HTTP method, path, and indices,
+     * using the JSON content type.
+     *
+     * @param method the factory that creates a curl request for an HTTP method
+     * @param path the request path appended after the indices
+     * @param indices the target index names
+     * @return the configured curl request
+     */
     public CurlRequest getCurlRequest(final Function<String, CurlRequest> method, final String path, final String... indices) {
         return getCurlRequest(method, ContentType.JSON, path, indices);
     }
 
+    /**
+     * Creates a curl request for the given HTTP method, content type, path,
+     * and indices. The request is bound to the node manager for failover.
+     *
+     * @param method the factory that creates a curl request for an HTTP method
+     * @param contentType the content type of the request body
+     * @param path the request path appended after the indices
+     * @param indices the target index names
+     * @return the configured curl request
+     */
     public CurlRequest getCurlRequest(final Function<String, CurlRequest> method, final ContentType contentType, final String path,
             final String... indices) {
         return getPlainCurlRequest(s -> new FesenRequest(method.apply(null), nodeManager, s), contentType, path, indices);
     }
 
+    /**
+     * Creates a curl request from the given request creator and applies the
+     * configured options such as content type, authentication, SSL,
+     * compression, proxy, and registered request builders.
+     *
+     * @param requestCreator the function that creates a curl request from the built path
+     * @param contentType the content type of the request body
+     * @param path the request path appended after the indices
+     * @param indices the target index names
+     * @return the configured curl request
+     */
     public CurlRequest getPlainCurlRequest(final Function<String, CurlRequest> requestCreator, final ContentType contentType,
             final String path, final String... indices) {
         final StringBuilder buf = new StringBuilder(100);
@@ -1277,6 +1398,14 @@ public class HttpClient extends HttpAbstractClient {
         return request;
     }
 
+    /**
+     * Creates the thread pool used to execute HTTP requests. The parallelism
+     * is taken from the thread_pool.http.size or processors setting, and the
+     * async mode from the thread_pool.http.async setting.
+     *
+     * @param settings the client settings
+     * @return the created thread pool
+     */
     protected ForkJoinPool createThreadPool(final Settings settings) {
         final int parallelism =
                 settings.getAsInt("thread_pool.http.size", settings.getAsInt("processors", Runtime.getRuntime().availableProcessors()));
@@ -1285,6 +1414,12 @@ public class HttpClient extends HttpAbstractClient {
                 asyncMode);
     }
 
+    /**
+     * Returns the default named XContent entries used to parse aggregation
+     * responses.
+     *
+     * @return the default named XContent entries
+     */
     protected List<NamedXContentRegistry.Entry> getDefaultNamedXContents() {
         // SearchModule.getNamedXContents() requires too many dependencies to instantiate.
         // Maintain the aggregation parser mappings manually.
@@ -1343,6 +1478,12 @@ public class HttpClient extends HttpAbstractClient {
                 .toList();
     }
 
+    /**
+     * Returns the named XContent entries provided by
+     * {@link NamedXContentProvider} services discovered via the service loader.
+     *
+     * @return the named XContent entries from service providers
+     */
     protected List<NamedXContentRegistry.Entry> getProvidedNamedXContents() {
         final List<NamedXContentRegistry.Entry> entries = new ArrayList<>();
         for (final NamedXContentProvider service : ServiceLoader.load(NamedXContentProvider.class)) {
@@ -1351,15 +1492,33 @@ public class HttpClient extends HttpAbstractClient {
         return entries;
     }
 
+    /**
+     * Returns the registry of named XContent parsers used by this client.
+     *
+     * @return the named XContent registry
+     */
     public NamedXContentRegistry getNamedXContentRegistry() {
         return namedXContentRegistry;
     }
 
+    /**
+     * Adds an operator that customizes each curl request before it is sent.
+     *
+     * @param builder the operator applied to each curl request
+     */
     public void addRequestBuilder(final UnaryOperator<CurlRequest> builder) {
         requestBuilderList.add(builder);
     }
 
+    /**
+     * A worker thread for the HTTP request thread pool, named "eshttp".
+     */
     protected static class WorkerThread extends ForkJoinWorkerThread {
+        /**
+         * Creates a new worker thread for the given pool.
+         *
+         * @param pool the fork-join pool this thread works in
+         */
         protected WorkerThread(final ForkJoinPool pool) {
             super(pool);
             setName("eshttp");

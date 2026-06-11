@@ -23,15 +23,31 @@ import org.opensearch.action.main.MainResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Main (cluster info) API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpMainAction extends HttpAction {
 
+    /** The main action definition. */
     protected final MainAction action;
 
+    /**
+     * Creates a new HTTP main action.
+     *
+     * @param client the HTTP client
+     * @param action the main action definition
+     */
     public HttpMainAction(final HttpClient client, final MainAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the main request and notifies the listener with the response.
+     *
+     * @param request the main request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final MainRequest request, final ActionListener<MainResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpMainAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the main API.
+     *
+     * @param request the main request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final MainRequest request) {
         return client.getCurlRequest(POST, "/_xpack");
     }

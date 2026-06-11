@@ -28,15 +28,31 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the create view API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpCreateViewAction extends HttpAction {
 
+    /** The create view action. */
     protected final CreateViewAction action;
 
+    /**
+     * Creates a new HTTP create view action.
+     *
+     * @param client the HTTP client
+     * @param action the create view action
+     */
     public HttpCreateViewAction(final HttpClient client, final CreateViewAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the create view request asynchronously.
+     *
+     * @param request the create view request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final CreateViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
         final String source = buildRequestBody(request);
         getCurlRequest(request).body(source).execute(response -> {
@@ -49,6 +65,12 @@ public class HttpCreateViewAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the JSON request body for the create view request.
+     *
+     * @param request the create view request
+     * @return the JSON request body
+     */
     protected String buildRequestBody(final CreateViewAction.Request request) {
         try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
             builder.startObject();
@@ -69,6 +91,12 @@ public class HttpCreateViewAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the create view API.
+     *
+     * @param request the create view request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final CreateViewAction.Request request) {
         // RestViewAction
         return client.getCurlRequest(POST, "/views");

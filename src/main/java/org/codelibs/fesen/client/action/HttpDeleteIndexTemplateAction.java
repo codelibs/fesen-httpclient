@@ -24,15 +24,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete index template API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeleteIndexTemplateAction extends HttpAction {
 
+    /** The delete index template action definition. */
     protected final DeleteIndexTemplateAction action;
 
+    /**
+     * Creates a new HttpDeleteIndexTemplateAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete index template action definition
+     */
     public HttpDeleteIndexTemplateAction(final HttpClient client, final DeleteIndexTemplateAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete index template request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete index template request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeleteIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpDeleteIndexTemplateAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete index template request.
+     *
+     * @param request the delete index template request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteIndexTemplateRequest request) {
         // RestDeleteIndexTemplatesAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_template/" + UrlUtils.encode(request.name()));

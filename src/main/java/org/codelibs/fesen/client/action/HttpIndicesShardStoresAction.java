@@ -30,15 +30,31 @@ import org.opensearch.cluster.health.ClusterHealthStatus;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Indices Shard Stores API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpIndicesShardStoresAction extends HttpAction {
 
+    /** The indices shard stores action definition. */
     protected final IndicesShardStoresAction action;
 
+    /**
+     * Creates a new HTTP indices shard stores action.
+     *
+     * @param client the HTTP client
+     * @param action the indices shard stores action definition
+     */
     public HttpIndicesShardStoresAction(final HttpClient client, final IndicesShardStoresAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the indices shard stores request and notifies the listener with the response.
+     *
+     * @param request the indices shard stores request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final IndicesShardStoresRequest request, final ActionListener<IndicesShardStoresResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -50,6 +66,14 @@ public class HttpIndicesShardStoresAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the indices shard stores response from the XContent parser.
+     * The store statuses are not parsed; an empty response is returned.
+     *
+     * @param parser the XContent parser positioned at the response body
+     * @return the parsed indices shard stores response
+     * @throws IOException if parsing fails
+     */
     protected IndicesShardStoresResponse fromXContent(final XContentParser parser) throws IOException {
         // Initialize parser - move to START_OBJECT
         XContentParser.Token token = parser.nextToken();
@@ -68,6 +92,12 @@ public class HttpIndicesShardStoresAction extends HttpAction {
         return new IndicesShardStoresResponse(Collections.emptyMap(), Collections.emptyList());
     }
 
+    /**
+     * Consumes and discards the current JSON object or array, including nested structures.
+     *
+     * @param parser the XContent parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -81,6 +111,12 @@ public class HttpIndicesShardStoresAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the indices shard stores API.
+     *
+     * @param request the indices shard stores request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final IndicesShardStoresRequest request) {
         // RestIndicesShardStoresAction
         final StringBuilder buf = new StringBuilder();

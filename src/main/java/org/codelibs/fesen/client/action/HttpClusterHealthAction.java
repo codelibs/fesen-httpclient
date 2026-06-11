@@ -44,15 +44,32 @@ import org.opensearch.core.xcontent.ConstructingObjectParser;
 import org.opensearch.core.xcontent.ObjectParser;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Cluster Health API over HTTP for OpenSearch/Elasticsearch, retrieving
+ * the health status of the cluster and its indices.
+ */
 public class HttpClusterHealthAction extends HttpAction {
 
+    /** The cluster health action definition. */
     protected final ClusterHealthAction action;
 
+    /**
+     * Creates a new HTTP cluster health action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the cluster health action definition
+     */
     public HttpClusterHealthAction(final HttpClient client, final ClusterHealthAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cluster health request and notifies the listener with the response.
+     *
+     * @param request the cluster health request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClusterHealthRequest request, final ActionListener<ClusterHealthResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -64,6 +81,12 @@ public class HttpClusterHealthAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the cluster health API endpoint.
+     *
+     * @param request the cluster health request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final ClusterHealthRequest request) {
         // RestClusterHealthAction
         final CurlRequest curlRequest = client.getCurlRequest(GET,

@@ -19,10 +19,19 @@ import org.opensearch.transport.client.AdminClient;
 import org.opensearch.transport.client.ClusterAdminClient;
 import org.opensearch.transport.client.IndicesAdminClient;
 
+/**
+ * An {@link AdminClient} wrapper that delegates to another admin client and wraps the indices
+ * admin client with {@link HttpIndicesAdminClient}.
+ */
 public class HttpAdminClient implements AdminClient {
 
     private final AdminClient adminClient;
 
+    /**
+     * Creates a new admin client wrapping the given delegate.
+     *
+     * @param admin the admin client to delegate to
+     */
     public HttpAdminClient(final AdminClient admin) {
         this.adminClient = admin;
     }

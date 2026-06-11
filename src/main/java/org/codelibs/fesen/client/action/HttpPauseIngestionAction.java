@@ -26,15 +26,31 @@ import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngesti
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the pause ingestion API over HTTP for OpenSearch.
+ */
 public class HttpPauseIngestionAction extends HttpAction {
 
+    /** The pause ingestion action definition. */
     protected final PauseIngestionAction action;
 
+    /**
+     * Creates a new HttpPauseIngestionAction.
+     *
+     * @param client the HTTP client
+     * @param action the pause ingestion action
+     */
     public HttpPauseIngestionAction(final HttpClient client, final PauseIngestionAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the pause ingestion request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the pause ingestion request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final PauseIngestionRequest request, final ActionListener<PauseIngestionResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -46,6 +62,13 @@ public class HttpPauseIngestionAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a pause ingestion response from the response content.
+     *
+     * @param parser the content parser
+     * @return the pause ingestion response
+     * @throws IOException if parsing fails
+     */
     protected PauseIngestionResponse fromXContent(final XContentParser parser) throws IOException {
         boolean acknowledged = false;
         boolean shardsAcknowledged = false;
@@ -72,6 +95,12 @@ public class HttpPauseIngestionAction extends HttpAction {
         return new PauseIngestionResponse(acknowledged, shardsAcknowledged, new IngestionStateShardFailure[0], "");
     }
 
+    /**
+     * Consumes and discards the current object, including any nested objects and arrays.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -85,6 +114,12 @@ public class HttpPauseIngestionAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the CURL request for the pause ingestion request.
+     *
+     * @param request the pause ingestion request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final PauseIngestionRequest request) {
         // RestPauseIngestionAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/ingestion/_pause", request.indices());

@@ -28,16 +28,32 @@ import org.codelibs.fesen.client.node.NodeManager;
 import org.codelibs.fesen.client.node.NodeUnavailableException;
 import org.opensearch.index.IndexNotFoundException;
 
+/**
+ * A {@link CurlRequest} that targets a cluster of nodes managed by a {@link NodeManager}.
+ * The request is executed against an available node, and if the node fails with a
+ * recoverable error, the node is marked as unavailable and the request is retried on
+ * the next available node.
+ */
 public class FesenRequest extends CurlRequest {
 
     private static final Logger logger = LogManager.getLogger(FesenRequest.class);
 
+    /** The node manager that provides the nodes to send requests to. */
     protected final NodeManager nodeManager;
 
+    /** The request path appended to the node URL. */
     protected final String path;
 
+    /** The iterator over the nodes used for failover. */
     protected final NodeIterator nodeIter;
 
+    /**
+     * Creates a new request for the given path using nodes from the node manager.
+     *
+     * @param request the original request whose HTTP method is reused
+     * @param nodeManager the node manager that provides target nodes
+     * @param path the request path appended to the node URL
+     */
     public FesenRequest(final CurlRequest request, final NodeManager nodeManager, final String path) {
         super(request.method(), null);
         this.nodeManager = nodeManager;
@@ -50,6 +66,14 @@ public class FesenRequest extends CurlRequest {
         execute(actionListener, exceptionListener, null);
     }
 
+    /**
+     * Executes the request asynchronously against the next available node, retrying on
+     * other nodes when a recoverable failure occurs.
+     *
+     * @param actionListener the listener invoked with the response on success
+     * @param exceptionListener the listener invoked when no node can process the request
+     * @param previous the exception from the previous attempt, or {@code null} for the first attempt
+     */
     protected void execute(final Consumer<CurlResponse> actionListener, final Consumer<Exception> exceptionListener,
             final Exception previous) {
         getNode().ifPresentOrElse(node -> {
@@ -80,6 +104,14 @@ public class FesenRequest extends CurlRequest {
         return execute(null);
     }
 
+    /**
+     * Executes the request synchronously against the next available node, retrying on
+     * other nodes when a recoverable failure occurs.
+     *
+     * @param previous the exception from the previous attempt, or {@code null} for the first attempt
+     * @return the response from the first node that processed the request
+     * @throws NodeUnavailableException if all nodes are unavailable and there is no previous exception
+     */
     protected CurlResponse execute(final RuntimeException previous) {
         return getNode().map(node -> {
             url = node.getUrl(path);
@@ -104,6 +136,13 @@ public class FesenRequest extends CurlRequest {
         });
     }
 
+    /**
+     * Determines whether the given exception should trigger a failover to another node.
+     * Exceptions caused by {@link IndexNotFoundException} are not retried.
+     *
+     * @param e the exception to inspect
+     * @return {@code true} if the request should be retried on another node
+     */
     protected boolean isTargetException(final Exception e) {
         int count = 0;
         Throwable t = e;
@@ -117,6 +156,11 @@ public class FesenRequest extends CurlRequest {
         return true;
     }
 
+    /**
+     * Returns the next available node from the node iterator.
+     *
+     * @return an {@link Optional} containing the next available node, or empty if none is available
+     */
     protected Optional<Node> getNode() {
         while (nodeIter.hasNext()) {
             final Node node = nodeIter.next();

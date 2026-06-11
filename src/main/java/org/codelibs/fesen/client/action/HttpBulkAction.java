@@ -55,6 +55,10 @@ import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.VersionType;
 import org.opensearch.index.seqno.SequenceNumbers;
 
+/**
+ * Handles the Bulk API over HTTP for OpenSearch/Elasticsearch, executing multiple
+ * index, create, update, and delete operations in a single request.
+ */
 public class HttpBulkAction extends HttpAction {
 
     private static final String ITEMS = "items";
@@ -64,13 +68,26 @@ public class HttpBulkAction extends HttpAction {
     private static final String STATUS = "status";
     private static final String ERROR = "error";
 
+    /** The bulk action definition. */
     protected final BulkAction action;
 
+    /**
+     * Creates a new HTTP bulk action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the bulk action definition
+     */
     public HttpBulkAction(final HttpClient client, final BulkAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the bulk request and notifies the listener with the response.
+     *
+     * @param request the bulk request containing the document write operations
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final BulkRequest request, final ActionListener<BulkResponse> listener) {
         // http://ndjson.org/
         final StringBuilder buf = new StringBuilder(10000);
@@ -120,6 +137,13 @@ public class HttpBulkAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a bulk response from XContent.
+     *
+     * @param parser the parser positioned at the response
+     * @return the parsed bulk response
+     * @throws IOException if parsing fails
+     */
     // BulkResponse.fromXContent(parser)
     protected BulkResponse fromXContent(final XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
@@ -156,6 +180,14 @@ public class HttpBulkAction extends HttpAction {
         return new BulkResponse(items.toArray(new BulkItemResponse[items.size()]), took, ingestTook);
     }
 
+    /**
+     * Parses a single bulk item response from XContent.
+     *
+     * @param parser the parser positioned at the item object
+     * @param id the position of the item within the bulk response
+     * @return the parsed bulk item response
+     * @throws IOException if parsing fails
+     */
     // BulkItemResponse.fromXContent(parser, items.size()))
     protected BulkItemResponse fromXContent(final XContentParser parser, final int id) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);
@@ -224,6 +256,12 @@ public class HttpBulkAction extends HttpAction {
         return bulkItemResponse;
     }
 
+    /**
+     * Builds the HTTP request for the bulk API endpoint.
+     *
+     * @param request the bulk request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final BulkRequest request) {
         // RestBulkAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_bulk");
@@ -239,6 +277,13 @@ public class HttpBulkAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Builds the NDJSON action line (such as {@code {"index":{...}}}) for a document
+     * write request in the bulk request body.
+     *
+     * @param request the document write request
+     * @return the JSON action line for the request
+     */
     protected String getStringfromDocWriteRequest(final DocWriteRequest<?> request) {
         // BulkRequestParser
         final StringBuilder buf = new StringBuilder(100);
@@ -289,10 +334,26 @@ public class HttpBulkAction extends HttpAction {
         return buf.toString();
     }
 
+    /**
+     * Appends a JSON key/value pair with a numeric value to the buffer.
+     *
+     * @param buf the buffer to append to
+     * @param key the JSON key
+     * @param value the numeric value
+     * @return the buffer for chaining
+     */
     protected StringBuilder appendStr(final StringBuilder buf, final String key, final long value) {
         return buf.append('"').append(key).append("\":").append(value);
     }
 
+    /**
+     * Appends a JSON key/value pair with a string value to the buffer.
+     *
+     * @param buf the buffer to append to
+     * @param key the JSON key
+     * @param value the string value
+     * @return the buffer for chaining
+     */
     protected StringBuilder appendStr(final StringBuilder buf, final String key, final String value) {
         return buf.append('"').append(key).append("\":\"").append(value).append('"');
     }

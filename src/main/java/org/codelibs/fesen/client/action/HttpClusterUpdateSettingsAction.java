@@ -30,15 +30,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the cluster update settings API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpClusterUpdateSettingsAction extends HttpAction {
 
+    /** The cluster update settings action. */
     protected final ClusterUpdateSettingsAction action;
 
+    /**
+     * Creates a new HTTP cluster update settings action.
+     *
+     * @param client the HTTP client
+     * @param action the cluster update settings action
+     */
     public HttpClusterUpdateSettingsAction(final HttpClient client, final ClusterUpdateSettingsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cluster update settings request asynchronously.
+     *
+     * @param request the cluster update settings request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClusterUpdateSettingsRequest request, final ActionListener<ClusterUpdateSettingsResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -57,6 +73,12 @@ public class HttpClusterUpdateSettingsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the cluster update settings API.
+     *
+     * @param request the cluster update settings request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ClusterUpdateSettingsRequest request) {
         // RestClusterUpdateSettingsAction
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/_cluster/settings");

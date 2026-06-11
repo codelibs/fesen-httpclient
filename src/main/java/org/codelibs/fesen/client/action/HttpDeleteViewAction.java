@@ -23,15 +23,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete view API over HTTP for OpenSearch.
+ */
 public class HttpDeleteViewAction extends HttpAction {
 
+    /** The delete view action definition. */
     protected final DeleteViewAction action;
 
+    /**
+     * Creates a new HttpDeleteViewAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete view action definition
+     */
     public HttpDeleteViewAction(final HttpClient client, final DeleteViewAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete view request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete view request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeleteViewAction.Request request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpDeleteViewAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete view request.
+     *
+     * @param request the delete view request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteViewAction.Request request) {
         // RestViewAction
         return client.getCurlRequest(DELETE, "/views/" + UrlUtils.encode(request.getName()));

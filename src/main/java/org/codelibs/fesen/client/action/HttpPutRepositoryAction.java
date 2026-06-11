@@ -24,15 +24,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the put repository API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpPutRepositoryAction extends HttpAction {
 
+    /** The put repository action definition. */
     protected final PutRepositoryAction action;
 
+    /**
+     * Creates a new HttpPutRepositoryAction.
+     *
+     * @param client the HTTP client
+     * @param action the put repository action
+     */
     public HttpPutRepositoryAction(final HttpClient client, final PutRepositoryAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the put repository request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the put repository request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final PutRepositoryRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpPutRepositoryAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the CURL request for the put repository request.
+     *
+     * @param request the put repository request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final PutRepositoryRequest request) {
         // RestPutRepositoryAction
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/_snapshot/" + UrlUtils.encode(request.name()));

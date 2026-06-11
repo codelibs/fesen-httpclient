@@ -23,15 +23,32 @@ import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.opensearch.core.action.ActionListener;
 
+/**
+ * Handles the indices exists API over HTTP for OpenSearch/Elasticsearch,
+ * checking whether one or more indices exist.
+ */
 public class HttpIndicesExistsAction extends HttpAction {
 
+    /** The indices exists action. */
     protected final IndicesExistsAction action;
 
+    /**
+     * Creates a new HttpIndicesExistsAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the indices exists action
+     */
     public HttpIndicesExistsAction(final HttpClient client, final IndicesExistsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the indices exists request and notifies the listener with the response.
+     *
+     * @param request the indices exists request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final IndicesExistsRequest request, final ActionListener<IndicesExistsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             final boolean exists = switch (response.getHttpStatusCode()) {
@@ -48,6 +65,12 @@ public class HttpIndicesExistsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the indices exists API.
+     *
+     * @param request the indices exists request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final IndicesExistsRequest request) {
         return client.getCurlRequest(HEAD, null, request.indices());
     }

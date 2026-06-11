@@ -28,15 +28,31 @@ import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.IndexNotFoundException;
 import org.opensearch.index.VersionType;
 
+/**
+ * Handles the Get Document API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetAction extends HttpAction {
 
+    /** The get action definition. */
     protected final GetAction action;
 
+    /**
+     * Creates a new HTTP get action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get action definition
+     */
     public HttpGetAction(final HttpClient client, final GetAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get request asynchronously.
+     *
+     * @param request the get request
+     * @param listener the listener notified with the get response or a failure
+     */
     public void execute(final GetRequest request, final ActionListener<GetResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {

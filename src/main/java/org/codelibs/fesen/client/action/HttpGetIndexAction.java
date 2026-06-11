@@ -38,15 +38,31 @@ import org.opensearch.common.settings.Settings;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Get Index API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetIndexAction extends HttpAction {
 
+    /** The get index action definition. */
     protected final GetIndexAction action;
 
+    /**
+     * Creates a new HTTP get index action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get index action definition
+     */
     public HttpGetIndexAction(final HttpClient client, final GetIndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get index request asynchronously.
+     *
+     * @param request the get index request
+     * @param listener the listener notified with the get index response or a failure
+     */
     public void execute(final GetIndexRequest request, final ActionListener<GetIndexResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -58,6 +74,12 @@ public class HttpGetIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get index API.
+     *
+     * @param request the get index request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetIndexRequest request) {
         // RestGetIndexAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/", request.indices());
@@ -65,6 +87,13 @@ public class HttpGetIndexAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Parses the HTTP response body into a {@link GetIndexResponse}.
+     *
+     * @param parser the content parser for the response body
+     * @return the parsed get index response
+     * @throws IOException if parsing fails
+     */
     protected static GetIndexResponse fromXContent(final XContentParser parser) throws IOException {
         Map<String, MappingMetadata> mappings = new HashMap<>();
         final Map<String, List<AliasMetadata>> aliases = new HashMap<>();
@@ -109,6 +138,13 @@ public class HttpGetIndexAction extends HttpAction {
         return new GetIndexResponse(indices.toArray(new String[0]), mappings, aliases, settings, defaultSettings, dataStreams, contexts);
     }
 
+    /**
+     * Parses a single index entry containing aliases, mappings, settings, and related metadata.
+     *
+     * @param parser the content parser positioned at an index entry object
+     * @return the parsed index entry
+     * @throws IOException if parsing fails
+     */
     protected static IndexEntry parseIndexEntry(final XContentParser parser) throws IOException {
         List<AliasMetadata> indexAliases = null;
         Map<String, MappingMetadata> indexMappings = null;
@@ -152,6 +188,13 @@ public class HttpGetIndexAction extends HttpAction {
         return new IndexEntry(indexAliases, indexMappings, indexSettings, indexDefaultSettings, dataStream, context);
     }
 
+    /**
+     * Parses the aliases section of an index entry.
+     *
+     * @param parser the content parser positioned at the aliases object
+     * @return the list of parsed alias metadata
+     * @throws IOException if parsing fails
+     */
     protected static List<AliasMetadata> parseAliases(final XContentParser parser) throws IOException {
         final List<AliasMetadata> indexAliases = new ArrayList<>();
         // We start at START_OBJECT since parseIndexEntry ensures that
@@ -162,6 +205,13 @@ public class HttpGetIndexAction extends HttpAction {
         return indexAliases;
     }
 
+    /**
+     * Parses the mappings section of an index entry.
+     *
+     * @param parser the content parser positioned at the mappings object
+     * @return a map of mapping type name to mapping metadata
+     * @throws IOException if parsing fails
+     */
     protected static Map<String, MappingMetadata> parseMappings(final XContentParser parser) throws IOException {
         final Map<String, MappingMetadata> indexMappings = new HashMap<>();
         // We start at START_OBJECT since parseIndexEntry ensures that
@@ -179,6 +229,9 @@ public class HttpGetIndexAction extends HttpAction {
     }
 
     // This is just an internal container to make stuff easier for returning
+    /**
+     * Internal container holding the parsed metadata of a single index entry.
+     */
     protected static class IndexEntry {
         List<AliasMetadata> indexAliases = new ArrayList<>();
         Map<String, MappingMetadata> indexMappings = new HashMap<>();

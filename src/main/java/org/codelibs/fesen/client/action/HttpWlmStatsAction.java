@@ -30,15 +30,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.wlm.stats.WlmStats;
 
+/**
+ * Handles the workload management (WLM) stats API over HTTP for OpenSearch.
+ */
 public class HttpWlmStatsAction extends HttpAction {
 
+    /** The WLM stats action definition. */
     protected WlmStatsAction action;
 
+    /**
+     * Creates a new HTTP WLM stats action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the WLM stats action definition
+     */
     public HttpWlmStatsAction(final HttpClient client, final WlmStatsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the WLM stats request and notifies the listener with the response.
+     *
+     * @param request the WLM stats request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final WlmStatsRequest request, final ActionListener<WlmStatsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -50,6 +66,14 @@ public class HttpWlmStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a WLM stats response, extracting the cluster name. Per-node WLM stats are
+     * consumed but not parsed, so the returned response contains an empty node list.
+     *
+     * @param parser the parser positioned at the response content
+     * @return the parsed WLM stats response
+     * @throws IOException if parsing fails
+     */
     protected WlmStatsResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         ClusterName clusterName = ClusterName.DEFAULT;
@@ -86,6 +110,12 @@ public class HttpWlmStatsAction extends HttpAction {
         return new WlmStatsResponse(clusterName, nodes, Collections.emptyList());
     }
 
+    /**
+     * Consumes the current object from the parser, including all nested objects and arrays.
+     *
+     * @param parser the parser positioned inside the object to consume
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -99,6 +129,12 @@ public class HttpWlmStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the WLM stats API.
+     *
+     * @param request the WLM stats request
+     * @return the curl request for the WLM stats endpoint
+     */
     protected CurlRequest getCurlRequest(final WlmStatsRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_wlm");

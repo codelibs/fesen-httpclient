@@ -33,15 +33,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Indices Stats API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpIndicesStatsAction extends HttpAction {
 
+    /** The indices stats action definition. */
     protected IndicesStatsAction action;
 
+    /**
+     * Creates a new HTTP indices stats action.
+     *
+     * @param client the HTTP client
+     * @param action the indices stats action definition
+     */
     public HttpIndicesStatsAction(final HttpClient client, final IndicesStatsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the indices stats request and notifies the listener with the response.
+     *
+     * @param request the indices stats request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final IndicesStatsRequest request, final ActionListener<IndicesStatsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -53,6 +69,14 @@ public class HttpIndicesStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the indices stats response from the XContent parser.
+     * Only the shard summary is parsed; per-index stats are skipped.
+     *
+     * @param parser the XContent parser positioned at the response body
+     * @return the parsed indices stats response
+     * @throws IOException if parsing fails
+     */
     protected IndicesStatsResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -102,6 +126,12 @@ public class HttpIndicesStatsAction extends HttpAction {
         return new IndicesStatsResponse(new ShardStats[0], totalShards, successfulShards, failedShards, shardFailures);
     }
 
+    /**
+     * Consumes and discards the current JSON object or array, including nested structures.
+     *
+     * @param parser the XContent parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -115,6 +145,12 @@ public class HttpIndicesStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the indices stats API.
+     *
+     * @param request the indices stats request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final IndicesStatsRequest request) {
         final StringBuilder buf = new StringBuilder();
         if (request.indices() != null && request.indices().length > 0) {
@@ -149,6 +185,12 @@ public class HttpIndicesStatsAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Converts the stats flags to a comma-separated metric path segment.
+     *
+     * @param flags the common stats flags
+     * @return the comma-separated metric names, or an empty string if all metrics are set
+     */
     protected String getMetric(final CommonStatsFlags flags) {
         final List<String> metrics = new ArrayList<>();
         if (flags.isSet(Flag.Docs)) {

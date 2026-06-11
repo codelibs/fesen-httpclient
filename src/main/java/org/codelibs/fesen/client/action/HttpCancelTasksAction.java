@@ -23,15 +23,32 @@ import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Cancel Tasks API over HTTP for OpenSearch/Elasticsearch, cancelling
+ * tasks running on cluster nodes.
+ */
 public class HttpCancelTasksAction extends HttpAction {
 
+    /** The cancel tasks action definition. */
     protected final CancelTasksAction action;
 
+    /**
+     * Creates a new HTTP cancel tasks action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the cancel tasks action definition
+     */
     public HttpCancelTasksAction(final HttpClient client, final CancelTasksAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cancel tasks request and notifies the listener with the response.
+     *
+     * @param request the cancel tasks request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final CancelTasksRequest request, final ActionListener<CancelTasksResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +60,12 @@ public class HttpCancelTasksAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the cancel tasks API endpoint.
+     *
+     * @param request the cancel tasks request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final CancelTasksRequest request) {
         // RestCancelTasksAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_tasks/_cancel");

@@ -23,15 +23,31 @@ import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Force Merge API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpForceMergeAction extends HttpAction {
 
+    /** The force merge action definition. */
     protected final ForceMergeAction action;
 
+    /**
+     * Creates a new HTTP force merge action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the force merge action definition
+     */
     public HttpForceMergeAction(final HttpClient client, final ForceMergeAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the force merge request asynchronously.
+     *
+     * @param request the force merge request
+     * @param listener the listener notified with the force merge response or a failure
+     */
     public void execute(final ForceMergeRequest request, final ActionListener<ForceMergeResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpForceMergeAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the force merge API.
+     *
+     * @param request the force merge request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final ForceMergeRequest request) {
         // RestForceMergeAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_forcemerge", request.indices());

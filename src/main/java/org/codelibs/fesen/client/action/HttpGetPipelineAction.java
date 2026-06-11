@@ -24,15 +24,31 @@ import org.opensearch.action.ingest.GetPipelineResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Get Pipeline API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetPipelineAction extends HttpAction {
 
+    /** The get pipeline action definition. */
     protected final GetPipelineAction action;
 
+    /**
+     * Creates a new HTTP get pipeline action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get pipeline action definition
+     */
     public HttpGetPipelineAction(final HttpClient client, final GetPipelineAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get pipeline request asynchronously.
+     *
+     * @param request the get pipeline request
+     * @param listener the listener notified with the get pipeline response or a failure
+     */
     public void execute(final GetPipelineRequest request, final ActionListener<GetPipelineResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpGetPipelineAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get pipeline API.
+     *
+     * @param request the get pipeline request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetPipelineRequest request) {
         // RestGetPipelineAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_ingest/pipeline/" + UrlUtils.joinAndEncode(",", request.getIds()));

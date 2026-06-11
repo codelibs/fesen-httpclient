@@ -26,15 +26,32 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the scale index (search-only) API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpScaleIndexAction extends HttpAction {
 
+    /** The scale index action. */
     protected final ScaleIndexAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the scale index action
+     */
     public HttpScaleIndexAction(final HttpClient client, final ScaleIndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the scale index request and notifies the listener with the response. The request
+     * fields are accessed via reflection because ScaleIndexRequest is package-private in OpenSearch.
+     *
+     * @param request the scale index request
+     * @param listener the listener to be notified with the acknowledged response or a failure
+     */
     public void execute(final ActionRequest request, final ActionListener<AcknowledgedResponse> listener) {
         // ScaleIndexRequest is package-private in OpenSearch, so reflection is the only way
         // to access getIndex() and isScaleDown() from outside the package.

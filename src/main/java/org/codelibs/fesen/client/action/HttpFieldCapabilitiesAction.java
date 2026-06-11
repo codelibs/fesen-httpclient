@@ -23,15 +23,31 @@ import org.opensearch.action.fieldcaps.FieldCapabilitiesResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the field capabilities API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpFieldCapabilitiesAction extends HttpAction {
 
+    /** The field capabilities action definition. */
     protected final FieldCapabilitiesAction action;
 
+    /**
+     * Creates a new HttpFieldCapabilitiesAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the field capabilities action definition
+     */
     public HttpFieldCapabilitiesAction(final HttpClient client, final FieldCapabilitiesAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the field capabilities request asynchronously and notifies the listener with the result.
+     *
+     * @param request the field capabilities request
+     * @param listener the listener to notify with the field capabilities response or a failure
+     */
     public void execute(final FieldCapabilitiesRequest request, final ActionListener<FieldCapabilitiesResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpFieldCapabilitiesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the field capabilities request.
+     *
+     * @param request the field capabilities request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final FieldCapabilitiesRequest request) {
         // RestFieldCapabilitiesAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_field_caps", request.indices());

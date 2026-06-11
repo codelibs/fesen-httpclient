@@ -30,15 +30,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the search scroll API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpSearchScrollAction extends HttpAction {
 
+    /** The search scroll action. */
     protected final SearchScrollAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the search scroll action
+     */
     public HttpSearchScrollAction(final HttpClient client, final SearchScrollAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the search scroll request and notifies the listener with the response.
+     *
+     * @param request the search scroll request
+     * @param listener the listener to be notified with the search response or a failure
+     */
     public void execute(final SearchScrollRequest request, final ActionListener<SearchResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -57,6 +73,12 @@ public class HttpSearchScrollAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds a curl request for the search scroll request.
+     *
+     * @param request the search scroll request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final SearchScrollRequest request) {
         // RestSearchScrollAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_search/scroll");

@@ -24,15 +24,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the cluster reroute API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpClusterRerouteAction extends HttpAction {
 
+    /** The cluster reroute action. */
     protected final ClusterRerouteAction action;
 
+    /**
+     * Creates a new HTTP cluster reroute action.
+     *
+     * @param client the HTTP client
+     * @param action the cluster reroute action
+     */
     public HttpClusterRerouteAction(final HttpClient client, final ClusterRerouteAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cluster reroute request asynchronously.
+     *
+     * @param request the cluster reroute request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClusterRerouteRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpClusterRerouteAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the cluster reroute API.
+     *
+     * @param request the cluster reroute request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ClusterRerouteRequest request) {
         // RestClusterRerouteAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_cluster/reroute");

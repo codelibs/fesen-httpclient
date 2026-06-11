@@ -30,15 +30,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the update index settings API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpUpdateSettingsAction extends HttpAction {
 
+    /** The update settings action definition. */
     protected final UpdateSettingsAction action;
 
+    /**
+     * Creates a new HTTP update settings action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the update settings action definition
+     */
     public HttpUpdateSettingsAction(final HttpClient client, final UpdateSettingsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the update settings request and notifies the listener with the response.
+     *
+     * @param request the update settings request
+     * @param listener the listener notified with the acknowledged response or a failure
+     */
     public void execute(final UpdateSettingsRequest request, final ActionListener<AcknowledgedResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -57,6 +73,12 @@ public class HttpUpdateSettingsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the update settings API.
+     *
+     * @param request the update settings request
+     * @return the curl request for the settings endpoint
+     */
     protected CurlRequest getCurlRequest(final UpdateSettingsRequest request) {
         // RestUpdateSettingsAction
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/_settings", request.indices());

@@ -23,15 +23,32 @@ import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRespo
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the get repositories API over HTTP for OpenSearch/Elasticsearch,
+ * retrieving information about registered snapshot repositories.
+ */
 public class HttpGetRepositoriesAction extends HttpAction {
 
+    /** The get repositories action. */
     protected final GetRepositoriesAction action;
 
+    /**
+     * Creates a new HttpGetRepositoriesAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the get repositories action
+     */
     public HttpGetRepositoriesAction(final HttpClient client, final GetRepositoriesAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get repositories request and notifies the listener with the response.
+     *
+     * @param request the get repositories request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final GetRepositoriesRequest request, final ActionListener<GetRepositoriesResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +60,12 @@ public class HttpGetRepositoriesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get repositories API.
+     *
+     * @param request the get repositories request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final GetRepositoriesRequest request) {
         // RestGetRepositoriesAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_snapshot");

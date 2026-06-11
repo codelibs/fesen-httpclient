@@ -37,21 +37,38 @@ import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
 import org.codelibs.fesen.client.util.MaxMapCountCheck;
 
+/**
+ * Manages a set of cluster nodes, tracking their availability and periodically
+ * checking unavailable nodes so they can be brought back into rotation.
+ */
 public class NodeManager {
     private static final Logger logger = LogManager.getLogger(NodeManager.class);
 
     private static final AtomicInteger nextSerialNumber = new AtomicInteger();
 
+    /** The managed nodes. */
     protected final Node[] nodes;
 
+    /** A factory that creates a health-check request for a node. */
     protected Function<Node, CurlRequest> requestCreator;
 
+    /** The interval in milliseconds between node availability checks. */
     protected long heartbeatInterval = 10 * 1000L; // 10sec;
 
+    /** The timer used to schedule node availability checks. */
     protected Timer timer;
 
+    /** Whether this node manager is running. */
     protected AtomicBoolean isRunning = new AtomicBoolean(true);
 
+    /**
+     * Creates a node manager for the given hosts using the given request creator
+     * for node availability checks. If the request creator is not {@code null},
+     * a background checker is scheduled.
+     *
+     * @param hosts the base URLs of the nodes to manage
+     * @param requestCreator a factory that creates a health-check request for a node, or {@code null} to disable checks
+     */
     public NodeManager(final String[] hosts, final Function<Node, CurlRequest> requestCreator) {
         this(hosts);
 
@@ -62,6 +79,13 @@ public class NodeManager {
         }
     }
 
+    /**
+     * Creates a node manager for the given hosts that checks node availability
+     * by sending a GET request to the root path via the given HTTP client.
+     *
+     * @param hosts the base URLs of the nodes to manage
+     * @param client the HTTP client used for node availability checks
+     */
     public NodeManager(final String[] hosts, final HttpClient client) {
         this(hosts, node -> client.getPlainCurlRequest(s -> Curl.get(node.getUrl(s)), ContentType.JSON, "/"));
     }
@@ -73,6 +97,9 @@ public class NodeManager {
         }
     }
 
+    /**
+     * Schedules the next node availability check if this manager is still running.
+     */
     protected void scheduleNodeChecker() {
         if (isRunning.get()) {
             if (logger.isDebugEnabled()) {
@@ -82,6 +109,9 @@ public class NodeManager {
         }
     }
 
+    /**
+     * Stops this node manager and cancels the scheduled node availability checks.
+     */
     public void close() {
         if (logger.isDebugEnabled()) {
             logger.debug("{} closing node manager.", this.toNodeString());
@@ -92,6 +122,12 @@ public class NodeManager {
         }
     }
 
+    /**
+     * Returns an iterator over the managed nodes. If no node is currently
+     * available, all nodes are reset to available before the iterator is created.
+     *
+     * @return an iterator over the managed nodes
+     */
     public NodeIterator getNodeIterator() {
         if (!hasAliveNode()) {
             if (logger.isDebugEnabled()) {
@@ -105,14 +141,29 @@ public class NodeManager {
         return new NodeIterator(nodes);
     }
 
+    /**
+     * Returns a comma-separated string describing the managed nodes and their states.
+     *
+     * @return a string representation of the managed nodes
+     */
     public String toNodeString() {
         return Arrays.stream(nodes).map(Node::toString).collect(Collectors.joining(","));
     }
 
+    /**
+     * Sets the interval between node availability checks.
+     *
+     * @param interval the interval in milliseconds
+     */
     public void setHeartbeatInterval(final long interval) {
         this.heartbeatInterval = interval;
     }
 
+    /**
+     * Returns whether at least one managed node is available.
+     *
+     * @return {@code true} if any node is available
+     */
     protected boolean hasAliveNode() {
         for (final Node node : nodes) {
             if (node.isAvailable()) {
@@ -122,6 +173,12 @@ public class NodeManager {
         return false;
     }
 
+    /**
+     * Unwraps nested {@link CurlException}s and returns the underlying cause.
+     *
+     * @param t the throwable to unwrap
+     * @return the root cause, or the given throwable if it is not a {@link CurlException}
+     */
     protected Throwable getCause(final Throwable t) {
         if (!(t instanceof CurlException)) {
             return t;

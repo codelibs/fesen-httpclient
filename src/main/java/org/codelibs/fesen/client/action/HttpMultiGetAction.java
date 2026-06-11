@@ -30,15 +30,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Multi Get API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpMultiGetAction extends HttpAction {
 
+    /** The multi get action definition. */
     protected final MultiGetAction action;
 
+    /**
+     * Creates a new HTTP multi get action.
+     *
+     * @param client the HTTP client
+     * @param action the multi get action definition
+     */
     public HttpMultiGetAction(final HttpClient client, final MultiGetAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the multi get request and notifies the listener with the response.
+     *
+     * @param request the multi get request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final MultiGetRequest request, final ActionListener<MultiGetResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -57,6 +73,12 @@ public class HttpMultiGetAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the multi get API.
+     *
+     * @param request the multi get request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final MultiGetRequest request) {
         // RestMultiGetAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_mget");

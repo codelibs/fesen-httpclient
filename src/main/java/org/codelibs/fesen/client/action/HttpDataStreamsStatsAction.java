@@ -29,15 +29,31 @@ import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.common.unit.ByteSizeValue;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the data streams stats API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDataStreamsStatsAction extends HttpAction {
 
+    /** The data streams stats action. */
     protected DataStreamsStatsAction action;
 
+    /**
+     * Creates a new HTTP data streams stats action.
+     *
+     * @param client the HTTP client
+     * @param action the data streams stats action
+     */
     public HttpDataStreamsStatsAction(final HttpClient client, final DataStreamsStatsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the data streams stats request asynchronously.
+     *
+     * @param request the data streams stats request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final DataStreamsStatsAction.Request request, final ActionListener<DataStreamsStatsAction.Response> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -49,6 +65,13 @@ public class HttpDataStreamsStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a data streams stats response from the given parser.
+     *
+     * @param parser the parser positioned at the response body
+     * @return the data streams stats response
+     * @throws IOException if parsing fails
+     */
     protected DataStreamsStatsAction.Response fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -113,6 +136,13 @@ public class HttpDataStreamsStatsAction extends HttpAction {
                 backingIndices, new ByteSizeValue(totalStoreSizeBytes), dataStreams.toArray(new DataStreamsStatsAction.DataStreamStats[0]));
     }
 
+    /**
+     * Parses the stats of a single data stream from the given parser.
+     *
+     * @param parser the parser positioned at a data stream object
+     * @return the data stream stats
+     * @throws IOException if parsing fails
+     */
     protected DataStreamsStatsAction.DataStreamStats parseDataStreamStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         String dataStream = null;
@@ -144,6 +174,12 @@ public class HttpDataStreamsStatsAction extends HttpAction {
         return new DataStreamsStatsAction.DataStreamStats(dataStream, backingIndices, new ByteSizeValue(storeSizeBytes), maximumTimestamp);
     }
 
+    /**
+     * Consumes the current object from the parser, including all nested structures.
+     *
+     * @param parser the parser positioned inside the object to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -157,6 +193,12 @@ public class HttpDataStreamsStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Consumes the current array from the parser, including all nested structures.
+     *
+     * @param parser the parser positioned inside the array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeArray(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -170,6 +212,12 @@ public class HttpDataStreamsStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the data streams stats API.
+     *
+     * @param request the data streams stats request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final DataStreamsStatsAction.Request request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_data_stream");

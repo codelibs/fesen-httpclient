@@ -31,15 +31,31 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the resume ingestion API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpResumeIngestionAction extends HttpAction {
 
+    /** The resume ingestion action. */
     protected final ResumeIngestionAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the resume ingestion action
+     */
     public HttpResumeIngestionAction(final HttpClient client, final ResumeIngestionAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the resume ingestion request and notifies the listener with the response.
+     *
+     * @param request the resume ingestion request
+     * @param listener the listener to be notified with the resume ingestion response or a failure
+     */
     public void execute(final ResumeIngestionRequest request, final ActionListener<ResumeIngestionResponse> listener) {
         String body = null;
         if (request.getResetSettings().length > 0) {
@@ -75,6 +91,13 @@ public class HttpResumeIngestionAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a resume ingestion response from the given parser.
+     *
+     * @param parser the content parser
+     * @return the parsed resume ingestion response
+     * @throws IOException if parsing fails
+     */
     protected ResumeIngestionResponse fromXContent(final XContentParser parser) throws IOException {
         boolean acknowledged = false;
         boolean shardsAcknowledged = false;
@@ -101,6 +124,12 @@ public class HttpResumeIngestionAction extends HttpAction {
         return new ResumeIngestionResponse(acknowledged, shardsAcknowledged, new IngestionStateShardFailure[0], "");
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -114,6 +143,12 @@ public class HttpResumeIngestionAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds a curl request for the resume ingestion request.
+     *
+     * @param request the resume ingestion request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ResumeIngestionRequest request) {
         // RestResumeIngestionAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/ingestion/_resume", request.indices());

@@ -35,15 +35,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.common.transport.TransportAddress;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the nodes usage API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpNodesUsageAction extends HttpAction {
 
+    /** The nodes usage action definition. */
     protected final NodesUsageAction action;
 
+    /**
+     * Creates a new HttpNodesUsageAction.
+     *
+     * @param client the HTTP client
+     * @param action the nodes usage action
+     */
     public HttpNodesUsageAction(final HttpClient client, final NodesUsageAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the nodes usage request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the nodes usage request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final NodesUsageRequest request, final ActionListener<NodesUsageResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -55,6 +71,13 @@ public class HttpNodesUsageAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a nodes usage response from the response content.
+     *
+     * @param parser the content parser
+     * @return the nodes usage response
+     * @throws IOException if parsing fails
+     */
     protected NodesUsageResponse fromXContent(final XContentParser parser) throws IOException {
         List<NodeUsage> nodes = Collections.emptyList();
         String fieldName = null;
@@ -87,6 +110,13 @@ public class HttpNodesUsageAction extends HttpAction {
         return new NodesUsageResponse(clusterName, nodes, Collections.emptyList());
     }
 
+    /**
+     * Parses the nodes section into a list of node usage information.
+     *
+     * @param parser the content parser
+     * @return the list of node usage information
+     * @throws IOException if parsing fails
+     */
     protected List<NodeUsage> parseNodes(final XContentParser parser) throws IOException {
         final List<NodeUsage> list = new ArrayList<>();
         String fieldName = null;
@@ -103,6 +133,14 @@ public class HttpNodesUsageAction extends HttpAction {
         return list;
     }
 
+    /**
+     * Parses usage information for a single node.
+     *
+     * @param parser the content parser
+     * @param nodeId the node identifier
+     * @return the node usage information
+     * @throws IOException if parsing fails
+     */
     protected NodeUsage parseNodeUsage(final XContentParser parser, final String nodeId) throws IOException {
         String fieldName = null;
         long timestamp = 0;
@@ -138,6 +176,13 @@ public class HttpNodesUsageAction extends HttpAction {
         return new NodeUsage(node, timestamp, sinceTime, restUsage, aggregationUsage);
     }
 
+    /**
+     * Parses REST action usage counts.
+     *
+     * @param parser the content parser
+     * @return a map of REST action names to usage counts
+     * @throws IOException if parsing fails
+     */
     protected Map<String, Long> parseRestActions(final XContentParser parser) throws IOException {
         final Map<String, Long> restActions = new HashMap<>();
         XContentParser.Token token;
@@ -153,6 +198,12 @@ public class HttpNodesUsageAction extends HttpAction {
         return restActions;
     }
 
+    /**
+     * Consumes and discards the current object, including any nested objects and arrays.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -166,6 +217,12 @@ public class HttpNodesUsageAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the CURL request for the nodes usage request.
+     *
+     * @param request the nodes usage request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final NodesUsageRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_nodes");

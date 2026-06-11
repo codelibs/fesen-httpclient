@@ -40,15 +40,33 @@ import org.opensearch.core.index.Index;
 import org.opensearch.core.index.shard.ShardId;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Cluster Allocation Explain API over HTTP for OpenSearch/Elasticsearch,
+ * explaining why a shard is or is not allocated to a node.
+ */
 public class HttpClusterAllocationExplainAction extends HttpAction {
 
+    /** The cluster allocation explain action definition. */
     protected final ClusterAllocationExplainAction action;
 
+    /**
+     * Creates a new HTTP cluster allocation explain action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the cluster allocation explain action definition
+     */
     public HttpClusterAllocationExplainAction(final HttpClient client, final ClusterAllocationExplainAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cluster allocation explain request and notifies the listener with the
+     * response.
+     *
+     * @param request the cluster allocation explain request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClusterAllocationExplainRequest request, final ActionListener<ClusterAllocationExplainResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -60,6 +78,14 @@ public class HttpClusterAllocationExplainAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a cluster allocation explain response from XContent, extracting the index,
+     * shard, primary flag, and current node information.
+     *
+     * @param parser the parser positioned at the response
+     * @return the parsed cluster allocation explain response
+     * @throws IOException if parsing fails
+     */
     protected ClusterAllocationExplainResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         String index = "";
@@ -129,6 +155,12 @@ public class HttpClusterAllocationExplainAction extends HttpAction {
         return new ClusterAllocationExplainResponse(explanation);
     }
 
+    /**
+     * Skips the current object or array in the parser, consuming all nested tokens.
+     *
+     * @param parser the parser positioned inside the object or array to skip
+     * @throws IOException if reading from the parser fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -142,6 +174,13 @@ public class HttpClusterAllocationExplainAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the HTTP request for the cluster allocation explain API endpoint, using POST
+     * with a request body when an index is specified and GET otherwise.
+     *
+     * @param request the cluster allocation explain request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final ClusterAllocationExplainRequest request) {
         final CurlRequest curlRequest;
         if (request.getIndex() != null) {

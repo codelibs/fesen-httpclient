@@ -27,15 +27,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete snapshot API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeleteSnapshotAction extends HttpAction {
 
+    /** The delete snapshot action definition. */
     protected final DeleteSnapshotAction action;
 
+    /**
+     * Creates a new HttpDeleteSnapshotAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete snapshot action definition
+     */
     public HttpDeleteSnapshotAction(final HttpClient client, final DeleteSnapshotAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete snapshot request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete snapshot request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeleteSnapshotRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -47,6 +63,12 @@ public class HttpDeleteSnapshotAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete snapshot request.
+     *
+     * @param request the delete snapshot request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteSnapshotRequest request) {
         // RestDeleteSnapshotAction
         final StringBuilder pathBuf = new StringBuilder(100).append("/_snapshot");

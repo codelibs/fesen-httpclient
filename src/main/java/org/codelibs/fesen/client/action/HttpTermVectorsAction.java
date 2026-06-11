@@ -31,15 +31,31 @@ import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the term vectors API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpTermVectorsAction extends HttpAction {
 
+    /** The term vectors action definition. */
     protected final TermVectorsAction action;
 
+    /**
+     * Creates a new HTTP term vectors action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the term vectors action definition
+     */
     public HttpTermVectorsAction(final HttpClient client, final TermVectorsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the term vectors request and notifies the listener with the response.
+     *
+     * @param request the term vectors request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final TermVectorsRequest request, final ActionListener<TermVectorsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -51,6 +67,14 @@ public class HttpTermVectorsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a term vectors response, extracting the index, document id, found flag, and took time.
+     * Nested term vector details are consumed but not parsed.
+     *
+     * @param parser the parser positioned at the response content
+     * @return the parsed term vectors response
+     * @throws IOException if parsing fails
+     */
     protected TermVectorsResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         String index = "";
@@ -95,6 +119,12 @@ public class HttpTermVectorsAction extends HttpAction {
         return response;
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the parser positioned inside the structure to consume
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -108,6 +138,12 @@ public class HttpTermVectorsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the term vectors API.
+     *
+     * @param request the term vectors request
+     * @return the curl request for the term vectors endpoint
+     */
     protected CurlRequest getCurlRequest(final TermVectorsRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append('/').append(UrlUtils.encode(request.index())).append("/_termvectors");
