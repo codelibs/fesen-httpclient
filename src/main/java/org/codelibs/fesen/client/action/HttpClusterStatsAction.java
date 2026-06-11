@@ -33,15 +33,31 @@ import org.opensearch.cluster.health.ClusterHealthStatus;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the cluster stats API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpClusterStatsAction extends HttpAction {
 
+    /** The cluster stats action. */
     protected ClusterStatsAction action;
 
+    /**
+     * Creates a new HTTP cluster stats action.
+     *
+     * @param client the HTTP client
+     * @param action the cluster stats action
+     */
     public HttpClusterStatsAction(final HttpClient client, final ClusterStatsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the cluster stats request asynchronously.
+     *
+     * @param request the cluster stats request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClusterStatsRequest request, final ActionListener<ClusterStatsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -53,6 +69,15 @@ public class HttpClusterStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a cluster stats response from the given parser. Basic fields such as the timestamp,
+     * cluster UUID, cluster name, and status are extracted; the nodes and indices sections are
+     * skipped because they cannot be fully reconstructed from JSON.
+     *
+     * @param parser the parser positioned at the response body
+     * @return the cluster stats response
+     * @throws IOException if parsing fails
+     */
     protected ClusterStatsResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         String clusterUUID = null;
@@ -106,11 +131,23 @@ public class HttpClusterStatsAction extends HttpAction {
         return response;
     }
 
+    /**
+     * Skips the {@code _nodes} section of the response.
+     *
+     * @param parser the parser positioned inside the {@code _nodes} object
+     * @throws IOException if parsing fails
+     */
     protected void parseNodeResults(final XContentParser parser) throws IOException {
         // Skip _nodes section
         consumeObject(parser);
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -124,6 +161,12 @@ public class HttpClusterStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the cluster stats API.
+     *
+     * @param request the cluster stats request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ClusterStatsRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_cluster/stats");

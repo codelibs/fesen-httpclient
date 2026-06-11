@@ -24,15 +24,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete stored script API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeleteStoredScriptAction extends HttpAction {
 
+    /** The delete stored script action definition. */
     protected final DeleteStoredScriptAction action;
 
+    /**
+     * Creates a new HttpDeleteStoredScriptAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete stored script action definition
+     */
     public HttpDeleteStoredScriptAction(final HttpClient client, final DeleteStoredScriptAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete stored script request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete stored script request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeleteStoredScriptRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpDeleteStoredScriptAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete stored script request.
+     *
+     * @param request the delete stored script request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteStoredScriptRequest request) {
         // RestDeleteStoredScriptAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_scripts/" + UrlUtils.encode(request.id()));

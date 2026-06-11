@@ -31,15 +31,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the remote store stats API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRemoteStoreStatsAction extends HttpAction {
 
+    /** The remote store stats action. */
     protected RemoteStoreStatsAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the remote store stats action
+     */
     public HttpRemoteStoreStatsAction(final HttpClient client, final RemoteStoreStatsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the remote store stats request and notifies the listener with the response.
+     *
+     * @param request the remote store stats request
+     * @param listener the listener to be notified with the remote store stats response or a failure
+     */
     public void execute(final RemoteStoreStatsRequest request, final ActionListener<RemoteStoreStatsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -51,6 +67,14 @@ public class HttpRemoteStoreStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a remote store stats response from the given parser. Shard counts are extracted while
+     * per-index stats are skipped, so the returned response contains an empty stats array.
+     *
+     * @param parser the content parser
+     * @return the parsed remote store stats response
+     * @throws IOException if parsing fails
+     */
     protected RemoteStoreStatsResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -96,6 +120,12 @@ public class HttpRemoteStoreStatsAction extends HttpAction {
         return new RemoteStoreStatsResponse(new RemoteStoreStats[0], totalShards, successfulShards, failedShards, shardFailures);
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -109,6 +139,12 @@ public class HttpRemoteStoreStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds a curl request for the remote store stats request.
+     *
+     * @param request the remote store stats request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RemoteStoreStatsRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_remotestore/stats");

@@ -31,15 +31,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the simulate pipeline API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpSimulatePipelineAction extends HttpAction {
 
+    /** The simulate pipeline action definition. */
     protected final SimulatePipelineAction action;
 
+    /**
+     * Creates a new HTTP simulate pipeline action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the simulate pipeline action definition
+     */
     public HttpSimulatePipelineAction(final HttpClient client, final SimulatePipelineAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the simulate pipeline request and notifies the listener with the response.
+     *
+     * @param request the simulate pipeline request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final SimulatePipelineRequest request, final ActionListener<SimulatePipelineResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -58,6 +74,12 @@ public class HttpSimulatePipelineAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the simulate pipeline API.
+     *
+     * @param request the simulate pipeline request
+     * @return the curl request for the simulate pipeline endpoint
+     */
     protected CurlRequest getCurlRequest(final SimulatePipelineRequest request) {
         // RestSimulatePipelineAction
         final String path = request.getId() != null ? "/_ingest/pipeline/" + UrlUtils.encode(request.getId()) + "/_simulate"

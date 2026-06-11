@@ -23,15 +23,31 @@ import org.opensearch.action.admin.indices.flush.FlushResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Flush API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpFlushAction extends HttpAction {
 
+    /** The flush action definition. */
     protected final FlushAction action;
 
+    /**
+     * Creates a new HTTP flush action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the flush action definition
+     */
     public HttpFlushAction(final HttpClient client, final FlushAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the flush request asynchronously.
+     *
+     * @param request the flush request
+     * @param listener the listener notified with the flush response or a failure
+     */
     public void execute(final FlushRequest request, final ActionListener<FlushResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpFlushAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the flush API.
+     *
+     * @param request the flush request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final FlushRequest request) {
         // RestFlushAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_flush", request.indices());

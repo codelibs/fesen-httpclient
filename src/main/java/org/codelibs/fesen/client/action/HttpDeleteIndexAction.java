@@ -23,15 +23,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete index API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeleteIndexAction extends HttpAction {
 
+    /** The delete index action definition. */
     protected final DeleteIndexAction action;
 
+    /**
+     * Creates a new HttpDeleteIndexAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete index action definition
+     */
     public HttpDeleteIndexAction(final HttpClient client, final DeleteIndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete index request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete index request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeleteIndexRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpDeleteIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete index request.
+     *
+     * @param request the delete index request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteIndexRequest request) {
         // RestDeleteIndexAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/", request.indices());

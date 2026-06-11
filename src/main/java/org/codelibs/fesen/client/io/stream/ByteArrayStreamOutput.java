@@ -23,9 +23,16 @@ import org.opensearch.core.common.io.stream.InputStreamStreamInput;
 import org.opensearch.core.common.io.stream.StreamInput;
 import org.opensearch.core.common.io.stream.StreamOutput;
 
+/**
+ * A {@link StreamOutput} implementation backed by a {@link ByteArrayOutputStream}.
+ * The written content can be retrieved as a byte array or converted to a {@link StreamInput}.
+ */
 public class ByteArrayStreamOutput extends StreamOutput {
     private final ByteArrayOutputStream out;
 
+    /**
+     * Creates a new stream output backed by an empty byte array output stream.
+     */
     public ByteArrayStreamOutput() {
         this.out = new ByteArrayOutputStream();
     }
@@ -55,10 +62,20 @@ public class ByteArrayStreamOutput extends StreamOutput {
         out.reset();
     }
 
+    /**
+     * Returns a copy of the bytes written to this stream.
+     *
+     * @return the written content as a byte array
+     */
     public byte[] toByteArray() {
         return out.toByteArray();
     }
 
+    /**
+     * Creates a {@link StreamInput} that reads the bytes written to this stream.
+     *
+     * @return a stream input over the written content
+     */
     public StreamInput toStreamInput() {
         return new InputStreamStreamInput(new ByteArrayInputStream(toByteArray()));
     }

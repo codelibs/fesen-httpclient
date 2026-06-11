@@ -17,24 +17,51 @@ package org.codelibs.fesen.client.node;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Represents a single node (host) in an OpenSearch/Elasticsearch cluster
+ * along with its availability state.
+ */
 public class Node {
 
+    /** The base URL of the node (e.g. {@code http://localhost:9200}). */
     protected String host;
 
+    /** Whether this node is currently available. */
     protected AtomicBoolean available = new AtomicBoolean(true);
 
+    /**
+     * Creates a new node for the given host.
+     *
+     * @param host the base URL of the node
+     */
     public Node(final String host) {
         this.host = host;
     }
 
+    /**
+     * Builds a full URL by appending the given path to this node's host.
+     *
+     * @param path the request path
+     * @return the full URL for the request
+     */
     public String getUrl(final String path) {
         return host + path;
     }
 
+    /**
+     * Returns whether this node is currently available.
+     *
+     * @return {@code true} if the node is available
+     */
     public boolean isAvailable() {
         return available.get();
     }
 
+    /**
+     * Sets the availability state of this node.
+     *
+     * @param available {@code true} to mark the node as available
+     */
     public void setAvailable(final boolean available) {
         this.available.set(available);
     }

@@ -22,15 +22,32 @@ import org.opensearch.action.admin.indices.view.GetViewAction;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the get view API over HTTP for OpenSearch,
+ * retrieving a view by its name.
+ */
 public class HttpGetViewAction extends HttpAction {
 
+    /** The get view action. */
     protected final GetViewAction action;
 
+    /**
+     * Creates a new HttpGetViewAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the get view action
+     */
     public HttpGetViewAction(final HttpClient client, final GetViewAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get view request and notifies the listener with the response.
+     *
+     * @param request the get view request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final GetViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -42,6 +59,12 @@ public class HttpGetViewAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get view API.
+     *
+     * @param request the get view request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final GetViewAction.Request request) {
         // RestViewAction
         return client.getCurlRequest(GET, "/views/" + UrlUtils.encode(request.getName()));

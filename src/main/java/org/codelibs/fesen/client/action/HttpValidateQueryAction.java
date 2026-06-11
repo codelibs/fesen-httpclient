@@ -29,15 +29,31 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the validate query API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpValidateQueryAction extends HttpAction {
 
+    /** The validate query action definition. */
     protected final ValidateQueryAction action;
 
+    /**
+     * Creates a new HTTP validate query action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the validate query action definition
+     */
     public HttpValidateQueryAction(final HttpClient client, final ValidateQueryAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the validate query request and notifies the listener with the response.
+     *
+     * @param request the validate query request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ValidateQueryRequest request, final ActionListener<ValidateQueryResponse> listener) {
         String source = null;
         try (final XContentBuilder builder =
@@ -57,6 +73,12 @@ public class HttpValidateQueryAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the validate query API.
+     *
+     * @param request the validate query request
+     * @return the curl request for the validate query endpoint
+     */
     protected CurlRequest getCurlRequest(final ValidateQueryRequest request) {
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_validate/query", request.indices());
         curlRequest.param("explain", Boolean.toString(request.explain()));

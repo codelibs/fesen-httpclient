@@ -31,15 +31,31 @@ import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the put index template API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpPutIndexTemplateAction extends HttpAction {
 
+    /** The put index template action definition. */
     protected final PutIndexTemplateAction action;
 
+    /**
+     * Creates a new HttpPutIndexTemplateAction.
+     *
+     * @param client the HTTP client
+     * @param action the put index template action
+     */
     public HttpPutIndexTemplateAction(final HttpClient client, final PutIndexTemplateAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the put index template request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the put index template request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final PutIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -58,6 +74,12 @@ public class HttpPutIndexTemplateAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the CURL request for the put index template request.
+     *
+     * @param request the put index template request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final PutIndexTemplateRequest request) {
         // RestPutIndexTemplateAction
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/_template/" + UrlUtils.encode(request.name()));

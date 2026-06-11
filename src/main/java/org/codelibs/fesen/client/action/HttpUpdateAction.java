@@ -38,15 +38,31 @@ import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.VersionType;
 
+/**
+ * Handles the document update API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpUpdateAction extends HttpAction {
 
+    /** The update action definition. */
     protected final UpdateAction action;
 
+    /**
+     * Creates a new HTTP update action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the update action definition
+     */
     public HttpUpdateAction(final HttpClient client, final UpdateAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the update request and notifies the listener with the response.
+     *
+     * @param request the update request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final UpdateRequest request, final ActionListener<UpdateResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -65,6 +81,13 @@ public class HttpUpdateAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses an update response from the given parser.
+     *
+     * @param parser the parser positioned at the response content
+     * @return the parsed update response
+     * @throws IOException if parsing fails
+     */
     // UpdateResponse.fromXContent(parser)
     protected UpdateResponse fromXContent(final XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
@@ -76,6 +99,12 @@ public class HttpUpdateAction extends HttpAction {
         return context.build();
     }
 
+    /**
+     * Builds the curl request for the update API.
+     *
+     * @param request the update request
+     * @return the curl request for the update endpoint
+     */
     protected CurlRequest getCurlRequest(final UpdateRequest request) {
         // RestUpdateAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_update/" + UrlUtils.encode(request.id()), request.index());

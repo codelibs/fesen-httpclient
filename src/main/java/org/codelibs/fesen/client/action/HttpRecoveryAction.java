@@ -30,15 +30,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the indices recovery API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRecoveryAction extends HttpAction {
 
+    /** The recovery action. */
     protected final RecoveryAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the recovery action
+     */
     public HttpRecoveryAction(final HttpClient client, final RecoveryAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the recovery request and notifies the listener with the response.
+     *
+     * @param request the recovery request
+     * @param listener the listener to be notified with the recovery response or a failure
+     */
     public void execute(final RecoveryRequest request, final ActionListener<RecoveryResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -50,6 +66,13 @@ public class HttpRecoveryAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a recovery response from the given parser, counting shards per index.
+     *
+     * @param parser the content parser
+     * @return the parsed recovery response
+     * @throws IOException if parsing fails
+     */
     protected RecoveryResponse fromXContent(final XContentParser parser) throws IOException {
         // Initialize parser - move to START_OBJECT
         XContentParser.Token token = parser.nextToken();
@@ -71,6 +94,13 @@ public class HttpRecoveryAction extends HttpAction {
         return new RecoveryResponse(totalShards, totalShards, 0, Collections.emptyMap(), new ArrayList<>());
     }
 
+    /**
+     * Counts the entries of the shards array in an index object and consumes the remaining content.
+     *
+     * @param parser the content parser positioned at the start of an index object
+     * @return the number of shard entries
+     * @throws IOException if parsing fails
+     */
     protected int countShardsAndConsume(final XContentParser parser) throws IOException {
         int shardCount = 0;
         XContentParser.Token token;
@@ -92,6 +122,12 @@ public class HttpRecoveryAction extends HttpAction {
         return shardCount;
     }
 
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -105,6 +141,12 @@ public class HttpRecoveryAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds a curl request for the recovery request.
+     *
+     * @param request the recovery request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RecoveryRequest request) {
         // RestRecoveryAction
         final StringBuilder buf = new StringBuilder();

@@ -31,17 +31,33 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.IndexNotFoundException;
 
+/**
+ * Handles the Get Mappings API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetMappingsAction extends HttpAction {
 
+    /** The get mappings action definition. */
     protected final GetMappingsAction action;
 
     private static final ParseField MAPPINGS = new ParseField("mappings");
 
+    /**
+     * Creates a new HTTP get mappings action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get mappings action definition
+     */
     public HttpGetMappingsAction(final HttpClient client, final GetMappingsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get mappings request asynchronously.
+     *
+     * @param request the get mappings request
+     * @param listener the listener notified with the get mappings response or a failure
+     */
     public void execute(final GetMappingsRequest request, final ActionListener<GetMappingsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             if (response.getHttpStatusCode() == 404) {
@@ -56,6 +72,12 @@ public class HttpGetMappingsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get mappings API.
+     *
+     * @param request the get mappings request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetMappingsRequest request) {
         // RestGetMappingAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_mapping", request.indices());
@@ -67,6 +89,14 @@ public class HttpGetMappingsAction extends HttpAction {
 
     // GetMappingsResponse does not provide fromXContent.
     // This custom implementation skips dynamic_templates for compatibility with older versions.
+    /**
+     * Parses the HTTP response body into a {@link GetMappingsResponse}.
+     * Skips dynamic_templates entries for compatibility with older versions.
+     *
+     * @param parser the content parser for the response body
+     * @return the parsed get mappings response
+     * @throws IOException if parsing fails
+     */
     public static GetMappingsResponse fromXContent(final XContentParser parser) throws IOException {
         if (parser.currentToken() == null) {
             parser.nextToken();

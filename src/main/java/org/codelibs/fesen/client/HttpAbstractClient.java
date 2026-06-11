@@ -458,12 +458,20 @@ import org.opensearch.transport.client.OpenSearchClient;
  */
 public abstract class HttpAbstractClient implements Client {
 
+    /** Logger for this client instance. */
     protected final Logger logger;
 
+    /** Settings used to configure this client. */
     protected final Settings settings;
     private final ThreadPool threadPool;
     private final Admin admin;
 
+    /**
+     * Creates a new client instance.
+     *
+     * @param settings the settings used to configure this client
+     * @param threadPool the thread pool used by this client
+     */
     public HttpAbstractClient(final Settings settings, final ThreadPool threadPool) {
         this.settings = settings;
         this.threadPool = threadPool;
@@ -503,6 +511,15 @@ public abstract class HttpAbstractClient implements Client {
         doExecute(action, request, listener);
     }
 
+    /**
+     * Executes the given action against the backend. Subclasses implement the actual request handling.
+     *
+     * @param <Request> the request type
+     * @param <Response> the response type
+     * @param action the action to execute
+     * @param request the request to send
+     * @param listener the listener notified with the response or failure
+     */
     protected abstract <Request extends ActionRequest, Response extends ActionResponse> void doExecute(ActionType<Response> action,
             Request request, ActionListener<Response> listener);
 

@@ -19,16 +19,29 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * An iterator over a fixed array of nodes that starts from a round-robin
+ * position and visits each node exactly once, wrapping around the array.
+ */
 public class NodeIterator implements Iterator<Node> {
 
+    /** A shared counter used to determine the round-robin start position. */
     protected static AtomicInteger positionCounter = new AtomicInteger();
 
+    /** The nodes to iterate over. */
     protected final Node[] nodes;
 
+    /** The current position in the node array. */
     protected int position;
 
+    /** The number of nodes returned so far. */
     protected int count = 0;
 
+    /**
+     * Creates a new iterator over the given nodes, starting at a round-robin position.
+     *
+     * @param nodes the nodes to iterate over
+     */
     public NodeIterator(final Node[] nodes) {
         this.nodes = nodes;
         this.position = positionCounter.incrementAndGet() % nodes.length;

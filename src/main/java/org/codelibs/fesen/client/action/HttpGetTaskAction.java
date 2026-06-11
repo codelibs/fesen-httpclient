@@ -26,15 +26,32 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.tasks.TaskResult;
 
+/**
+ * Handles the get task API over HTTP for OpenSearch/Elasticsearch,
+ * retrieving information about a task currently running in the cluster.
+ */
 public class HttpGetTaskAction extends HttpAction {
 
+    /** The get task action. */
     protected final GetTaskAction action;
 
+    /**
+     * Creates a new HttpGetTaskAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the get task action
+     */
     public HttpGetTaskAction(final HttpClient client, final GetTaskAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get task request and notifies the listener with the response.
+     *
+     * @param request the get task request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final GetTaskRequest request, final ActionListener<GetTaskResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -46,12 +63,25 @@ public class HttpGetTaskAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a get task response from the given parser.
+     *
+     * @param parser the parser for the response body
+     * @return the parsed get task response
+     * @throws IOException if the response cannot be parsed
+     */
     protected GetTaskResponse fromXContent(final XContentParser parser) throws IOException {
         parser.nextToken();
         final TaskResult taskResult = TaskResult.PARSER.apply(parser, null);
         return new GetTaskResponse(taskResult);
     }
 
+    /**
+     * Builds the curl request for the get task API.
+     *
+     * @param request the get task request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final GetTaskRequest request) {
         final String taskId = request.getTaskId().getNodeId() + ":" + request.getTaskId().getId();
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_tasks/" + taskId);

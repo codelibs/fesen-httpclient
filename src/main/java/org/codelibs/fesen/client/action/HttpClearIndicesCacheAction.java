@@ -23,15 +23,32 @@ import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Clear Indices Cache API over HTTP for OpenSearch/Elasticsearch, clearing
+ * field data, query, and request caches for indices.
+ */
 public class HttpClearIndicesCacheAction extends HttpAction {
 
+    /** The clear indices cache action definition. */
     protected final ClearIndicesCacheAction action;
 
+    /**
+     * Creates a new HTTP clear indices cache action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the clear indices cache action definition
+     */
     public HttpClearIndicesCacheAction(final HttpClient client, final ClearIndicesCacheAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the clear indices cache request and notifies the listener with the response.
+     *
+     * @param request the clear indices cache request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClearIndicesCacheRequest request, final ActionListener<ClearIndicesCacheResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +60,12 @@ public class HttpClearIndicesCacheAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the clear indices cache API endpoint.
+     *
+     * @param request the clear indices cache request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final ClearIndicesCacheRequest request) {
         // RestClearIndicesCacheAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_cache/clear", request.indices());

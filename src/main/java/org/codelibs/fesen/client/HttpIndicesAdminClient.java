@@ -124,10 +124,20 @@ import org.opensearch.core.action.ActionResponse;
 import org.opensearch.threadpool.ThreadPool;
 import org.opensearch.transport.client.IndicesAdminClient;
 
+/**
+ * An {@link IndicesAdminClient} implementation that delegates all indices
+ * administration operations to a wrapped client, overriding selected request
+ * builders (such as index creation) with HTTP-based implementations.
+ */
 public class HttpIndicesAdminClient implements IndicesAdminClient {
 
     private final IndicesAdminClient indicesClient;
 
+    /**
+     * Creates a new instance that delegates to the given indices admin client.
+     *
+     * @param indices the indices admin client to delegate operations to
+     */
     public HttpIndicesAdminClient(final IndicesAdminClient indices) {
         this.indicesClient = indices;
     }

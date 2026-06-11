@@ -24,15 +24,32 @@ import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the get settings API over HTTP for OpenSearch/Elasticsearch,
+ * retrieving settings of one or more indices.
+ */
 public class HttpGetSettingsAction extends HttpAction {
 
+    /** The get settings action. */
     protected final GetSettingsAction action;
 
+    /**
+     * Creates a new HttpGetSettingsAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the get settings action
+     */
     public HttpGetSettingsAction(final HttpClient client, final GetSettingsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get settings request and notifies the listener with the response.
+     *
+     * @param request the get settings request
+     * @param listener the listener to notify with the response or a failure
+     */
     public void execute(final GetSettingsRequest request, final ActionListener<GetSettingsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +61,12 @@ public class HttpGetSettingsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get settings API.
+     *
+     * @param request the get settings request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final GetSettingsRequest request) {
         // RestGetSettingsAction
         final CurlRequest curlRequest =

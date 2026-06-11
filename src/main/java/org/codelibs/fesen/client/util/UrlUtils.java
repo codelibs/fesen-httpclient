@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Utility methods for URL-encoding values used in request paths and parameters.
+ */
 public final class UrlUtils {
 
     private static final Logger logger = LogManager.getLogger(UrlUtils.class);
@@ -31,6 +34,13 @@ public final class UrlUtils {
         // nothing
     }
 
+    /**
+     * URL-encodes each element and joins them with the given delimiter.
+     *
+     * @param delimiter the delimiter placed between the encoded elements
+     * @param elements the elements to encode and join
+     * @return the joined string, or {@code null} if {@code elements} is {@code null}
+     */
     public static String joinAndEncode(final CharSequence delimiter, final CharSequence... elements) {
         if (elements == null) {
             return null;
@@ -38,6 +48,12 @@ public final class UrlUtils {
         return Arrays.stream(elements).map(UrlUtils::encode).collect(Collectors.joining(delimiter));
     }
 
+    /**
+     * URL-encodes the given value using UTF-8.
+     *
+     * @param element the value to encode
+     * @return the encoded value, or {@code null} if {@code element} is {@code null}
+     */
     public static String encode(final CharSequence element) {
         if (element == null) {
             return null;

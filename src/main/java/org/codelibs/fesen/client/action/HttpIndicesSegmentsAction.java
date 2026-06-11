@@ -27,15 +27,31 @@ import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Indices Segments API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpIndicesSegmentsAction extends HttpAction {
 
+    /** The indices segments action definition. */
     protected final IndicesSegmentsAction action;
 
+    /**
+     * Creates a new HTTP indices segments action.
+     *
+     * @param client the HTTP client
+     * @param action the indices segments action definition
+     */
     public HttpIndicesSegmentsAction(final HttpClient client, final IndicesSegmentsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the indices segments request and notifies the listener with the response.
+     *
+     * @param request the indices segments request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final IndicesSegmentsRequest request, final ActionListener<IndicesSegmentResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -47,6 +63,13 @@ public class HttpIndicesSegmentsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the indices segments response from the XContent parser.
+     *
+     * @param parser the XContent parser positioned at the response body
+     * @return the parsed indices segments response
+     * @throws IOException if parsing fails
+     */
     protected IndicesSegmentResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -99,6 +122,12 @@ public class HttpIndicesSegmentsAction extends HttpAction {
         }
     }
 
+    /**
+     * Consumes and discards the current JSON object or array, including nested structures.
+     *
+     * @param parser the XContent parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -112,6 +141,12 @@ public class HttpIndicesSegmentsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the indices segments API.
+     *
+     * @param request the indices segments request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final IndicesSegmentsRequest request) {
         // RestIndicesSegmentsAction
         final StringBuilder buf = new StringBuilder();

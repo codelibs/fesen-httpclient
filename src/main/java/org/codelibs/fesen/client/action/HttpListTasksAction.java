@@ -23,15 +23,31 @@ import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the List Tasks API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpListTasksAction extends HttpAction {
 
+    /** The list tasks action definition. */
     protected final ListTasksAction action;
 
+    /**
+     * Creates a new HTTP list tasks action.
+     *
+     * @param client the HTTP client
+     * @param action the list tasks action definition
+     */
     public HttpListTasksAction(final HttpClient client, final ListTasksAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the list tasks request and notifies the listener with the response.
+     *
+     * @param request the list tasks request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final ListTasksRequest request, final ActionListener<ListTasksResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -43,6 +59,12 @@ public class HttpListTasksAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the list tasks API.
+     *
+     * @param request the list tasks request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final ListTasksRequest request) {
         // RestListTasksAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_tasks");

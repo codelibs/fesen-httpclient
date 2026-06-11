@@ -40,15 +40,31 @@ import org.opensearch.core.xcontent.ToXContent.Params;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the index rollover API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpRolloverAction extends HttpAction {
 
+    /** The rollover action. */
     protected final RolloverAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the rollover action
+     */
     public HttpRolloverAction(final HttpClient client, final RolloverAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the rollover request and notifies the listener with the response.
+     *
+     * @param request the rollover request
+     * @param listener the listener to be notified with the rollover response or a failure
+     */
     public void execute(final RolloverRequest request, final ActionListener<RolloverResponse> listener) {
         String source = null;
         try (final XContentBuilder builder = toXContent(request, JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
@@ -67,6 +83,12 @@ public class HttpRolloverAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds a curl request for the rollover request.
+     *
+     * @param request the rollover request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final RolloverRequest request) {
         // RestRolloverIndexAction
         final CurlRequest curlRequest = client.getCurlRequest(POST,
@@ -90,6 +112,15 @@ public class HttpRolloverAction extends HttpAction {
 
     private static final ParseField CONDITIONS = new ParseField("conditions");
 
+    /**
+     * Serializes the rollover request, including its create index request and conditions, to XContent.
+     *
+     * @param request the rollover request
+     * @param builder the content builder to write to
+     * @param params the serialization parameters
+     * @return the content builder
+     * @throws IOException if serialization fails
+     */
     protected XContentBuilder toXContent(final RolloverRequest request, final XContentBuilder builder, final Params params)
             throws IOException {
         builder.startObject();
@@ -107,6 +138,15 @@ public class HttpRolloverAction extends HttpAction {
         return builder;
     }
 
+    /**
+     * Serializes the settings, mappings, and aliases of the create index request to XContent.
+     *
+     * @param createIndexRequest the create index request
+     * @param builder the content builder to write to
+     * @param params the serialization parameters
+     * @return the content builder
+     * @throws IOException if serialization fails
+     */
     protected XContentBuilder innerToXContent(final CreateIndexRequest createIndexRequest, final XContentBuilder builder,
             final Params params) throws IOException {
         builder.startObject(CreateIndexRequest.SETTINGS.getPreferredName());

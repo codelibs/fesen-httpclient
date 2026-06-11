@@ -29,15 +29,31 @@ import org.opensearch.cluster.metadata.IndexTemplateMetadata;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Get Index Templates API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetIndexTemplatesAction extends HttpAction {
 
+    /** The get index templates action definition. */
     protected final GetIndexTemplatesAction action;
 
+    /**
+     * Creates a new HTTP get index templates action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get index templates action definition
+     */
     public HttpGetIndexTemplatesAction(final HttpClient client, final GetIndexTemplatesAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get index templates request asynchronously.
+     *
+     * @param request the get index templates request
+     * @param listener the listener notified with the get index templates response or a failure
+     */
     public void execute(final GetIndexTemplatesRequest request, final ActionListener<GetIndexTemplatesResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -49,6 +65,12 @@ public class HttpGetIndexTemplatesAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get index templates API.
+     *
+     * @param request the get index templates request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetIndexTemplatesRequest request) {
         // RestGetIndexTemplateAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_template/" + UrlUtils.joinAndEncode(",", request.names()));

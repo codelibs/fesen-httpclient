@@ -37,15 +37,31 @@ import org.opensearch.core.xcontent.XContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Multi Search API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpMultiSearchAction extends HttpAction {
 
+    /** The multi search action definition. */
     protected final MultiSearchAction action;
 
+    /**
+     * Creates a new HTTP multi search action.
+     *
+     * @param client the HTTP client
+     * @param action the multi search action definition
+     */
     public HttpMultiSearchAction(final HttpClient client, final MultiSearchAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the multi search request and notifies the listener with the response.
+     *
+     * @param request the multi search request
+     * @param listener the listener to notify with the response or failure
+     */
     public void execute(final MultiSearchRequest request, final ActionListener<MultiSearchResponse> listener) {
         String source = null;
         try {
@@ -63,6 +79,14 @@ public class HttpMultiSearchAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Serializes the multi search request into the newline-delimited (NDJSON) multi-line format.
+     *
+     * @param multiSearchRequest the multi search request to serialize
+     * @param xContent the content type used for serialization
+     * @return the serialized request body bytes
+     * @throws IOException if serialization fails
+     */
     // MultiSearchRequest.writeMultiLineFormat(request, XContentFactory.xContent(XContentType.JSON))
     protected byte[] writeMultiLineFormat(final MultiSearchRequest multiSearchRequest, final XContent xContent) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -86,6 +110,14 @@ public class HttpMultiSearchAction extends HttpAction {
         return output.toByteArray();
     }
 
+    /**
+     * Writes the header line parameters of a single search request, adjusting the output
+     * for the target engine type (Elasticsearch 8 and OpenSearch 2 use a custom format).
+     *
+     * @param request the search request
+     * @param xContentBuilder the builder to write the parameters to
+     * @throws IOException if writing fails
+     */
     //  MultiSearchRequest.writeSearchRequestParams(request, xContentBuilder)
     protected void writeSearchRequestParams(final SearchRequest request, final XContentBuilder xContentBuilder) throws IOException {
         final EngineType engineType = client.getEngineInfo().getType();
@@ -124,6 +156,12 @@ public class HttpMultiSearchAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the multi search API.
+     *
+     * @param request the multi search request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final MultiSearchRequest request) {
         // RestMultiSearchAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, ContentType.X_NDJSON, "/_msearch");

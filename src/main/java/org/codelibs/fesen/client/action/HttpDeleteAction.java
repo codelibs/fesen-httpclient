@@ -33,15 +33,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.VersionType;
 
+/**
+ * Handles the delete document API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeleteAction extends HttpAction {
 
+    /** The delete action definition. */
     protected final DeleteAction action;
 
+    /**
+     * Creates a new HttpDeleteAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete action definition
+     */
     public HttpDeleteAction(final HttpClient client, final DeleteAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete request
+     * @param listener the listener to notify with the delete response or a failure
+     */
     public void execute(final DeleteRequest request, final ActionListener<DeleteResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -54,6 +70,13 @@ public class HttpDeleteAction extends HttpAction {
     }
 
     // DeleteResponse.fromXContent(parser)
+    /**
+     * Parses a delete response from the given XContent parser.
+     *
+     * @param parser the parser positioned at the response body
+     * @return the parsed delete response
+     * @throws IOException if parsing the response fails
+     */
     protected DeleteResponse fromXContent(final XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
 
@@ -64,6 +87,12 @@ public class HttpDeleteAction extends HttpAction {
         return context.build();
     }
 
+    /**
+     * Builds the HTTP request for the delete request.
+     *
+     * @param request the delete request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteRequest request) {
         // RestDeleteAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_doc/" + UrlUtils.encode(request.id()), request.index());

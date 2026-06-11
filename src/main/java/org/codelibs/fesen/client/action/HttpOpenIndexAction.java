@@ -24,15 +24,31 @@ import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the open index API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpOpenIndexAction extends HttpAction {
 
+    /** The open index action definition. */
     protected final OpenIndexAction action;
 
+    /**
+     * Creates a new HttpOpenIndexAction.
+     *
+     * @param client the HTTP client
+     * @param action the open index action
+     */
     public HttpOpenIndexAction(final HttpClient client, final OpenIndexAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the open index request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the open index request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final OpenIndexRequest request, final ActionListener<OpenIndexResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpOpenIndexAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the CURL request for the open index request.
+     *
+     * @param request the open index request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final OpenIndexRequest request) {
         // RestOpenIndexAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_open", request.indices());

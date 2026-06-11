@@ -27,15 +27,31 @@ import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the upgrade status API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpUpgradeStatusAction extends HttpAction {
 
+    /** The upgrade status action definition. */
     protected final UpgradeStatusAction action;
 
+    /**
+     * Creates a new HTTP upgrade status action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the upgrade status action definition
+     */
     public HttpUpgradeStatusAction(final HttpClient client, final UpgradeStatusAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the upgrade status request and notifies the listener with the response.
+     *
+     * @param request the upgrade status request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final UpgradeStatusRequest request, final ActionListener<UpgradeStatusResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -47,6 +63,15 @@ public class HttpUpgradeStatusAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses an upgrade status response, extracting the shard counts from the {@code _shards} section.
+     * Since {@link UpgradeStatusResponse} has package-private constructors, the response is
+     * reconstructed via the wire format.
+     *
+     * @param parser the parser positioned at the response content
+     * @return the parsed upgrade status response
+     * @throws IOException if parsing fails
+     */
     protected UpgradeStatusResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -99,6 +124,12 @@ public class HttpUpgradeStatusAction extends HttpAction {
         }
     }
 
+    /**
+     * Consumes the current object from the parser, including all nested objects and arrays.
+     *
+     * @param parser the parser positioned inside the object to consume
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -112,6 +143,12 @@ public class HttpUpgradeStatusAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the upgrade status API.
+     *
+     * @param request the upgrade status request
+     * @return the curl request for the upgrade status endpoint
+     */
     protected CurlRequest getCurlRequest(final UpgradeStatusRequest request) {
         // RestUpgradeStatusAction
         final StringBuilder buf = new StringBuilder();

@@ -24,15 +24,31 @@ import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the delete snapshot repository API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpDeleteRepositoryAction extends HttpAction {
 
+    /** The delete repository action definition. */
     protected final DeleteRepositoryAction action;
 
+    /**
+     * Creates a new HttpDeleteRepositoryAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete repository action definition
+     */
     public HttpDeleteRepositoryAction(final HttpClient client, final DeleteRepositoryAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the delete repository request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete repository request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
     public void execute(final DeleteRepositoryRequest request, final ActionListener<AcknowledgedResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpDeleteRepositoryAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the delete repository request.
+     *
+     * @param request the delete repository request
+     * @return the configured curl request
+     */
     protected CurlRequest getCurlRequest(final DeleteRepositoryRequest request) {
         // RestVerifyRepositoryAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_snapshot/" + UrlUtils.encode(request.name()));

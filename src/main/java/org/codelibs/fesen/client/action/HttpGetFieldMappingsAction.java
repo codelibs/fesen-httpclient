@@ -37,15 +37,31 @@ import org.opensearch.core.xcontent.ConstructingObjectParser;
 import org.opensearch.core.xcontent.ObjectParser;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Get Field Mappings API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpGetFieldMappingsAction extends HttpAction {
 
+    /** The get field mappings action definition. */
     protected final GetFieldMappingsAction action;
 
+    /**
+     * Creates a new HTTP get field mappings action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get field mappings action definition
+     */
     public HttpGetFieldMappingsAction(final HttpClient client, final GetFieldMappingsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get field mappings request asynchronously.
+     *
+     * @param request the get field mappings request
+     * @param listener the listener notified with the get field mappings response or a failure
+     */
     public void execute(final GetFieldMappingsRequest request, final ActionListener<GetFieldMappingsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -57,6 +73,12 @@ public class HttpGetFieldMappingsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the get field mappings API.
+     *
+     * @param request the get field mappings request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetFieldMappingsRequest request) {
         // RestGetFieldMappingsAction
         final StringBuilder pathSuffix = new StringBuilder(100).append("/_mapping/field/");
@@ -71,6 +93,13 @@ public class HttpGetFieldMappingsAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Parses the HTTP response body into a {@link GetFieldMappingsResponse}.
+     *
+     * @param parser the content parser for the response body
+     * @return the parsed get field mappings response
+     * @throws IOException if parsing fails
+     */
     protected GetFieldMappingsResponse fromXContent(final XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
         final Map<String, Map<String, Map<String, GetFieldMappingsResponse.FieldMappingMetadata>>> mappings = new HashMap<>();
@@ -88,6 +117,14 @@ public class HttpGetFieldMappingsAction extends HttpAction {
         return newGetFieldMappingsResponse(mappings);
     }
 
+    /**
+     * Parses the type-level mappings of an index entry.
+     *
+     * @param parser the content parser positioned at an index entry
+     * @param index the index name being parsed
+     * @return a map of type name to field mapping metadata
+     * @throws IOException if parsing fails
+     */
     protected Map<String, Map<String, GetFieldMappingsResponse.FieldMappingMetadata>> parseTypeMappings(final XContentParser parser,
             final String index) throws IOException {
         final ObjectParser<Map<String, Map<String, GetFieldMappingsResponse.FieldMappingMetadata>>, String> objectParser =
@@ -115,6 +152,13 @@ public class HttpGetFieldMappingsAction extends HttpAction {
         return objectParser.parse(parser, index);
     }
 
+    /**
+     * Parses a single field mapping metadata entry.
+     *
+     * @param parser the content parser positioned at a field mapping object
+     * @return the parsed field mapping metadata
+     * @throws IOException if parsing fails
+     */
     protected GetFieldMappingsResponse.FieldMappingMetadata getFieldMappingMetadata(final XContentParser parser) throws IOException {
         final ConstructingObjectParser<GetFieldMappingsResponse.FieldMappingMetadata, String> objectParser =
                 new ConstructingObjectParser<>("field_mapping_meta_data", true,
@@ -129,6 +173,13 @@ public class HttpGetFieldMappingsAction extends HttpAction {
         return objectParser.parse(parser, null);
     }
 
+    /**
+     * Creates a {@link GetFieldMappingsResponse} from the parsed mappings via reflection,
+     * because the constructor is not publicly accessible.
+     *
+     * @param mappings the parsed mappings keyed by index, type, and field name
+     * @return a new get field mappings response
+     */
     protected GetFieldMappingsResponse newGetFieldMappingsResponse(
             final Map<String, Map<String, Map<String, GetFieldMappingsResponse.FieldMappingMetadata>>> mappings) {
         final Class<GetFieldMappingsResponse> clazz = GetFieldMappingsResponse.class;

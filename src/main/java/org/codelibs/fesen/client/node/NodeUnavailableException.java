@@ -17,10 +17,18 @@ package org.codelibs.fesen.client.node;
 
 import org.opensearch.OpenSearchException;
 
+/**
+ * An exception thrown when no node in the cluster is available to process a request.
+ */
 public class NodeUnavailableException extends OpenSearchException {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new exception with the given message.
+     *
+     * @param msg the detail message
+     */
     public NodeUnavailableException(final String msg) {
         super(msg);
     }

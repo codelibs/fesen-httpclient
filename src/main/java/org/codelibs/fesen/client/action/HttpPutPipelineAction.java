@@ -28,15 +28,31 @@ import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the put pipeline API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpPutPipelineAction extends HttpAction {
 
+    /** The put pipeline action definition. */
     protected final PutPipelineAction action;
 
+    /**
+     * Creates a new HttpPutPipelineAction.
+     *
+     * @param client the HTTP client
+     * @param action the put pipeline action
+     */
     public HttpPutPipelineAction(final HttpClient client, final PutPipelineAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the put pipeline request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the put pipeline request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final PutPipelineRequest request, final ActionListener<AcknowledgedResponse> listener) {
         String source = null;
         try {
@@ -54,6 +70,12 @@ public class HttpPutPipelineAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the CURL request for the put pipeline request.
+     *
+     * @param request the put pipeline request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final PutPipelineRequest request) {
         // RestPutPipelineAction
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/_ingest/pipeline/" + UrlUtils.encode(request.getId()));

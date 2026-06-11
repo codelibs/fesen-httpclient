@@ -33,15 +33,32 @@ import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.SegmentReplicationPerGroupStats;
 
+/**
+ * Handles the segment replication stats API over HTTP for OpenSearch/Elasticsearch.
+ * Uses the CAT segment replication endpoint to retrieve replication statistics.
+ */
 public class HttpSegmentReplicationStatsAction extends HttpAction {
 
+    /** The segment replication stats action definition. */
     protected SegmentReplicationStatsAction action;
 
+    /**
+     * Creates a new HTTP segment replication stats action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the segment replication stats action definition
+     */
     public HttpSegmentReplicationStatsAction(final HttpClient client, final SegmentReplicationStatsAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the segment replication stats request and notifies the listener with the response.
+     *
+     * @param request the segment replication stats request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final SegmentReplicationStatsRequest request, final ActionListener<SegmentReplicationStatsResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -53,6 +70,15 @@ public class HttpSegmentReplicationStatsAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the CAT segment replication response. Since the CAT API response format does not
+     * match the expected {@link SegmentReplicationStatsResponse} structure, the content is
+     * consumed and an empty response is returned.
+     *
+     * @param parser the parser positioned at the response content
+     * @return an empty segment replication stats response
+     * @throws IOException if parsing fails
+     */
     protected SegmentReplicationStatsResponse fromXContent(final XContentParser parser) throws IOException {
         // CAT API returns an array of objects, not a standard response format
         // We need to handle this differently
@@ -79,6 +105,12 @@ public class HttpSegmentReplicationStatsAction extends HttpAction {
                 replicationStats, shardFailures);
     }
 
+    /**
+     * Consumes the current object from the parser, including all nested objects and arrays.
+     *
+     * @param parser the parser positioned inside the object to consume
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -92,6 +124,12 @@ public class HttpSegmentReplicationStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Consumes the current array from the parser, including all nested objects and arrays.
+     *
+     * @param parser the parser positioned inside the array to consume
+     * @throws IOException if parsing fails
+     */
     protected void consumeArray(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -105,6 +143,12 @@ public class HttpSegmentReplicationStatsAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the segment replication stats API.
+     *
+     * @param request the segment replication stats request
+     * @return the curl request for the CAT segment replication endpoint
+     */
     protected CurlRequest getCurlRequest(final SegmentReplicationStatsRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_cat/segment_replication");

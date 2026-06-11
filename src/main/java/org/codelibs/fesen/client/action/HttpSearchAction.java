@@ -31,15 +31,31 @@ import org.opensearch.core.xcontent.XContentHelper;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.search.builder.SearchSourceBuilder;
 
+/**
+ * Handles the search API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpSearchAction extends HttpAction {
 
+    /** The search action. */
     protected final SearchAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the search action
+     */
     public HttpSearchAction(final HttpClient client, final SearchAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the search request and notifies the listener with the response.
+     *
+     * @param request the search request
+     * @param listener the listener to be notified with the search response or a failure
+     */
     public void execute(final SearchRequest request, final ActionListener<SearchResponse> listener) {
         getCurlRequest(request).body(getQuerySource(request)).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -55,6 +71,12 @@ public class HttpSearchAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Converts the search source of the request to a JSON string.
+     *
+     * @param request the search request
+     * @return the JSON representation of the search source, or null if the request has no source
+     */
     protected String getQuerySource(final SearchRequest request) {
         final SearchSourceBuilder source = request.source();
         if (source != null) {
@@ -67,6 +89,12 @@ public class HttpSearchAction extends HttpAction {
         return null;
     }
 
+    /**
+     * Builds a curl request for the search request.
+     *
+     * @param request the search request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final SearchRequest request) {
         // RestSearchAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_search", request.indices());

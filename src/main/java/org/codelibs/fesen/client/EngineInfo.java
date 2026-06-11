@@ -17,6 +17,11 @@ package org.codelibs.fesen.client;
 
 import java.util.Map;
 
+/**
+ * Holds information about the backend search engine, such as the node name,
+ * cluster name, version number, and distribution, parsed from the root
+ * endpoint response of OpenSearch or Elasticsearch.
+ */
 public class EngineInfo {
 
     private static final String UNKNOWN = "unknown";
@@ -29,6 +34,12 @@ public class EngineInfo {
 
     private final String distribution;
 
+    /**
+     * Creates an engine information object from the parsed JSON content of the
+     * root endpoint response.
+     *
+     * @param content the parsed response body containing name, cluster_name, and version information
+     */
     public EngineInfo(final Map<String, Object> content) {
         nodeName = (String) content.getOrDefault("name", UNKNOWN);
         clusterName = (String) content.getOrDefault("cluster_name", UNKNOWN);
@@ -43,22 +54,47 @@ public class EngineInfo {
         }
     }
 
+    /**
+     * Returns the node name reported by the engine.
+     *
+     * @return the node name, or "unknown" if not available
+     */
     public String getNodeName() {
         return nodeName;
     }
 
+    /**
+     * Returns the cluster name reported by the engine.
+     *
+     * @return the cluster name, or "unknown" if not available
+     */
     public String getClusterName() {
         return clusterName;
     }
 
+    /**
+     * Returns the version number of the engine.
+     *
+     * @return the version number, or "unknown" if not available
+     */
     public String getNumber() {
         return number;
     }
 
+    /**
+     * Returns the distribution name of the engine, such as "elasticsearch" or "opensearch".
+     *
+     * @return the distribution name, or "unknown" if not available
+     */
     public String getDistribution() {
         return distribution;
     }
 
+    /**
+     * Determines the engine type from the distribution name and version number.
+     *
+     * @return the detected engine type, or {@link EngineType#UNKNOWN} if it cannot be determined
+     */
     public EngineType getType() {
         if (distribution.startsWith("elasticsearch")) {
             if (number.startsWith("7.")) {
@@ -81,7 +117,22 @@ public class EngineInfo {
         return EngineType.UNKNOWN;
     }
 
+    /**
+     * The type of the backend search engine, identified by its distribution
+     * and major version.
+     */
     public enum EngineType {
-        ELASTICSEARCH7, ELASTICSEARCH8, OPENSEARCH1, OPENSEARCH2, OPENSEARCH3, UNKNOWN;
+        /** Elasticsearch 7.x. */
+        ELASTICSEARCH7,
+        /** Elasticsearch 8.x. */
+        ELASTICSEARCH8,
+        /** OpenSearch 1.x. */
+        OPENSEARCH1,
+        /** OpenSearch 2.x. */
+        OPENSEARCH2,
+        /** OpenSearch 3.x. */
+        OPENSEARCH3,
+        /** An unknown or unsupported engine. */
+        UNKNOWN;
     }
 }

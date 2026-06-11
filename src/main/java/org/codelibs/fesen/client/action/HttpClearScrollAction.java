@@ -29,15 +29,32 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Clear Scroll API over HTTP for OpenSearch/Elasticsearch, releasing
+ * search contexts held by scroll requests.
+ */
 public class HttpClearScrollAction extends HttpAction {
 
+    /** The clear scroll action definition. */
     protected final ClearScrollAction action;
 
+    /**
+     * Creates a new HTTP clear scroll action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the clear scroll action definition
+     */
     public HttpClearScrollAction(final HttpClient client, final ClearScrollAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the clear scroll request and notifies the listener with the response.
+     *
+     * @param request the clear scroll request containing the scroll IDs to release
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final ClearScrollRequest request, final ActionListener<ClearScrollResponse> listener) {
         String source = null;
         try (final XContentBuilder builder =
@@ -57,6 +74,12 @@ public class HttpClearScrollAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the HTTP request for the clear scroll API endpoint.
+     *
+     * @param request the clear scroll request
+     * @return the HTTP request to execute
+     */
     protected CurlRequest getCurlRequest(final ClearScrollRequest request) {
         return client.getCurlRequest(DELETE, "/_search/scroll");
     }

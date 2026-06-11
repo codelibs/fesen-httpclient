@@ -24,15 +24,31 @@ import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryR
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the verify repository API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpVerifyRepositoryAction extends HttpAction {
 
+    /** The verify repository action definition. */
     protected final VerifyRepositoryAction action;
 
+    /**
+     * Creates a new HTTP verify repository action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the verify repository action definition
+     */
     public HttpVerifyRepositoryAction(final HttpClient client, final VerifyRepositoryAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the verify repository request and notifies the listener with the response.
+     *
+     * @param request the verify repository request
+     * @param listener the listener notified with the response or a failure
+     */
     public void execute(final VerifyRepositoryRequest request, final ActionListener<VerifyRepositoryResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -44,6 +60,12 @@ public class HttpVerifyRepositoryAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the curl request for the verify repository API.
+     *
+     * @param request the verify repository request
+     * @return the curl request for the repository verify endpoint
+     */
     protected CurlRequest getCurlRequest(final VerifyRepositoryRequest request) {
         // RestVerifyRepositoryAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_snapshot/" + UrlUtils.encode(request.name()) + "/_verify");

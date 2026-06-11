@@ -37,15 +37,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.common.transport.TransportAddress;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the nodes info API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpNodesInfoAction extends HttpAction {
 
+    /** The nodes info action definition. */
     protected final NodesInfoAction action;
 
+    /**
+     * Creates a new HttpNodesInfoAction.
+     *
+     * @param client the HTTP client
+     * @param action the nodes info action
+     */
     public HttpNodesInfoAction(final HttpClient client, final NodesInfoAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the nodes info request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the nodes info request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final NodesInfoRequest request, final ActionListener<NodesInfoResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -57,6 +73,13 @@ public class HttpNodesInfoAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses a nodes info response from the response content.
+     *
+     * @param parser the content parser
+     * @return the nodes info response
+     * @throws IOException if parsing fails
+     */
     protected NodesInfoResponse fromXContent(final XContentParser parser) throws IOException {
         List<NodeInfo> nodes = Collections.emptyList();
         String fieldName = null;
@@ -89,6 +112,13 @@ public class HttpNodesInfoAction extends HttpAction {
         return new NodesInfoResponse(clusterName, nodes, Collections.emptyList());
     }
 
+    /**
+     * Parses the nodes section into a list of node information.
+     *
+     * @param parser the content parser
+     * @return the list of node information
+     * @throws IOException if parsing fails
+     */
     protected List<NodeInfo> parseNodes(final XContentParser parser) throws IOException {
         final List<NodeInfo> list = new ArrayList<>();
         String fieldName = null;
@@ -105,6 +135,14 @@ public class HttpNodesInfoAction extends HttpAction {
         return list;
     }
 
+    /**
+     * Parses information for a single node.
+     *
+     * @param parser the content parser
+     * @param nodeId the node identifier
+     * @return the node information
+     * @throws IOException if parsing fails
+     */
     protected NodeInfo parseNodeInfo(final XContentParser parser, final String nodeId) throws IOException {
         String fieldName = null;
         String nodeName = nodeId;
@@ -148,6 +186,12 @@ public class HttpNodesInfoAction extends HttpAction {
         return NodeInfo.builder(Version.CURRENT, Build.CURRENT, discoveryNode).build();
     }
 
+    /**
+     * Consumes and discards the current object, including any nested objects and arrays.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -161,6 +205,12 @@ public class HttpNodesInfoAction extends HttpAction {
         }
     }
 
+    /**
+     * Consumes and discards the current array, including any nested objects and arrays.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
     protected void consumeArray(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -174,6 +224,12 @@ public class HttpNodesInfoAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the CURL request for the nodes info request.
+     *
+     * @param request the nodes info request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final NodesInfoRequest request) {
         final StringBuilder buf = new StringBuilder();
         buf.append("/_nodes");

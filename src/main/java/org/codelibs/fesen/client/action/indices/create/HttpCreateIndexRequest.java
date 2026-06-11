@@ -45,10 +45,19 @@ import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.index.mapper.MapperService;
 import org.opensearch.tasks.Task;
 
+/**
+ * A {@link CreateIndexRequest} wrapper for HTTP-based clients that adjusts how the
+ * settings and mappings source is prepared, ensuring mappings are not nested under a type name.
+ */
 public class HttpCreateIndexRequest extends CreateIndexRequest {
 
     private final CreateIndexRequest request;
 
+    /**
+     * Creates a new HTTP create index request wrapping the given request.
+     *
+     * @param request the create index request to delegate to
+     */
     public HttpCreateIndexRequest(final CreateIndexRequest request) {
         this.request = request;
     }
@@ -120,6 +129,14 @@ public class HttpCreateIndexRequest extends CreateIndexRequest {
         return this;
     }
 
+    /**
+     * Wraps the mapping definition under the single mapping type name, rejecting sources
+     * whose mapping definition is already nested under a type.
+     *
+     * @param source the source map containing settings and mappings
+     * @return the source map with the mappings wrapped under the single mapping type
+     * @throws IllegalArgumentException if the mapping definition is nested under a type
+     */
     // RestCreateIndexAction#prepareMappings
     public static Map<String, Object> prepareMappings(final Map<String, Object> source) {
         if (!source.containsKey("mappings") || !(source.get("mappings") instanceof Map)) {

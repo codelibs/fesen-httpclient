@@ -31,15 +31,31 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the Get Ingestion State API over HTTP for OpenSearch.
+ */
 public class HttpGetIngestionStateAction extends HttpAction {
 
+    /** The get ingestion state action definition. */
     protected final GetIngestionStateAction action;
 
+    /**
+     * Creates a new HTTP get ingestion state action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the get ingestion state action definition
+     */
     public HttpGetIngestionStateAction(final HttpClient client, final GetIngestionStateAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the get ingestion state request asynchronously.
+     *
+     * @param request the get ingestion state request
+     * @param listener the listener notified with the get ingestion state response or a failure
+     */
     public void execute(final GetIngestionStateRequest request, final ActionListener<GetIngestionStateResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -51,6 +67,13 @@ public class HttpGetIngestionStateAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Parses the HTTP response body into a {@link GetIngestionStateResponse}.
+     *
+     * @param parser the content parser for the response body
+     * @return the parsed get ingestion state response
+     * @throws IOException if parsing fails
+     */
     protected GetIngestionStateResponse fromXContent(final XContentParser parser) throws IOException {
         String fieldName = null;
         int totalShards = 0;
@@ -101,6 +124,13 @@ public class HttpGetIngestionStateAction extends HttpAction {
                 nextPageToken, shardFailures);
     }
 
+    /**
+     * Parses the ingestion_state section and adds the shard states to the given list.
+     *
+     * @param parser the content parser positioned at the ingestion_state object
+     * @param shardStates the list to which parsed shard ingestion states are added
+     * @throws IOException if parsing fails
+     */
     protected void parseIngestionState(final XContentParser parser, final List<ShardIngestionState> shardStates) throws IOException {
         // ingestion_state: { "index_name": [ {shard fields...}, ... ], ... }
         XContentParser.Token token;
@@ -119,6 +149,14 @@ public class HttpGetIngestionStateAction extends HttpAction {
         }
     }
 
+    /**
+     * Parses a single shard ingestion state entry.
+     *
+     * @param parser the content parser positioned at a shard state object
+     * @param indexName the name of the index the shard belongs to
+     * @return the parsed shard ingestion state
+     * @throws IOException if parsing fails
+     */
     protected ShardIngestionState parseShardIngestionState(final XContentParser parser, final String indexName) throws IOException {
         int shardId = -1;
         String pollerState = null;
@@ -165,6 +203,12 @@ public class HttpGetIngestionStateAction extends HttpAction {
                 isPrimary, nodeName);
     }
 
+    /**
+     * Consumes and discards the current object or array, including all nested structures.
+     *
+     * @param parser the content parser positioned inside the object or array to skip
+     * @throws IOException if parsing fails
+     */
     protected void consumeObject(final XContentParser parser) throws IOException {
         XContentParser.Token token;
         int depth = 1;
@@ -178,6 +222,12 @@ public class HttpGetIngestionStateAction extends HttpAction {
         }
     }
 
+    /**
+     * Builds the curl request for the get ingestion state API.
+     *
+     * @param request the get ingestion state request
+     * @return the curl request to send
+     */
     protected CurlRequest getCurlRequest(final GetIngestionStateRequest request) {
         // RestGetIngestionStateAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/ingestion/_state", request.indices());

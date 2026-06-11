@@ -32,15 +32,31 @@ import org.opensearch.core.common.text.Text;
 import org.opensearch.core.xcontent.ConstructingObjectParser;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the pending cluster tasks API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpPendingClusterTasksAction extends HttpAction {
 
+    /** The pending cluster tasks action definition. */
     protected final PendingClusterTasksAction action;
 
+    /**
+     * Creates a new HttpPendingClusterTasksAction.
+     *
+     * @param client the HTTP client
+     * @param action the pending cluster tasks action
+     */
     public HttpPendingClusterTasksAction(final HttpClient client, final PendingClusterTasksAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the pending cluster tasks request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the pending cluster tasks request
+     * @param listener the listener notified with the response or failure
+     */
     public void execute(final PendingClusterTasksRequest request, final ActionListener<PendingClusterTasksResponse> listener) {
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
@@ -52,6 +68,12 @@ public class HttpPendingClusterTasksAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds the CURL request for the pending cluster tasks request.
+     *
+     * @param request the pending cluster tasks request
+     * @return the CURL request
+     */
     protected CurlRequest getCurlRequest(final PendingClusterTasksRequest request) {
         // RestPendingClusterTasksAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_cluster/pending_tasks");
@@ -62,6 +84,12 @@ public class HttpPendingClusterTasksAction extends HttpAction {
         return curlRequest;
     }
 
+    /**
+     * Parses a pending cluster tasks response from the response content.
+     *
+     * @param parser the content parser
+     * @return the pending cluster tasks response
+     */
     protected PendingClusterTasksResponse getPendingClusterTasksResponse(final XContentParser parser) {
         @SuppressWarnings("unchecked")
         final ConstructingObjectParser<PendingClusterTasksResponse, Void> objectParser =
@@ -85,6 +113,11 @@ public class HttpPendingClusterTasksAction extends HttpAction {
         return objectParser.apply(parser, null);
     }
 
+    /**
+     * Creates an object parser for a single pending cluster task.
+     *
+     * @return the pending cluster task parser
+     */
     protected ConstructingObjectParser<PendingClusterTask, Void> getPendingClusterTaskParser() {
         final ConstructingObjectParser<PendingClusterTask, Void> objectParser =
                 new ConstructingObjectParser<>("tasks", true, a -> new PendingClusterTask((long) a[0], Priority.valueOf((String) a[1]),

@@ -28,15 +28,31 @@ import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 
+/**
+ * Handles the put stored script API over HTTP for OpenSearch/Elasticsearch.
+ */
 public class HttpPutStoredScriptAction extends HttpAction {
 
+    /** The put stored script action. */
     protected final PutStoredScriptAction action;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the put stored script action
+     */
     public HttpPutStoredScriptAction(final HttpClient client, final PutStoredScriptAction action) {
         super(client);
         this.action = action;
     }
 
+    /**
+     * Executes the put stored script request and notifies the listener with the response.
+     *
+     * @param request the put stored script request
+     * @param listener the listener to be notified with the acknowledged response or a failure
+     */
     public void execute(final PutStoredScriptRequest request, final ActionListener<AcknowledgedResponse> listener) {
         String source = null;
         try {
@@ -54,6 +70,12 @@ public class HttpPutStoredScriptAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
+    /**
+     * Builds a curl request for the put stored script request.
+     *
+     * @param request the put stored script request
+     * @return the curl request
+     */
     protected CurlRequest getCurlRequest(final PutStoredScriptRequest request) {
         // RestPutStoredScriptAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_scripts/" + UrlUtils.encode(request.id()));
