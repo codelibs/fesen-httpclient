@@ -32,7 +32,7 @@ Add the following dependency to your `pom.xml`:
 <dependency>
     <groupId>org.codelibs.fesen.client</groupId>
     <artifactId>fesen-httpclient</artifactId>
-    <version>3.2.0</version>
+    <version>3.7.0</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@ Add the following dependency to your `pom.xml`:
 Add to your `build.gradle`:
 
 ```gradle
-implementation 'org.codelibs.fesen.client:fesen-httpclient:3.2.0'
+implementation 'org.codelibs.fesen.client:fesen-httpclient:3.7.0'
 ```
 
 ## 🏃 Quick Start
