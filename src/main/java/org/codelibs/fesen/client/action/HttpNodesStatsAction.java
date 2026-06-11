@@ -86,6 +86,9 @@ import org.opensearch.index.store.StoreStats;
 import org.opensearch.index.store.remote.filecache.AggregateFileCacheStats;
 import org.opensearch.index.store.remote.filecache.AggregateFileCacheStats.FileCacheStatsType;
 import org.opensearch.index.store.remote.filecache.FileCacheStats;
+import org.opensearch.plugin.stats.AnalyticsBackendNativeMemoryStats;
+import org.opensearch.plugin.stats.NativeAllocatorPoolStats;
+import org.opensearch.plugins.BlockCacheStats;
 import org.opensearch.index.translog.TranslogStats;
 import org.opensearch.index.warmer.WarmerStats;
 import org.opensearch.indices.NodeIndicesStats;
@@ -227,6 +230,8 @@ public class HttpNodesStatsAction extends HttpAction {
         ClusterManagerThrottlingStats clusterManagerThrottlingStats = null;
         WeightedRoutingStats weightedRoutingStats = null;
         AggregateFileCacheStats fileCacheStats = null;
+        AggregateFileCacheStats fileCacheOnlyStats = null;
+        BlockCacheStats blockCacheOnlyStats = null;
         TaskCancellationStats taskCancellationStats = null;
         SearchPipelineStats searchPipelineStats = null;
         SegmentReplicationRejectionStats segmentReplicationRejectionStats = null;
@@ -234,6 +239,9 @@ public class HttpNodesStatsAction extends HttpAction {
         AdmissionControlStats admissionControlStats = null;
         NodeCacheStats nodeCacheStats = null;
         RemoteStoreNodeStats remoteStoreNodeStats = null;
+        NativeAllocatorPoolStats nativeAllocatorStats = null;
+        AnalyticsBackendNativeMemoryStats nativeMemoryStats = null;
+        long totalEstimatedNativeBytes = -1L;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
         TransportAddress transportAddress = new TransportAddress(TransportAddress.META_ADDRESS, 0);
@@ -283,8 +291,34 @@ public class HttpNodesStatsAction extends HttpAction {
                     clusterManagerThrottlingStats = parseClusterManagerThrottlingStats(parser);
                 } else if ("weighted_routing".equals(fieldName)) {
                     weightedRoutingStats = parseWeightedRoutingStats(parser);
-                } else if ("file_cache".equals(fieldName)) {
+                } else if ("aggregate_file_cache".equals(fieldName)) {
                     fileCacheStats = parseAggregateFileCacheStats(parser);
+                } else if ("file_cache".equals(fieldName)) {
+                    fileCacheOnlyStats = parseAggregateFileCacheStats(parser);
+                } else if ("block_cache".equals(fieldName)) {
+                    blockCacheOnlyStats = parseBlockCacheStats(parser);
+                } else if ("native_memory".equals(fieldName)) {
+                    String nmFieldName = null;
+                    XContentParser.Token nmToken;
+                    while ((nmToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (nmToken == XContentParser.Token.FIELD_NAME) {
+                            nmFieldName = parser.currentName();
+                        } else if (nmToken == XContentParser.Token.VALUE_NUMBER) {
+                            if ("total_estimated_bytes".equals(nmFieldName)) {
+                                totalEstimatedNativeBytes = parser.longValue();
+                            }
+                        } else if (nmToken == XContentParser.Token.START_OBJECT) {
+                            parser.nextToken();
+                            if ("analytics_backend".equals(nmFieldName)) {
+                                nativeMemoryStats = parseAnalyticsBackendNativeMemoryStats(parser);
+                            } else if ("native_allocator".equals(nmFieldName)) {
+                                nativeAllocatorStats = parseNativeAllocatorPoolStats(parser);
+                            } else {
+                                consumeObject(parser);
+                            }
+                        }
+                        parser.nextToken();
+                    }
                 } else if ("task_cancellation".equals(fieldName)) {
                     taskCancellationStats = parseTaskCancellationStats(parser);
                 } else if ("search_pipeline".equals(fieldName)) {
@@ -350,13 +384,18 @@ public class HttpNodesStatsAction extends HttpAction {
                 clusterManagerThrottlingStats, //
                 weightedRoutingStats, //
                 fileCacheStats, //
+                fileCacheOnlyStats, //
+                blockCacheOnlyStats, //
                 taskCancellationStats, //
                 searchPipelineStats, //
                 segmentReplicationRejectionStats, //
                 repositoriesStats, //
                 admissionControlStats, //
                 nodeCacheStats, //
-                remoteStoreNodeStats);
+                remoteStoreNodeStats, //
+                nativeAllocatorStats, //
+                nativeMemoryStats, //
+                totalEstimatedNativeBytes);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
@@ -545,6 +584,150 @@ public class HttpNodesStatsAction extends HttpAction {
             pinnedFileStats = new FileCacheStats(0, 0, 0, 0, 0, 0, 0, 0, FileCacheStatsType.PINNED_FILE_STATS);
         }
         return new AggregateFileCacheStats(timestamp, overAllStats, fullFileStats, blockFileStats, pinnedFileStats);
+    }
+
+    protected BlockCacheStats parseBlockCacheStats(final XContentParser parser) throws IOException {
+        // Parse from over_all_stats sub-object; consume the other 3 sub-objects.
+        // JSON fields available in over_all_stats:
+        //   hit_count -> hits, miss_count -> misses, evictions_in_bytes -> evictionBytes,
+        //   removed_in_bytes -> removedBytes, active_in_bytes -> activeInBytes,
+        //   used_in_bytes -> memoryBytesUsed (server emits used_in_bytes = memoryBytesUsed + diskBytesUsed;
+        //   the split is not recoverable from JSON, so assign the combined value to memoryBytesUsed and 0
+        //   to diskBytesUsed -- re-serializing then reproduces the same used_in_bytes).
+        // hitBytes, missBytes, evictions, removed, diskBytesUsed, totalBytes -> 0 (not emitted by server).
+        long hits = 0;
+        long misses = 0;
+        long evictionBytes = 0;
+        long removedBytes = 0;
+        long activeInBytes = 0;
+        long memoryBytesUsed = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("over_all_stats".equals(fieldName)) {
+                    String subField = null;
+                    XContentParser.Token subToken;
+                    while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (subToken == XContentParser.Token.FIELD_NAME) {
+                            subField = parser.currentName();
+                        } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                            if ("hit_count".equals(subField)) {
+                                hits = parser.longValue();
+                            } else if ("miss_count".equals(subField)) {
+                                misses = parser.longValue();
+                            } else if ("evictions_in_bytes".equals(subField)) {
+                                evictionBytes = parser.longValue();
+                            } else if ("removed_in_bytes".equals(subField)) {
+                                removedBytes = parser.longValue();
+                            } else if ("active_in_bytes".equals(subField)) {
+                                activeInBytes = parser.longValue();
+                            } else if ("used_in_bytes".equals(subField)) {
+                                memoryBytesUsed = parser.longValue();
+                            }
+                        }
+                        parser.nextToken();
+                    }
+                } else {
+                    consumeObject(parser);
+                }
+            }
+            parser.nextToken();
+        }
+        return new BlockCacheStats(hits, misses, 0L, 0L, 0L, evictionBytes, 0L, removedBytes, memoryBytesUsed, 0L, 0L, activeInBytes);
+    }
+
+    protected AnalyticsBackendNativeMemoryStats parseAnalyticsBackendNativeMemoryStats(final XContentParser parser) throws IOException {
+        long allocatedBytes = 0;
+        long residentBytes = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("allocated_bytes".equals(fieldName)) {
+                    allocatedBytes = parser.longValue();
+                } else if ("resident_bytes".equals(fieldName)) {
+                    residentBytes = parser.longValue();
+                }
+            }
+            parser.nextToken();
+        }
+        return new AnalyticsBackendNativeMemoryStats(allocatedBytes, residentBytes);
+    }
+
+    protected NativeAllocatorPoolStats parseNativeAllocatorPoolStats(final XContentParser parser) throws IOException {
+        long rootAllocatedBytes = 0;
+        long rootPeakBytes = 0;
+        long rootLimitBytes = 0;
+        final List<NativeAllocatorPoolStats.PoolStats> pools = new ArrayList<>();
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("root".equals(fieldName)) {
+                    String subField = null;
+                    XContentParser.Token subToken;
+                    while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (subToken == XContentParser.Token.FIELD_NAME) {
+                            subField = parser.currentName();
+                        } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                            if ("allocated_bytes".equals(subField)) {
+                                rootAllocatedBytes = parser.longValue();
+                            } else if ("peak_bytes".equals(subField)) {
+                                rootPeakBytes = parser.longValue();
+                            } else if ("limit_bytes".equals(subField)) {
+                                rootLimitBytes = parser.longValue();
+                            }
+                        }
+                        parser.nextToken();
+                    }
+                } else if ("pools".equals(fieldName)) {
+                    String poolName = null;
+                    XContentParser.Token poolToken;
+                    while ((poolToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (poolToken == XContentParser.Token.FIELD_NAME) {
+                            poolName = parser.currentName();
+                        } else if (poolToken == XContentParser.Token.START_OBJECT) {
+                            parser.nextToken();
+                            long allocatedBytes = 0;
+                            long peakBytes = 0;
+                            long limitBytes = 0;
+                            final String name = poolName;
+                            String subField = null;
+                            XContentParser.Token subToken;
+                            while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                                if (subToken == XContentParser.Token.FIELD_NAME) {
+                                    subField = parser.currentName();
+                                } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                                    if ("allocated_bytes".equals(subField)) {
+                                        allocatedBytes = parser.longValue();
+                                    } else if ("peak_bytes".equals(subField)) {
+                                        peakBytes = parser.longValue();
+                                    } else if ("limit_bytes".equals(subField)) {
+                                        limitBytes = parser.longValue();
+                                    }
+                                }
+                                parser.nextToken();
+                            }
+                            pools.add(new NativeAllocatorPoolStats.PoolStats(name, allocatedBytes, peakBytes, limitBytes));
+                        }
+                        parser.nextToken();
+                    }
+                } else {
+                    consumeObject(parser);
+                }
+            }
+            parser.nextToken();
+        }
+        return new NativeAllocatorPoolStats(rootAllocatedBytes, rootPeakBytes, rootLimitBytes, pools);
     }
 
     protected TaskCancellationStats parseTaskCancellationStats(final XContentParser parser) throws IOException {
@@ -2373,6 +2556,9 @@ public class HttpNodesStatsAction extends HttpAction {
         final CurlRequest curlRequest = client.getCurlRequest(GET, buf.toString());
         if (request.timeout() != null) {
             curlRequest.param("timeout", request.timeout().toString());
+        }
+        if (request.isFileCacheDetailed()) {
+            curlRequest.param("detailed", "true");
         }
         return curlRequest;
     }

@@ -17,6 +17,7 @@ package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -31,15 +32,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.opensearch.action.admin.cluster.node.stats.NodeStats;
+import org.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
+import org.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.xcontent.DeprecationHandler;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.XContentParser;
+import org.opensearch.plugin.stats.AnalyticsBackendNativeMemoryStats;
+import org.opensearch.plugin.stats.NativeAllocatorPoolStats;
+import org.opensearch.plugins.BlockCacheStats;
 import org.opensearch.search.backpressure.stats.SearchBackpressureStats;
 import org.opensearch.search.pipeline.SearchPipelineStats;
 import org.opensearch.tasks.TaskCancellationStats;
@@ -994,6 +1003,426 @@ class HttpNodesStatsActionTest {
         }
     }
 
+    // ==================== New helper methods for new parser methods ====================
+
+    private BlockCacheStats callParseBlockCacheStats(final XContentParser parser) throws Exception {
+        final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseBlockCacheStats", XContentParser.class);
+        m.setAccessible(true);
+        return (BlockCacheStats) m.invoke(action, parser);
+    }
+
+    private AnalyticsBackendNativeMemoryStats callParseAnalyticsBackendNativeMemoryStats(final XContentParser parser) throws Exception {
+        final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseAnalyticsBackendNativeMemoryStats", XContentParser.class);
+        m.setAccessible(true);
+        return (AnalyticsBackendNativeMemoryStats) m.invoke(action, parser);
+    }
+
+    private NativeAllocatorPoolStats callParseNativeAllocatorPoolStats(final XContentParser parser) throws Exception {
+        final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseNativeAllocatorPoolStats", XContentParser.class);
+        m.setAccessible(true);
+        return (NativeAllocatorPoolStats) m.invoke(action, parser);
+    }
+
+    // ==================== parseNativeAllocatorPoolStats tests ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNativeAllocatorPoolStats_fullParse() throws Exception {
+        final String json = "{" + "\"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30}," + "\"pools\":{"
+                + "  \"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3},"
+                + "  \"pool-b\":{\"allocated_bytes\":4,\"peak_bytes\":5,\"limit_bytes\":6}" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken(); // advance past START_OBJECT into first field
+            final NativeAllocatorPoolStats stats = callParseNativeAllocatorPoolStats(parser);
+            assertNotNull(stats);
+            assertEquals(10L, stats.getRootAllocatedBytes());
+            assertEquals(20L, stats.getRootPeakBytes());
+            assertEquals(30L, stats.getRootLimitBytes());
+            assertEquals(2, stats.getPools().size());
+            final NativeAllocatorPoolStats.PoolStats poolA = stats.getPools().get(0);
+            assertEquals("pool-a", poolA.getName());
+            assertEquals(1L, poolA.getAllocatedBytes());
+            assertEquals(2L, poolA.getPeakBytes());
+            assertEquals(3L, poolA.getLimitBytes());
+            final NativeAllocatorPoolStats.PoolStats poolB = stats.getPools().get(1);
+            assertEquals("pool-b", poolB.getName());
+            assertEquals(4L, poolB.getAllocatedBytes());
+            assertEquals(5L, poolB.getPeakBytes());
+            assertEquals(6L, poolB.getLimitBytes());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNativeAllocatorPoolStats_noPools() throws Exception {
+        final String json = "{\"root\":{\"allocated_bytes\":100,\"peak_bytes\":200,\"limit_bytes\":300}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NativeAllocatorPoolStats stats = callParseNativeAllocatorPoolStats(parser);
+            assertNotNull(stats);
+            assertEquals(100L, stats.getRootAllocatedBytes());
+            assertEquals(200L, stats.getRootPeakBytes());
+            assertEquals(300L, stats.getRootLimitBytes());
+            assertNotNull(stats.getPools());
+            assertEquals(0, stats.getPools().size());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    // ==================== parseAnalyticsBackendNativeMemoryStats tests ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseAnalyticsBackendNativeMemoryStats_full() throws Exception {
+        final String json = "{\"allocated_bytes\":1111,\"resident_bytes\":2222}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final AnalyticsBackendNativeMemoryStats stats = callParseAnalyticsBackendNativeMemoryStats(parser);
+            assertNotNull(stats);
+            assertEquals(1111L, stats.getAllocatedBytes());
+            assertEquals(2222L, stats.getResidentBytes());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseAnalyticsBackendNativeMemoryStats_empty() throws Exception {
+        final String json = "{}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final AnalyticsBackendNativeMemoryStats stats = callParseAnalyticsBackendNativeMemoryStats(parser);
+            assertNotNull(stats);
+            assertEquals(0L, stats.getAllocatedBytes());
+            assertEquals(0L, stats.getResidentBytes());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    // ==================== parseBlockCacheStats tests ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseBlockCacheStats_full() throws Exception {
+        final String json = "{" + "\"over_all_stats\":{\"active_in_bytes\":800,\"used_in_bytes\":900,\"pinned_in_bytes\":0,"
+                + "  \"evictions_in_bytes\":50,\"removed_in_bytes\":30,\"active_percent\":0,\"hit_count\":500,\"miss_count\":100},"
+                + "\"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "  \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "\"block_file_stats\":{\"active_in_bytes\":800,\"used_in_bytes\":900,\"pinned_in_bytes\":0,"
+                + "  \"evictions_in_bytes\":50,\"removed_in_bytes\":30,\"active_percent\":0,\"hit_count\":500,\"miss_count\":100},"
+                + "\"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "  \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final BlockCacheStats stats = callParseBlockCacheStats(parser);
+            assertNotNull(stats);
+            assertEquals(500L, stats.hits());
+            assertEquals(100L, stats.misses());
+            assertEquals(50L, stats.evictionBytes());
+            assertEquals(30L, stats.removedBytes());
+            assertEquals(800L, stats.activeInBytes());
+            assertEquals(900L, stats.memoryBytesUsed());
+            assertEquals(0L, stats.hitBytes());
+            assertEquals(0L, stats.missBytes());
+            assertEquals(0L, stats.evictions());
+            assertEquals(0L, stats.removed());
+            assertEquals(0L, stats.diskBytesUsed());
+            assertEquals(0L, stats.totalBytes());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseBlockCacheStats_empty() throws Exception {
+        final String json = "{}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final BlockCacheStats stats = callParseBlockCacheStats(parser);
+            assertNotNull(stats);
+            assertEquals(0L, stats.hits());
+            assertEquals(0L, stats.misses());
+            assertEquals(0L, stats.hitBytes());
+            assertEquals(0L, stats.missBytes());
+            assertEquals(0L, stats.evictions());
+            assertEquals(0L, stats.evictionBytes());
+            assertEquals(0L, stats.removed());
+            assertEquals(0L, stats.removedBytes());
+            assertEquals(0L, stats.memoryBytesUsed());
+            assertEquals(0L, stats.diskBytesUsed());
+            assertEquals(0L, stats.totalBytes());
+            assertEquals(0L, stats.activeInBytes());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    // ==================== parseNodeStats: native_memory tests ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemoryFull() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\"," + "\"timestamp\":1234567890," + "\"native_memory\":{"
+                + "  \"total_estimated_bytes\":123456," + "  \"analytics_backend\":{\"allocated_bytes\":1111,\"resident_bytes\":2222},"
+                + "  \"native_allocator\":{" + "    \"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30},"
+                + "    \"pools\":{" + "      \"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3},"
+                + "      \"pool-b\":{\"allocated_bytes\":4,\"peak_bytes\":5,\"limit_bytes\":6}" + "    }" + "  }" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertEquals(123456L, nodeStats.getTotalEstimatedNativeBytes());
+            final AnalyticsBackendNativeMemoryStats nativeMemory = nodeStats.getAnalyticsBackendNativeMemoryStats();
+            assertNotNull(nativeMemory);
+            assertEquals(1111L, nativeMemory.getAllocatedBytes());
+            assertEquals(2222L, nativeMemory.getResidentBytes());
+            final NativeAllocatorPoolStats nativeAllocator = nodeStats.getNativeAllocatorStats();
+            assertNotNull(nativeAllocator);
+            assertEquals(10L, nativeAllocator.getRootAllocatedBytes());
+            assertEquals(20L, nativeAllocator.getRootPeakBytes());
+            assertEquals(30L, nativeAllocator.getRootLimitBytes());
+            assertEquals(2, nativeAllocator.getPools().size());
+            final NativeAllocatorPoolStats.PoolStats pool0 = nativeAllocator.getPools().get(0);
+            assertEquals("pool-a", pool0.getName());
+            assertEquals(1L, pool0.getAllocatedBytes());
+            assertEquals(2L, pool0.getPeakBytes());
+            assertEquals(3L, pool0.getLimitBytes());
+            final NativeAllocatorPoolStats.PoolStats pool1 = nativeAllocator.getPools().get(1);
+            assertEquals("pool-b", pool1.getName());
+            assertEquals(4L, pool1.getAllocatedBytes());
+            assertEquals(5L, pool1.getPeakBytes());
+            assertEquals(6L, pool1.getLimitBytes());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemoryMinimal() throws Exception {
+        final String json =
+                "{" + "\"name\":\"test-node\"," + "\"timestamp\":9999," + "\"native_memory\":{\"total_estimated_bytes\":99999}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertEquals(99999L, nodeStats.getTotalEstimatedNativeBytes());
+            assertNull(nodeStats.getAnalyticsBackendNativeMemoryStats());
+            assertNull(nodeStats.getNativeAllocatorStats());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemoryAbsent() throws Exception {
+        final String json = "{\"name\":\"test-node\",\"timestamp\":111}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertEquals(-1L, nodeStats.getTotalEstimatedNativeBytes());
+            assertNull(nodeStats.getAnalyticsBackendNativeMemoryStats());
+            assertNull(nodeStats.getNativeAllocatorStats());
+        }
+    }
+
+    // ==================== parseNodeStats: file cache dispatch tests ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_aggregateFileCache_populatesFileCacheStats() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\"," + "\"timestamp\":111," + "\"aggregate_file_cache\":{"
+                + "  \"timestamp\":123456789," + "  \"active_in_bytes\":100,\"total_in_bytes\":200,\"used_in_bytes\":150,"
+                + "  \"pinned_in_bytes\":10,\"evictions_in_bytes\":5,\"removed_in_bytes\":3,"
+                + "  \"active_percent\":50,\"used_percent\":75,\"hit_count\":42,\"miss_count\":7,"
+                + "  \"over_all_stats\":{\"active_in_bytes\":100,\"used_in_bytes\":150,\"pinned_in_bytes\":10,"
+                + "    \"evictions_in_bytes\":5,\"removed_in_bytes\":3,\"active_percent\":50,\"hit_count\":42,\"miss_count\":7},"
+                + "  \"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "  \"block_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "  \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertNotNull(nodeStats.getFileCacheStats());
+            assertEquals(123456789L, nodeStats.getFileCacheStats().getTimestamp());
+            assertEquals(42L, nodeStats.getFileCacheStats().getCacheHits());
+            assertEquals(7L, nodeStats.getFileCacheStats().getCacheMisses());
+            assertNull(nodeStats.getFileCacheOnlyStats());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_fileCacheDetailed_populatesFileCacheOnlyStats() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\"," + "\"timestamp\":222," + "\"file_cache\":{"
+                + "  \"over_all_stats\":{\"active_in_bytes\":100,\"used_in_bytes\":150,\"pinned_in_bytes\":10,"
+                + "    \"evictions_in_bytes\":5,\"removed_in_bytes\":3,\"active_percent\":50,\"hit_count\":42,\"miss_count\":7},"
+                + "  \"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "  \"block_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "  \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertNotNull(nodeStats.getFileCacheOnlyStats());
+            assertEquals(42L, nodeStats.getFileCacheOnlyStats().getCacheHits());
+            assertEquals(7L, nodeStats.getFileCacheOnlyStats().getCacheMisses());
+            assertNull(nodeStats.getFileCacheStats());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_blockCache_populatesBlockCacheOnlyStats() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\"," + "\"timestamp\":333," + "\"block_cache\":{"
+                + "  \"over_all_stats\":{\"active_in_bytes\":800,\"used_in_bytes\":900,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":50,\"removed_in_bytes\":30,\"active_percent\":0,\"hit_count\":500,\"miss_count\":100},"
+                + "  \"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "  \"block_file_stats\":{\"active_in_bytes\":800,\"used_in_bytes\":900,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":50,\"removed_in_bytes\":30,\"active_percent\":0,\"hit_count\":500,\"miss_count\":100},"
+                + "  \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "    \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            final BlockCacheStats blockCache = nodeStats.getBlockCacheOnlyStats();
+            assertNotNull(blockCache);
+            assertEquals(500L, blockCache.hits());
+            assertEquals(100L, blockCache.misses());
+            assertEquals(50L, blockCache.evictionBytes());
+            assertEquals(30L, blockCache.removedBytes());
+            assertEquals(800L, blockCache.activeInBytes());
+            assertEquals(900L, blockCache.memoryBytesUsed());
+            assertEquals(0L, blockCache.hitBytes());
+            assertEquals(0L, blockCache.missBytes());
+            assertEquals(0L, blockCache.evictions());
+            assertEquals(0L, blockCache.removed());
+            assertEquals(0L, blockCache.diskBytesUsed());
+            assertEquals(0L, blockCache.totalBytes());
+        }
+    }
+
+    // ==================== Integration-style test: all new sections together ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_allNewSectionsTogether_withJvmAndOs() throws Exception {
+        final String json = "{" + "\"_nodes\":{\"total\":1,\"successful\":1,\"failed\":0}," + "\"cluster_name\":\"test-cluster\","
+                + "\"nodes\":{\"node1\":{" + "  \"name\":\"test-node\",\"timestamp\":9999," + "  \"transport_address\":\"127.0.0.1:9300\","
+                + "  \"jvm\":{" + "    \"timestamp\":9999,\"uptime_in_millis\":1000," + "    \"mem\":{"
+                + "      \"heap_used_in_bytes\":1000,\"heap_used_percent\":10,"
+                + "      \"heap_committed_in_bytes\":2000,\"heap_max_in_bytes\":2000,"
+                + "      \"non_heap_used_in_bytes\":100,\"non_heap_committed_in_bytes\":150" + "    },"
+                + "    \"threads\":{\"count\":10,\"peak_count\":15},"
+                + "    \"gc\":{\"collectors\":{\"young\":{\"collection_count\":5,\"collection_time_in_millis\":100},"
+                + "      \"old\":{\"collection_count\":1,\"collection_time_in_millis\":500}}},"
+                + "    \"classes\":{\"current_loaded_count\":100,\"total_loaded_count\":100,\"total_unloaded_count\":0},"
+                + "    \"buffer_pools\":{}" + "  }," + "  \"transport\":{\"server_open\":5,\"total_outbound_connections\":3,"
+                + "    \"rx_count\":100,\"rx_size_in_bytes\":5000,\"tx_count\":100,\"tx_size_in_bytes\":5000},"
+                + "  \"aggregate_file_cache\":{" + "    \"timestamp\":11111,"
+                + "    \"over_all_stats\":{\"active_in_bytes\":10,\"used_in_bytes\":20,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":1,\"removed_in_bytes\":0,\"active_percent\":50,\"hit_count\":5,\"miss_count\":2},"
+                + "    \"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "    \"block_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "    \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "  },"
+                + "  \"file_cache\":{" + "    \"over_all_stats\":{\"active_in_bytes\":10,\"used_in_bytes\":20,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":1,\"removed_in_bytes\":0,\"active_percent\":50,\"hit_count\":5,\"miss_count\":2},"
+                + "    \"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "    \"block_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "    \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "  },"
+                + "  \"block_cache\":{" + "    \"over_all_stats\":{\"active_in_bytes\":800,\"used_in_bytes\":900,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":50,\"removed_in_bytes\":30,\"active_percent\":0,\"hit_count\":500,\"miss_count\":100},"
+                + "    \"full_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "    \"block_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0},"
+                + "    \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
+                + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "  },"
+                + "  \"native_memory\":{" + "    \"total_estimated_bytes\":123456,"
+                + "    \"analytics_backend\":{\"allocated_bytes\":1111,\"resident_bytes\":2222}," + "    \"native_allocator\":{"
+                + "      \"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30},"
+                + "      \"pools\":{\"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3}}" + "    }" + "  }" + "}}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            final NodesStatsResponse response = callFromXContent(parser);
+            assertNotNull(response);
+            assertEquals(1, response.getNodes().size());
+            final NodeStats node = response.getNodes().get(0);
+            assertEquals("test-node", node.getNode().getName());
+            assertNotNull(node.getFileCacheStats());
+            assertNotNull(node.getFileCacheOnlyStats());
+            assertNotNull(node.getBlockCacheOnlyStats());
+            assertEquals(123456L, node.getTotalEstimatedNativeBytes());
+            assertNotNull(node.getAnalyticsBackendNativeMemoryStats());
+            assertNotNull(node.getNativeAllocatorStats());
+            assertNotNull(node.getJvm());
+            assertNotNull(node.getTransport());
+        }
+    }
+
+    // ==================== Robustness: unknown nested fields in native_memory ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemory_unknownNestedObject_consumedGracefully() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\",\"timestamp\":111," + "\"native_memory\":{" + "  \"total_estimated_bytes\":500,"
+                + "  \"future_field\":{\"nested\":{\"deep\":true},\"count\":42},"
+                + "  \"analytics_backend\":{\"allocated_bytes\":10,\"resident_bytes\":20}," + "  \"native_allocator\":{"
+                + "    \"root\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3}," + "    \"pools\":{}" + "  }" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertEquals(500L, nodeStats.getTotalEstimatedNativeBytes());
+            assertNotNull(nodeStats.getAnalyticsBackendNativeMemoryStats());
+            assertEquals(10L, nodeStats.getAnalyticsBackendNativeMemoryStats().getAllocatedBytes());
+            assertNotNull(nodeStats.getNativeAllocatorStats());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemory_emptyObject() throws Exception {
+        final String json = "{\"name\":\"test-node\",\"timestamp\":111,\"native_memory\":{}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertEquals(-1L, nodeStats.getTotalEstimatedNativeBytes());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_blockCache_emptyObject() throws Exception {
+        final String json = "{\"name\":\"test-node\",\"timestamp\":111,\"block_cache\":{}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            final BlockCacheStats blockCache = nodeStats.getBlockCacheOnlyStats();
+            assertNotNull(blockCache);
+            assertEquals(0L, blockCache.hits());
+            assertEquals(0L, blockCache.misses());
+            assertEquals(0L, blockCache.evictionBytes());
+            assertEquals(0L, blockCache.removedBytes());
+            assertEquals(0L, blockCache.activeInBytes());
+            assertEquals(0L, blockCache.memoryBytesUsed());
+        }
+    }
+
     // ==================== Concurrent parsing test ====================
 
     @Test
@@ -1029,6 +1458,44 @@ class HttpNodesStatsActionTest {
         executor.shutdownNow();
         if (error.get() != null) {
             fail("Concurrent parsing failed: " + error.get().getMessage());
+        }
+    }
+
+    // ==================== getCurlRequest: detailed=true query param ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_getCurlRequest_fileCacheDetailed_true_addsDetailedParam() throws Exception {
+        final Settings settings = Settings.builder().putList("http.hosts", "localhost:9201").build();
+        try (final HttpClient httpClient = new HttpClient(settings, null)) {
+            final HttpNodesStatsAction nodesStatsAction = new HttpNodesStatsAction(httpClient, NodesStatsAction.INSTANCE);
+            final NodesStatsRequest request = new NodesStatsRequest();
+            request.fileCacheDetailed(true);
+            final CurlRequest curlRequest = nodesStatsAction.getCurlRequest(request);
+            final Field paramListField = CurlRequest.class.getDeclaredField("paramList");
+            paramListField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            final List<String> paramList = (List<String>) paramListField.get(curlRequest);
+            assertNotNull(paramList, "paramList must not be null when detailed=true is set");
+            assertTrue(paramList.contains("detailed=true"), "paramList must contain 'detailed=true', actual: " + paramList);
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_getCurlRequest_fileCacheDetailed_false_omitsDetailedParam() throws Exception {
+        final Settings settings = Settings.builder().putList("http.hosts", "localhost:9201").build();
+        try (final HttpClient httpClient = new HttpClient(settings, null)) {
+            final HttpNodesStatsAction nodesStatsAction = new HttpNodesStatsAction(httpClient, NodesStatsAction.INSTANCE);
+            final NodesStatsRequest request = new NodesStatsRequest(); // default: fileCacheDetailed == false
+            final CurlRequest curlRequest = nodesStatsAction.getCurlRequest(request);
+            final Field paramListField = CurlRequest.class.getDeclaredField("paramList");
+            paramListField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            final List<String> paramList = (List<String>) paramListField.get(curlRequest);
+            // paramList may be null (no params set at all) or non-null but must not contain "detailed=true"
+            assertTrue(paramList == null || !paramList.contains("detailed=true"),
+                    "paramList must not contain 'detailed=true', actual: " + paramList);
         }
     }
 }
