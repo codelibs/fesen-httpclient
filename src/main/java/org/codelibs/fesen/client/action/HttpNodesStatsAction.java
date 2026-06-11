@@ -350,13 +350,18 @@ public class HttpNodesStatsAction extends HttpAction {
                 clusterManagerThrottlingStats, //
                 weightedRoutingStats, //
                 fileCacheStats, //
+                null, //
+                null, //
                 taskCancellationStats, //
                 searchPipelineStats, //
                 segmentReplicationRejectionStats, //
                 repositoriesStats, //
                 admissionControlStats, //
                 nodeCacheStats, //
-                remoteStoreNodeStats);
+                remoteStoreNodeStats, //
+                null, //
+                null, //
+                -1L);
     }
 
     public static TransportAddress parseTransportAddress(final String addr) {
