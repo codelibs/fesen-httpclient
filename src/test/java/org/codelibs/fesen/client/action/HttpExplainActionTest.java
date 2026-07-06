@@ -17,48 +17,32 @@ package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.get.GetAction;
-import org.opensearch.action.get.GetRequest;
+import org.opensearch.action.explain.ExplainAction;
+import org.opensearch.action.explain.ExplainRequest;
 import org.opensearch.search.fetch.subphase.FetchSourceContext;
 
-class HttpGetActionTest {
+class HttpExplainActionTest {
 
-    private final HttpGetAction clientAction = new HttpGetAction(ActionTestUtils.testClient(), GetAction.INSTANCE);
-
-    @Test
-    void test_construction() {
-        final HttpGetAction action = new HttpGetAction(null, GetAction.INSTANCE);
-        assertNotNull(action);
-    }
+    private final HttpExplainAction clientAction = new HttpExplainAction(ActionTestUtils.testClient(), ExplainAction.INSTANCE);
 
     @Test
     void test_getCurlRequest_sourceIncludesExcludes() {
-        final GetRequest request = new GetRequest("test-index", "1")
-                .fetchSourceContext(new FetchSourceContext(true, new String[] { "field1", "field2" }, new String[] { "excluded" }));
+        final ExplainRequest request = new ExplainRequest("test-index", "1")
+                .fetchSourceContext(new FetchSourceContext(true, new String[] { "field1" }, new String[] { "excluded" }));
         final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
-        assertEquals("field1,field2", params.get("_source_includes"));
+        assertEquals("field1", params.get("_source_includes"));
         assertEquals("excluded", params.get("_source_excludes"));
     }
 
     @Test
     void test_getCurlRequest_sourceDisabled() {
-        final GetRequest request = new GetRequest("test-index", "1").fetchSourceContext(new FetchSourceContext(false));
+        final ExplainRequest request = new ExplainRequest("test-index", "1").fetchSourceContext(new FetchSourceContext(false));
         final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
         assertEquals("false", params.get("_source"));
         assertFalse(params.containsKey("_source_includes"));
-    }
-
-    @Test
-    void test_getCurlRequest_storedFieldsAndPreference() {
-        final GetRequest request = new GetRequest("test-index", "1").storedFields("f1", "f2").preference("_local").routing("r1");
-        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
-        assertEquals("f1,f2", params.get("stored_fields"));
-        assertEquals("_local", params.get("preference"));
-        assertEquals("r1", params.get("routing"));
     }
 }

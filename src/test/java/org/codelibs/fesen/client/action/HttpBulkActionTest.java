@@ -21,12 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.bulk.BulkAction;
+import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
 import org.opensearch.action.index.IndexRequest;
+import org.opensearch.action.update.UpdateRequest;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.xcontent.DeprecationHandler;
@@ -36,6 +39,36 @@ import org.opensearch.core.xcontent.XContentParser;
 class HttpBulkActionTest {
 
     private final HttpBulkAction action = new HttpBulkAction(null, BulkAction.INSTANCE);
+
+    private final HttpBulkAction clientAction = new HttpBulkAction(ActionTestUtils.testClient(), BulkAction.INSTANCE);
+
+    @Test
+    void test_getStringfromDocWriteRequest_updateRetryOnConflict() {
+        final UpdateRequest request = new UpdateRequest("test-index", "doc1").retryOnConflict(3);
+        final String result = action.getStringfromDocWriteRequest(request);
+        assertTrue(result.contains("\"update\""));
+        assertTrue(result.contains("\"retry_on_conflict\":3"));
+    }
+
+    @Test
+    void test_getStringfromDocWriteRequest_requireAlias() {
+        final IndexRequest request =
+                new IndexRequest("test-index").id("doc1").setRequireAlias(true).source("{\"field\":\"value\"}", XContentType.JSON);
+        final String result = action.getStringfromDocWriteRequest(request);
+        assertTrue(result.contains("\"require_alias\":true"));
+    }
+
+    @Test
+    void test_getCurlRequest_globalPipelineRoutingRequireAlias() {
+        final BulkRequest request = new BulkRequest();
+        request.pipeline("my-pipeline");
+        request.routing("r1");
+        request.requireAlias(true);
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("my-pipeline", params.get("pipeline"));
+        assertEquals("r1", params.get("routing"));
+        assertEquals("true", params.get("require_alias"));
+    }
 
     @Test
     void test_getStringfromDocWriteRequest_indexWithId() {

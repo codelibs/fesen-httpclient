@@ -27,6 +27,7 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.IndexNotFoundException;
 import org.opensearch.index.VersionType;
+import org.opensearch.search.fetch.subphase.FetchSourceContext;
 
 /**
  * Handles the Get Document API over HTTP for OpenSearch/Elasticsearch.
@@ -67,7 +68,13 @@ public class HttpGetAction extends HttpAction {
         }, e -> unwrapOpenSearchException(listener, e));
     }
 
-    private CurlRequest getCurlRequest(final GetRequest request) {
+    /**
+     * Builds the curl request for the get document API.
+     *
+     * @param request the get request
+     * @return the curl request
+     */
+    protected CurlRequest getCurlRequest(final GetRequest request) {
         // RestGetAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_doc/" + UrlUtils.encode(request.id()), request.index());
         if (request.refresh()) {
@@ -90,6 +97,19 @@ public class HttpGetAction extends HttpAction {
         }
         if (!VersionType.INTERNAL.equals(request.versionType())) {
             curlRequest.param("version_type", request.versionType().name().toLowerCase(Locale.ROOT));
+        }
+        final FetchSourceContext fetchSourceContext = request.fetchSourceContext();
+        if (fetchSourceContext != null) {
+            if (!fetchSourceContext.fetchSource()) {
+                curlRequest.param("_source", "false");
+            } else {
+                if (fetchSourceContext.includes().length > 0) {
+                    curlRequest.param("_source_includes", String.join(",", fetchSourceContext.includes()));
+                }
+                if (fetchSourceContext.excludes().length > 0) {
+                    curlRequest.param("_source_excludes", String.join(",", fetchSourceContext.excludes()));
+                }
+            }
         }
         return curlRequest;
     }

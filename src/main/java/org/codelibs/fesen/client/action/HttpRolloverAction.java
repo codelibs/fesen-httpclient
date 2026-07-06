@@ -104,8 +104,7 @@ public class HttpRolloverAction extends HttpAction {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
         if (!ActiveShardCount.DEFAULT.equals(request.getCreateIndexRequest().waitForActiveShards())) {
-            curlRequest.param("wait_for_active_shards",
-                    String.valueOf(getActiveShardsCountValue(request.getCreateIndexRequest().waitForActiveShards())));
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.getCreateIndexRequest().waitForActiveShards()));
         }
         return curlRequest;
     }

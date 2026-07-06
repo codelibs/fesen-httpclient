@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.search.SearchAction;
 import org.opensearch.action.search.SearchRequest;
@@ -28,6 +30,18 @@ import org.opensearch.search.builder.SearchSourceBuilder;
 class HttpSearchActionTest {
 
     private final HttpSearchAction action = new HttpSearchAction(null, SearchAction.INSTANCE);
+
+    private final HttpSearchAction clientAction = new HttpSearchAction(ActionTestUtils.testClient(), SearchAction.INSTANCE);
+
+    @Test
+    void test_getCurlRequest_indicesOptionsAndTypedKeys() {
+        final SearchRequest request = new SearchRequest("test-index");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("open", params.get("expand_wildcards"));
+        assertEquals("false", params.get("ignore_unavailable"));
+        assertEquals("true", params.get("allow_no_indices"));
+        assertEquals("true", params.get("typed_keys"));
+    }
 
     @Test
     void test_getQuerySource_withDefaultSource() {
