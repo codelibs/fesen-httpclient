@@ -22,11 +22,11 @@ import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
 import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.opensearch.common.xcontent.XContentFactory;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
@@ -57,30 +57,7 @@ public class HttpIndicesAliasesAction extends HttpAction {
      * @param listener the listener to notify with the response or a failure
      */
     public void execute(final IndicesAliasesRequest request, final ActionListener<AcknowledgedResponse> listener) {
-        String source = null;
-        try (final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startArray("actions")) {
-            for (final AliasActions aliasAction : request.getAliasActions()) {
-                builder.startObject().startObject(aliasAction.actionType().toString().toLowerCase());
-                builder.array("indices", aliasAction.indices());
-                builder.array("aliases", aliasAction.aliases());
-                if (aliasAction.filter() != null) {
-                    builder.field("filter", aliasAction.filter());
-                }
-                if (aliasAction.indexRouting() != null) {
-                    builder.field("index_routing", aliasAction.indexRouting());
-                }
-                if (aliasAction.searchRouting() != null) {
-                    builder.field("search_routing", aliasAction.searchRouting());
-                }
-                builder.endObject().endObject();
-            }
-            builder.endArray().endObject();
-            builder.flush();
-            source = BytesReference.bytes(builder).utf8ToString();
-        } catch (final IOException e) {
-            throw new OpenSearchException("Failed to parse a request.", e);
-        }
-        getCurlRequest(request).body(source).execute(response -> {
+        getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final AcknowledgedResponse indicesAliasesResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(indicesAliasesResponse);
@@ -105,6 +82,14 @@ public class HttpIndicesAliasesAction extends HttpAction {
         if (request.masterNodeTimeout() != null) {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
-        return curlRequest;
+        String source = null;
+        try (final XContentBuilder builder = XContentFactory.jsonBuilder()) {
+            request.toXContent(builder, ToXContent.EMPTY_PARAMS);
+            builder.flush();
+            source = BytesReference.bytes(builder).utf8ToString();
+        } catch (final IOException e) {
+            throw new OpenSearchException("Failed to parse a request.", e);
+        }
+        return curlRequest.body(source);
     }
 }

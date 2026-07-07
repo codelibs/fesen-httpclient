@@ -18,7 +18,6 @@ package org.codelibs.fesen.client.action;
 import static org.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
@@ -36,7 +35,6 @@ import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.VersionType;
 
 /**
  * Handles the document update API over HTTP for OpenSearch/Elasticsearch.
@@ -124,12 +122,6 @@ public class HttpUpdateAction extends HttpAction {
         curlRequest.param("retry_on_conflict", String.valueOf(request.retryOnConflict()));
         curlRequest.param("if_seq_no", Long.toString(request.ifSeqNo()));
         curlRequest.param("if_primary_term", Long.toString(request.ifPrimaryTerm()));
-        if (request.version() >= 0) {
-            curlRequest.param("version", Long.toString(request.version()));
-        }
-        if (!VersionType.INTERNAL.equals(request.versionType())) {
-            curlRequest.param("version_type", request.versionType().name().toLowerCase(Locale.ROOT));
-        }
         return curlRequest;
     }
 }

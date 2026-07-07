@@ -68,8 +68,9 @@ public class HttpForceMergeAction extends HttpAction {
     protected CurlRequest getCurlRequest(final ForceMergeRequest request) {
         // RestForceMergeAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_forcemerge", request.indices());
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest.param("max_num_segments", String.valueOf(request.maxNumSegments()))
-                .param("only_expunge_deletes", String.valueOf(request.onlyExpungeDeletes()))
-                .param("flush", String.valueOf(request.flush()));
+                .param("only_expunge_deletes", String.valueOf(request.onlyExpungeDeletes())).param("flush", String.valueOf(request.flush()))
+                .param("primary_only", String.valueOf(request.primaryOnly()));
     }
 }

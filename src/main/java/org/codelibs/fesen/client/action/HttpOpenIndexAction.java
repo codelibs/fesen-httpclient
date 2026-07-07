@@ -76,8 +76,9 @@ public class HttpOpenIndexAction extends HttpAction {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
         if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
-            curlRequest.param("wait_for_active_shards", request.waitForActiveShards().toString());
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));
         }
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 }
