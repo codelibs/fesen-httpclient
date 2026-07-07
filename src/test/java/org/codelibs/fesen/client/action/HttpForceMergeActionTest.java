@@ -16,9 +16,11 @@
 package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Map;
 
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
 import org.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
@@ -33,6 +35,30 @@ class HttpForceMergeActionTest {
         final ForceMergeRequest request = new ForceMergeRequest("test-index").primaryOnly(true);
         final Map<String, String> params = ActionTestUtils.params(action.getCurlRequest(request));
         assertEquals("true", params.get("primary_only"));
+    }
+
+    @Test
+    void test_getCurlRequest_primaryOnly_openSearch2() {
+        final HttpForceMergeAction os2Action =
+                new HttpForceMergeAction(ActionTestUtils.testClient(EngineType.OPENSEARCH2), ForceMergeAction.INSTANCE);
+        final ForceMergeRequest request = new ForceMergeRequest("test-index").primaryOnly(true);
+        final Map<String, String> params = ActionTestUtils.params(os2Action.getCurlRequest(request));
+        assertEquals("true", params.get("primary_only"));
+    }
+
+    @Test
+    void test_getCurlRequest_primaryOnly_notSentOnLegacyEngines() {
+        // primary_only is unknown to OpenSearch 1.x and Elasticsearch 7/8, which reject it with HTTP 400.
+        for (final EngineType engineType : new EngineType[] { EngineType.OPENSEARCH1, EngineType.ELASTICSEARCH7,
+                EngineType.ELASTICSEARCH8 }) {
+            final HttpForceMergeAction legacyAction =
+                    new HttpForceMergeAction(ActionTestUtils.testClient(engineType), ForceMergeAction.INSTANCE);
+            final ForceMergeRequest request = new ForceMergeRequest("test-index").primaryOnly(true);
+            final Map<String, String> params = ActionTestUtils.params(legacyAction.getCurlRequest(request));
+            assertFalse(params.containsKey("primary_only"), engineType.toString());
+            // non-version-specific params are still forwarded
+            assertEquals(String.valueOf(request.maxNumSegments()), params.get("max_num_segments"), engineType.toString());
+        }
     }
 
     @Test
