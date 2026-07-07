@@ -15,12 +15,19 @@
  */
 package org.codelibs.fesen.client.action;
 
+import java.io.IOException;
+
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
+import org.opensearch.OpenSearchException;
 import org.opensearch.action.fieldcaps.FieldCapabilitiesAction;
 import org.opensearch.action.fieldcaps.FieldCapabilitiesRequest;
 import org.opensearch.action.fieldcaps.FieldCapabilitiesResponse;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.xcontent.ToXContent;
+import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
 /**
@@ -49,7 +56,20 @@ public class HttpFieldCapabilitiesAction extends HttpAction {
      * @param listener the listener to notify with the field capabilities response or a failure
      */
     public void execute(final FieldCapabilitiesRequest request, final ActionListener<FieldCapabilitiesResponse> listener) {
-        getCurlRequest(request).execute(response -> {
+        final CurlRequest curlRequest = getCurlRequest(request);
+        if (request.indexFilter() != null) {
+            try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
+                builder.startObject();
+                builder.field("index_filter");
+                request.indexFilter().toXContent(builder, ToXContent.EMPTY_PARAMS);
+                builder.endObject();
+                builder.flush();
+                curlRequest.body(BytesReference.bytes(builder).utf8ToString());
+            } catch (final IOException e) {
+                throw new OpenSearchException("Failed to parse a request.", e);
+            }
+        }
+        curlRequest.execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final FieldCapabilitiesResponse fieldCapabilitiesResponse = FieldCapabilitiesResponse.fromXContent(parser);
                 listener.onResponse(fieldCapabilitiesResponse);
@@ -71,6 +91,10 @@ public class HttpFieldCapabilitiesAction extends HttpAction {
         if (request.fields() != null) {
             curlRequest.param("fields", String.join(",", request.fields()));
         }
+        if (request.includeUnmapped()) {
+            curlRequest.param("include_unmapped", "true");
+        }
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 }

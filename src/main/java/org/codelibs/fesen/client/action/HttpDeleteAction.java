@@ -108,7 +108,7 @@ public class HttpDeleteAction extends HttpAction {
         curlRequest.param("if_seq_no", Long.toString(request.ifSeqNo()));
         curlRequest.param("if_primary_term", Long.toString(request.ifPrimaryTerm()));
         if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
-            curlRequest.param("wait_for_active_shards", String.valueOf(getActiveShardsCountValue(request.waitForActiveShards())));
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));
         }
         return curlRequest.param("routing", request.routing()).param("version", String.valueOf(request.version()));
     }

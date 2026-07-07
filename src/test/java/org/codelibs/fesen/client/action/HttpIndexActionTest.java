@@ -16,12 +16,15 @@
 package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.index.IndexAction;
+import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.xcontent.DeprecationHandler;
@@ -31,6 +34,31 @@ import org.opensearch.core.xcontent.XContentParser;
 class HttpIndexActionTest {
 
     private final HttpIndexAction action = new HttpIndexAction(null, IndexAction.INSTANCE);
+
+    private final HttpIndexAction clientAction = new HttpIndexAction(ActionTestUtils.testClient(), IndexAction.INSTANCE);
+
+    @Test
+    void test_getCurlRequest_ifSeqNoAndPrimaryTerm() {
+        final IndexRequest request = new IndexRequest("test-index").id("1").setIfSeqNo(5L).setIfPrimaryTerm(2L);
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("5", params.get("if_seq_no"));
+        assertEquals("2", params.get("if_primary_term"));
+    }
+
+    @Test
+    void test_getCurlRequest_ifSeqNoUnassignedNotSent() {
+        final IndexRequest request = new IndexRequest("test-index").id("1");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertFalse(params.containsKey("if_seq_no"));
+        assertFalse(params.containsKey("if_primary_term"));
+    }
+
+    @Test
+    void test_getCurlRequest_requireAlias() {
+        final IndexRequest request = new IndexRequest("test-index").id("1").setRequireAlias(true);
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("true", params.get("require_alias"));
+    }
 
     @Test
     void test_fromXContent_created() throws IOException {

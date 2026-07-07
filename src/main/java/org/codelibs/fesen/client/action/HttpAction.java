@@ -27,6 +27,7 @@ import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.opensearch.OpenSearchException;
 import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.support.ActiveShardCount;
+import org.opensearch.action.support.IndicesOptions;
 import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.ParseField;
@@ -243,6 +244,63 @@ public class HttpAction {
         } catch (final IOException e) {
             throw new OpenSearchException("Failed to parse a request.", e);
         }
+    }
+
+    /**
+     * Serializes an {@link ActiveShardCount} to its {@code wait_for_active_shards} query-parameter form:
+     * {@code "all"} for {@link ActiveShardCount#ALL}, otherwise the numeric value (e.g. {@code "0"} for NONE, {@code "2"} for a count).
+     *
+     * @param activeShardCount the active shard count to serialize
+     * @return the query-parameter string representation
+     */
+    protected String getActiveShardsCountString(final ActiveShardCount activeShardCount) {
+        if (ActiveShardCount.ALL.equals(activeShardCount)) {
+            return "all";
+        }
+        return Integer.toString(getActiveShardsCountValue(activeShardCount));
+    }
+
+    /**
+     * Appends the standard indices options query parameters ({@code ignore_unavailable},
+     * {@code allow_no_indices}, and {@code expand_wildcards}) to the given curl request.
+     *
+     * @param curlRequest the curl request to append the parameters to
+     * @param indicesOptions the indices options to serialize
+     */
+    protected void appendIndicesOptions(final CurlRequest curlRequest, final IndicesOptions indicesOptions) {
+        curlRequest.param("ignore_unavailable", Boolean.toString(indicesOptions.ignoreUnavailable()));
+        curlRequest.param("allow_no_indices", Boolean.toString(indicesOptions.allowNoIndices()));
+        curlRequest.param("expand_wildcards", expandWildcards(indicesOptions));
+    }
+
+    /**
+     * Serializes the wildcard expansion flags of the given indices options into the
+     * comma-separated {@code expand_wildcards} query parameter value.
+     *
+     * @param indicesOptions the indices options to serialize
+     * @return the {@code expand_wildcards} value ({@code none} when no wildcard state is enabled)
+     */
+    protected static String expandWildcards(final IndicesOptions indicesOptions) {
+        final StringBuilder buf = new StringBuilder();
+        if (indicesOptions.expandWildcardsOpen()) {
+            buf.append("open");
+        }
+        if (indicesOptions.expandWildcardsClosed()) {
+            if (buf.length() > 0) {
+                buf.append(',');
+            }
+            buf.append("closed");
+        }
+        if (indicesOptions.expandWildcardsHidden()) {
+            if (buf.length() > 0) {
+                buf.append(',');
+            }
+            buf.append("hidden");
+        }
+        if (buf.length() == 0) {
+            buf.append("none");
+        }
+        return buf.toString();
     }
 
     /**

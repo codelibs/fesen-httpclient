@@ -266,13 +266,22 @@ public class HttpBulkAction extends HttpAction {
         // RestBulkAction
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_bulk");
         if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
-            curlRequest.param("wait_for_active_shards", String.valueOf(getActiveShardsCountValue(request.waitForActiveShards())));
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));
         }
         if (request.timeout() != null) {
             curlRequest.param("timeout", request.timeout().toString());
         }
         if (!RefreshPolicy.NONE.equals(request.getRefreshPolicy())) {
             curlRequest.param("refresh", request.getRefreshPolicy().getValue());
+        }
+        if (request.pipeline() != null) {
+            curlRequest.param("pipeline", request.pipeline());
+        }
+        if (request.routing() != null) {
+            curlRequest.param("routing", request.routing());
+        }
+        if (request.requireAlias() != null && request.requireAlias().booleanValue()) {
+            curlRequest.param("require_alias", "true");
         }
         return curlRequest;
     }
@@ -311,7 +320,9 @@ public class HttpBulkAction extends HttpAction {
         if (request.ifPrimaryTerm() != SequenceNumbers.UNASSIGNED_PRIMARY_TERM) {
             appendStr(buf.append(','), "if_primary_term", request.ifPrimaryTerm());
         }
-        // retry_on_conflict
+        if (request.isRequireAlias()) {
+            buf.append(",\"require_alias\":true");
+        }
         switch (request.opType()) {
         case INDEX:
         case CREATE:
@@ -321,7 +332,10 @@ public class HttpBulkAction extends HttpAction {
             }
             break;
         case UPDATE:
-            // final UpdateRequest updateRequest = (UpdateRequest) request;
+            final UpdateRequest updateRequest = (UpdateRequest) request;
+            if (updateRequest.retryOnConflict() > 0) {
+                appendStr(buf.append(','), "retry_on_conflict", updateRequest.retryOnConflict());
+            }
             break;
         case DELETE:
             // final DeleteRequest deleteRequest = (DeleteRequest) request;

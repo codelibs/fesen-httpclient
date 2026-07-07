@@ -35,6 +35,7 @@ import org.opensearch.core.xcontent.ConstructingObjectParser;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.get.GetResult;
+import org.opensearch.search.fetch.subphase.FetchSourceContext;
 
 /**
  * Handles the explain API over HTTP for OpenSearch/Elasticsearch.
@@ -139,11 +140,21 @@ public class HttpExplainAction extends HttpAction {
         if (request.preference() != null) {
             curlRequest.param("preference", request.preference());
         }
-        if (request.query() != null) {
-            //
-        }
         if (request.storedFields() != null) {
             curlRequest.param("stored_fields", String.join(",", request.storedFields()));
+        }
+        final FetchSourceContext fetchSourceContext = request.fetchSourceContext();
+        if (fetchSourceContext != null) {
+            if (!fetchSourceContext.fetchSource()) {
+                curlRequest.param("_source", "false");
+            } else {
+                if (fetchSourceContext.includes().length > 0) {
+                    curlRequest.param("_source_includes", String.join(",", fetchSourceContext.includes()));
+                }
+                if (fetchSourceContext.excludes().length > 0) {
+                    curlRequest.param("_source_excludes", String.join(",", fetchSourceContext.excludes()));
+                }
+            }
         }
         return curlRequest;
     }

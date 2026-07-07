@@ -110,6 +110,21 @@ class HttpActionTest {
     }
 
     @Test
+    void test_getActiveShardsCountString_all() {
+        assertEquals("all", action.getActiveShardsCountString(ActiveShardCount.ALL));
+    }
+
+    @Test
+    void test_getActiveShardsCountString_none() {
+        assertEquals("0", action.getActiveShardsCountString(ActiveShardCount.NONE));
+    }
+
+    @Test
+    void test_getActiveShardsCountString_customValue() {
+        assertEquals("2", action.getActiveShardsCountString(ActiveShardCount.from(2)));
+    }
+
+    @Test
     void test_unwrapOpenSearchException_withOpenSearchCause() {
         final OpenSearchException cause = new OpenSearchException("inner error");
         final Exception wrapper = new RuntimeException("outer", cause);

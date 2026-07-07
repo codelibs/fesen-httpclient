@@ -75,6 +75,10 @@ public class HttpPutMappingAction extends HttpAction {
         if (request.masterNodeTimeout() != null) {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
+        if (request.writeIndexOnly()) {
+            curlRequest.param("write_index_only", "true");
+        }
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 

@@ -57,11 +57,14 @@ import org.codelibs.fesen.client.action.HttpClusterHealthAction;
 import org.codelibs.fesen.client.action.HttpClusterRerouteAction;
 import org.codelibs.fesen.client.action.HttpClusterUpdateSettingsAction;
 import org.codelibs.fesen.client.action.HttpCreateIndexAction;
+import org.codelibs.fesen.client.action.HttpCreatePitAction;
 import org.codelibs.fesen.client.action.HttpCreateSnapshotAction;
 import org.codelibs.fesen.client.action.HttpDeleteAction;
+import org.codelibs.fesen.client.action.HttpDeleteByQueryAction;
 import org.codelibs.fesen.client.action.HttpDeleteIndexAction;
 import org.codelibs.fesen.client.action.HttpDeleteIndexTemplateAction;
 import org.codelibs.fesen.client.action.HttpDeletePipelineAction;
+import org.codelibs.fesen.client.action.HttpDeletePitAction;
 import org.codelibs.fesen.client.action.HttpDeleteRepositoryAction;
 import org.codelibs.fesen.client.action.HttpDeleteSnapshotAction;
 import org.codelibs.fesen.client.action.HttpDeleteStoredScriptAction;
@@ -71,6 +74,7 @@ import org.codelibs.fesen.client.action.HttpFlushAction;
 import org.codelibs.fesen.client.action.HttpForceMergeAction;
 import org.codelibs.fesen.client.action.HttpGetAction;
 import org.codelibs.fesen.client.action.HttpGetAliasesAction;
+import org.codelibs.fesen.client.action.HttpGetAllPitsAction;
 import org.codelibs.fesen.client.action.HttpGetFieldMappingsAction;
 import org.codelibs.fesen.client.action.HttpGetIndexAction;
 import org.codelibs.fesen.client.action.HttpGetIndexTemplatesAction;
@@ -128,6 +132,8 @@ import org.codelibs.fesen.client.action.HttpPutPipelineAction;
 import org.codelibs.fesen.client.action.HttpPutRepositoryAction;
 import org.codelibs.fesen.client.action.HttpPutStoredScriptAction;
 import org.codelibs.fesen.client.action.HttpRefreshAction;
+import org.codelibs.fesen.client.action.HttpReindexAction;
+import org.codelibs.fesen.client.action.HttpResolveIndexAction;
 import org.codelibs.fesen.client.action.HttpRestoreSnapshotAction;
 import org.codelibs.fesen.client.action.HttpRolloverAction;
 import org.codelibs.fesen.client.action.HttpSearchAction;
@@ -135,6 +141,7 @@ import org.codelibs.fesen.client.action.HttpSearchScrollAction;
 import org.codelibs.fesen.client.action.HttpSimulatePipelineAction;
 import org.codelibs.fesen.client.action.HttpSnapshotsStatusAction;
 import org.codelibs.fesen.client.action.HttpUpdateAction;
+import org.codelibs.fesen.client.action.HttpUpdateByQueryAction;
 import org.codelibs.fesen.client.action.HttpUpdateSettingsAction;
 import org.codelibs.fesen.client.action.HttpValidateQueryAction;
 import org.codelibs.fesen.client.action.HttpVerifyRepositoryAction;
@@ -290,6 +297,7 @@ import org.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.opensearch.action.admin.indices.refresh.RefreshAction;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
+import org.opensearch.action.admin.indices.resolve.ResolveIndexAction;
 import org.opensearch.action.admin.indices.rollover.RolloverAction;
 import org.opensearch.action.admin.indices.rollover.RolloverRequest;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
@@ -367,6 +375,15 @@ import org.opensearch.action.main.MainResponse;
 import org.opensearch.action.search.ClearScrollAction;
 import org.opensearch.action.search.ClearScrollRequest;
 import org.opensearch.action.search.ClearScrollResponse;
+import org.opensearch.action.search.CreatePitAction;
+import org.opensearch.action.search.CreatePitRequest;
+import org.opensearch.action.search.CreatePitResponse;
+import org.opensearch.action.search.DeletePitAction;
+import org.opensearch.action.search.DeletePitRequest;
+import org.opensearch.action.search.DeletePitResponse;
+import org.opensearch.action.search.GetAllPitNodesRequest;
+import org.opensearch.action.search.GetAllPitNodesResponse;
+import org.opensearch.action.search.GetAllPitsAction;
 import org.opensearch.action.search.MultiSearchAction;
 import org.opensearch.action.search.MultiSearchRequest;
 import org.opensearch.action.search.MultiSearchResponse;
@@ -395,6 +412,13 @@ import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.ActionResponse;
 import org.opensearch.core.xcontent.ContextParser;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
+import org.opensearch.index.reindex.BulkByScrollResponse;
+import org.opensearch.index.reindex.DeleteByQueryAction;
+import org.opensearch.index.reindex.DeleteByQueryRequest;
+import org.opensearch.index.reindex.ReindexAction;
+import org.opensearch.index.reindex.ReindexRequest;
+import org.opensearch.index.reindex.UpdateByQueryAction;
+import org.opensearch.index.reindex.UpdateByQueryRequest;
 import org.opensearch.plugins.spi.NamedXContentProvider;
 import org.opensearch.search.aggregations.Aggregation;
 import org.opensearch.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregationBuilder;
@@ -1144,6 +1168,54 @@ public class HttpClient extends HttpAbstractClient {
         actions.put(RemoteStoreMetadataAction.INSTANCE, (request, listener) -> {
             new HttpRemoteStoreMetadataAction(this, RemoteStoreMetadataAction.INSTANCE).execute((RemoteStoreMetadataRequest) request,
                     (ActionListener<RemoteStoreMetadataResponse>) listener);
+        });
+
+        // Reindex / Update-By-Query / Delete-By-Query APIs
+        actions.put(ReindexAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.index.reindex.ReindexAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<BulkByScrollResponse> actionListener = (ActionListener<BulkByScrollResponse>) listener;
+            new HttpReindexAction(this, ReindexAction.INSTANCE).execute((ReindexRequest) request, actionListener);
+        });
+        actions.put(UpdateByQueryAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.index.reindex.UpdateByQueryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<BulkByScrollResponse> actionListener = (ActionListener<BulkByScrollResponse>) listener;
+            new HttpUpdateByQueryAction(this, UpdateByQueryAction.INSTANCE).execute((UpdateByQueryRequest) request, actionListener);
+        });
+        actions.put(DeleteByQueryAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.index.reindex.DeleteByQueryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<BulkByScrollResponse> actionListener = (ActionListener<BulkByScrollResponse>) listener;
+            new HttpDeleteByQueryAction(this, DeleteByQueryAction.INSTANCE).execute((DeleteByQueryRequest) request, actionListener);
+        });
+
+        // Point-in-Time (PIT) APIs
+        actions.put(CreatePitAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.search.CreatePitAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<CreatePitResponse> actionListener = (ActionListener<CreatePitResponse>) listener;
+            new HttpCreatePitAction(this, CreatePitAction.INSTANCE).execute((CreatePitRequest) request, actionListener);
+        });
+        actions.put(DeletePitAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.search.DeletePitAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<DeletePitResponse> actionListener = (ActionListener<DeletePitResponse>) listener;
+            new HttpDeletePitAction(this, DeletePitAction.INSTANCE).execute((DeletePitRequest) request, actionListener);
+        });
+        actions.put(GetAllPitsAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.search.GetAllPitsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetAllPitNodesResponse> actionListener = (ActionListener<GetAllPitNodesResponse>) listener;
+            new HttpGetAllPitsAction(this, GetAllPitsAction.INSTANCE).execute((GetAllPitNodesRequest) request, actionListener);
+        });
+
+        // Resolve Index API
+        actions.put(ResolveIndexAction.INSTANCE, (request, listener) -> {
+            // org.opensearch.action.admin.indices.resolve.ResolveIndexAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ResolveIndexAction.Response> actionListener = (ActionListener<ResolveIndexAction.Response>) listener;
+            new HttpResolveIndexAction(this, ResolveIndexAction.INSTANCE).execute((ResolveIndexAction.Request) request, actionListener);
         });
     }
 

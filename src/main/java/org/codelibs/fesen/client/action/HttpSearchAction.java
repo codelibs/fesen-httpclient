@@ -125,6 +125,7 @@ public class HttpSearchAction extends HttpAction {
             curlRequest.param("preference", request.preference());
         }
         curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 }

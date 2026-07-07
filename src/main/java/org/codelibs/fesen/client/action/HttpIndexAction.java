@@ -36,6 +36,7 @@ import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.VersionType;
+import org.opensearch.index.seqno.SequenceNumbers;
 
 /**
  * Handles the index API over HTTP for OpenSearch/Elasticsearch,
@@ -132,10 +133,17 @@ public class HttpIndexAction extends HttpAction {
             curlRequest.param("version_type", request.versionType().name().toLowerCase(Locale.ROOT));
         }
         if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
-            curlRequest.param("wait_for_active_shards", String.valueOf(getActiveShardsCountValue(request.waitForActiveShards())));
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));
         }
         if (request.id() != null) {
             curlRequest.param("op_type", opType.getLowercase());
+        }
+        if (request.ifSeqNo() != SequenceNumbers.UNASSIGNED_SEQ_NO) {
+            curlRequest.param("if_seq_no", Long.toString(request.ifSeqNo()));
+            curlRequest.param("if_primary_term", Long.toString(request.ifPrimaryTerm()));
+        }
+        if (request.isRequireAlias()) {
+            curlRequest.param("require_alias", "true");
         }
         return curlRequest;
     }

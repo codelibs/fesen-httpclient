@@ -33,7 +33,6 @@ import org.opensearch.OpenSearchException;
 import org.opensearch.action.admin.cluster.health.ClusterHealthAction;
 import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.cluster.health.ClusterHealthStatus;
 import org.opensearch.cluster.health.ClusterIndexHealth;
 import org.opensearch.cluster.health.ClusterStateHealth;
@@ -103,10 +102,7 @@ public class HttpClusterHealthAction extends HttpAction {
             }
         }
         if (request.waitForActiveShards() != null) {
-            curlRequest.param("wait_for_active_shards", String.valueOf(getActiveShardsCountValue(request.waitForActiveShards())));
-        }
-        if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
-            curlRequest.param("wait_for_active_shards", request.waitForActiveShards().toString());
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));
         }
         if (request.waitForEvents() != null) {
             curlRequest.param("wait_for_events", request.waitForEvents().toString());

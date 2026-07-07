@@ -89,6 +89,7 @@ public class HttpUpdateSettingsAction extends HttpAction {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
         curlRequest.param("preserve_existing", Boolean.toString(request.isPreserveExisting()));
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 }
