@@ -18,6 +18,7 @@ package org.codelibs.fesen.client.action;
 import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.action.search.GetAllPitNodesRequest;
 import org.opensearch.action.search.GetAllPitNodesResponse;
@@ -29,10 +30,12 @@ import org.opensearch.core.xcontent.XContentParser;
  * Handles the Get All Point-in-Time (PIT) API over HTTP, listing every active
  * PIT reader context across the cluster.
  *
- * <p>This action targets the OpenSearch REST API only. The
- * {@code /_search/point_in_time/_all} endpoint is OpenSearch-specific;
- * Elasticsearch uses a different {@code _pit} endpoint and Elasticsearch 7 has
- * no PIT support at all. No Elasticsearch adaptation is provided.
+ * <p>This API is OpenSearch-specific and supported only on OpenSearch 2.x and
+ * later via the {@code GET /_search/point_in_time/_all} endpoint. Elasticsearch
+ * (7.x and 8.x) has no equivalent list-all endpoint, OpenSearch 1.x predates
+ * PIT, and the engine cannot be determined for {@link EngineType#UNKNOWN};
+ * in all of these cases {@link #execute(GetAllPitNodesRequest, ActionListener)}
+ * fails the listener with an {@link UnsupportedOperationException}.
  */
 public class HttpGetAllPitsAction extends HttpAction {
 
@@ -53,10 +56,19 @@ public class HttpGetAllPitsAction extends HttpAction {
     /**
      * Executes the get all PITs request and notifies the listener with the response.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on any backend
+     * other than OpenSearch 2.x+, since listing all PITs is OpenSearch-specific.
+     *
      * @param request the get all PITs request
      * @param listener the listener notified with the response or a failure
      */
     public void execute(final GetAllPitNodesRequest request, final ActionListener<GetAllPitNodesResponse> listener) {
+        final EngineType type = client.getEngineInfo().getType();
+        if (type != EngineType.OPENSEARCH2 && type != EngineType.OPENSEARCH3) {
+            listener.onFailure(new UnsupportedOperationException(
+                    "Listing all PITs is not supported on " + type + " over HTTP (OpenSearch 2.x+ only)"));
+            return;
+        }
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final GetAllPitNodesResponse pitResponse = fromXContent(parser);

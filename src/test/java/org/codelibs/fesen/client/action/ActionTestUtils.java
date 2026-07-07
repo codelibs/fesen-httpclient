@@ -158,6 +158,23 @@ final class ActionTestUtils {
         return map;
     }
 
+    /**
+     * Returns the request URL of the given curl request, read reflectively from the
+     * protected {@code url} field.
+     *
+     * @param request the curl request to inspect
+     * @return the request URL
+     */
+    static String url(final CurlRequest request) {
+        try {
+            final Field field = CurlRequest.class.getDeclaredField("url");
+            field.setAccessible(true);
+            return (String) field.get(request);
+        } catch (final ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static String decode(final String value) {
         return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }

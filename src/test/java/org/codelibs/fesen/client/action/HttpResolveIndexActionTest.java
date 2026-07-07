@@ -18,14 +18,17 @@ package org.codelibs.fesen.client.action;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.admin.indices.resolve.ResolveIndexAction;
 import org.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedAlias;
 import org.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedDataStream;
 import org.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedIndex;
+import org.opensearch.action.support.IndicesOptions;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.xcontent.DeprecationHandler;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
@@ -34,6 +37,21 @@ import org.opensearch.core.xcontent.XContentParser;
 class HttpResolveIndexActionTest {
 
     private final HttpResolveIndexAction action = new HttpResolveIndexAction(null, ResolveIndexAction.INSTANCE);
+
+    private final HttpResolveIndexAction clientAction =
+            new HttpResolveIndexAction(ActionTestUtils.testClient(), ResolveIndexAction.INSTANCE);
+
+    @Test
+    void test_getCurlRequest_urlAndIndicesOptions() {
+        final ResolveIndexAction.Request request =
+                new ResolveIndexAction.Request(new String[] { "idx1", "idx2" }, IndicesOptions.fromOptions(true, false, false, true));
+        // The index pattern is carried in the path under /_resolve/index/.
+        assertTrue(ActionTestUtils.url(clientAction.getCurlRequest(request)).contains("/_resolve/index/idx1,idx2"));
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("true", params.get("ignore_unavailable"));
+        assertEquals("false", params.get("allow_no_indices"));
+        assertEquals("closed", params.get("expand_wildcards"));
+    }
 
     @Test
     void test_fromXContent() throws IOException {
