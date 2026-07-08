@@ -549,6 +549,12 @@ public class HttpClient extends HttpAbstractClient {
     /** Whether gzip compression is enabled for HTTP requests. */
     protected final boolean compression;
 
+    /** The connect timeout in milliseconds; 0 or negative means unlimited (not set). */
+    protected final int connectionTimeout;
+
+    /** The socket (read) timeout in milliseconds; 0 or negative means unlimited (not set). */
+    protected final int socketTimeout;
+
     /** The HTTP proxy to use for requests, or null if not configured. */
     protected final Proxy proxy;
 
@@ -619,6 +625,8 @@ public class HttpClient extends HttpAbstractClient {
         nodeManager.setHeartbeatInterval(settings.getAsLong("http.heartbeat_interval", 10000L));
 
         compression = settings.getAsBoolean("http.compression", true);
+        connectionTimeout = settings.getAsInt("http.connection_timeout", 0);
+        socketTimeout = settings.getAsInt("http.socket_timeout", 0);
         basicAuth = createBasicAuthentication(settings);
         sslSocketFactory = createSSLSocketFactory(settings);
         proxy = createProxy(settings);
@@ -1449,6 +1457,9 @@ public class HttpClient extends HttpAbstractClient {
             buf.append(path);
         }
         CurlRequest request = requestCreator.apply(buf.toString()).header("Content-Type", contentType.getString()).threadPool(threadPool);
+        if (connectionTimeout > 0 || socketTimeout > 0) {
+            request.timeout(connectionTimeout, socketTimeout);
+        }
         if (basicAuth != null) {
             request.header("Authorization", basicAuth);
         }
