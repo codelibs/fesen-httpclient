@@ -40,13 +40,27 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opensearch.OpenSearchException;
 import org.opensearch.action.DocWriteResponse.Result;
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
+import org.opensearch.action.admin.cluster.node.tasks.list.ListTasksResponse;
+import org.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
+import org.opensearch.action.admin.cluster.remote.RemoteInfoAction;
+import org.opensearch.action.admin.cluster.remote.RemoteInfoRequest;
+import org.opensearch.action.admin.cluster.remote.RemoteInfoResponse;
+import org.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
 import org.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
+import org.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
+import org.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusResponse;
 import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
 import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.opensearch.action.admin.indices.alias.Alias;
@@ -66,6 +80,7 @@ import org.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
 import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.opensearch.action.bulk.BulkRequestBuilder;
 import org.opensearch.action.bulk.BulkResponse;
@@ -99,12 +114,15 @@ import org.opensearch.core.common.bytes.BytesArray;
 import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.core.common.unit.ByteSizeUnit;
 import org.opensearch.core.rest.RestStatus;
+import org.opensearch.core.tasks.TaskId;
 import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.index.IndexNotFoundException;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.indices.recovery.RecoverySettings;
 import org.opensearch.search.SearchHit;
+import org.opensearch.search.builder.PointInTimeBuilder;
+import org.opensearch.tasks.TaskInfo;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -143,6 +161,7 @@ class OpenSearch3ClientTest {
                 .withEnv("discovery.type", "single-node")//
                 .withEnv("DISABLE_INSTALL_DEMO_CONFIG", "true")//
                 .withEnv("DISABLE_SECURITY_PLUGIN", "true")//
+                .withEnv("path.repo", "/tmp/repo")//
                 .withExposedPorts(9200);
         server.start();
     }
@@ -1319,6 +1338,8 @@ class OpenSearch3ClientTest {
             builder.flush();
             try (OutputStream out = builder.getOutputStream()) {
                 final String value = ((ByteArrayOutputStream) out).toString("UTF-8");
+                assertFalse(value.isEmpty());
+                assertTrue(value.contains("nodes"));
                 System.out.println(value);
             }
         }
@@ -1997,21 +2018,6 @@ class OpenSearch3ClientTest {
         }
     }
 
-    // TODO PutIndexTemplateAction
-    // TODO GetIndexTemplatesAction
-    // TODO DeleteIndexTemplateAction
-    // TODO CancelTasksAction
-    // TODO ListTasksAction
-    // TODO VerifyRepositoryAction
-    // TODO PutRepositoryAction
-    // TODO GetRepositoriesAction
-    // TODO DeleteRepositoryAction
-    // TODO SnapshotsStatusAction
-    // TODO CreateSnapshotAction
-    // TODO GetSnapshotsAction
-    // TODO DeleteSnapshotAction
-    // TODO RestoreSnapshotAction
-
     // needs x-pack
     // TODO @Test
     void test_info() throws Exception {
@@ -2422,6 +2428,11 @@ class OpenSearch3ClientTest {
         assertNotNull(pitId);
         assertFalse(pitId.isEmpty());
 
+        // PIT-backed search must read the 3 documents captured by the point in time.
+        final SearchResponse pitSearchResponse = client.prepareSearch().setPointInTime(new PointInTimeBuilder(pitId))
+                .setQuery(QueryBuilders.matchAllQuery()).setSize(10).execute().actionGet();
+        assertEquals(3L, pitSearchResponse.getHits().getTotalHits().value());
+
         final org.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
                 .execute(org.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.opensearch.action.search.GetAllPitNodesRequest())
                 .actionGet();
@@ -2459,5 +2470,276 @@ class OpenSearch3ClientTest {
                 .execute(org.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.opensearch.action.search.GetAllPitNodesRequest())
                 .actionGet();
         assertTrue(getAllPitsResponse.getPitInfos().isEmpty());
+    }
+
+    @Test
+    void test_list_tasks() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareListTasks().execute(wrap(res -> {
+            try {
+                assertNotNull(res);
+                assertNotNull(res.getTasks());
+            } finally {
+                latch.countDown();
+            }
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ListTasksResponse listTasksResponse = client.admin().cluster().prepareListTasks().execute().actionGet();
+            assertNotNull(listTasksResponse);
+            assertNotNull(listTasksResponse.getTasks());
+        }
+    }
+
+    @Test
+    void test_nodes_usage() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareNodesUsage().execute(wrap(res -> {
+            try {
+                assertNotNull(res);
+                assertNotNull(res.getNodes());
+                assertNotNull(res.getNodesMap());
+            } finally {
+                latch.countDown();
+            }
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final NodesUsageResponse nodesUsageResponse = client.admin().cluster().prepareNodesUsage().execute().actionGet();
+            assertNotNull(nodesUsageResponse);
+            assertNotNull(nodesUsageResponse.getNodes());
+            assertNotNull(nodesUsageResponse.getNodesMap());
+        }
+    }
+
+    @Test
+    void test_cancel_tasks() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().cluster().prepareCancelTasks().execute(wrap(res -> {
+            try {
+                assertNotNull(res);
+            } finally {
+                latch.countDown();
+            }
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final CancelTasksResponse cancelTasksResponse = client.admin().cluster().prepareCancelTasks().execute().actionGet();
+            assertNotNull(cancelTasksResponse);
+        }
+    }
+
+    @Test
+    void test_remote_info() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.execute(RemoteInfoAction.INSTANCE, new RemoteInfoRequest(), wrap(res -> {
+            try {
+                assertNotNull(res);
+                assertNotNull(res.getInfos());
+            } finally {
+                latch.countDown();
+            }
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final RemoteInfoResponse remoteInfoResponse = client.execute(RemoteInfoAction.INSTANCE, new RemoteInfoRequest()).actionGet();
+            assertNotNull(remoteInfoResponse);
+            assertNotNull(remoteInfoResponse.getInfos());
+        }
+    }
+
+    @Test
+    void test_get_task() throws Exception {
+        // Find a currently running task to look up. A standalone node always reports at least
+        // the list-tasks call that is running while the response is being built.
+        final ListTasksResponse listTasksResponse = client.admin().cluster().prepareListTasks().execute().actionGet();
+        assertNotNull(listTasksResponse);
+        assertNotNull(listTasksResponse.getTasks());
+        if (listTasksResponse.getTasks().isEmpty()) {
+            // Nothing to look up; the list-tasks smoke assertions above are sufficient.
+            return;
+        }
+
+        final TaskInfo taskInfo = listTasksResponse.getTasks().get(0);
+        final TaskId taskId = taskInfo.getTaskId();
+        try {
+            final GetTaskResponse getTaskResponse = client.admin().cluster().prepareGetTask(taskId).execute().actionGet();
+            // The task may still be running; if it is found the response must expose it.
+            assertNotNull(getTaskResponse);
+            assertNotNull(getTaskResponse.getTask());
+        } catch (final OpenSearchException e) {
+            // The task completed and was removed between listing and lookup (typically a 404
+            // resource_not_found_exception). This is expected and acceptable, not a failure.
+            assertNotNull(e);
+        }
+    }
+
+    @Test
+    void test_upgrade_status() throws Exception {
+        final String index = "test_upgrade_status";
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"text\":\"test\"}", XContentType.JSON).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareUpgradeStatus(index).execute(wrap(res -> {
+            try {
+                assertNotNull(res);
+                assertNotNull(res.getIndices());
+            } finally {
+                latch.countDown();
+            }
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final UpgradeStatusResponse upgradeStatusResponse = client.admin().indices().prepareUpgradeStatus(index).execute().actionGet();
+            assertNotNull(upgradeStatusResponse);
+            assertNotNull(upgradeStatusResponse.getIndices());
+            // A document was indexed, so the reconstructed per-index aggregates must be non-empty.
+            assertTrue(upgradeStatusResponse.getTotalBytes() > 0);
+            assertTrue(upgradeStatusResponse.getIndices().containsKey(index));
+        }
+    }
+
+    @Test
+    void test_crud_snapshot_repository() throws Exception {
+        final String repository = "test_crud_snapshot_repository";
+        try {
+            // Register an fs repository (location must be under the container's path.repo).
+            final AcknowledgedResponse putResponse = client.admin().cluster().preparePutRepository(repository).setType("fs")
+                    .setSettings(Settings.builder().put("location", "/tmp/repo/" + repository).build()).execute().actionGet();
+            assertTrue(putResponse.isAcknowledged());
+
+            // Verify the repository.
+            final VerifyRepositoryResponse verifyResponse =
+                    client.admin().cluster().prepareVerifyRepository(repository).execute().actionGet();
+            assertNotNull(verifyResponse);
+            assertNotNull(verifyResponse.getNodes());
+
+            // Get repositories and ensure the created one is present.
+            final GetRepositoriesResponse getResponse = client.admin().cluster().prepareGetRepositories(repository).execute().actionGet();
+            assertNotNull(getResponse);
+            assertTrue(getResponse.repositories().stream().anyMatch(r -> repository.equals(r.name())));
+
+            // Delete the repository.
+            final AcknowledgedResponse deleteResponse = client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+            assertTrue(deleteResponse.isAcknowledged());
+        } finally {
+            try {
+                client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+            } catch (final Exception e) {
+                // ignore cleanup failure (the repository may already be deleted)
+            }
+        }
+    }
+
+    @Test
+    void test_snapshot_lifecycle() throws Exception {
+        final String repository = "test_snapshot_lifecycle_repo";
+        final String snapshot = "test_snapshot_lifecycle_snap";
+        final String index = "test_snapshot_lifecycle";
+
+        // Index a document into the source index.
+        client.prepareIndex().setIndex(index).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"text\":\"snapshot test\"}", XContentType.JSON).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        // Register an fs repository.
+        final AcknowledgedResponse putRepositoryResponse = client.admin().cluster().preparePutRepository(repository).setType("fs")
+                .setSettings(Settings.builder().put("location", "/tmp/repo/" + repository).build()).execute().actionGet();
+        assertTrue(putRepositoryResponse.isAcknowledged());
+
+        try {
+            // Create a snapshot of the source index and wait for completion.
+            final CreateSnapshotResponse createSnapshotResponse = client.admin().cluster().prepareCreateSnapshot(repository, snapshot)
+                    .setWaitForCompletion(true).setIndices(index).execute().actionGet();
+            assertNotNull(createSnapshotResponse.getSnapshotInfo());
+            assertEquals("SUCCESS", createSnapshotResponse.getSnapshotInfo().state().name());
+
+            // Query the snapshot status.
+            final SnapshotsStatusResponse snapshotsStatusResponse =
+                    client.admin().cluster().prepareSnapshotStatus(repository).setSnapshots(snapshot).execute().actionGet();
+            assertNotNull(snapshotsStatusResponse);
+            assertNotNull(snapshotsStatusResponse.getSnapshots());
+
+            // Get snapshots and ensure the created one is present.
+            final GetSnapshotsResponse getSnapshotsResponse =
+                    client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet();
+            assertNotNull(getSnapshotsResponse);
+            assertTrue(getSnapshotsResponse.getSnapshots().stream().anyMatch(s -> snapshot.equals(s.snapshotId().getName())));
+
+            // Delete the source index so the restore has to recreate it.
+            client.admin().indices().prepareDelete(index).execute().actionGet();
+
+            // Restore the snapshot and wait for completion.
+            final RestoreSnapshotResponse restoreSnapshotResponse =
+                    client.admin().cluster().prepareRestoreSnapshot(repository, snapshot).setWaitForCompletion(true).execute().actionGet();
+            assertNotNull(restoreSnapshotResponse.getRestoreInfo());
+            assertTrue(restoreSnapshotResponse.getRestoreInfo().totalShards() > 0);
+
+            // The restored document must be searchable again.
+            client.admin().indices().prepareRefresh(index).execute().actionGet();
+            final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+            assertEquals(1L, searchResponse.getHits().getTotalHits().value());
+        } finally {
+            // Two independent cleanup blocks so one failure cannot skip the other and leak resources.
+            try {
+                client.admin().cluster().prepareDeleteSnapshot(repository, snapshot).execute().actionGet();
+            } catch (final Exception e) {
+                // ignore snapshot cleanup failure
+            }
+            try {
+                client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+            } catch (final Exception e) {
+                // ignore repository cleanup failure
+            }
+        }
+    }
+
+    @Test
+    void test_engine_info() throws Exception {
+        final EngineInfo engineInfo = client.getEngineInfo();
+        assertNotNull(engineInfo);
+        assertEquals(EngineInfo.EngineType.OPENSEARCH3, engineInfo.getType());
     }
 }

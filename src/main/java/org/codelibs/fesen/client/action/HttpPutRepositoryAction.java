@@ -15,13 +15,20 @@
  */
 package org.codelibs.fesen.client.action;
 
+import java.io.IOException;
+
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
+import org.opensearch.OpenSearchException;
 import org.opensearch.action.admin.cluster.repositories.put.PutRepositoryAction;
 import org.opensearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
 import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.xcontent.ToXContent;
+import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentParser;
 
 /**
@@ -50,7 +57,14 @@ public class HttpPutRepositoryAction extends HttpAction {
      * @param listener the listener notified with the response or failure
      */
     public void execute(final PutRepositoryRequest request, final ActionListener<AcknowledgedResponse> listener) {
-        getCurlRequest(request).execute(response -> {
+        String source = null;
+        try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
+            builder.flush();
+            source = BytesReference.bytes(builder).utf8ToString();
+        } catch (final IOException e) {
+            throw new OpenSearchException("Failed to parse a request.", e);
+        }
+        getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final AcknowledgedResponse putRepositoryResponse = AcknowledgedResponse.fromXContent(parser);
                 listener.onResponse(putRepositoryResponse);
