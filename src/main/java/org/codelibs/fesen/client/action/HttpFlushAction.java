@@ -70,6 +70,7 @@ public class HttpFlushAction extends HttpAction {
         final CurlRequest curlRequest = client.getCurlRequest(POST, "/_flush", request.indices());
         curlRequest.param("wait_if_ongoing", Boolean.toString(request.waitIfOngoing()));
         curlRequest.param("force", Boolean.toString(request.force()));
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 }

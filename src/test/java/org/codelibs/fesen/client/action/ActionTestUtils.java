@@ -22,9 +22,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
 import org.opensearch.common.settings.Settings;
@@ -39,28 +42,35 @@ import org.opensearch.common.settings.Settings;
  */
 final class ActionTestUtils {
 
-    private static volatile HttpClient client;
+    private static final Map<EngineType, HttpClient> CLIENTS = new ConcurrentHashMap<>();
 
     private ActionTestUtils() {
     }
 
     /**
      * Returns a shared {@link HttpClient} that builds plain, inspectable curl requests.
+     * The backend engine is reported as OpenSearch 3.x.
      *
      * @return the test HTTP client
      */
     static HttpClient testClient() {
-        if (client == null) {
-            synchronized (ActionTestUtils.class) {
-                if (client == null) {
-                    client = createClient();
-                }
-            }
-        }
-        return client;
+        return testClient(EngineType.OPENSEARCH3);
     }
 
-    private static HttpClient createClient() {
+    /**
+     * Returns a shared {@link HttpClient} that builds plain, inspectable curl requests and
+     * reports the given backend engine type from {@link HttpClient#getEngineInfo()}, so that
+     * version-conditional parameter serialization can be exercised offline.
+     *
+     * @param engineType the backend engine type to report
+     * @return the test HTTP client
+     */
+    static HttpClient testClient(final EngineType engineType) {
+        return CLIENTS.computeIfAbsent(engineType, ActionTestUtils::createClient);
+    }
+
+    private static HttpClient createClient(final EngineType engineType) {
+        final EngineInfo engineInfo = stubEngineInfo(engineType);
         final Settings settings = Settings.builder().putList("http.hosts", "localhost:9200").build();
         return new HttpClient(settings, null) {
             @Override
@@ -75,7 +85,41 @@ final class ActionTestUtils {
                 }
                 return method.apply(buf.toString());
             }
+
+            @Override
+            public EngineInfo getEngineInfo() {
+                return engineInfo;
+            }
         };
+    }
+
+    private static EngineInfo stubEngineInfo(final EngineType engineType) {
+        final String distribution;
+        final String number;
+        switch (engineType) {
+        case ELASTICSEARCH7:
+            distribution = "elasticsearch";
+            number = "7.17.0";
+            break;
+        case ELASTICSEARCH8:
+            distribution = "elasticsearch";
+            number = "8.11.0";
+            break;
+        case OPENSEARCH1:
+            distribution = "opensearch";
+            number = "1.3.0";
+            break;
+        case OPENSEARCH2:
+            distribution = "opensearch";
+            number = "2.11.0";
+            break;
+        case OPENSEARCH3:
+        default:
+            distribution = "opensearch";
+            number = "3.0.0";
+            break;
+        }
+        return new EngineInfo(Map.of("version", Map.of("number", number, "distribution", distribution)));
     }
 
     /**

@@ -29,6 +29,7 @@ import org.opensearch.action.admin.indices.close.CloseIndexResponse;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.IndexResult;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult;
 import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
+import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.index.Index;
 import org.opensearch.core.xcontent.XContentParser;
@@ -85,6 +86,10 @@ public class HttpCloseIndexAction extends HttpAction {
         if (request.masterNodeTimeout() != null) {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
+        if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
+            curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));
+        }
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 

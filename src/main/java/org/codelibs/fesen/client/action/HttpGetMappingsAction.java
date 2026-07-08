@@ -84,6 +84,7 @@ public class HttpGetMappingsAction extends HttpAction {
         if (client.getEngineInfo().getType() != EngineType.ELASTICSEARCH8) {
             curlRequest.param("local", Boolean.toString(request.local()));
         }
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 

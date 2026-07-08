@@ -66,6 +66,8 @@ public class HttpRefreshAction extends HttpAction {
      * @return the curl request
      */
     protected CurlRequest getCurlRequest(final RefreshRequest request) {
-        return client.getCurlRequest(POST, "/_refresh", request.indices());
+        final CurlRequest curlRequest = client.getCurlRequest(POST, "/_refresh", request.indices());
+        appendIndicesOptions(curlRequest, request.indicesOptions());
+        return curlRequest;
     }
 }

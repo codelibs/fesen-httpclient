@@ -74,6 +74,7 @@ public class HttpDeleteIndexAction extends HttpAction {
         if (request.masterNodeTimeout() != null) {
             curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
         }
+        appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;
     }
 }
