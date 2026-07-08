@@ -18,6 +18,9 @@ package org.codelibs.fesen.client.action;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.common.xcontent.json.JsonXContent;
@@ -26,10 +29,49 @@ import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.reindex.BulkByScrollResponse;
 import org.opensearch.index.reindex.UpdateByQueryAction;
+import org.opensearch.index.reindex.UpdateByQueryRequest;
 
 class HttpUpdateByQueryActionTest {
 
     private final HttpUpdateByQueryAction action = new HttpUpdateByQueryAction(null, UpdateByQueryAction.INSTANCE);
+
+    private final HttpUpdateByQueryAction clientAction =
+            new HttpUpdateByQueryAction(ActionTestUtils.testClient(), UpdateByQueryAction.INSTANCE);
+
+    @Test
+    void test_getCurlRequest_endpointAndParams() {
+        final UpdateByQueryRequest request = new UpdateByQueryRequest("idx");
+        request.setAbortOnVersionConflict(false);
+        request.setMaxDocs(50);
+        request.setSlices(4);
+        request.setRequestsPerSecond(250f);
+        request.setRouting("r1");
+        request.setPipeline("p1");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        // Endpoint is POST /idx/_update_by_query.
+        assertTrue(ActionTestUtils.url(clientAction.getCurlRequest(request)).contains("/idx/_update_by_query"));
+        assertEquals("true", params.get("wait_for_completion"));
+        // For by-query, conflicts and max_docs are query PARAMETERS (unlike reindex, where they ride in the body).
+        assertEquals("proceed", params.get("conflicts"));
+        assertEquals("50", params.get("max_docs"));
+        assertEquals("4", params.get("slices"));
+        assertEquals(Float.toString(request.getRequestsPerSecond()), params.get("requests_per_second"));
+        assertEquals("r1", params.get("routing"));
+        assertEquals("p1", params.get("pipeline"));
+    }
+
+    @Test
+    void test_getCurlRequest_defaultsOmitOptionalParams() {
+        final UpdateByQueryRequest request = new UpdateByQueryRequest("idx");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("true", params.get("wait_for_completion"));
+        // conflicts defaults to abort, so it is not emitted; the remaining optionals stay unset.
+        assertFalse(params.containsKey("conflicts"));
+        assertFalse(params.containsKey("max_docs"));
+        assertFalse(params.containsKey("slices"));
+        assertFalse(params.containsKey("routing"));
+        assertFalse(params.containsKey("pipeline"));
+    }
 
     @Test
     void test_fromXContent() throws Exception {

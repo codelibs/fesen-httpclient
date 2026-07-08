@@ -2309,4 +2309,155 @@ class OpenSearch3ClientTest {
         }));
         latch.await();
     }
+
+    @Test
+    void test_reindex() throws Exception {
+        final String srcIndex = "test_reindex_src";
+        final String destIndex = "test_reindex_dest";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 3; i++) {
+            bulkRequestBuilder.add(client.prepareIndex().setIndex(srcIndex).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}",
+                    XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
+
+        final org.opensearch.index.reindex.ReindexRequest reindexRequest = new org.opensearch.index.reindex.ReindexRequest();
+        reindexRequest.setSourceIndices(srcIndex);
+        reindexRequest.setDestIndex(destIndex);
+        reindexRequest.setRefresh(true);
+        final org.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.opensearch.index.reindex.ReindexAction.INSTANCE, reindexRequest).actionGet();
+        assertEquals(3L, response.getTotal());
+        assertEquals(3L, response.getCreated());
+        assertEquals(0, response.getBulkFailures().size());
+
+        client.admin().indices().prepareRefresh(destIndex).execute().actionGet();
+        final SearchResponse searchResponse = client.prepareSearch(destIndex).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_update_by_query() throws Exception {
+        final String index = "test_update_by_query";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 3; i++) {
+            bulkRequestBuilder.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{\"value\":" + i + ",\"status\":\"new\"}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.opensearch.index.reindex.UpdateByQueryRequest request = new org.opensearch.index.reindex.UpdateByQueryRequest(index);
+        request.setQuery(QueryBuilders.matchAllQuery());
+        request.setScript(new org.opensearch.script.Script("ctx._source.status = 'updated'"));
+        request.setConflicts("proceed");
+        request.setRefresh(true);
+        final org.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.opensearch.index.reindex.UpdateByQueryAction.INSTANCE, request).actionGet();
+        assertEquals(3L, response.getTotal());
+        assertEquals(3L, response.getUpdated());
+        assertEquals(0, response.getBulkFailures().size());
+
+        final SearchResponse searchResponse =
+                client.prepareSearch(index).setQuery(QueryBuilders.matchQuery("status", "updated")).execute().actionGet();
+        assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_delete_by_query() throws Exception {
+        final String index = "test_delete_by_query";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 5; i++) {
+            final String group = i <= 2 ? "a" : "b";
+            bulkRequestBuilder.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{\"value\":" + i + ",\"group\":\"" + group + "\"}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.opensearch.index.reindex.DeleteByQueryRequest request = new org.opensearch.index.reindex.DeleteByQueryRequest(index);
+        request.setQuery(QueryBuilders.matchQuery("group", "a"));
+        request.setConflicts("proceed");
+        request.setRefresh(true);
+        final org.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.opensearch.index.reindex.DeleteByQueryAction.INSTANCE, request).actionGet();
+        assertEquals(2L, response.getDeleted());
+        assertEquals(0, response.getBulkFailures().size());
+
+        final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_resolve_index() throws Exception {
+        final String index = "test_resolve_index";
+        final String alias = "test_resolve_index_alias";
+        client.admin().indices().prepareCreate(index).addAlias(new Alias(alias)).execute().actionGet();
+
+        final org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
+                new org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(new String[] { "test_resolve_index*" });
+        final org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
+                client.execute(org.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
+        assertTrue(response.getIndices().stream().anyMatch(i -> index.equals(i.getName())));
+        assertTrue(response.getAliases().stream().anyMatch(a -> alias.equals(a.getName())));
+    }
+
+    @Test
+    void test_pit_lifecycle() throws Exception {
+        final String index = "test_pit_lifecycle";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 3; i++) {
+            bulkRequestBuilder.add(
+                    client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.opensearch.action.search.CreatePitRequest createPitRequest =
+                new org.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
+        final org.opensearch.action.search.CreatePitResponse createPitResponse =
+                client.execute(org.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet();
+        final String pitId = createPitResponse.getId();
+        assertNotNull(pitId);
+        assertFalse(pitId.isEmpty());
+
+        final org.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
+                .execute(org.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.opensearch.action.search.GetAllPitNodesRequest())
+                .actionGet();
+        assertTrue(getAllPitsResponse.getPitInfos().stream().anyMatch(p -> pitId.equals(p.getPitId())));
+
+        final org.opensearch.action.search.DeletePitResponse deletePitResponse = client
+                .execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest(pitId))
+                .actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.opensearch.action.search.DeletePitInfo::isSuccessful));
+    }
+
+    @Test
+    void test_pit_delete_all() throws Exception {
+        final String index = "test_pit_delete_all";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 2; i++) {
+            bulkRequestBuilder.add(
+                    client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.opensearch.action.search.CreatePitRequest createPitRequest =
+                new org.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
+        final org.opensearch.action.search.CreatePitResponse createPitResponse =
+                client.execute(org.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet();
+        assertNotNull(createPitResponse.getId());
+
+        final org.opensearch.action.search.DeletePitResponse deletePitResponse = client
+                .execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest("_all"))
+                .actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.opensearch.action.search.DeletePitInfo::isSuccessful));
+
+        final org.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
+                .execute(org.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.opensearch.action.search.GetAllPitNodesRequest())
+                .actionGet();
+        assertTrue(getAllPitsResponse.getPitInfos().isEmpty());
+    }
 }

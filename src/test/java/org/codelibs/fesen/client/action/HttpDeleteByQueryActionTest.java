@@ -18,6 +18,9 @@ package org.codelibs.fesen.client.action;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.opensearch.common.xcontent.json.JsonXContent;
@@ -26,10 +29,46 @@ import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.index.reindex.BulkByScrollResponse;
 import org.opensearch.index.reindex.DeleteByQueryAction;
+import org.opensearch.index.reindex.DeleteByQueryRequest;
 
 class HttpDeleteByQueryActionTest {
 
     private final HttpDeleteByQueryAction action = new HttpDeleteByQueryAction(null, DeleteByQueryAction.INSTANCE);
+
+    private final HttpDeleteByQueryAction clientAction =
+            new HttpDeleteByQueryAction(ActionTestUtils.testClient(), DeleteByQueryAction.INSTANCE);
+
+    @Test
+    void test_getCurlRequest_endpointAndParams() {
+        final DeleteByQueryRequest request = new DeleteByQueryRequest("idx");
+        request.setAbortOnVersionConflict(false);
+        request.setMaxDocs(30);
+        request.setSlices(2);
+        request.setRequestsPerSecond(100f);
+        request.setRouting("r2");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        // Endpoint is POST /idx/_delete_by_query.
+        assertTrue(ActionTestUtils.url(clientAction.getCurlRequest(request)).contains("/idx/_delete_by_query"));
+        assertEquals("true", params.get("wait_for_completion"));
+        assertEquals("proceed", params.get("conflicts"));
+        assertEquals("30", params.get("max_docs"));
+        assertEquals("2", params.get("slices"));
+        assertEquals(Float.toString(request.getRequestsPerSecond()), params.get("requests_per_second"));
+        assertEquals("r2", params.get("routing"));
+        // delete-by-query has no pipeline parameter (unlike update-by-query).
+        assertFalse(params.containsKey("pipeline"));
+    }
+
+    @Test
+    void test_getCurlRequest_defaultsOmitOptionalParams() {
+        final DeleteByQueryRequest request = new DeleteByQueryRequest("idx");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("true", params.get("wait_for_completion"));
+        assertFalse(params.containsKey("conflicts"));
+        assertFalse(params.containsKey("max_docs"));
+        assertFalse(params.containsKey("slices"));
+        assertFalse(params.containsKey("routing"));
+    }
 
     @Test
     void test_fromXContent() throws Exception {

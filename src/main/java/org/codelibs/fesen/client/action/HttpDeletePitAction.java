@@ -16,12 +16,16 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.opensearch.OpenSearchException;
 import org.opensearch.action.search.DeletePitAction;
+import org.opensearch.action.search.DeletePitInfo;
 import org.opensearch.action.search.DeletePitRequest;
 import org.opensearch.action.search.DeletePitResponse;
 import org.opensearch.common.xcontent.json.JsonXContent;
@@ -35,15 +39,20 @@ import org.opensearch.core.xcontent.XContentParser;
  * Handles the Delete Point-in-Time (PIT) API over HTTP, releasing one or more
  * PIT reader contexts.
  *
- * <p>When the request targets the special {@code _all} identifier the delete-all
- * endpoint {@code DELETE /_search/point_in_time/_all} is used with no body;
- * otherwise the PIT identifiers are sent as a {@code {"pit_id":[...]}} body to
- * {@code DELETE /_search/point_in_time}.
+ * <p>On OpenSearch 2.x+ a delete-by-id request sends a {@code {"pit_id":[...]}}
+ * body to {@code DELETE /_search/point_in_time}, and the special {@code _all}
+ * identifier targets {@code DELETE /_search/point_in_time/_all} with no body. On
+ * Elasticsearch 7.10+ and 8.x a delete-by-id request sends a {@code {"id":"..."}}
+ * body to {@code DELETE /_pit} (the endpoint accepts a single identifier only, so
+ * a request carrying multiple identifiers fails the listener with an
+ * {@link UnsupportedOperationException}); Elasticsearch has no delete-all
+ * endpoint, so a delete-all request likewise fails the listener with an
+ * {@link UnsupportedOperationException}.
  *
- * <p>This action targets the OpenSearch REST API only. The
- * {@code _search/point_in_time} endpoint is OpenSearch-specific; Elasticsearch
- * uses a different {@code _pit} endpoint and Elasticsearch 7 has no PIT support
- * at all. No Elasticsearch adaptation is provided.
+ * <p>PIT is not available on OpenSearch 1.x, and the engine cannot be determined
+ * for {@link EngineType#UNKNOWN}; in both cases
+ * {@link #execute(DeletePitRequest, ActionListener)} fails the listener with an
+ * {@link UnsupportedOperationException}.
  */
 public class HttpDeletePitAction extends HttpAction {
 
@@ -67,17 +76,39 @@ public class HttpDeletePitAction extends HttpAction {
     /**
      * Executes the delete PIT request and notifies the listener with the response.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} when the
+     * backend is OpenSearch 1.x or an unknown engine, or when a delete-all request
+     * targets Elasticsearch (which has no delete-all endpoint).
+     *
      * @param request the delete PIT request containing the PIT identifiers to release
      * @param listener the listener notified with the response or a failure
      */
     public void execute(final DeletePitRequest request, final ActionListener<DeletePitResponse> listener) {
+        final EngineType type = client.getEngineInfo().getType();
+        if (type == EngineType.OPENSEARCH1 || type == EngineType.UNKNOWN) {
+            listener.onFailure(new UnsupportedOperationException(
+                    "Point-In-Time is not supported on " + type + " over HTTP (requires OpenSearch 2.x+ or Elasticsearch 7.10+)"));
+            return;
+        }
+        final boolean elasticsearch = type == EngineType.ELASTICSEARCH7 || type == EngineType.ELASTICSEARCH8;
+        if (elasticsearch && isDeleteAll(request)) {
+            listener.onFailure(new UnsupportedOperationException("Delete-all PITs is not supported on Elasticsearch over HTTP"));
+            return;
+        }
+        if (elasticsearch && request.getPitIds() != null && request.getPitIds().size() > 1) {
+            // The Elasticsearch _pit endpoint accepts a single id per request (an array body is
+            // rejected with HTTP 400); callers must delete multiple PITs individually.
+            listener.onFailure(new UnsupportedOperationException(
+                    "Deleting multiple PITs in a single request is not supported on Elasticsearch over HTTP; delete them individually"));
+            return;
+        }
         final CurlRequest curlRequest = getCurlRequest(request);
         if (!isDeleteAll(request)) {
-            curlRequest.body(buildBody(request));
+            curlRequest.body(elasticsearch ? buildEsBody(request) : buildBody(request));
         }
         curlRequest.execute(response -> {
             try (final XContentParser parser = createParser(response)) {
-                final DeletePitResponse pitResponse = fromXContent(parser);
+                final DeletePitResponse pitResponse = elasticsearch ? parseEsDelete(parser, request) : fromXContent(parser);
                 listener.onResponse(pitResponse);
             } catch (final Exception e) {
                 listener.onFailure(toOpenSearchException(response, e));
@@ -86,7 +117,7 @@ public class HttpDeletePitAction extends HttpAction {
     }
 
     /**
-     * Parses a delete PIT response from the given XContent parser.
+     * Parses an OpenSearch delete PIT response from the given XContent parser.
      *
      * @param parser the parser positioned at the response body
      * @return the parsed delete PIT response
@@ -97,14 +128,49 @@ public class HttpDeletePitAction extends HttpAction {
     }
 
     /**
-     * Builds the HTTP request for the delete PIT API endpoint. A delete-all request
-     * targets the {@code /_all} endpoint; otherwise the plain endpoint is used.
+     * Parses an Elasticsearch close PIT response ({@code {"succeeded":...,"num_freed":...}}) into
+     * a {@link DeletePitResponse}. Elasticsearch returns only an aggregate {@code succeeded} flag
+     * and no per-identifier list, so the flag is applied to each requested identifier.
+     *
+     * @param parser the parser positioned at the response body
+     * @param request the originating delete PIT request providing the identifiers
+     * @return the parsed delete PIT response
+     * @throws IOException if parsing the response fails
+     */
+    DeletePitResponse parseEsDelete(final XContentParser parser, final DeletePitRequest request) throws IOException {
+        if (parser.currentToken() == null) {
+            parser.nextToken();
+        }
+        final Map<String, Object> map = parser.map();
+        if (!map.containsKey("succeeded")) {
+            // Not a successful close-PIT body (e.g. an error response routed through the success
+            // path); surface it as a failure instead of reporting every id as failed.
+            throw new IOException("Unexpected delete PIT response (missing \"succeeded\"): " + map);
+        }
+        final boolean succeeded = Boolean.TRUE.equals(map.get("succeeded"));
+        final List<DeletePitInfo> results = new ArrayList<>();
+        for (final String pitId : request.getPitIds()) {
+            results.add(new DeletePitInfo(succeeded, pitId));
+        }
+        return new DeletePitResponse(results);
+    }
+
+    /**
+     * Builds the HTTP request for the delete PIT API endpoint. The endpoint is selected by the
+     * engine reported by {@link HttpClient#getEngineInfo()}: Elasticsearch uses {@code /_pit},
+     * OpenSearch uses {@code /_search/point_in_time} (or its {@code /_all} variant for a
+     * delete-all request).
      *
      * @param request the delete PIT request
      * @return the configured curl request
      */
     protected CurlRequest getCurlRequest(final DeletePitRequest request) {
-        // RestDeletePitAction
+        final EngineType type = client.getEngineInfo().getType();
+        if (type == EngineType.ELASTICSEARCH7 || type == EngineType.ELASTICSEARCH8) {
+            // Elasticsearch Close PIT API: DELETE /_pit
+            return client.getCurlRequest(DELETE, "/_pit");
+        }
+        // OpenSearch RestDeletePitAction
         if (isDeleteAll(request)) {
             return client.getCurlRequest(DELETE, "/_search/point_in_time/_all");
         }
@@ -124,7 +190,8 @@ public class HttpDeletePitAction extends HttpAction {
     }
 
     /**
-     * Serializes the delete PIT request body as a {@code {"pit_id":[...]}} JSON object.
+     * Serializes the delete PIT request body as a {@code {"pit_id":[...]}} JSON object
+     * for OpenSearch.
      *
      * @param request the delete PIT request
      * @return the JSON request body
@@ -132,6 +199,26 @@ public class HttpDeletePitAction extends HttpAction {
     protected String buildBody(final DeletePitRequest request) {
         try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
             request.toXContent(builder, ToXContent.EMPTY_PARAMS);
+            builder.flush();
+            return BytesReference.bytes(builder).utf8ToString();
+        } catch (final IOException e) {
+            throw new OpenSearchException("Failed to build a request.", e);
+        }
+    }
+
+    /**
+     * Serializes the delete PIT request body as a {@code {"id":"..."}} JSON object for
+     * Elasticsearch, which accepts a single identifier only. Callers with multiple identifiers
+     * are rejected earlier in {@link #execute(DeletePitRequest, ActionListener)}.
+     *
+     * @param request the delete PIT request
+     * @return the JSON request body
+     */
+    protected String buildEsBody(final DeletePitRequest request) {
+        try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
+            builder.startObject();
+            builder.field("id", request.getPitIds().get(0));
+            builder.endObject();
             builder.flush();
             return BytesReference.bytes(builder).utf8ToString();
         } catch (final IOException e) {
