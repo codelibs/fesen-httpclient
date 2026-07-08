@@ -2338,6 +2338,52 @@ class OpenSearch3ClientTest {
     }
 
     @Test
+    void test_resize() throws Exception {
+        final String srcIndex = "test_resize_src";
+        final String targetIndex = "test_resize_clone";
+        try {
+            final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+            for (int i = 1; i <= 3; i++) {
+                bulkRequestBuilder.add(client.prepareIndex().setIndex(srcIndex).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}",
+                        XContentType.JSON));
+            }
+            bulkRequestBuilder.execute().actionGet();
+            client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
+
+            // _clone requires the source index to be write-blocked.
+            final AcknowledgedResponse blockResponse = client.admin().indices().prepareUpdateSettings(srcIndex)
+                    .setSettings(Settings.builder().put("index.blocks.write", true)).execute().actionGet();
+            assertTrue(blockResponse.isAcknowledged());
+
+            final org.opensearch.action.admin.indices.shrink.ResizeRequest request =
+                    new org.opensearch.action.admin.indices.shrink.ResizeRequest(targetIndex, srcIndex);
+            request.setResizeType(org.opensearch.action.admin.indices.shrink.ResizeType.CLONE);
+            final org.opensearch.action.admin.indices.shrink.ResizeResponse response =
+                    client.execute(org.opensearch.action.admin.indices.shrink.ResizeAction.INSTANCE, request).actionGet();
+            assertTrue(response.isAcknowledged());
+            assertEquals(targetIndex, response.index());
+
+            client.admin().indices().prepareRefresh(targetIndex).execute().actionGet();
+            final SearchResponse searchResponse =
+                    client.prepareSearch(targetIndex).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+            assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+        } finally {
+            // Regression isolation: delete each index independently so a missing one
+            // (e.g. a clone that failed before the target was created) cannot skip the other.
+            try {
+                client.admin().indices().prepareDelete(srcIndex).execute().actionGet();
+            } catch (final Exception e) {
+                logger.fine("Cleanup ignored: " + e.getLocalizedMessage());
+            }
+            try {
+                client.admin().indices().prepareDelete(targetIndex).execute().actionGet();
+            } catch (final Exception e) {
+                logger.fine("Cleanup ignored: " + e.getLocalizedMessage());
+            }
+        }
+    }
+
+    @Test
     void test_update_by_query() throws Exception {
         final String index = "test_update_by_query";
         final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();

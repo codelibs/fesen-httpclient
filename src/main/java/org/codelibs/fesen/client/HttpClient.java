@@ -133,6 +133,7 @@ import org.codelibs.fesen.client.action.HttpPutRepositoryAction;
 import org.codelibs.fesen.client.action.HttpPutStoredScriptAction;
 import org.codelibs.fesen.client.action.HttpRefreshAction;
 import org.codelibs.fesen.client.action.HttpReindexAction;
+import org.codelibs.fesen.client.action.HttpResizeAction;
 import org.codelibs.fesen.client.action.HttpResolveIndexAction;
 import org.codelibs.fesen.client.action.HttpRestoreSnapshotAction;
 import org.codelibs.fesen.client.action.HttpRolloverAction;
@@ -306,6 +307,9 @@ import org.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.opensearch.action.admin.indices.shrink.ResizeAction;
+import org.opensearch.action.admin.indices.shrink.ResizeRequest;
+import org.opensearch.action.admin.indices.shrink.ResizeResponse;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
 import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
@@ -549,6 +553,12 @@ public class HttpClient extends HttpAbstractClient {
     /** Whether gzip compression is enabled for HTTP requests. */
     protected final boolean compression;
 
+    /** The connect timeout in milliseconds; 0 or negative means unlimited (not set). */
+    protected final int connectionTimeout;
+
+    /** The socket (read) timeout in milliseconds; 0 or negative means unlimited (not set). */
+    protected final int socketTimeout;
+
     /** The HTTP proxy to use for requests, or null if not configured. */
     protected final Proxy proxy;
 
@@ -619,6 +629,8 @@ public class HttpClient extends HttpAbstractClient {
         nodeManager.setHeartbeatInterval(settings.getAsLong("http.heartbeat_interval", 10000L));
 
         compression = settings.getAsBoolean("http.compression", true);
+        connectionTimeout = settings.getAsInt("http.connection_timeout", 0);
+        socketTimeout = settings.getAsInt("http.socket_timeout", 0);
         basicAuth = createBasicAuthentication(settings);
         sslSocketFactory = createSSLSocketFactory(settings);
         proxy = createProxy(settings);
@@ -836,6 +848,12 @@ public class HttpClient extends HttpAbstractClient {
             @SuppressWarnings("unchecked")
             final ActionListener<RolloverResponse> actionListener = (ActionListener<RolloverResponse>) listener;
             new HttpRolloverAction(this, RolloverAction.INSTANCE).execute((RolloverRequest) request, actionListener);
+        });
+        actions.put(ResizeAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.shrink.ResizeAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ResizeResponse> actionListener = (ActionListener<ResizeResponse>) listener;
+            new HttpResizeAction(this, ResizeAction.INSTANCE).execute((ResizeRequest) request, actionListener);
         });
         actions.put(ClearIndicesCacheAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.cache.clear.ClearIndicesCacheAction
@@ -1449,6 +1467,9 @@ public class HttpClient extends HttpAbstractClient {
             buf.append(path);
         }
         CurlRequest request = requestCreator.apply(buf.toString()).header("Content-Type", contentType.getString()).threadPool(threadPool);
+        if (connectionTimeout > 0 || socketTimeout > 0) {
+            request.timeout(connectionTimeout, socketTimeout);
+        }
         if (basicAuth != null) {
             request.header("Authorization", basicAuth);
         }
