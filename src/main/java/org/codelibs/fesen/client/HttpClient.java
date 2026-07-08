@@ -133,6 +133,7 @@ import org.codelibs.fesen.client.action.HttpPutRepositoryAction;
 import org.codelibs.fesen.client.action.HttpPutStoredScriptAction;
 import org.codelibs.fesen.client.action.HttpRefreshAction;
 import org.codelibs.fesen.client.action.HttpReindexAction;
+import org.codelibs.fesen.client.action.HttpResizeAction;
 import org.codelibs.fesen.client.action.HttpResolveIndexAction;
 import org.codelibs.fesen.client.action.HttpRestoreSnapshotAction;
 import org.codelibs.fesen.client.action.HttpRolloverAction;
@@ -301,6 +302,9 @@ import org.opensearch.action.admin.indices.resolve.ResolveIndexAction;
 import org.opensearch.action.admin.indices.rollover.RolloverAction;
 import org.opensearch.action.admin.indices.rollover.RolloverRequest;
 import org.opensearch.action.admin.indices.rollover.RolloverResponse;
+import org.opensearch.action.admin.indices.shrink.ResizeAction;
+import org.opensearch.action.admin.indices.shrink.ResizeRequest;
+import org.opensearch.action.admin.indices.shrink.ResizeResponse;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsAction;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
@@ -844,6 +848,12 @@ public class HttpClient extends HttpAbstractClient {
             @SuppressWarnings("unchecked")
             final ActionListener<RolloverResponse> actionListener = (ActionListener<RolloverResponse>) listener;
             new HttpRolloverAction(this, RolloverAction.INSTANCE).execute((RolloverRequest) request, actionListener);
+        });
+        actions.put(ResizeAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.shrink.ResizeAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ResizeResponse> actionListener = (ActionListener<ResizeResponse>) listener;
+            new HttpResizeAction(this, ResizeAction.INSTANCE).execute((ResizeRequest) request, actionListener);
         });
         actions.put(ClearIndicesCacheAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.cache.clear.ClearIndicesCacheAction
