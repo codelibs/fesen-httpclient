@@ -63,4 +63,19 @@ class HttpClientTimeoutTest {
             client.close();
         }
     }
+
+    @Test
+    void test_timeouts_connectOnly_applied() {
+        final Settings settings = Settings.builder().putList("http.hosts", "localhost:9200").put("http.connection_timeout", 3000).build();
+        final HttpClient client = new HttpClient(settings, null);
+        try {
+            final CurlRequest request = client.getCurlRequest(Curl::get, "/", "idx");
+            assertEquals(3000, intField(request, "connectTimeout"));
+            // timeout(3000, 0) was called, so readTimeout is 0 (== infinite per HttpURLConnection),
+            // NOT the -1 "never set" sentinel.
+            assertEquals(0, intField(request, "readTimeout"));
+        } finally {
+            client.close();
+        }
+    }
 }

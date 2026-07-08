@@ -1430,9 +1430,15 @@ class OpenSearch2ClientTest {
                     client.prepareSearch(targetIndex).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
             assertEquals(3L, searchResponse.getHits().getTotalHits().value());
         } finally {
-            // Regression isolation: remove both indices regardless of outcome.
+            // Regression isolation: delete each index independently so a missing one
+            // (e.g. a clone that failed before the target was created) cannot skip the other.
             try {
-                client.admin().indices().prepareDelete(srcIndex, targetIndex).execute().actionGet();
+                client.admin().indices().prepareDelete(srcIndex).execute().actionGet();
+            } catch (final Exception e) {
+                logger.fine("Cleanup ignored: " + e.getLocalizedMessage());
+            }
+            try {
+                client.admin().indices().prepareDelete(targetIndex).execute().actionGet();
             } catch (final Exception e) {
                 logger.fine("Cleanup ignored: " + e.getLocalizedMessage());
             }

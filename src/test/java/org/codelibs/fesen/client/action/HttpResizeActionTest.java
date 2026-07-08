@@ -71,6 +71,14 @@ class HttpResizeActionTest {
     }
 
     @Test
+    void test_getCurlRequest_emitsTimeoutAndMasterTimeout() {
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(resizeRequest(ResizeType.CLONE)));
+        // ResizeRequest inherits non-null defaults for both, so the action always emits them.
+        assertTrue(params.containsKey("timeout"));
+        assertTrue(params.containsKey("master_timeout"));
+    }
+
+    @Test
     void test_toSource_carriesSettings() {
         final ResizeRequest request = resizeRequest(ResizeType.SPLIT);
         request.getTargetIndexRequest().settings(Settings.builder().put("index.number_of_shards", 4));
