@@ -142,7 +142,8 @@ class OpenSearch1ClientTest {
     static void startServer() {
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
-                .withEnv("plugins.security.disabled", "true")//
+                .withEnv("DISABLE_INSTALL_DEMO_CONFIG", "true")//
+                .withEnv("DISABLE_SECURITY_PLUGIN", "true")//
                 .withExposedPorts(9200);
         server.start();
     }
