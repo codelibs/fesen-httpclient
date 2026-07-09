@@ -124,8 +124,17 @@ public class HttpSearchAction extends HttpAction {
         if (request.preference() != null) {
             curlRequest.param("preference", request.preference());
         }
-        curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
-        appendIndicesOptions(curlRequest, request.indicesOptions());
+        // OpenSearch rejects both ccs_minimize_roundtrips and index options together with a
+        // point-in-time search (400 "[ccs_minimize_roundtrips]/[indicesOptions] cannot be used with
+        // point in time"), and over HTTP such a 400 on a request with a body manifests as an
+        // indefinite hang. A PIT already binds its own indices, so omit both when a PIT is set.
+        final boolean hasPointInTime = request.source() != null && request.source().pointInTimeBuilder() != null;
+        if (!hasPointInTime) {
+            curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
+        }
+        if (!hasPointInTime) {
+            appendIndicesOptions(curlRequest, request.indicesOptions());
+        }
         return curlRequest;
     }
 }

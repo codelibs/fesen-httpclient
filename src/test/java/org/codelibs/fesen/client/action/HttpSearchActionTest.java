@@ -16,6 +16,7 @@
 package org.codelibs.fesen.client.action;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.opensearch.action.search.SearchAction;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.PointInTimeBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 
 class HttpSearchActionTest {
@@ -41,6 +43,30 @@ class HttpSearchActionTest {
         assertEquals("false", params.get("ignore_unavailable"));
         assertEquals("true", params.get("allow_no_indices"));
         assertEquals("true", params.get("typed_keys"));
+    }
+
+    @Test
+    void test_getCurlRequest_pitIncompatibleParams_emittedWithoutPit() {
+        // A plain search still carries ccs_minimize_roundtrips and the index options.
+        final SearchRequest request = new SearchRequest("test-index");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("true", params.get("ccs_minimize_roundtrips"));
+        assertTrue(params.containsKey("ignore_unavailable"));
+        assertTrue(params.containsKey("allow_no_indices"));
+        assertTrue(params.containsKey("expand_wildcards"));
+    }
+
+    @Test
+    void test_getCurlRequest_pitIncompatibleParams_omittedWithPit() {
+        // OpenSearch rejects both ccs_minimize_roundtrips and index options together with a
+        // point-in-time search, so all of them must be omitted whenever the source carries a PIT.
+        final SearchRequest request = new SearchRequest();
+        request.source(new SearchSourceBuilder().pointInTimeBuilder(new PointInTimeBuilder("pit-id")));
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertFalse(params.containsKey("ccs_minimize_roundtrips"));
+        assertFalse(params.containsKey("ignore_unavailable"));
+        assertFalse(params.containsKey("allow_no_indices"));
+        assertFalse(params.containsKey("expand_wildcards"));
     }
 
     @Test
