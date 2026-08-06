@@ -203,7 +203,7 @@
 		<repository>
 			<id>codelibs.org</id>
 			<name>CodeLibs Repository</name>
-			<url>https://maven.codelibs.org/</url>
+			<url>https://maven.codelibs.org/release/</url>
 		</repository>
 	</repositories>
 	<dependencies>
