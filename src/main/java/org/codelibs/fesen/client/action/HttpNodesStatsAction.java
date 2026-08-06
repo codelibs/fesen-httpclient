@@ -86,7 +86,6 @@ import org.opensearch.index.store.StoreStats;
 import org.opensearch.index.store.remote.filecache.AggregateFileCacheStats;
 import org.opensearch.index.store.remote.filecache.AggregateFileCacheStats.FileCacheStatsType;
 import org.opensearch.index.store.remote.filecache.FileCacheStats;
-import org.opensearch.plugin.stats.AnalyticsBackendNativeMemoryStats;
 import org.opensearch.plugin.stats.NativeAllocatorPoolStats;
 import org.opensearch.plugins.BlockCacheStats;
 import org.opensearch.index.translog.TranslogStats;
@@ -116,6 +115,10 @@ import org.opensearch.tasks.SearchTaskCancellationStats;
 import org.opensearch.tasks.TaskCancellationStats;
 import org.opensearch.threadpool.ThreadPoolStats;
 import org.opensearch.transport.TransportStats;
+import org.opensearch.ratelimitting.admissioncontrol.stats.AdmissionControllerStats;
+import org.opensearch.node.ResponseCollectorService.ComputedNodeStats;
+import org.opensearch.core.common.io.stream.StreamOutput;
+import java.util.LinkedHashMap;
 
 /**
  * Handles the nodes stats API over HTTP for OpenSearch/Elasticsearch.
@@ -196,6 +199,7 @@ public class HttpNodesStatsAction extends HttpAction {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
                 if ("_nodes".equals(fieldName)) {
+                    parser.nextToken();
                     parseNodeResults(parser);
                 } else if ("nodes".equals(fieldName)) {
                     parser.nextToken();
@@ -279,7 +283,6 @@ public class HttpNodesStatsAction extends HttpAction {
         NodeCacheStats nodeCacheStats = null;
         RemoteStoreNodeStats remoteStoreNodeStats = null;
         NativeAllocatorPoolStats nativeAllocatorStats = null;
-        AnalyticsBackendNativeMemoryStats nativeMemoryStats = null;
         long totalEstimatedNativeBytes = -1L;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
@@ -337,6 +340,11 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("block_cache".equals(fieldName)) {
                     blockCacheOnlyStats = parseBlockCacheStats(parser);
                 } else if ("native_memory".equals(fieldName)) {
+                    long runtimeAllocatedBytes = 0;
+                    long runtimeResidentBytes = 0;
+                    List<NativeAllocatorPoolStats.PoolStats> memoryPools = null;
+                    NativeAllocatorPoolStats legacyNativeAllocatorStats = null;
+                    boolean hasRuntime = false;
                     String nmFieldName = null;
                     XContentParser.Token nmToken;
                     while ((nmToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -348,15 +356,37 @@ public class HttpNodesStatsAction extends HttpAction {
                             }
                         } else if (nmToken == XContentParser.Token.START_OBJECT) {
                             parser.nextToken();
-                            if ("analytics_backend".equals(nmFieldName)) {
-                                nativeMemoryStats = parseAnalyticsBackendNativeMemoryStats(parser);
+                            if ("runtime".equals(nmFieldName)) {
+                                hasRuntime = true;
+                                String runtimeFieldName = null;
+                                XContentParser.Token runtimeToken;
+                                while ((runtimeToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                                    if (runtimeToken == XContentParser.Token.FIELD_NAME) {
+                                        runtimeFieldName = parser.currentName();
+                                    } else if (runtimeToken == XContentParser.Token.VALUE_NUMBER) {
+                                        if ("allocated_bytes".equals(runtimeFieldName)) {
+                                            runtimeAllocatedBytes = parser.longValue();
+                                        } else if ("resident_bytes".equals(runtimeFieldName)) {
+                                            runtimeResidentBytes = parser.longValue();
+                                        }
+                                    }
+                                    parser.nextToken();
+                                }
+                            } else if ("memory_pools".equals(nmFieldName)) {
+                                memoryPools = parseNativeMemoryPools(parser);
                             } else if ("native_allocator".equals(nmFieldName)) {
-                                nativeAllocatorStats = parseNativeAllocatorPoolStats(parser);
+                                legacyNativeAllocatorStats = parseLegacyNativeAllocatorStats(parser);
                             } else {
                                 consumeObject(parser);
                             }
                         }
                         parser.nextToken();
+                    }
+                    if (hasRuntime || memoryPools != null) {
+                        nativeAllocatorStats = new NativeAllocatorPoolStats(runtimeAllocatedBytes, runtimeResidentBytes,
+                                memoryPools != null ? memoryPools : new ArrayList<>());
+                    } else {
+                        nativeAllocatorStats = legacyNativeAllocatorStats;
                     }
                 } else if ("task_cancellation".equals(fieldName)) {
                     taskCancellationStats = parseTaskCancellationStats(parser);
@@ -365,7 +395,7 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("segment_replication_backpressure".equals(fieldName)) {
                     segmentReplicationRejectionStats = parseSegmentReplicationRejectionStats(parser);
                 } else if ("admission_control".equals(fieldName)) {
-                    consumeObject(parser);
+                    admissionControlStats = parseAdmissionControlStats(parser);
                 } else if ("caches".equals(fieldName)) {
                     consumeObject(parser);
                 } else if ("remote_store".equals(fieldName)) {
@@ -433,7 +463,6 @@ public class HttpNodesStatsAction extends HttpAction {
                 nodeCacheStats, //
                 remoteStoreNodeStats, //
                 nativeAllocatorStats, //
-                nativeMemoryStats, //
                 totalEstimatedNativeBytes);
     }
 
@@ -465,51 +494,295 @@ public class HttpNodesStatsAction extends HttpAction {
     }
 
     /**
-     * Consumes the adaptive selection section and returns empty adaptive selection statistics.
+     * Parses adaptive selection statistics from the response content.
+     *
+     * <p>The rendered {@code rank} is a formatted string derived from the other values, and the
+     * client connection count behind it is never rendered, so both are recomputed from the parsed
+     * averages rather than restored.
      *
      * @param parser the content parser
      * @return the adaptive selection statistics
      * @throws IOException if parsing fails
      */
     protected AdaptiveSelectionStats parseAdaptiveSelectionStats(final XContentParser parser) throws IOException {
-        consumeObject(parser);
-        return new AdaptiveSelectionStats(Collections.emptyMap(), Collections.emptyMap());
+        final Map<String, Long> clientOutgoingConnections = new HashMap<>();
+        final Map<String, ComputedNodeStats> nodeComputedStats = new HashMap<>();
+        String nodeId = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                nodeId = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                final String id = nodeId;
+                long outgoingSearches = 0;
+                int queueSize = 0;
+                double serviceTime = 0;
+                double responseTime = 0;
+                String subField = null;
+                XContentParser.Token subToken;
+                while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (subToken == XContentParser.Token.FIELD_NAME) {
+                        subField = parser.currentName();
+                    } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                        if ("outgoing_searches".equals(subField)) {
+                            outgoingSearches = parser.longValue();
+                        } else if ("avg_queue_size".equals(subField)) {
+                            queueSize = parser.intValue();
+                        } else if ("avg_service_time_ns".equals(subField)) {
+                            serviceTime = parser.doubleValue();
+                        } else if ("avg_response_time_ns".equals(subField)) {
+                            responseTime = parser.doubleValue();
+                        }
+                    } else {
+                        skipNestedValue(parser);
+                    }
+                    parser.nextToken();
+                }
+                if (id != null) {
+                    clientOutgoingConnections.put(id, outgoingSearches);
+                    nodeComputedStats.put(id, new ComputedNodeStats(id, 0, queueSize, responseTime, serviceTime));
+                }
+            }
+            parser.nextToken();
+        }
+        return new AdaptiveSelectionStats(clientOutgoingConnections, nodeComputedStats);
     }
 
     /**
-     * Consumes the script cache section and returns empty script cache statistics.
+     * Parses script cache statistics from the response content.
+     *
+     * <p>When the node reports per-context entries the statistics are keyed by context name;
+     * otherwise the {@code sum} object is the whole picture and is returned as general statistics.
      *
      * @param parser the content parser
      * @return the script cache statistics
      * @throws IOException if parsing fails
      */
     protected ScriptCacheStats parseScriptCacheStats(final XContentParser parser) throws IOException {
-        consumeObject(parser);
-        return new ScriptCacheStats(Collections.emptyMap());
+        final Map<String, ScriptStats> contexts = new HashMap<>();
+        ScriptStats sum = null;
+        boolean hasContexts = false;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("sum".equals(fieldName)) {
+                    sum = parseScriptStats(parser);
+                } else {
+                    consumeObject(parser);
+                }
+            } else if ((token == XContentParser.Token.START_ARRAY) && "contexts".equals(fieldName)) {
+                hasContexts = true;
+                parser.nextToken();
+                while (parser.currentToken() != XContentParser.Token.END_ARRAY) {
+                    if (parser.currentToken() == XContentParser.Token.START_OBJECT) {
+                        parser.nextToken();
+                        final String[] contextName = new String[1];
+                        final ScriptStats stats = parseScriptContextStats(parser, contextName);
+                        if (contextName[0] != null) {
+                            contexts.put(contextName[0], stats);
+                        }
+                    }
+                    parser.nextToken();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        if (hasContexts) {
+            return new ScriptCacheStats(contexts);
+        }
+        return new ScriptCacheStats(sum != null ? sum : new ScriptStats(0, 0, 0));
     }
 
     /**
-     * Consumes the indexing pressure section and returns empty indexing pressure statistics.
+     * Parses a single entry of the script cache {@code contexts} array.
+     *
+     * @param parser the content parser
+     * @param contextName single element array receiving the context name
+     * @return the statistics for the context
+     * @throws IOException if parsing fails
+     */
+    protected ScriptStats parseScriptContextStats(final XContentParser parser, final String[] contextName) throws IOException {
+        long compilations = 0;
+        long cacheEvictions = 0;
+        long compilationLimitTriggered = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("compilations".equals(fieldName)) {
+                    compilations = parser.longValue();
+                } else if ("cache_evictions".equals(fieldName)) {
+                    cacheEvictions = parser.longValue();
+                } else if ("compilation_limit_triggered".equals(fieldName)) {
+                    compilationLimitTriggered = parser.longValue();
+                }
+            } else if ((token == XContentParser.Token.VALUE_STRING) && "context".equals(fieldName)) {
+                contextName[0] = parser.text();
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return new ScriptStats(compilations, cacheEvictions, compilationLimitTriggered);
+    }
+
+    /**
+     * Parses indexing pressure statistics from the response content.
+     *
+     * <p>{@code all_in_bytes} is not read because it is rendered as the sum of the replica and
+     * combined values rather than stored separately.
      *
      * @param parser the content parser
      * @return the indexing pressure statistics
      * @throws IOException if parsing fails
      */
     protected IndexingPressureStats parseIndexingPressureStats(final XContentParser parser) throws IOException {
-        consumeObject(parser);
-        return new IndexingPressureStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        final long[] current = new long[4];
+        final long[] total = new long[7];
+        long memoryLimit = 0;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if ((token == XContentParser.Token.START_OBJECT) && "memory".equals(fieldName)) {
+                parser.nextToken();
+                String memField = null;
+                XContentParser.Token memToken;
+                while ((memToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (memToken == XContentParser.Token.FIELD_NAME) {
+                        memField = parser.currentName();
+                    } else if (memToken == XContentParser.Token.VALUE_NUMBER) {
+                        if ("limit_in_bytes".equals(memField)) {
+                            memoryLimit = parser.longValue();
+                        }
+                    } else if (memToken == XContentParser.Token.START_OBJECT) {
+                        parser.nextToken();
+                        if ("current".equals(memField)) {
+                            parseIndexingPressureBucket(parser, current);
+                        } else if ("total".equals(memField)) {
+                            parseIndexingPressureBucket(parser, total);
+                        } else {
+                            consumeObject(parser);
+                        }
+                    }
+                    parser.nextToken();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return new IndexingPressureStats(total[0], total[1], total[2], total[3], current[0], current[1], current[2], current[3], total[4],
+                total[5], total[6], memoryLimit);
     }
 
     /**
-     * Consumes the shard indexing pressure section and returns empty shard indexing pressure statistics.
+     * Parses one of the {@code current} or {@code total} buckets of the indexing pressure section.
+     *
+     * @param parser the content parser
+     * @param values receives combined, coordinating, primary and replica bytes, followed by the
+     *        coordinating, primary and replica rejection counts when the array is long enough
+     * @throws IOException if parsing fails
+     */
+    protected void parseIndexingPressureBucket(final XContentParser parser, final long[] values) throws IOException {
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("combined_coordinating_and_primary_in_bytes".equals(fieldName)) {
+                    values[0] = parser.longValue();
+                } else if ("coordinating_in_bytes".equals(fieldName)) {
+                    values[1] = parser.longValue();
+                } else if ("primary_in_bytes".equals(fieldName)) {
+                    values[2] = parser.longValue();
+                } else if ("replica_in_bytes".equals(fieldName)) {
+                    values[3] = parser.longValue();
+                } else if ((values.length > 6) && "coordinating_rejections".equals(fieldName)) {
+                    values[4] = parser.longValue();
+                } else if ((values.length > 6) && "primary_rejections".equals(fieldName)) {
+                    values[5] = parser.longValue();
+                } else if ((values.length > 6) && "replica_rejections".equals(fieldName)) {
+                    values[6] = parser.longValue();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+    }
+
+    /**
+     * Parses shard indexing pressure statistics from the response content.
+     *
+     * <p>The rejection breakup object is named {@code total_rejections_breakup} when enforcement is
+     * on and {@code total_rejections_breakup_shadow_mode} otherwise, so both names are accepted. The
+     * per-shard {@code stats} entries are keyed by shard id, which the response does not render in a
+     * form that can be turned back into one, so that map stays empty.
      *
      * @param parser the content parser
      * @return the shard indexing pressure statistics
      * @throws IOException if parsing fails
      */
     protected ShardIndexingPressureStats parseShardIndexingPressureStats(final XContentParser parser) throws IOException {
-        consumeObject(parser);
-        return new ShardIndexingPressureStats(Collections.emptyMap(), 0, 0, 0, false, false);
+        long nodeLimitsRejections = 0;
+        long lastSuccessfulRequestLimitsRejections = 0;
+        long throughputDegradationLimitsRejections = 0;
+        boolean enabled = false;
+        boolean enforced = false;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_BOOLEAN) {
+                if ("enabled".equals(fieldName)) {
+                    enabled = parser.booleanValue();
+                } else if ("enforced".equals(fieldName)) {
+                    enforced = parser.booleanValue();
+                }
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("total_rejections_breakup".equals(fieldName) || "total_rejections_breakup_shadow_mode".equals(fieldName)) {
+                    String subField = null;
+                    XContentParser.Token subToken;
+                    while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (subToken == XContentParser.Token.FIELD_NAME) {
+                            subField = parser.currentName();
+                        } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                            if ("node_limits".equals(subField)) {
+                                nodeLimitsRejections = parser.longValue();
+                            } else if ("no_successful_request_limits".equals(subField)) {
+                                lastSuccessfulRequestLimitsRejections = parser.longValue();
+                            } else if ("throughput_degradation_limits".equals(subField)) {
+                                throughputDegradationLimitsRejections = parser.longValue();
+                            }
+                        } else {
+                            skipNestedValue(parser);
+                        }
+                        parser.nextToken();
+                    }
+                } else {
+                    consumeObject(parser);
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return new ShardIndexingPressureStats(Collections.emptyMap(), nodeLimitsRejections, lastSuccessfulRequestLimitsRejections,
+                throughputDegradationLimitsRejections, enabled, enforced);
     }
 
     /**
@@ -521,8 +794,9 @@ public class HttpNodesStatsAction extends HttpAction {
      */
     protected SearchBackpressureStats parseSearchBackpressureStats(final XContentParser parser) throws IOException {
         SearchBackpressureMode mode = SearchBackpressureMode.DISABLED;
-        SearchTaskStats searchTaskStats = new SearchTaskStats(0, 0, 0, Collections.emptyMap());
-        SearchShardTaskStats searchShardTaskStats = new SearchShardTaskStats(0, 0, 0, Collections.emptyMap());
+        // completion_count is omitted when it is -1, so that is the default rather than zero.
+        SearchTaskStats searchTaskStats = new SearchTaskStats(0, 0, -1, Collections.emptyMap());
+        SearchShardTaskStats searchShardTaskStats = new SearchShardTaskStats(0, 0, -1, Collections.emptyMap());
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -530,8 +804,12 @@ public class HttpNodesStatsAction extends HttpAction {
                 fieldName = parser.currentName();
             } else if (token == XContentParser.Token.START_OBJECT) {
                 parser.nextToken();
-                if ("search_task".equals(fieldName) || "search_shard_task".equals(fieldName)) {
-                    consumeObject(parser);
+                if ("search_task".equals(fieldName)) {
+                    final long[] counts = parseSearchBackpressureTaskCounts(parser);
+                    searchTaskStats = new SearchTaskStats(counts[0], counts[1], counts[2], Collections.emptyMap());
+                } else if ("search_shard_task".equals(fieldName)) {
+                    final long[] counts = parseSearchBackpressureTaskCounts(parser);
+                    searchShardTaskStats = new SearchShardTaskStats(counts[0], counts[1], counts[2], Collections.emptyMap());
                 } else {
                     consumeObject(parser);
                 }
@@ -546,15 +824,101 @@ public class HttpNodesStatsAction extends HttpAction {
     }
 
     /**
-     * Consumes the cluster manager throttling section and returns empty throttling statistics.
+     * Parses the counters of a search backpressure task section.
+     *
+     * <p>The {@code resource_tracker_stats} entries are keyed by tracker type and carry per-tracker
+     * subclasses that the response does not identify, so they are not restored.
+     *
+     * @param parser the content parser
+     * @return the cancellation count, the cancellation limit reached count and the completion count
+     * @throws IOException if parsing fails
+     */
+    protected long[] parseSearchBackpressureTaskCounts(final XContentParser parser) throws IOException {
+        final long[] counts = { 0, 0, -1 };
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("completion_count".equals(fieldName)) {
+                    counts[2] = parser.longValue();
+                }
+            } else if ((token == XContentParser.Token.START_OBJECT) && "cancellation_stats".equals(fieldName)) {
+                parser.nextToken();
+                String subField = null;
+                XContentParser.Token subToken;
+                while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (subToken == XContentParser.Token.FIELD_NAME) {
+                        subField = parser.currentName();
+                    } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                        if ("cancellation_count".equals(subField)) {
+                            counts[0] = parser.longValue();
+                        } else if ("cancellation_limit_reached_count".equals(subField)) {
+                            counts[1] = parser.longValue();
+                        }
+                    } else {
+                        skipNestedValue(parser);
+                    }
+                    parser.nextToken();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return counts;
+    }
+
+    /**
+     * Parses cluster manager throttling statistics from the response content.
      *
      * @param parser the content parser
      * @return the cluster manager throttling statistics
      * @throws IOException if parsing fails
      */
     protected ClusterManagerThrottlingStats parseClusterManagerThrottlingStats(final XContentParser parser) throws IOException {
-        consumeObject(parser);
-        return new ClusterManagerThrottlingStats();
+        final ClusterManagerThrottlingStats stats = new ClusterManagerThrottlingStats();
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if ((token == XContentParser.Token.START_OBJECT) && "stats".equals(fieldName)) {
+                parser.nextToken();
+                String statsField = null;
+                XContentParser.Token statsToken;
+                while ((statsToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (statsToken == XContentParser.Token.FIELD_NAME) {
+                        statsField = parser.currentName();
+                    } else if ((statsToken == XContentParser.Token.START_OBJECT) && "throttled_tasks_per_task_type".equals(statsField)) {
+                        parser.nextToken();
+                        // total_throttled_tasks is the sum of these entries, so it is not read separately.
+                        String taskType = null;
+                        XContentParser.Token typeToken;
+                        while ((typeToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                            if (typeToken == XContentParser.Token.FIELD_NAME) {
+                                taskType = parser.currentName();
+                            } else if (typeToken == XContentParser.Token.VALUE_NUMBER) {
+                                if (taskType != null) {
+                                    stats.onThrottle(taskType, parser.intValue());
+                                }
+                            } else {
+                                skipNestedValue(parser);
+                            }
+                            parser.nextToken();
+                        }
+                    } else {
+                        skipNestedValue(parser);
+                    }
+                    parser.nextToken();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return stats;
     }
 
     /**
@@ -571,9 +935,11 @@ public class HttpNodesStatsAction extends HttpAction {
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
                 fieldName = parser.currentName();
-            } else if ((token == XContentParser.Token.VALUE_NUMBER) && "stats".equals(fieldName)) {
+            } else if ((token == XContentParser.Token.START_OBJECT) && "stats".equals(fieldName)) {
+                parser.nextToken();
                 failOpenCount = parseFailOpenCount(parser);
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         final WeightedRoutingStats stats = WeightedRoutingStats.getInstance();
@@ -601,6 +967,7 @@ public class HttpNodesStatsAction extends HttpAction {
             } else if ((token == XContentParser.Token.VALUE_NUMBER) && "fail_open_count".equals(fieldName)) {
                 failOpenCount = parser.intValue();
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return failOpenCount;
@@ -647,6 +1014,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     pinned = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new FileCacheStats(active, total, used, pinned, evicted, removed, hits, misses, statsType);
@@ -675,6 +1043,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     timestamp = parser.longValue();
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
                 if ("full_file_stats".equals(fieldName)) {
                     fullFileStats = parseFileCacheStats(parser, FileCacheStatsType.FULL_FILE_STATS);
                 } else if ("block_file_stats".equals(fieldName)) {
@@ -683,6 +1052,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     overAllStats = parseFileCacheStats(parser, FileCacheStatsType.OVER_ALL_STATS);
                 } else if ("pinned_file_stats".equals(fieldName)) {
                     pinnedFileStats = parseFileCacheStats(parser, FileCacheStatsType.PINNED_FILE_STATS);
+                } else {
+                    consumeObject(parser);
                 }
             }
             parser.nextToken();
@@ -764,44 +1135,80 @@ public class HttpNodesStatsAction extends HttpAction {
     }
 
     /**
-     * Parses analytics backend native memory statistics from the response content.
+     * Parses the native memory pool statistics from the response content.
      *
      * @param parser the content parser
-     * @return the analytics backend native memory statistics
+     * @return the list of native memory pool statistics
      * @throws IOException if parsing fails
      */
-    protected AnalyticsBackendNativeMemoryStats parseAnalyticsBackendNativeMemoryStats(final XContentParser parser) throws IOException {
-        long allocatedBytes = 0;
-        long residentBytes = 0;
-        String fieldName = null;
+    protected List<NativeAllocatorPoolStats.PoolStats> parseNativeMemoryPools(final XContentParser parser) throws IOException {
+        final List<NativeAllocatorPoolStats.PoolStats> pools = new ArrayList<>();
+        String poolName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
-                fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("allocated_bytes".equals(fieldName)) {
-                    allocatedBytes = parser.longValue();
-                } else if ("resident_bytes".equals(fieldName)) {
-                    residentBytes = parser.longValue();
+                poolName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                long allocatedBytes = 0;
+                long peakBytes = 0;
+                long limitBytes = 0;
+                long minBytes = 0;
+                String group = null;
+                final String name = poolName;
+                String subField = null;
+                XContentParser.Token subToken;
+                while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (subToken == XContentParser.Token.FIELD_NAME) {
+                        subField = parser.currentName();
+                    } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                        if ("allocated_bytes".equals(subField)) {
+                            allocatedBytes = parser.longValue();
+                        } else if ("peak_bytes".equals(subField)) {
+                            // Only rendered by OpenSearch 3.7; 3.8 and later drop it.
+                            peakBytes = parser.longValue();
+                        } else if ("limit_bytes".equals(subField)) {
+                            limitBytes = parser.longValue();
+                        } else if ("min_bytes".equals(subField)) {
+                            minBytes = parser.longValue();
+                        }
+                    } else if (subToken == XContentParser.Token.VALUE_STRING) {
+                        if ("group".equals(subField)) {
+                            group = parser.text();
+                        }
+                    } else if (subToken == XContentParser.Token.START_OBJECT) {
+                        parser.nextToken();
+                        consumeObject(parser);
+                    } else if (subToken == XContentParser.Token.START_ARRAY) {
+                        parser.skipChildren();
+                    }
+                    parser.nextToken();
                 }
+                pools.add(new NativeAllocatorPoolStats.PoolStats(name, allocatedBytes, peakBytes, limitBytes, group, minBytes));
             }
             parser.nextToken();
         }
-        return new AnalyticsBackendNativeMemoryStats(allocatedBytes, residentBytes);
+        return pools;
     }
 
     /**
-     * Parses native allocator pool statistics from the response content.
+     * Parses the OpenSearch 3.7 {@code native_allocator} object into the current stats type.
+     *
+     * <p>OpenSearch 3.7 nested the totals under {@code root} and the pools under {@code pools}; 3.8
+     * replaced that with sibling {@code runtime} and {@code memory_pools} objects. The totals are
+     * mapped the same way OpenSearch itself bridges the two formats: allocated bytes carry over and
+     * the old peak becomes the resident value. The old {@code root.limit_bytes} has no counterpart
+     * and is dropped.
      *
      * @param parser the content parser
-     * @return the native allocator pool statistics
+     * @return the native allocator statistics, or null if the object carried neither totals nor pools
      * @throws IOException if parsing fails
      */
-    protected NativeAllocatorPoolStats parseNativeAllocatorPoolStats(final XContentParser parser) throws IOException {
+    protected NativeAllocatorPoolStats parseLegacyNativeAllocatorStats(final XContentParser parser) throws IOException {
         long rootAllocatedBytes = 0;
         long rootPeakBytes = 0;
-        long rootLimitBytes = 0;
-        final List<NativeAllocatorPoolStats.PoolStats> pools = new ArrayList<>();
+        List<NativeAllocatorPoolStats.PoolStats> pools = null;
+        boolean hasRoot = false;
         String fieldName = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -810,6 +1217,7 @@ public class HttpNodesStatsAction extends HttpAction {
             } else if (token == XContentParser.Token.START_OBJECT) {
                 parser.nextToken();
                 if ("root".equals(fieldName)) {
+                    hasRoot = true;
                     String subField = null;
                     XContentParser.Token subToken;
                     while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -820,51 +1228,24 @@ public class HttpNodesStatsAction extends HttpAction {
                                 rootAllocatedBytes = parser.longValue();
                             } else if ("peak_bytes".equals(subField)) {
                                 rootPeakBytes = parser.longValue();
-                            } else if ("limit_bytes".equals(subField)) {
-                                rootLimitBytes = parser.longValue();
                             }
+                        } else {
+                            skipNestedValue(parser);
                         }
                         parser.nextToken();
                     }
                 } else if ("pools".equals(fieldName)) {
-                    String poolName = null;
-                    XContentParser.Token poolToken;
-                    while ((poolToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
-                        if (poolToken == XContentParser.Token.FIELD_NAME) {
-                            poolName = parser.currentName();
-                        } else if (poolToken == XContentParser.Token.START_OBJECT) {
-                            parser.nextToken();
-                            long allocatedBytes = 0;
-                            long peakBytes = 0;
-                            long limitBytes = 0;
-                            final String name = poolName;
-                            String subField = null;
-                            XContentParser.Token subToken;
-                            while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
-                                if (subToken == XContentParser.Token.FIELD_NAME) {
-                                    subField = parser.currentName();
-                                } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
-                                    if ("allocated_bytes".equals(subField)) {
-                                        allocatedBytes = parser.longValue();
-                                    } else if ("peak_bytes".equals(subField)) {
-                                        peakBytes = parser.longValue();
-                                    } else if ("limit_bytes".equals(subField)) {
-                                        limitBytes = parser.longValue();
-                                    }
-                                }
-                                parser.nextToken();
-                            }
-                            pools.add(new NativeAllocatorPoolStats.PoolStats(name, allocatedBytes, peakBytes, limitBytes));
-                        }
-                        parser.nextToken();
-                    }
+                    pools = parseNativeMemoryPools(parser);
                 } else {
                     consumeObject(parser);
                 }
             }
             parser.nextToken();
         }
-        return new NativeAllocatorPoolStats(rootAllocatedBytes, rootPeakBytes, rootLimitBytes, pools);
+        if (!hasRoot && pools == null) {
+            return null;
+        }
+        return new NativeAllocatorPoolStats(rootAllocatedBytes, rootPeakBytes, pools != null ? pools : new ArrayList<>());
     }
 
     /**
@@ -919,6 +1300,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalLongRunningCancelledTaskCount = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new SearchTaskCancellationStats(currentLongRunningCancelledTaskCount, totalLongRunningCancelledTaskCount);
@@ -946,6 +1328,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalLongRunningCancelledTaskCount = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new SearchShardTaskCancellationStats(currentLongRunningCancelledTaskCount, totalLongRunningCancelledTaskCount);
@@ -1002,21 +1385,130 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalRejectedRequests = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new SegmentReplicationRejectionStats(totalRejectedRequests);
     }
 
     /**
-     * Consumes the remote store section and returns empty remote store node statistics.
+     * Parses admission control statistics from the response content.
+     *
+     * <p>{@link AdmissionControllerStats} can only be built from a running admission controller or
+     * from the wire, so the parsed rejection counts are restored through the wire format.
+     *
+     * @param parser the content parser
+     * @return the admission control statistics
+     * @throws IOException if parsing fails
+     */
+    protected AdmissionControlStats parseAdmissionControlStats(final XContentParser parser) throws IOException {
+        final Map<String, Map<String, Long>> rejectionCountsByController = new LinkedHashMap<>();
+        String controllerName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                controllerName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if (controllerName != null) {
+                    rejectionCountsByController.put(controllerName, parseAdmissionControllerRejectionCounts(parser));
+                } else {
+                    consumeObject(parser);
+                }
+            }
+            parser.nextToken();
+        }
+        try (final ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
+            out.writeVInt(rejectionCountsByController.size());
+            for (final Map.Entry<String, Map<String, Long>> entry : rejectionCountsByController.entrySet()) {
+                out.writeMap(entry.getValue(), StreamOutput::writeString, StreamOutput::writeLong);
+                out.writeString(entry.getKey());
+            }
+            return new AdmissionControlStats(out.toStreamInput());
+        }
+    }
+
+    /**
+     * Parses the {@code transport.rejection_count} map of a single admission controller.
+     *
+     * @param parser the content parser
+     * @return the rejection counts keyed by action
+     * @throws IOException if parsing fails
+     */
+    protected Map<String, Long> parseAdmissionControllerRejectionCounts(final XContentParser parser) throws IOException {
+        final Map<String, Long> rejectionCount = new LinkedHashMap<>();
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("transport".equals(fieldName)) {
+                    String transportField = null;
+                    XContentParser.Token transportToken;
+                    while ((transportToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                        if (transportToken == XContentParser.Token.FIELD_NAME) {
+                            transportField = parser.currentName();
+                        } else if ((transportToken == XContentParser.Token.START_OBJECT) && "rejection_count".equals(transportField)) {
+                            parser.nextToken();
+                            String action = null;
+                            XContentParser.Token countToken;
+                            while ((countToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                                if (countToken == XContentParser.Token.FIELD_NAME) {
+                                    action = parser.currentName();
+                                } else if (countToken == XContentParser.Token.VALUE_NUMBER) {
+                                    if (action != null) {
+                                        rejectionCount.put(action, parser.longValue());
+                                    }
+                                } else {
+                                    skipNestedValue(parser);
+                                }
+                                parser.nextToken();
+                            }
+                        } else {
+                            skipNestedValue(parser);
+                        }
+                        parser.nextToken();
+                    }
+                } else {
+                    consumeObject(parser);
+                }
+            }
+            parser.nextToken();
+        }
+        return rejectionCount;
+    }
+
+    /**
+     * Parses remote store node statistics from the response content.
      *
      * @param parser the content parser
      * @return the remote store node statistics
      * @throws IOException if parsing fails
      */
     protected RemoteStoreNodeStats parseRemoteStoreNodeStats(final XContentParser parser) throws IOException {
-        consumeObject(parser);
-        return new RemoteStoreNodeStats();
+        long lastSuccessfulFetchOfPinnedTimestamps = -1L;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if (RemoteStoreNodeStats.LAST_SUCCESSFUL_FETCH_OF_PINNED_TIMESTAMPS.equals(fieldName)) {
+                    lastSuccessfulFetchOfPinnedTimestamps = parser.longValue();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        // The no-argument constructor reads this node's own pinned timestamp service, which is not
+        // meaningful on a client, so the value from the response is restored over the wire format.
+        try (final ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
+            out.writeLong(lastSuccessfulFetchOfPinnedTimestamps);
+            return new RemoteStoreNodeStats(out.toStreamInput());
+        }
     }
 
     /**
@@ -1047,6 +1539,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     failedCount = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new OperationStats(count, totalTimeInMillis, current, failedCount);
@@ -1240,6 +1733,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     compatibleClusterStateDiffReceivedCount = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new PublishClusterStateStats(fullClusterStateReceivedCount, incompatibleClusterStateDiffReceivedCount,
@@ -1271,6 +1765,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     committed = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new PendingClusterStateStats(total, pending, committed);
@@ -1301,6 +1796,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     compilationLimitTriggered = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new ScriptStats(compilations, cacheEvictions, compilationLimitTriggered);
@@ -1372,6 +1868,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalOpened = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new HttpStats(serverOpen, totalOpened);
@@ -1411,6 +1908,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     txSize = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new TransportStats(serverOpen, totalOutboundConnections, rxCount, rxSize, txCount, txSize);
@@ -1504,6 +2002,7 @@ public class HttpNodesStatsAction extends HttpAction {
             } else if ((token == XContentParser.Token.VALUE_STRING) && "path".equals(fieldName)) {
                 path = parser.text();
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new DiskUsage(nodeId, nodeName, path, totalBytes, freeBytes);
@@ -1634,6 +2133,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     unloadedClassCount = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new JvmStats.Classes(loadedClassCount, totalLoadedClassCount, unloadedClassCount);
@@ -1752,6 +2252,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     peakCount = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new JvmStats.Threads(count, peakCount);
@@ -1911,6 +2412,7 @@ public class HttpNodesStatsAction extends HttpAction {
             } else if ((token == XContentParser.Token.VALUE_NUMBER) && "total_virtual_in_bytes".equals(fieldName)) {
                 totalVirtual = parser.longValue();
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new ProcessStats.Mem(totalVirtual);
@@ -1938,6 +2440,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     total = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new ProcessStats.Cpu(percent, total);
@@ -2107,6 +2610,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     free = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new OsStats.Swap(total, free);
@@ -2134,6 +2638,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     free = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new OsStats.Mem(total, free);
@@ -2302,6 +2807,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     throttleTimeInNanos = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         try (ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
@@ -2342,6 +2848,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     missCount = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new RequestCacheStats(memorySize, evictions, hitCount, missCount);
@@ -2378,6 +2885,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     earliestLastModifiedAge = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new TranslogStats(numberOfOperations, translogSizeInBytes, uncommittedOperations, uncommittedSizeInBytes,
@@ -2387,6 +2895,10 @@ public class HttpNodesStatsAction extends HttpAction {
     /**
      * Parses segment statistics from the response content.
      *
+     * <p>The per-type memory fields (terms, stored fields, term vectors, norms, points and doc
+     * values) were dropped in Lucene 9, are always rendered as zero and are not part of the current
+     * wire format, so they are no longer read.
+     *
      * @param parser the content parser
      * @return the segment statistics
      * @throws IOException if parsing fails
@@ -2394,18 +2906,13 @@ public class HttpNodesStatsAction extends HttpAction {
     protected SegmentsStats parseSegmentsStats(final XContentParser parser) throws IOException {
         String fieldName = null;
         long count = 0;
-        long memoryInBytes = 0;
-        long termsMemoryInBytes = 0;
-        long storedFieldsMemoryInBytes = 0;
-        long termVectorsMemoryInBytes = 0;
-        long normsMemoryInBytes = 0;
-        long pointsMemoryInBytes = 0;
-        long docValuesMemoryInBytes = 0;
         long indexWriterMemoryInBytes = 0;
         long versionMapMemoryInBytes = 0;
         long bitsetMemoryInBytes = 0;
         long maxUnsafeAutoIdTimestamp = 0;
         final Map<String, Long> fileSizes = new HashMap<>();
+        long[] remoteStore = null;
+        long[] segmentReplication = null;
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
             if (token == XContentParser.Token.FIELD_NAME) {
@@ -2419,29 +2926,21 @@ public class HttpNodesStatsAction extends HttpAction {
                             key = parser.currentName();
                         } else if (token == XContentParser.Token.VALUE_NUMBER) {
                             fileSizes.put(key, parser.longValue());
+                        } else {
+                            skipNestedValue(parser);
                         }
                         parser.nextToken();
                     }
+                } else if ("remote_store".equals(fieldName)) {
+                    remoteStore = parseRemoteSegmentStats(parser);
+                } else if ("segment_replication".equals(fieldName)) {
+                    segmentReplication = parseSegmentReplicationStats(parser);
                 } else {
                     consumeObject(parser);
                 }
             } else if (token == XContentParser.Token.VALUE_NUMBER) {
                 if ("count".equals(fieldName)) {
                     count = parser.longValue();
-                } else if ("memory_in_bytes".equals(fieldName)) {
-                    memoryInBytes = parser.longValue();
-                } else if ("terms_memory_in_bytes".equals(fieldName)) {
-                    termsMemoryInBytes = parser.longValue();
-                } else if ("stored_fields_memory_in_bytes".equals(fieldName)) {
-                    storedFieldsMemoryInBytes = parser.longValue();
-                } else if ("term_vectors_memory_in_bytes".equals(fieldName)) {
-                    termVectorsMemoryInBytes = parser.longValue();
-                } else if ("norms_memory_in_bytes".equals(fieldName)) {
-                    normsMemoryInBytes = parser.longValue();
-                } else if ("points_memory_in_bytes".equals(fieldName)) {
-                    pointsMemoryInBytes = parser.longValue();
-                } else if ("doc_values_memory_in_bytes".equals(fieldName)) {
-                    docValuesMemoryInBytes = parser.longValue();
                 } else if ("index_writer_memory_in_bytes".equals(fieldName)) {
                     indexWriterMemoryInBytes = parser.longValue();
                 } else if ("version_map_memory_in_bytes".equals(fieldName)) {
@@ -2451,31 +2950,223 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("max_unsafe_auto_id_timestamp".equals(fieldName)) {
                     maxUnsafeAutoIdTimestamp = parser.longValue();
                 }
+            } else {
+                skipNestedValue(parser);
             }
             parser.nextToken();
         }
         try (ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
             out.writeVLong(count);
-            out.writeLong(memoryInBytes);
-            out.writeLong(termsMemoryInBytes);
-            out.writeLong(storedFieldsMemoryInBytes);
-            out.writeLong(termVectorsMemoryInBytes);
-            out.writeLong(normsMemoryInBytes);
-            out.writeLong(pointsMemoryInBytes);
-            out.writeLong(docValuesMemoryInBytes);
             out.writeLong(indexWriterMemoryInBytes);
             out.writeLong(versionMapMemoryInBytes);
             out.writeLong(bitsetMemoryInBytes);
             out.writeLong(maxUnsafeAutoIdTimestamp);
-            out.writeVInt(fileSizes.size());
-            for (final Map.Entry<String, Long> entry : fileSizes.entrySet()) {
-                out.writeString(entry.getKey());
-                out.writeLong(entry.getValue());
-            }
+            out.writeMap(fileSizes, StreamOutput::writeString, StreamOutput::writeLong);
+            writeOptionalRemoteSegmentStats(out, remoteStore);
+            writeOptionalReplicationStats(out, segmentReplication);
             try (StreamInput in = new InputStreamStreamInput(new ByteArrayInputStream(out.toByteArray()))) {
                 return new SegmentsStats(in);
             }
         }
+    }
+
+    /**
+     * Writes the optional remote segment statistics of the segment statistics wire format.
+     *
+     * @param out the stream to write to
+     * @param values the counters returned by {@link #parseRemoteSegmentStats(XContentParser)}, or null
+     * @throws IOException if writing fails
+     */
+    protected void writeOptionalRemoteSegmentStats(final ByteArrayStreamOutput out, final long[] values) throws IOException {
+        if (values == null) {
+            out.writeBoolean(false);
+            return;
+        }
+        out.writeBoolean(true);
+        for (int i = 0; i < 11; i++) {
+            out.writeLong(values[i]);
+        }
+        out.writeVLong(values[11]);
+    }
+
+    /**
+     * Writes the optional replication statistics of the segment statistics wire format.
+     *
+     * @param out the stream to write to
+     * @param values the counters returned by {@link #parseSegmentReplicationStats(XContentParser)}, or null
+     * @throws IOException if writing fails
+     */
+    protected void writeOptionalReplicationStats(final ByteArrayStreamOutput out, final long[] values) throws IOException {
+        if (values == null) {
+            out.writeBoolean(false);
+            return;
+        }
+        out.writeBoolean(true);
+        out.writeVLong(values[0]);
+        out.writeVLong(values[1]);
+        out.writeVLong(values[2]);
+    }
+
+    /**
+     * Parses the {@code remote_store} object nested in the segment statistics.
+     *
+     * @param parser the content parser
+     * @return the upload and download counters in wire order, with the rejection count last
+     * @throws IOException if parsing fails
+     */
+    protected long[] parseRemoteSegmentStats(final XContentParser parser) throws IOException {
+        // uploadStarted, uploadFailed, uploadSucceeded, downloadStarted, downloadFailed,
+        // downloadSucceeded, maxRefreshTimeLag, maxRefreshBytesLag, totalRefreshBytesLag,
+        // totalUploadTime, totalDownloadTime, totalRejections
+        final long[] values = new long[12];
+        String section = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                section = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                if ("upload".equals(section)) {
+                    parseRemoteSegmentUploadStats(parser, values);
+                } else if ("download".equals(section)) {
+                    parseRemoteSegmentDownloadStats(parser, values);
+                } else {
+                    consumeObject(parser);
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return values;
+    }
+
+    /**
+     * Parses the {@code upload} object of the segment remote store statistics.
+     *
+     * @param parser the content parser
+     * @param values the counter array being filled
+     * @throws IOException if parsing fails
+     */
+    protected void parseRemoteSegmentUploadStats(final XContentParser parser, final long[] values) throws IOException {
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("max_refresh_time_lag_in_millis".equals(fieldName)) {
+                    values[6] = parser.longValue();
+                } else if ("total_time_spent_in_millis".equals(fieldName)) {
+                    values[9] = parser.longValue();
+                }
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                final String section = fieldName;
+                String subField = null;
+                XContentParser.Token subToken;
+                while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (subToken == XContentParser.Token.FIELD_NAME) {
+                        subField = parser.currentName();
+                    } else if (subToken == XContentParser.Token.VALUE_NUMBER) {
+                        if ("total_upload_size".equals(section)) {
+                            if ("started_bytes".equals(subField)) {
+                                values[0] = parser.longValue();
+                            } else if ("failed_bytes".equals(subField)) {
+                                values[1] = parser.longValue();
+                            } else if ("succeeded_bytes".equals(subField)) {
+                                values[2] = parser.longValue();
+                            }
+                        } else if ("refresh_size_lag".equals(section)) {
+                            if ("max_bytes".equals(subField)) {
+                                values[7] = parser.longValue();
+                            } else if ("total_bytes".equals(subField)) {
+                                values[8] = parser.longValue();
+                            }
+                        } else if ("pressure".equals(section) && "total_rejections".equals(subField)) {
+                            values[11] = parser.longValue();
+                        }
+                    } else {
+                        skipNestedValue(parser);
+                    }
+                    parser.nextToken();
+                }
+            }
+            parser.nextToken();
+        }
+    }
+
+    /**
+     * Parses the {@code download} object of the segment remote store statistics.
+     *
+     * @param parser the content parser
+     * @param values the counter array being filled
+     * @throws IOException if parsing fails
+     */
+    protected void parseRemoteSegmentDownloadStats(final XContentParser parser, final long[] values) throws IOException {
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("total_time_spent_in_millis".equals(fieldName)) {
+                    values[10] = parser.longValue();
+                }
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                final String section = fieldName;
+                String subField = null;
+                XContentParser.Token subToken;
+                while ((subToken = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+                    if (subToken == XContentParser.Token.FIELD_NAME) {
+                        subField = parser.currentName();
+                    } else if ((subToken == XContentParser.Token.VALUE_NUMBER) && "total_download_size".equals(section)) {
+                        if ("started_bytes".equals(subField)) {
+                            values[3] = parser.longValue();
+                        } else if ("failed_bytes".equals(subField)) {
+                            values[4] = parser.longValue();
+                        } else if ("succeeded_bytes".equals(subField)) {
+                            values[5] = parser.longValue();
+                        }
+                    } else {
+                        skipNestedValue(parser);
+                    }
+                    parser.nextToken();
+                }
+            }
+            parser.nextToken();
+        }
+    }
+
+    /**
+     * Parses the {@code segment_replication} object nested in the segment statistics.
+     *
+     * @param parser the content parser
+     * @return the max bytes behind, total bytes behind and max replication lag
+     * @throws IOException if parsing fails
+     */
+    protected long[] parseSegmentReplicationStats(final XContentParser parser) throws IOException {
+        final long[] values = new long[3];
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("max_bytes_behind".equals(fieldName)) {
+                    values[0] = parser.longValue();
+                } else if ("total_bytes_behind".equals(fieldName)) {
+                    values[1] = parser.longValue();
+                } else if ("max_replication_lag".equals(fieldName)) {
+                    values[2] = parser.longValue();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return values;
     }
 
     /**
@@ -2495,6 +3186,7 @@ public class HttpNodesStatsAction extends HttpAction {
             } else if ((token == XContentParser.Token.VALUE_NUMBER) && "size_in_bytes".equals(fieldName)) {
                 size = parser.longValue();
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new CompletionStats(size, null);
@@ -2522,6 +3214,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     evictions = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new FieldDataStats(memorySize, evictions, null);
@@ -2558,6 +3251,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     cacheSize = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new QueryCacheStats(ramBytesUsed, hitCount, missCount, cacheCount, cacheSize);
@@ -2588,6 +3282,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalTimeInMillis = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new WarmerStats(current, total, totalTimeInMillis);
@@ -2618,6 +3313,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalTimeInMillis = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new FlushStats(total, periodic, totalTimeInMillis);
@@ -2654,6 +3350,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     listeners = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new RefreshStats(total, totalTimeInMillis, externalTotal, externalTotalTimeInMillis, listeners);
@@ -2705,6 +3402,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalBytesPerSecAutoThrottle = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         try (ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
@@ -2803,6 +3501,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     searchIdleReactivateCount = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         long queryConcurrency = 0;
@@ -2863,6 +3562,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     current = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new GetStats(existsCount, existsTimeInMillis, missingCount, missingTimeInMillis, current);
@@ -2916,9 +3616,9 @@ public class HttpNodesStatsAction extends HttpAction {
                 } else if ("throttle_time_in_millis".equals(fieldName)) {
                     throttleTimeInMillis = parser.longValue();
                 }
-            } else if ("doc_status".equals(fieldName)) {
-                consumeObject(parser);
             }
+            // doc_status and any other nested value are handled by skipNestedValue below.
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new IndexingStats(new IndexingStats.Stats(indexCount, indexTimeInMillis, indexCurrent, indexFailedCount, deleteCount,
@@ -2947,6 +3647,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     reservedSize = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new StoreStats(sizeInBytes, reservedSize);
@@ -2977,6 +3678,7 @@ public class HttpNodesStatsAction extends HttpAction {
                     totalSizeInBytes = parser.longValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return new DocsStats(count, deleted, totalSizeInBytes);
@@ -3005,9 +3707,31 @@ public class HttpNodesStatsAction extends HttpAction {
                     results[2] = parser.intValue();
                 }
             }
+            skipNestedValue(parser);
             parser.nextToken();
         }
         return results;
+    }
+
+    /**
+     * Skips a value that the enclosing parse loop does not consume itself.
+     *
+     * <p>Reads the parser's current position rather than the token the iteration started on, so it is
+     * a no-op when the loop body already consumed the value. Without this, a loop that only handles
+     * field names and scalars descends into a nested value and exits at that value's closing token,
+     * leaving the parser out of sync and silently dropping every remaining field.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
+    protected void skipNestedValue(final XContentParser parser) throws IOException {
+        final XContentParser.Token token = parser.currentToken();
+        if (token == XContentParser.Token.START_OBJECT) {
+            parser.nextToken();
+            consumeObject(parser);
+        } else if (token == XContentParser.Token.START_ARRAY) {
+            parser.skipChildren();
+        }
     }
 
     /**

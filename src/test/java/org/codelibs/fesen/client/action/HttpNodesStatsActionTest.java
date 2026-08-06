@@ -41,12 +41,12 @@ import org.opensearch.action.admin.cluster.node.stats.NodeStats;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.opensearch.common.settings.ClusterSettings;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.xcontent.DeprecationHandler;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.plugin.stats.AnalyticsBackendNativeMemoryStats;
 import org.opensearch.plugin.stats.NativeAllocatorPoolStats;
 import org.opensearch.plugins.BlockCacheStats;
 import org.opensearch.search.backpressure.stats.SearchBackpressureStats;
@@ -54,6 +54,22 @@ import org.opensearch.search.pipeline.SearchPipelineStats;
 import org.opensearch.tasks.TaskCancellationStats;
 
 import sun.misc.Unsafe;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.Map;
+import java.util.HashMap;
+import org.opensearch.index.remote.RemoteSegmentStats;
+import org.opensearch.index.engine.SegmentsStats;
+import org.opensearch.ratelimitting.admissioncontrol.stats.AdmissionControlStats;
+import org.opensearch.node.remotestore.RemoteStoreNodeStats;
+import org.opensearch.node.ResponseCollectorService.ComputedNodeStats;
+import org.opensearch.node.AdaptiveSelectionStats;
+import org.opensearch.cluster.service.ClusterManagerThrottlingStats;
+import org.opensearch.script.ScriptCacheStats;
+import org.opensearch.index.stats.ShardIndexingPressureStats;
+import org.opensearch.index.stats.IndexingPressureStats;
+import org.opensearch.core.xcontent.XContentBuilder;
+import org.opensearch.core.xcontent.ToXContentFragment;
+import org.opensearch.core.xcontent.ToXContent;
 
 /**
  * Tests for {@link HttpNodesStatsAction} JSON parsing logic.
@@ -69,6 +85,10 @@ class HttpNodesStatsActionTest {
         f.setAccessible(true);
         final Unsafe unsafe = (Unsafe) f.get(null);
         action = (HttpNodesStatsAction) unsafe.allocateInstance(HttpNodesStatsAction.class);
+        // allocateInstance skips the constructor, so wire up the one field the indices parser needs.
+        final Field cs = HttpNodesStatsAction.class.getDeclaredField("clusterSettings");
+        cs.setAccessible(true);
+        cs.set(action, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
     }
 
     private XContentParser createParser(final String json) throws IOException {
@@ -1011,91 +1031,63 @@ class HttpNodesStatsActionTest {
         return (BlockCacheStats) m.invoke(action, parser);
     }
 
-    private AnalyticsBackendNativeMemoryStats callParseAnalyticsBackendNativeMemoryStats(final XContentParser parser) throws Exception {
-        final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseAnalyticsBackendNativeMemoryStats", XContentParser.class);
+    @SuppressWarnings("unchecked")
+    private List<NativeAllocatorPoolStats.PoolStats> callParseNativeMemoryPools(final XContentParser parser) throws Exception {
+        final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseNativeMemoryPools", XContentParser.class);
         m.setAccessible(true);
-        return (AnalyticsBackendNativeMemoryStats) m.invoke(action, parser);
+        return (List<NativeAllocatorPoolStats.PoolStats>) m.invoke(action, parser);
     }
 
-    private NativeAllocatorPoolStats callParseNativeAllocatorPoolStats(final XContentParser parser) throws Exception {
-        final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseNativeAllocatorPoolStats", XContentParser.class);
-        m.setAccessible(true);
-        return (NativeAllocatorPoolStats) m.invoke(action, parser);
-    }
-
-    // ==================== parseNativeAllocatorPoolStats tests ====================
+    // ==================== parseNativeMemoryPools tests ====================
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void test_parseNativeAllocatorPoolStats_fullParse() throws Exception {
-        final String json = "{" + "\"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30}," + "\"pools\":{"
-                + "  \"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3},"
-                + "  \"pool-b\":{\"allocated_bytes\":4,\"peak_bytes\":5,\"limit_bytes\":6}" + "}" + "}";
+    void test_parseNativeMemoryPools_fullParse() throws Exception {
+        final String json = "{" + "  \"pool-a\":{\"allocated_bytes\":1,\"limit_bytes\":3,\"min_bytes\":2,\"group\":\"arrow\"},"
+                + "  \"pool-b\":{\"allocated_bytes\":4,\"limit_bytes\":6,\"min_bytes\":5}" + "}";
         try (final XContentParser parser = createParser(json)) {
             parser.nextToken(); // advance past START_OBJECT into first field
-            final NativeAllocatorPoolStats stats = callParseNativeAllocatorPoolStats(parser);
-            assertNotNull(stats);
-            assertEquals(10L, stats.getRootAllocatedBytes());
-            assertEquals(20L, stats.getRootPeakBytes());
-            assertEquals(30L, stats.getRootLimitBytes());
-            assertEquals(2, stats.getPools().size());
-            final NativeAllocatorPoolStats.PoolStats poolA = stats.getPools().get(0);
+            final List<NativeAllocatorPoolStats.PoolStats> pools = callParseNativeMemoryPools(parser);
+            assertEquals(2, pools.size());
+            final NativeAllocatorPoolStats.PoolStats poolA = pools.get(0);
             assertEquals("pool-a", poolA.getName());
             assertEquals(1L, poolA.getAllocatedBytes());
-            assertEquals(2L, poolA.getPeakBytes());
             assertEquals(3L, poolA.getLimitBytes());
-            final NativeAllocatorPoolStats.PoolStats poolB = stats.getPools().get(1);
+            assertEquals(2L, poolA.getMinBytes());
+            assertEquals("arrow", poolA.getGroup());
+            final NativeAllocatorPoolStats.PoolStats poolB = pools.get(1);
             assertEquals("pool-b", poolB.getName());
             assertEquals(4L, poolB.getAllocatedBytes());
-            assertEquals(5L, poolB.getPeakBytes());
             assertEquals(6L, poolB.getLimitBytes());
+            assertEquals(5L, poolB.getMinBytes());
+            assertNull(poolB.getGroup());
             assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
         }
     }
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void test_parseNativeAllocatorPoolStats_noPools() throws Exception {
-        final String json = "{\"root\":{\"allocated_bytes\":100,\"peak_bytes\":200,\"limit_bytes\":300}}";
-        try (final XContentParser parser = createParser(json)) {
-            parser.nextToken();
-            final NativeAllocatorPoolStats stats = callParseNativeAllocatorPoolStats(parser);
-            assertNotNull(stats);
-            assertEquals(100L, stats.getRootAllocatedBytes());
-            assertEquals(200L, stats.getRootPeakBytes());
-            assertEquals(300L, stats.getRootLimitBytes());
-            assertNotNull(stats.getPools());
-            assertEquals(0, stats.getPools().size());
-            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
-        }
-    }
-
-    // ==================== parseAnalyticsBackendNativeMemoryStats tests ====================
-
-    @Test
-    @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void test_parseAnalyticsBackendNativeMemoryStats_full() throws Exception {
-        final String json = "{\"allocated_bytes\":1111,\"resident_bytes\":2222}";
-        try (final XContentParser parser = createParser(json)) {
-            parser.nextToken();
-            final AnalyticsBackendNativeMemoryStats stats = callParseAnalyticsBackendNativeMemoryStats(parser);
-            assertNotNull(stats);
-            assertEquals(1111L, stats.getAllocatedBytes());
-            assertEquals(2222L, stats.getResidentBytes());
-            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
-        }
-    }
-
-    @Test
-    @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void test_parseAnalyticsBackendNativeMemoryStats_empty() throws Exception {
+    void test_parseNativeMemoryPools_empty() throws Exception {
         final String json = "{}";
         try (final XContentParser parser = createParser(json)) {
             parser.nextToken();
-            final AnalyticsBackendNativeMemoryStats stats = callParseAnalyticsBackendNativeMemoryStats(parser);
-            assertNotNull(stats);
-            assertEquals(0L, stats.getAllocatedBytes());
-            assertEquals(0L, stats.getResidentBytes());
+            final List<NativeAllocatorPoolStats.PoolStats> pools = callParseNativeMemoryPools(parser);
+            assertNotNull(pools);
+            assertEquals(0, pools.size());
+            assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNativeMemoryPools_unknownFieldsIgnored() throws Exception {
+        final String json = "{\"pool-a\":{\"allocated_bytes\":7,\"peak_bytes\":99,\"unknown\":{\"a\":1},\"limit_bytes\":8}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final List<NativeAllocatorPoolStats.PoolStats> pools = callParseNativeMemoryPools(parser);
+            assertEquals(1, pools.size());
+            assertEquals(7L, pools.get(0).getAllocatedBytes());
+            assertEquals(8L, pools.get(0).getLimitBytes());
             assertEquals(XContentParser.Token.END_OBJECT, parser.currentToken());
         }
     }
@@ -1163,35 +1155,31 @@ class HttpNodesStatsActionTest {
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void test_parseNodeStats_nativeMemoryFull() throws Exception {
         final String json = "{" + "\"name\":\"test-node\"," + "\"timestamp\":1234567890," + "\"native_memory\":{"
-                + "  \"total_estimated_bytes\":123456," + "  \"analytics_backend\":{\"allocated_bytes\":1111,\"resident_bytes\":2222},"
-                + "  \"native_allocator\":{" + "    \"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30},"
-                + "    \"pools\":{" + "      \"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3},"
-                + "      \"pool-b\":{\"allocated_bytes\":4,\"peak_bytes\":5,\"limit_bytes\":6}" + "    }" + "  }" + "}" + "}";
+                + "  \"total_estimated_bytes\":123456," + "  \"runtime\":{\"allocated_bytes\":10,\"resident_bytes\":20},"
+                + "  \"memory_pools\":{" + "    \"pool-a\":{\"allocated_bytes\":1,\"limit_bytes\":3,\"min_bytes\":2},"
+                + "    \"pool-b\":{\"allocated_bytes\":4,\"limit_bytes\":6,\"min_bytes\":5,\"group\":\"arrow\"}" + "  }" + "}" + "}";
         try (final XContentParser parser = createParser(json)) {
             parser.nextToken();
             final NodeStats nodeStats = callParseNodeStats(parser, "node1");
             assertNotNull(nodeStats);
             assertEquals(123456L, nodeStats.getTotalEstimatedNativeBytes());
-            final AnalyticsBackendNativeMemoryStats nativeMemory = nodeStats.getAnalyticsBackendNativeMemoryStats();
-            assertNotNull(nativeMemory);
-            assertEquals(1111L, nativeMemory.getAllocatedBytes());
-            assertEquals(2222L, nativeMemory.getResidentBytes());
             final NativeAllocatorPoolStats nativeAllocator = nodeStats.getNativeAllocatorStats();
             assertNotNull(nativeAllocator);
-            assertEquals(10L, nativeAllocator.getRootAllocatedBytes());
-            assertEquals(20L, nativeAllocator.getRootPeakBytes());
-            assertEquals(30L, nativeAllocator.getRootLimitBytes());
+            assertEquals(10L, nativeAllocator.getNativeAllocatedBytes());
+            assertEquals(20L, nativeAllocator.getNativeResidentBytes());
             assertEquals(2, nativeAllocator.getPools().size());
             final NativeAllocatorPoolStats.PoolStats pool0 = nativeAllocator.getPools().get(0);
             assertEquals("pool-a", pool0.getName());
             assertEquals(1L, pool0.getAllocatedBytes());
-            assertEquals(2L, pool0.getPeakBytes());
             assertEquals(3L, pool0.getLimitBytes());
+            assertEquals(2L, pool0.getMinBytes());
+            assertNull(pool0.getGroup());
             final NativeAllocatorPoolStats.PoolStats pool1 = nativeAllocator.getPools().get(1);
             assertEquals("pool-b", pool1.getName());
             assertEquals(4L, pool1.getAllocatedBytes());
-            assertEquals(5L, pool1.getPeakBytes());
             assertEquals(6L, pool1.getLimitBytes());
+            assertEquals(5L, pool1.getMinBytes());
+            assertEquals("arrow", pool1.getGroup());
         }
     }
 
@@ -1205,7 +1193,6 @@ class HttpNodesStatsActionTest {
             final NodeStats nodeStats = callParseNodeStats(parser, "node1");
             assertNotNull(nodeStats);
             assertEquals(99999L, nodeStats.getTotalEstimatedNativeBytes());
-            assertNull(nodeStats.getAnalyticsBackendNativeMemoryStats());
             assertNull(nodeStats.getNativeAllocatorStats());
         }
     }
@@ -1219,7 +1206,6 @@ class HttpNodesStatsActionTest {
             final NodeStats nodeStats = callParseNodeStats(parser, "node1");
             assertNotNull(nodeStats);
             assertEquals(-1L, nodeStats.getTotalEstimatedNativeBytes());
-            assertNull(nodeStats.getAnalyticsBackendNativeMemoryStats());
             assertNull(nodeStats.getNativeAllocatorStats());
         }
     }
@@ -1352,9 +1338,8 @@ class HttpNodesStatsActionTest {
                 + "    \"pinned_file_stats\":{\"active_in_bytes\":0,\"used_in_bytes\":0,\"pinned_in_bytes\":0,"
                 + "      \"evictions_in_bytes\":0,\"removed_in_bytes\":0,\"active_percent\":0,\"hit_count\":0,\"miss_count\":0}" + "  },"
                 + "  \"native_memory\":{" + "    \"total_estimated_bytes\":123456,"
-                + "    \"analytics_backend\":{\"allocated_bytes\":1111,\"resident_bytes\":2222}," + "    \"native_allocator\":{"
-                + "      \"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30},"
-                + "      \"pools\":{\"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3}}" + "    }" + "  }" + "}}" + "}";
+                + "    \"runtime\":{\"allocated_bytes\":10,\"resident_bytes\":20},"
+                + "    \"memory_pools\":{\"pool-a\":{\"allocated_bytes\":1,\"limit_bytes\":3,\"min_bytes\":2}}" + "  }" + "}}" + "}";
         try (final XContentParser parser = createParser(json)) {
             final NodesStatsResponse response = callFromXContent(parser);
             assertNotNull(response);
@@ -1365,7 +1350,6 @@ class HttpNodesStatsActionTest {
             assertNotNull(node.getFileCacheOnlyStats());
             assertNotNull(node.getBlockCacheOnlyStats());
             assertEquals(123456L, node.getTotalEstimatedNativeBytes());
-            assertNotNull(node.getAnalyticsBackendNativeMemoryStats());
             assertNotNull(node.getNativeAllocatorStats());
             assertNotNull(node.getJvm());
             assertNotNull(node.getTransport());
@@ -1379,16 +1363,15 @@ class HttpNodesStatsActionTest {
     void test_parseNodeStats_nativeMemory_unknownNestedObject_consumedGracefully() throws Exception {
         final String json = "{" + "\"name\":\"test-node\",\"timestamp\":111," + "\"native_memory\":{" + "  \"total_estimated_bytes\":500,"
                 + "  \"future_field\":{\"nested\":{\"deep\":true},\"count\":42},"
-                + "  \"analytics_backend\":{\"allocated_bytes\":10,\"resident_bytes\":20}," + "  \"native_allocator\":{"
-                + "    \"root\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3}," + "    \"pools\":{}" + "  }" + "}" + "}";
+                + "  \"runtime\":{\"allocated_bytes\":1,\"resident_bytes\":2}," + "  \"memory_pools\":{}" + "}" + "}";
         try (final XContentParser parser = createParser(json)) {
             parser.nextToken();
             final NodeStats nodeStats = callParseNodeStats(parser, "node1");
             assertNotNull(nodeStats);
             assertEquals(500L, nodeStats.getTotalEstimatedNativeBytes());
-            assertNotNull(nodeStats.getAnalyticsBackendNativeMemoryStats());
-            assertEquals(10L, nodeStats.getAnalyticsBackendNativeMemoryStats().getAllocatedBytes());
             assertNotNull(nodeStats.getNativeAllocatorStats());
+            assertEquals(1L, nodeStats.getNativeAllocatorStats().getNativeAllocatedBytes());
+            assertEquals(0, nodeStats.getNativeAllocatorStats().getPools().size());
         }
     }
 
@@ -1401,6 +1384,344 @@ class HttpNodesStatsActionTest {
             final NodeStats nodeStats = callParseNodeStats(parser, "node1");
             assertNotNull(nodeStats);
             assertEquals(-1L, nodeStats.getTotalEstimatedNativeBytes());
+        }
+    }
+
+    /** Renders a stats fragment to JSON so values without public getters can still be asserted. */
+    private String render(final ToXContentFragment fragment) throws IOException {
+        final XContentBuilder builder = JsonXContent.contentBuilder();
+        builder.startObject();
+        fragment.toXContent(builder, ToXContent.EMPTY_PARAMS);
+        builder.endObject();
+        builder.flush();
+        return ((java.io.ByteArrayOutputStream) builder.getOutputStream()).toString("UTF-8");
+    }
+
+    // ==================== Sections that used to be discarded ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_indexingPressure() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"indexing_pressure\":{\"memory\":{"
+                + "  \"current\":{\"combined_coordinating_and_primary_in_bytes\":11,\"coordinating_in_bytes\":12,"
+                + "    \"primary_in_bytes\":13,\"replica_in_bytes\":14,\"all_in_bytes\":25},"
+                + "  \"total\":{\"combined_coordinating_and_primary_in_bytes\":21,\"coordinating_in_bytes\":22,"
+                + "    \"primary_in_bytes\":23,\"replica_in_bytes\":24,\"all_in_bytes\":45,"
+                + "    \"coordinating_rejections\":31,\"primary_rejections\":32,\"replica_rejections\":33}," + "  \"limit_in_bytes\":99}}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final IndexingPressureStats stats = callParseNodeStats(parser, "n1").getIndexingPressureStats();
+            assertNotNull(stats);
+            assertEquals(11L, stats.getCurrentCombinedCoordinatingAndPrimaryBytes());
+            assertEquals(12L, stats.getCurrentCoordinatingBytes());
+            assertEquals(13L, stats.getCurrentPrimaryBytes());
+            assertEquals(14L, stats.getCurrentReplicaBytes());
+            assertEquals(21L, stats.getTotalCombinedCoordinatingAndPrimaryBytes());
+            assertEquals(22L, stats.getTotalCoordinatingBytes());
+            assertEquals(23L, stats.getTotalPrimaryBytes());
+            assertEquals(24L, stats.getTotalReplicaBytes());
+            assertEquals(31L, stats.getCoordinatingRejections());
+            assertEquals(32L, stats.getPrimaryRejections());
+            assertEquals(33L, stats.getReplicaRejections());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_shardIndexingPressure_shadowModeAndEnforced() throws Exception {
+        final String shadow = "{\"name\":\"n\",\"timestamp\":1,\"shard_indexing_pressure\":{\"stats\":{},"
+                + "\"total_rejections_breakup_shadow_mode\":{\"node_limits\":1,\"no_successful_request_limits\":2,"
+                + "\"throughput_degradation_limits\":3},\"enabled\":true,\"enforced\":false}}";
+        try (final XContentParser parser = createParser(shadow)) {
+            parser.nextToken();
+            final ShardIndexingPressureStats stats = callParseNodeStats(parser, "n1").getShardIndexingPressureStats();
+            assertNotNull(stats);
+            final String rendered = render(stats);
+            assertTrue(rendered.contains("\"node_limits\":1"), rendered);
+            assertTrue(rendered.contains("\"no_successful_request_limits\":2"), rendered);
+            assertTrue(rendered.contains("\"throughput_degradation_limits\":3"), rendered);
+            assertTrue(rendered.contains("\"enabled\":true"), rendered);
+            assertTrue(rendered.contains("\"enforced\":false"), rendered);
+            assertTrue(rendered.contains("total_rejections_breakup_shadow_mode"), rendered);
+        }
+        // The object is renamed once enforcement is on, so the other name must work too.
+        final String enforced = "{\"name\":\"n\",\"timestamp\":1,\"shard_indexing_pressure\":{\"stats\":{},"
+                + "\"total_rejections_breakup\":{\"node_limits\":7,\"no_successful_request_limits\":8,"
+                + "\"throughput_degradation_limits\":9},\"enabled\":true,\"enforced\":true}}";
+        try (final XContentParser parser = createParser(enforced)) {
+            parser.nextToken();
+            final ShardIndexingPressureStats stats = callParseNodeStats(parser, "n1").getShardIndexingPressureStats();
+            final String rendered = render(stats);
+            assertTrue(rendered.contains("\"node_limits\":7"), rendered);
+            assertTrue(rendered.contains("\"throughput_degradation_limits\":9"), rendered);
+            assertTrue(rendered.contains("\"enforced\":true"), rendered);
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_scriptCache_contexts() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"script_cache\":{"
+                + "\"sum\":{\"compilations\":5,\"cache_evictions\":6,\"compilation_limit_triggered\":7},"
+                + "\"contexts\":[{\"context\":\"aggs\",\"compilations\":1,\"cache_evictions\":2,\"compilation_limit_triggered\":3},"
+                + "{\"context\":\"update\",\"compilations\":4,\"cache_evictions\":5,\"compilation_limit_triggered\":6}]}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final ScriptCacheStats stats = callParseNodeStats(parser, "n1").getScriptCacheStats();
+            assertNotNull(stats);
+            assertEquals(2, stats.getContextStats().size());
+            assertEquals(1L, stats.getContextStats().get("aggs").getCompilations());
+            assertEquals(2L, stats.getContextStats().get("aggs").getCacheEvictions());
+            assertEquals(3L, stats.getContextStats().get("aggs").getCompilationLimitTriggered());
+            assertEquals(4L, stats.getContextStats().get("update").getCompilations());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_clusterManagerThrottling() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"cluster_manager_throttling\":{\"stats\":{"
+                + "\"total_throttled_tasks\":5,\"throttled_tasks_per_task_type\":{\"put-mapping\":2,\"create-index\":3}}}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final ClusterManagerThrottlingStats stats = callParseNodeStats(parser, "n1").getClusterManagerThrottlingStats();
+            assertNotNull(stats);
+            assertEquals(5L, stats.getTotalThrottledTaskCount());
+            assertEquals(2L, stats.getThrottlingCount("put-mapping"));
+            assertEquals(3L, stats.getThrottlingCount("create-index"));
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_adaptiveSelection() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"adaptive_selection\":{\"node-a\":{"
+                + "\"outgoing_searches\":2,\"avg_queue_size\":3,\"avg_service_time_ns\":6386680,"
+                + "\"avg_response_time_ns\":24100443,\"rank\":\"24.1\"}}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final AdaptiveSelectionStats stats = callParseNodeStats(parser, "n1").getAdaptiveSelectionStats();
+            assertNotNull(stats);
+            assertEquals(2L, stats.getOutgoingConnections().get("node-a").longValue());
+            final ComputedNodeStats computed = stats.getComputedStats().get("node-a");
+            assertNotNull(computed);
+            assertEquals(3, computed.queueSize);
+            assertEquals(6386680.0, computed.serviceTime, 0.0001);
+            assertEquals(24100443.0, computed.responseTime, 0.0001);
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_remoteStore_usesResponseValue() throws Exception {
+        final String json =
+                "{\"name\":\"n\",\"timestamp\":1," + "\"remote_store\":{\"last_successful_fetch_of_pinned_timestamps\":1234567890}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final RemoteStoreNodeStats stats = callParseNodeStats(parser, "n1").getRemoteStoreNodeStats();
+            assertNotNull(stats);
+            assertEquals(1234567890L, stats.getLastSuccessfulFetchOfPinnedTimestamps());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_admissionControl() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"admission_control\":{"
+                + "\"global_cpu_usage\":{\"transport\":{\"rejection_count\":{\"indexing\":4,\"search\":5}}},"
+                + "\"global_io_usage\":{\"transport\":{\"rejection_count\":{}}}}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final AdmissionControlStats stats = callParseNodeStats(parser, "n1").getAdmissionControlStats();
+            assertNotNull(stats);
+            assertEquals(2, stats.getAdmissionControllerStatsList().size());
+            final Map<String, Long> byName = new HashMap<>();
+            stats.getAdmissionControllerStatsList()
+                    .forEach(c -> c.getRejectionCount().forEach((k, v) -> byName.put(c.getAdmissionControllerName() + "." + k, v)));
+            assertEquals(4L, byName.get("global_cpu_usage.indexing").longValue());
+            assertEquals(5L, byName.get("global_cpu_usage.search").longValue());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_weightedRouting_failOpenCount() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"weighted_routing\":{\"stats\":{\"fail_open_count\":3}}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            assertEquals(3L, callParseNodeStats(parser, "n1").getWeightedRoutingStats().getFailOpenCount());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_searchBackpressure_taskCounters() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"search_backpressure\":{"
+                + "\"search_task\":{\"resource_tracker_stats\":{\"cpu_usage_tracker\":{\"cancellation_count\":9}},"
+                + "  \"completion_count\":11,\"cancellation_stats\":{\"cancellation_count\":1,\"cancellation_limit_reached_count\":2}},"
+                + "\"search_shard_task\":{\"resource_tracker_stats\":{},"
+                + "  \"completion_count\":22,\"cancellation_stats\":{\"cancellation_count\":3,\"cancellation_limit_reached_count\":4}},"
+                + "\"mode\":\"monitor_only\"}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final SearchBackpressureStats stats = callParseNodeStats(parser, "n1").getSearchBackpressureStats();
+            assertNotNull(stats);
+            // SearchBackpressureStats exposes no getters, so the counters are checked as rendered.
+            final String rendered = render(stats);
+            assertTrue(rendered.contains("\"completion_count\":11"), rendered);
+            assertTrue(rendered.contains("\"cancellation_count\":1,\"cancellation_limit_reached_count\":2"), rendered);
+            assertTrue(rendered.contains("\"completion_count\":22"), rendered);
+            assertTrue(rendered.contains("\"cancellation_count\":3,\"cancellation_limit_reached_count\":4"), rendered);
+            assertTrue(rendered.contains("monitor_only"), rendered);
+        }
+    }
+
+    /**
+     * The segment statistics used to be rebuilt with the pre-2.0 wire layout while being read back at
+     * the current version, so the values landed in the wrong fields and the nested stats stayed null.
+     */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_segments_valuesAndNestedStats() throws Exception {
+        final String json = "{\"name\":\"n\",\"timestamp\":1,\"indices\":{\"segments\":{"
+                + "\"count\":5,\"memory_in_bytes\":0,\"index_writer_memory_in_bytes\":116004,"
+                + "\"version_map_memory_in_bytes\":117,\"fixed_bit_set_memory_in_bytes\":42," + "\"max_unsafe_auto_id_timestamp\":-1,"
+                + "\"remote_store\":{\"upload\":{\"total_upload_size\":{\"started_bytes\":10,\"succeeded_bytes\":11,\"failed_bytes\":12},"
+                + "  \"refresh_size_lag\":{\"total_bytes\":13,\"max_bytes\":14},\"max_refresh_time_lag_in_millis\":15,"
+                + "  \"total_time_spent_in_millis\":16,\"pressure\":{\"total_rejections\":17}},"
+                + "  \"download\":{\"total_download_size\":{\"started_bytes\":20,\"succeeded_bytes\":21,\"failed_bytes\":22},"
+                + "  \"total_time_spent_in_millis\":23}},"
+                + "\"segment_replication\":{\"max_bytes_behind\":30,\"total_bytes_behind\":31,\"max_replication_lag\":32},"
+                + "\"file_sizes\":{\"seg1\":99}}}}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final SegmentsStats stats = callParseNodeStats(parser, "n1").getIndices().getSegments();
+            assertNotNull(stats);
+            assertEquals(5L, stats.getCount());
+            assertEquals(116004L, stats.getIndexWriterMemoryInBytes());
+            assertEquals(117L, stats.getVersionMapMemoryInBytes());
+            assertEquals(42L, stats.getBitsetMemoryInBytes());
+            assertEquals(-1L, stats.getMaxUnsafeAutoIdTimestamp());
+            assertEquals(99L, stats.getFileSizes().get("seg1").longValue());
+            final RemoteSegmentStats remote = stats.getRemoteSegmentStats();
+            assertNotNull(remote);
+            assertEquals(10L, remote.getUploadBytesStarted());
+            assertEquals(11L, remote.getUploadBytesSucceeded());
+            assertEquals(12L, remote.getUploadBytesFailed());
+            assertEquals(20L, remote.getDownloadBytesStarted());
+            assertEquals(21L, remote.getDownloadBytesSucceeded());
+            assertEquals(15L, remote.getMaxRefreshTimeLag());
+            assertEquals(14L, remote.getMaxRefreshBytesLag());
+            assertEquals(13L, remote.getTotalRefreshBytesLag());
+            assertEquals(16L, remote.getTotalUploadTime());
+            assertEquals(23L, remote.getTotalDownloadTime());
+            assertEquals(17L, remote.getTotalRejections());
+        }
+    }
+
+    // ==================== Regression: nested objects must not desynchronise the parse ====================
+
+    /**
+     * A real {@code indices.search} carries a nested {@code request} object. A parse loop that only
+     * handles field names and scalars descends into it and exits early, which used to spill the
+     * remaining {@code indices} keys out as sibling nodes and drop every later section.
+     */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_indicesSearchWithNestedRequest_doesNotDesync() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\",\"timestamp\":111," + "\"indices\":{" + "  \"docs\":{\"count\":5,\"deleted\":0},"
+                + "  \"search\":{\"open_contexts\":0,\"query_total\":6,"
+                + "    \"request\":{\"took\":{\"time_in_millis\":157,\"current\":0,\"total\":6},"
+                + "      \"query\":{\"time_in_millis\":142,\"current\":0,\"total\":6}}}," + "  \"merges\":{\"current\":0,\"total\":0},"
+                + "  \"segments\":{\"count\":3}" + "}," + "\"jvm\":{\"timestamp\":222,"
+                + "  \"mem\":{\"heap_used_in_bytes\":1000,\"heap_used_percent\":10,\"heap_committed_in_bytes\":2000,"
+                + "    \"heap_max_in_bytes\":2000,\"non_heap_used_in_bytes\":300,\"non_heap_committed_in_bytes\":400}},"
+                + "\"native_memory\":{" + "  \"total_estimated_bytes\":253865984" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertNotNull(nodeStats.getIndices());
+            // Everything after the nested object must still be reached.
+            assertNotNull(nodeStats.getJvm());
+            assertEquals(253865984L, nodeStats.getTotalEstimatedNativeBytes());
+        }
+    }
+
+    /** The same shape through fromXContent: the leftover indices keys must not become extra nodes. */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_fromXContent_indicesSearchWithNestedRequest_yieldsExactlyOneNode() throws Exception {
+        final String json = "{" + "\"_nodes\":{\"total\":1,\"successful\":1,\"failed\":0}," + "\"cluster_name\":\"test-cluster\","
+                + "\"nodes\":{\"node1\":{" + "  \"name\":\"test-node\",\"timestamp\":111," + "  \"indices\":{"
+                + "    \"search\":{\"query_total\":6,\"request\":{\"took\":{\"time_in_millis\":1,\"current\":0,\"total\":1}}},"
+                + "    \"merges\":{\"current\":0}," + "    \"refresh\":{\"total\":1}," + "    \"flush\":{\"total\":1}" + "  },"
+                + "  \"native_memory\":{\"total_estimated_bytes\":42}" + "}}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            final NodesStatsResponse response = callFromXContent(parser);
+            assertNotNull(response);
+            assertEquals(1, response.getNodes().size());
+            assertEquals("test-node", response.getNodes().get(0).getNode().getName());
+            assertEquals(42L, response.getNodes().get(0).getTotalEstimatedNativeBytes());
+        }
+    }
+
+    // ==================== Backwards compatibility: OpenSearch 3.7 native_memory shape ====================
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemory_legacy37Shape() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\",\"timestamp\":111," + "\"native_memory\":{"
+                + "  \"total_estimated_bytes\":242368512," + "  \"analytics_backend\":{\"allocated_bytes\":1111,\"resident_bytes\":2222},"
+                + "  \"native_allocator\":{" + "    \"root\":{\"allocated_bytes\":10,\"peak_bytes\":20,\"limit_bytes\":30},"
+                + "    \"pools\":{\"pool-a\":{\"allocated_bytes\":1,\"peak_bytes\":2,\"limit_bytes\":3}}" + "  }" + "}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertNotNull(nodeStats);
+            assertEquals(242368512L, nodeStats.getTotalEstimatedNativeBytes());
+            final NativeAllocatorPoolStats stats = nodeStats.getNativeAllocatorStats();
+            assertNotNull(stats);
+            // root.allocated_bytes/peak_bytes map onto the 3.8 allocated/resident pair.
+            assertEquals(10L, stats.getNativeAllocatedBytes());
+            assertEquals(20L, stats.getNativeResidentBytes());
+            assertEquals(1, stats.getPools().size());
+            final NativeAllocatorPoolStats.PoolStats pool = stats.getPools().get(0);
+            assertEquals("pool-a", pool.getName());
+            assertEquals(1L, pool.getAllocatedBytes());
+            assertEquals(2L, pool.getPeakBytes());
+            assertEquals(3L, pool.getLimitBytes());
+        }
+    }
+
+    /** A 3.7 server that reports only totals still yields stats rather than null. */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemory_legacy37_rootOnly() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\",\"timestamp\":111," + "\"native_memory\":{\"total_estimated_bytes\":7,"
+                + "  \"native_allocator\":{\"root\":{\"allocated_bytes\":100,\"peak_bytes\":200,\"limit_bytes\":300}}}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            final NativeAllocatorPoolStats stats = nodeStats.getNativeAllocatorStats();
+            assertNotNull(stats);
+            assertEquals(100L, stats.getNativeAllocatedBytes());
+            assertEquals(200L, stats.getNativeResidentBytes());
+            assertEquals(0, stats.getPools().size());
+        }
+    }
+
+    /** The 3.7 analytics_backend object alone has no 3.8 counterpart and must not fabricate stats. */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_nativeMemory_legacy37_analyticsBackendOnly() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\",\"timestamp\":111," + "\"native_memory\":{\"total_estimated_bytes\":9,"
+                + "  \"analytics_backend\":{\"allocated_bytes\":1,\"resident_bytes\":2}}" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertEquals(9L, nodeStats.getTotalEstimatedNativeBytes());
+            assertNull(nodeStats.getNativeAllocatorStats());
         }
     }
 

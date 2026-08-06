@@ -226,7 +226,7 @@ The integration test suite runs against the following versions using Testcontain
 
 | Engine | Versions tested |
 |---|---|
-| OpenSearch | 1.3.20, 2.19.4, 3.7.0 |
+| OpenSearch | 1.3.20, 2.19.4, 3.8.0 |
 | Elasticsearch | 7.17.29, 8.19.11 |
 
 `HttpClient` inspects the cluster's root endpoint (`GET /`) to determine which engine and major version it is talking to, and adjusts request/response handling where the two diverge.
