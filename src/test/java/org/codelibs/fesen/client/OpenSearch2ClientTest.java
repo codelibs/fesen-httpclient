@@ -1568,4 +1568,68 @@ class OpenSearch2ClientTest {
                 .actionGet();
         assertTrue(getAllPitsResponse.getPitInfos().isEmpty());
     }
+
+    @Test
+    void test_pit_search_after_pagination() throws Exception {
+        final String index = "test_pit_search_after_os2";
+        // Three shards, so the pages really are assembled across shards.
+        //
+        // The tiebreaker is the unique "value" field rather than _shard_doc: ShardDocSortBuilder
+        // exists in the OpenSearch 3.x client library this project compiles against, but an
+        // OpenSearch 2.x server has no such sort field and answers 400 "No mapping found for
+        // [_shard_doc] in order to sort on". Sorting on a field with unique values gives the total
+        // order that search_after needs on this backend.
+        client.admin().indices().prepareCreate(index)
+                .setSettings("{\"index\":{\"number_of_shards\":3,\"number_of_replicas\":0}}", XContentType.JSON).execute().actionGet();
+        final int total = 25;
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= total; i++) {
+            bulkRequestBuilder.add(
+                    client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.opensearch.action.search.CreatePitRequest createPitRequest =
+                new org.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
+        final String pitId = client.execute(org.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet().getId();
+        assertNotNull(pitId);
+
+        final int pageSize = 7;
+        final java.util.List<String> collected = new java.util.ArrayList<>();
+        try {
+            Object[] searchAfter = null;
+            while (true) {
+                final SearchRequestBuilder builder = client.prepareSearch()
+                        .setPointInTime(
+                                new org.opensearch.search.builder.PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                        .setQuery(QueryBuilders.matchAllQuery()).setSize(pageSize)
+                        .addSort(org.opensearch.search.sort.SortBuilders.fieldSort("value"));
+                if (searchAfter != null) {
+                    builder.searchAfter(searchAfter);
+                }
+                final SearchResponse response = builder.execute().actionGet();
+                final SearchHit[] hits = response.getHits().getHits();
+                if (hits.length == 0) {
+                    break;
+                }
+                for (final SearchHit hit : hits) {
+                    collected.add(hit.getId());
+                }
+                searchAfter = hits[hits.length - 1].getSortValues();
+                assertNotNull(searchAfter);
+                assertEquals(1, searchAfter.length);
+            }
+        } finally {
+            client.execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest(pitId))
+                    .actionGet();
+        }
+
+        // Every document is seen exactly once, in "value" order, across the pages.
+        assertEquals(total, collected.size());
+        assertEquals(total, new java.util.HashSet<>(collected).size());
+        for (int i = 0; i < total; i++) {
+            assertEquals(String.valueOf(i + 1), collected.get(i));
+        }
+    }
 }

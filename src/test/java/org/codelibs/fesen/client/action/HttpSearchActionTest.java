@@ -70,6 +70,47 @@ class HttpSearchActionTest {
     }
 
     @Test
+    void test_getCurlRequest_indicesOmittedFromPathWithPit() {
+        // OpenSearch rejects "[indices] cannot be used with point in time" (RestSearchAction
+        // #preparePointInTime). A PIT binds its own indices, so the URL must stay at /_search.
+        final SearchRequest request = new SearchRequest("test-index");
+        request.source(new SearchSourceBuilder().pointInTimeBuilder(new PointInTimeBuilder("pit-id")));
+        final String url = ActionTestUtils.url(clientAction.getCurlRequest(request));
+        assertEquals("http://localhost/_search", url);
+    }
+
+    @Test
+    void test_getCurlRequest_indicesKeptInPathWithoutPit() {
+        // Without a PIT the indices must still be part of the path.
+        final SearchRequest request = new SearchRequest("test-index");
+        final String url = ActionTestUtils.url(clientAction.getCurlRequest(request));
+        assertEquals("http://localhost/test-index/_search", url);
+    }
+
+    @Test
+    void test_getCurlRequest_routingAndPreferenceOmittedWithPit() {
+        // OpenSearch rejects "[routing]" and "[preference]" together with a point in time.
+        final SearchRequest request = new SearchRequest("test-index");
+        request.routing("r1");
+        request.preference("_local");
+        request.source(new SearchSourceBuilder().pointInTimeBuilder(new PointInTimeBuilder("pit-id")));
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertFalse(params.containsKey("routing"));
+        assertFalse(params.containsKey("preference"));
+    }
+
+    @Test
+    void test_getCurlRequest_routingAndPreferenceKeptWithoutPit() {
+        // Without a PIT both must still be sent.
+        final SearchRequest request = new SearchRequest("test-index");
+        request.routing("r1");
+        request.preference("_local");
+        final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(request));
+        assertEquals("r1", params.get("routing"));
+        assertEquals("_local", params.get("preference"));
+    }
+
+    @Test
     void test_getQuerySource_withDefaultSource() {
         final SearchRequest request = new SearchRequest("test-index");
         final String result = action.getQuerySource(request);

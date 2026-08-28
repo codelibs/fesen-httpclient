@@ -118,13 +118,20 @@ public class HttpSearchViewAction extends HttpAction {
         if (request.scroll() != null) {
             curlRequest.param("scroll", request.scroll().keepAlive().toString());
         }
-        if (request.routing() != null) {
-            curlRequest.param("routing", request.routing());
+        // RestSearchAction#preparePointInTime rejects [routing], [preference] and
+        // [ccs_minimize_roundtrips] with a 400 whenever the search carries a point in time, and
+        // over HTTP such a 400 on a request with a body manifests as an indefinite hang. A PIT
+        // binds routing and preference itself -- they are given to CreatePitRequest instead.
+        final boolean hasPointInTime = request.source() != null && request.source().pointInTimeBuilder() != null;
+        if (!hasPointInTime) {
+            if (request.routing() != null) {
+                curlRequest.param("routing", request.routing());
+            }
+            if (request.preference() != null) {
+                curlRequest.param("preference", request.preference());
+            }
+            curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
         }
-        if (request.preference() != null) {
-            curlRequest.param("preference", request.preference());
-        }
-        curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
         return curlRequest;
     }
 }
