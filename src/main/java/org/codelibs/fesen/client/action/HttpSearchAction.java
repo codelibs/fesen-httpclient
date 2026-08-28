@@ -96,8 +96,14 @@ public class HttpSearchAction extends HttpAction {
      * @return the curl request
      */
     protected CurlRequest getCurlRequest(final SearchRequest request) {
-        // RestSearchAction
-        final CurlRequest curlRequest = client.getCurlRequest(POST, "/_search", request.indices());
+        // RestSearchAction#preparePointInTime rejects [indices], [indicesOptions], [routing],
+        // [preference] and [ccs_minimize_roundtrips] with a 400 whenever the search carries a
+        // point in time, and over HTTP a 400 on a request with a body manifests as an indefinite
+        // hang rather than an error. A PIT already binds its own indices, routing and preference
+        // -- they are given to CreatePitRequest instead -- so none of them may be sent here.
+        final boolean hasPointInTime = request.source() != null && request.source().pointInTimeBuilder() != null;
+        final CurlRequest curlRequest =
+                hasPointInTime ? client.getCurlRequest(POST, "/_search") : client.getCurlRequest(POST, "/_search", request.indices());
         curlRequest.param("typed_keys", "true");
         curlRequest.param("batched_reduce_size", Integer.toString(request.getBatchedReduceSize()));
         if (request.getPreFilterShardSize() != null) {
@@ -118,21 +124,14 @@ public class HttpSearchAction extends HttpAction {
         if (request.scroll() != null) {
             curlRequest.param("scroll", request.scroll().keepAlive().toString());
         }
-        if (request.routing() != null) {
-            curlRequest.param("routing", request.routing());
-        }
-        if (request.preference() != null) {
-            curlRequest.param("preference", request.preference());
-        }
-        // OpenSearch rejects both ccs_minimize_roundtrips and index options together with a
-        // point-in-time search (400 "[ccs_minimize_roundtrips]/[indicesOptions] cannot be used with
-        // point in time"), and over HTTP such a 400 on a request with a body manifests as an
-        // indefinite hang. A PIT already binds its own indices, so omit both when a PIT is set.
-        final boolean hasPointInTime = request.source() != null && request.source().pointInTimeBuilder() != null;
         if (!hasPointInTime) {
+            if (request.routing() != null) {
+                curlRequest.param("routing", request.routing());
+            }
+            if (request.preference() != null) {
+                curlRequest.param("preference", request.preference());
+            }
             curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
-        }
-        if (!hasPointInTime) {
             appendIndicesOptions(curlRequest, request.indicesOptions());
         }
         return curlRequest;
