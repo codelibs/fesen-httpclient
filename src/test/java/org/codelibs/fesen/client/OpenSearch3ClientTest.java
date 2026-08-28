@@ -2519,6 +2519,116 @@ class OpenSearch3ClientTest {
     }
 
     @Test
+    void test_pit_search_after_pagination() throws Exception {
+        final String index = "test_pit_search_after";
+        // Three shards on purpose: a _shard_doc sort value encodes (shardIndex << 32) | docId, so
+        // only a multi-shard index produces values above Integer.MAX_VALUE. With a single shard the
+        // values stay small and the JSON round trip of the sort value would go untested for longs.
+        client.admin().indices().prepareCreate(index)
+                .setSettings("{\"index\":{\"number_of_shards\":3,\"number_of_replicas\":0}}", XContentType.JSON).execute().actionGet();
+        final int total = 25;
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= total; i++) {
+            bulkRequestBuilder.add(
+                    client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.opensearch.action.search.CreatePitRequest createPitRequest =
+                new org.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
+        final String pitId = client.execute(org.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet().getId();
+        assertNotNull(pitId);
+
+        final int pageSize = 7;
+        final java.util.List<String> collected = new java.util.ArrayList<>();
+        boolean sawValueAboveIntRange = false;
+        try {
+            Object[] searchAfter = null;
+            while (true) {
+                final SearchRequestBuilder builder =
+                        client.prepareSearch().setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                                .setQuery(QueryBuilders.matchAllQuery()).setSize(pageSize)
+                                .addSort(org.opensearch.search.sort.SortBuilders.shardDocSort());
+                if (searchAfter != null) {
+                    builder.searchAfter(searchAfter);
+                }
+                final SearchResponse response = builder.execute().actionGet();
+                final SearchHit[] hits = response.getHits().getHits();
+                if (hits.length == 0) {
+                    break;
+                }
+                for (final SearchHit hit : hits) {
+                    collected.add(hit.getId());
+                }
+                searchAfter = hits[hits.length - 1].getSortValues();
+                assertNotNull(searchAfter);
+                assertEquals(1, searchAfter.length);
+                // The sort value arrives as a JSON number, so it is an Integer while it fits and a
+                // Long once the shard index pushes it past Integer.MAX_VALUE. Both must be accepted
+                // by search_after, which is what the next iteration exercises.
+                assertTrue(searchAfter[0] instanceof Number, "unexpected sort value type: " + searchAfter[0].getClass());
+                if (((Number) searchAfter[0]).longValue() > Integer.MAX_VALUE) {
+                    sawValueAboveIntRange = true;
+                }
+            }
+        } finally {
+            client.execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest(pitId))
+                    .actionGet();
+        }
+
+        // Every document is seen exactly once across the pages.
+        assertEquals(total, collected.size());
+        assertEquals(total, new java.util.HashSet<>(collected).size());
+        // Shards 1 and 2 encode their doc ids above the int range, so the long path was covered.
+        assertTrue(sawValueAboveIntRange, "no _shard_doc sort value exceeded Integer.MAX_VALUE; the long round trip was not covered");
+    }
+
+    @Test
+    void test_pit_search_after_sort_value_round_trip() throws Exception {
+        final String index = "test_pit_sort_round_trip";
+        client.admin().indices().prepareCreate(index)
+                .setSettings("{\"index\":{\"number_of_shards\":3,\"number_of_replicas\":0}}", XContentType.JSON).execute().actionGet();
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 5; i++) {
+            bulkRequestBuilder.add(
+                    client.prepareIndex().setIndex(index).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final String pitId = client.execute(org.opensearch.action.search.CreatePitAction.INSTANCE,
+                new org.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index)).actionGet().getId();
+        try {
+            // A field sort plus the _shard_doc tiebreaker: both sort values must survive the JSON
+            // round trip well enough to be fed back into search_after.
+            final SearchResponse first = client.prepareSearch()
+                    .setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                    .setQuery(QueryBuilders.matchAllQuery()).setSize(2).addSort(org.opensearch.search.sort.SortBuilders.fieldSort("value"))
+                    .addSort(org.opensearch.search.sort.SortBuilders.shardDocSort()).execute().actionGet();
+            final SearchHit[] firstHits = first.getHits().getHits();
+            assertEquals(2, firstHits.length);
+            assertEquals("1", firstHits[0].getId());
+            assertEquals("2", firstHits[1].getId());
+
+            final Object[] sortValues = firstHits[1].getSortValues();
+            assertEquals(2, sortValues.length);
+
+            final SearchResponse second = client.prepareSearch()
+                    .setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                    .setQuery(QueryBuilders.matchAllQuery()).setSize(2).addSort(org.opensearch.search.sort.SortBuilders.fieldSort("value"))
+                    .addSort(org.opensearch.search.sort.SortBuilders.shardDocSort()).searchAfter(sortValues).execute().actionGet();
+            final SearchHit[] secondHits = second.getHits().getHits();
+            assertEquals(2, secondHits.length);
+            assertEquals("3", secondHits[0].getId());
+            assertEquals("4", secondHits[1].getId());
+        } finally {
+            client.execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest(pitId))
+                    .actionGet();
+        }
+    }
+
+    @Test
     void test_list_tasks() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         client.admin().cluster().prepareListTasks().execute(wrap(res -> {
