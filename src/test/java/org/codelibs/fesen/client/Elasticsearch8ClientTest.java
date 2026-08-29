@@ -142,7 +142,8 @@ class Elasticsearch8ClientTest {
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
                 .withEnv("xpack.security.enabled", "false")//
-                .withExposedPorts(9200);
+                .withExposedPorts(9200)//
+                .withStartupAttempts(3);
         server.start();
     }
 
