@@ -142,7 +142,8 @@ class Elasticsearch7ClientTest {
     static void startServer() {
         server = new GenericContainer<>(DockerImageName.parse(imageTag))//
                 .withEnv("discovery.type", "single-node")//
-                .withExposedPorts(9200);
+                .withExposedPorts(9200)//
+                .withStartupAttempts(3);
         server.start();
     }
 

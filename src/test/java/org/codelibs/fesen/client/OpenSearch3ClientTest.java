@@ -162,7 +162,8 @@ class OpenSearch3ClientTest {
                 .withEnv("DISABLE_INSTALL_DEMO_CONFIG", "true")//
                 .withEnv("DISABLE_SECURITY_PLUGIN", "true")//
                 .withEnv("path.repo", "/tmp/repo")//
-                .withExposedPorts(9200);
+                .withExposedPorts(9200)//
+                .withStartupAttempts(3);
         server.start();
     }
 
