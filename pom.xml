@@ -366,18 +366,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-spatial3d</artifactId>
-			<version>${lucene.version}</version>
-			<exclusions>
-				<!-- Every Lucene module this fork needs is declared explicitly, as OpenSearch does. -->
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-suggest</artifactId>
 			<version>${lucene.version}</version>
 			<exclusions>
@@ -483,6 +471,12 @@
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
