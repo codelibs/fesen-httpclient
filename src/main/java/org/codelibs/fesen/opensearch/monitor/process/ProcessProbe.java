@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.monitor.process;
 
-import org.codelibs.fesen.opensearch.bootstrap.BootstrapInfo;
 import org.codelibs.fesen.opensearch.monitor.Probes;
 
 import java.lang.management.ManagementFactory;
@@ -144,7 +143,8 @@ public class ProcessProbe {
     }
 
     public ProcessInfo processInfo(long refreshInterval) {
-        return new ProcessInfo(jvmInfo().pid(), BootstrapInfo.isMemoryLocked(), refreshInterval);
+        // mlockall state came from bootstrap/Natives (JNA), which is not part of this client-only fork
+        return new ProcessInfo(jvmInfo().pid(), false, refreshInterval);
     }
 
     public ProcessStats processStats() {

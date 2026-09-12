@@ -8,7 +8,6 @@
 
 package org.codelibs.fesen.opensearch.ingest;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * Ingest pipeline info help hold the pipeline id and type.
@@ -17,7 +16,7 @@ public class IngestPipelineInfo {
     private final String pipelineId;
     private final IngestPipelineType type;
 
-    public IngestPipelineInfo(final @NonNull String pipelineId, final @NonNull IngestPipelineType type) {
+    public IngestPipelineInfo(final String pipelineId, final IngestPipelineType type) {
         this.pipelineId = pipelineId;
         this.type = type;
     }

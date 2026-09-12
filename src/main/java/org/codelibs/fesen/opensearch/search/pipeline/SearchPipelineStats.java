@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import reactor.util.annotation.NonNull;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -173,7 +172,7 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
             return this;
         }
 
-        Builder withSystemGeneratedProcessorMetrics(@NonNull final SystemGeneratedProcessorMetrics systemGeneratedProcessorMetrics) {
+        Builder withSystemGeneratedProcessorMetrics(final SystemGeneratedProcessorMetrics systemGeneratedProcessorMetrics) {
             systemGeneratedFactoryStats = systemGeneratedProcessorMetrics.getFactoryStats();
             systemGeneratedProcessorStats = systemGeneratedProcessorMetrics.getProcessorStats();
             return this;

@@ -78,8 +78,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import org.reactivestreams.Subscriber;
-import reactor.core.publisher.Mono;
 
 import static org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver.SYSTEM_INDEX_ACCESS_CONTROL_HEADER_KEY;
 import static org.codelibs.fesen.opensearch.core.rest.RestStatus.BAD_REQUEST;
@@ -355,23 +353,14 @@ public class RestController implements HttpServerTransport.Dispatcher {
             }
 
             if (handler.supportsStreaming()) {
-                // The handler may support streaming but not the engine, in this case we fail with the bad request
-                if (channel instanceof StreamingRestChannel streamingRestChannel) {
-                    responseChannel = new StreamHandlingHttpChannel(streamingRestChannel, circuitBreakerService, contentLength);
-                } else {
-                    throw new IllegalStateException(
-                        "The engine does not support HTTP streaming, unable to serve uri ["
-                            + request.getHttpRequest().uri()
-                            + "] and method ["
-                            + request.getHttpRequest().method()
-                            + "]"
-                    );
-                }
-
-                if (mediaType == null) {
-                    sendContentTypeErrorMessage(request.getAllHeaderValues("Content-Type"), responseChannel);
-                    return;
-                }
+                // HTTP streaming is not supported by this build of the library
+                throw new IllegalStateException(
+                    "The engine does not support HTTP streaming, unable to serve uri ["
+                        + request.getHttpRequest().uri()
+                        + "] and method ["
+                        + request.getHttpRequest().method()
+                        + "]"
+                );
             } else {
                 // if we could reserve bytes for the request we need to send the response also over this channel
                 responseChannel = new ResourceHandlingHttpChannel(channel, circuitBreakerService, contentLength);
@@ -670,106 +659,6 @@ public class RestController implements HttpServerTransport.Dispatcher {
         }
     }
 
-    private static final class StreamHandlingHttpChannel implements StreamingRestChannel {
-        private final StreamingRestChannel delegate;
-        private final CircuitBreakerService circuitBreakerService;
-        private final int contentLength;
-        private final AtomicBoolean closed = new AtomicBoolean();
-        private final AtomicBoolean subscribed = new AtomicBoolean();
-
-        StreamHandlingHttpChannel(StreamingRestChannel delegate, CircuitBreakerService circuitBreakerService, int contentLength) {
-            this.delegate = delegate;
-            this.circuitBreakerService = circuitBreakerService;
-            this.contentLength = contentLength;
-        }
-
-        @Override
-        public XContentBuilder newBuilder() throws IOException {
-            return delegate.newBuilder();
-        }
-
-        @Override
-        public XContentBuilder newErrorBuilder() throws IOException {
-            return delegate.newErrorBuilder();
-        }
-
-        @Override
-        public XContentBuilder newBuilder(@Nullable MediaType mediaType, boolean useFiltering) throws IOException {
-            return delegate.newBuilder(mediaType, useFiltering);
-        }
-
-        @Override
-        public XContentBuilder newBuilder(MediaType mediaType, MediaType responseContentType, boolean useFiltering) throws IOException {
-            return delegate.newBuilder(mediaType, responseContentType, useFiltering);
-        }
-
-        @Override
-        public BytesStreamOutput bytesOutput() {
-            return delegate.bytesOutput();
-        }
-
-        @Override
-        public RestRequest request() {
-            return delegate.request();
-        }
-
-        @Override
-        public boolean detailedErrorsEnabled() {
-            return delegate.detailedErrorsEnabled();
-        }
-
-        @Override
-        public boolean detailedErrorStackTraceEnabled() {
-            return delegate.detailedErrorStackTraceEnabled();
-        }
-
-        @Override
-        public void sendResponse(RestResponse response) {
-            close();
-
-            // Check if subscribe() is already called, the headers and status are going to be sent
-            // over so we need to populate those **before** that, if possible.
-            if (subscribed.get() == false) {
-                prepareResponse(response.status(), Map.of("Content-Type", List.of(response.contentType())));
-            }
-
-            Mono.from(this).ignoreElement().then(Mono.just(response)).subscribe(delegate::sendResponse);
-        }
-
-        @Override
-        public void sendChunk(HttpChunk chunk) {
-            delegate.sendChunk(chunk);
-        }
-
-        @Override
-        public void prepareResponse(RestStatus status, Map<String, List<String>> headers) {
-            delegate.prepareResponse(status, headers);
-        }
-
-        @Override
-        public void subscribe(Subscriber<? super HttpChunk> subscriber) {
-            subscribed.set(true);
-            delegate.subscribe(subscriber);
-        }
-
-        private void close() {
-            // attempt to close once atomically
-            if (closed.compareAndSet(false, true) == false) {
-                throw new IllegalStateException("Channel is already closed");
-            }
-            inFlightRequestsBreaker(circuitBreakerService).addWithoutBreaking(-contentLength);
-        }
-
-        @Override
-        public boolean isReadable() {
-            return delegate.isReadable();
-        }
-
-        @Override
-        public boolean isWritable() {
-            return delegate.isWritable();
-        }
-    }
 
     private static CircuitBreaker inFlightRequestsBreaker(CircuitBreakerService circuitBreakerService) {
         // We always obtain a fresh breaker to reflect changes to the breaker configuration.

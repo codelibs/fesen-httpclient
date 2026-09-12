@@ -8,13 +8,12 @@
 
 package org.codelibs.fesen.opensearch.search.pipeline;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * A holder for the system generated pipelines
  */
-public record SystemGeneratedPipelineHolder(@NonNull SystemGeneratedPipelineWithMetrics prePipeline,
-    @NonNull SystemGeneratedPipelineWithMetrics postPipeline) {
+public record SystemGeneratedPipelineHolder(SystemGeneratedPipelineWithMetrics prePipeline,
+    SystemGeneratedPipelineWithMetrics postPipeline) {
 
     boolean isNoOp() {
         return prePipeline.isNoOp() && postPipeline.isNoOp();

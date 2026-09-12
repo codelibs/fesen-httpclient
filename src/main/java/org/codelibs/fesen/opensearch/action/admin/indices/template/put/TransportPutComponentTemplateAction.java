@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * An action for putting a single component template into the cluster state
@@ -135,9 +134,9 @@ public class TransportPutComponentTemplateAction extends TransportClusterManager
     }
 
     private ActionListener<String> getMappingTransformListener(
-        @NonNull final PutComponentTemplateAction.Request request,
-        @NonNull final ActionListener<AcknowledgedResponse> listener,
-        @NonNull final ComponentTemplate componentTemplate
+        final PutComponentTemplateAction.Request request,
+        final ActionListener<AcknowledgedResponse> listener,
+        final ComponentTemplate componentTemplate
     ) {
         return ActionListener.wrap(transformedMappings -> {
             if (transformedMappings != null && componentTemplate.template() != null) {
@@ -154,7 +153,7 @@ public class TransportPutComponentTemplateAction extends TransportClusterManager
         }, listener::onFailure);
     }
 
-    private void transformMapping(final Template template, @NonNull final ActionListener<String> mappingTransformListener) {
+    private void transformMapping(final Template template, final ActionListener<String> mappingTransformListener) {
         if (template == null || template.mappings() == null) {
             mappingTransformListener.onResponse(null);
         } else {

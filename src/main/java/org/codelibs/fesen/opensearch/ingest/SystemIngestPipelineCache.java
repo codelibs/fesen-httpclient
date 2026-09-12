@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * Cache for system ingest pipeline
@@ -37,8 +36,8 @@ public class SystemIngestPipelineCache {
      * @param maxIngestProcessorCount
      */
     public void cachePipeline(
-        @NonNull final String index,
-        @NonNull final Pipeline systemIngestPipeline,
+        final String index,
+        final Pipeline systemIngestPipeline,
         final int maxIngestProcessorCount
     ) {
         if (systemIngestPipeline.getProcessors().size() > maxIngestProcessorCount) {
@@ -105,7 +104,7 @@ public class SystemIngestPipelineCache {
      * Invalidate the cache for an index.
      * @param index [index_name/index_uuid]
      */
-    public void invalidateCacheForIndex(@NonNull final String index) {
+    public void invalidateCacheForIndex(final String index) {
         cache.remove(index);
     }
 

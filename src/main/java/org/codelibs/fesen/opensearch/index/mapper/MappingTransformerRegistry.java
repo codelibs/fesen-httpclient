@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * This class collects all registered mapping transformers and applies them when needed.
@@ -33,8 +32,8 @@ public class MappingTransformerRegistry {
     protected final Logger logger = LogManager.getLogger(getClass());
 
     public MappingTransformerRegistry(
-        @NonNull final List<MapperPlugin> mapperPlugins,
-        @NonNull final NamedXContentRegistry xContentRegistry
+        final List<MapperPlugin> mapperPlugins,
+        final NamedXContentRegistry xContentRegistry
     ) {
         this.xContentRegistry = xContentRegistry;
         this.transformers = new ArrayList<>();
@@ -45,10 +44,10 @@ public class MappingTransformerRegistry {
     }
 
     private void applyNext(
-        @NonNull final Map<String, Object> mapping,
+        final Map<String, Object> mapping,
         final MappingTransformer.TransformContext context,
-        @NonNull final AtomicInteger index,
-        @NonNull final ActionListener<String> listener
+        final AtomicInteger index,
+        final ActionListener<String> listener
     ) {
         try {
             // Parse the mapping after each transformer to catch corruption early and identify the faulty transformer.
@@ -108,7 +107,7 @@ public class MappingTransformerRegistry {
     public void applyTransformers(
         final String mappingString,
         final MappingTransformer.TransformContext context,
-        @NonNull final ActionListener<String> mappingTransformListener
+        final ActionListener<String> mappingTransformListener
     ) {
         if (transformers.isEmpty() || mappingString == null) {
             mappingTransformListener.onResponse(mappingString);

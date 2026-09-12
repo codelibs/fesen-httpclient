@@ -12,7 +12,6 @@ import org.codelibs.fesen.opensearch.core.action.ActionListener;
 
 import java.util.Map;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * A transformer to allow plugins to implement logic to transform the index mapping during
@@ -23,7 +22,7 @@ public interface MappingTransformer {
     default void transform(
         final Map<String, Object> mapping,
         final TransformContext context,
-        @NonNull final ActionListener<Void> listener
+        final ActionListener<Void> listener
     ) {
         listener.onResponse(null);
     }

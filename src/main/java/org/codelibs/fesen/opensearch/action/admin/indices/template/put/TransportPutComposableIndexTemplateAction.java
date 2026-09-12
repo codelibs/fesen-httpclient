@@ -53,7 +53,6 @@ import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * An action for putting a composable index template into the cluster state
@@ -132,8 +131,8 @@ public class TransportPutComposableIndexTemplateAction extends TransportClusterM
     }
 
     private void transformMapping(
-        @NonNull final ComposableIndexTemplate indexTemplate,
-        @NonNull final ActionListener<String> mappingTransformListener
+        final ComposableIndexTemplate indexTemplate,
+        final ActionListener<String> mappingTransformListener
     ) {
         final Template template = indexTemplate.template();
         if (template == null || template.mappings() == null) {

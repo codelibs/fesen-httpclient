@@ -328,11 +328,6 @@ import org.codelibs.fesen.opensearch.common.settings.SettingsFilter;
 import org.codelibs.fesen.opensearch.common.util.FeatureFlags;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.indices.breaker.CircuitBreakerService;
-import org.codelibs.fesen.opensearch.extensions.ExtensionsManager;
-import org.codelibs.fesen.opensearch.extensions.action.ExtensionProxyAction;
-import org.codelibs.fesen.opensearch.extensions.action.ExtensionProxyTransportAction;
-import org.codelibs.fesen.opensearch.extensions.rest.RestInitializeExtensionAction;
-import org.codelibs.fesen.opensearch.extensions.rest.RestSendToExtensionAction;
 import org.codelibs.fesen.opensearch.http.HttpTransportSettings;
 import org.codelibs.fesen.opensearch.identity.IdentityService;
 import org.codelibs.fesen.opensearch.index.seqno.RetentionLeaseActions;
@@ -474,7 +469,6 @@ import org.codelibs.fesen.opensearch.rest.action.cat.RestTasksAction;
 import org.codelibs.fesen.opensearch.rest.action.cat.RestTemplatesAction;
 import org.codelibs.fesen.opensearch.rest.action.cat.RestThreadPoolAction;
 import org.codelibs.fesen.opensearch.rest.action.document.RestBulkAction;
-import org.codelibs.fesen.opensearch.rest.action.document.RestBulkStreamingAction;
 import org.codelibs.fesen.opensearch.rest.action.document.RestDeleteAction;
 import org.codelibs.fesen.opensearch.rest.action.document.RestGetAction;
 import org.codelibs.fesen.opensearch.rest.action.document.RestGetSourceAction;
@@ -578,7 +572,6 @@ public class ActionModule extends AbstractModule {
     private final RequestValidators<PutMappingRequest> mappingRequestValidators;
     private final RequestValidators<IndicesAliasesRequest> indicesAliasesRequestRequestValidators;
     private final ThreadPool threadPool;
-    private final ExtensionsManager extensionsManager;
     private final ResponseLimitSettings responseLimitSettings;
 
     public ActionModule(
@@ -593,8 +586,7 @@ public class ActionModule extends AbstractModule {
         CircuitBreakerService circuitBreakerService,
         UsageService usageService,
         SystemIndices systemIndices,
-        IdentityService identityService,
-        ExtensionsManager extensionsManager
+        IdentityService identityService
     ) {
         this.settings = settings;
         this.indexNameExpressionResolver = indexNameExpressionResolver;
@@ -603,7 +595,6 @@ public class ActionModule extends AbstractModule {
         this.settingsFilter = settingsFilter;
         this.actionPlugins = actionPlugins;
         this.threadPool = threadPool;
-        this.extensionsManager = extensionsManager;
         actions = setupActions(actionPlugins);
         actionFilters = setupActionFilters(actionPlugins);
         dynamicActionRegistry = new DynamicActionRegistry();
@@ -844,11 +835,6 @@ public class ActionModule extends AbstractModule {
         // Remote Store
         actions.register(RestoreRemoteStoreAction.INSTANCE, TransportRestoreRemoteStoreAction.class);
 
-        if (FeatureFlags.isEnabled(FeatureFlags.EXTENSIONS)) {
-            // ExtensionProxyAction
-            actions.register(ExtensionProxyAction.INSTANCE, ExtensionProxyTransportAction.class);
-        }
-
         // Decommission actions
         actions.register(DecommissionAction.INSTANCE, TransportDecommissionAction.class);
         actions.register(GetDecommissionStateAction.INSTANCE, TransportGetDecommissionStateAction.class);
@@ -990,7 +976,6 @@ public class ActionModule extends AbstractModule {
         registerHandler.accept(new RestTermVectorsAction());
         registerHandler.accept(new RestMultiTermVectorsAction());
         registerHandler.accept(new RestBulkAction(settings));
-        registerHandler.accept(new RestBulkStreamingAction(settings));
         registerHandler.accept(new RestUpdateAction());
 
         registerHandler.accept(new RestSearchAction(clusterSettings));
@@ -1086,11 +1071,6 @@ public class ActionModule extends AbstractModule {
         registerHandler.accept(new RestPutSearchPipelineAction());
         registerHandler.accept(new RestGetSearchPipelineAction());
         registerHandler.accept(new RestDeleteSearchPipelineAction());
-
-        // Extensions API
-        if (FeatureFlags.isEnabled(FeatureFlags.EXTENSIONS)) {
-            registerHandler.accept(new RestInitializeExtensionAction(extensionsManager));
-        }
 
         for (ActionPlugin plugin : actionPlugins) {
             for (RestHandler handler : plugin.getRestHandlers(
@@ -1192,10 +1172,6 @@ public class ActionModule extends AbstractModule {
         // at times other than node bootstrap.
         private final Map<ActionType<?>, TransportAction<?, ?>> registry = new ConcurrentHashMap<>();
 
-        // A dynamic registry to add or remove Route / RestSendToExtensionAction pairs
-        // at times other than node bootstrap.
-        private final Map<NamedRoute, RestSendToExtensionAction> routeRegistry = new ConcurrentHashMap<>();
-
         private final Set<String> registeredActionNames = new ConcurrentSkipListSet<>();
 
         /**
@@ -1261,67 +1237,5 @@ public class ActionModule extends AbstractModule {
             return registry.get(action);
         }
 
-        /**
-         * Adds a dynamic route to the registry.
-         *
-         * @param route The route instance to add
-         * @param action The corresponding instance of RestSendToExtensionAction to execute
-         */
-        public void registerDynamicRoute(NamedRoute route, RestSendToExtensionAction action) {
-            requireNonNull(route, "route is required");
-            requireNonNull(action, "action is required");
-
-            String routeName = route.name();
-            requireNonNull(routeName, "route name is required");
-            if (isActionRegistered(routeName)) {
-                throw new IllegalArgumentException("route [" + route + "] already registered");
-            }
-
-            Set<String> actionNames = route.actionNames();
-            if (!Collections.disjoint(actionNames, registeredActionNames)) {
-                Set<String> alreadyRegistered = new HashSet<>(registeredActionNames);
-                alreadyRegistered.retainAll(actionNames);
-                String acts = String.join(", ", alreadyRegistered);
-                throw new IllegalArgumentException(
-                    "action" + (alreadyRegistered.size() > 1 ? "s [" : " [") + acts + "] already registered"
-                );
-            }
-
-            if (routeRegistry.containsKey(route)) {
-                throw new IllegalArgumentException("route [" + route + "] already registered");
-            }
-            routeRegistry.put(route, action);
-            registeredActionNames.add(routeName);
-            registeredActionNames.addAll(actionNames);
-        }
-
-        /**
-         * Remove a dynamic route from the registry.
-         *
-         * @param route The route to remove
-         */
-        public void unregisterDynamicRoute(NamedRoute route) {
-            requireNonNull(route, "route is required");
-            if (routeRegistry.remove(route) == null) {
-                throw new IllegalArgumentException("action [" + route + "] was not registered");
-            }
-
-            registeredActionNames.remove(route.name());
-            registeredActionNames.removeAll(route.actionNames());
-        }
-
-        /**
-         * Gets the {@link RestSendToExtensionAction} instance corresponding to the {@link RestHandler.Route} instance.
-         *
-         * @param route The {@link RestHandler.Route}.
-         * @return the corresponding {@link RestSendToExtensionAction} if it is registered, null otherwise.
-         */
-        public RestSendToExtensionAction get(RestHandler.Route route) {
-            if (route instanceof NamedRoute namedRoute) {
-                return routeRegistry.get(namedRoute);
-            }
-            // Only NamedRoutes are map keys so any other route is not in the map
-            return null;
-        }
     }
 }

@@ -46,7 +46,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.LongSupplier;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * A pipeline is a list of {@link Processor} instances grouped under a unique id.
@@ -125,9 +124,9 @@ public final class Pipeline {
     }
 
     public static Pipeline createSystemIngestPipeline(
-        @NonNull final String index,
-        @NonNull final Map<String, Processor.Factory> systemIngestProcessorFactories,
-        @NonNull final Map<String, Object> config
+        final String index,
+        final Map<String, Processor.Factory> systemIngestProcessorFactories,
+        final Map<String, Object> config
     ) {
         final String id = index + "_system_generated_ingest_pipeline";
         final String description = "This is an in-memory systematically generated ingest pipeline.";

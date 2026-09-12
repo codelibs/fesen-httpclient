@@ -101,7 +101,6 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 
-import reactor.util.annotation.NonNull;
 
 import static org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTask.DELETE_PIPELINE;
 import static org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTask.PUT_PIPELINE;
@@ -427,8 +426,8 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
     }
 
     private String getSystemIngestPipelineForTemplateV1(
-        @NonNull final List<IndexTemplateMetadata> templates,
-        @NonNull final IndexRequest indexRequest
+        final List<IndexTemplateMetadata> templates,
+        final IndexRequest indexRequest
     ) {
         // Here we cache it with index name + template as the suffix since currently we don't have the uuid.
         // We need to cache it so that later during execution we can find it by indexId to reuse it.
@@ -469,8 +468,8 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
     }
 
     private String getSystemIngestPipelineForTemplateV2(
-        @NonNull final String templateName,
-        @NonNull final IndexRequest indexRequest,
+        final String templateName,
+        final IndexRequest indexRequest,
         final Settings settings
     ) {
         // Here we cache it with index name + template as the suffix since currently we don't have the uuid.
@@ -511,17 +510,17 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         return ingestPipeline.getProcessors().isEmpty() ? null : indexId;
     }
 
-    private String createIndexIdWithTemplateSuffix(@NonNull final String indexName) {
+    private String createIndexIdWithTemplateSuffix(final String indexName) {
         return "[" + indexName + "/template]";
     }
 
-    private Pipeline createSystemIngestPipeline(@NonNull final String indexId, @NonNull final Map<String, Object> pipelineConfig) {
+    private Pipeline createSystemIngestPipeline(final String indexId, final Map<String, Object> pipelineConfig) {
         final Pipeline pipeline = Pipeline.createSystemIngestPipeline(indexId, systemIngestProcessorFactories, pipelineConfig);
         systemIngestPipelineCache.cachePipeline(indexId, pipeline, maxIngestProcessorCount);
         return pipeline;
     }
 
-    private String getSystemIngestPipelineForExistingIndex(@NonNull final IndexMetadata indexMetadata, IndexRequest indexRequest) {
+    private String getSystemIngestPipelineForExistingIndex(final IndexMetadata indexMetadata, IndexRequest indexRequest) {
         final String indexId = indexMetadata.getIndex().toString();
         Pipeline ingestPipeline = systemIngestPipelineCache.getSystemIngestPipeline(indexId);
         if (ingestPipeline == null) {
@@ -1301,9 +1300,9 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
     }
 
     private void completeExecution(
-        @NonNull final AtomicInteger counter,
-        @NonNull final BiConsumer<Thread, Exception> onCompletion,
-        @NonNull final Thread originalThread,
+        final AtomicInteger counter,
+        final BiConsumer<Thread, Exception> onCompletion,
+        final Thread originalThread,
         final int completedRequestSize
     ) {
         if (counter.addAndGet(-completedRequestSize) == 0) {
@@ -1312,7 +1311,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         assert counter.get() >= 0;
     }
 
-    private Pipeline getPipelineFromHolder(final PipelineHolder holder, @NonNull final String pipelineId) {
+    private Pipeline getPipelineFromHolder(final PipelineHolder holder, final String pipelineId) {
         if (holder == null) {
             throw new IllegalArgumentException("pipeline with id [" + pipelineId + "] does not exist");
         }
@@ -1495,7 +1494,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         }
     }
 
-    private void invalidateSystemIngestPipeline(@NonNull final ClusterChangedEvent event) {
+    private void invalidateSystemIngestPipeline(final ClusterChangedEvent event) {
         final Map<String, IndexMetadata> currentIndices = event.state().metadata().indices();
         final Map<String, IndexMetadata> previousIndices = event.previousState().metadata().indices();
         for (Map.Entry<String, IndexMetadata> entry : previousIndices.entrySet()) {

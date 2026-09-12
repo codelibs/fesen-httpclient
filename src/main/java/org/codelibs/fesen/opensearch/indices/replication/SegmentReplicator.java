@@ -40,7 +40,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import reactor.util.annotation.NonNull;
 
 /**
  * This class is responsible for managing segment replication events on replicas.
@@ -297,7 +296,7 @@ public class SegmentReplicator {
 
         public ReplicationRunner(
             long replicationId,
-            @NonNull ReplicationCollection<R> onGoingReplications,
+            ReplicationCollection<R> onGoingReplications,
             @Nullable Map<ShardId, SegmentReplicationState> completedReplications
         ) {
             this.replicationId = replicationId;
