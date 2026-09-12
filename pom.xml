@@ -395,16 +395,37 @@
 			<groupId>tools.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-cbor</artifactId>
 			<version>${jackson.version}</version>
+			<exclusions>
+				<!-- Only the streaming API is used; OpenSearch excludes these too. -->
+				<exclusion>
+					<groupId>tools.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>tools.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-smile</artifactId>
 			<version>${jackson.version}</version>
+			<exclusions>
+				<!-- Only the streaming API is used; OpenSearch excludes these too. -->
+				<exclusion>
+					<groupId>tools.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>tools.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 			<version>${jackson.version}</version>
+			<exclusions>
+				<!-- Only the streaming API is used; OpenSearch excludes these too. -->
+				<exclusion>
+					<groupId>tools.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.snakeyaml</groupId>
