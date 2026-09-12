@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.alias.IndicesAliasesAction;
-import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
 
 class HttpIndicesAliasesActionTest {
 

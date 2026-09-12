@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
-import static org.opensearch.core.xcontent.XContentParserUtils.throwUnknownField;
-import static org.opensearch.core.xcontent.XContentParserUtils.throwUnknownToken;
+import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.throwUnknownField;
+import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.throwUnknownToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,34 +26,34 @@ import java.util.Locale;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.DocWriteRequest;
-import org.opensearch.action.DocWriteRequest.OpType;
-import org.opensearch.action.DocWriteResponse;
-import org.opensearch.action.bulk.BulkAction;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkItemResponse.Failure;
-import org.opensearch.action.bulk.BulkRequest;
-import org.opensearch.action.bulk.BulkResponse;
-import org.opensearch.action.delete.DeleteResponse;
-import org.opensearch.action.index.IndexRequest;
-import org.opensearch.action.index.IndexResponse;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.action.support.WriteRequest.RefreshPolicy;
-import org.opensearch.action.update.UpdateRequest;
-import org.opensearch.action.update.UpdateResponse;
-import org.opensearch.common.CheckedConsumer;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.rest.RestStatus;
-import org.opensearch.core.xcontent.ToXContent;
-import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.VersionType;
-import org.opensearch.index.seqno.SequenceNumbers;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.DocWriteRequest;
+import org.codelibs.fesen.opensearch.action.DocWriteRequest.OpType;
+import org.codelibs.fesen.opensearch.action.DocWriteResponse;
+import org.codelibs.fesen.opensearch.action.bulk.BulkAction;
+import org.codelibs.fesen.opensearch.action.bulk.BulkItemResponse;
+import org.codelibs.fesen.opensearch.action.bulk.BulkItemResponse.Failure;
+import org.codelibs.fesen.opensearch.action.bulk.BulkRequest;
+import org.codelibs.fesen.opensearch.action.bulk.BulkResponse;
+import org.codelibs.fesen.opensearch.action.delete.DeleteResponse;
+import org.codelibs.fesen.opensearch.action.index.IndexRequest;
+import org.codelibs.fesen.opensearch.action.index.IndexResponse;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.action.support.WriteRequest.RefreshPolicy;
+import org.codelibs.fesen.opensearch.action.update.UpdateRequest;
+import org.codelibs.fesen.opensearch.action.update.UpdateResponse;
+import org.codelibs.fesen.opensearch.common.CheckedConsumer;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.rest.RestStatus;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.VersionType;
+import org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers;
 
 /**
  * Handles the Bulk API over HTTP for OpenSearch/Elasticsearch, executing multiple

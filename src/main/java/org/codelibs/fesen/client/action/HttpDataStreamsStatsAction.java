@@ -23,11 +23,11 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.datastream.DataStreamsStatsAction;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.action.support.DefaultShardOperationFailedException;
-import org.opensearch.core.common.unit.ByteSizeValue;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.datastream.DataStreamsStatsAction;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
+import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the data streams stats API over HTTP for OpenSearch/Elasticsearch.

@@ -20,13 +20,13 @@ import java.io.IOException;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
-import org.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
-import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
+import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the put stored script API over HTTP for OpenSearch/Elasticsearch.

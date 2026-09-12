@@ -26,7 +26,7 @@ import org.codelibs.curl.Curl;
 import org.codelibs.fesen.client.node.Node;
 import org.codelibs.fesen.client.node.NodeManager;
 import org.junit.jupiter.api.Test;
-import org.opensearch.index.IndexNotFoundException;
+import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
 
 class FesenRequestTest {
 

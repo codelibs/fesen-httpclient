@@ -25,13 +25,13 @@ import java.util.Map;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
-import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
-import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.action.support.DefaultShardOperationFailedException;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.SegmentReplicationPerGroupStats;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.SegmentReplicationPerGroupStats;
 
 /**
  * Handles the segment replication stats API over HTTP for OpenSearch/Elasticsearch.

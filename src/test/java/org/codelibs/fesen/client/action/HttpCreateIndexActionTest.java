@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.create.CreateIndexAction;
-import org.opensearch.action.admin.indices.create.CreateIndexRequest;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.xcontent.ToXContent;
-import org.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 
 class HttpCreateIndexActionTest {
 

@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.update.UpdateAction;
-import org.opensearch.action.update.UpdateRequest;
+import org.codelibs.fesen.opensearch.action.update.UpdateAction;
+import org.codelibs.fesen.opensearch.action.update.UpdateRequest;
 
 class HttpUpdateActionTest {
 

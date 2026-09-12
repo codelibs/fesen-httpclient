@@ -22,17 +22,17 @@ import java.util.List;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.admin.indices.close.CloseIndexAction;
-import org.opensearch.action.admin.indices.close.CloseIndexRequest;
-import org.opensearch.action.admin.indices.close.CloseIndexResponse;
-import org.opensearch.action.admin.indices.close.CloseIndexResponse.IndexResult;
-import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult;
-import org.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.index.Index;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse.IndexResult;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse.ShardResult.Failure;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.index.Index;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Close Index API over HTTP for OpenSearch/Elasticsearch, closing one or

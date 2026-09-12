@@ -25,15 +25,15 @@ import java.util.Map;
 
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.opensearch.action.support.IndicesOptions;
-import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.cluster.metadata.MappingMetadata;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 class HttpGetMappingsActionTest {
 

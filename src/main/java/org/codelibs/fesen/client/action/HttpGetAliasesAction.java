@@ -25,14 +25,14 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesAction;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
-import org.opensearch.cluster.metadata.AliasMetadata;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.core.xcontent.XContentParserUtils;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
+import org.codelibs.fesen.opensearch.cluster.metadata.AliasMetadata;
+import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils;
 
 /**
  * Handles the Get Aliases API over HTTP for OpenSearch/Elasticsearch.

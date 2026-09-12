@@ -23,13 +23,13 @@ import java.util.stream.IntStream;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateAction;
-import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
-import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
-import org.opensearch.action.admin.indices.streamingingestion.state.ShardIngestionState;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.action.support.DefaultShardOperationFailedException;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.ShardIngestionState;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Get Ingestion State API over HTTP for OpenSearch.

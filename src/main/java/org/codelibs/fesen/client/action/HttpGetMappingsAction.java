@@ -22,14 +22,14 @@ import java.util.Map;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.core.ParseField;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.IndexNotFoundException;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.codelibs.fesen.opensearch.cluster.metadata.MappingMetadata;
+import org.codelibs.fesen.opensearch.core.ParseField;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
 
 /**
  * Handles the Get Mappings API over HTTP for OpenSearch/Elasticsearch.

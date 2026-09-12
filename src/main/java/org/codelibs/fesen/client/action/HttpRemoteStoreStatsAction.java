@@ -23,13 +23,13 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStats;
-import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction;
-import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
-import org.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.action.support.DefaultShardOperationFailedException;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStats;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the remote store stats API over HTTP for OpenSearch/Elasticsearch.

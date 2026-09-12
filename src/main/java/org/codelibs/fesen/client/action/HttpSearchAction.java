@@ -19,17 +19,17 @@ import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.search.SearchAction;
-import org.opensearch.action.search.SearchRequest;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.action.search.SearchType;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.ToXContent;
-import org.opensearch.core.xcontent.XContentHelper;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.search.SearchAction;
+import org.codelibs.fesen.opensearch.action.search.SearchRequest;
+import org.codelibs.fesen.opensearch.action.search.SearchResponse;
+import org.codelibs.fesen.opensearch.action.search.SearchType;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder;
 
 /**
  * Handles the search API over HTTP for OpenSearch/Elasticsearch.

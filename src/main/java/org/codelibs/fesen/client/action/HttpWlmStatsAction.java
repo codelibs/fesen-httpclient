@@ -22,13 +22,13 @@ import java.util.List;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.cluster.wlm.WlmStatsAction;
-import org.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
-import org.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
-import org.opensearch.cluster.ClusterName;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.wlm.stats.WlmStats;
+import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
+import org.codelibs.fesen.opensearch.cluster.ClusterName;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.wlm.stats.WlmStats;
 
 /**
  * Handles the workload management (WLM) stats API over HTTP for OpenSearch.

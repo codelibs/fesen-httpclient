@@ -15,8 +15,8 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.opensearch.core.xcontent.ConstructingObjectParser.constructorArg;
-import static org.opensearch.core.xcontent.ConstructingObjectParser.optionalConstructorArg;
+import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser.constructorArg;
+import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser.optionalConstructorArg;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,19 +29,19 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.admin.cluster.health.ClusterHealthAction;
-import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.opensearch.cluster.health.ClusterHealthStatus;
-import org.opensearch.cluster.health.ClusterIndexHealth;
-import org.opensearch.cluster.health.ClusterStateHealth;
-import org.opensearch.common.unit.TimeValue;
-import org.opensearch.core.ParseField;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.ConstructingObjectParser;
-import org.opensearch.core.xcontent.ObjectParser;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.codelibs.fesen.opensearch.cluster.health.ClusterHealthStatus;
+import org.codelibs.fesen.opensearch.cluster.health.ClusterIndexHealth;
+import org.codelibs.fesen.opensearch.cluster.health.ClusterStateHealth;
+import org.codelibs.fesen.opensearch.common.unit.TimeValue;
+import org.codelibs.fesen.opensearch.core.ParseField;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
+import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Cluster Health API over HTTP for OpenSearch/Elasticsearch, retrieving

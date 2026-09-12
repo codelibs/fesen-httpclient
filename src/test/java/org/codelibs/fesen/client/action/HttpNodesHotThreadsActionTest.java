@@ -18,8 +18,8 @@ package org.codelibs.fesen.client.action;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
-import org.opensearch.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
+import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 
 class HttpNodesHotThreadsActionTest {
     @Test

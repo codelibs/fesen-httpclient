@@ -19,15 +19,15 @@ import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.xcontent.ToXContent;
-import org.opensearch.core.xcontent.ToXContentObject;
-import org.opensearch.core.xcontent.XContentHelper;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.reindex.AbstractBulkByScrollRequest;
-import org.opensearch.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse;
 
 /**
  * Base class for HTTP actions that return a {@link BulkByScrollResponse}, namely

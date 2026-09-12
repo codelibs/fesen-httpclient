@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Force Merge API over HTTP for OpenSearch/Elasticsearch.

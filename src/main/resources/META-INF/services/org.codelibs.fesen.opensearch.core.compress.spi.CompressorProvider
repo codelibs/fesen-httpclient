@@ -1,0 +1,3 @@
+org.codelibs.fesen.opensearch.core.compress.spi.DefaultCompressorProvider
+org.codelibs.fesen.opensearch.compress.spi.CompressionProvider
+org.codelibs.fesen.opensearch.common.compress.spi.ServerCompressorProvider

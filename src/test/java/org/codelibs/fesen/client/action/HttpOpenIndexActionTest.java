@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.open.OpenIndexAction;
-import org.opensearch.action.admin.indices.open.OpenIndexRequest;
-import org.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequest;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
 
 class HttpOpenIndexActionTest {
 

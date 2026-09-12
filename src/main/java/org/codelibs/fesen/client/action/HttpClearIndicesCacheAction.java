@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Clear Indices Cache API over HTTP for OpenSearch/Elasticsearch, clearing

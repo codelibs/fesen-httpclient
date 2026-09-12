@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opensearch.core.action.ActionListener.wrap;
+import static org.codelibs.fesen.opensearch.core.action.ActionListener.wrap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -41,70 +41,70 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.DocWriteResponse.Result;
-import org.opensearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
-import org.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
-import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
-import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
-import org.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
-import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
-import org.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
-import org.opensearch.action.admin.indices.alias.Alias;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
-import org.opensearch.action.admin.indices.analyze.AnalyzeAction;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
-import org.opensearch.action.admin.indices.close.CloseIndexResponse;
-import org.opensearch.action.admin.indices.create.CreateIndexResponse;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.opensearch.action.admin.indices.flush.FlushResponse;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
-import org.opensearch.action.admin.indices.get.GetIndexResponse;
-import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.opensearch.action.admin.indices.open.OpenIndexResponse;
-import org.opensearch.action.admin.indices.refresh.RefreshResponse;
-import org.opensearch.action.admin.indices.rollover.RolloverResponse;
-import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
-import org.opensearch.action.bulk.BulkRequestBuilder;
-import org.opensearch.action.bulk.BulkResponse;
-import org.opensearch.action.delete.DeleteResponse;
-import org.opensearch.action.explain.ExplainResponse;
-import org.opensearch.action.fieldcaps.FieldCapabilities;
-import org.opensearch.action.fieldcaps.FieldCapabilitiesResponse;
-import org.opensearch.action.get.GetResponse;
-import org.opensearch.action.get.MultiGetRequest;
-import org.opensearch.action.get.MultiGetRequestBuilder;
-import org.opensearch.action.get.MultiGetResponse;
-import org.opensearch.action.index.IndexResponse;
-import org.opensearch.action.ingest.GetPipelineResponse;
-import org.opensearch.action.main.MainAction;
-import org.opensearch.action.main.MainRequest;
-import org.opensearch.action.main.MainResponse;
-import org.opensearch.action.search.ClearScrollResponse;
-import org.opensearch.action.search.MultiSearchResponse;
-import org.opensearch.action.search.SearchRequestBuilder;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.action.support.WriteRequest.RefreshPolicy;
-import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.opensearch.action.update.UpdateResponse;
-import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.settings.Settings;
-import org.opensearch.common.unit.TimeValue;
-import org.opensearch.common.xcontent.XContentFactory;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.common.bytes.BytesArray;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.common.unit.ByteSizeUnit;
-import org.opensearch.core.rest.RestStatus;
-import org.opensearch.core.xcontent.ToXContent;
-import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.index.IndexNotFoundException;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.indices.recovery.RecoverySettings;
-import org.opensearch.search.SearchHit;
+import org.codelibs.fesen.opensearch.action.DocWriteResponse.Result;
+import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.Alias;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
+import org.codelibs.fesen.opensearch.action.bulk.BulkRequestBuilder;
+import org.codelibs.fesen.opensearch.action.bulk.BulkResponse;
+import org.codelibs.fesen.opensearch.action.delete.DeleteResponse;
+import org.codelibs.fesen.opensearch.action.explain.ExplainResponse;
+import org.codelibs.fesen.opensearch.action.fieldcaps.FieldCapabilities;
+import org.codelibs.fesen.opensearch.action.fieldcaps.FieldCapabilitiesResponse;
+import org.codelibs.fesen.opensearch.action.get.GetResponse;
+import org.codelibs.fesen.opensearch.action.get.MultiGetRequest;
+import org.codelibs.fesen.opensearch.action.get.MultiGetRequestBuilder;
+import org.codelibs.fesen.opensearch.action.get.MultiGetResponse;
+import org.codelibs.fesen.opensearch.action.index.IndexResponse;
+import org.codelibs.fesen.opensearch.action.ingest.GetPipelineResponse;
+import org.codelibs.fesen.opensearch.action.main.MainAction;
+import org.codelibs.fesen.opensearch.action.main.MainRequest;
+import org.codelibs.fesen.opensearch.action.main.MainResponse;
+import org.codelibs.fesen.opensearch.action.search.ClearScrollResponse;
+import org.codelibs.fesen.opensearch.action.search.MultiSearchResponse;
+import org.codelibs.fesen.opensearch.action.search.SearchRequestBuilder;
+import org.codelibs.fesen.opensearch.action.search.SearchResponse;
+import org.codelibs.fesen.opensearch.action.support.WriteRequest.RefreshPolicy;
+import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.codelibs.fesen.opensearch.action.update.UpdateResponse;
+import org.codelibs.fesen.opensearch.cluster.metadata.MappingMetadata;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.common.unit.TimeValue;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentFactory;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesArray;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeUnit;
+import org.codelibs.fesen.opensearch.core.rest.RestStatus;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
+import org.codelibs.fesen.opensearch.index.query.QueryBuilders;
+import org.codelibs.fesen.opensearch.indices.recovery.RecoverySettings;
+import org.codelibs.fesen.opensearch.search.SearchHit;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -1318,12 +1318,12 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
 
-        final org.opensearch.index.reindex.ReindexRequest reindexRequest = new org.opensearch.index.reindex.ReindexRequest();
+        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest = new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
         reindexRequest.setSourceIndices(srcIndex);
         reindexRequest.setDestIndex(destIndex);
         reindexRequest.setRefresh(true);
-        final org.opensearch.index.reindex.BulkByScrollResponse response =
-                client.execute(org.opensearch.index.reindex.ReindexAction.INSTANCE, reindexRequest).actionGet();
+        final org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.codelibs.fesen.opensearch.index.reindex.ReindexAction.INSTANCE, reindexRequest).actionGet();
         assertEquals(3L, response.getTotal());
         assertEquals(3L, response.getCreated());
         assertEquals(0, response.getBulkFailures().size());
@@ -1351,11 +1351,11 @@ class Elasticsearch8ClientTest {
                     .setSettings(Settings.builder().put("index.blocks.write", true)).execute().actionGet();
             assertTrue(blockResponse.isAcknowledged());
 
-            final org.opensearch.action.admin.indices.shrink.ResizeRequest request =
-                    new org.opensearch.action.admin.indices.shrink.ResizeRequest(targetIndex, srcIndex);
-            request.setResizeType(org.opensearch.action.admin.indices.shrink.ResizeType.CLONE);
-            final org.opensearch.action.admin.indices.shrink.ResizeResponse response =
-                    client.execute(org.opensearch.action.admin.indices.shrink.ResizeAction.INSTANCE, request).actionGet();
+            final org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest request =
+                    new org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest(targetIndex, srcIndex);
+            request.setResizeType(org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeType.CLONE);
+            final org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse response =
+                    client.execute(org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeAction.INSTANCE, request).actionGet();
             assertTrue(response.isAcknowledged());
             assertEquals(targetIndex, response.index());
 
@@ -1390,13 +1390,13 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.opensearch.index.reindex.UpdateByQueryRequest request = new org.opensearch.index.reindex.UpdateByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
         request.setQuery(QueryBuilders.matchAllQuery());
-        request.setScript(new org.opensearch.script.Script("ctx._source.status = 'updated'"));
+        request.setScript(new org.codelibs.fesen.opensearch.script.Script("ctx._source.status = 'updated'"));
         request.setConflicts("proceed");
         request.setRefresh(true);
-        final org.opensearch.index.reindex.BulkByScrollResponse response =
-                client.execute(org.opensearch.index.reindex.UpdateByQueryAction.INSTANCE, request).actionGet();
+        final org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryAction.INSTANCE, request).actionGet();
         assertEquals(3L, response.getTotal());
         assertEquals(3L, response.getUpdated());
         assertEquals(0, response.getBulkFailures().size());
@@ -1418,12 +1418,12 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.opensearch.index.reindex.DeleteByQueryRequest request = new org.opensearch.index.reindex.DeleteByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
         request.setQuery(QueryBuilders.matchQuery("group", "a"));
         request.setConflicts("proceed");
         request.setRefresh(true);
-        final org.opensearch.index.reindex.BulkByScrollResponse response =
-                client.execute(org.opensearch.index.reindex.DeleteByQueryAction.INSTANCE, request).actionGet();
+        final org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryAction.INSTANCE, request).actionGet();
         assertEquals(2L, response.getDeleted());
         assertEquals(0, response.getBulkFailures().size());
 
@@ -1437,10 +1437,10 @@ class Elasticsearch8ClientTest {
         final String alias = "test_resolve_index_alias";
         client.admin().indices().prepareCreate(index).addAlias(new Alias(alias)).execute().actionGet();
 
-        final org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
-                new org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(new String[] { "test_resolve_index*" });
-        final org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
-                client.execute(org.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
+        final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
+                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(new String[] { "test_resolve_index*" });
+        final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
+                client.execute(org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
         assertTrue(response.getIndices().stream().anyMatch(i -> index.equals(i.getName())));
         assertTrue(response.getAliases().stream().anyMatch(a -> alias.equals(a.getName())));
     }
@@ -1456,31 +1456,31 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.opensearch.action.search.CreatePitRequest createPitRequest =
-                new org.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
-        final org.opensearch.action.search.CreatePitResponse createPitResponse =
-                client.execute(org.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet();
+        final org.codelibs.fesen.opensearch.action.search.CreatePitRequest createPitRequest =
+                new org.codelibs.fesen.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
+        final org.codelibs.fesen.opensearch.action.search.CreatePitResponse createPitResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet();
         final String pitId = createPitResponse.getId();
         assertNotNull(pitId);
         assertFalse(pitId.isEmpty());
 
-        final org.opensearch.action.search.DeletePitResponse deletePitResponse = client
-                .execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest(pitId))
+        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse = client
+                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
                 .actionGet();
-        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.opensearch.action.search.DeletePitInfo::isSuccessful));
+        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
     }
 
     @Test
     void test_pit_get_all_unsupported() throws Exception {
         assertThrows(UnsupportedOperationException.class, () -> client
-                .execute(org.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.opensearch.action.search.GetAllPitNodesRequest())
+                .execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest())
                 .actionGet());
     }
 
     @Test
     void test_pit_delete_all_unsupported() throws Exception {
         assertThrows(UnsupportedOperationException.class, () -> client
-                .execute(org.opensearch.action.search.DeletePitAction.INSTANCE, new org.opensearch.action.search.DeletePitRequest("_all"))
+                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all"))
                 .actionGet());
     }
 }

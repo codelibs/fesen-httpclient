@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.opensearch.common.io.PathUtils;
+import org.codelibs.fesen.opensearch.common.io.PathUtils;
 
 /**
  * Checks whether the operating system setting {@code vm.max_map_count} meets

@@ -23,27 +23,27 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.opensearch.action.ActionRequestValidationException;
-import org.opensearch.action.admin.indices.alias.Alias;
-import org.opensearch.action.admin.indices.create.CreateIndexRequest;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.action.support.IndicesOptions;
-import org.opensearch.common.settings.Settings;
-import org.opensearch.common.settings.Settings.Builder;
-import org.opensearch.common.unit.TimeValue;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.common.bytes.BytesArray;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.common.io.stream.StreamOutput;
-import org.opensearch.core.common.transport.TransportAddress;
-import org.opensearch.core.tasks.TaskId;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.MediaType;
-import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.index.mapper.MapperService;
-import org.opensearch.tasks.Task;
+import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.Alias;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.common.settings.Settings.Builder;
+import org.codelibs.fesen.opensearch.common.unit.TimeValue;
+import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesArray;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.common.transport.TransportAddress;
+import org.codelibs.fesen.opensearch.core.tasks.TaskId;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.index.mapper.MapperService;
+import org.codelibs.fesen.opensearch.tasks.Task;
 
 /**
  * A {@link CreateIndexRequest} wrapper for HTTP-based clients that adjusts how the

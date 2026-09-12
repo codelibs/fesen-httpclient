@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.settings.get.GetSettingsAction;
-import org.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 
 class HttpGetSettingsActionTest {
 

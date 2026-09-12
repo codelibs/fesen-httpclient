@@ -24,19 +24,19 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
-import org.opensearch.OpenSearchException;
-import org.opensearch.OpenSearchStatusException;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.action.support.IndicesOptions;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.ParseField;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.rest.RestStatus;
-import org.opensearch.core.xcontent.MediaType;
-import org.opensearch.core.xcontent.XContent;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.rest.BytesRestResponse;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.OpenSearchStatusException;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.ParseField;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.rest.RestStatus;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
+import org.codelibs.fesen.opensearch.core.xcontent.XContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.rest.BytesRestResponse;
 
 /**
  * Base class for HTTP-based action implementations that invoke OpenSearch/Elasticsearch

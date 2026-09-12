@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.search.MultiSearchAction;
-import org.opensearch.action.search.MultiSearchRequest;
+import org.codelibs.fesen.opensearch.action.search.MultiSearchAction;
+import org.codelibs.fesen.opensearch.action.search.MultiSearchRequest;
 
 class HttpMultiSearchActionTest {
 

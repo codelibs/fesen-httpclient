@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.reindex.BulkByScrollResponse;
-import org.opensearch.index.reindex.ReindexAction;
-import org.opensearch.index.reindex.ReindexRequest;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.opensearch.index.reindex.ReindexAction;
+import org.codelibs.fesen.opensearch.index.reindex.ReindexRequest;
 
 class HttpReindexActionTest {
 

@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 import org.codelibs.curl.Curl;
 import org.codelibs.curl.CurlRequest;
 import org.junit.jupiter.api.Test;
-import org.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
 
 class HttpClientTimeoutTest {
 

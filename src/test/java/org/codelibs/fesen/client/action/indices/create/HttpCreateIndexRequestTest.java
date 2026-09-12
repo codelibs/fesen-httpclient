@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
 
 class HttpCreateIndexRequestTest {
 

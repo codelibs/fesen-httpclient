@@ -18,27 +18,27 @@ package org.codelibs.fesen.client.action;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.Version;
-import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
-import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
-import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
-import org.opensearch.action.admin.cluster.allocation.ClusterAllocationExplanation;
-import org.opensearch.cluster.ClusterInfo;
-import org.opensearch.cluster.node.DiscoveryNode;
-import org.opensearch.cluster.routing.RecoverySource;
-import org.opensearch.cluster.routing.ShardRouting;
-import org.opensearch.cluster.routing.UnassignedInfo;
-import org.opensearch.cluster.routing.allocation.ShardAllocationDecision;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.common.transport.TransportAddress;
-import org.opensearch.core.index.Index;
-import org.opensearch.core.index.shard.ShardId;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.Version;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplanation;
+import org.codelibs.fesen.opensearch.cluster.ClusterInfo;
+import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.opensearch.cluster.routing.RecoverySource;
+import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
+import org.codelibs.fesen.opensearch.cluster.routing.UnassignedInfo;
+import org.codelibs.fesen.opensearch.cluster.routing.allocation.ShardAllocationDecision;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.transport.TransportAddress;
+import org.codelibs.fesen.opensearch.core.index.Index;
+import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Cluster Allocation Explain API over HTTP for OpenSearch/Elasticsearch,

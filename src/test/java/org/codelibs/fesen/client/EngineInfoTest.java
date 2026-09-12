@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.junit.jupiter.api.Test;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 
 class EngineInfoTest {
 

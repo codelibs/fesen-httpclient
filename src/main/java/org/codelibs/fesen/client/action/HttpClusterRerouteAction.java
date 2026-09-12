@@ -17,12 +17,12 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
-import org.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
-import org.opensearch.action.admin.cluster.reroute.ClusterRerouteResponse;
-import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteResponse;
+import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the cluster reroute API over HTTP for OpenSearch/Elasticsearch.

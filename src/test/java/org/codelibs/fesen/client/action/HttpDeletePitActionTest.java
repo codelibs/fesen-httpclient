@@ -27,14 +27,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.search.DeletePitAction;
-import org.opensearch.action.search.DeletePitRequest;
-import org.opensearch.action.search.DeletePitResponse;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.search.DeletePitAction;
+import org.codelibs.fesen.opensearch.action.search.DeletePitRequest;
+import org.codelibs.fesen.opensearch.action.search.DeletePitResponse;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 class HttpDeletePitActionTest {
 

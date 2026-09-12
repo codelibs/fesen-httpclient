@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsAction;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
 
 /**
  * Handles the indices exists API over HTTP for OpenSearch/Elasticsearch,

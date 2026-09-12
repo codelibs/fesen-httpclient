@@ -15,7 +15,7 @@
  */
 package org.codelibs.fesen.client.action;
 
-import static org.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
+import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -23,20 +23,20 @@ import java.util.Locale;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.DocWriteRequest.OpType;
-import org.opensearch.action.index.IndexAction;
-import org.opensearch.action.index.IndexRequest;
-import org.opensearch.action.index.IndexResponse;
-import org.opensearch.action.index.IndexResponse.Builder;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.action.support.WriteRequest.RefreshPolicy;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.VersionType;
-import org.opensearch.index.seqno.SequenceNumbers;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.DocWriteRequest.OpType;
+import org.codelibs.fesen.opensearch.action.index.IndexAction;
+import org.codelibs.fesen.opensearch.action.index.IndexRequest;
+import org.codelibs.fesen.opensearch.action.index.IndexResponse;
+import org.codelibs.fesen.opensearch.action.index.IndexResponse.Builder;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.action.support.WriteRequest.RefreshPolicy;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.VersionType;
+import org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers;
 
 /**
  * Handles the index API over HTTP for OpenSearch/Elasticsearch,

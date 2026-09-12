@@ -23,13 +23,13 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.index.IndexAction;
-import org.opensearch.action.index.IndexRequest;
-import org.opensearch.action.index.IndexResponse;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.index.IndexAction;
+import org.codelibs.fesen.opensearch.action.index.IndexRequest;
+import org.codelibs.fesen.opensearch.action.index.IndexResponse;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 class HttpIndexActionTest {
 

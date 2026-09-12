@@ -30,7 +30,7 @@ import org.codelibs.fesen.client.EngineInfo;
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.HttpClient.ContentType;
-import org.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
 
 /**
  * Test helpers for inspecting the {@link CurlRequest} that an {@code HttpXxxAction}

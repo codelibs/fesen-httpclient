@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptAction;
-import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequest;
-import org.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the get stored script API over HTTP for OpenSearch/Elasticsearch,

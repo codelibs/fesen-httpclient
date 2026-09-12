@@ -15,7 +15,7 @@
  */
 package org.codelibs.fesen.client.node;
 
-import org.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.OpenSearchException;
 
 /**
  * An exception thrown when no node in the cluster is available to process a request.

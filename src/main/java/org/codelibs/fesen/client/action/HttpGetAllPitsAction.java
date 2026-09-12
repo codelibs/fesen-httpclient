@@ -20,11 +20,11 @@ import java.io.IOException;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.search.GetAllPitNodesRequest;
-import org.opensearch.action.search.GetAllPitNodesResponse;
-import org.opensearch.action.search.GetAllPitsAction;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest;
+import org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse;
+import org.codelibs.fesen.opensearch.action.search.GetAllPitsAction;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Get All Point-in-Time (PIT) API over HTTP, listing every active

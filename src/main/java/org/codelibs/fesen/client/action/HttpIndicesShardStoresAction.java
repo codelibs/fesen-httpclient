@@ -23,12 +23,12 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.shards.IndicesShardStoresAction;
-import org.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
-import org.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
-import org.opensearch.cluster.health.ClusterHealthStatus;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
+import org.codelibs.fesen.opensearch.cluster.health.ClusterHealthStatus;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Indices Shard Stores API over HTTP for OpenSearch/Elasticsearch.

@@ -24,16 +24,16 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.shrink.ResizeAction;
-import org.opensearch.action.admin.indices.shrink.ResizeRequest;
-import org.opensearch.action.admin.indices.shrink.ResizeResponse;
-import org.opensearch.action.admin.indices.shrink.ResizeType;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.common.settings.Settings;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeType;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 class HttpResizeActionTest {
 
