@@ -724,7 +724,8 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public ActionFuture<AcknowledgedResponse> deleteView(org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
+    public ActionFuture<AcknowledgedResponse> deleteView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
         return indicesClient.deleteView(request);
     }
 

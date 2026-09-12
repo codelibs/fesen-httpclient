@@ -1604,11 +1604,13 @@ class OpenSearch3ClientTest {
         latch.await();
 
         {
-            final org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsRequestBuilder syncBuilder = client.prepareMultiTermVectors();
+            final org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsRequestBuilder syncBuilder =
+                    client.prepareMultiTermVectors();
             syncBuilder.add(new org.codelibs.fesen.opensearch.action.termvectors.TermVectorsRequest(index, "1").selectedFields("text"));
             syncBuilder.add(new org.codelibs.fesen.opensearch.action.termvectors.TermVectorsRequest(index, "2").selectedFields("text"));
             syncBuilder.add(new org.codelibs.fesen.opensearch.action.termvectors.TermVectorsRequest(index, "3").selectedFields("text"));
-            final org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsResponse multiTermVectorsResponse = syncBuilder.execute().actionGet();
+            final org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsResponse multiTermVectorsResponse =
+                    syncBuilder.execute().actionGet();
             assertNotNull(multiTermVectorsResponse);
             assertEquals(3, multiTermVectorsResponse.getResponses().length);
         }
@@ -1978,10 +1980,10 @@ class OpenSearch3ClientTest {
 
         {
             final MultiGetRequestBuilder mgetBuilder = client.prepareMultiGet();
-            mgetBuilder.add(new MultiGetRequest.Item(index, "1")
-                    .fetchSourceContext(new org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "user" }, null)));
-            mgetBuilder.add(new MultiGetRequest.Item(index, "2")
-                    .fetchSourceContext(new org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "score" }, null)));
+            mgetBuilder.add(new MultiGetRequest.Item(index, "1").fetchSourceContext(
+                    new org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "user" }, null)));
+            mgetBuilder.add(new MultiGetRequest.Item(index, "2").fetchSourceContext(
+                    new org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext(true, new String[] { "score" }, null)));
             final MultiGetResponse multiGetResponse = mgetBuilder.execute().actionGet();
             assertEquals(2, multiGetResponse.getResponses().length);
             assertTrue(multiGetResponse.getResponses()[0].getResponse().isExists());
@@ -2219,17 +2221,18 @@ class OpenSearch3ClientTest {
         org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest request =
                 new org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest();
         request.indices(index);
-        client.execute(org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction.INSTANCE, request, wrap(response -> {
-            logger.info("RemoteStoreStats with index response received");
-            assertNotNull(response);
-            assertTrue(response.getTotalShards() >= 0);
-            logger.info("RemoteStoreStats with index - totalShards: " + response.getTotalShards());
-            latch.countDown();
-        }, e -> {
-            logger.severe("RemoteStoreStats with index failed: " + e.getMessage());
-            e.printStackTrace();
-            fail();
-        }));
+        client.execute(org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction.INSTANCE, request,
+                wrap(response -> {
+                    logger.info("RemoteStoreStats with index response received");
+                    assertNotNull(response);
+                    assertTrue(response.getTotalShards() >= 0);
+                    logger.info("RemoteStoreStats with index - totalShards: " + response.getTotalShards());
+                    latch.countDown();
+                }, e -> {
+                    logger.severe("RemoteStoreStats with index failed: " + e.getMessage());
+                    e.printStackTrace();
+                    fail();
+                }));
         latch.await();
 
         // Cleanup
@@ -2265,17 +2268,18 @@ class OpenSearch3ClientTest {
                 new org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest();
         request.detailed(true);
         request.activeOnly(false);
-        client.execute(org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction.INSTANCE, request, wrap(response -> {
-            logger.info("SegmentReplicationStats with options response received");
-            assertNotNull(response);
-            assertTrue(response.getTotalShards() >= 0);
-            logger.info("SegmentReplicationStats with options - totalShards: " + response.getTotalShards());
-            latch.countDown();
-        }, e -> {
-            logger.severe("SegmentReplicationStats with options failed: " + e.getMessage());
-            e.printStackTrace();
-            fail();
-        }));
+        client.execute(org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction.INSTANCE, request,
+                wrap(response -> {
+                    logger.info("SegmentReplicationStats with options response received");
+                    assertNotNull(response);
+                    assertTrue(response.getTotalShards() >= 0);
+                    logger.info("SegmentReplicationStats with options - totalShards: " + response.getTotalShards());
+                    latch.countDown();
+                }, e -> {
+                    logger.severe("SegmentReplicationStats with options failed: " + e.getMessage());
+                    e.printStackTrace();
+                    fail();
+                }));
         latch.await();
     }
 
@@ -2301,8 +2305,9 @@ class OpenSearch3ClientTest {
     void test_wlmStats_withNodeFilter() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         // Use constructor to specify node filter
-        org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest request = new org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest(
-                new String[] { "_local" }, java.util.Collections.emptySet(), false);
+        org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest request =
+                new org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest(new String[] { "_local" },
+                        java.util.Collections.emptySet(), false);
         client.execute(org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsAction.INSTANCE, request, wrap(response -> {
             logger.info("WlmStats with node filter response received");
             assertNotNull(response);
@@ -2329,7 +2334,8 @@ class OpenSearch3ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest = new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
+        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest =
+                new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
         reindexRequest.setSourceIndices(srcIndex);
         reindexRequest.setDestIndex(destIndex);
         reindexRequest.setRefresh(true);
@@ -2401,7 +2407,8 @@ class OpenSearch3ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
         request.setQuery(QueryBuilders.matchAllQuery());
         request.setScript(new org.codelibs.fesen.opensearch.script.Script("ctx._source.status = 'updated'"));
         request.setConflicts("proceed");
@@ -2429,7 +2436,8 @@ class OpenSearch3ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
         request.setQuery(QueryBuilders.matchQuery("group", "a"));
         request.setConflicts("proceed");
         request.setRefresh(true);
@@ -2449,7 +2457,8 @@ class OpenSearch3ClientTest {
         client.admin().indices().prepareCreate(index).addAlias(new Alias(alias)).execute().actionGet();
 
         final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
-                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(new String[] { "test_resolve_index*" });
+                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(
+                        new String[] { "test_resolve_index*" });
         final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
                 client.execute(org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
         assertTrue(response.getIndices().stream().anyMatch(i -> index.equals(i.getName())));
@@ -2480,15 +2489,16 @@ class OpenSearch3ClientTest {
                 .setQuery(QueryBuilders.matchAllQuery()).setSize(10).execute().actionGet();
         assertEquals(3L, pitSearchResponse.getHits().getTotalHits().value());
 
-        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest())
-                .actionGet();
+        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest()).actionGet();
         assertTrue(getAllPitsResponse.getPitInfos().stream().anyMatch(p -> pitId.equals(p.getPitId())));
 
-        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
-                .actionGet();
-        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
+        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream()
+                .allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
     }
 
     @Test
@@ -2508,14 +2518,15 @@ class OpenSearch3ClientTest {
                 client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet();
         assertNotNull(createPitResponse.getId());
 
-        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all"))
-                .actionGet();
-        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
+        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all")).actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream()
+                .allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
 
-        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest())
-                .actionGet();
+        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest()).actionGet();
         assertTrue(getAllPitsResponse.getPitInfos().isEmpty());
     }
 
@@ -2538,7 +2549,8 @@ class OpenSearch3ClientTest {
 
         final org.codelibs.fesen.opensearch.action.search.CreatePitRequest createPitRequest =
                 new org.codelibs.fesen.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
-        final String pitId = client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet().getId();
+        final String pitId =
+                client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet().getId();
         assertNotNull(pitId);
 
         final int pageSize = 7;
@@ -2574,8 +2586,8 @@ class OpenSearch3ClientTest {
                 }
             }
         } finally {
-            client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
-                    .actionGet();
+            client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                    new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
         }
 
         // Every document is seen exactly once across the pages.
@@ -2598,15 +2610,18 @@ class OpenSearch3ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final String pitId = client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE,
-                new org.codelibs.fesen.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index)).actionGet().getId();
+        final String pitId = client
+                .execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index))
+                .actionGet().getId();
         try {
             // A field sort plus the _shard_doc tiebreaker: both sort values must survive the JSON
             // round trip well enough to be fed back into search_after.
-            final SearchResponse first = client.prepareSearch()
-                    .setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
-                    .setQuery(QueryBuilders.matchAllQuery()).setSize(2).addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.fieldSort("value"))
-                    .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.shardDocSort()).execute().actionGet();
+            final SearchResponse first =
+                    client.prepareSearch().setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                            .setQuery(QueryBuilders.matchAllQuery()).setSize(2)
+                            .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.fieldSort("value"))
+                            .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.shardDocSort()).execute().actionGet();
             final SearchHit[] firstHits = first.getHits().getHits();
             assertEquals(2, firstHits.length);
             assertEquals("1", firstHits[0].getId());
@@ -2615,17 +2630,19 @@ class OpenSearch3ClientTest {
             final Object[] sortValues = firstHits[1].getSortValues();
             assertEquals(2, sortValues.length);
 
-            final SearchResponse second = client.prepareSearch()
-                    .setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
-                    .setQuery(QueryBuilders.matchAllQuery()).setSize(2).addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.fieldSort("value"))
-                    .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.shardDocSort()).searchAfter(sortValues).execute().actionGet();
+            final SearchResponse second =
+                    client.prepareSearch().setPointInTime(new PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                            .setQuery(QueryBuilders.matchAllQuery()).setSize(2)
+                            .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.fieldSort("value"))
+                            .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.shardDocSort()).searchAfter(sortValues)
+                            .execute().actionGet();
             final SearchHit[] secondHits = second.getHits().getHits();
             assertEquals(2, secondHits.length);
             assertEquals("3", secondHits[0].getId());
             assertEquals("4", secondHits[1].getId());
         } finally {
-            client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
-                    .actionGet();
+            client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                    new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
         }
     }
 

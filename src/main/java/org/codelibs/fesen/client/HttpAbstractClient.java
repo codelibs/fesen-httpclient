@@ -1550,7 +1550,8 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public void remoteStoreMetadata(org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequest request,
+        public void remoteStoreMetadata(
+                org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequest request,
                 org.codelibs.fesen.opensearch.core.action.ActionListener<org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse> listener) {
             execute(RemoteStoreMetadataAction.INSTANCE, request, listener);
         }
@@ -2140,7 +2141,8 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<AcknowledgedResponse> deleteView(org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
+        public ActionFuture<AcknowledgedResponse> deleteView(
+                org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
             return execute(DeleteViewAction.INSTANCE, request);
         }
 

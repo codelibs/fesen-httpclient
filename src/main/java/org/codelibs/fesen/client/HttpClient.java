@@ -1625,7 +1625,8 @@ public class HttpClient extends HttpAbstractClient {
     }
 
     @Override
-    public ActionFuture<SearchResponse> searchView(org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
+    public ActionFuture<SearchResponse> searchView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
         return execute(SearchViewAction.INSTANCE, request);
     }
 

@@ -1385,7 +1385,8 @@ class OpenSearch2ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest = new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
+        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest =
+                new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
         reindexRequest.setSourceIndices(srcIndex);
         reindexRequest.setDestIndex(destIndex);
         reindexRequest.setRefresh(true);
@@ -1457,7 +1458,8 @@ class OpenSearch2ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
         request.setQuery(QueryBuilders.matchAllQuery());
         request.setScript(new org.codelibs.fesen.opensearch.script.Script("ctx._source.status = 'updated'"));
         request.setConflicts("proceed");
@@ -1485,7 +1487,8 @@ class OpenSearch2ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
         request.setQuery(QueryBuilders.matchQuery("group", "a"));
         request.setConflicts("proceed");
         request.setRefresh(true);
@@ -1505,7 +1508,8 @@ class OpenSearch2ClientTest {
         client.admin().indices().prepareCreate(index).addAlias(new Alias(alias)).execute().actionGet();
 
         final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
-                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(new String[] { "test_resolve_index*" });
+                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(
+                        new String[] { "test_resolve_index*" });
         final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
                 client.execute(org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
         assertTrue(response.getIndices().stream().anyMatch(i -> index.equals(i.getName())));
@@ -1531,15 +1535,16 @@ class OpenSearch2ClientTest {
         assertNotNull(pitId);
         assertFalse(pitId.isEmpty());
 
-        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest())
-                .actionGet();
+        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest()).actionGet();
         assertTrue(getAllPitsResponse.getPitInfos().stream().anyMatch(p -> pitId.equals(p.getPitId())));
 
-        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
-                .actionGet();
-        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
+        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream()
+                .allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
     }
 
     @Test
@@ -1559,14 +1564,15 @@ class OpenSearch2ClientTest {
                 client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet();
         assertNotNull(createPitResponse.getId());
 
-        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all"))
-                .actionGet();
-        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
+        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all")).actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream()
+                .allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
 
-        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest())
-                .actionGet();
+        final org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse getAllPitsResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest()).actionGet();
         assertTrue(getAllPitsResponse.getPitInfos().isEmpty());
     }
 
@@ -1593,7 +1599,8 @@ class OpenSearch2ClientTest {
 
         final org.codelibs.fesen.opensearch.action.search.CreatePitRequest createPitRequest =
                 new org.codelibs.fesen.opensearch.action.search.CreatePitRequest(TimeValue.timeValueMinutes(1), true, index);
-        final String pitId = client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet().getId();
+        final String pitId =
+                client.execute(org.codelibs.fesen.opensearch.action.search.CreatePitAction.INSTANCE, createPitRequest).actionGet().getId();
         assertNotNull(pitId);
 
         final int pageSize = 7;
@@ -1602,8 +1609,8 @@ class OpenSearch2ClientTest {
             Object[] searchAfter = null;
             while (true) {
                 final SearchRequestBuilder builder = client.prepareSearch()
-                        .setPointInTime(
-                                new org.codelibs.fesen.opensearch.search.builder.PointInTimeBuilder(pitId).setKeepAlive(TimeValue.timeValueMinutes(1)))
+                        .setPointInTime(new org.codelibs.fesen.opensearch.search.builder.PointInTimeBuilder(pitId)
+                                .setKeepAlive(TimeValue.timeValueMinutes(1)))
                         .setQuery(QueryBuilders.matchAllQuery()).setSize(pageSize)
                         .addSort(org.codelibs.fesen.opensearch.search.sort.SortBuilders.fieldSort("value"));
                 if (searchAfter != null) {
@@ -1622,8 +1629,8 @@ class OpenSearch2ClientTest {
                 assertEquals(1, searchAfter.length);
             }
         } finally {
-            client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
-                    .actionGet();
+            client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                    new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
         }
 
         // Every document is seen exactly once, in "value" order, across the pages.

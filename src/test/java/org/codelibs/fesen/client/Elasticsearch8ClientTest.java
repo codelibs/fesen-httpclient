@@ -1318,7 +1318,8 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest = new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
+        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest =
+                new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
         reindexRequest.setSourceIndices(srcIndex);
         reindexRequest.setDestIndex(destIndex);
         reindexRequest.setRefresh(true);
@@ -1390,7 +1391,8 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
         request.setQuery(QueryBuilders.matchAllQuery());
         request.setScript(new org.codelibs.fesen.opensearch.script.Script("ctx._source.status = 'updated'"));
         request.setConflicts("proceed");
@@ -1418,7 +1420,8 @@ class Elasticsearch8ClientTest {
         bulkRequestBuilder.execute().actionGet();
         client.admin().indices().prepareRefresh(index).execute().actionGet();
 
-        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request = new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
+        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
         request.setQuery(QueryBuilders.matchQuery("group", "a"));
         request.setConflicts("proceed");
         request.setRefresh(true);
@@ -1438,7 +1441,8 @@ class Elasticsearch8ClientTest {
         client.admin().indices().prepareCreate(index).addAlias(new Alias(alias)).execute().actionGet();
 
         final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
-                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(new String[] { "test_resolve_index*" });
+                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(
+                        new String[] { "test_resolve_index*" });
         final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
                 client.execute(org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
         assertTrue(response.getIndices().stream().anyMatch(i -> index.equals(i.getName())));
@@ -1464,23 +1468,24 @@ class Elasticsearch8ClientTest {
         assertNotNull(pitId);
         assertFalse(pitId.isEmpty());
 
-        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse = client
-                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId))
-                .actionGet();
-        assertTrue(deletePitResponse.getDeletePitResults().stream().allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
+        final org.codelibs.fesen.opensearch.action.search.DeletePitResponse deletePitResponse =
+                client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
+        assertTrue(deletePitResponse.getDeletePitResults().stream()
+                .allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
     }
 
     @Test
     void test_pit_get_all_unsupported() throws Exception {
-        assertThrows(UnsupportedOperationException.class, () -> client
-                .execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest())
-                .actionGet());
+        assertThrows(UnsupportedOperationException.class,
+                () -> client.execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest()).actionGet());
     }
 
     @Test
     void test_pit_delete_all_unsupported() throws Exception {
-        assertThrows(UnsupportedOperationException.class, () -> client
-                .execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE, new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all"))
-                .actionGet());
+        assertThrows(UnsupportedOperationException.class,
+                () -> client.execute(org.codelibs.fesen.opensearch.action.search.DeletePitAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.DeletePitRequest("_all")).actionGet());
     }
 }
