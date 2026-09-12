@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.action.FailedNodeException;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.nodes.TransportNodesAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.node.NodeService;
@@ -61,7 +60,6 @@ public class TransportNodesStatsAction extends TransportNodesAction<
 
     private final NodeService nodeService;
 
-    @Inject
     public TransportNodesStatsAction(
         ThreadPool threadPool,
         ClusterService clusterService,

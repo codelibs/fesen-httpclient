@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexTemplateServi
 import org.codelibs.fesen.opensearch.cluster.metadata.Template;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.UUIDs;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
@@ -76,7 +75,6 @@ public class TransportSimulateTemplateAction extends TransportClusterManagerNode
     private final IndicesService indicesService;
     private AliasValidator aliasValidator;
 
-    @Inject
     public TransportSimulateTemplateAction(
         TransportService transportService,
         ClusterService clusterService,

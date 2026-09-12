@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -100,7 +99,6 @@ public class SegmentReplicationPressureService implements Closeable {
 
     private volatile AsyncFailStaleReplicaTask failStaleReplicaTask;
 
-    @Inject
     public SegmentReplicationPressureService(
         Settings settings,
         ClusterService clusterService,

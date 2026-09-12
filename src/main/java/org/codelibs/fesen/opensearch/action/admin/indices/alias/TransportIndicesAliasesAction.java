@@ -52,7 +52,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexAliasesService;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -89,7 +88,6 @@ public class TransportIndicesAliasesAction extends TransportClusterManagerNodeAc
     private final MetadataIndexAliasesService indexAliasesService;
     private final RequestValidators<IndicesAliasesRequest> requestValidators;
 
-    @Inject
     public TransportIndicesAliasesAction(
         final TransportService transportService,
         final ClusterService clusterService,

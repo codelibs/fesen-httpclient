@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
 import org.codelibs.fesen.opensearch.index.IndexService;
@@ -63,7 +62,6 @@ public class TransportShardMultiTermsVectorAction extends TransportSingleShardAc
 
     private static final String ACTION_NAME = MultiTermVectorsAction.NAME + "[shard]";
 
-    @Inject
     public TransportShardMultiTermsVectorAction(
         ClusterService clusterService,
         TransportService transportService,

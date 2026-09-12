@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.action.bulk.TransportBulkAction;
 import org.codelibs.fesen.opensearch.action.bulk.TransportSingleItemBulkWriteAction;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.transport.TransportService;
 
 /**
@@ -56,7 +55,6 @@ import org.codelibs.fesen.opensearch.transport.TransportService;
 @Deprecated
 public class TransportIndexAction extends TransportSingleItemBulkWriteAction<IndexRequest, IndexResponse> {
 
-    @Inject
     public TransportIndexAction(
         ActionFilters actionFilters,
         TransportService transportService,

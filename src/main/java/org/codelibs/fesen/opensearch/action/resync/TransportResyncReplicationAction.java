@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -84,7 +83,6 @@ public class TransportResyncReplicationAction extends TransportWriteAction<
         }
     };
 
-    @Inject
     public TransportResyncReplicationAction(
         Settings settings,
         TransportService transportService,

@@ -19,7 +19,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.PlainShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.index.IndexService;
@@ -53,7 +52,6 @@ public class TransportRemoteStoreStatsAction extends TransportBroadcastByNodeAct
 
     private final RemoteStoreStatsTrackerFactory remoteStoreStatsTrackerFactory;
 
-    @Inject
     public TransportRemoteStoreStatsAction(
         ClusterService clusterService,
         TransportService transportService,

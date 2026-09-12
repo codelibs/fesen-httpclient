@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.script.ScriptService;
@@ -62,7 +61,6 @@ public class TransportPutStoredScriptAction extends TransportClusterManagerNodeA
     private final ScriptService scriptService;
     private final ClusterManagerTaskThrottler.ThrottlingKey putScriptTaskKey;
 
-    @Inject
     public TransportPutStoredScriptAction(
         TransportService transportService,
         ClusterService clusterService,

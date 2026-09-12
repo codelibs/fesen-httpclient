@@ -15,7 +15,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.ReplicationRespo
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.index.shard.IndexShard;
@@ -41,7 +40,6 @@ public class PublishMergedSegmentAction extends AbstractPublishCheckpointAction<
 
     private final SegmentReplicationTargetService replicationService;
 
-    @Inject
     public PublishMergedSegmentAction(
         Settings settings,
         TransportService transportService,

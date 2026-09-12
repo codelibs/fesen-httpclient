@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.ingest.IngestInfo;
@@ -68,7 +67,6 @@ public class PutPipelineTransportAction extends TransportClusterManagerNodeActio
     private final IngestService ingestService;
     private final OriginSettingClient client;
 
-    @Inject
     public PutPipelineTransportAction(
         ThreadPool threadPool,
         TransportService transportService,

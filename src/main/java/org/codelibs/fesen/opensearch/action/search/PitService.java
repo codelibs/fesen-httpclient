@@ -15,7 +15,6 @@ import org.codelibs.fesen.opensearch.action.StepListener;
 import org.codelibs.fesen.opensearch.action.support.GroupedActionListener;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -51,7 +50,6 @@ public class PitService {
     private final TransportService transportService;
     private final NodeClient nodeClient;
 
-    @Inject
     public PitService(
         ClusterService clusterService,
         SearchTransportService searchTransportService,

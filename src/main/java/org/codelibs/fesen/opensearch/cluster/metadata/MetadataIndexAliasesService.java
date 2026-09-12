@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.AliasAction.NewAliasValida
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.index.Index;
@@ -82,7 +81,6 @@ public class MetadataIndexAliasesService {
     private final NamedXContentRegistry xContentRegistry;
     private final ClusterManagerTaskThrottler.ThrottlingKey indexAliasTaskKey;
 
-    @Inject
     public MetadataIndexAliasesService(
         ClusterService clusterService,
         IndicesService indicesService,

@@ -50,7 +50,6 @@ import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.UUIDs;
 import org.codelibs.fesen.opensearch.common.ValidationException;
 import org.codelibs.fesen.opensearch.common.compress.CompressedXContent;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.logging.HeaderWarning;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
@@ -132,7 +131,6 @@ public class MetadataIndexTemplateService {
     private final ClusterManagerTaskThrottler.ThrottlingKey removeComponentTemplateTaskKey;
     private final ThreadPool threadPool;
 
-    @Inject
     public MetadataIndexTemplateService(
         ClusterService clusterService,
         MetadataCreateIndexService metadataCreateIndexService,

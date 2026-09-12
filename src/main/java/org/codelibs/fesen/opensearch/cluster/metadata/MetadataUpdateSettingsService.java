@@ -52,7 +52,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.ValidationException;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
@@ -109,7 +108,6 @@ public class MetadataUpdateSettingsService {
 
     private AwarenessReplicaBalance awarenessReplicaBalance;
 
-    @Inject
     public MetadataUpdateSettingsService(
         ClusterService clusterService,
         AllocationService allocationService,

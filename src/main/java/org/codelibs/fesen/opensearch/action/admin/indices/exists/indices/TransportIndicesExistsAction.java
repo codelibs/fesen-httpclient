@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
@@ -60,7 +59,6 @@ public class TransportIndicesExistsAction extends TransportClusterManagerNodeRea
     implements
         TransportIndicesResolvingAction<IndicesExistsRequest> {
 
-    @Inject
     public TransportIndicesExistsAction(
         TransportService transportService,
         ClusterService clusterService,

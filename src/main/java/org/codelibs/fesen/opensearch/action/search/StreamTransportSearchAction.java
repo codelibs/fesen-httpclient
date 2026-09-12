@@ -14,7 +14,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.routing.GroupShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.opensearch.core.indices.breaker.CircuitBreakerService;
@@ -41,7 +40,6 @@ import java.util.function.BiFunction;
  * @opensearch.internal
  */
 public class StreamTransportSearchAction extends TransportSearchAction {
-    @Inject
     public StreamTransportSearchAction(
         NodeClient client,
         ThreadPool threadPool,

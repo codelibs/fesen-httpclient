@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.action.admin.cluster.remote;
 import org.codelibs.fesen.opensearch.action.search.SearchTransportService;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.tasks.Task;
 import org.codelibs.fesen.opensearch.transport.RemoteClusterService;
@@ -52,7 +51,6 @@ public final class TransportRemoteInfoAction extends HandledTransportAction<Remo
 
     private final RemoteClusterService remoteClusterService;
 
-    @Inject
     public TransportRemoteInfoAction(
         TransportService transportService,
         ActionFilters actionFilters,

@@ -27,7 +27,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -65,7 +64,6 @@ public class TransportPitSegmentsAction extends TransportBroadcastByNodeAction<P
     private final TransportService transportService;
     private final PitService pitService;
 
-    @Inject
     public TransportPitSegmentsAction(
         ClusterService clusterService,
         TransportService transportService,

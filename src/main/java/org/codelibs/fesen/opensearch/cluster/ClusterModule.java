@@ -84,7 +84,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.TargetPo
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.ThrottlingAllocationDecider;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.WarmDiskThresholdDecider;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.AbstractModule;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -125,7 +124,7 @@ import java.util.function.Supplier;
  *
  * @opensearch.internal
  */
-public class ClusterModule extends AbstractModule {
+public class ClusterModule {
 
     public static final String BALANCED_ALLOCATOR = "balanced"; // default
     public static final Setting<String> SHARDS_ALLOCATOR_TYPE_SETTING = new Setting<>(
@@ -460,34 +459,6 @@ public class ClusterModule extends AbstractModule {
 
     public AllocationService getAllocationService() {
         return allocationService;
-    }
-
-    @Override
-    protected void configure() {
-        bind(GatewayAllocator.class).asEagerSingleton();
-        bind(ShardsBatchGatewayAllocator.class).asEagerSingleton();
-        bind(AllocationService.class).toInstance(allocationService);
-        bind(ClusterService.class).toInstance(clusterService);
-        bind(NodeConnectionsService.class).asEagerSingleton();
-        bind(MetadataDeleteIndexService.class).asEagerSingleton();
-        bind(MetadataIndexStateService.class).asEagerSingleton();
-        bind(MetadataMappingService.class).asEagerSingleton();
-        bind(MetadataIndexAliasesService.class).asEagerSingleton();
-        bind(MetadataUpdateSettingsService.class).asEagerSingleton();
-        bind(MetadataIndexTemplateService.class).asEagerSingleton();
-        bind(IndexNameExpressionResolver.class).toInstance(indexNameExpressionResolver);
-        bind(DelayedAllocationService.class).asEagerSingleton();
-        if (shardStateActionClass == ShardStateAction.class) {
-            bind(ShardStateAction.class).asEagerSingleton();
-        } else {
-            bind(ShardStateAction.class).to(shardStateActionClass).asEagerSingleton();
-        }
-        bind(NodeMappingRefreshAction.class).asEagerSingleton();
-        bind(MappingUpdatedAction.class).asEagerSingleton();
-        bind(TaskResultsService.class).asEagerSingleton();
-        bind(AllocationDeciders.class).toInstance(allocationDeciders);
-        bind(ShardsAllocator.class).toInstance(shardsAllocator);
-        bind(ClusterManagerMetrics.class).toInstance(clusterManagerMetrics);
     }
 
     public void setExistingShardsAllocators(GatewayAllocator gatewayAllocator, ShardsBatchGatewayAllocator shardsBatchGatewayAllocator) {

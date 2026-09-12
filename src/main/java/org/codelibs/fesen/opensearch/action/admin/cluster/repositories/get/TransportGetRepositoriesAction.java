@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.RepositoriesMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.RepositoryMetadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -64,7 +63,6 @@ import java.util.Set;
  */
 public class TransportGetRepositoriesAction extends TransportClusterManagerNodeReadAction<GetRepositoriesRequest, GetRepositoriesResponse> {
 
-    @Inject
     public TransportGetRepositoriesAction(
         TransportService transportService,
         ClusterService clusterService,

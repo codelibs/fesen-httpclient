@@ -55,7 +55,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -178,7 +177,6 @@ public class DeleteDataStreamAction extends ActionType<AcknowledgedResponse> {
         private final MetadataDeleteIndexService deleteIndexService;
         private final ClusterManagerTaskThrottler.ThrottlingKey removeDataStreamTaskKey;
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

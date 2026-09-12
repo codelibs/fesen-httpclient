@@ -17,7 +17,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.routing.WeightedRoutingService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
@@ -36,7 +35,6 @@ public class TransportAddWeightedRoutingAction extends TransportClusterManagerNo
 
     private final WeightedRoutingService weightedRoutingService;
 
-    @Inject
     public TransportAddWeightedRoutingAction(
         TransportService transportService,
         ClusterService clusterService,

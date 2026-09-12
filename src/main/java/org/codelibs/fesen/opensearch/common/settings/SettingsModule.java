@@ -34,8 +34,6 @@ package org.codelibs.fesen.opensearch.common.settings;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.opensearch.common.inject.Binder;
-import org.codelibs.fesen.opensearch.common.inject.Module;
 import org.codelibs.fesen.opensearch.common.util.FeatureFlags;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
@@ -57,7 +55,7 @@ import java.util.stream.IntStream;
  *
  * @opensearch.internal
  */
-public class SettingsModule implements Module {
+public class SettingsModule {
     private static final Logger logger = LogManager.getLogger(SettingsModule.class);
 
     private final Settings settings;
@@ -177,14 +175,6 @@ public class SettingsModule implements Module {
         // by now we are fully configured, lets check node level settings for unregistered index settings
         clusterSettings.validate(settings, true);
         this.settingsFilter = new SettingsFilter(settingsFilterPattern);
-    }
-
-    @Override
-    public void configure(Binder binder) {
-        binder.bind(Settings.class).toInstance(settings);
-        binder.bind(SettingsFilter.class).toInstance(settingsFilter);
-        binder.bind(ClusterSettings.class).toInstance(clusterSettings);
-        binder.bind(IndexScopedSettings.class).toInstance(indexScopedSettings);
     }
 
     /**

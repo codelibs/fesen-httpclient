@@ -46,7 +46,6 @@ import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lifecycle.AbstractLifecycleComponent;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -113,7 +112,6 @@ public class GatewayService extends AbstractLifecycleComponent implements Cluste
     private final AtomicBoolean recoveryInProgress = new AtomicBoolean();
     private final AtomicBoolean scheduledRecovery = new AtomicBoolean();
 
-    @Inject
     public GatewayService(
         final Settings settings,
         final AllocationService allocationService,

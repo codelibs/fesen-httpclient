@@ -11,7 +11,6 @@ package org.codelibs.fesen.opensearch.action.search;
 import org.codelibs.fesen.opensearch.action.support.nodes.BaseNodesRequest;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 
@@ -25,7 +24,6 @@ import java.io.IOException;
 @PublicApi(since = "2.3.0")
 public class GetAllPitNodesRequest extends BaseNodesRequest<GetAllPitNodesRequest> {
 
-    @Inject
     public GetAllPitNodesRequest(DiscoveryNode... concreteNodes) {
         super(concreteNodes);
     }

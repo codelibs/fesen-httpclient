@@ -22,7 +22,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -74,7 +73,6 @@ public class TransportPrepareTieringAction extends TransportBroadcastByNodeActio
      * @param actionFilters the action filters
      * @param indexNameExpressionResolver the index name expression resolver
      */
-    @Inject
     public TransportPrepareTieringAction(
         ClusterService clusterService,
         TransportService transportService,

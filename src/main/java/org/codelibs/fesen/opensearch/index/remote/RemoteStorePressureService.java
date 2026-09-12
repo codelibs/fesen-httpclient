@@ -11,7 +11,6 @@ package org.codelibs.fesen.opensearch.index.remote;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.concurrency.OpenSearchRejectedExecutionException;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
@@ -38,7 +37,6 @@ public class RemoteStorePressureService {
 
     private final RemoteStoreStatsTrackerFactory remoteStoreStatsTrackerFactory;
 
-    @Inject
     public RemoteStorePressureService(
         ClusterService clusterService,
         Settings settings,

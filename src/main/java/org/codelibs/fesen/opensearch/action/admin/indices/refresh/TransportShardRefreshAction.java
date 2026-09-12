@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.ReplicationRespo
 import org.codelibs.fesen.opensearch.action.support.replication.TransportReplicationAction;
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -61,7 +60,6 @@ public class TransportShardRefreshAction extends TransportReplicationAction<
 
     public static final String NAME = RefreshAction.NAME + "[s]";
 
-    @Inject
     public TransportShardRefreshAction(
         Settings settings,
         TransportService transportService,

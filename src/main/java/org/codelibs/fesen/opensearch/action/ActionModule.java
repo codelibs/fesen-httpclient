@@ -139,7 +139,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.TransportGet
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.TransportAnalyzeAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.TransportClearIndicesCacheAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.TransportCloseIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.create.AutoCreateAction;
@@ -318,9 +317,6 @@ import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.opensearch.common.NamedRegistry;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.breaker.ResponseLimitSettings;
-import org.codelibs.fesen.opensearch.common.inject.AbstractModule;
-import org.codelibs.fesen.opensearch.common.inject.TypeLiteral;
-import org.codelibs.fesen.opensearch.common.inject.multibindings.MapBinder;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -544,7 +540,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @opensearch.internal
  */
-public class ActionModule extends AbstractModule {
+public class ActionModule {
 
     private static final Logger logger = LogManager.getLogger(ActionModule.class);
 
@@ -744,7 +740,6 @@ public class ActionModule extends AbstractModule {
         actions.register(UpgradeAction.INSTANCE, TransportUpgradeAction.class);
         actions.register(UpgradeStatusAction.INSTANCE, TransportUpgradeStatusAction.class);
         actions.register(UpgradeSettingsAction.INSTANCE, TransportUpgradeSettingsAction.class);
-        actions.register(ClearIndicesCacheAction.INSTANCE, TransportClearIndicesCacheAction.class);
         actions.register(GetAliasesAction.INSTANCE, TransportGetAliasesAction.class);
         actions.register(GetSettingsAction.INSTANCE, TransportGetSettingsAction.class);
 
@@ -1106,41 +1101,6 @@ public class ActionModule extends AbstractModule {
             registerHandler.accept(new RestHotToWarmTierAction());
             registerHandler.accept(new RestWarmToHotTierAction());
         }
-    }
-
-    @Override
-    protected void configure() {
-        bind(ActionFilters.class).toInstance(actionFilters);
-        bind(DestructiveOperations.class).toInstance(destructiveOperations);
-        bind(new TypeLiteral<RequestValidators<PutMappingRequest>>() {
-        }).toInstance(mappingRequestValidators);
-        bind(new TypeLiteral<RequestValidators<IndicesAliasesRequest>>() {
-        }).toInstance(indicesAliasesRequestRequestValidators);
-
-        // Supporting classes
-        bind(AutoCreateIndex.class).toInstance(autoCreateIndex);
-        bind(TransportLivenessAction.class).asEagerSingleton();
-
-        // register ActionType -> transportAction Map used by NodeClient
-        @SuppressWarnings("rawtypes")
-        MapBinder<ActionType, TransportAction> transportActionsBinder = MapBinder.newMapBinder(
-            binder(),
-            ActionType.class,
-            TransportAction.class
-        );
-        for (ActionHandler<?, ?> action : actions.values()) {
-            // bind the action as eager singleton, so the map binder one will reuse it
-            bind(action.getTransportAction()).asEagerSingleton();
-            transportActionsBinder.addBinding(action.getAction()).to(action.getTransportAction()).asEagerSingleton();
-            for (Class<?> supportAction : action.getSupportTransportActions()) {
-                bind(supportAction).asEagerSingleton();
-            }
-        }
-
-        // register dynamic ActionType -> transportAction Map used by NodeClient
-        bind(DynamicActionRegistry.class).toInstance(dynamicActionRegistry);
-
-        bind(ResponseLimitSettings.class).toInstance(responseLimitSettings);
     }
 
     public ActionFilters getActionFilters() {

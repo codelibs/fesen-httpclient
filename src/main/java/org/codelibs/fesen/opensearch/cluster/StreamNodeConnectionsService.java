@@ -9,7 +9,6 @@
 package org.codelibs.fesen.opensearch.cluster;
 
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.StreamTransportService;
@@ -19,7 +18,6 @@ import org.codelibs.fesen.opensearch.transport.StreamTransportService;
  */
 @ExperimentalApi
 public class StreamNodeConnectionsService extends NodeConnectionsService {
-    @Inject
     public StreamNodeConnectionsService(Settings settings, ThreadPool threadPool, StreamTransportService streamTransportService) {
         super(settings, threadPool, streamTransportService);
     }

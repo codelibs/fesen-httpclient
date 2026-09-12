@@ -15,7 +15,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.index.Index;
@@ -52,7 +51,6 @@ public class WarmToHotTieringService extends TieringService {
      * @param nodeEnvironment the node environment
      * @param shardLimitValidator the shard limit validator
      */
-    @Inject
     public WarmToHotTieringService(
         final Settings settings,
         final ClusterService clusterService,

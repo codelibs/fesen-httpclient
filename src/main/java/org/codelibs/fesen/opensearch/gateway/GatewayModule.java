@@ -32,22 +32,11 @@
 
 package org.codelibs.fesen.opensearch.gateway;
 
-import org.codelibs.fesen.opensearch.common.inject.AbstractModule;
 
 /**
  * Binds the gateway module
  *
  * @opensearch.internal
  */
-public class GatewayModule extends AbstractModule {
-
-    @Override
-    protected void configure() {
-        bind(DanglingIndicesState.class).asEagerSingleton();
-        bind(GatewayService.class).asEagerSingleton();
-        bind(TransportNodesListGatewayMetaState.class).asEagerSingleton();
-        bind(TransportNodesListGatewayStartedShards.class).asEagerSingleton();
-        bind(TransportNodesListGatewayStartedShardsBatch.class).asEagerSingleton();
-        bind(LocalAllocateDangledIndices.class).asEagerSingleton();
-    }
+public class GatewayModule {
 }

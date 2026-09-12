@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.ComposableIndexTemplate;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -61,7 +60,6 @@ public class TransportGetComposableIndexTemplateAction extends TransportClusterM
     GetComposableIndexTemplateAction.Request,
     GetComposableIndexTemplateAction.Response> {
 
-    @Inject
     public TransportGetComposableIndexTemplateAction(
         TransportService transportService,
         ClusterService clusterService,

@@ -21,7 +21,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
@@ -61,7 +60,6 @@ public class TransportHotToWarmTierAction extends TransportTierAction {
      * @param hotToWarmTieringService the hot to warm tiering service
      * @param prepareTieringAction the prepare tiering action for DFA indices
      */
-    @Inject
     public TransportHotToWarmTierAction(
         TransportService transportService,
         ClusterService clusterService,

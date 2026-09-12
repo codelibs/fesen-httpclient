@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.rollover.MaxAgeConditi
 import org.codelibs.fesen.opensearch.action.admin.indices.rollover.MaxDocsCondition;
 import org.codelibs.fesen.opensearch.action.admin.indices.rollover.MaxSizeCondition;
 import org.codelibs.fesen.opensearch.action.resync.TransportResyncReplicationAction;
-import org.codelibs.fesen.opensearch.common.inject.AbstractModule;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteableRegistry.Entry;
@@ -106,7 +105,7 @@ import java.util.function.Predicate;
  *
  * @opensearch.internal
  */
-public class IndicesModule extends AbstractModule {
+public class IndicesModule {
     private final List<Entry> namedWritables = new ArrayList<>();
     private final MapperRegistry mapperRegistry;
 
@@ -289,23 +288,6 @@ public class IndicesModule extends AbstractModule {
             }
             return firstPredicate.and(secondPredicate);
         };
-    }
-
-    @Override
-    protected void configure() {
-        bind(IndicesStore.class).asEagerSingleton();
-        bind(IndicesClusterStateService.class).asEagerSingleton();
-        bind(TransportNodesListShardStoreMetadata.class).asEagerSingleton();
-        bind(TransportNodesListShardStoreMetadataBatch.class).asEagerSingleton();
-        bind(GlobalCheckpointSyncAction.class).asEagerSingleton();
-        bind(TransportResyncReplicationAction.class).asEagerSingleton();
-        bind(PrimaryReplicaSyncer.class).asEagerSingleton();
-        bind(RetentionLeaseSyncAction.class).asEagerSingleton();
-        bind(RetentionLeaseBackgroundSyncAction.class).asEagerSingleton();
-        bind(RetentionLeaseSyncer.class).asEagerSingleton();
-        bind(SegmentReplicationCheckpointPublisher.class).asEagerSingleton();
-        bind(SegmentReplicationPressureService.class).asEagerSingleton();
-        bind(RemoteStorePressureService.class).asEagerSingleton();
     }
 
     /**

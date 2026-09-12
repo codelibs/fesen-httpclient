@@ -49,7 +49,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -112,7 +111,6 @@ public class IndicesStore implements ClusterStateListener, Closeable {
 
     private final TimeValue deleteShardTimeout;
 
-    @Inject
     public IndicesStore(
         Settings settings,
         IndicesService indicesService,

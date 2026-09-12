@@ -50,7 +50,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateDataStreamSe
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -145,7 +144,6 @@ public class CreateDataStreamAction extends ActionType<AcknowledgedResponse> {
 
         private final MetadataCreateDataStreamService metadataCreateDataStreamService;
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

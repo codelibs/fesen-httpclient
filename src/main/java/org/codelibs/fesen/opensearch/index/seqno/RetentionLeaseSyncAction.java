@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.TransportWriteAc
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContextAccess;
@@ -91,7 +90,6 @@ public class RetentionLeaseSyncAction extends TransportWriteAction<
         return LOGGER;
     }
 
-    @Inject
     public RetentionLeaseSyncAction(
         final Settings settings,
         final TransportService transportService,

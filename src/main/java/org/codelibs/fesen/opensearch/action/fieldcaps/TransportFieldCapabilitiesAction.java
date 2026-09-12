@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.concurrent.CountDown;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -73,7 +72,6 @@ public class TransportFieldCapabilitiesAction extends HandledTransportAction<Fie
     private final RemoteClusterService remoteClusterService;
     private final IndexNameExpressionResolver indexNameExpressionResolver;
 
-    @Inject
     public TransportFieldCapabilitiesAction(
         TransportService transportService,
         ClusterService clusterService,

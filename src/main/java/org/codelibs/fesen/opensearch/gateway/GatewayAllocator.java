@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.ExistingShardsAl
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.FailedShard;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasables;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.opensearch.common.util.set.Sets;
@@ -89,7 +88,6 @@ public class GatewayAllocator implements ExistingShardsAllocator {
         ConcurrentCollections.newConcurrentMap();
     private Set<String> lastSeenEphemeralIds = Collections.emptySet();
 
-    @Inject
     public GatewayAllocator(
         RerouteService rerouteService,
         TransportNodesListGatewayStartedShards startedAction,

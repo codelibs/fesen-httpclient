@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.command.Allocati
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -83,7 +82,6 @@ public class TransportClusterRerouteAction extends TransportClusterManagerNodeAc
     private final AllocationService allocationService;
     private static ClusterManagerTaskThrottler.ThrottlingKey clusterRerouteTaskKey;
 
-    @Inject
     public TransportClusterRerouteAction(
         TransportService transportService,
         ClusterService clusterService,

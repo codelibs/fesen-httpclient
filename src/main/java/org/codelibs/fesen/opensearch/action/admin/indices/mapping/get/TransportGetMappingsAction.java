@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.MappingMetadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.indices.IndicesService;
@@ -61,7 +60,6 @@ public class TransportGetMappingsAction extends TransportClusterInfoAction<GetMa
 
     private final IndicesService indicesService;
 
-    @Inject
     public TransportGetMappingsAction(
         TransportService transportService,
         ClusterService clusterService,

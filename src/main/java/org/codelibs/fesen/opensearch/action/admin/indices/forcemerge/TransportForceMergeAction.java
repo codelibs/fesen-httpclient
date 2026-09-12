@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.index.shard.IndexShard;
@@ -64,7 +63,6 @@ public class TransportForceMergeAction extends TransportBroadcastByNodeAction<
 
     private final IndicesService indicesService;
 
-    @Inject
     public TransportForceMergeAction(
         ClusterService clusterService,
         TransportService transportService,

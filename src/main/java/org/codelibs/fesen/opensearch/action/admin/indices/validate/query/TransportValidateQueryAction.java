@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.GroupShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Randomness;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasables;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
@@ -85,7 +84,6 @@ public class TransportValidateQueryAction extends TransportBroadcastAction<
 
     private final SearchService searchService;
 
-    @Inject
     public TransportValidateQueryAction(
         ClusterService clusterService,
         TransportService transportService,

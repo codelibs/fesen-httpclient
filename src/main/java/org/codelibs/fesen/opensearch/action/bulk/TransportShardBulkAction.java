@@ -70,7 +70,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
 import org.codelibs.fesen.opensearch.common.compress.CompressedXContent;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -155,7 +154,6 @@ public class TransportShardBulkAction extends TransportWriteAction<BulkShardRequ
      */
     private final String transportPrimaryTermValidationAction;
 
-    @Inject
     public TransportShardBulkAction(
         Settings settings,
         TransportService transportService,

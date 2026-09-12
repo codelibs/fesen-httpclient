@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lifecycle.AbstractLifecycleComponent;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -147,7 +146,6 @@ public class DelayedAllocationService extends AbstractLifecycleComponent impleme
         }
     }
 
-    @Inject
     public DelayedAllocationService(ThreadPool threadPool, ClusterService clusterService, AllocationService allocationService) {
         this.threadPool = threadPool;
         this.clusterService = clusterService;

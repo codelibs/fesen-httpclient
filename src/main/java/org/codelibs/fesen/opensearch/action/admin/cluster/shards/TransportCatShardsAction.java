@@ -21,7 +21,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.common.breaker.ResponseLimitBreachedException;
 import org.codelibs.fesen.opensearch.common.breaker.ResponseLimitSettings;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.NotifyOnceListener;
 import org.codelibs.fesen.opensearch.tasks.CancellableTask;
@@ -44,7 +43,6 @@ public class TransportCatShardsAction extends HandledTransportAction<CatShardsRe
     private final NodeClient client;
     private final ResponseLimitSettings responseLimitSettings;
 
-    @Inject
     public TransportCatShardsAction(
         NodeClient client,
         TransportService transportService,

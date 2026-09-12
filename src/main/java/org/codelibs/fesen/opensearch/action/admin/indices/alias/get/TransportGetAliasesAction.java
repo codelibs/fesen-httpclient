@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -75,7 +74,6 @@ public class TransportGetAliasesAction extends TransportClusterManagerNodeReadAc
 
     private final SystemIndices systemIndices;
 
-    @Inject
     public TransportGetAliasesAction(
         TransportService transportService,
         ClusterService clusterService,

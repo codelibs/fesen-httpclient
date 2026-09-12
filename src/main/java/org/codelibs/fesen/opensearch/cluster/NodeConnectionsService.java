@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterApplier;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lifecycle.AbstractLifecycleComponent;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -108,7 +107,6 @@ public class NodeConnectionsService extends AbstractLifecycleComponent {
     private final TimeValue reconnectInterval;
     protected volatile ConnectionChecker connectionChecker;
 
-    @Inject
     public NodeConnectionsService(Settings settings, ThreadPool threadPool, TransportService transportService) {
         this.threadPool = threadPool;
         this.transportService = transportService;

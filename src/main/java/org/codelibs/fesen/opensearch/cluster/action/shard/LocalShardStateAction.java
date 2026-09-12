@@ -16,7 +16,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.TransportService;
@@ -28,7 +27,6 @@ import java.util.function.Function;
  * local cluster state. This is used in clusterless mode, where there is no cluster manager.
  */
 public class LocalShardStateAction extends ShardStateAction {
-    @Inject
     public LocalShardStateAction(
         ClusterService clusterService,
         TransportService transportService,

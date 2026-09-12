@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.ReplicationRespo
 import org.codelibs.fesen.opensearch.action.support.replication.TransportBroadcastReplicationAction;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
 import org.codelibs.fesen.opensearch.transport.TransportService;
@@ -55,7 +54,6 @@ public class TransportFlushAction extends TransportBroadcastReplicationAction<
     ShardFlushRequest,
     ReplicationResponse> {
 
-    @Inject
     public TransportFlushAction(
         ClusterService clusterService,
         TransportService transportService,

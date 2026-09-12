@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.action.TaskOperationFailure;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.tasks.TransportTasksAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -68,7 +67,6 @@ public class TransportListTasksAction extends TransportTasksAction<Task, ListTas
 
     private final TaskResourceTrackingService taskResourceTrackingService;
 
-    @Inject
     public TransportListTasksAction(
         ClusterService clusterService,
         TransportService transportService,

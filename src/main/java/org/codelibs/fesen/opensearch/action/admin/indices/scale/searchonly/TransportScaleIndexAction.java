@@ -29,7 +29,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -97,7 +96,6 @@ public class TransportScaleIndexAction extends TransportClusterManagerNodeAction
      * @param allocationService           service for shard allocation decisions
      * @param indicesService              service for accessing index shards
      */
-    @Inject
     public TransportScaleIndexAction(
         TransportService transportService,
         ClusterService clusterService,

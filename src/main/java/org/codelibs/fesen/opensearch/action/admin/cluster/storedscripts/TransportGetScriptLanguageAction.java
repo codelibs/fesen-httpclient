@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts;
 
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.script.ScriptService;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -48,7 +47,6 @@ import org.codelibs.fesen.opensearch.transport.TransportService;
 public class TransportGetScriptLanguageAction extends HandledTransportAction<GetScriptLanguageRequest, GetScriptLanguageResponse> {
     private final ScriptService scriptService;
 
-    @Inject
     public TransportGetScriptLanguageAction(TransportService transportService, ActionFilters actionFilters, ScriptService scriptService) {
         super(GetScriptLanguageAction.NAME, transportService, actionFilters, GetScriptLanguageRequest::new);
         this.scriptService = scriptService;

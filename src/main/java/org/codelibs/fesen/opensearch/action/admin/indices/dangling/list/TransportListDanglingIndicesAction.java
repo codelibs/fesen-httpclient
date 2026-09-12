@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.action.support.nodes.TransportNodesAction;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.gateway.DanglingIndicesState;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
@@ -63,7 +62,6 @@ public class TransportListDanglingIndicesAction extends TransportNodesAction<
     private final TransportService transportService;
     private final DanglingIndicesState danglingIndicesState;
 
-    @Inject
     public TransportListDanglingIndicesAction(
         ThreadPool threadPool,
         ClusterService clusterService,

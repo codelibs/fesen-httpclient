@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.action.bulk.TransportBulkAction;
 import org.codelibs.fesen.opensearch.action.bulk.TransportSingleItemBulkWriteAction;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.transport.TransportService;
 
 /**
@@ -49,7 +48,6 @@ import org.codelibs.fesen.opensearch.transport.TransportService;
 @Deprecated
 public class TransportDeleteAction extends TransportSingleItemBulkWriteAction<DeleteRequest, DeleteResponse> {
 
-    @Inject
     public TransportDeleteAction(
         TransportService transportService,
         ActionFilters actionFilters,

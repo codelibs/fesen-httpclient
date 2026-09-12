@@ -18,7 +18,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.ClusterStateUpdateTask;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.index.Index;
@@ -36,7 +35,6 @@ public class MetadataStreamingIngestionStateService {
     private final ClusterService clusterService;
     private final TransportUpdateIngestionStateAction transportUpdateIngestionStateAction;
 
-    @Inject
     public MetadataStreamingIngestionStateService(
         ClusterService clusterService,
         TransportUpdateIngestionStateAction transportUpdateIngestionStateAction

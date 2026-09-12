@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -75,7 +74,6 @@ public class TransportUpgradeAction extends TransportBroadcastByNodeAction<Upgra
     private final IndicesService indicesService;
     private final NodeClient client;
 
-    @Inject
     public TransportUpgradeAction(
         ClusterService clusterService,
         TransportService transportService,

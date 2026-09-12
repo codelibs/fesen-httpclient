@@ -24,7 +24,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataStreamingIngestionStateService;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -47,7 +46,6 @@ public class TransportPauseIngestionAction extends TransportClusterManagerNodeAc
     private final MetadataStreamingIngestionStateService ingestionStateService;
     private final DestructiveOperations destructiveOperations;
 
-    @Inject
     public TransportPauseIngestionAction(
         TransportService transportService,
         ClusterService clusterService,

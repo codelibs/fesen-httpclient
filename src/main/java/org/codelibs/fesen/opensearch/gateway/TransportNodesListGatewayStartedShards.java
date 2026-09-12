@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterName;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -93,7 +92,6 @@ public class TransportNodesListGatewayStartedShards extends TransportNodesAction
     private final IndicesService indicesService;
     private final NamedXContentRegistry namedXContentRegistry;
 
-    @Inject
     public TransportNodesListGatewayStartedShards(
         Settings settings,
         ThreadPool threadPool,

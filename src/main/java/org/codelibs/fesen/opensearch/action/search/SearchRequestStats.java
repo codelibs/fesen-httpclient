@@ -9,7 +9,6 @@
 package org.codelibs.fesen.opensearch.action.search;
 
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.metrics.CounterMetric;
 import org.codelibs.fesen.opensearch.common.metrics.MeanMetric;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
@@ -37,7 +36,6 @@ public final class SearchRequestStats extends SearchRequestOperationsListener {
         Setting.Property.NodeScope
     );
 
-    @Inject
     public SearchRequestStats(ClusterSettings clusterSettings) {
         this.setEnabled(clusterSettings.get(SEARCH_REQUEST_STATS_ENABLED));
         clusterSettings.addSettingsUpdateConsumer(SEARCH_REQUEST_STATS_ENABLED, this::setEnabled);

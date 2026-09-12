@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNodeRole;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Module;
 import org.codelibs.fesen.opensearch.common.lifecycle.LifecycleComponent;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.SettingUpgrader;
@@ -104,13 +103,6 @@ public abstract class Plugin implements Closeable {
      */
     protected Optional<String> getFeature() {
         return Optional.empty();
-    }
-
-    /**
-     * Node level guice modules.
-     */
-    public Collection<Module> createGuiceModules() {
-        return Collections.emptyList();
     }
 
     /**

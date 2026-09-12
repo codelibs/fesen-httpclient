@@ -23,7 +23,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -59,7 +58,6 @@ public class TransportGetIngestionStateAction extends TransportBroadcastByNodeAc
     private final ClusterService clusterService;
     private final NodeClient client;
 
-    @Inject
     public TransportGetIngestionStateAction(
         ClusterService clusterService,
         TransportService transportService,

@@ -55,7 +55,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.ShardIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.logging.LoggerMessageFormat;
@@ -112,7 +111,6 @@ public class TransportFieldCapabilitiesIndexAction extends HandledTransportActio
     private final IndicesService indicesService;
     private final Executor executor;
 
-    @Inject
     public TransportFieldCapabilitiesIndexAction(
         ClusterService clusterService,
         TransportService transportService,

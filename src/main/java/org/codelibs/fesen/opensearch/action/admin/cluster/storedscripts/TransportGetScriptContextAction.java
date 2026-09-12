@@ -33,7 +33,6 @@ package org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts;
 
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.script.ScriptContextInfo;
 import org.codelibs.fesen.opensearch.script.ScriptService;
@@ -51,7 +50,6 @@ public class TransportGetScriptContextAction extends HandledTransportAction<GetS
 
     private final ScriptService scriptService;
 
-    @Inject
     public TransportGetScriptContextAction(TransportService transportService, ActionFilters actionFilters, ScriptService scriptService) {
         super(GetScriptContextAction.NAME, transportService, actionFilters, GetScriptContextRequest::new);
         this.scriptService = scriptService;

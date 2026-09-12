@@ -68,7 +68,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.UUIDs;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -142,7 +141,6 @@ public class MetadataIndexStateService {
     private final TransportVerifyShardIndexBlockAction transportVerifyShardIndexBlockAction;
     private final ActiveShardsObserver activeShardsObserver;
 
-    @Inject
     public MetadataIndexStateService(
         ClusterService clusterService,
         AllocationService allocationService,

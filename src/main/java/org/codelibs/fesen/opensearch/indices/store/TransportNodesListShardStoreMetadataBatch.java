@@ -19,7 +19,6 @@ import org.codelibs.fesen.opensearch.action.support.nodes.TransportNodesAction;
 import org.codelibs.fesen.opensearch.cluster.ClusterName;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -68,7 +67,6 @@ public class TransportNodesListShardStoreMetadataBatch extends TransportNodesAct
     private final IndicesService indicesService;
     private final NodeEnvironment nodeEnv;
 
-    @Inject
     public TransportNodesListShardStoreMetadataBatch(
         Settings settings,
         ThreadPool threadPool,

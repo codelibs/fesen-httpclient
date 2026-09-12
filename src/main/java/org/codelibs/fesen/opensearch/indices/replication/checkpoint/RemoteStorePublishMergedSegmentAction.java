@@ -17,7 +17,6 @@ import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.metadata.CryptoMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.util.UploadListener;
@@ -53,7 +52,6 @@ public class RemoteStorePublishMergedSegmentAction extends AbstractPublishCheckp
 
     private final SegmentReplicationTargetService replicationService;
 
-    @Inject
     public RemoteStorePublishMergedSegmentAction(
         Settings settings,
         TransportService transportService,

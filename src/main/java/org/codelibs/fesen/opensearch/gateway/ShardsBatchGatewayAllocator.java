@@ -26,7 +26,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.FailedShard;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.UUIDs;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasables;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
@@ -186,7 +185,6 @@ public class ShardsBatchGatewayAllocator implements ExistingShardsAllocator {
     private final TransportNodesListGatewayStartedShardsBatch batchStartedAction;
     private final TransportNodesListShardStoreMetadataBatch batchStoreAction;
 
-    @Inject
     public ShardsBatchGatewayAllocator(
         RerouteService rerouteService,
         TransportNodesListGatewayStartedShardsBatch batchStartedAction,

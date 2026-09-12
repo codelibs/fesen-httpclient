@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.action.search;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -55,7 +54,6 @@ public class TransportSearchScrollAction extends HandledTransportAction<SearchSc
     private final SearchPhaseController searchPhaseController;
     private final ThreadPool threadPool;
 
-    @Inject
     public TransportSearchScrollAction(
         TransportService transportService,
         ClusterService clusterService,

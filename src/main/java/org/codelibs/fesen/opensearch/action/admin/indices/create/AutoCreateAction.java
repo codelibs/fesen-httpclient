@@ -54,7 +54,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
@@ -93,7 +92,6 @@ public final class AutoCreateAction extends ActionType<CreateIndexResponse> {
         private final MetadataCreateDataStreamService metadataCreateDataStreamService;
         private final ClusterManagerTaskThrottler.ThrottlingKey autoCreateTaskKey;
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

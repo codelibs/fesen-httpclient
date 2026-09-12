@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.node.Node;
@@ -55,7 +54,6 @@ public class TransportMainAction extends HandledTransportAction<MainRequest, Mai
     private final String nodeName;
     private final ClusterService clusterService;
 
-    @Inject
     public TransportMainAction(
         Settings settings,
         TransportService transportService,

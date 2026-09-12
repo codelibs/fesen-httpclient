@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.opensearch.cluster.health.ClusterStateHealth;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.index.IndexService;
@@ -99,7 +98,6 @@ public class TransportClusterStatsAction extends TransportNodesAction<
     private final NodeService nodeService;
     private final IndicesService indicesService;
 
-    @Inject
     public TransportClusterStatsAction(
         ThreadPool threadPool,
         ClusterService clusterService,

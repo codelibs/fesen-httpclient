@@ -14,7 +14,6 @@ import org.codelibs.fesen.opensearch.action.ActionType;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -117,7 +116,6 @@ public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response
 
         private final ViewService viewService;
 
-        @Inject
         public TransportAction(final TransportService transportService, final ActionFilters actionFilters, final ViewService viewService) {
             super(NAME, transportService, actionFilters, Request::new);
             this.viewService = viewService;

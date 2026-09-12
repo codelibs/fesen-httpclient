@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.index.seqno;
 
 import org.codelibs.fesen.opensearch.action.support.replication.ReplicationResponse;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
 
@@ -50,7 +49,6 @@ public class RetentionLeaseSyncer {
     private final SyncAction syncAction;
     private final BackgroundSyncAction backgroundSyncAction;
 
-    @Inject
     public RetentionLeaseSyncer(RetentionLeaseSyncAction syncAction, RetentionLeaseBackgroundSyncAction backgroundSyncAction) {
         this(syncAction::sync, backgroundSyncAction::backgroundSync);
     }

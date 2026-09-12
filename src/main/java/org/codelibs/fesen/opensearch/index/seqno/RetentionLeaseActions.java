@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
@@ -80,7 +79,6 @@ public class RetentionLeaseActions {
 
         private final IndicesService indicesService;
 
-        @Inject
         TransportRetentionLeaseAction(
             final String name,
             final ThreadPool threadPool,
@@ -160,7 +158,6 @@ public class RetentionLeaseActions {
          */
         public static class TransportAction extends TransportRetentionLeaseAction<AddRequest> {
 
-            @Inject
             public TransportAction(
                 final ThreadPool threadPool,
                 final ClusterService clusterService,
@@ -220,7 +217,6 @@ public class RetentionLeaseActions {
          */
         public static class TransportAction extends TransportRetentionLeaseAction<RenewRequest> {
 
-            @Inject
             public TransportAction(
                 final ThreadPool threadPool,
                 final ClusterService clusterService,
@@ -271,7 +267,6 @@ public class RetentionLeaseActions {
          */
         public static class TransportAction extends TransportRetentionLeaseAction<RemoveRequest> {
 
-            @Inject
             public TransportAction(
                 final ThreadPool threadPool,
                 final ClusterService clusterService,

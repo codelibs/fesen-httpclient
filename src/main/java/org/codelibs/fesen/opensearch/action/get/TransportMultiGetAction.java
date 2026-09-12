@@ -43,7 +43,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.routing.Preference;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.concurrent.AtomicArray;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
@@ -68,7 +67,6 @@ public class TransportMultiGetAction extends HandledTransportAction<MultiGetRequ
     private final TransportShardMultiGetAction shardAction;
     private final IndexNameExpressionResolver indexNameExpressionResolver;
 
-    @Inject
     public TransportMultiGetAction(
         TransportService transportService,
         ClusterService clusterService,

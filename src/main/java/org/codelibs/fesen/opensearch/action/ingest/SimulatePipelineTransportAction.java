@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.action.ingest;
 
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
@@ -55,7 +54,6 @@ public class SimulatePipelineTransportAction extends HandledTransportAction<Simu
     private final IngestService ingestService;
     private final SimulateExecutionService executionService;
 
-    @Inject
     public SimulatePipelineTransportAction(
         ThreadPool threadPool,
         TransportService transportService,

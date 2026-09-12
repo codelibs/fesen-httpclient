@@ -18,7 +18,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.decommission.DecommissionService;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
@@ -38,7 +37,6 @@ public class TransportDeleteDecommissionStateAction extends TransportClusterMana
     private static final Logger logger = LogManager.getLogger(TransportDeleteDecommissionStateAction.class);
     private final DecommissionService decommissionService;
 
-    @Inject
     public TransportDeleteDecommissionStateAction(
         TransportService transportService,
         ClusterService clusterService,

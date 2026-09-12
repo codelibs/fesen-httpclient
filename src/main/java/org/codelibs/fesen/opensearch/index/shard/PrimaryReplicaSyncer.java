@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.action.resync.ResyncReplicationRequest;
 import org.codelibs.fesen.opensearch.action.resync.ResyncReplicationResponse;
 import org.codelibs.fesen.opensearch.action.resync.TransportResyncReplicationAction;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.opensearch.common.util.io.IOUtils;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -83,7 +82,6 @@ public class PrimaryReplicaSyncer {
 
     private volatile ByteSizeValue chunkSize = DEFAULT_CHUNK_SIZE;
 
-    @Inject
     public PrimaryReplicaSyncer(TransportService transportService, TransportResyncReplicationAction syncAction) {
         this(transportService.getTaskManager(), syncAction);
     }

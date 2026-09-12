@@ -55,7 +55,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.NodeWeighedAwayException;
 import org.codelibs.fesen.opensearch.cluster.routing.WeightedRoutingUtils;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -85,7 +84,6 @@ public class TransportClusterHealthAction extends TransportClusterManagerNodeRea
     private final AllocationService allocationService;
     private final Discovery discovery;
 
-    @Inject
     public TransportClusterHealthAction(
         TransportService transportService,
         ClusterService clusterService,

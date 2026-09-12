@@ -33,7 +33,6 @@
 package org.codelibs.fesen.opensearch.action.admin.cluster.node.liveness;
 
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.tasks.Task;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.TransportChannel;
@@ -50,7 +49,6 @@ public final class TransportLivenessAction implements TransportRequestHandler<Li
     private final ClusterService clusterService;
     public static final String NAME = "cluster:monitor/nodes/liveness";
 
-    @Inject
     public TransportLivenessAction(ClusterService clusterService, TransportService transportService) {
         this.clusterService = clusterService;
         transportService.registerRequestHandler(

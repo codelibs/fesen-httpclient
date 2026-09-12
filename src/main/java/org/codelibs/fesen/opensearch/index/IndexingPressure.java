@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.index;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -77,7 +76,6 @@ public class IndexingPressure {
     protected final long primaryAndCoordinatingLimits;
     protected final long replicaLimits;
 
-    @Inject
     public IndexingPressure(Settings settings) {
         this.primaryAndCoordinatingLimits = MAX_INDEXING_BYTES.get(settings).getBytes();
         this.replicaLimits = (long) (this.primaryAndCoordinatingLimits * 1.5);

@@ -22,7 +22,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.View;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -116,7 +115,6 @@ public class DeleteViewAction extends ActionType<AcknowledgedResponse> {
 
         private final ViewService viewService;
 
-        @Inject
         public TransportAction(
             final TransportService transportService,
             final ClusterService clusterService,

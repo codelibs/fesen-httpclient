@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
@@ -87,7 +86,6 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
 
     private final TaskResourceTrackingService taskResourceTrackingService;
 
-    @Inject
     public TransportGetTaskAction(
         ThreadPool threadPool,
         TransportService transportService,

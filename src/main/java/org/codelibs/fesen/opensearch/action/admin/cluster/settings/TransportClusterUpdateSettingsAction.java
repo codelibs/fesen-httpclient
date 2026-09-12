@@ -51,7 +51,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.settings.SettingsException;
@@ -84,7 +83,6 @@ public class TransportClusterUpdateSettingsAction extends TransportClusterManage
 
     private final ClusterManagerTaskThrottler.ThrottlingKey clusterUpdateSettingTaskKey;
 
-    @Inject
     public TransportClusterUpdateSettingsAction(
         TransportService transportService,
         ClusterService clusterService,

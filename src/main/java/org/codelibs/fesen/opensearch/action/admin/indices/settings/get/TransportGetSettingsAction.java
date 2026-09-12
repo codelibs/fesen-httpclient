@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -70,7 +69,6 @@ public class TransportGetSettingsAction extends TransportClusterManagerNodeReadA
     private final SettingsFilter settingsFilter;
     private final IndexScopedSettings indexScopedSettings;
 
-    @Inject
     public TransportGetSettingsAction(
         TransportService transportService,
         ClusterService clusterService,

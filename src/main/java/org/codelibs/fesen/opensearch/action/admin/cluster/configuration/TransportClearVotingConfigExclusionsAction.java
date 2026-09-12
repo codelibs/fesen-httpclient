@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.coordination.CoordinationMetadata.V
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -71,7 +70,6 @@ public class TransportClearVotingConfigExclusionsAction extends TransportCluster
 
     private static final Logger logger = LogManager.getLogger(TransportClearVotingConfigExclusionsAction.class);
 
-    @Inject
     public TransportClearVotingConfigExclusionsAction(
         TransportService transportService,
         ClusterService clusterService,

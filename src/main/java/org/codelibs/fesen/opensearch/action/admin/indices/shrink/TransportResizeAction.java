@@ -49,7 +49,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateIndexService
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -88,7 +87,6 @@ public class TransportResizeAction extends TransportClusterManagerNodeAction<Res
     private final MetadataCreateIndexService createIndexService;
     private final Client client;
 
-    @Inject
     public TransportResizeAction(
         TransportService transportService,
         ClusterService clusterService,

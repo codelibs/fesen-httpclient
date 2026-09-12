@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.concurrent.AtomicArray;
 import org.codelibs.fesen.opensearch.common.util.concurrent.OpenSearchExecutors;
@@ -70,7 +69,6 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
     private final LongSupplier relativeTimeProvider;
     private final NodeClient client;
 
-    @Inject
     public TransportMultiSearchAction(
         Settings settings,
         ThreadPool threadPool,

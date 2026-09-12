@@ -77,7 +77,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Randomness;
 import org.codelibs.fesen.opensearch.common.ValidationException;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.util.concurrent.AtomicArray;
@@ -160,7 +159,6 @@ public class TransportBulkAction extends HandledTransportAction<BulkRequest, Bul
     private final ResponseCollectorService nodeMetricsCollector;
     private final Map<String, Long> clientConnections = ConcurrentCollections.newConcurrentMapWithAggressiveConcurrency();
 
-    @Inject
     public TransportBulkAction(
         ThreadPool threadPool,
         TransportService transportService,

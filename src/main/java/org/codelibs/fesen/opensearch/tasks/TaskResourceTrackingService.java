@@ -19,7 +19,6 @@ import org.codelibs.fesen.opensearch.action.search.SearchShardTask;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.SuppressForbidden;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.io.stream.WriteableBase64;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
@@ -90,7 +89,6 @@ public class TaskResourceTrackingService implements RunnableTaskExecutionListene
     private volatile boolean taskResourceTrackingEnabled;
     private volatile boolean binaryResourceUsageHeaderEnabled;
 
-    @Inject
     public TaskResourceTrackingService(
         Settings settings,
         ClusterSettings clusterSettings,

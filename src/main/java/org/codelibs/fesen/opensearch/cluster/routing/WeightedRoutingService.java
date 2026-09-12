@@ -27,7 +27,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.WeightedRoutingMetadata;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.AwarenessAllocationDecider;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -56,7 +55,6 @@ public class WeightedRoutingService {
     private volatile Map<String, List<String>> forcedAwarenessAttributes;
     private static final Double DECOMMISSIONED_AWARENESS_VALUE_WEIGHT = 0.0;
 
-    @Inject
     public WeightedRoutingService(
         ClusterService clusterService,
         ThreadPool threadPool,

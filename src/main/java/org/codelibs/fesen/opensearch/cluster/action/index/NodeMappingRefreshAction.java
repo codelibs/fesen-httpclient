@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataMappingService;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.transport.TransportResponse;
@@ -67,7 +66,6 @@ public class NodeMappingRefreshAction {
     private final TransportService transportService;
     private final MetadataMappingService metadataMappingService;
 
-    @Inject
     public NodeMappingRefreshAction(TransportService transportService, MetadataMappingService metadataMappingService) {
         this.transportService = transportService;
         this.metadataMappingService = metadataMappingService;

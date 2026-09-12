@@ -9,7 +9,6 @@
 package org.codelibs.fesen.opensearch.indices.replication.checkpoint;
 
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.index.shard.IndexShard;
 
 import java.util.Objects;
@@ -24,7 +23,6 @@ public class ReferencedSegmentsPublisher {
     private final PublishAction publishAction;
 
     // This Component is behind feature flag so we are manually binding this in IndicesModule.
-    @Inject
     public ReferencedSegmentsPublisher(PublishReferencedSegmentsAction publishAction) {
         this(publishAction::publish);
     }

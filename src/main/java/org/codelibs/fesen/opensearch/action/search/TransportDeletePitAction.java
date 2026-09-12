@@ -13,7 +13,6 @@ import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.action.support.TransportIndicesResolvingAction;
 import org.codelibs.fesen.opensearch.cluster.metadata.OptionallyResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteableRegistry;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -36,7 +35,6 @@ public class TransportDeletePitAction extends HandledTransportAction<DeletePitRe
     private final NamedWriteableRegistry namedWriteableRegistry;
     private final PitService pitService;
 
-    @Inject
     public TransportDeletePitAction(
         TransportService transportService,
         ActionFilters actionFilters,

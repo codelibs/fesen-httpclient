@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.compress.CompressedXContent;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.util.io.IOUtils;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -86,7 +85,6 @@ public class MetadataMappingService {
     final RefreshTaskExecutor refreshExecutor = new RefreshTaskExecutor();
     final PutMappingExecutor putMappingExecutor = new PutMappingExecutor();
 
-    @Inject
     public MetadataMappingService(ClusterService clusterService, IndicesService indicesService) {
         this.clusterService = clusterService;
         this.indicesService = indicesService;

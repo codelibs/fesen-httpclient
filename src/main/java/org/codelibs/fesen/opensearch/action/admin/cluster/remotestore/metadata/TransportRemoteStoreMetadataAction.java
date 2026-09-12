@@ -17,7 +17,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.index.Index;
@@ -64,7 +63,6 @@ public class TransportRemoteStoreMetadataAction extends TransportAction<RemoteSt
     private final ThreadPool threadPool;
     private final RemoteStoreSettings remoteStoreSettings;
 
-    @Inject
     public TransportRemoteStoreMetadataAction(
         ClusterService clusterService,
         TransportService transportService,

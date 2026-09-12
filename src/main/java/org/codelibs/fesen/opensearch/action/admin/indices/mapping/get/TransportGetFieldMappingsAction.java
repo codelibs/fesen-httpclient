@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.tasks.Task;
 import org.codelibs.fesen.opensearch.transport.TransportService;
@@ -65,7 +64,6 @@ public class TransportGetFieldMappingsAction extends HandledTransportAction<GetF
     private final TransportGetFieldMappingsIndexAction shardAction;
     private final IndexNameExpressionResolver indexNameExpressionResolver;
 
-    @Inject
     public TransportGetFieldMappingsAction(
         TransportService transportService,
         ClusterService clusterService,

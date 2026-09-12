@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexTemplateMetadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -61,7 +60,6 @@ public class TransportGetIndexTemplatesAction extends TransportClusterManagerNod
     GetIndexTemplatesRequest,
     GetIndexTemplatesResponse> {
 
-    @Inject
     public TransportGetIndexTemplatesAction(
         TransportService transportService,
         ClusterService clusterService,

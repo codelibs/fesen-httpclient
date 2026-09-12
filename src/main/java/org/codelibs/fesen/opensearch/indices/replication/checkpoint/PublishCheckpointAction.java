@@ -16,7 +16,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.ReplicationRespo
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -51,7 +50,6 @@ public class PublishCheckpointAction extends AbstractPublishCheckpointAction<Pub
         Setting.Property.NodeScope
     );
 
-    @Inject
     public PublishCheckpointAction(
         Settings settings,
         TransportService transportService,

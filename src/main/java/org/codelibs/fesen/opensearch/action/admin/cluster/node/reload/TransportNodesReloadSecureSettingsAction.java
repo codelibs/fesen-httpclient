@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.nodes.TransportNodesAction;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.KeyStoreWrapper;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -74,7 +73,6 @@ public class TransportNodesReloadSecureSettingsAction extends TransportNodesActi
     private final Environment environment;
     private final PluginsService pluginsService;
 
-    @Inject
     public TransportNodesReloadSecureSettingsAction(
         ThreadPool threadPool,
         ClusterService clusterService,

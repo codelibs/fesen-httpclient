@@ -20,7 +20,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.WeightedRoutingMetadata;
 import org.codelibs.fesen.opensearch.cluster.routing.WeightedRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.WeightedRoutingService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
@@ -39,7 +38,6 @@ public class TransportGetWeightedRoutingAction extends TransportClusterManagerNo
     private static final Logger logger = LogManager.getLogger(TransportGetWeightedRoutingAction.class);
     private final WeightedRoutingService weightedRoutingService;
 
-    @Inject
     public TransportGetWeightedRoutingAction(
         TransportService transportService,
         ClusterService clusterService,

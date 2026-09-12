@@ -46,7 +46,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateService;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -85,7 +84,6 @@ public class TransportCloseIndexAction extends TransportClusterManagerNodeAction
         Property.NodeScope
     );
 
-    @Inject
     public TransportCloseIndexAction(
         Settings settings,
         TransportService transportService,

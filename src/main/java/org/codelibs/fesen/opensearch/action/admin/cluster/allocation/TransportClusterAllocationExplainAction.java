@@ -51,7 +51,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocatio
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.ShardAllocationDecision;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.AllocationDeciders;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.snapshots.SnapshotsInfoService;
@@ -78,7 +77,6 @@ public class TransportClusterAllocationExplainAction extends TransportClusterMan
     private final AllocationDeciders allocationDeciders;
     private final AllocationService allocationService;
 
-    @Inject
     public TransportClusterAllocationExplainAction(
         TransportService transportService,
         ClusterService clusterService,

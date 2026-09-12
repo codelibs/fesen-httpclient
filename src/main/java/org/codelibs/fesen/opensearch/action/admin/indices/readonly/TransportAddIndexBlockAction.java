@@ -46,7 +46,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateService;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.index.Index;
@@ -76,7 +75,6 @@ public class TransportAddIndexBlockAction extends TransportClusterManagerNodeAct
     private final MetadataIndexStateService indexStateService;
     private final DestructiveOperations destructiveOperations;
 
-    @Inject
     public TransportAddIndexBlockAction(
         TransportService transportService,
         ClusterService clusterService,

@@ -12,7 +12,6 @@ import org.codelibs.fesen.opensearch.action.FailedNodeException;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.nodes.TransportNodesAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.TransportService;
@@ -31,7 +30,6 @@ public class TransportWlmStatsAction extends TransportNodesAction<WlmStatsReques
 
     final WorkloadGroupService workloadGroupService;
 
-    @Inject
     public TransportWlmStatsAction(
         ThreadPool threadPool,
         ClusterService clusterService,

@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.coordination.CoordinationMetadata.V
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -88,7 +87,6 @@ public class TransportAddVotingConfigExclusionsAction extends TransportClusterMa
 
     private volatile int maxVotingConfigExclusions;
 
-    @Inject
     public TransportAddVotingConfigExclusionsAction(
         Settings settings,
         ClusterSettings clusterSettings,

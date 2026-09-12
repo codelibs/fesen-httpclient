@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexGraveyard;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ConcurrentCollections;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -91,7 +90,6 @@ public class DanglingIndicesState implements ClusterStateListener {
 
     private final Map<Index, IndexMetadata> danglingIndices = ConcurrentCollections.newConcurrentMap();
 
-    @Inject
     public DanglingIndicesState(
         NodeEnvironment nodeEnv,
         MetaStateService metaStateService,

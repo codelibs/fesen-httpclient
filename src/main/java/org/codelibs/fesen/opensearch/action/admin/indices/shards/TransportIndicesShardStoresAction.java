@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.concurrent.CountDown;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -93,7 +92,6 @@ public class TransportIndicesShardStoresAction extends TransportClusterManagerNo
     private final TransportNodesListGatewayStartedShards listShardStoresInfo;
     private final ClusterManagerMetrics clusterManagerMetrics;
 
-    @Inject
     public TransportIndicesShardStoresAction(
         TransportService transportService,
         ClusterService clusterService,

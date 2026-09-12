@@ -18,7 +18,6 @@ import org.codelibs.fesen.opensearch.cluster.coordination.ClusterStateTermVersio
 import org.codelibs.fesen.opensearch.cluster.coordination.Coordinator;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.FeatureFlags;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -41,7 +40,6 @@ public class TransportGetTermVersionAction extends TransportClusterManagerNodeRe
 
     private boolean usePreCommitState = false;
 
-    @Inject
     public TransportGetTermVersionAction(
         TransportService transportService,
         ClusterService clusterService,

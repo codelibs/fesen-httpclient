@@ -43,7 +43,6 @@ import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlock;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlocks;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -76,7 +75,6 @@ public class TransportVerifyShardIndexBlockAction extends TransportReplicationAc
     public static final ActionType<ReplicationResponse> TYPE = new ActionType<>(NAME, ReplicationResponse::new);
     protected Logger logger = LogManager.getLogger(getClass());
 
-    @Inject
     public TransportVerifyShardIndexBlockAction(
         final Settings settings,
         final TransportService transportService,

@@ -28,7 +28,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationServic
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
 import org.codelibs.fesen.opensearch.common.UUIDs;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -80,7 +79,6 @@ public class DecommissionService {
     private volatile Map<String, List<String>> forcedAwarenessAttributes;
     private volatile int maxVotingConfigExclusions;
 
-    @Inject
     public DecommissionService(
         Settings settings,
         ClusterSettings clusterSettings,

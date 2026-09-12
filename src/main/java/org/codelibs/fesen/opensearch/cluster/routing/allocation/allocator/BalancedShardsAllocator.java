@@ -51,7 +51,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.RebalanceParamet
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.ShardAllocationDecision;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -255,7 +254,6 @@ public class BalancedShardsAllocator implements ShardsAllocator {
         this(settings, new ClusterSettings(settings, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
     }
 
-    @Inject
     public BalancedShardsAllocator(Settings settings, ClusterSettings clusterSettings) {
         setShardBalanceFactor(SHARD_BALANCE_FACTOR_SETTING.get(settings));
         setIndexBalanceFactor(INDEX_BALANCE_FACTOR_SETTING.get(settings));

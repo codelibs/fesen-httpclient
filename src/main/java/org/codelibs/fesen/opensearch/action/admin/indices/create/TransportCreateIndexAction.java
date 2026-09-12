@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateIndexService;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.index.mapper.MappingTransformerRegistry;
@@ -66,7 +65,6 @@ public class TransportCreateIndexAction extends TransportClusterManagerNodeActio
     private final MetadataCreateIndexService createIndexService;
     private final MappingTransformerRegistry mappingTransformerRegistry;
 
-    @Inject
     public TransportCreateIndexAction(
         TransportService transportService,
         ClusterService clusterService,

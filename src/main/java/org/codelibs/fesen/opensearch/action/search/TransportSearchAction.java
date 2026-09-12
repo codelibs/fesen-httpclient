@@ -58,7 +58,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.OperationRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -194,7 +193,6 @@ public class TransportSearchAction extends HandledTransportAction<SearchRequest,
 
     private final SearchIndexPruningService searchIndexPruningService;
 
-    @Inject
     public TransportSearchAction(
         NodeClient client,
         ThreadPool threadPool,

@@ -15,7 +15,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.ReplicationRespo
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.index.shard.IndexShard;
@@ -38,7 +37,6 @@ public class PublishReferencedSegmentsAction extends AbstractPublishCheckpointAc
     private static final String TASK_ACTION_NAME = "segrep_publish_referenced_segments";
     protected static Logger logger = LogManager.getLogger(PublishReferencedSegmentsAction.class);
 
-    @Inject
     public PublishReferencedSegmentsAction(
         Settings settings,
         TransportService transportService,

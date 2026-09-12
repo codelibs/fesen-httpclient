@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.UUIDs;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -87,7 +86,6 @@ public class LocalAllocateDangledIndices {
 
     private final MetadataIndexUpgradeService metadataIndexUpgradeService;
 
-    @Inject
     public LocalAllocateDangledIndices(
         TransportService transportService,
         ClusterService clusterService,

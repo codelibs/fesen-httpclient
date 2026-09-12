@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.lifecycle.AbstractLifecycleComponent;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.concurrent.FutureUtils;
@@ -95,7 +94,6 @@ public class PeerRecoverySourceService extends AbstractLifecycleComponent implem
 
     final OngoingRecoveries ongoingRecoveries = new OngoingRecoveries();
 
-    @Inject
     public PeerRecoverySourceService(TransportService transportService, IndicesService indicesService, RecoverySettings recoverySettings) {
         this.transportService = transportService;
         this.indicesService = indicesService;

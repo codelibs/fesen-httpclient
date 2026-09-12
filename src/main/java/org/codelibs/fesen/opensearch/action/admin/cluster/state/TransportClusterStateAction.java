@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.Metadata.Custom;
 import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -76,7 +75,6 @@ public class TransportClusterStateAction extends TransportClusterManagerNodeRead
         }
     }
 
-    @Inject
     public TransportClusterStateAction(
         TransportService transportService,
         ClusterService clusterService,

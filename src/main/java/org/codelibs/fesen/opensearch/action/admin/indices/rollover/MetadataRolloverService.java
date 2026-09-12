@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateIndexService
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexAliasesService;
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexTemplateService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
@@ -81,7 +80,6 @@ public class MetadataRolloverService {
     private final MetadataIndexAliasesService indexAliasesService;
     private final IndexNameExpressionResolver indexNameExpressionResolver;
 
-    @Inject
     public MetadataRolloverService(
         ThreadPool threadPool,
         MetadataCreateIndexService createIndexService,

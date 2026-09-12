@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.GroupShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
@@ -71,7 +70,6 @@ public class TransportClusterSearchShardsAction extends TransportClusterManagerN
 
     private final IndicesService indicesService;
 
-    @Inject
     public TransportClusterSearchShardsAction(
         TransportService transportService,
         ClusterService clusterService,

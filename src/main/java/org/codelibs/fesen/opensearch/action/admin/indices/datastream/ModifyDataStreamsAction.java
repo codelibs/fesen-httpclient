@@ -22,7 +22,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.MetadataDataStreamsService
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataDataStreamsService.ModifyDataStreamsClusterStateUpdateRequest;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -112,7 +111,6 @@ public class ModifyDataStreamsAction extends ActionType<AcknowledgedResponse> {
 
         private final MetadataDataStreamsService metadataDataStreamsService;
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.StaleShard;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -137,7 +136,6 @@ public class ShardStateAction {
     // we keep track of these shards in order to avoid sending duplicate failed shard requests for a single failing shard.
     private final TransportRequestDeduplicator<FailedShardEntry> remoteFailedShardsDeduplicator = new TransportRequestDeduplicator<>();
 
-    @Inject
     public ShardStateAction(
         ClusterService clusterService,
         TransportService transportService,

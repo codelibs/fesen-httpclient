@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexTemplateServi
 import org.codelibs.fesen.opensearch.cluster.metadata.Template;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.compress.CompressedXContent;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.IndexScopedSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -70,7 +69,6 @@ public class TransportPutComponentTemplateAction extends TransportClusterManager
     private final IndexScopedSettings indexScopedSettings;
     private final MappingTransformerRegistry mappingTransformerRegistry;
 
-    @Inject
     public TransportPutComponentTemplateAction(
         TransportService transportService,
         ClusterService clusterService,

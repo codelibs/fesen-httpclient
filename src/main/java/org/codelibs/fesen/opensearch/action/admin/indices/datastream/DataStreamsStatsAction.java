@@ -51,7 +51,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -374,7 +373,6 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
         private final IndicesService indicesService;
         private final IndexAbstractionResolver indexAbstractionResolver;
 
-        @Inject
         public TransportAction(
             ClusterService clusterService,
             TransportService transportService,

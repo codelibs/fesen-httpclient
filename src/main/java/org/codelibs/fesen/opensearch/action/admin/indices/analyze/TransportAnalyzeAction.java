@@ -49,7 +49,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.io.IOUtils;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
@@ -91,7 +90,6 @@ public class TransportAnalyzeAction extends TransportSingleShardAction<AnalyzeAc
     private final Settings settings;
     private final IndicesService indicesService;
 
-    @Inject
     public TransportAnalyzeAction(
         Settings settings,
         ThreadPool threadPool,

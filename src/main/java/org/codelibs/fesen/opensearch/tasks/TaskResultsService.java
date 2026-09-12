@@ -46,7 +46,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.MappingMetadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.util.io.Streams;
@@ -99,7 +98,6 @@ public class TaskResultsService {
 
     private final ThreadPool threadPool;
 
-    @Inject
     public TaskResultsService(Client client, ClusterService clusterService, ThreadPool threadPool) {
         this.client = new OriginSettingClient(client, TASKS_ORIGIN);
         this.clusterService = clusterService;

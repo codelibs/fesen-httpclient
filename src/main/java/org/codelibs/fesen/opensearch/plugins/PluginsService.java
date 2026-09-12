@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.PluginsAndModules;
 import org.codelibs.fesen.opensearch.common.bootstrap.JarHell;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Module;
 import org.codelibs.fesen.opensearch.common.lifecycle.LifecycleComponent;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -310,14 +309,6 @@ public class PluginsService implements ReportingService<PluginsAndModules> {
             builder.put(TransportSettings.FEATURE_PREFIX + "." + feature, true);
         }
         return builder.put(this.settings).build();
-    }
-
-    public Collection<Module> createGuiceModules() {
-        List<Module> modules = new ArrayList<>();
-        for (Tuple<PluginInfo, Plugin> plugin : plugins) {
-            modules.addAll(plugin.v2().createGuiceModules());
-        }
-        return modules;
     }
 
     public List<ExecutorBuilder<?>> getExecutorBuilders(Settings settings) {

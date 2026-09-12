@@ -15,7 +15,6 @@ import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.action.support.TransportIndicesResolvingAction;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteableRegistry;
@@ -46,7 +45,6 @@ public class TransportCreatePitAction extends HandledTransportAction<CreatePitRe
     private final NamedWriteableRegistry namedWriteableRegistry;
     private final CreatePitController createPitController;
 
-    @Inject
     public TransportCreatePitAction(
         TransportService transportService,
         ActionFilters actionFilters,

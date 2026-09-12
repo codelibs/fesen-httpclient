@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.action.TaskOperationFailure;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.tasks.TransportTasksAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.tasks.CancellableTask;
 import org.codelibs.fesen.opensearch.tasks.TaskInfo;
@@ -59,7 +58,6 @@ import java.util.function.Consumer;
  */
 public class TransportCancelTasksAction extends TransportTasksAction<CancellableTask, CancelTasksRequest, CancelTasksResponse, TaskInfo> {
 
-    @Inject
     public TransportCancelTasksAction(ClusterService clusterService, TransportService transportService, ActionFilters actionFilters) {
         super(
             CancelTasksAction.NAME,

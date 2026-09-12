@@ -54,7 +54,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -300,7 +299,6 @@ public class GetDataStreamAction extends ActionType<GetDataStreamAction.Response
 
         private static final Logger logger = LogManager.getLogger(TransportAction.class);
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

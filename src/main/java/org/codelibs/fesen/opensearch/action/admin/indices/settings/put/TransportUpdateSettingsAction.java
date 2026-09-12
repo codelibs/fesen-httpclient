@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.MetadataUpdateSettingsService;
 import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.index.Index;
@@ -87,7 +86,6 @@ public class TransportUpdateSettingsAction extends TransportClusterManagerNodeAc
 
     private final MetadataUpdateSettingsService updateSettingsService;
 
-    @Inject
     public TransportUpdateSettingsAction(
         TransportService transportService,
         ClusterService clusterService,

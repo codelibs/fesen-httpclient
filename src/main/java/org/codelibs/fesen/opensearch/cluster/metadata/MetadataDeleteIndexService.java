@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationServic
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Priority;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.set.Sets;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -78,7 +77,6 @@ public class MetadataDeleteIndexService {
     private final AllocationService allocationService;
     private final ClusterManagerTaskThrottler.ThrottlingKey deleteIndexTaskKey;
 
-    @Inject
     public MetadataDeleteIndexService(Settings settings, ClusterService clusterService, AllocationService allocationService) {
         this.settings = settings;
         this.clusterService = clusterService;

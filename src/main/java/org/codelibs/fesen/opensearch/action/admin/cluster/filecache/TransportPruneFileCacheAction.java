@@ -15,7 +15,6 @@ import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.index.store.remote.filecache.FileCache;
@@ -43,7 +42,6 @@ public class TransportPruneFileCacheAction extends TransportNodesAction<
 
     private final FileCache fileCache;
 
-    @Inject
     public TransportPruneFileCacheAction(
         ThreadPool threadPool,
         ClusterService clusterService,

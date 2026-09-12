@@ -53,7 +53,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -84,7 +83,6 @@ public class TransportDeleteDanglingIndexAction extends TransportClusterManagerN
     private final NodeClient nodeClient;
     private final ClusterManagerTaskThrottler.ThrottlingKey deleteDanglingIndexTaskKey;
 
-    @Inject
     public TransportDeleteDanglingIndexAction(
         TransportService transportService,
         ClusterService clusterService,

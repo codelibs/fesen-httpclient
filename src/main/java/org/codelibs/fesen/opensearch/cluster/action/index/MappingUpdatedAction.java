@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.AutoPutMap
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.ClusterManagerNodeRequest;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
@@ -81,7 +80,6 @@ public class MappingUpdatedAction {
     private final AdjustableSemaphore semaphore;
     private final ClusterService clusterService;
 
-    @Inject
     public MappingUpdatedAction(Settings settings, ClusterSettings clusterSettings, ClusterService clusterService) {
         this.dynamicMappingUpdateTimeout = INDICES_MAPPING_DYNAMIC_TIMEOUT_SETTING.get(settings);
         this.semaphore = new AdjustableSemaphore(INDICES_MAX_IN_FLIGHT_UPDATES_SETTING.get(settings), true);

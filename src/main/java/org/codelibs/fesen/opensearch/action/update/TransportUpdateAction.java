@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.ShardIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
@@ -100,7 +99,6 @@ public class TransportUpdateAction extends TransportInstanceSingleOperationActio
     private final NodeClient client;
     private final ClusterService clusterService;
 
-    @Inject
     public TransportUpdateAction(
         ThreadPool threadPool,
         ClusterService clusterService,

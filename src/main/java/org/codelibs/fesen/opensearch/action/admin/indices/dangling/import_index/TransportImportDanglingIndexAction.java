@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.gateway.LocalAllocateDangledIndices;
 import org.codelibs.fesen.opensearch.tasks.Task;
@@ -71,7 +70,6 @@ public class TransportImportDanglingIndexAction extends HandledTransportAction<I
     private final LocalAllocateDangledIndices danglingIndexAllocator;
     private final NodeClient nodeClient;
 
-    @Inject
     public TransportImportDanglingIndexAction(
         ActionFilters actionFilters,
         TransportService transportService,

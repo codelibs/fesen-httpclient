@@ -21,7 +21,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.metadata.View;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
@@ -177,7 +176,6 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
 
         private final ViewService viewService;
 
-        @Inject
         public TransportAction(
             final TransportService transportService,
             final ClusterService clusterService,

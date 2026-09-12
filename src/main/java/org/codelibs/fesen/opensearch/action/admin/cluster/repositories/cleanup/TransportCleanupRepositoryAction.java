@@ -49,7 +49,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolve
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.index.engine.dataformat.DataFormatRegistry;
@@ -106,7 +105,6 @@ public final class TransportCleanupRepositoryAction extends TransportClusterMana
         return ThreadPool.Names.SAME;
     }
 
-    @Inject
     public TransportCleanupRepositoryAction(
         TransportService transportService,
         ClusterService clusterService,

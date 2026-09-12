@@ -46,7 +46,6 @@ import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.action.ActionFuture;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -73,7 +72,6 @@ public class TransportNodesListGatewayMetaState extends TransportNodesAction<
 
     private final GatewayMetaState metaState;
 
-    @Inject
     public TransportNodesListGatewayMetaState(
         ThreadPool threadPool,
         ClusterService clusterService,

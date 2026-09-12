@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -175,7 +174,6 @@ public class UpdatePersistentTaskStatusAction extends ActionType<PersistentTaskR
 
         private final PersistentTasksClusterService persistentTasksClusterService;
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

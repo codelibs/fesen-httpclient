@@ -54,7 +54,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerTaskThrottler;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
@@ -88,7 +87,6 @@ public class TransportRolloverAction extends TransportClusterManagerNodeAction<R
     private final Client client;
     private final ClusterManagerTaskThrottler.ThrottlingKey rolloverIndexTaskKey;
 
-    @Inject
     public TransportRolloverAction(
         TransportService transportService,
         ClusterService clusterService,

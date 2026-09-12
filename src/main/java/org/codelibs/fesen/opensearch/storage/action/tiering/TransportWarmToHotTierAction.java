@@ -11,7 +11,6 @@ package org.codelibs.fesen.opensearch.storage.action.tiering;
 import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.storage.tiering.WarmToHotTieringService;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.TransportService;
@@ -31,7 +30,6 @@ public class TransportWarmToHotTierAction extends TransportTierAction {
      * @param indexNameExpressionResolver the index name expression resolver
      * @param warmToHotTieringService the warm to hot tiering service
      */
-    @Inject
     public TransportWarmToHotTierAction(
         TransportService transportService,
         ClusterService clusterService,

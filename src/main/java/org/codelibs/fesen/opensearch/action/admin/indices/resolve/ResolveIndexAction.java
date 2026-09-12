@@ -51,7 +51,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.util.concurrent.CountDown;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
@@ -509,7 +508,6 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
         private final IndexNameExpressionResolver indexNameExpressionResolver;
         private final IndexAbstractionResolver indexAbstractionResolver;
 
-        @Inject
         public TransportAction(
             TransportService transportService,
             ClusterService clusterService,

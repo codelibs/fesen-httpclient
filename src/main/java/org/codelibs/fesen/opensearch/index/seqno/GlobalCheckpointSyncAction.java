@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.action.support.replication.ReplicationRespo
 import org.codelibs.fesen.opensearch.action.support.replication.TransportReplicationAction;
 import org.codelibs.fesen.opensearch.cluster.action.shard.ShardStateAction;
 import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
-import org.codelibs.fesen.opensearch.common.inject.Inject;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContextAccess;
@@ -71,7 +70,6 @@ public class GlobalCheckpointSyncAction extends TransportReplicationAction<
 
     public static String ACTION_NAME = "indices:admin/seq_no/global_checkpoint_sync";
 
-    @Inject
     public GlobalCheckpointSyncAction(
         final Settings settings,
         final TransportService transportService,
