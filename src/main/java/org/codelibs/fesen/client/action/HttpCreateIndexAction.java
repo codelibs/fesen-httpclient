@@ -139,9 +139,10 @@ public class HttpCreateIndexAction extends HttpAction {
 
         builder.startObject(ALIASES.getPreferredName());
         for (final Alias alias : request.aliases()) {
-            if (alias.writeIndex() == null) {
-                alias.writeIndex(false);
-            }
+            // Leave is_write_index unset when the caller did not ask for it. Forcing false here
+            // made every alias created through this action read-only, so indexing through an
+            // alias failed with "no write index is defined for alias [...]" even when the alias
+            // pointed at a single index - which the transport client accepts as writable.
             alias.toXContent(builder, params);
         }
         builder.endObject();
