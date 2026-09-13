@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Captures weighted shard routing stats per node. See {@link WeightedRoutingService} for more details.
+ * Captures weighted shard routing stats per node. See {@code WeightedRoutingService} for more details.
  *
  * @opensearch.internal
  */

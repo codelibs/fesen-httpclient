@@ -96,7 +96,7 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      * Sets the document source to index.
      * <p>
      * Note, its preferable to either set it using {@link #setSource(XContentBuilder)}
-     * or using the {@link #setSource(byte[], MediaType)}.
+     * or using the {@code #setSource(byte[], MediaType)}.
      */
     public IndexRequestBuilder setSource(String source, MediaType mediaType) {
         request.source(source, mediaType);

@@ -86,7 +86,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
      * @param shardSizes a shardkey to size in bytes mapping per shard.
      * @param routingToDataPath the shard routing to datapath mapping
      * @param reservedSpace reserved space per shard broken down by node and data path
-     * @see #shardIdentifierFromRouting
      */
     public ClusterInfo(
         final Map<String, DiskUsage> leastAvailableSpaceUsage,

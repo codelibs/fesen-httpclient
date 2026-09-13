@@ -140,7 +140,7 @@ public final class MoveDecision extends AbstractAllocationDecision {
     /**
      * Gets the current ranking of the node to which the shard is currently assigned, relative to the
      * other nodes in the cluster as reported in {@link NodeAllocationResult#getWeightRanking()}.  The
-     * ranking will only return a meaningful positive integer if {@link #getClusterRebalanceDecision()} returns
+     * ranking will only return a meaningful positive integer if {@code #getClusterRebalanceDecision()} returns
      * a non-null value; otherwise, 0 will be returned.  If {@link #isDecisionTaken()} returns
      * {@code false}, then invoking this method will throw an {@code IllegalStateException}.
      */

@@ -277,7 +277,7 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Sets the number of shard copies that must be active before proceeding with the write.
-     * See {@link ReplicationRequest#waitForActiveShards(ActiveShardCount)} for details.
+     * See {@code ReplicationRequest#waitForActiveShards(ActiveShardCount)} for details.
      */
     public Self setWaitForActiveShards(ActiveShardCount activeShardCount) {
         this.activeShardCount = activeShardCount;

@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Response for {@link TransportFieldCapabilitiesIndexAction}.
+ * Response for {@code TransportFieldCapabilitiesIndexAction}.
  *
  * @opensearch.internal
  */

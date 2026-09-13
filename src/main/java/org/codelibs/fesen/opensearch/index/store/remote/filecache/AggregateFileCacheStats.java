@@ -21,7 +21,7 @@ import java.util.EnumSet;
 
 /**
  * Statistics for the file cache system that tracks memory usage and performance metrics.
- * {@link FileCache} internally uses a {@link org.codelibs.fesen.opensearch.index.store.remote.utils.cache.SegmentedCache}
+ * {@code FileCache} internally uses a {@code org.codelibs.fesen.opensearch.index.store.remote.utils.cache.SegmentedCache}
  * to manage cached file data in memory segments.
  * This class aggregates statistics across all cache segments including:
  * - Memory usage (total, active, used)

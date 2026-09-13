@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Keeps track of remote refresh which happens in {@link org.codelibs.fesen.opensearch.index.shard.RemoteStoreRefreshListener}. This consist of multiple critical metrics.
+ * Keeps track of remote refresh which happens in {@code org.codelibs.fesen.opensearch.index.shard.RemoteStoreRefreshListener}. This consist of multiple critical metrics.
  *
  * @opensearch.api
  */

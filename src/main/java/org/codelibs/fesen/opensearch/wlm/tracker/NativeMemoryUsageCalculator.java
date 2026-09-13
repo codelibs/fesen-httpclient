@@ -17,7 +17,7 @@ import java.util.List;
  *
  * <p>Workload Management does not account native (off-heap) memory per workload group — that
  * live usage is reported by native backends (e.g. DataFusion) via the search backpressure
- * {@code NativeMemoryUsageTracker}. The enum entry exists so {@link
+ * {@code NativeMemoryUsageTracker}. The enum entry exists so {@code
  * org.codelibs.fesen.opensearch.search.backpressure.trackers.NodeDuressTrackers} can route native-memory
  * duress through the same {@code ResourceType} keyed map as CPU and heap; this calculator
  * simply returns zero for any task or task list so WLM surfaces that accidentally iterate it

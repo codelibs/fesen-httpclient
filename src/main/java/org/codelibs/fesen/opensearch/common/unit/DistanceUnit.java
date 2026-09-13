@@ -42,7 +42,7 @@ import java.io.IOException;
 /**
  * The DistanceUnit enumerates several units for measuring distances. These units
  * provide methods for converting strings and methods to convert units among each
- * others. Some methods like {@link DistanceUnit#getEarthCircumference} refer to
+ * others. Some methods like {@code DistanceUnit#getEarthCircumference} refer to
  * the earth ellipsoid defined in {@link GeoUtils}. The default unit used within
  * this project is <code>METERS</code> which is defined by <code>DEFAULT</code>
  *

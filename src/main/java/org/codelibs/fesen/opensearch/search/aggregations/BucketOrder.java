@@ -49,7 +49,7 @@ import java.util.function.ToLongFunction;
  * {@link Bucket} ordering strategy. Buckets can be order either as
  * "complete" buckets using {@link #comparator()} or against a combination
  * of the buckets internals with its ordinal with
- * {@link #partiallyBuiltBucketComparator(ToLongFunction, Aggregator)}.
+ * {@code #partiallyBuiltBucketComparator(ToLongFunction, Aggregator)}.
  *
  * @opensearch.internal
  */

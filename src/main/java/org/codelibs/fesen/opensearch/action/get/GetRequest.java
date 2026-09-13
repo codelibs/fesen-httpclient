@@ -55,13 +55,12 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 
 /**
  * A request to get a document (its source) from an index based on its id. Best created using
- * {@link Requests#getRequest(String)}.
+ * {@code Requests#getRequest(String)}.
  * <p>
  * The operation requires the {@link #index()}} and {@link #id(String)}
  * to be set.
  *
  * @see GetResponse
- * @see Requests#getRequest(String)
  * @see Client#get(GetRequest)
  *
  * @opensearch.api

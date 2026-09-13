@@ -60,8 +60,8 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
 import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser.optionalConstructorArg;
 
 /**
- * Information about a running task or a task that stored its result. Running tasks just have a {@link #getTask()} while
- * tasks with stored result will have either a {@link #getError()} or {@link #getResponse()}.
+ * Information about a running task or a task that stored its result. Running tasks just have a {@code #getTask()} while
+ * tasks with stored result will have either a {@code #getError()} or {@code #getResponse()}.
  *
  * @opensearch.api
  */
@@ -100,7 +100,7 @@ public final class TaskResult implements Writeable, ToXContentObject {
     }
 
     /**
-     * Convert {@link #getError()} from XContent to a Map for easy processing. Will return an empty map if the task didn't finish with an
+     * Convert {@code #getError()} from XContent to a Map for easy processing. Will return an empty map if the task didn't finish with an
      * error, hasn't yet finished, or didn't store its result.
      */
     public Map<String, Object> getErrorAsMap() {
@@ -111,7 +111,7 @@ public final class TaskResult implements Writeable, ToXContentObject {
     }
 
     /**
-     * Convert {@link #getResponse()} from XContent to a Map for easy processing. Will return an empty map if the task was finished with an
+     * Convert {@code #getResponse()} from XContent to a Map for easy processing. Will return an empty map if the task was finished with an
      * error, hasn't yet finished, or didn't store its result.
      */
     public Map<String, Object> getResponseAsMap() {

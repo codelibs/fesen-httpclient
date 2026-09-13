@@ -43,7 +43,6 @@ import java.io.IOException;
 /**
  * A request to upgrade one or more indices. In order to update all indices, pass an empty array or
  * {@code null} for the indices.
- * @see Requests#upgradeRequest(String...)
  * @see IndicesAdminClient#upgrade(UpgradeRequest)
  * @see UpgradeResponse
  *

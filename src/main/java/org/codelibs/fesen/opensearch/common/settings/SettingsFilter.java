@@ -71,7 +71,6 @@ public final class SettingsFilter {
     /**
      * Returns <code>true</code> iff the given string is either a valid settings key pattern or a simple regular expression
      * @see Regex
-     * @see AbstractScopedSettings#isValidKey(String)
      */
     public static boolean isValidPattern(String pattern) {
         return pattern != null || Regex.isSimpleMatchPattern(pattern);

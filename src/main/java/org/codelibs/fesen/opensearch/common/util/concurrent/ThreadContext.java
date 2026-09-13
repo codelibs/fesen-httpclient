@@ -77,7 +77,7 @@ import java.util.stream.Stream;
  * Consumers of ThreadContext usually don't need to interact with adding or stashing contexts. Every opensearch thread is managed by
  * a thread pool or executor being responsible for stashing and restoring the threads context. For instance if a network request is
  * received, all headers are deserialized from the network and directly added as the headers of the threads {@link ThreadContext}
- * (see {@link #readHeaders(StreamInput)}. In order to not modify the context that is currently active on this thread the network code
+ * (see {@code #readHeaders(StreamInput)}. In order to not modify the context that is currently active on this thread the network code
  * uses a try/with pattern to stash it's current context, read headers into a fresh one and once the request is handled or a handler thread
  * is forked (which in turn inherits the context) it restores the previous context. For instance:
  * </p>

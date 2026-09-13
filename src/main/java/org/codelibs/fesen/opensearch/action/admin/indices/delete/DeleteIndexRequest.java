@@ -46,7 +46,7 @@ import java.io.IOException;
 import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidationError;
 
 /**
- * A request to delete an index. Best created with {@link Requests#deleteIndexRequest(String)}.
+ * A request to delete an index. Best created with {@code Requests#deleteIndexRequest(String)}.
  *
  * @opensearch.api
  */

@@ -202,9 +202,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      * <p>
      * - {@link BulkRequest#add(IndexRequest)}
      * - {@link BulkRequest#add(UpdateRequest)}
-     * - {@link BulkRequest#add(DocWriteRequest)}
-     * - {@link BulkRequest#add(DocWriteRequest[])} )}
-     * - {@link BulkRequest#add(Iterable)}
+     * - {@code BulkRequest#add(DocWriteRequest)}
+     * - {@code BulkRequest#add(DocWriteRequest[])} )}
+     * - {@code BulkRequest#add(Iterable)}
      * @param globalPipeline the global default setting
      * @return Bulk request with global setting set
      */
@@ -219,9 +219,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      * <p>
       - {@link BulkRequest#add(IndexRequest)}
       - {@link BulkRequest#add(UpdateRequest)}
-      - {@link BulkRequest#add(DocWriteRequest)}
-      - {@link BulkRequest#add(DocWriteRequest[])} )}
-      - {@link BulkRequest#add(Iterable)}
+      - {@code BulkRequest#add(DocWriteRequest)}
+      - {@code BulkRequest#add(DocWriteRequest[])} )}
+      - {@code BulkRequest#add(Iterable)}
      * @param globalRouting the global default setting
      * @return Bulk request with global setting set
      */
@@ -252,9 +252,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
      * <p>
      * - {@link BulkRequest#add(IndexRequest)}
      * - {@link BulkRequest#add(UpdateRequest)}
-     * - {@link BulkRequest#add(DocWriteRequest)}
-     * - {@link BulkRequest#add(DocWriteRequest[])} )}
-     * - {@link BulkRequest#add(Iterable)}
+     * - {@code BulkRequest#add(DocWriteRequest)}
+     * - {@code BulkRequest#add(DocWriteRequest[])} )}
+     * - {@code BulkRequest#add(Iterable)}
      * @param globalRequireAlias the global default setting
      * @return Bulk request with global setting set
      */

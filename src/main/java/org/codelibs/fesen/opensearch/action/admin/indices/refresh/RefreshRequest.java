@@ -44,7 +44,6 @@ import java.io.IOException;
  * capabilities depends on the index engine used. For example, the internal one requires refresh to be called, but by
  * default a refresh is scheduled periodically.
  *
- * @see Requests#refreshRequest(String...)
  * @see IndicesAdminClient#refresh(RefreshRequest)
  * @see RefreshResponse
  *

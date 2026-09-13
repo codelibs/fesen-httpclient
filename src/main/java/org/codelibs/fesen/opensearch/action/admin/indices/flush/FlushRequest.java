@@ -48,9 +48,8 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
  * by flushing data to the index storage and clearing the internal transaction log. By default, OpenSearch uses
  * memory heuristics in order to automatically trigger flush operations as required in order to clear memory.
  * <p>
- * Best created with {@link Requests#flushRequest(String...)}.
+ * Best created with {@code Requests#flushRequest(String...)}.
  *
- * @see Requests#flushRequest(String...)
  * @see IndicesAdminClient#flush(FlushRequest)
  * @see FlushResponse
  *

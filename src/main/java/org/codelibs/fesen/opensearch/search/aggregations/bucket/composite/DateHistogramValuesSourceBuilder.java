@@ -57,7 +57,7 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceTyp
 import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
- * A {@link CompositeValuesSourceBuilder} that builds a {@link RoundingValuesSource} from a {@link Script} or
+ * A {@link CompositeValuesSourceBuilder} that builds a {@code RoundingValuesSource} from a {@link Script} or
  * a field name using the provided interval.
  *
  * @opensearch.internal

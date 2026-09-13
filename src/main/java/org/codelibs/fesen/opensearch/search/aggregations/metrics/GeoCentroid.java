@@ -36,7 +36,7 @@ import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
 import org.codelibs.fesen.opensearch.search.aggregations.Aggregation;
 
 /**
- * Interface for {@link GeoCentroidAggregator}
+ * Interface for {@code GeoCentroidAggregator}
  *
  * @opensearch.internal
  */

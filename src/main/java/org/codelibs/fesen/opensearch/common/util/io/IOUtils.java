@@ -70,7 +70,6 @@ public final class IOUtils {
     }
 
     /**
-     * @see #close(Closeable...)
      */
     public static void close(@Nullable Closeable closeable) throws IOException {
         if (closeable != null) {
@@ -110,7 +109,6 @@ public final class IOUtils {
      * @param ex existing Exception to add exceptions occurring during close to
      * @param objects objects to close
      *
-     * @see #close(Closeable...)
      */
     public static void close(final Exception ex, final Iterable<? extends Closeable> objects) throws IOException {
         Exception firstException = ex;
@@ -137,7 +135,6 @@ public final class IOUtils {
     }
 
     /**
-     * @see #closeWhileHandlingException(Closeable...)
      */
     public static void closeWhileHandlingException(final Closeable closeable) {
         // noinspection EmptyCatchBlock

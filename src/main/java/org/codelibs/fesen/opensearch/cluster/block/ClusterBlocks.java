@@ -140,13 +140,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return false;
     }
 
-    /**
-     * Returns <code>true</code> iff non of the given have a {@link ClusterBlockLevel#METADATA_WRITE} in place where the
-     * {@link ClusterBlock#isAllowReleaseResources()} returns <code>false</code>. This is used in places where resources will be released
-     * like the deletion of an index to free up resources on nodes.
-     * @param indices the indices to check
-     */
-
     @Override
     public String toString() {
         if (global.isEmpty() && indices().isEmpty()) {

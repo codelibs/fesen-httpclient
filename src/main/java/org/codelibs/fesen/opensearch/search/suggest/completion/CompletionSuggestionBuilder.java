@@ -189,8 +189,8 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
     /**
      * Sets query contexts for completion
      * @param queryContexts named query contexts
-     *                      see {@link org.codelibs.fesen.opensearch.search.suggest.completion.context.CategoryQueryContext}
-     *                      and {@link org.codelibs.fesen.opensearch.search.suggest.completion.context.GeoQueryContext}
+     *                      see {@code org.codelibs.fesen.opensearch.search.suggest.completion.context.CategoryQueryContext}
+     *                      and {@code org.codelibs.fesen.opensearch.search.suggest.completion.context.GeoQueryContext}
      */
     public CompletionSuggestionBuilder contexts(Map<String, List<? extends ToXContent>> queryContexts) {
         Objects.requireNonNull(queryContexts, "contexts must not be null");

@@ -75,12 +75,11 @@ import static org.codelibs.fesen.opensearch.common.settings.Settings.readSetting
 import static org.codelibs.fesen.opensearch.common.settings.Settings.writeSettingsToStream;
 
 /**
- * A request to create an index. Best created with {@link Requests#createIndexRequest(String)}.
+ * A request to create an index. Best created with {@code Requests#createIndexRequest(String)}.
  * <p>
  * The index created can optionally be created with {@link #settings(org.codelibs.fesen.opensearch.common.settings.Settings)}.
  *
  * @see IndicesAdminClient#create(CreateIndexRequest)
- * @see Requests#createIndexRequest(String)
  * @see CreateIndexResponse
  *
  * @opensearch.api

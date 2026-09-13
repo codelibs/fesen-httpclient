@@ -290,7 +290,7 @@ public class XContentHelper {
     /**
      * Writes a "raw" (bytes) field, handling cases where the bytes are compressed, and tries to optimize writing using
      * {@link XContentBuilder#rawField(String, InputStream)}.
-     * @deprecated use {@link #writeRawField(String, BytesReference, XContentType, XContentBuilder, Params)} to avoid content type
+     * @deprecated use {@code #writeRawField(String, BytesReference, XContentType, XContentBuilder, Params)} to avoid content type
      * auto-detection
      */
     @Deprecated

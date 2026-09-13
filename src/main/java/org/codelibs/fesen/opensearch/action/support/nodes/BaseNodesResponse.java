@@ -91,7 +91,6 @@ public abstract class BaseNodesResponse<TNodeResponse extends BaseNodeResponse> 
      * Get the <em>successful</em> node responses.
      *
      * @return Never {@code null}. Can be empty.
-     * @see #hasFailures()
      */
     public List<TNodeResponse> getNodes() {
         return nodes;

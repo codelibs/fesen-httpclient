@@ -274,7 +274,7 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * Clears all rescorers on the builder and sets the first one.  To use multiple rescore windows use
-     * {@link #addRescorer(org.codelibs.fesen.opensearch.search.rescore.RescorerBuilder, int)}.
+     * {@code #addRescorer(org.codelibs.fesen.opensearch.search.rescore.RescorerBuilder, int)}.
      *
      * @param rescorer rescorer configuration
      * @param window   rescore window

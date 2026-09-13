@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A parser for parsing requests for a {@link BucketMetricsPipelineAggregator}
+ * A parser for parsing requests for a {@code BucketMetricsPipelineAggregator}
  *
  * @opensearch.internal
  */

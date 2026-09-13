@@ -243,7 +243,7 @@ public final class ExceptionsHelper {
 
     /**
      * Looks at the given Throwable and its cause(s) and returns the first Throwable that is of one of the given classes or {@code null}
-     * if no matching Throwable is found. Unlike {@link #unwrapCorruption} this method does only check the given Throwable and its causes
+     * if no matching Throwable is found. Unlike {@code #unwrapCorruption} this method does only check the given Throwable and its causes
      * but does not look at any suppressed exceptions.
      * @param t Throwable
      * @param clazzes Classes to look for

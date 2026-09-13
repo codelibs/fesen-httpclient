@@ -153,7 +153,7 @@ public abstract class AggregationBuilder
      * by this builder will contain per parent bucket used to validate sorts
      * and pipeline aggregations. Just "zero", "one", and "many".
      * <p>
-     * Unlike {@link CardinalityUpperBound} which is <strong>total</strong>
+     * Unlike {@code CardinalityUpperBound} which is <strong>total</strong>
      * instead of <strong>per parent bucket</strong>.
      *
      * @opensearch.api

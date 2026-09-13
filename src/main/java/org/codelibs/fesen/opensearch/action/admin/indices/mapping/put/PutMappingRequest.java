@@ -68,12 +68,11 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 
 /**
  * Puts mapping definition into one or more indices. Best created with
- * {@link Requests#putMappingRequest(String...)}.
+ * {@code Requests#putMappingRequest(String...)}.
  * <p>
  * If the mappings already exists, the new mappings will be merged with the new one. If there are elements
  * that can't be merged are detected, the request will be rejected.
  *
- * @see Requests#putMappingRequest(String...)
  * @see IndicesAdminClient#putMapping(PutMappingRequest)
  * @see AcknowledgedResponse
  *

@@ -47,11 +47,10 @@ import java.util.Arrays;
  * A request to force merging the segments of one or more indices. In order to
  * run a merge on all the indices, pass an empty array or {@code null} for the
  * indices.
- * {@link #maxNumSegments(int)} allows to control the number of segments
+ * {@code #maxNumSegments(int)} allows to control the number of segments
  * to force merge down to. Defaults to simply checking if a merge needs
  * to execute, and if so, executes it
  *
- * @see Requests#forceMergeRequest(String...)
  * @see IndicesAdminClient#forceMerge(ForceMergeRequest)
  * @see ForceMergeResponse
  *

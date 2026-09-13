@@ -138,7 +138,7 @@ public class RepositoryMetadata implements Writeable {
     /**
      * Returns the safe repository generation. the repository data for this generation is assumed to exist in the repository.
      * All operations on the repository must be based on the the repository data at this generation.
-     * See package level documentation for the blob store based repositories {@link org.codelibs.fesen.opensearch.repositories.blobstore} for details
+     * See package level documentation for the blob store based repositories {@code org.codelibs.fesen.opensearch.repositories.blobstore} for details
      * on how this value is used during snapshots.
      * @return safe repository generation
      */
@@ -150,7 +150,7 @@ public class RepositoryMetadata implements Writeable {
      * Returns the pending repository generation. the repository data for this generation and all generations down to the safe
      * generation {@link #generation} may exist in the repository and should not be reused for writing new the repository data to the
      * repository.
-     * See package level documentation for the blob store based repositories {@link org.codelibs.fesen.opensearch.repositories.blobstore} for details
+     * See package level documentation for the blob store based repositories {@code org.codelibs.fesen.opensearch.repositories.blobstore} for details
      * on how this value is used during snapshots.
      *
      * @return highest pending repository generation
