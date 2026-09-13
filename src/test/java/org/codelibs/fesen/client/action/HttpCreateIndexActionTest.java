@@ -113,22 +113,34 @@ class HttpCreateIndexActionTest {
     }
 
     /**
-     * An alias the caller did not mark must not be sent as is_write_index=false: that makes the
-     * alias read-only, and indexing through it then fails with "no write index is defined for
-     * alias", even though the alias points at a single index. Alias.toXContent writes the field
-     * unconditionally, so it goes out as null, which the create-index API treats as unset.
+     * An alias the caller did not mark must not carry is_write_index at all. Sending false makes
+     * the alias read-only, so indexing through it fails with "no write index is defined for
+     * alias"; sending null is rejected outright by Elasticsearch 8 with
+     * "Unknown token [VALUE_NULL] in alias". Omitting the field is the only rendering both
+     * engines read as "the caller did not decide".
      */
     @Test
-    void test_innerToXContent_aliasWriteIndexNotForcedToFalse() throws IOException {
+    void test_innerToXContent_aliasWriteIndexOmittedWhenCallerDidNotSetIt() throws IOException {
         final String rendered = renderAliases(new Alias("test-alias"));
-        assertFalse(rendered.contains("\"is_write_index\":false"));
-        assertTrue(rendered.contains("\"is_write_index\":null"));
+        assertFalse(rendered.contains("is_write_index"));
+        assertTrue(rendered.contains("\"test-alias\""));
     }
 
     @Test
     void test_innerToXContent_aliasWriteIndexKeptWhenCallerSetIt() throws IOException {
         assertTrue(renderAliases(new Alias("test-alias").writeIndex(true)).contains("\"is_write_index\":true"));
         assertTrue(renderAliases(new Alias("test-alias").writeIndex(false)).contains("\"is_write_index\":false"));
+    }
+
+    @Test
+    void test_innerToXContent_aliasOptionalFieldsOmittedUnlessSet() throws IOException {
+        assertFalse(renderAliases(new Alias("test-alias")).contains("is_hidden"));
+        assertFalse(renderAliases(new Alias("test-alias")).contains("routing"));
+        assertTrue(renderAliases(new Alias("test-alias").isHidden(true)).contains("\"is_hidden\":true"));
+        assertTrue(renderAliases(new Alias("test-alias").routing("r")).contains("\"routing\":\"r\""));
+        final String split = renderAliases(new Alias("test-alias").indexRouting("i").searchRouting("s"));
+        assertTrue(split.contains("\"index_routing\":\"i\""));
+        assertTrue(split.contains("\"search_routing\":\"s\""));
     }
 
     private String renderAliases(final Alias alias) throws IOException {

@@ -16,6 +16,7 @@
 package org.codelibs.fesen.client.action;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
@@ -30,7 +31,9 @@ import org.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.ParseField;
 import org.opensearch.core.action.ActionListener;
+import org.opensearch.core.common.bytes.BytesArray;
 import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.xcontent.MediaTypeRegistry;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.core.xcontent.ToXContent;
 import org.opensearch.core.xcontent.ToXContent.Params;
@@ -139,14 +142,53 @@ public class HttpCreateIndexAction extends HttpAction {
 
         builder.startObject(ALIASES.getPreferredName());
         for (final Alias alias : request.aliases()) {
-            // Leave is_write_index unset when the caller did not ask for it. Forcing false here
-            // made every alias created through this action read-only, so indexing through an
-            // alias failed with "no write index is defined for alias [...]" even when the alias
-            // pointed at a single index - which the transport client accepts as writable.
-            alias.toXContent(builder, params);
+            writeAlias(alias, builder);
         }
         builder.endObject();
         return builder;
+    }
+
+    /**
+     * Writes a single alias definition, omitting every field the caller did not set.
+     *
+     * <p>This does not delegate to {@link Alias#toXContent} because that method writes
+     * {@code is_write_index} unconditionally. Sending it as {@code false} makes the alias
+     * read-only, so indexing through it fails with "no write index is defined for alias [...]"
+     * even when the alias points at a single index; sending it as {@code null} is rejected
+     * outright by Elasticsearch 8 with "Unknown token [VALUE_NULL] in alias [...]". Leaving the
+     * field out is the only rendering both engines read as "the caller did not decide".</p>
+     *
+     * <p>The field names are spelled out because {@code Alias}'s own {@code ParseField}
+     * constants are private.</p>
+     *
+     * @param alias the alias to write
+     * @param builder the builder to write to
+     * @throws IOException if the builder fails
+     */
+    protected void writeAlias(final Alias alias, final XContentBuilder builder) throws IOException {
+        builder.startObject(alias.name());
+        if (alias.filter() != null) {
+            try (InputStream stream = new BytesArray(alias.filter()).streamInput()) {
+                builder.rawField("filter", stream, MediaTypeRegistry.JSON);
+            }
+        }
+        if (alias.indexRouting() != null && alias.indexRouting().equals(alias.searchRouting())) {
+            builder.field("routing", alias.indexRouting());
+        } else {
+            if (alias.indexRouting() != null) {
+                builder.field("index_routing", alias.indexRouting());
+            }
+            if (alias.searchRouting() != null) {
+                builder.field("search_routing", alias.searchRouting());
+            }
+        }
+        if (alias.writeIndex() != null) {
+            builder.field("is_write_index", alias.writeIndex());
+        }
+        if (alias.isHidden() != null) {
+            builder.field("is_hidden", alias.isHidden());
+        }
+        builder.endObject();
     }
 
     /**
