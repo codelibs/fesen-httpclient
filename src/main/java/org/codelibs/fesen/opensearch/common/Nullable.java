@@ -34,8 +34,6 @@ package org.codelibs.fesen.opensearch.common;
 
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.meta.TypeQualifierNickname;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -51,8 +49,6 @@ import java.lang.annotation.Target;
  * @opensearch.api
  */
 @Documented
-@TypeQualifierNickname
-@CheckForNull
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
 @PublicApi(since = "1.0.0")
