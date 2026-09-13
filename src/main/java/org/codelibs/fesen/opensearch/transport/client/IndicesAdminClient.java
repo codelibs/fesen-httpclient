@@ -363,23 +363,6 @@ public interface IndicesAdminClient extends OpenSearchClient {
     void open(OpenIndexRequest request, ActionListener<OpenIndexResponse> listener);
 
     /**
-     * Adds a block to an index
-     *
-     * @param block   The block to add
-     * @param indices The name of the indices to add the block to
-     */
-    AddIndexBlockRequestBuilder prepareAddBlock(APIBlock block, String... indices);
-
-    /**
-     * Adds a block to an index
-     *
-     * @param request  The add index block request
-     * @param listener A listener to be notified with a result
-     * @see Requests#openIndexRequest(String)
-     */
-    void addBlock(AddIndexBlockRequest request, ActionListener<AddIndexBlockResponse> listener);
-
-    /**
      * Opens one or more indices based on their index name.
      *
      * @param indices The name of the indices to close
@@ -813,36 +796,6 @@ public interface IndicesAdminClient extends OpenSearchClient {
     void rolloverIndex(RolloverRequest request, ActionListener<RolloverResponse> listener);
 
     /**
-     * Store a data stream
-     */
-    void createDataStream(CreateDataStreamAction.Request request, ActionListener<AcknowledgedResponse> listener);
-
-    /**
-     * Store a data stream
-     */
-    ActionFuture<AcknowledgedResponse> createDataStream(CreateDataStreamAction.Request request);
-
-    /**
-     * Delete a data stream
-     */
-    void deleteDataStream(DeleteDataStreamAction.Request request, ActionListener<AcknowledgedResponse> listener);
-
-    /**
-     * Delete a data stream
-     */
-    ActionFuture<AcknowledgedResponse> deleteDataStream(DeleteDataStreamAction.Request request);
-
-    /**
-     * Get data streams
-     */
-    void getDataStreams(GetDataStreamAction.Request request, ActionListener<GetDataStreamAction.Response> listener);
-
-    /**
-     * Get data streams
-     */
-    ActionFuture<GetDataStreamAction.Response> getDataStreams(GetDataStreamAction.Request request);
-
-    /**
      * Resolves names and wildcard expressions to indices, aliases, and data streams
      */
     void resolveIndex(ResolveIndexAction.Request request, ActionListener<ResolveIndexAction.Response> listener);
@@ -970,13 +923,6 @@ public interface IndicesAdminClient extends OpenSearchClient {
     default CompletionStage<OpenIndexResponse> openAsync(OpenIndexRequest request) {
         CompletableFuture<OpenIndexResponse> future = new CompletableFuture<>();
         open(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /** Add index block - CompletionStage version */
-    default CompletionStage<AddIndexBlockResponse> addBlockAsync(AddIndexBlockRequest request) {
-        CompletableFuture<AddIndexBlockResponse> future = new CompletableFuture<>();
-        addBlock(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
@@ -1124,27 +1070,6 @@ public interface IndicesAdminClient extends OpenSearchClient {
     default CompletionStage<RolloverResponse> rolloverIndexAsync(RolloverRequest request) {
         CompletableFuture<RolloverResponse> future = new CompletableFuture<>();
         rolloverIndex(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /** Create data stream - CompletionStage version */
-    default CompletionStage<AcknowledgedResponse> createDataStreamAsync(CreateDataStreamAction.Request request) {
-        CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
-        createDataStream(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /** Delete data stream - CompletionStage version */
-    default CompletionStage<AcknowledgedResponse> deleteDataStreamAsync(DeleteDataStreamAction.Request request) {
-        CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
-        deleteDataStream(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /** Get data streams - CompletionStage version */
-    default CompletionStage<GetDataStreamAction.Response> getDataStreamsAsync(GetDataStreamAction.Request request) {
-        CompletableFuture<GetDataStreamAction.Response> future = new CompletableFuture<>();
-        getDataStreams(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 

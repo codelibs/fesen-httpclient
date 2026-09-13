@@ -360,11 +360,6 @@ public interface Client extends OpenSearchClient, Releasable {
     void getAllPits(GetAllPitNodesRequest getAllPitNodesRequest, ActionListener<GetAllPitNodesResponse> listener);
 
     /**
-     * Get information of segments of one or more PITs
-     */
-    void pitSegments(PitSegmentsRequest pitSegmentsRequest, ActionListener<IndicesSegmentResponse> listener);
-
-    /**
      * Performs multiple search requests.
      */
     ActionFuture<MultiSearchResponse> multiSearch(MultiSearchRequest request);

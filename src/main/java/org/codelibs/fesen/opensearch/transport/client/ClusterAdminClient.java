@@ -240,11 +240,6 @@ public interface ClusterAdminClient extends OpenSearchClient {
     ClusterUpdateSettingsRequestBuilder prepareUpdateSettings();
 
     /**
-     * Re initialize each cluster node and pass them the secret store password.
-     */
-    NodesReloadSecureSettingsRequestBuilder prepareReloadSecureSettings();
-
-    /**
      * Reroutes allocation of shards. Advance API.
      */
     ActionFuture<ClusterRerouteResponse> reroute(ClusterRerouteRequest request);
@@ -527,21 +522,6 @@ public interface ClusterAdminClient extends OpenSearchClient {
     GetRepositoriesRequestBuilder prepareGetRepositories(String... name);
 
     /**
-     * Cleans up repository.
-     */
-    CleanupRepositoryRequestBuilder prepareCleanupRepository(String repository);
-
-    /**
-     * Cleans up repository.
-     */
-    ActionFuture<CleanupRepositoryResponse> cleanupRepository(CleanupRepositoryRequest repository);
-
-    /**
-     * Cleans up repository.
-     */
-    void cleanupRepository(CleanupRepositoryRequest repository, ActionListener<CleanupRepositoryResponse> listener);
-
-    /**
      * Verifies a repository.
      */
     ActionFuture<VerifyRepositoryResponse> verifyRepository(VerifyRepositoryRequest request);
@@ -570,21 +550,6 @@ public interface ClusterAdminClient extends OpenSearchClient {
      * Creates a new snapshot.
      */
     CreateSnapshotRequestBuilder prepareCreateSnapshot(String repository, String name);
-
-    /**
-     * Clones a snapshot.
-     */
-    CloneSnapshotRequestBuilder prepareCloneSnapshot(String repository, String source, String target);
-
-    /**
-     * Clones a snapshot.
-     */
-    ActionFuture<AcknowledgedResponse> cloneSnapshot(CloneSnapshotRequest request);
-
-    /**
-     * Clones a snapshot.
-     */
-    void cloneSnapshot(CloneSnapshotRequest request, ActionListener<AcknowledgedResponse> listener);
 
     /**
      * Get snapshots.
@@ -625,11 +590,6 @@ public interface ClusterAdminClient extends OpenSearchClient {
      * Restores a snapshot.
      */
     void restoreSnapshot(RestoreSnapshotRequest request, ActionListener<RestoreSnapshotResponse> listener);
-
-    /**
-     * Restores from remote store.
-     */
-    void restoreRemoteStore(RestoreRemoteStoreRequest request, ActionListener<RestoreRemoteStoreResponse> listener);
 
     /**
      * Restores a snapshot.
@@ -809,153 +769,4 @@ public interface ClusterAdminClient extends OpenSearchClient {
      */
     ActionFuture<GetStoredScriptResponse> getStoredScript(GetStoredScriptRequest request);
 
-    /**
-     * List dangling indices on all nodes.
-     */
-    void listDanglingIndices(ListDanglingIndicesRequest request, ActionListener<ListDanglingIndicesResponse> listener);
-
-    /**
-     * List dangling indices on all nodes.
-     */
-    ActionFuture<ListDanglingIndicesResponse> listDanglingIndices(ListDanglingIndicesRequest request);
-
-    /**
-     * Restore specified dangling indices.
-     */
-    void importDanglingIndex(ImportDanglingIndexRequest request, ActionListener<AcknowledgedResponse> listener);
-
-    /**
-     * Restore specified dangling indices.
-     */
-    ActionFuture<AcknowledgedResponse> importDanglingIndex(ImportDanglingIndexRequest request);
-
-    /**
-     * Delete specified dangling indices.
-     */
-    void deleteDanglingIndex(DeleteDanglingIndexRequest request, ActionListener<AcknowledgedResponse> listener);
-
-    /**
-     * Delete specified dangling indices.
-     */
-    ActionFuture<AcknowledgedResponse> deleteDanglingIndex(DeleteDanglingIndexRequest request);
-
-    /**
-     * Updates weights for weighted round-robin search routing policy.
-     */
-    ActionFuture<ClusterPutWeightedRoutingResponse> putWeightedRouting(ClusterPutWeightedRoutingRequest request);
-
-    /**
-     * Updates weights for weighted round-robin search routing policy.
-     */
-    void putWeightedRouting(ClusterPutWeightedRoutingRequest request, ActionListener<ClusterPutWeightedRoutingResponse> listener);
-
-    /**
-     * Updates weights for weighted round-robin search routing policy.
-     */
-    ClusterPutWeightedRoutingRequestBuilder prepareWeightedRouting();
-
-    /**
-     * Gets weights for weighted round-robin search routing policy.
-     */
-    ActionFuture<ClusterGetWeightedRoutingResponse> getWeightedRouting(ClusterGetWeightedRoutingRequest request);
-
-    /**
-     * Gets weights for weighted round-robin search routing policy.
-     */
-    void getWeightedRouting(ClusterGetWeightedRoutingRequest request, ActionListener<ClusterGetWeightedRoutingResponse> listener);
-
-    /**
-     * Gets weights for weighted round-robin search routing policy.
-     */
-    ClusterGetWeightedRoutingRequestBuilder prepareGetWeightedRouting();
-
-    /**
-     * Deletes weights for weighted round-robin search routing policy.
-     */
-    ActionFuture<ClusterDeleteWeightedRoutingResponse> deleteWeightedRouting(ClusterDeleteWeightedRoutingRequest request);
-
-    /**
-     * Deletes weights for weighted round-robin search routing policy.
-     */
-    void deleteWeightedRouting(ClusterDeleteWeightedRoutingRequest request, ActionListener<ClusterDeleteWeightedRoutingResponse> listener);
-
-    /**
-     * Deletes weights for weighted round-robin search routing policy.
-     */
-    ClusterDeleteWeightedRoutingRequestBuilder prepareDeleteWeightedRouting();
-
-    /**
-     * Decommission awareness attribute
-     */
-    ActionFuture<DecommissionResponse> decommission(DecommissionRequest request);
-
-    /**
-     * Decommission awareness attribute
-     */
-    void decommission(DecommissionRequest request, ActionListener<DecommissionResponse> listener);
-
-    /**
-     * Decommission awareness attribute
-     */
-    DecommissionRequestBuilder prepareDecommission(DecommissionRequest request);
-
-    /**
-     * Get Decommissioned attribute
-     */
-    ActionFuture<GetDecommissionStateResponse> getDecommissionState(GetDecommissionStateRequest request);
-
-    /**
-     * Get Decommissioned attribute
-     */
-    void getDecommissionState(GetDecommissionStateRequest request, ActionListener<GetDecommissionStateResponse> listener);
-
-    /**
-     * Get Decommissioned attribute
-     */
-    GetDecommissionStateRequestBuilder prepareGetDecommissionState();
-
-    /**
-     * Deletes the decommission metadata.
-     */
-    ActionFuture<DeleteDecommissionStateResponse> deleteDecommissionState(DeleteDecommissionStateRequest request);
-
-    /**
-     * Deletes the decommission metadata.
-     */
-    void deleteDecommissionState(DeleteDecommissionStateRequest request, ActionListener<DeleteDecommissionStateResponse> listener);
-
-    /**
-     * Deletes the decommission metadata.
-     */
-    DeleteDecommissionStateRequestBuilder prepareDeleteDecommissionRequest();
-
-    /**
-     * Stores a search pipeline
-     */
-    void putSearchPipeline(PutSearchPipelineRequest request, ActionListener<AcknowledgedResponse> listener);
-
-    /**
-     * Stores a search pipeline
-     */
-    ActionFuture<AcknowledgedResponse> putSearchPipeline(PutSearchPipelineRequest request);
-
-    /**
-     * Returns a stored search pipeline
-     */
-    void getSearchPipeline(GetSearchPipelineRequest request, ActionListener<GetSearchPipelineResponse> listener);
-
-    /**
-     * Returns a stored search pipeline
-     */
-    ActionFuture<GetSearchPipelineResponse> getSearchPipeline(GetSearchPipelineRequest request);
-
-    /**
-     * Deletes a stored search pipeline
-     */
-    void deleteSearchPipeline(DeleteSearchPipelineRequest request, ActionListener<AcknowledgedResponse> listener);
-
-    /**
-     * Deletes a stored search pipeline
-     */
-    ActionFuture<AcknowledgedResponse> deleteSearchPipeline(DeleteSearchPipelineRequest request);
 }

@@ -684,11 +684,6 @@ public abstract class HttpAbstractClient implements Client {
     }
 
     @Override
-    public void pitSegments(final PitSegmentsRequest request, final ActionListener<IndicesSegmentResponse> listener) {
-        execute(PitSegmentsAction.INSTANCE, request, listener);
-    }
-
-    @Override
     public ActionFuture<MultiSearchResponse> multiSearch(final MultiSearchRequest request) {
         return execute(MultiSearchAction.INSTANCE, request);
     }
@@ -891,11 +886,6 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public NodesReloadSecureSettingsRequestBuilder prepareReloadSecureSettings() {
-            return new NodesReloadSecureSettingsRequestBuilder(this, NodesReloadSecureSettingsAction.INSTANCE);
-        }
-
-        @Override
         public ActionFuture<NodesInfoResponse> nodesInfo(final NodesInfoRequest request) {
             return execute(NodesInfoAction.INSTANCE, request);
         }
@@ -1087,21 +1077,6 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public CloneSnapshotRequestBuilder prepareCloneSnapshot(final String repository, final String source, final String target) {
-            return new CloneSnapshotRequestBuilder(this, CloneSnapshotAction.INSTANCE, repository, source, target);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> cloneSnapshot(final CloneSnapshotRequest request) {
-            return execute(CloneSnapshotAction.INSTANCE, request);
-        }
-
-        @Override
-        public void cloneSnapshot(final CloneSnapshotRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(CloneSnapshotAction.INSTANCE, request, listener);
-        }
-
-        @Override
         public ActionFuture<GetSnapshotsResponse> getSnapshots(final GetSnapshotsRequest request) {
             return execute(GetSnapshotsAction.INSTANCE, request);
         }
@@ -1177,21 +1152,6 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public CleanupRepositoryRequestBuilder prepareCleanupRepository(final String repository) {
-            return new CleanupRepositoryRequestBuilder(this, CleanupRepositoryAction.INSTANCE, repository);
-        }
-
-        @Override
-        public ActionFuture<CleanupRepositoryResponse> cleanupRepository(final CleanupRepositoryRequest request) {
-            return execute(CleanupRepositoryAction.INSTANCE, request);
-        }
-
-        @Override
-        public void cleanupRepository(final CleanupRepositoryRequest request, final ActionListener<CleanupRepositoryResponse> listener) {
-            execute(CleanupRepositoryAction.INSTANCE, request, listener);
-        }
-
-        @Override
         public ActionFuture<RestoreSnapshotResponse> restoreSnapshot(final RestoreSnapshotRequest request) {
             return execute(RestoreSnapshotAction.INSTANCE, request);
         }
@@ -1199,11 +1159,6 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public void restoreSnapshot(final RestoreSnapshotRequest request, final ActionListener<RestoreSnapshotResponse> listener) {
             execute(RestoreSnapshotAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public void restoreRemoteStore(final RestoreRemoteStoreRequest request, final ActionListener<RestoreRemoteStoreResponse> listener) {
-            execute(RestoreRemoteStoreAction.INSTANCE, request, listener);
         }
 
         @Override
@@ -1323,85 +1278,6 @@ public abstract class HttpAbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<ListDanglingIndicesResponse> listDanglingIndices(final ListDanglingIndicesRequest request) {
-            return execute(ListDanglingIndicesAction.INSTANCE, request);
-        }
-
-        @Override
-        public void listDanglingIndices(final ListDanglingIndicesRequest request,
-                final ActionListener<ListDanglingIndicesResponse> listener) {
-            execute(ListDanglingIndicesAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> importDanglingIndex(final ImportDanglingIndexRequest request) {
-            return execute(ImportDanglingIndexAction.INSTANCE, request);
-        }
-
-        @Override
-        public void importDanglingIndex(final ImportDanglingIndexRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(ImportDanglingIndexAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteDanglingIndex(final DeleteDanglingIndexRequest request) {
-            return execute(DeleteDanglingIndexAction.INSTANCE, request);
-        }
-
-        @Override
-        public ActionFuture<ClusterPutWeightedRoutingResponse> putWeightedRouting(final ClusterPutWeightedRoutingRequest request) {
-            return execute(ClusterAddWeightedRoutingAction.INSTANCE, request);
-        }
-
-        @Override
-        public void putWeightedRouting(final ClusterPutWeightedRoutingRequest request,
-                final ActionListener<ClusterPutWeightedRoutingResponse> listener) {
-            execute(ClusterAddWeightedRoutingAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterPutWeightedRoutingRequestBuilder prepareWeightedRouting() {
-            return new ClusterPutWeightedRoutingRequestBuilder(this, ClusterAddWeightedRoutingAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<ClusterGetWeightedRoutingResponse> getWeightedRouting(final ClusterGetWeightedRoutingRequest request) {
-            return execute(ClusterGetWeightedRoutingAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getWeightedRouting(final ClusterGetWeightedRoutingRequest request,
-                final ActionListener<ClusterGetWeightedRoutingResponse> listener) {
-            execute(ClusterGetWeightedRoutingAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterGetWeightedRoutingRequestBuilder prepareGetWeightedRouting() {
-            return new ClusterGetWeightedRoutingRequestBuilder(this, ClusterGetWeightedRoutingAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<ClusterDeleteWeightedRoutingResponse> deleteWeightedRouting(final ClusterDeleteWeightedRoutingRequest request) {
-            return execute(ClusterDeleteWeightedRoutingAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteWeightedRouting(final ClusterDeleteWeightedRoutingRequest request,
-                final ActionListener<ClusterDeleteWeightedRoutingResponse> listener) {
-            execute(ClusterDeleteWeightedRoutingAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterDeleteWeightedRoutingRequestBuilder prepareDeleteWeightedRouting() {
-            return new ClusterDeleteWeightedRoutingRequestBuilder(this, ClusterDeleteWeightedRoutingAction.INSTANCE);
-        }
-
-        @Override
-        public void deleteDanglingIndex(final DeleteDanglingIndexRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteDanglingIndexAction.INSTANCE, request, listener);
-        }
-
-        @Override
         public GetStoredScriptRequestBuilder prepareGetStoredScript() {
             return new GetStoredScriptRequestBuilder(this, GetStoredScriptAction.INSTANCE);
         }
@@ -1445,83 +1321,6 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public DeleteStoredScriptRequestBuilder prepareDeleteStoredScript(final String id) {
             return prepareDeleteStoredScript().setId(id);
-        }
-
-        @Override
-        public ActionFuture<DecommissionResponse> decommission(final DecommissionRequest request) {
-            return execute(DecommissionAction.INSTANCE, request);
-        }
-
-        @Override
-        public void decommission(final DecommissionRequest request, final ActionListener<DecommissionResponse> listener) {
-            execute(DecommissionAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public DecommissionRequestBuilder prepareDecommission(final DecommissionRequest request) {
-            return new DecommissionRequestBuilder(this, DecommissionAction.INSTANCE, request);
-        }
-
-        @Override
-        public ActionFuture<GetDecommissionStateResponse> getDecommissionState(final GetDecommissionStateRequest request) {
-            return execute(GetDecommissionStateAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getDecommissionState(final GetDecommissionStateRequest request,
-                final ActionListener<GetDecommissionStateResponse> listener) {
-            execute(GetDecommissionStateAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public GetDecommissionStateRequestBuilder prepareGetDecommissionState() {
-            return new GetDecommissionStateRequestBuilder(this, GetDecommissionStateAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<DeleteDecommissionStateResponse> deleteDecommissionState(final DeleteDecommissionStateRequest request) {
-            return execute(DeleteDecommissionStateAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteDecommissionState(final DeleteDecommissionStateRequest request,
-                final ActionListener<DeleteDecommissionStateResponse> listener) {
-            execute(DeleteDecommissionStateAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public DeleteDecommissionStateRequestBuilder prepareDeleteDecommissionRequest() {
-            return new DeleteDecommissionStateRequestBuilder(this, DeleteDecommissionStateAction.INSTANCE);
-        }
-
-        @Override
-        public void putSearchPipeline(final PutSearchPipelineRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(PutSearchPipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> putSearchPipeline(final PutSearchPipelineRequest request) {
-            return execute(PutSearchPipelineAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getSearchPipeline(final GetSearchPipelineRequest request, final ActionListener<GetSearchPipelineResponse> listener) {
-            execute(GetSearchPipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<GetSearchPipelineResponse> getSearchPipeline(final GetSearchPipelineRequest request) {
-            return execute(GetSearchPipelineAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteSearchPipeline(final DeleteSearchPipelineRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteSearchPipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteSearchPipeline(final DeleteSearchPipelineRequest request) {
-            return execute(DeleteSearchPipelineAction.INSTANCE, request);
         }
 
         @Override
@@ -1711,16 +1510,6 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public void open(final OpenIndexRequest request, final ActionListener<OpenIndexResponse> listener) {
             execute(OpenIndexAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public AddIndexBlockRequestBuilder prepareAddBlock(final APIBlock block, final String... indices) {
-            return new AddIndexBlockRequestBuilder(this, AddIndexBlockAction.INSTANCE, block, indices);
-        }
-
-        @Override
-        public void addBlock(final AddIndexBlockRequest request, final ActionListener<AddIndexBlockResponse> listener) {
-            execute(AddIndexBlockAction.INSTANCE, request, listener);
         }
 
         @Override
@@ -2052,36 +1841,6 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public void getSettings(final GetSettingsRequest request, final ActionListener<GetSettingsResponse> listener) {
             execute(GetSettingsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public void createDataStream(final CreateDataStreamAction.Request request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(CreateDataStreamAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> createDataStream(final CreateDataStreamAction.Request request) {
-            return execute(CreateDataStreamAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteDataStream(final DeleteDataStreamAction.Request request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteDataStreamAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteDataStream(final DeleteDataStreamAction.Request request) {
-            return execute(DeleteDataStreamAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getDataStreams(final GetDataStreamAction.Request request, final ActionListener<GetDataStreamAction.Response> listener) {
-            execute(GetDataStreamAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<GetDataStreamAction.Response> getDataStreams(final GetDataStreamAction.Request request) {
-            return execute(GetDataStreamAction.INSTANCE, request);
         }
 
         @Override

@@ -290,16 +290,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public AddIndexBlockRequestBuilder prepareAddBlock(final APIBlock block, final String... indices) {
-        return indicesClient.prepareAddBlock(block, indices);
-    }
-
-    @Override
-    public void addBlock(final AddIndexBlockRequest request, final ActionListener<AddIndexBlockResponse> listener) {
-        indicesClient.addBlock(request, listener);
-    }
-
-    @Override
     public OpenIndexRequestBuilder prepareOpen(final String... indices) {
         return indicesClient.prepareOpen(indices);
     }
@@ -627,42 +617,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     @Override
     public void rolloverIndex(final RolloverRequest request, final ActionListener<RolloverResponse> listener) {
         indicesClient.rolloverIndex(request, listener);
-    }
-
-    @Override
-    public void createDataStream(final org.codelibs.fesen.opensearch.action.admin.indices.datastream.CreateDataStreamAction.Request request,
-            final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.createDataStream(request, listener);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> createDataStream(
-            final org.codelibs.fesen.opensearch.action.admin.indices.datastream.CreateDataStreamAction.Request request) {
-        return indicesClient.createDataStream(request);
-    }
-
-    @Override
-    public void deleteDataStream(final org.codelibs.fesen.opensearch.action.admin.indices.datastream.DeleteDataStreamAction.Request request,
-            final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.deleteDataStream(request, listener);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> deleteDataStream(
-            final org.codelibs.fesen.opensearch.action.admin.indices.datastream.DeleteDataStreamAction.Request request) {
-        return indicesClient.deleteDataStream(request);
-    }
-
-    @Override
-    public void getDataStreams(final org.codelibs.fesen.opensearch.action.admin.indices.datastream.GetDataStreamAction.Request request,
-            final ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.datastream.GetDataStreamAction.Response> listener) {
-        indicesClient.getDataStreams(request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.datastream.GetDataStreamAction.Response> getDataStreams(
-            final org.codelibs.fesen.opensearch.action.admin.indices.datastream.GetDataStreamAction.Request request) {
-        return indicesClient.getDataStreams(request);
     }
 
     @Override
