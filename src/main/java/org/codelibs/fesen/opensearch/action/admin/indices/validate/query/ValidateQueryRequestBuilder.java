@@ -71,20 +71,4 @@ public class ValidateQueryRequestBuilder extends BroadcastOperationRequestBuilde
         request.explain(explain);
         return this;
     }
-
-    /**
-     * Indicates whether the query should be rewritten into primitive queries
-     */
-    public ValidateQueryRequestBuilder setRewrite(boolean rewrite) {
-        request.rewrite(rewrite);
-        return this;
-    }
-
-    /**
-     * Indicates whether the query should be validated on all shards
-     */
-    public ValidateQueryRequestBuilder setAllShards(boolean rewrite) {
-        request.allShards(rewrite);
-        return this;
-    }
 }

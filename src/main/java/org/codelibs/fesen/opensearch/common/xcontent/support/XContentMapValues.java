@@ -288,34 +288,6 @@ public class XContentMapValues {
         return node.toString();
     }
 
-    public static float nodeFloatValue(Object node, float defaultValue) {
-        if (node == null) {
-            return defaultValue;
-        }
-        return nodeFloatValue(node);
-    }
-
-    public static float nodeFloatValue(Object node) {
-        if (node instanceof Number) {
-            return ((Number) node).floatValue();
-        }
-        return Float.parseFloat(node.toString());
-    }
-
-    public static double nodeDoubleValue(Object node, double defaultValue) {
-        if (node == null) {
-            return defaultValue;
-        }
-        return nodeDoubleValue(node);
-    }
-
-    public static double nodeDoubleValue(Object node) {
-        if (node instanceof Number) {
-            return ((Number) node).doubleValue();
-        }
-        return Double.parseDouble(node.toString());
-    }
-
     public static boolean nodeBooleanValue(Object node) {
         return Booleans.parseBoolean(node.toString());
     }

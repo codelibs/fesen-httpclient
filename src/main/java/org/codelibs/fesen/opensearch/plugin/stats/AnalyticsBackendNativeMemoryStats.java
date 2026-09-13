@@ -32,12 +32,6 @@ public class AnalyticsBackendNativeMemoryStats implements Writeable, ToXContentF
     private final long residentBytes;
     private final long purgeCount;
 
-    public AnalyticsBackendNativeMemoryStats(long allocatedBytes, long residentBytes, long purgeCount) {
-        this.allocatedBytes = allocatedBytes;
-        this.residentBytes = residentBytes;
-        this.purgeCount = purgeCount;
-    }
-
     /**
      * Deserialization constructor.
      *

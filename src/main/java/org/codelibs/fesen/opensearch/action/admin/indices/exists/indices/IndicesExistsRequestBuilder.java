@@ -55,20 +55,4 @@ public class IndicesExistsRequestBuilder extends ClusterManagerNodeReadOperation
         request.indices(indices);
         return this;
     }
-
-    /**
-     * Controls whether wildcard expressions will be expanded to existing open indices
-     */
-    public IndicesExistsRequestBuilder setExpandWildcardsOpen(boolean expandWildcardsOpen) {
-        request.expandWilcardsOpen(expandWildcardsOpen);
-        return this;
-    }
-
-    /**
-     * Controls whether wildcard expressions will be expanded to existing closed indices
-     */
-    public IndicesExistsRequestBuilder setExpandWildcardsClosed(boolean expandWildcardsClosed) {
-        request.expandWilcardsClosed(expandWildcardsClosed);
-        return this;
-    }
 }

@@ -50,13 +50,4 @@ public abstract class ClusterManagerNodeReadOperationRequestBuilder<
     protected ClusterManagerNodeReadOperationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
-
-    /**
-     * Specifies if the request should be executed on local node rather than on master
-     */
-    @SuppressWarnings("unchecked")
-    public final RequestBuilder setLocal(boolean local) {
-        request.local(local);
-        return (RequestBuilder) this;
-    }
 }

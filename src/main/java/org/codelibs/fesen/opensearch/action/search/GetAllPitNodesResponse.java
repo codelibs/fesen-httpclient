@@ -54,28 +54,6 @@ public class GetAllPitNodesResponse extends BaseNodesResponse<GetAllPitNodeRespo
     }
 
     public GetAllPitNodesResponse(
-        ClusterName clusterName,
-        List<GetAllPitNodeResponse> getAllPitNodeResponseList,
-        List<FailedNodeException> failures
-    ) {
-        super(clusterName, getAllPitNodeResponseList, failures);
-        Set<String> uniquePitIds = new HashSet<>();
-        pitInfos.addAll(
-            getAllPitNodeResponseList.stream()
-                .flatMap(p -> p.getPitInfos().stream().filter(t -> uniquePitIds.add(t.getPitId())))
-                .collect(Collectors.toList())
-        );
-    }
-
-    /**
-     * Copy constructor that explicitly sets the list pit infos
-     */
-    public GetAllPitNodesResponse(List<ListPitInfo> listPitInfos, GetAllPitNodesResponse response) {
-        super(response.getClusterName(), response.getNodes(), response.failures());
-        pitInfos.addAll(listPitInfos);
-    }
-
-    public GetAllPitNodesResponse(
         List<ListPitInfo> listPitInfos,
         ClusterName clusterName,
         List<GetAllPitNodeResponse> getAllPitNodeResponseList,

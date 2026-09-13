@@ -56,33 +56,6 @@ public class ForceMergeRequestBuilder extends BroadcastOperationRequestBuilder<
     }
 
     /**
-     * Will force merge the index down to &lt;= maxNumSegments. By default, will
-     * cause the merge process to merge down to half the configured number of
-     * segments.
-     */
-    public ForceMergeRequestBuilder setMaxNumSegments(int maxNumSegments) {
-        request.maxNumSegments(maxNumSegments);
-        return this;
-    }
-
-    /**
-     * Should the merge only expunge deletes from the index, without full merging.
-     * Defaults to full merging ({@code false}).
-     */
-    public ForceMergeRequestBuilder setOnlyExpungeDeletes(boolean onlyExpungeDeletes) {
-        request.onlyExpungeDeletes(onlyExpungeDeletes);
-        return this;
-    }
-
-    /**
-     * Should flush be performed after the merge. Defaults to {@code true}.
-     */
-    public ForceMergeRequestBuilder setFlush(boolean flush) {
-        request.flush(flush);
-        return this;
-    }
-
-    /**
      * Should force merge only performed on primary shards. Defaults to {@code false}.
      */
     public ForceMergeRequestBuilder setPrimaryOnly(boolean primaryOnly) {

@@ -57,12 +57,6 @@ public class DeleteIndexRequest extends AcknowledgedRequest<DeleteIndexRequest> 
     // Delete index should work by default on both open and closed indices.
     private IndicesOptions indicesOptions = IndicesOptions.fromOptions(false, true, true, true, false, false, true, false);
 
-    public DeleteIndexRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
     public DeleteIndexRequest() {}
 
     /**

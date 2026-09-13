@@ -260,14 +260,6 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
             this.dateTimeUnit = ALLOWED_INTERVALS.get(dateTimeUnit);
         }
 
-        public RoundingInfo(StreamInput in) throws IOException {
-            rounding = Rounding.read(in);
-            roughEstimateDurationMillis = in.readVLong();
-            innerIntervals = in.readIntArray();
-            unitAbbreviation = in.readString();
-            dateTimeUnit = in.readString();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             rounding.writeTo(out);
@@ -277,20 +269,8 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
             out.writeString(dateTimeUnit);
         }
 
-        public int getMaximumInnerInterval() {
-            return innerIntervals[innerIntervals.length - 1];
-        }
-
         public String getDateTimeUnit() {
             return this.dateTimeUnit;
-        }
-
-        public long getRoughEstimateDurationMillis() {
-            return roughEstimateDurationMillis;
-        }
-
-        public long getMaximumRoughEstimateDurationMillis() {
-            return getRoughEstimateDurationMillis() * getMaximumInnerInterval();
         }
 
         @Override

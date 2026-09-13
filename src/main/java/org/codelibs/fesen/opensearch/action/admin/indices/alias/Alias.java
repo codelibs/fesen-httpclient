@@ -138,25 +138,6 @@ public class Alias implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Associates a filter to the alias
-     */
-    public Alias filter(QueryBuilder filterBuilder) {
-        if (filterBuilder == null) {
-            this.filter = null;
-            return this;
-        }
-        try {
-            XContentBuilder builder = MediaTypeRegistry.JSON.contentBuilder();
-            filterBuilder.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            builder.close();
-            this.filter = builder.toString();
-            return this;
-        } catch (IOException e) {
-            throw new OpenSearchGenerationException("Failed to build json for alias request", e);
-        }
-    }
-
-    /**
      * Associates a routing value to the alias
      */
     public Alias routing(String routing) {

@@ -82,46 +82,6 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         return singles();
     }
 
-    public long kilo() {
-        return sizeUnit.toKilo(size);
-    }
-
-    public long getKilo() {
-        return kilo();
-    }
-
-    public long mega() {
-        return sizeUnit.toMega(size);
-    }
-
-    public long getMega() {
-        return mega();
-    }
-
-    public long giga() {
-        return sizeUnit.toGiga(size);
-    }
-
-    public long getGiga() {
-        return giga();
-    }
-
-    public long tera() {
-        return sizeUnit.toTera(size);
-    }
-
-    public long getTera() {
-        return tera();
-    }
-
-    public long peta() {
-        return sizeUnit.toPeta(size);
-    }
-
-    public long getPeta() {
-        return peta();
-    }
-
     public double kiloFrac() {
         return ((double) singles()) / SizeUnit.C1;
     }

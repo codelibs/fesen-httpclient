@@ -69,10 +69,6 @@ public class ClearScrollRequest extends ActionRequest implements ToXContentObjec
         return scrollIds;
     }
 
-    public void setScrollIds(List<String> scrollIds) {
-        this.scrollIds = scrollIds;
-    }
-
     public void addScrollId(String scrollId) {
         if (scrollIds == null) {
             scrollIds = new ArrayList<>();

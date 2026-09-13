@@ -65,18 +65,6 @@ public abstract class Decision implements ToXContent, Writeable {
     public static final Decision NO = new Single(Type.NO);
     public static final Decision THROTTLE = new Single(Type.THROTTLE);
 
-    /**
-     * Creates a simple decision
-     * @param type {@link Type} of the decision
-     * @param label label for the Decider that produced this decision
-     * @param explanation explanation of the decision
-     * @param explanationParams additional parameters for the decision
-     * @return new {@link Decision} instance
-     */
-    public static Decision single(Type type, @Nullable String label, @Nullable String explanation, @Nullable Object... explanationParams) {
-        return new Single(type, label, explanation, explanationParams);
-    }
-
     public static Decision readFrom(StreamInput in) throws IOException {
         // Determine whether to read a Single or Multi Decision
         if (in.readBoolean()) {
@@ -131,17 +119,6 @@ public abstract class Decision implements ToXContent, Writeable {
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeVInt(id);
-        }
-
-        public boolean higherThan(Type other) {
-            if (this == NO) {
-                return false;
-            } else if (other == NO) {
-                return true;
-            } else if (other == THROTTLE && this == YES) {
-                return true;
-            }
-            return false;
         }
 
         public boolean canPreemptivelyReturn() {

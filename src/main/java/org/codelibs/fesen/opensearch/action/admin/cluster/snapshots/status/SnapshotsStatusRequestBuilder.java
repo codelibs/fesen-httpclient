@@ -63,17 +63,6 @@ public class SnapshotsStatusRequestBuilder extends ClusterManagerNodeOperationRe
     }
 
     /**
-     * Sets the repository name
-     *
-     * @param repository repository name
-     * @return this builder
-     */
-    public SnapshotsStatusRequestBuilder setRepository(String repository) {
-        request.repository(repository);
-        return this;
-    }
-
-    /**
      * Sets list of snapshots to return
      *
      * @param snapshots list of snapshots
@@ -92,18 +81,6 @@ public class SnapshotsStatusRequestBuilder extends ClusterManagerNodeOperationRe
      */
     public SnapshotsStatusRequestBuilder addSnapshots(String... snapshots) {
         request.snapshots(ArrayUtils.concat(request.snapshots(), snapshots));
-        return this;
-    }
-
-    /**
-     * Set to <code>true</code> to ignore unavailable snapshots and indices, instead of throwing an exception.
-     * Defaults to <code>false</code>, which means unavailable snapshots and indices cause an exception to be thrown.
-     *
-     * @param ignoreUnavailable whether to ignore unavailable snapshots and indices.
-     * @return this builder
-     */
-    public SnapshotsStatusRequestBuilder setIgnoreUnavailable(boolean ignoreUnavailable) {
-        request.ignoreUnavailable(ignoreUnavailable);
         return this;
     }
 }

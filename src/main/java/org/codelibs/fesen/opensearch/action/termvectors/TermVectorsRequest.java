@@ -233,13 +233,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         this.id = id;
     }
 
-    public TermVectorsRequest(MultiGetRequest.Item item) {
-        super(item.index());
-        this.id = item.id();
-        this.selectedFields(item.storedFields());
-        this.routing(item.routing());
-    }
-
     public EnumSet<Flag> getFlags() {
         return flagsEnum;
     }
@@ -272,15 +265,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Sets an artificial document from which term vectors are requested for.
-     * @deprecated use {@link #doc(BytesReference, boolean, MediaType)} to avoid content auto detection
-     */
-    @Deprecated
-    public TermVectorsRequest doc(BytesReference doc, boolean generateRandomId) {
-        return this.doc(doc, generateRandomId, MediaTypeRegistry.xContentType(doc));
-    }
-
-    /**
-     * Sets an artificial document from which term vectors are requested for.
      */
     public TermVectorsRequest doc(BytesReference doc, boolean generateRandomId, MediaType mediaType) {
         // assign a random id to this artificial document, for routing
@@ -306,17 +290,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     public String preference() {
         return this.preference;
-    }
-
-    /**
-     * Sets the preference to execute the search. Defaults to randomize across
-     * shards. Can be set to {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
-     * or a custom value, which guarantees that the same order will be used across different
-     * requests.
-     */
-    public TermVectorsRequest preference(String preference) {
-        this.preference = preference;
-        return this;
     }
 
     /**

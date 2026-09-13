@@ -336,34 +336,6 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
 
     private final List<SnapshotShardFailure> shardFailures;
 
-    public SnapshotInfo(SnapshotId snapshotId, List<String> indices, List<String> dataStreams, SnapshotState state) {
-        this(snapshotId, indices, dataStreams, state, null, null, 0L, 0L, 0, 0, Collections.emptyList(), null, null, null, 0);
-    }
-
-    public SnapshotInfo(SnapshotId snapshotId, List<String> indices, List<String> dataStreams, SnapshotState state, Version version) {
-        this(snapshotId, indices, dataStreams, state, null, version, 0L, 0L, 0, 0, Collections.emptyList(), null, null, null, 0);
-    }
-
-    public SnapshotInfo(SnapshotsInProgress.Entry entry) {
-        this(
-            entry.snapshot().getSnapshotId(),
-            entry.indices().stream().map(IndexId::getName).collect(Collectors.toList()),
-            entry.dataStreams(),
-            SnapshotState.IN_PROGRESS,
-            null,
-            Version.CURRENT,
-            entry.startTime(),
-            0L,
-            0,
-            0,
-            Collections.emptyList(),
-            entry.includeGlobalState(),
-            entry.userMetadata(),
-            entry.remoteStoreIndexShallowCopy(),
-            0L
-        );
-    }
-
     SnapshotInfo(
         SnapshotId snapshotId,
         List<String> indices,
@@ -421,14 +393,6 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
         if (in.getVersion().onOrAfter(Version.V_2_17_0)) {
             pinnedTimestamp = in.readVLong();
         }
-    }
-
-    /**
-     * Gets a new {@link SnapshotInfo} instance from the given {@link SnapshotInfo} with
-     * all information stripped out except the snapshot id, state, and indices.
-     */
-    public SnapshotInfo basic() {
-        return new SnapshotInfo(snapshotId, indices, Collections.emptyList(), state);
     }
 
     /**
@@ -609,19 +573,6 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
             + ", pinnedTimestamp="
             + pinnedTimestamp
             + '}';
-    }
-
-    /**
-     * Returns snapshot REST status
-     */
-    public RestStatus status() {
-        if (state == SnapshotState.FAILED) {
-            return RestStatus.INTERNAL_SERVER_ERROR;
-        }
-        if (shardFailures.size() == 0) {
-            return RestStatus.OK;
-        }
-        return RestStatus.status(successfulShards, totalShards, shardFailures.toArray(new ShardOperationFailedException[0]));
     }
 
     @Override

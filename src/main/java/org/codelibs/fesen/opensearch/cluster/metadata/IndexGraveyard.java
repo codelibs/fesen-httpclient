@@ -102,10 +102,6 @@ public final class IndexGraveyard implements Metadata.Custom {
         tombstones = Collections.unmodifiableList(list);
     }
 
-    public IndexGraveyard(final StreamInput in) throws IOException {
-        this.tombstones = Collections.unmodifiableList(in.readList(Tombstone::new));
-    }
-
     @Override
     public String getWriteableName() {
         return TYPE;
@@ -131,18 +127,6 @@ public final class IndexGraveyard implements Metadata.Custom {
      */
     public List<Tombstone> getTombstones() {
         return tombstones;
-    }
-
-    /**
-     * Returns true if the graveyard contains a tombstone for the given index.
-     */
-    public boolean containsIndex(final Index index) {
-        for (Tombstone tombstone : tombstones) {
-            if (tombstone.getIndex().equals(index)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -181,10 +165,6 @@ public final class IndexGraveyard implements Metadata.Custom {
         return new IndexGraveyard.Builder();
     }
 
-    public static IndexGraveyard.Builder builder(final IndexGraveyard graveyard) {
-        return new IndexGraveyard.Builder(graveyard);
-    }
-
     /**
      * A class to build an IndexGraveyard.
      *
@@ -200,33 +180,11 @@ public final class IndexGraveyard implements Metadata.Custom {
             tombstones = new ArrayList<>();
         }
 
-        private Builder(IndexGraveyard that) {
-            tombstones = new ArrayList<>(that.getTombstones());
-        }
-
         /**
          * A copy of the current tombstones in the builder.
          */
         public List<Tombstone> tombstones() {
             return Collections.unmodifiableList(tombstones);
-        }
-
-        /**
-         * Add a deleted index to the list of tombstones in the cluster state.
-         */
-        public Builder addTombstone(final Index index) {
-            tombstones.add(new Tombstone(index, currentTime));
-            return this;
-        }
-
-        /**
-         * Add a set of deleted indexes to the list of tombstones in the cluster state.
-         */
-        public Builder addTombstones(final Collection<Index> indices) {
-            for (Index index : indices) {
-                addTombstone(index);
-            }
-            return this;
         }
 
         /**
@@ -407,13 +365,6 @@ public final class IndexGraveyard implements Metadata.Custom {
         private Tombstone(StreamInput in) throws IOException {
             index = new Index(in);
             deleteDateInMillis = in.readLong();
-        }
-
-        /**
-         * The deleted index.
-         */
-        public Index getIndex() {
-            return index;
         }
 
         /**

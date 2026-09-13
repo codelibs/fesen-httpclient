@@ -61,13 +61,4 @@ public class IndicesShardStoreRequestBuilder extends ClusterManagerNodeReadOpera
         request.indices(indices);
         return this;
     }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions
-     * By default, expands wildcards to both open and closed indices
-     */
-    public IndicesShardStoreRequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
-        return this;
-    }
 }

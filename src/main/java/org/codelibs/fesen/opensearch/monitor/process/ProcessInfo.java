@@ -51,12 +51,6 @@ public class ProcessInfo implements ReportingService.Info {
     private final long id;
     private final boolean mlockall;
 
-    public ProcessInfo(long id, boolean mlockall, long refreshInterval) {
-        this.id = id;
-        this.mlockall = mlockall;
-        this.refreshInterval = refreshInterval;
-    }
-
     public ProcessInfo(StreamInput in) throws IOException {
         refreshInterval = in.readLong();
         id = in.readLong();

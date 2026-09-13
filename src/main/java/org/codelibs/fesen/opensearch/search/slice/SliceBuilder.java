@@ -201,15 +201,6 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         return Objects.hash(this.field, this.id, this.max);
     }
 
-    public boolean shardMatches(int shardOrdinal, int numShards) {
-        if (max >= numShards) {
-            // Slices are distributed over shards
-            return id % numShards == shardOrdinal;
-        }
-        // Shards are distributed over slices
-        return shardOrdinal % max == id;
-    }
-
     @Override
     public String toString() {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, true);

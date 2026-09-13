@@ -156,14 +156,6 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
         this.nodes = in.readList(NodeView::new);
     }
 
-    public VerifyRepositoryResponse(DiscoveryNode[] nodes) {
-        this.nodes = Arrays.stream(nodes).map(dn -> new NodeView(dn.getId(), dn.getName())).collect(Collectors.toList());
-    }
-
-    public VerifyRepositoryResponse(List<NodeView> nodes) {
-        this.nodes = nodes;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeList(nodes);

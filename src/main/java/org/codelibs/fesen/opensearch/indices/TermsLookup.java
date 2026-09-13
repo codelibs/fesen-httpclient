@@ -169,21 +169,6 @@ public class TermsLookup implements Writeable, ToXContentFragment {
         return this;
     }
 
-    public void setQuery(QueryBuilder query) {
-        if (this.id != null && query != null) {
-            throw new IllegalArgumentException("[" + TermsQueryBuilder.NAME + "] query lookup element cannot specify both id and query.");
-        }
-        this.query = query;
-    }
-
-    public TermsLookup id(String id) {
-        if (this.query != null && id != null) {
-            throw new IllegalArgumentException("[" + TermsQueryBuilder.NAME + "] query lookup element cannot specify both id and query.");
-        }
-        this.id = id;
-        return this;
-    }
-
     private static final ConstructingObjectParser<TermsLookup, Void> PARSER = new ConstructingObjectParser<>("terms_lookup", args -> {
         String index = (String) args[0];
         String id = (String) args[1]; // Optional id or query but not both

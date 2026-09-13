@@ -52,12 +52,6 @@ public class ListTasksRequest extends BaseTasksRequest<ListTasksRequest> {
 
     public ListTasksRequest() {}
 
-    public ListTasksRequest(StreamInput in) throws IOException {
-        super(in);
-        detailed = in.readBoolean();
-        waitForCompletion = in.readBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -73,26 +67,10 @@ public class ListTasksRequest extends BaseTasksRequest<ListTasksRequest> {
     }
 
     /**
-     * Should the detailed task information be returned.
-     */
-    public ListTasksRequest setDetailed(boolean detailed) {
-        this.detailed = detailed;
-        return this;
-    }
-
-    /**
      * Should this request wait for all found tasks to complete?
      */
     public boolean getWaitForCompletion() {
         return waitForCompletion;
-    }
-
-    /**
-     * Should this request wait for all found tasks to complete?
-     */
-    public ListTasksRequest setWaitForCompletion(boolean waitForCompletion) {
-        this.waitForCompletion = waitForCompletion;
-        return this;
     }
 
 }

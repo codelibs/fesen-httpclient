@@ -424,42 +424,6 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
         PARSER.declareInt(DirectCandidateGeneratorBuilder::prefixLength, PREFIX_LENGTH_FIELD);
     }
 
-    private static SuggestMode resolveSuggestMode(String suggestMode) {
-        suggestMode = suggestMode.toLowerCase(Locale.US);
-        if ("missing".equals(suggestMode)) {
-            return SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX;
-        } else if ("popular".equals(suggestMode)) {
-            return SuggestMode.SUGGEST_MORE_POPULAR;
-        } else if ("always".equals(suggestMode)) {
-            return SuggestMode.SUGGEST_ALWAYS;
-        } else {
-            throw new IllegalArgumentException("Illegal suggest mode " + suggestMode);
-        }
-    }
-
-    static StringDistance resolveDistance(String distanceVal) {
-        distanceVal = distanceVal.toLowerCase(Locale.ROOT);
-        if ("internal".equals(distanceVal)) {
-            return DirectSpellChecker.INTERNAL_LEVENSHTEIN;
-        } else if ("damerau_levenshtein".equals(distanceVal)) {
-            return new LuceneLevenshteinDistance();
-        } else if ("levenshtein".equals(distanceVal)) {
-            return new LevenshteinDistance();
-        } else if ("jaro_winkler".equals(distanceVal)) {
-            return new JaroWinklerDistance();
-        } else if ("ngram".equals(distanceVal)) {
-            return new NGramDistance();
-        } else {
-            throw new IllegalArgumentException("Illegal distance option " + distanceVal);
-        }
-    }
-
-    private static <T> void transferIfNotNull(T value, Consumer<T> consumer) {
-        if (value != null) {
-            consumer.accept(value);
-        }
-    }
-
     @Override
     public String toString() {
         try {

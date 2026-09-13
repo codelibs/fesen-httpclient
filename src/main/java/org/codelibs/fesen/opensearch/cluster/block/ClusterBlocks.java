@@ -128,29 +128,8 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return levelHolders;
     }
 
-    /**
-     * Returns {@code true} if one of the global blocks as its disable state persistence flag set.
-     */
-    public boolean disableStatePersistence() {
-        for (ClusterBlock clusterBlock : global) {
-            if (clusterBlock.disableStatePersistence()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean hasGlobalBlock(ClusterBlock block) {
         return global.contains(block);
-    }
-
-    public boolean hasGlobalBlockWithId(final int blockId) {
-        for (ClusterBlock clusterBlock : global) {
-            if (clusterBlock.id() == blockId) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -163,35 +142,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             }
         }
         return false;
-    }
-
-    public boolean hasIndexBlock(String index, ClusterBlock block) {
-        return indicesBlocks.containsKey(index) && indicesBlocks.get(index).contains(block);
-    }
-
-    public boolean hasIndexBlockWithId(String index, int blockId) {
-        final Set<ClusterBlock> clusterBlocks = indicesBlocks.get(index);
-        if (clusterBlocks != null) {
-            for (ClusterBlock clusterBlock : clusterBlocks) {
-                if (clusterBlock.id() == blockId) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Nullable
-    public ClusterBlock getIndexBlockWithId(final String index, final int blockId) {
-        final Set<ClusterBlock> clusterBlocks = indicesBlocks.get(index);
-        if (clusterBlocks != null) {
-            for (ClusterBlock clusterBlock : clusterBlocks) {
-                if (clusterBlock.id() == blockId) {
-                    return clusterBlock;
-                }
-            }
-        }
-        return null;
     }
 
     /**

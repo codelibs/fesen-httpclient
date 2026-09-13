@@ -90,12 +90,6 @@ public class BroadcastRequest<Request extends BroadcastRequest<Request>> extends
         return this.timeout;
     }
 
-    @SuppressWarnings("unchecked")
-    public final Request timeout(String timeout) {
-        this.timeout = TimeValue.parseTimeValue(timeout, DEFAULT_TIMEOUT_SECONDS, getClass().getSimpleName() + ".timeout");
-        return (Request) this;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

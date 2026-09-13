@@ -29,10 +29,6 @@ public class RepositoriesStats implements Writeable, ToXContentObject {
 
     List<RepositoryStatsSnapshot> repositoryStatsSnapshots;
 
-    public RepositoriesStats(List<RepositoryStatsSnapshot> repositoryStatsSnapshots) {
-        this.repositoryStatsSnapshots = repositoryStatsSnapshots;
-    }
-
     public RepositoriesStats(StreamInput in) throws IOException {
         this.repositoryStatsSnapshots = in.readList(RepositoryStatsSnapshot::new);
     }

@@ -320,17 +320,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
             aliases = new HashMap<>();
         }
 
-        public Builder(IndexTemplateMetadata indexTemplateMetadata) {
-            this.name = indexTemplateMetadata.name();
-            order(indexTemplateMetadata.order());
-            version(indexTemplateMetadata.version());
-            patterns(indexTemplateMetadata.patterns());
-            settings(indexTemplateMetadata.settings());
-
-            mappings = new HashMap<>(indexTemplateMetadata.mappings);
-            aliases = new HashMap<>(indexTemplateMetadata.aliases());
-        }
-
         public Builder order(int order) {
             this.order = order;
             return this;
@@ -368,11 +357,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
 
         public Builder putAlias(AliasMetadata aliasMetadata) {
             aliases.put(aliasMetadata.alias(), aliasMetadata);
-            return this;
-        }
-
-        public Builder putAlias(AliasMetadata.Builder aliasMetadata) {
-            aliases.put(aliasMetadata.alias(), aliasMetadata.build());
             return this;
         }
 

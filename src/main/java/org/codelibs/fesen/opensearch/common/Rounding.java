@@ -222,10 +222,6 @@ public abstract class Rounding implements Writeable {
             return id;
         }
 
-        public TemporalField getField() {
-            return field;
-        }
-
         public static DateTimeUnit resolve(String name) {
             return DateTimeUnit.valueOf(name.toUpperCase(Locale.ROOT));
         }
@@ -1320,20 +1316,6 @@ public abstract class Rounding implements Writeable {
             case TimeIntervalRounding.ID -> new TimeIntervalRounding(in);
             case OffsetRounding.ID -> new OffsetRounding(in);
             default -> throw new OpenSearchException("unknown rounding id [" + id + "]");
-        };
-    }
-
-    /**
-     * Extracts the interval value from the {@link Rounding} instance
-     * @param rounding {@link Rounding} instance
-     * @return the interval value from the {@link Rounding} instance or {@code OptionalLong.empty()}
-     * if the interval is not available
-     */
-    public static OptionalLong getInterval(Rounding rounding) {
-        return switch (rounding) {
-            case TimeUnitRounding tur -> OptionalLong.of(tur.unit.extraLocalOffsetLookup());
-            case TimeIntervalRounding tir -> OptionalLong.of(tir.interval);
-            default -> OptionalLong.empty();
         };
     }
 

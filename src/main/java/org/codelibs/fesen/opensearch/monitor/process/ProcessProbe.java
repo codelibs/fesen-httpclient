@@ -142,17 +142,6 @@ public class ProcessProbe {
         return -1;
     }
 
-    public ProcessInfo processInfo(long refreshInterval) {
-        // mlockall state came from bootstrap/Natives (JNA), which is not part of this client-only fork
-        return new ProcessInfo(jvmInfo().pid(), false, refreshInterval);
-    }
-
-    public ProcessStats processStats() {
-        ProcessStats.Cpu cpu = new ProcessStats.Cpu(getProcessCpuPercent(), getProcessCpuTotalTime());
-        ProcessStats.Mem mem = new ProcessStats.Mem(getTotalVirtualMemorySize());
-        return new ProcessStats(System.currentTimeMillis(), getOpenFileDescriptorCount(), getMaxFileDescriptorCount(), cpu, mem);
-    }
-
     /**
      * Returns a given method of the OperatingSystemMXBean,
      * or null if the method is not found or unavailable.

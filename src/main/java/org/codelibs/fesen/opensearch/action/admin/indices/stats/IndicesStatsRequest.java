@@ -58,27 +58,6 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
         super((String[]) null);
     }
 
-    public IndicesStatsRequest(StreamInput in) throws IOException {
-        super(in);
-        flags = new CommonStatsFlags(in);
-    }
-
-    /**
-     * Sets all flags to return all stats.
-     */
-    public IndicesStatsRequest all() {
-        flags.all();
-        return this;
-    }
-
-    /**
-     * Clears all stats.
-     */
-    public IndicesStatsRequest clear() {
-        flags.clear();
-        return this;
-    }
-
     /**
      * Returns the underlying stats flags.
      */
@@ -91,15 +70,6 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
      */
     public IndicesStatsRequest flags(CommonStatsFlags flags) {
         this.flags = flags;
-        return this;
-    }
-
-    /**
-     * Sets specific search group stats to retrieve the stats for. Mainly affects search
-     * when enabled.
-     */
-    public IndicesStatsRequest groups(String... groups) {
-        flags.groups(groups);
         return this;
     }
 
@@ -155,22 +125,12 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
         return flags.isSet(CommonStatsFlags.Flag.Segments);
     }
 
-    public IndicesStatsRequest fieldDataFields(String... fieldDataFields) {
-        flags.fieldDataFields(fieldDataFields);
-        return this;
-    }
-
     public String[] fieldDataFields() {
         return flags.fieldDataFields();
     }
 
     public boolean completion() {
         return flags.isSet(CommonStatsFlags.Flag.Completion);
-    }
-
-    public IndicesStatsRequest completionFields(String... completionDataFields) {
-        flags.completionDataFields(completionDataFields);
-        return this;
     }
 
     public String[] completionFields() {
@@ -191,16 +151,6 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
 
     public boolean includeSegmentFileSizes() {
         return flags.includeSegmentFileSizes();
-    }
-
-    public IndicesStatsRequest includeSegmentFileSizes(boolean includeSegmentFileSizes) {
-        flags.includeSegmentFileSizes(includeSegmentFileSizes);
-        return this;
-    }
-
-    public IndicesStatsRequest includeUnloadedSegments(boolean includeUnloadedSegments) {
-        flags.includeUnloadedSegments(includeUnloadedSegments);
-        return this;
     }
 
     @Override

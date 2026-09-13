@@ -52,9 +52,4 @@ public class FlushRequestBuilder extends BroadcastOperationRequestBuilder<FlushR
         request.force(force);
         return this;
     }
-
-    public FlushRequestBuilder setWaitIfOngoing(boolean waitIfOngoing) {
-        request.waitIfOngoing(waitIfOngoing);
-        return this;
-    }
 }

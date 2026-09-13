@@ -64,23 +64,6 @@ public final class GenericSearchExtBuilder extends SearchExtBuilder {
         this.valueType = valueType;
     }
 
-    public GenericSearchExtBuilder(StreamInput in) throws IOException {
-        valueType = ValueType.fromInt(in.readInt());
-        switch (valueType) {
-            case SIMPLE:
-                genericObj = in.readGenericValue();
-                break;
-            case MAP:
-                genericObj = in.readMap();
-                break;
-            case LIST:
-                genericObj = in.readList(r -> r.readGenericValue());
-                break;
-            default:
-                throw new IllegalStateException("Unable to construct GenericSearchExtBuilder from incoming stream.");
-        }
-    }
-
     public static GenericSearchExtBuilder fromXContent(XContentParser parser) throws IOException {
         // Look at the parser's next token.
         // If it's START_OBJECT, parse as map, if it's START_ARRAY, parse as list, else

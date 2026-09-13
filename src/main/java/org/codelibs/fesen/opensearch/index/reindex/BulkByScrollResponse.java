@@ -166,13 +166,6 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
     }
 
     /**
-     * The reason that the request was canceled or null if it hasn't been.
-     */
-    public String getReasonCancelled() {
-        return status.getReasonCancelled();
-    }
-
-    /**
      * The number of times that the request had retry bulk actions.
      */
     public long getBulkRetries() {

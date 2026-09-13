@@ -253,14 +253,6 @@ public class MultiGetRequest extends ActionRequest
 
     public MultiGetRequest() {}
 
-    public MultiGetRequest(StreamInput in) throws IOException {
-        super(in);
-        preference = in.readOptionalString();
-        refresh = in.readBoolean();
-        realtime = in.readBoolean();
-        items = in.readList(Item::new);
-    }
-
     public List<Item> getItems() {
         return this.items;
     }
@@ -289,17 +281,6 @@ public class MultiGetRequest extends ActionRequest
         return validationException;
     }
 
-    /**
-     * Sets the preference to execute the search. Defaults to randomize across shards. Can be set to
-     * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
-     * or a custom value, which guarantees that the same order
-     * will be used across different requests.
-     */
-    public MultiGetRequest preference(String preference) {
-        this.preference = preference;
-        return this;
-    }
-
     public String preference() {
         return this.preference;
     }
@@ -316,11 +297,6 @@ public class MultiGetRequest extends ActionRequest
 
     public boolean refresh() {
         return this.refresh;
-    }
-
-    public MultiGetRequest refresh(boolean refresh) {
-        this.refresh = refresh;
-        return this;
     }
 
     @Override

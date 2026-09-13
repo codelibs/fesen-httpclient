@@ -104,25 +104,6 @@ public class CryptoMetadata implements Writeable {
         settings = Settings.readSettingsFromStream(in);
     }
 
-    public static CryptoMetadata fromRequest(CryptoSettings cryptoSettings) {
-        if (cryptoSettings == null) {
-            return null;
-        }
-        return new CryptoMetadata(cryptoSettings.getKeyProviderName(), cryptoSettings.getKeyProviderType(), cryptoSettings.getSettings());
-    }
-
-    public static CryptoMetadata fromIndexSettings(Settings indexSettings) {
-        String keyProviderName = indexSettings.get("index.store.crypto.key_provider");
-        if (keyProviderName == null) {
-            return null;
-        }
-
-        String keyProviderType = indexSettings.get("index.store.crypto.key_provider_type", "aws-kms");
-        Settings cryptoSettings = indexSettings.getAsSettings("index.store.crypto");
-
-        return new CryptoMetadata(keyProviderName, keyProviderType, cryptoSettings);
-    }
-
     /**
      * Writes crypto metadata to stream output
      *

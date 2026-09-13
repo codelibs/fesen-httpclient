@@ -63,10 +63,6 @@ public class DeleteResponse extends DocWriteResponse {
         super(in);
     }
 
-    public DeleteResponse(ShardId shardId, String id, long seqNo, long primaryTerm, long version, boolean found) {
-        this(shardId, id, seqNo, primaryTerm, version, found ? Result.DELETED : Result.NOT_FOUND);
-    }
-
     private DeleteResponse(ShardId shardId, String id, long seqNo, long primaryTerm, long version, Result result) {
         super(shardId, id, seqNo, primaryTerm, version, assertDeletedOrNotFound(result));
     }
@@ -91,16 +87,6 @@ public class DeleteResponse extends DocWriteResponse {
         builder.append(",result=").append(getResult().getLowercase());
         builder.append(",shards=").append(getShardInfo());
         return builder.append("]").toString();
-    }
-
-    public static DeleteResponse fromXContent(XContentParser parser) throws IOException {
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-
-        Builder context = new Builder();
-        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-            parseXContentFields(parser, context);
-        }
-        return context.build();
     }
 
     /**

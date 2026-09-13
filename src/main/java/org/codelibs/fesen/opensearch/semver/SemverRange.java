@@ -109,27 +109,6 @@ public class SemverRange implements ToXContentFragment {
         return rangeVersion;
     }
 
-    /**
-     * Check if range is satisfied by given version string.
-     *
-     * @param versionToEvaluate version to check
-     * @return {@code true} if range is satisfied by version, {@code false} otherwise
-     */
-    public boolean isSatisfiedBy(final String versionToEvaluate) {
-        return isSatisfiedBy(Version.fromString(versionToEvaluate));
-    }
-
-    /**
-     * Check if range is satisfied by given version.
-     *
-     * @param versionToEvaluate version to check
-     * @return {@code true} if range is satisfied by version, {@code false} otherwise
-     * @see #isSatisfiedBy(String)
-     */
-    public boolean isSatisfiedBy(final Version versionToEvaluate) {
-        return this.expression.evaluate(this.rangeVersion, versionToEvaluate);
-    }
-
     @Override
     public boolean equals(@Nullable final Object o) {
         if (this == o) {

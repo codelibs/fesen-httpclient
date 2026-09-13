@@ -85,10 +85,6 @@ public class InstantiatingObjectParser<Value, Context>
         return new Builder<>(name, ignoreUnknownFields, valueClass);
     }
 
-    public static <Value, Context> Builder<Value, Context> builder(String name, Class<Value> valueClass) {
-        return new Builder<>(name, valueClass);
-    }
-
     /**
      * Builder for the Instantiating Object Parser
      *
@@ -101,10 +97,6 @@ public class InstantiatingObjectParser<Value, Context>
         private final Class<Value> valueClass;
 
         private Constructor<Value> constructor;
-
-        public Builder(String name, Class<Value> valueClass) {
-            this(name, false, valueClass);
-        }
 
         public Builder(String name, boolean ignoreUnknownFields, Class<Value> valueClass) {
             this.constructingObjectParser = new ConstructingObjectParser<>(name, ignoreUnknownFields, this::build);

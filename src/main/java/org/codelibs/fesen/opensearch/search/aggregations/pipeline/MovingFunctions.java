@@ -58,22 +58,6 @@ public class MovingFunctions {
     }
 
     /**
-     * Find the sum of a window of values
-     * If all values are missing/null/NaN, the return value will be 0.0
-     */
-    public static double sum(double[] values) {
-        if (values.length == 0) {
-            return 0.0;
-        }
-        return Arrays.stream(values).map(value -> {
-            if (Double.isNaN(value) == false) {
-                return value;
-            }
-            return 0.0;
-        }).sum();
-    }
-
-    /**
      * Calculate a simple unweighted (arithmetic) moving average.
      * <p>
      * Only finite values are averaged.  NaN or null are ignored.
@@ -90,29 +74,6 @@ public class MovingFunctions {
             }
         }
         return count == 0 ? Double.NaN : avg / count;
-    }
-
-    /**
-     * Calculate a standard deviation over the values using the provided average.
-     * <p>
-     * Only finite values are averaged.  NaN or null are ignored.
-     * If all values are missing/null/NaN, the return value will be NaN.
-     * The average is based on the count of non-null, non-NaN values.
-     */
-    public static double stdDev(double[] values, double avg) {
-        if (Double.isNaN(avg)) {
-            return Double.NaN;
-        } else {
-            long count = 0;
-            double squaredMean = 0;
-            for (double v : values) {
-                if (Double.isNaN(v) == false) {
-                    squaredMean += Math.pow(v - avg, 2);
-                    count += 1;
-                }
-            }
-            return Math.sqrt(squaredMean / count);
-        }
     }
 
     /**
@@ -170,30 +131,6 @@ public class MovingFunctions {
     }
 
     /**
-     * Calculate a doubly exponential weighted moving average
-     * <p>
-     * Alpha controls the smoothing of the data.  Alpha = 1 retains no memory of past values
-     * (e.g. a random walk), while alpha = 0 retains infinite memory of past values (e.g.
-     * the series mean).  Useful values are somewhere in between.  Defaults to 0.5.
-     * <p>
-     * Beta is equivalent to alpha, but controls the smoothing of the trend instead of the data
-     * <p>
-     * Only finite values are averaged.  NaN or null are ignored.
-     * If all values are missing/null/NaN, the return value will be NaN
-     * The average is based on the count of non-null, non-NaN values.
-     *
-     * @param alpha A double between 0-1 inclusive, controls data smoothing
-     * @param beta a double between 0-1 inclusive, controls trend smoothing
-     */
-    public static double holt(double[] values, double alpha, double beta) {
-        if (values.length == 0) {
-            return Double.NaN;
-        }
-
-        return holtForecast(values, alpha, beta, 1)[0];
-    }
-
-    /**
      * Version of holt that can "forecast", not exposed as an allowlisted function for moving_fn scripts, but
      * here as compatibility/code sharing for existing moving_avg agg.  Can be removed when moving_avg is gone.
      */
@@ -237,36 +174,6 @@ public class MovingFunctions {
         }
 
         return forecastValues;
-    }
-
-    /**
-     * Calculate a triple exponential weighted moving average
-     * <p>
-     * Alpha controls the smoothing of the data.  Alpha = 1 retains no memory of past values
-     * (e.g. a random walk), while alpha = 0 retains infinite memory of past values (e.g.
-     * the series mean).  Useful values are somewhere in between.  Defaults to 0.5.
-     * <p>
-     * Beta is equivalent to alpha, but controls the smoothing of the trend instead of the data.
-     * Gamma is equivalent to alpha, but controls the smoothing of the seasonality instead of the data
-     * <p>
-     * Only finite values are averaged.  NaN or null are ignored.
-     * If all values are missing/null/NaN, the return value will be NaN
-     * The average is based on the count of non-null, non-NaN values.
-     *
-     * @param alpha A double between 0-1 inclusive, controls data smoothing
-     * @param beta a double between 0-1 inclusive, controls trend smoothing
-     * @param gamma a double between 0-1 inclusive, controls seasonality smoothing
-     * @param period the expected periodicity of the data
-     * @param multiplicative true if multiplicative HW should be used. False for additive
-     */
-    public static double holtWinters(double[] values, double alpha, double beta, double gamma, int period, boolean multiplicative) {
-
-        if (values.length == 0) {
-            return Double.NaN;
-        }
-
-        double padding = multiplicative ? 0.0000000001 : 0.0;
-        return holtWintersForecast(values, alpha, beta, gamma, period, padding, multiplicative, 1)[0];
     }
 
     /**

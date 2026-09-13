@@ -88,12 +88,6 @@ public class WarmerStats implements Writeable, ToXContentFragment {
         this.totalTimeInMillis = totalTimeInMillis;
     }
 
-    public void add(long current, long total, long totalTimeInMillis) {
-        this.current += current;
-        this.total += total;
-        this.totalTimeInMillis += totalTimeInMillis;
-    }
-
     public void add(WarmerStats warmerStats) {
         if (warmerStats == null) {
             return;

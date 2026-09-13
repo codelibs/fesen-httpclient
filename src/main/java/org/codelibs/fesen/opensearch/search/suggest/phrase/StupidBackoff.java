@@ -78,13 +78,6 @@ public final class StupidBackoff extends SmoothingModel {
         this.discount = discount;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public StupidBackoff(StreamInput in) throws IOException {
-        discount = in.readDouble();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeDouble(discount);

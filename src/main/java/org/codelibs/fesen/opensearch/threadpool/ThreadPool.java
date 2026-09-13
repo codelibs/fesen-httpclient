@@ -396,26 +396,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     }
 
     /**
-     * Returns a value of milliseconds that may be used for relative time calculations.
-     * <p>
-     * This method should only be used for calculating time deltas. For an epoch based
-     * timestamp, see {@link #absoluteTimeInMillis()}.
-     */
-    public long relativeTimeInMillis() {
-        return TimeValue.nsecToMSec(relativeTimeInNanos());
-    }
-
-    /**
-     * Returns a value of nanoseconds that may be used for relative time calculations.
-     * <p>
-     * This method should only be used for calculating time deltas. For an epoch based
-     * timestamp, see {@link #absoluteTimeInMillis()}.
-     */
-    public long relativeTimeInNanos() {
-        return cachedTimeThread.relativeTimeInNanos();
-    }
-
-    /**
      * Returns a value of nanoseconds that may be used for relative time calculations
      * that require the highest precision possible. Performance critical code must use
      * either {@link #relativeTimeInNanos()} or {@link #relativeTimeInMillis()} which
@@ -442,14 +422,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     @Override
     public ThreadPoolInfo info() {
         return threadPoolInfo;
-    }
-
-    public Info info(String name) {
-        ExecutorHolder holder = executors.get(name);
-        if (holder == null) {
-            return null;
-        }
-        return holder.info;
     }
 
     /**
@@ -503,26 +475,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
             command = new ThreadedRunnable(command, executor(executor));
         }
         return new ScheduledCancellableAdapter(scheduler.schedule(command, delay.millis(), TimeUnit.MILLISECONDS));
-    }
-
-    public void scheduleUnlessShuttingDown(TimeValue delay, String executor, Runnable command) {
-        try {
-            schedule(command, delay, executor);
-        } catch (OpenSearchRejectedExecutionException e) {
-            if (e.isExecutorShutdown()) {
-                logger.debug(
-                    new ParameterizedMessage(
-                        "could not schedule execution of [{}] after [{}] on [{}] as executor is shut down",
-                        command,
-                        delay,
-                        executor
-                    ),
-                    e
-                );
-            } else {
-                throw e;
-            }
-        }
     }
 
     @Override
@@ -892,14 +844,5 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
     public ThreadContext getThreadContext() {
         return threadContext;
-    }
-
-    public static boolean assertNotScheduleThread(String reason) {
-        assert Thread.currentThread().getName().contains("scheduler") == false : "Expected current thread ["
-            + Thread.currentThread()
-            + "] to not be the scheduler thread. Reason: ["
-            + reason
-            + "]";
-        return true;
     }
 }

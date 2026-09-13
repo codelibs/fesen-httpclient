@@ -69,35 +69,11 @@ public class Queries {
         return new MatchNoDocsQuery(reason);
     }
 
-    public static Query newUnmappedFieldQuery(String field) {
-        return newUnmappedFieldsQuery(Collections.singletonList(field));
-    }
-
-    public static Query newUnmappedFieldsQuery(Collection<String> fields) {
-        return Queries.newMatchNoDocsQuery("unmapped fields " + fields);
-    }
-
-    public static Query newLenientFieldQuery(String field, RuntimeException e) {
-        String message = OpenSearchException.getExceptionName(e) + ":[" + e.getMessage() + "]";
-        return Queries.newMatchNoDocsQuery("failed [" + field + "] query, caused by " + message);
-    }
-
     /**
      * Creates a new non-nested docs query
      */
     public static Query newNonNestedFilter() {
         return new FieldExistsQuery("_primary_term");
-    }
-
-    public static BooleanQuery filtered(@Nullable Query query, @Nullable Query filter) {
-        BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        if (query != null) {
-            builder.add(new BooleanClause(query, Occur.MUST));
-        }
-        if (filter != null) {
-            builder.add(new BooleanClause(filter, Occur.FILTER));
-        }
-        return builder.build();
     }
 
     /** Return a query that matches all documents but those that match the given query. */

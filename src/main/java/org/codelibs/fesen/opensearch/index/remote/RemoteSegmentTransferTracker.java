@@ -151,20 +151,6 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
         return remoteRefreshClockTimeMs;
     }
 
-    public synchronized void updateRemoteRefreshTimeMs(long refreshTimeMs) {
-        assert refreshTimeMs >= this.remoteRefreshTimeMs : "newRemoteRefreshTimeMs="
-            + refreshTimeMs
-            + " < "
-            + "currentRemoteRefreshTimeMs="
-            + this.remoteRefreshTimeMs;
-        this.remoteRefreshTimeMs = refreshTimeMs;
-        // When multiple refreshes have failed, there is a possibility that retry is ongoing while another refresh gets
-        // triggered. After the segments have been uploaded and before the below code runs, the updateLocalRefreshTimeAndSeqNo
-        // method is triggered, which will update the local localRefreshTimeMs. Now, the lag would basically become the
-        // time since the last refresh happened locally.
-        this.remoteRefreshStartTimeMs = refreshTimeMs == this.localRefreshTimeMs ? -1 : this.localRefreshTimeMs;
-    }
-
     public void updateRemoteRefreshClockTimeMs(long remoteRefreshClockTimeMs) {
         this.remoteRefreshClockTimeMs = remoteRefreshClockTimeMs;
     }
@@ -179,16 +165,6 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
 
     public long getRejectionCount() {
         return rejectionCount.get();
-    }
-
-    /** public only for testing **/
-    public void incrementRejectionCount() {
-        rejectionCount.incrementAndGet();
-    }
-
-    void incrementRejectionCount(String rejectionReason) {
-        rejectionCountMap.computeIfAbsent(rejectionReason, k -> new AtomicLong()).incrementAndGet();
-        incrementRejectionCount();
     }
 
     long getRejectionCount(String rejectionReason) {

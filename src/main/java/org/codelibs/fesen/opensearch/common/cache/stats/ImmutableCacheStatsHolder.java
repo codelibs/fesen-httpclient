@@ -121,37 +121,6 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
         return statsRoot.getStats();
     }
 
-    public long getTotalHits() {
-        return getTotalStats().getHits();
-    }
-
-    public long getTotalMisses() {
-        return getTotalStats().getMisses();
-    }
-
-    public long getTotalEvictions() {
-        return getTotalStats().getEvictions();
-    }
-
-    public long getTotalSizeInBytes() {
-        return getTotalStats().getSizeInBytes();
-    }
-
-    public long getTotalItems() {
-        return getTotalStats().getItems();
-    }
-
-    public ImmutableCacheStats getStatsForDimensionValues(List<String> dimensionValues) {
-        Node current = statsRoot;
-        for (String dimensionValue : dimensionValues) {
-            current = current.children.get(dimensionValue);
-            if (current == null) {
-                return null;
-            }
-        }
-        return current.stats;
-    }
-
     /**
      * Filters out levels that aren't in dimensionNames, and orders the resulting list to match the order in dimensionNames.
      * Unrecognized levels are ignored.
@@ -287,10 +256,6 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
 
         private void addChild(String dimensionValue, Node child) {
             this.children.putIfAbsent(dimensionValue, child);
-        }
-
-        private void incrementStats(ImmutableCacheStats toIncrement) {
-            stats = ImmutableCacheStats.addSnapshots(stats, toIncrement);
         }
     }
 

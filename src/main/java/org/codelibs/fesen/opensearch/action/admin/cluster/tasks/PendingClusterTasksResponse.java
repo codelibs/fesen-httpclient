@@ -59,10 +59,6 @@ public class PendingClusterTasksResponse extends ActionResponse implements Itera
         pendingTasks = in.readList(PendingClusterTask::new);
     }
 
-    PendingClusterTasksResponse(List<PendingClusterTask> pendingTasks) {
-        this.pendingTasks = pendingTasks;
-    }
-
     public List<PendingClusterTask> pendingTasks() {
         return pendingTasks;
     }

@@ -101,15 +101,6 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
     }
 
     /**
-     * Sets the list of action masks for the actions that should be returned
-     */
-    @SuppressWarnings("unchecked")
-    public final Request setActions(String... actions) {
-        this.actions = actions;
-        return (Request) this;
-    }
-
-    /**
      * Return the list of action masks for the actions that should be returned
      */
     public String[] getActions() {
@@ -135,12 +126,6 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
         return taskId;
     }
 
-    @SuppressWarnings("unchecked")
-    public final Request setTaskId(TaskId taskId) {
-        this.taskId = taskId;
-        return (Request) this;
-    }
-
     /**
      * Returns the parent task id that tasks should be filtered by
      */
@@ -148,26 +133,8 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
         return parentTaskId;
     }
 
-    @SuppressWarnings("unchecked")
-    public Request setParentTaskId(TaskId parentTaskId) {
-        this.parentTaskId = parentTaskId;
-        return (Request) this;
-    }
-
     public TimeValue getTimeout() {
         return this.timeout;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final Request setTimeout(TimeValue timeout) {
-        this.timeout = timeout;
-        return (Request) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final Request setTimeout(String timeout) {
-        this.timeout = TimeValue.parseTimeValue(timeout, null, getClass().getSimpleName() + ".timeout");
-        return (Request) this;
     }
 
     public boolean match(Task task) {

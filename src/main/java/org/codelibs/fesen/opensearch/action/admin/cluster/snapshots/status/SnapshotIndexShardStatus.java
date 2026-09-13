@@ -78,12 +78,6 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
         failure = in.readOptionalString();
     }
 
-    SnapshotIndexShardStatus(ShardId shardId, SnapshotIndexShardStage stage) {
-        super(shardId);
-        this.stage = stage;
-        this.stats = new SnapshotStats();
-    }
-
     SnapshotIndexShardStatus(ShardId shardId, IndexShardSnapshotStatus.Copy indexShardStatus) {
         this(shardId, indexShardStatus, null);
     }
@@ -240,11 +234,6 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
             ShardId shardId = new ShardId(new Index(indexId, IndexMetadata.INDEX_UUID_NA_VALUE), shard);
             return innerParser.parse(p, shardId);
         };
-    }
-
-    public static SnapshotIndexShardStatus fromXContent(XContentParser parser, String indexId) throws IOException {
-        XContentParserUtils.ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
-        return PARSER.parse(parser, indexId, parser.currentName());
     }
 
     @Override

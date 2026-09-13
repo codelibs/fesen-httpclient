@@ -39,22 +39,8 @@ public class DeletePitRequest extends ActionRequest implements ToXContentObject 
      */
     private final List<String> pitIds = new ArrayList<>();
 
-    public DeletePitRequest(StreamInput in) throws IOException {
-        super(in);
-        pitIds.addAll(Arrays.asList(in.readStringArray()));
-    }
-
     public DeletePitRequest(String... pitIds) {
         this.pitIds.addAll(Arrays.asList(pitIds));
-    }
-
-    public DeletePitRequest(List<String> pitIds) {
-        this.pitIds.addAll(pitIds);
-    }
-
-    public void clearAndSetPitIds(List<String> pitIds) {
-        this.pitIds.clear();
-        this.pitIds.addAll(pitIds);
     }
 
     public DeletePitRequest() {}

@@ -45,12 +45,6 @@ public class PlainActionFuture<T> extends AdapterActionFuture<T, T> {
         return new PlainActionFuture<>();
     }
 
-    public static <T, E extends Exception> T get(CheckedConsumer<PlainActionFuture<T>, E> e) throws E {
-        PlainActionFuture<T> fut = newFuture();
-        e.accept(fut);
-        return fut.actionGet();
-    }
-
     @Override
     protected T convert(T listenerResponse) {
         return listenerResponse;

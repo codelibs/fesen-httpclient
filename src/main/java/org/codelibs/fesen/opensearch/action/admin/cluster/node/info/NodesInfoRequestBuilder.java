@@ -47,31 +47,4 @@ public class NodesInfoRequestBuilder extends NodesOperationRequestBuilder<NodesI
     public NodesInfoRequestBuilder(OpenSearchClient client, NodesInfoAction action) {
         super(client, action, new NodesInfoRequest());
     }
-
-    /**
-     * Clears all info flags.
-     */
-    public NodesInfoRequestBuilder clear() {
-        request.clear();
-        return this;
-    }
-
-    /**
-     * Sets to return all the data.
-     */
-    public NodesInfoRequestBuilder all() {
-        request.all();
-        return this;
-    }
-
-    /**
-     * Add a single metric to the request.
-     *
-     * @param metric Name of metric as a string.
-     * @return This, for request chaining.
-     */
-    public NodesInfoRequestBuilder addMetric(String metric) {
-        request.addMetric(metric);
-        return this;
-    }
 }

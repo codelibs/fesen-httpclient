@@ -121,12 +121,6 @@ public abstract class CancellableTask extends Task {
         return true;
     }
 
-    @Nullable
-    public Long getCancellationStartTimeNanos() {
-        CancelledInfo info = cancelledInfo.get();
-        return (info != null) ? info.cancellationStartTimeNanos : null;
-    }
-
     /**
      * The reason the task was cancelled or null if it hasn't been cancelled.
      */

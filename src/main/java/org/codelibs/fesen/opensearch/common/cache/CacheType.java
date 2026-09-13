@@ -47,14 +47,6 @@ public enum CacheType {
         return value;
     }
 
-    public static CacheType getByValue(String value) {
-        CacheType result = valuesMap.get(value);
-        if (result == null) {
-            throw new IllegalArgumentException("No CacheType with value = " + value);
-        }
-        return result;
-    }
-
     public static Set<String> allValues() {
         return valuesMap.keySet();
     }

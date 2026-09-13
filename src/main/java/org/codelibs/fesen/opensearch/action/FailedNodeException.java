@@ -48,11 +48,6 @@ public class FailedNodeException extends OpenSearchException {
 
     private final String nodeId;
 
-    public FailedNodeException(String nodeId, String msg, Throwable cause) {
-        super(msg, cause);
-        this.nodeId = nodeId;
-    }
-
     public String nodeId() {
         return this.nodeId;
     }

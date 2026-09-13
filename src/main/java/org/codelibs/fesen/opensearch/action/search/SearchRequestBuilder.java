@@ -115,14 +115,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * If set, will enable scrolling of the search request for the specified timeout.
-     */
-    public SearchRequestBuilder setScroll(String keepAlive) {
-        request.scroll(keepAlive);
-        return this;
-    }
-
-    /**
      * An optional timeout to control how long search is allowed to take.
      */
     public SearchRequestBuilder setTimeout(TimeValue timeout) {
@@ -179,15 +171,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Sets a filter that will be executed after the query has been executed and only has affect on the search hits
-     * (not aggregations). This filter is always executed as last filtering mechanism.
-     */
-    public SearchRequestBuilder setPostFilter(QueryBuilder postFilter) {
-        sourceBuilder().postFilter(postFilter);
-        return this;
-    }
-
-    /**
      * Sets the minimum score below which docs will be filtered out.
      */
     public SearchRequestBuilder setMinScore(float minScore) {
@@ -239,33 +222,10 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Sets the boost a specific index will receive when the query is executed against it.
-     *
-     * @param index      The index to apply the boost against
-     * @param indexBoost The boost to apply to the index
-     */
-    public SearchRequestBuilder addIndexBoost(String index, float indexBoost) {
-        sourceBuilder().indexBoost(index, indexBoost);
-        return this;
-    }
-
-    /**
      * Indicates whether the response should contain the stored _source for every hit
      */
     public SearchRequestBuilder setFetchSource(boolean fetch) {
         sourceBuilder().fetchSource(fetch);
-        return this;
-    }
-
-    /**
-     * Indicate that _source should be returned with every hit, with an "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param include An optional include (optionally wildcarded) pattern to filter the returned _source
-     * @param exclude An optional exclude (optionally wildcarded) pattern to filter the returned _source
-     */
-    public SearchRequestBuilder setFetchSource(@Nullable String include, @Nullable String exclude) {
-        sourceBuilder().fetchSource(include, exclude);
         return this;
     }
 
@@ -286,21 +246,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder addStoredField(String field) {
         sourceBuilder().storedField(field);
-        return this;
-    }
-
-    /**
-     * Adds a derived field of a given type. The script provided will be used to derive the value
-     * of a given type. Thereafter, it can be treated as regular field of a given type to perform
-     * query on them.
-     *
-     * @param name   The name of the field to be used in various parts of the query. The name will also represent
-     *               the field value in the return hit.
-     * @param type   The type of derived field. All values emitted by script must be of this type
-     * @param script The script to use
-     */
-    public SearchRequestBuilder addDerivedField(String name, String type, Script script) {
-        sourceBuilder().derivedField(name, type, script);
         return this;
     }
 
@@ -331,28 +276,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder searchAfter(Object[] values) {
         sourceBuilder().searchAfter(values);
-        return this;
-    }
-
-    public SearchRequestBuilder slice(SliceBuilder builder) {
-        sourceBuilder().slice(builder);
-        return this;
-    }
-
-    /**
-     * Applies when sorting, and controls if scores will be tracked as well. Defaults to {@code false}.
-     */
-    public SearchRequestBuilder setTrackScores(boolean trackScores) {
-        sourceBuilder().trackScores(trackScores);
-        return this;
-    }
-
-    /**
-     * Applies when fetching scores with named queries, and controls if scores will be tracked as well.
-     * Defaults to {@code false}.
-     */
-    public SearchRequestBuilder setIncludeNamedQueriesScore(boolean includeNamedQueriesScore) {
-        sourceBuilder().includeNamedQueriesScores(includeNamedQueriesScore);
         return this;
     }
 
@@ -391,37 +314,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
         return this;
     }
 
-    /**
-     * Adds an aggregation to the search operation.
-     */
-    public SearchRequestBuilder addAggregation(PipelineAggregationBuilder aggregation) {
-        sourceBuilder().aggregation(aggregation);
-        return this;
-    }
-
     public SearchRequestBuilder highlighter(HighlightBuilder highlightBuilder) {
         sourceBuilder().highlighter(highlightBuilder);
         return this;
-    }
-
-    /**
-     * Delegates to {@link SearchSourceBuilder#suggest(SuggestBuilder)}
-     */
-    public SearchRequestBuilder suggest(SuggestBuilder suggestBuilder) {
-        sourceBuilder().suggest(suggestBuilder);
-        return this;
-    }
-
-    /**
-     * Clears all rescorers on the builder and sets the first one.  To use multiple rescore windows use
-     * {@link #addRescorer(org.codelibs.fesen.opensearch.search.rescore.RescorerBuilder, int)}.
-     *
-     * @param rescorer rescorer configuration
-     * @return this for chaining
-     */
-    public SearchRequestBuilder setRescorer(RescorerBuilder<?> rescorer) {
-        sourceBuilder().clearRescorers();
-        return addRescorer(rescorer);
     }
 
     /**
@@ -449,18 +344,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Adds a new rescorer.
-     *
-     * @param rescorer rescorer configuration
-     * @param window   rescore window
-     * @return this for chaining
-     */
-    public SearchRequestBuilder addRescorer(RescorerBuilder<?> rescorer, int window) {
-        sourceBuilder().addRescorer(rescorer.windowSize(window));
-        return this;
-    }
-
-    /**
      * Clears all rescorers from the builder.
      *
      * @return this for chaining
@@ -475,14 +358,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder setSource(SearchSourceBuilder source) {
         request.source(source);
-        return this;
-    }
-
-    /**
-     * Should the query be profiled. Defaults to <code>false</code>
-     */
-    public SearchRequestBuilder setProfile(boolean profile) {
-        sourceBuilder().profile(profile);
         return this;
     }
 
@@ -512,42 +387,5 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
             request.source(new SearchSourceBuilder());
         }
         return request.source();
-    }
-
-    /**
-     * Sets the number of shard results that should be reduced at once on the coordinating node. This value should be used as a protection
-     * mechanism to reduce the memory overhead per search request if the potential number of shards in the request can be large.
-     */
-    public SearchRequestBuilder setBatchedReduceSize(int batchedReduceSize) {
-        this.request.setBatchedReduceSize(batchedReduceSize);
-        return this;
-    }
-
-    /**
-     * Sets the number of shard requests that should be executed concurrently on a single node. This value should be used as a
-     * protection mechanism to reduce the number of shard requests fired per high level search request. Searches that hit the entire
-     * cluster can be throttled with this number to reduce the cluster load. The default is {@code 5}.
-     */
-    public SearchRequestBuilder setMaxConcurrentShardRequests(int maxConcurrentShardRequests) {
-        this.request.setMaxConcurrentShardRequests(maxConcurrentShardRequests);
-        return this;
-    }
-
-    /**
-     * Sets a threshold that enforces a pre-filter roundtrip to pre-filter search shards based on query rewriting if the number of shards
-     * the search request expands to exceeds the threshold. This filter roundtrip can limit the number of shards significantly if for
-     * instance a shard can not match any documents based on its rewrite method ie. if date filters are mandatory to match but the shard
-     * bounds and the query are disjoint.
-     * <p>
-     * When unspecified, the pre-filter phase is executed if any of these conditions is met:
-     * <ul>
-     * <li>The request targets more than 128 shards</li>
-     * <li>The request targets one or more read-only index</li>
-     * <li>The primary sort of the query targets an indexed field</li>
-     * </ul>
-     */
-    public SearchRequestBuilder setPreFilterShardSize(int preFilterShardSize) {
-        this.request.setPreFilterShardSize(preFilterShardSize);
-        return this;
     }
 }

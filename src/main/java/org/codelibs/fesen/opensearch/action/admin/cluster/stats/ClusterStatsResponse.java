@@ -90,17 +90,6 @@ public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResp
         ClusterName clusterName,
         List<ClusterStatsNodeResponse> nodes,
         List<FailedNodeException> failures,
-        ClusterState state
-    ) {
-        this(timestamp, clusterUUID, clusterName, nodes, failures, state, Set.of(Metric.values()), Set.of(IndexMetric.values()));
-    }
-
-    public ClusterStatsResponse(
-        long timestamp,
-        String clusterUUID,
-        ClusterName clusterName,
-        List<ClusterStatsNodeResponse> nodes,
-        List<FailedNodeException> failures,
         ClusterState state,
         Set<Metric> requestedMetrics,
         Set<IndexMetric> indicesMetrics

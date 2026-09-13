@@ -64,15 +64,6 @@ public class ShardUpgradeStatus extends BroadcastShardResponse {
         toUpgradeBytesAncient = in.readLong();
     }
 
-    ShardUpgradeStatus(ShardRouting shardRouting, long totalBytes, long toUpgradeBytes, long upgradeBytesAncient) {
-        super(shardRouting.shardId());
-        this.shardRouting = shardRouting;
-        this.totalBytes = totalBytes;
-        this.toUpgradeBytes = toUpgradeBytes;
-        this.toUpgradeBytesAncient = upgradeBytesAncient;
-
-    }
-
     public ShardRouting getShardRouting() {
         return this.shardRouting;
     }

@@ -107,33 +107,6 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
             this.parallelism = -1;
         }
 
-        /**
-         * This constructor will be deprecated starting in version 3.4.0.
-         * Use {@link Builder} instead.
-         */
-        @Deprecated
-        public Stats(
-            String name,
-            int threads,
-            int queue,
-            int active,
-            long rejected,
-            int largest,
-            long completed,
-            long waitTimeNanos,
-            int parallelism
-        ) {
-            this.name = name;
-            this.threads = threads;
-            this.queue = queue;
-            this.active = active;
-            this.rejected = rejected;
-            this.largest = largest;
-            this.completed = completed;
-            this.waitTimeNanos = waitTimeNanos;
-            this.parallelism = parallelism;
-        }
-
         public Stats(StreamInput in) throws IOException {
             name = in.readString();
             threads = in.readInt();

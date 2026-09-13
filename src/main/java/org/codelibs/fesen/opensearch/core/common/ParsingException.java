@@ -71,16 +71,6 @@ public class ParsingException extends OpenSearchException {
         this.lineNumber = lineNumber;
     }
 
-    /**
-     * This constructor is provided for use in unit tests where a
-     * {@link XContentParser} may not be available
-     */
-    public ParsingException(int line, int col, String msg, Throwable cause) {
-        super(msg, cause);
-        this.lineNumber = line;
-        this.columnNumber = col;
-    }
-
     public ParsingException(StreamInput in) throws IOException {
         super(in);
         lineNumber = in.readInt();

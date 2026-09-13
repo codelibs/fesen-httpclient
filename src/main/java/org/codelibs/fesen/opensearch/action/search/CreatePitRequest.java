@@ -55,16 +55,6 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
         this.indices = indices;
     }
 
-    public CreatePitRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        routing = in.readOptionalString();
-        preference = in.readOptionalString();
-        keepAlive = in.readTimeValue();
-        allowPartialPitCreation = in.readOptionalBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

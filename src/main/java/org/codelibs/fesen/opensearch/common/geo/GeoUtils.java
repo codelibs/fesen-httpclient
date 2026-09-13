@@ -495,13 +495,5 @@ public class GeoUtils {
         return point.resetFromString(val, false, EffectivePoint.BOTTOM_LEFT);
     }
 
-    /** Returns the maximum distance/radius (in meters) from the point 'center' before overlapping */
-    public static double maxRadialDistanceMeters(final double centerLat, final double centerLon) {
-        if (Math.abs(centerLat) == MAX_LAT) {
-            return SloppyMath.haversinMeters(centerLat, centerLon, 0, centerLon);
-        }
-        return SloppyMath.haversinMeters(centerLat, centerLon, centerLat, (MAX_LON + centerLon) % 360);
-    }
-
     private GeoUtils() {}
 }

@@ -299,10 +299,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
 
         private final long pinnedTimestamp;
 
-        public SnapshotRecoverySource(String restoreUUID, Snapshot snapshot, Version version, IndexId indexId) {
-            this(restoreUUID, snapshot, version, indexId, false, false, null);
-        }
-
         public SnapshotRecoverySource(
             String restoreUUID,
             Snapshot snapshot,
@@ -504,12 +500,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
         private final String restoreUUID;
         private final IndexId index;
         private final Version version;
-
-        public RemoteStoreRecoverySource(String restoreUUID, Version version, IndexId indexId) {
-            this.restoreUUID = restoreUUID;
-            this.version = Objects.requireNonNull(version);
-            this.index = Objects.requireNonNull(indexId);
-        }
 
         RemoteStoreRecoverySource(StreamInput in) throws IOException {
             restoreUUID = in.readString();

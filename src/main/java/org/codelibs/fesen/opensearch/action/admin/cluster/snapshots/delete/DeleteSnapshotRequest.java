@@ -82,12 +82,6 @@ public class DeleteSnapshotRequest extends ClusterManagerNodeRequest<DeleteSnaps
         this.repository = repository;
     }
 
-    public DeleteSnapshotRequest(StreamInput in) throws IOException {
-        super(in);
-        repository = in.readString();
-        snapshots = in.readStringArray();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -107,11 +101,6 @@ public class DeleteSnapshotRequest extends ClusterManagerNodeRequest<DeleteSnaps
         return validationException;
     }
 
-    public DeleteSnapshotRequest repository(String repository) {
-        this.repository = repository;
-        return this;
-    }
-
     /**
      * Returns repository name
      *
@@ -128,15 +117,5 @@ public class DeleteSnapshotRequest extends ClusterManagerNodeRequest<DeleteSnaps
      */
     public String[] snapshots() {
         return this.snapshots;
-    }
-
-    /**
-     * Sets snapshot names
-     *
-     * @return this request
-     */
-    public DeleteSnapshotRequest snapshots(String... snapshots) {
-        this.snapshots = snapshots;
-        return this;
     }
 }

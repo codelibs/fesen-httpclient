@@ -92,23 +92,6 @@ public final class MatchQuery {
             this.ordinal = ordinal;
         }
 
-        /**
-         * Reads a type off the wire.
-         *
-         * @param in the stream to read from
-         * @return the type
-         * @throws IOException if reading fails
-         */
-        public static Type readFromStream(StreamInput in) throws IOException {
-            int ord = in.readVInt();
-            for (Type type : Type.values()) {
-                if (type.ordinal == ord) {
-                    return type;
-                }
-            }
-            throw new OpenSearchException("unknown serialized type [" + ord + "]");
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeVInt(this.ordinal);

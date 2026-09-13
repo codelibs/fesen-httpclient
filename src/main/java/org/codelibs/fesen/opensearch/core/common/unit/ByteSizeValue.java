@@ -96,15 +96,6 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
         return unit;
     }
 
-    @Deprecated
-    public int bytesAsInt() {
-        long bytes = getBytes();
-        if (bytes > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("size [" + toString() + "] is bigger than max int");
-        }
-        return (int) bytes;
-    }
-
     public long getBytes() {
         return unit.toBytes(size);
     }

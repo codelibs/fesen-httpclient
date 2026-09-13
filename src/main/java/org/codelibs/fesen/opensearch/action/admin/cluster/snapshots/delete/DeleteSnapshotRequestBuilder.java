@@ -61,26 +61,4 @@ public class DeleteSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
     public DeleteSnapshotRequestBuilder(OpenSearchClient client, DeleteSnapshotAction action, String repository, String... snapshots) {
         super(client, action, new DeleteSnapshotRequest(repository, snapshots));
     }
-
-    /**
-     * Sets the repository name
-     *
-     * @param repository repository name
-     * @return this builder
-     */
-    public DeleteSnapshotRequestBuilder setRepository(String repository) {
-        request.repository(repository);
-        return this;
-    }
-
-    /**
-     * Sets the snapshot name
-     *
-     * @param snapshots snapshot names
-     * @return this builder
-     */
-    public DeleteSnapshotRequestBuilder setSnapshots(String... snapshots) {
-        request.snapshots(snapshots);
-        return this;
-    }
 }

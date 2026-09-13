@@ -59,12 +59,6 @@ public class RecoveryRequest extends BroadcastRequest<RecoveryRequest> {
         this(Strings.EMPTY_ARRAY);
     }
 
-    public RecoveryRequest(StreamInput in) throws IOException {
-        super(in);
-        detailed = in.readBoolean();
-        activeOnly = in.readBoolean();
-    }
-
     /**
      * Constructs a request for recovery information for all shards for the given indices
      *
@@ -84,32 +78,12 @@ public class RecoveryRequest extends BroadcastRequest<RecoveryRequest> {
     }
 
     /**
-     * Set value of the detailed flag. Detailed requests will contain extra
-     * information such as a list of physical files and their recovery progress.
-     *
-     * @param detailed  Whether or not to set the detailed flag
-     */
-    public void detailed(boolean detailed) {
-        this.detailed = detailed;
-    }
-
-    /**
      * True if activeOnly flag is set, false otherwise. This value is false by default.
      *
      * @return  True if activeOnly flag is set, false otherwise
      */
     public boolean activeOnly() {
         return activeOnly;
-    }
-
-    /**
-     * Set value of the activeOnly flag. If true, this request will only response with
-     * on-going recovery information.
-     *
-     * @param activeOnly    Whether or not to set the activeOnly flag.
-     */
-    public void activeOnly(boolean activeOnly) {
-        this.activeOnly = activeOnly;
     }
 
     @Override

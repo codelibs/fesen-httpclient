@@ -62,40 +62,6 @@ public class SnapshotsStatusRequest extends ClusterManagerNodeRequest<SnapshotsS
 
     public SnapshotsStatusRequest() {}
 
-    /**
-     * Constructs a new get snapshots request with given repository name and list of snapshots
-     *
-     * @param repository repository name
-     * @param snapshots  list of snapshots
-     */
-    public SnapshotsStatusRequest(String repository, String[] snapshots) {
-        this.repository = repository;
-        this.snapshots = snapshots;
-    }
-
-    /**
-     * Constructs a new get snapshots request with given repository name and list of snapshots
-     *
-     * @param repository repository name
-     * @param snapshots  list of snapshots
-     * @param indices  list of indices
-     */
-    public SnapshotsStatusRequest(String repository, String[] snapshots, String[] indices) {
-        this.repository = repository;
-        this.snapshots = snapshots;
-        this.indices = indices;
-    }
-
-    public SnapshotsStatusRequest(StreamInput in) throws IOException {
-        super(in);
-        repository = in.readString();
-        snapshots = in.readStringArray();
-        ignoreUnavailable = in.readBoolean();
-        if (in.getVersion().onOrAfter(Version.V_2_17_0)) {
-            indices = in.readOptionalStringArray();
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -144,17 +110,6 @@ public class SnapshotsStatusRequest extends ClusterManagerNodeRequest<SnapshotsS
     }
 
     /**
-     * Sets repository name
-     *
-     * @param repository repository name
-     * @return this request
-     */
-    public SnapshotsStatusRequest repository(String repository) {
-        this.repository = repository;
-        return this;
-    }
-
-    /**
      * Returns repository name
      *
      * @return repository name
@@ -179,18 +134,6 @@ public class SnapshotsStatusRequest extends ClusterManagerNodeRequest<SnapshotsS
      */
     public SnapshotsStatusRequest snapshots(String[] snapshots) {
         this.snapshots = snapshots;
-        return this;
-    }
-
-    /**
-     * Set to <code>true</code> to ignore unavailable snapshots and indices, instead of throwing an exception.
-     * Defaults to <code>false</code>, which means unavailable snapshots and indices cause an exception to be thrown.
-     *
-     * @param ignoreUnavailable whether to ignore unavailable snapshots and indices
-     * @return this request
-     */
-    public SnapshotsStatusRequest ignoreUnavailable(boolean ignoreUnavailable) {
-        this.ignoreUnavailable = ignoreUnavailable;
         return this;
     }
 

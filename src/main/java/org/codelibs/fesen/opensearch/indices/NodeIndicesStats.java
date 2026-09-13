@@ -128,26 +128,6 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
         }
     }
 
-    /**
-     * By default, the levels passed from the transport action will be a list of strings, since NodeIndicesStats can
-     * only aggregate on one level, we pick the first accepted level else we ignore if no known level is passed. Level is
-     * selected based on enum defined in {@link StatsLevel}
-     *
-     * Note - we are picking the first level as multiple levels are not supported in the previous versions.
-     * @param levels - levels sent in the request.
-     *
-     * @return Corresponding identified enum {@link StatsLevel}
-     */
-    public static StatsLevel getAcceptedLevel(String[] levels) {
-        if (levels != null && levels.length > 0) {
-            Optional<StatsLevel> level = Arrays.stream(StatsLevel.values())
-                .filter(field -> field.getRestName().equals(levels[0]))
-                .findFirst();
-            return level.orElseThrow(() -> new IllegalArgumentException("Level provided is not supported by NodeIndicesStats"));
-        }
-        return null;
-    }
-
     private Map<Index, CommonStats> readStatsByIndex(StreamInput in) throws IOException {
         Map<Index, CommonStats> statsByIndex = new HashMap<>();
         int indexEntries = in.readVInt();
@@ -384,14 +364,6 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
         }
 
         return statsMap;
-    }
-
-    public List<IndexShardStats> getShardStats(Index index) {
-        if (statsByShard == null) {
-            return null;
-        } else {
-            return statsByShard.get(index);
-        }
     }
 
     /**

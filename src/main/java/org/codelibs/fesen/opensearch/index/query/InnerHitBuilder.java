@@ -176,10 +176,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         this.name = null;
     }
 
-    public InnerHitBuilder(String name) {
-        this.name = name;
-    }
-
     /**
      * Read from a stream.
      */
@@ -375,24 +371,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     }
 
     /**
-     * Adds a field to load from the docvalue and return.
-     */
-    public InnerHitBuilder addDocValueField(String field, String format) {
-        if (docValueFields == null || docValueFields.isEmpty()) {
-            docValueFields = new ArrayList<>();
-        }
-        docValueFields.add(new FieldAndFormat(field, format));
-        return this;
-    }
-
-    /**
-     * Adds a field to load from doc values and return.
-     */
-    public InnerHitBuilder addDocValueField(String field) {
-        return addDocValueField(field, null);
-    }
-
-    /**
      * Gets the fields to load and return as part of the search request.
      */
     public List<FieldAndFormat> getFetchFields() {
@@ -407,40 +385,12 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    /**
-     * Adds a field to load and return as part of the search request.
-     */
-    public InnerHitBuilder addFetchField(String name) {
-        return addFetchField(name, null);
-    }
-
-    /**
-     * Adds a field to load and return as part of the search request.
-     * @param name the field name.
-     * @param format an optional format string used when formatting values, for example a date format.
-     */
-    public InnerHitBuilder addFetchField(String name, @Nullable String format) {
-        if (fetchFields == null || fetchFields.isEmpty()) {
-            fetchFields = new ArrayList<>();
-        }
-        fetchFields.add(new FieldAndFormat(name, format));
-        return this;
-    }
-
     public Set<ScriptField> getScriptFields() {
         return scriptFields;
     }
 
     public InnerHitBuilder setScriptFields(Set<ScriptField> scriptFields) {
         this.scriptFields = scriptFields;
-        return this;
-    }
-
-    public InnerHitBuilder addScriptField(String name, Script script) {
-        if (scriptFields == null) {
-            scriptFields = new HashSet<>();
-        }
-        scriptFields.add(new ScriptField(name, script, false));
         return this;
     }
 

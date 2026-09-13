@@ -317,19 +317,6 @@ public class Joda {
         return new JodaDateFormatter(input, formatter, formatter);
     }
 
-    public static void writeTimeZone(final StreamOutput out, final DateTimeZone timeZone) throws IOException {
-        out.writeString(timeZone.getID());
-    }
-
-    public static void writeOptionalTimeZone(final StreamOutput out, final DateTimeZone timeZone) throws IOException {
-        if (timeZone == null) {
-            out.writeBoolean(false);
-        } else {
-            out.writeBoolean(true);
-            writeTimeZone(out, timeZone);
-        }
-    }
-
     /**
      * Read a {@linkplain DateTimeZone} from a {@linkplain StreamInput}.
      */

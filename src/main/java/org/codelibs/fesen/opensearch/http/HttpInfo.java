@@ -107,14 +107,6 @@ public class HttpInfo implements ReportingService.Info {
         return builder;
     }
 
-    public BoundTransportAddress address() {
-        return address;
-    }
-
-    public BoundTransportAddress getAddress() {
-        return address();
-    }
-
     public ByteSizeValue maxContentLength() {
         return new ByteSizeValue(maxContentLength);
     }

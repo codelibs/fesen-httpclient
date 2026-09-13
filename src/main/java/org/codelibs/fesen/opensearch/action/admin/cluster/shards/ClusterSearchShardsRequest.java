@@ -68,26 +68,6 @@ public class ClusterSearchShardsRequest extends ClusterManagerNodeReadRequest<Cl
 
     public ClusterSearchShardsRequest() {}
 
-    public ClusterSearchShardsRequest(String... indices) {
-        indices(indices);
-    }
-
-    public ClusterSearchShardsRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-
-        routing = in.readOptionalString();
-        preference = in.readOptionalString();
-
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        if (in.getVersion().onOrAfter(Version.V_2_19_0)) {
-            boolean hasSlice = in.readBoolean();
-            if (hasSlice) {
-                sliceBuilder = new SliceBuilder(in);
-            }
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -136,11 +116,6 @@ public class ClusterSearchShardsRequest extends ClusterManagerNodeReadRequest<Cl
         return indicesOptions;
     }
 
-    public ClusterSearchShardsRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public boolean includeDataStreams() {
         return true;
@@ -151,25 +126,6 @@ public class ClusterSearchShardsRequest extends ClusterManagerNodeReadRequest<Cl
      */
     public String routing() {
         return this.routing;
-    }
-
-    /**
-     * A comma separated list of routing values to control the shards the search will be executed on.
-     */
-    public ClusterSearchShardsRequest routing(String routing) {
-        this.routing = routing;
-        return this;
-    }
-
-    /**
-     * Sets the preference to execute the search. Defaults to randomize across shards. Can be set to
-     * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
-     * or a custom value, which guarantees that the same order
-     * will be used across different requests.
-     */
-    public ClusterSearchShardsRequest preference(String preference) {
-        this.preference = preference;
-        return this;
     }
 
     public String preference() {

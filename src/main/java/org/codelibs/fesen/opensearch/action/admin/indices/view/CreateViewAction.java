@@ -60,13 +60,6 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
             this.targets = targets;
         }
 
-        public Request(final StreamInput in) throws IOException {
-            super(in);
-            this.name = in.readString();
-            this.description = in.readString();
-            this.targets = in.readList(Target::new);
-        }
-
         public String getName() {
             return name;
         }

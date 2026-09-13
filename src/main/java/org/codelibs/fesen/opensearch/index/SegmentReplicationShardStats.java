@@ -41,22 +41,6 @@ public class SegmentReplicationShardStats implements Writeable, ToXContentFragme
     @Nullable
     private SegmentReplicationState currentReplicationState;
 
-    public SegmentReplicationShardStats(
-        String allocationId,
-        long checkpointsBehindCount,
-        long bytesBehindCount,
-        long currentReplicationTimeMillis,
-        long currentReplicationLagMillis,
-        long lastCompletedReplicationTime
-    ) {
-        this.allocationId = allocationId;
-        this.checkpointsBehindCount = checkpointsBehindCount;
-        this.bytesBehindCount = bytesBehindCount;
-        this.currentReplicationTimeMillis = currentReplicationTimeMillis;
-        this.currentReplicationLagMillis = currentReplicationLagMillis;
-        this.lastCompletedReplicationTimeMillis = lastCompletedReplicationTime;
-    }
-
     public SegmentReplicationShardStats(StreamInput in) throws IOException {
         this.allocationId = in.readString();
         this.checkpointsBehindCount = in.readVLong();

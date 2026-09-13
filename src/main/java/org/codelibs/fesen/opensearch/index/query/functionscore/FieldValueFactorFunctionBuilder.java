@@ -72,17 +72,6 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
         setFunctionName(functionName);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public FieldValueFactorFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-        field = in.readString();
-        factor = in.readFloat();
-        missing = in.readOptionalDouble();
-        modifier = FieldValueFactorFunction.Modifier.readFromStream(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeString(field);

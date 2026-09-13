@@ -78,12 +78,6 @@ public class ClusterUpdateSettingsRequest extends AcknowledgedRequest<ClusterUpd
     private Settings transientSettings = EMPTY_SETTINGS;
     private Settings persistentSettings = EMPTY_SETTINGS;
 
-    public ClusterUpdateSettingsRequest(StreamInput in) throws IOException {
-        super(in);
-        transientSettings = readSettingsFromStream(in);
-        persistentSettings = readSettingsFromStream(in);
-    }
-
     public ClusterUpdateSettingsRequest() {}
 
     @Override
@@ -108,62 +102,6 @@ public class ClusterUpdateSettingsRequest extends AcknowledgedRequest<ClusterUpd
      */
     public ClusterUpdateSettingsRequest transientSettings(Settings settings) {
         this.transientSettings = settings;
-        return this;
-    }
-
-    /**
-     * Sets the transient settings to be updated. They will not survive a full cluster restart
-     */
-    public ClusterUpdateSettingsRequest transientSettings(Settings.Builder settings) {
-        this.transientSettings = settings.build();
-        return this;
-    }
-
-    /**
-     * Sets the source containing the transient settings to be updated. They will not survive a full cluster restart
-     */
-    public ClusterUpdateSettingsRequest transientSettings(String source, final MediaType mediaType) {
-        this.transientSettings = Settings.builder().loadFromSource(source, mediaType).build();
-        return this;
-    }
-
-    /**
-     * Sets the transient settings to be updated. They will not survive a full cluster restart
-     */
-    public ClusterUpdateSettingsRequest transientSettings(Map<String, ?> source) {
-        this.transientSettings = Settings.builder().loadFromMap(source).build();
-        return this;
-    }
-
-    /**
-     * Sets the persistent settings to be updated. They will get applied cross restarts
-     */
-    public ClusterUpdateSettingsRequest persistentSettings(Settings settings) {
-        this.persistentSettings = settings;
-        return this;
-    }
-
-    /**
-     * Sets the persistent settings to be updated. They will get applied cross restarts
-     */
-    public ClusterUpdateSettingsRequest persistentSettings(Settings.Builder settings) {
-        this.persistentSettings = settings.build();
-        return this;
-    }
-
-    /**
-     * Sets the source containing the persistent settings to be updated. They will get applied cross restarts
-     */
-    public ClusterUpdateSettingsRequest persistentSettings(String source, final MediaType mediaType) {
-        this.persistentSettings = Settings.builder().loadFromSource(source, mediaType).build();
-        return this;
-    }
-
-    /**
-     * Sets the persistent settings to be updated. They will get applied cross restarts
-     */
-    public ClusterUpdateSettingsRequest persistentSettings(Map<String, ?> source) {
-        this.persistentSettings = Settings.builder().loadFromMap(source).build();
         return this;
     }
 

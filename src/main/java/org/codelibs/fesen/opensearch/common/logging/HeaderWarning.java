@@ -129,40 +129,6 @@ public class HeaderWarning {
      */
     static final CopyOnWriteArraySet<ThreadContext> THREAD_CONTEXT = new CopyOnWriteArraySet<>();
 
-    /**
-     * Set the {@link ThreadContext} used to add warning headers to network responses.
-     * <p>
-     * This is expected to <em>only</em> be invoked by the {@code Node}'s constructor (therefore once outside of tests).
-     *
-     * @param threadContext The thread context owned by the {@code ThreadPool} (and implicitly a {@code Node})
-     * @throws IllegalStateException if this {@code threadContext} has already been set
-     */
-    public static void setThreadContext(ThreadContext threadContext) {
-        Objects.requireNonNull(threadContext, "Cannot register a null ThreadContext");
-
-        // add returning false means it _did_ have it already
-        if (THREAD_CONTEXT.add(threadContext) == false) {
-            throw new IllegalStateException("Double-setting ThreadContext not allowed!");
-        }
-    }
-
-    /**
-     * Remove the {@link ThreadContext} used to add warning headers to network responses.
-     * <p>
-     * This is expected to <em>only</em> be invoked by the {@code Node}'s {@code close} method (therefore once outside of tests).
-     *
-     * @param threadContext The thread context owned by the {@code ThreadPool} (and implicitly a {@code Node})
-     * @throws IllegalStateException if this {@code threadContext} is unknown (and presumably already unset before)
-     */
-    public static void removeThreadContext(ThreadContext threadContext) {
-        assert threadContext != null;
-
-        // remove returning false means it did not have it already
-        if (THREAD_CONTEXT.remove(threadContext) == false) {
-            throw new IllegalStateException("Removing unknown ThreadContext not allowed!");
-        }
-    }
-
     public static String getXOpaqueId() {
         return THREAD_CONTEXT.stream()
             .filter(t -> t.getHeader(Task.X_OPAQUE_ID) != null)

@@ -101,21 +101,6 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
         return this.repositories;
     }
 
-    /**
-     * Returns a repository with a given name or null if such repository doesn't exist
-     *
-     * @param name name of repository
-     * @return repository metadata
-     */
-    public RepositoryMetadata repository(String name) {
-        for (RepositoryMetadata repository : repositories) {
-            if (name.equals(repository.name())) {
-                return repository;
-            }
-        }
-        return null;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -62,14 +62,6 @@ public class GetAliasesRequest extends ClusterManagerNodeReadRequest<GetAliasesR
 
     public GetAliasesRequest() {}
 
-    public GetAliasesRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        aliases = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        originalAliases = in.readStringArray();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -88,11 +80,6 @@ public class GetAliasesRequest extends ClusterManagerNodeReadRequest<GetAliasesR
     public GetAliasesRequest aliases(String... aliases) {
         this.aliases = aliases;
         this.originalAliases = aliases;
-        return this;
-    }
-
-    public GetAliasesRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
         return this;
     }
 

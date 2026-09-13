@@ -27,12 +27,4 @@ public class RemoteStoreMetadataRequestBuilder extends BroadcastOperationRequest
     public RemoteStoreMetadataRequestBuilder(OpenSearchClient client, RemoteStoreMetadataAction action) {
         super(client, action, new RemoteStoreMetadataRequest());
     }
-
-    /**
-     * Sets shards preference of request.
-     */
-    public final RemoteStoreMetadataRequestBuilder setShards(String... shards) {
-        request.shards(shards);
-        return this;
-    }
 }

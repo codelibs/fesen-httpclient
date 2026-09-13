@@ -298,81 +298,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     }
 
     /**
-     * @deprecated Use {@link #script()} instead
-     */
-    @Deprecated
-    public String scriptString() {
-        return this.script == null ? null : this.script.getIdOrCode();
-    }
-
-    /**
-     * The script to execute. Note, make sure not to send different script each
-     * times and instead use script params if possible with the same
-     * (automatically compiled) script.
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest script(String script, ScriptType scriptType, @Nullable Map<String, Object> scriptParams) {
-        this.script = new Script(scriptType, Script.DEFAULT_SCRIPT_LANG, script, scriptParams);
-        return this;
-    }
-
-    /**
-     * The script to execute. Note, make sure not to send different script each
-     * times and instead use script params if possible with the same
-     * (automatically compiled) script.
-     *
-     * @param script
-     *            The script to execute
-     * @param scriptLang
-     *            The script language
-     * @param scriptType
-     *            The script type
-     * @param scriptParams
-     *            The script parameters
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest script(
-        String script,
-        @Nullable String scriptLang,
-        ScriptType scriptType,
-        @Nullable Map<String, Object> scriptParams
-    ) {
-        this.script = new Script(scriptType, scriptLang, script, scriptParams);
-        return this;
-    }
-
-    /**
-     * Indicate that _source should be returned, with an
-     * "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param includes
-     *            An optional list of include (optionally wildcarded) pattern to
-     *            filter the returned _source
-     * @param excludes
-     *            An optional list of exclude (optionally wildcarded) pattern to
-     *            filter the returned _source
-     */
-    public UpdateRequest fetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
-        FetchSourceContext context = this.fetchSourceContext == null ? FetchSourceContext.FETCH_SOURCE : this.fetchSourceContext;
-        this.fetchSourceContext = new FetchSourceContext(context.fetchSource(), includes, excludes);
-        return this;
-    }
-
-    /**
-     * Indicates whether the response should contain the updated _source.
-     */
-    public UpdateRequest fetchSource(boolean fetchSource) {
-        FetchSourceContext context = this.fetchSourceContext == null ? FetchSourceContext.FETCH_SOURCE : this.fetchSourceContext;
-        this.fetchSourceContext = new FetchSourceContext(fetchSource, context.includes(), context.excludes());
-        return this;
-    }
-
-    /**
      * Explicitly set the fetch source context for this request
      */
     public UpdateRequest fetchSource(FetchSourceContext context) {
@@ -493,40 +418,8 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     /**
      * Sets the doc to use for updates when a script is not specified.
      */
-    public UpdateRequest doc(IndexRequest doc) {
-        this.doc = doc;
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
     public UpdateRequest doc(XContentBuilder source) {
         safeDoc().source(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequest doc(Map<String, Object> source) {
-        safeDoc().source(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequest doc(Map<String, Object> source, MediaType mediaType) {
-        safeDoc().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequest doc(String source, MediaType mediaType) {
-        safeDoc().source(source, mediaType);
         return this;
     }
 
@@ -536,15 +429,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
      */
     public UpdateRequest doc(Object... source) {
         safeDoc().source(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified, the doc provided
-     * is a field and value pairs.
-     */
-    public UpdateRequest doc(MediaType mediaType, Object... source) {
-        safeDoc().source(mediaType, source);
         return this;
     }
 
@@ -560,61 +444,10 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     }
 
     /**
-     * Sets the index request to be used if the document does not exists. Otherwise, a
-     * {@link org.codelibs.fesen.opensearch.index.engine.DocumentMissingException} is thrown.
-     */
-    public UpdateRequest upsert(IndexRequest upsertRequest) {
-        this.upsertRequest = upsertRequest;
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequest upsert(XContentBuilder source) {
-        safeUpsertRequest().source(source);
-        return this;
-    }
-
-    /**
      * Sets the doc source of the update request to be used when the document does not exists.
      */
     public UpdateRequest upsert(Map<String, Object> source) {
         safeUpsertRequest().source(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequest upsert(Map<String, Object> source, MediaType mediaType) {
-        safeUpsertRequest().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequest upsert(String source, MediaType mediaType) {
-        safeUpsertRequest().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists. The doc
-     * includes field and value pairs.
-     */
-    public UpdateRequest upsert(Object... source) {
-        safeUpsertRequest().source(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists. The doc
-     * includes field and value pairs.
-     */
-    public UpdateRequest upsert(MediaType mediaType, Object... source) {
-        safeUpsertRequest().source(mediaType, source);
         return this;
     }
 
@@ -822,22 +655,5 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
             childRequestBytes += upsertRequest.ramBytesUsed();
         }
         return SHALLOW_SIZE + RamUsageEstimator.sizeOf(id) + childRequestBytes;
-    }
-
-    /**
-     * Gets all valid child index requests for the update request.
-     * The order is deterministic.
-     *
-     * @return a list of index requests
-     */
-    public List<IndexRequest> getChildIndexRequests() {
-        List<IndexRequest> childIndexRequests = new ArrayList<>();
-        if (doc != null) {
-            childIndexRequests.add(doc);
-        }
-        if (upsertRequest != null) {
-            childIndexRequests.add(upsertRequest);
-        }
-        return childIndexRequests;
     }
 }

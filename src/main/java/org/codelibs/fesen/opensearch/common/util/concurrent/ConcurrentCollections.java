@@ -56,29 +56,8 @@ public abstract class ConcurrentCollections {
         aggressiveConcurrencyLevel = Math.max(Runtime.getRuntime().availableProcessors() * 2, 16);
     }
 
-    /**
-     * Creates a new CHM with an aggressive concurrency level, aimed at high concurrent update rate long living maps.
-     */
-    public static <K, V> ConcurrentMap<K, V> newConcurrentMapWithAggressiveConcurrency() {
-        return newConcurrentMapWithAggressiveConcurrency(16);
-    }
-
-    /**
-     * Creates a new CHM with an aggressive concurrency level, aimed at high concurrent update rate long living maps.
-     */
-    public static <K, V> ConcurrentMap<K, V> newConcurrentMapWithAggressiveConcurrency(int initalCapacity) {
-        return new ConcurrentHashMap<>(initalCapacity, 0.75f, aggressiveConcurrencyLevel);
-    }
-
     public static <K, V> ConcurrentMap<K, V> newConcurrentMap() {
         return new ConcurrentHashMap<>();
-    }
-
-    /**
-     * Creates a new CHM with an aggressive concurrency level, aimed at highly updateable long living maps.
-     */
-    public static <V> ConcurrentMapLong<V> newConcurrentMapLongWithAggressiveConcurrency() {
-        return new ConcurrentHashMapLong<>(ConcurrentCollections.<Long, V>newConcurrentMapWithAggressiveConcurrency());
     }
 
     public static <V> ConcurrentMapLong<V> newConcurrentMapLong() {

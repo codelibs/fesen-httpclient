@@ -133,20 +133,6 @@ public class AllocateUnassignedDecision extends AbstractAllocationDecision {
         configuredDelayInMillis = in.readVLong();
     }
 
-    /**
-     * Creates a YES decision with the given individual node-level decisions that
-     * comprised the final YES decision, along with the node id to which the shard is assigned and
-     * the allocation id for the shard, if available.
-     */
-    public static AllocateUnassignedDecision yes(
-        DiscoveryNode assignedNode,
-        @Nullable String allocationId,
-        @Nullable List<NodeAllocationResult> decisions,
-        boolean reuseStore
-    ) {
-        return new AllocateUnassignedDecision(null, assignedNode, allocationId, decisions, reuseStore, 0L, 0L);
-    }
-
     @Override
     public boolean isDecisionTaken() {
         return allocationStatus != AllocationStatus.NO_ATTEMPT;

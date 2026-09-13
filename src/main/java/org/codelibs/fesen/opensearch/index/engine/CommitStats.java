@@ -58,15 +58,6 @@ public final class CommitStats implements Writeable, ToXContentFragment {
     private final String id; // lucene commit id in base 64;
     private final int numDocs;
 
-    public CommitStats(SegmentInfos segmentInfos) {
-        // clone the map to protect against concurrent changes
-        userData = MapBuilder.<String, String>newMapBuilder().putAll(segmentInfos.getUserData()).immutableMap();
-        // lucene calls the current generation, last generation.
-        generation = segmentInfos.getLastGeneration();
-        id = Base64.getEncoder().encodeToString(segmentInfos.getId());
-        numDocs = Lucene.getNumDocs(segmentInfos);
-    }
-
     CommitStats(StreamInput in) throws IOException {
         MapBuilder<String, String> builder = MapBuilder.newMapBuilder();
         for (int i = in.readVInt(); i > 0; i--) {

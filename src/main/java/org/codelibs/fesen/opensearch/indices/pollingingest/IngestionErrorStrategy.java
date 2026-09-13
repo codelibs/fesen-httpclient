@@ -29,16 +29,6 @@ public interface IngestionErrorStrategy {
      */
     boolean shouldIgnoreError(Throwable e, ErrorStage stage);
 
-    static IngestionErrorStrategy create(ErrorStrategy errorStrategy, String ingestionSource) {
-        switch (errorStrategy) {
-            case BLOCK:
-                return new BlockIngestionErrorStrategy(ingestionSource);
-            case DROP:
-            default:
-                return new DropIngestionErrorStrategy(ingestionSource);
-        }
-    }
-
     /**
      * Returns the name of the error policy.
      */

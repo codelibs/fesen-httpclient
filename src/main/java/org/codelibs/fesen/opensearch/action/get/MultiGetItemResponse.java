@@ -66,26 +66,6 @@ public class MultiGetItemResponse implements Writeable {
     }
 
     /**
-     * The index name of the document.
-     */
-    public String getIndex() {
-        if (failure != null) {
-            return failure.getIndex();
-        }
-        return response.getIndex();
-    }
-
-    /**
-     * The id of the document.
-     */
-    public String getId() {
-        if (failure != null) {
-            return failure.getId();
-        }
-        return response.getId();
-    }
-
-    /**
      * Is this a failed execution?
      */
     public boolean isFailed() {

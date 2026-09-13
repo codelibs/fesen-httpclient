@@ -278,20 +278,6 @@ public class AggregatorFactories {
             }
         }
 
-        public boolean mustVisitAllDocs() {
-            for (AggregationBuilder builder : aggregationBuilders) {
-                if (builder instanceof GlobalAggregationBuilder) {
-                    return true;
-                } else if (builder instanceof TermsAggregationBuilder termsAggregationBuilder) {
-                    if (termsAggregationBuilder.minDocCount() == 0) {
-                        return true;
-                    }
-                }
-
-            }
-            return false;
-        }
-
         public Builder addAggregator(AggregationBuilder factory) {
             if (!names.add(factory.name)) {
                 throw new IllegalArgumentException("Two sibling aggregations cannot have the same name: [" + factory.name + "]");

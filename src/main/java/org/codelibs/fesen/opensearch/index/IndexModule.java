@@ -106,20 +106,6 @@ public final class IndexModule {
         }
 
         /**
-         * Returns the type the given settings key selects.
-         *
-         * @param key the settings key
-         * @return the matching type
-         */
-        public static Type fromSettingsKey(final String key) {
-            final Type type = TYPES.get(key);
-            if (type == null) {
-                throw new IllegalArgumentException("no matching store type for [" + key + "]");
-            }
-            return type;
-        }
-
-        /**
          * Returns whether the given settings key selects this type.
          *
          * @param setting the settings key

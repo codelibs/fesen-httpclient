@@ -176,50 +176,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
 
         public Item() {}
 
-        Item(Item copy) {
-            if (copy.id == null && copy.doc == null) {
-                throw new IllegalArgumentException("Item requires either id or doc to be non-null");
-            }
-            this.index = copy.index;
-            this.id = copy.id;
-            this.routing = copy.routing;
-            this.doc = copy.doc;
-            this.mediaType = copy.mediaType;
-            this.fields = copy.fields;
-            this.perFieldAnalyzer = copy.perFieldAnalyzer;
-            this.version = copy.version;
-            this.versionType = copy.versionType;
-        }
-
-        /**
-         * Constructor for a given item / document request
-         *
-         * @param index the index where the document is located
-         * @param id and its id
-         */
-        public Item(@Nullable String index, String id) {
-            if (id == null) {
-                throw new IllegalArgumentException("Item requires id to be non-null");
-            }
-            this.index = index;
-            this.id = id;
-        }
-
-        /**
-         * Constructor for an artificial document request, that is not present in the index.
-         *
-         * @param index the index to be used for parsing the doc
-         * @param doc the document specification
-         */
-        public Item(@Nullable String index, XContentBuilder doc) {
-            if (doc == null) {
-                throw new IllegalArgumentException("Item requires doc to be non-null");
-            }
-            this.index = index;
-            this.doc = BytesReference.bytes(doc);
-            this.mediaType = doc.contentType();
-        }
-
         /**
          * Read from a stream.
          */

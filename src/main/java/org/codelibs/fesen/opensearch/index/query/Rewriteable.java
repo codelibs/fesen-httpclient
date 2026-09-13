@@ -101,13 +101,6 @@ public interface Rewriteable<T> {
     /**
      * Rewrites the given rewriteable and fetches pending async tasks for each round before rewriting again.
      */
-    static <T extends Rewriteable<T>> void rewriteAndFetch(T original, QueryRewriteContext context, ActionListener<T> rewriteResponse) {
-        rewriteAndFetch(original, context, rewriteResponse, 0);
-    }
-
-    /**
-     * Rewrites the given rewriteable and fetches pending async tasks for each round before rewriting again.
-     */
     static <T extends Rewriteable<T>> void rewriteAndFetch(
         T original,
         QueryRewriteContext context,

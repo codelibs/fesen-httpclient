@@ -53,11 +53,6 @@ public class PluginsAndModules implements ReportingService.Info {
     private final List<PluginInfo> plugins;
     private final List<PluginInfo> modules;
 
-    public PluginsAndModules(List<PluginInfo> plugins, List<PluginInfo> modules) {
-        this.plugins = Collections.unmodifiableList(plugins);
-        this.modules = Collections.unmodifiableList(modules);
-    }
-
     public PluginsAndModules(StreamInput in) throws IOException {
         this.plugins = Collections.unmodifiableList(in.readList(PluginInfo::new));
         this.modules = Collections.unmodifiableList(in.readList(PluginInfo::new));

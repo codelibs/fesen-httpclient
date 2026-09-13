@@ -27,14 +27,6 @@ public class AdmissionControlStats implements ToXContentFragment, Writeable {
 
     /**
      *
-     * @param admissionControllerStatsList list of admissionControllerStats
-     */
-    public AdmissionControlStats(List<AdmissionControllerStats> admissionControllerStatsList) {
-        this.admissionControllerStatsList = admissionControllerStatsList;
-    }
-
-    /**
-     *
      * @param in the stream to read from
      * @throws IOException if an I/O error occurs
      */

@@ -322,49 +322,6 @@ public class DateUtils {
     }
 
     /**
-     * Convert a nanosecond timestamp in milliseconds
-     *
-     * @param milliSecondsSinceEpoch the millisecond since the epoch
-     * @return                      the nanoseconds since the epoch
-     */
-    public static long toNanoSeconds(long milliSecondsSinceEpoch) {
-        if (milliSecondsSinceEpoch < 0) {
-            throw new IllegalArgumentException(
-                "milliSeconds [" + milliSecondsSinceEpoch + "] are before the epoch in 1970 and cannot " + "be converted to nanoseconds"
-            );
-        } else if (milliSecondsSinceEpoch > MAX_NANOSECOND_IN_MILLIS) {
-            throw new IllegalArgumentException(
-                "milliSeconds ["
-                    + milliSecondsSinceEpoch
-                    + "] are after 2262-04-11T23:47:16.854775807 "
-                    + "and cannot be converted to nanoseconds"
-            );
-        }
-
-        return milliSecondsSinceEpoch * 1_000_000;
-    }
-
-    /**
-     * Convert a nanosecond timestamp in milliseconds
-     *
-     * @param nanoSecondsSinceEpoch the nanoseconds since the epoch
-     * @return                      the milliseconds since the epoch
-     */
-    public static long toMilliSeconds(long nanoSecondsSinceEpoch) {
-        if (nanoSecondsSinceEpoch < 0) {
-            throw new IllegalArgumentException(
-                "nanoseconds are [" + nanoSecondsSinceEpoch + "] are before the epoch in 1970 and cannot " + "be converted to milliseconds"
-            );
-        }
-
-        if (nanoSecondsSinceEpoch == 0) {
-            return 0;
-        }
-
-        return nanoSecondsSinceEpoch / 1_000_000;
-    }
-
-    /**
      * Rounds the given utc milliseconds sicne the epoch down to the next unit millis
      * <p>
      * Note: This does not check for correctness of the result, as this only works with units smaller or equal than a day
@@ -435,23 +392,5 @@ public class DateUtils {
         long millis = utcMillisAtStartOfYear(year);
         millis += getTotalMillisByYearMonth(year, month);
         return millis;
-    }
-
-    /**
-     * Returns the current UTC date-time with milliseconds precision.
-     * In Java 9+ (as opposed to Java 8) the {@code Clock} implementation uses system's best clock implementation (which could mean
-     * that the precision of the clock can be milliseconds, microseconds or nanoseconds), whereas in Java 8
-     * {@code System.currentTimeMillis()} is always used. To account for these differences, this method defines a new {@code Clock}
-     * which will offer a value for {@code ZonedDateTime.now()} set to always have milliseconds precision.
-     *
-     * @return {@link ZonedDateTime} instance for the current date-time with milliseconds precision in UTC
-     */
-    public static ZonedDateTime nowWithMillisResolution() {
-        return nowWithMillisResolution(Clock.systemUTC());
-    }
-
-    public static ZonedDateTime nowWithMillisResolution(Clock clock) {
-        Clock millisResolutionClock = Clock.tick(clock, Duration.ofMillis(1));
-        return ZonedDateTime.now(millisResolutionClock);
     }
 }

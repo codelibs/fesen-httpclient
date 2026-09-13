@@ -30,12 +30,6 @@ public class ReplicationStats implements ToXContentFragment, Writeable {
     public long maxReplicationLag;
     public long totalBytesBehind;
 
-    public ReplicationStats(long maxBytesBehind, long totalBytesBehind, long maxReplicationLag) {
-        this.maxBytesBehind = maxBytesBehind;
-        this.totalBytesBehind = totalBytesBehind;
-        this.maxReplicationLag = maxReplicationLag;
-    }
-
     public ReplicationStats(StreamInput in) throws IOException {
         this.maxBytesBehind = in.readVLong();
         this.totalBytesBehind = in.readVLong();

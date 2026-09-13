@@ -26,10 +26,6 @@ public class NodesResourceUsageStats implements Writeable, ToXContentFragment {
     // Map of node id to resource usage stats of the corresponding node.
     private final Map<String, NodeResourceUsageStats> nodeIdToResourceUsageStatsMap;
 
-    public NodesResourceUsageStats(Map<String, NodeResourceUsageStats> nodeIdToResourceUsageStatsMap) {
-        this.nodeIdToResourceUsageStatsMap = nodeIdToResourceUsageStatsMap;
-    }
-
     public NodesResourceUsageStats(StreamInput in) throws IOException {
         this.nodeIdToResourceUsageStatsMap = in.readMap(StreamInput::readString, NodeResourceUsageStats::new);
     }

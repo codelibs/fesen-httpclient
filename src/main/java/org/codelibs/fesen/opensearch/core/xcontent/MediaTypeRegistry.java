@@ -147,15 +147,6 @@ public final class MediaTypeRegistry {
         throw new IllegalArgumentException("No matching content type for " + type);
     }
 
-    public static XContentBuilder contentBuilder(MediaType type, OutputStream outputStream) throws IOException {
-        for (var mediaType : formatToMediaType.values()) {
-            if (type == mediaType) {
-                return type.contentBuilder(outputStream);
-            }
-        }
-        throw new IllegalArgumentException("No matching content type for " + type);
-    }
-
     /**
      * Guesses the content (type) based on the provided char sequence and returns the corresponding {@link XContent}
      *

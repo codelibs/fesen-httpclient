@@ -82,23 +82,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         return new XContentBuilder(xContent, new ByteArrayOutputStream());
     }
 
-    /**
-     * Create a new {@link XContentBuilder} using the given {@link XContent} content and some inclusive and/or exclusive filters.
-     * <p>
-     * The builder uses an internal {@link ByteArrayOutputStream} output stream to build the content. When both exclusive and
-     * inclusive filters are provided, the underlying builder will first use exclusion filters to remove fields and then will check the
-     * remaining fields against the inclusive filters.
-     * </p>
-     *
-     * @param xContent the {@link XContent}
-     * @param includes the inclusive filters: only fields and objects that match the inclusive filters will be written to the output.
-     * @param excludes the exclusive filters: only fields and objects that don't match the exclusive filters will be written to the output.
-     * @throws IOException if an {@link IOException} occurs while building the content
-     */
-    public static XContentBuilder builder(XContent xContent, Set<String> includes, Set<String> excludes) throws IOException {
-        return new XContentBuilder(xContent, new ByteArrayOutputStream(), includes, excludes);
-    }
-
     private static final Map<Class<?>, Writer> WRITERS;
     private static final Map<Class<?>, HumanReadableTransformer> HUMAN_READABLE_TRANSFORMERS;
     private static final Map<Class<?>, Function<Object, Object>> DATE_TRANSFORMERS;
@@ -234,16 +217,6 @@ public final class XContentBuilder implements Closeable, Flushable {
     }
 
     /**
-     * Constructs a new builder using the provided XContent, an OutputStream and
-     * some filters. If filters are specified, only those values matching a
-     * filter will be written to the output stream. Make sure to call
-     * {@link #close()} when the builder is done with.
-     */
-    public XContentBuilder(XContent xContent, OutputStream bos, Set<String> includes) throws IOException {
-        this(xContent, bos, includes, Collections.emptySet());
-    }
-
-    /**
      * Creates a new builder using the provided XContent, output stream and some inclusive and/or exclusive filters. When both exclusive and
      * inclusive filters are provided, the underlying builder will first use exclusion filters to remove fields and then will check the
      * remaining fields against the inclusive filters.
@@ -324,21 +297,6 @@ public final class XContentBuilder implements Closeable, Flushable {
 
     public boolean isPrettyPrint() {
         return this.prettyPrint;
-    }
-
-    /**
-     * Indicate that the current {@link XContentBuilder} must write a line feed ("\n")
-     * at the end of the built object.
-     * <p>
-     * This only applies for JSON XContent type. It has no effect for other types.
-     */
-    public XContentBuilder lfAtEnd() {
-        try {
-            generatorInstance().usePrintLineFeedAtEnd();
-            return this;
-        } catch (final IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
     }
 
     /**
@@ -433,14 +391,6 @@ public final class XContentBuilder implements Closeable, Flushable {
     // ------------------------------------------------------------------------
     // Byte
     // ------------------------------
-
-    public XContentBuilder field(String name, Byte value) throws IOException {
-        return (value == null) ? nullField(name) : field(name, value.byteValue());
-    }
-
-    public XContentBuilder field(String name, byte value) throws IOException {
-        return field(name).value(value);
-    }
 
     public XContentBuilder value(Byte value) throws IOException {
         return (value == null) ? nullValue() : value(value.byteValue());
@@ -611,10 +561,6 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Short
     // ------------------------------
 
-    public XContentBuilder field(String name, Short value) throws IOException {
-        return (value == null) ? nullField(name) : field(name, value.shortValue());
-    }
-
     public XContentBuilder field(String name, short value) throws IOException {
         return field(name).value(value);
     }
@@ -668,15 +614,6 @@ public final class XContentBuilder implements Closeable, Flushable {
     // ------------------------------------------------------------------------
     // BigDecimal
     // ------------------------------
-
-    public XContentBuilder field(String name, BigDecimal value) throws IOException {
-        if (value == null) {
-            return nullField(name);
-        }
-        ensureNameNotNull(name);
-        generatorInstance().writeNumberField(name, value);
-        return this;
-    }
 
     public XContentBuilder value(BigDecimal value) throws IOException {
         if (value == null) {
@@ -819,10 +756,6 @@ public final class XContentBuilder implements Closeable, Flushable {
     // ------------------------------------------------------------------------
     // LatLon
     // ------------------------------
-
-    public XContentBuilder latlon(String name, double lat, double lon) throws IOException {
-        return field(name).latlon(lat, lon);
-    }
 
     public XContentBuilder latlon(double lat, double lon) throws IOException {
         return startObject().field("lat", lat).field("lon", lon).endObject();

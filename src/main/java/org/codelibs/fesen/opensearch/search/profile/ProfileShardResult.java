@@ -74,19 +74,6 @@ public class ProfileShardResult implements Writeable {
         this.networkTime = networkTime;
     }
 
-    /**
-     * Constructor for backwards compatibility.
-     * @deprecated Use {@link #ProfileShardResult(List, AggregationProfileShardResult, FetchProfileShardResult, NetworkTime)} instead
-     */
-    @Deprecated
-    public ProfileShardResult(
-        List<QueryProfileShardResult> queryProfileResults,
-        AggregationProfileShardResult aggProfileShardResult,
-        NetworkTime networkTime
-    ) {
-        this(queryProfileResults, aggProfileShardResult, new FetchProfileShardResult(Collections.emptyList()), networkTime);
-    }
-
     public ProfileShardResult(StreamInput in) throws IOException {
         int profileSize = in.readVInt();
         List<QueryProfileShardResult> queryProfileResults = new ArrayList<>(profileSize);
@@ -131,11 +118,6 @@ public class ProfileShardResult implements Writeable {
 
     public NetworkTime getNetworkTime() {
         return networkTime;
-    }
-
-    public void setNetworkTime(NetworkTime newTime) {
-        networkTime.setInboundNetworkTime(newTime.getInboundNetworkTime());
-        networkTime.setOutboundNetworkTime(newTime.getOutboundNetworkTime());
     }
 
 }

@@ -51,39 +51,9 @@ public class TasksRequestBuilder<
         super(client, action, request);
     }
 
-    /**
-     * Set the task to lookup.
-     */
-    @SuppressWarnings("unchecked")
-    public final RequestBuilder setTaskId(TaskId taskId) {
-        request.setTaskId(taskId);
-        return (RequestBuilder) this;
-    }
-
     @SuppressWarnings("unchecked")
     public final RequestBuilder setNodesIds(String... nodesIds) {
         request.setNodes(nodesIds);
-        return (RequestBuilder) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final RequestBuilder setActions(String... actions) {
-        request.setActions(actions);
-        return (RequestBuilder) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final RequestBuilder setTimeout(TimeValue timeout) {
-        request.setTimeout(timeout);
-        return (RequestBuilder) this;
-    }
-
-    /**
-     * Match all children of the provided task.
-     */
-    @SuppressWarnings("unchecked")
-    public final RequestBuilder setParentTaskId(TaskId taskId) {
-        request.setParentTaskId(taskId);
         return (RequestBuilder) this;
     }
 }

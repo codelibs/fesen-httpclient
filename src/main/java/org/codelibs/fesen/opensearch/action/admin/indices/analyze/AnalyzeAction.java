@@ -96,19 +96,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
 
         public Request() {}
 
-        Request(StreamInput in) throws IOException {
-            super(in);
-            text = in.readStringArray();
-            analyzer = in.readOptionalString();
-            tokenizer = in.readOptionalWriteable(NameOrDefinition::new);
-            tokenFilters.addAll(in.readList(NameOrDefinition::new));
-            charFilters.addAll(in.readList(NameOrDefinition::new));
-            field = in.readOptionalString();
-            explain = in.readBoolean();
-            attributes = in.readStringArray();
-            normalizer = in.readOptionalString();
-        }
-
         /**
          * Constructs a new analyzer request for the provided index.
          *
@@ -141,16 +128,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             return this.analyzer;
         }
 
-        public Request tokenizer(String tokenizer) {
-            this.tokenizer = new NameOrDefinition(tokenizer);
-            return this;
-        }
-
-        public Request tokenizer(Map<String, ?> tokenizer) {
-            this.tokenizer = new NameOrDefinition(tokenizer);
-            return this;
-        }
-
         public void tokenizer(NameOrDefinition tokenizer) {
             this.tokenizer = tokenizer;
         }
@@ -159,32 +136,12 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             return this.tokenizer;
         }
 
-        public Request addTokenFilter(String tokenFilter) {
-            this.tokenFilters.add(new NameOrDefinition(tokenFilter));
-            return this;
-        }
-
-        public Request addTokenFilter(Map<String, ?> tokenFilter) {
-            this.tokenFilters.add(new NameOrDefinition(tokenFilter));
-            return this;
-        }
-
         public void setTokenFilters(List<NameOrDefinition> tokenFilters) {
             this.tokenFilters.addAll(tokenFilters);
         }
 
         public List<NameOrDefinition> tokenFilters() {
             return this.tokenFilters;
-        }
-
-        public Request addCharFilter(Map<String, ?> charFilter) {
-            this.charFilters.add(new NameOrDefinition(charFilter));
-            return this;
-        }
-
-        public Request addCharFilter(String charFilter) {
-            this.charFilters.add(new NameOrDefinition(charFilter));
-            return this;
         }
 
         public void setCharFilters(List<NameOrDefinition> charFilters) {
@@ -211,14 +168,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
 
         public boolean explain() {
             return this.explain;
-        }
-
-        public Request attributes(String... attributes) {
-            if (attributes == null) {
-                throw new IllegalArgumentException("attributes must not be null");
-            }
-            this.attributes = attributes;
-            return this;
         }
 
         public void attributes(List<String> attributes) {
@@ -280,12 +229,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             out.writeBoolean(explain);
             out.writeStringArray(attributes);
             out.writeOptionalString(normalizer);
-        }
-
-        public static Request fromXContent(XContentParser parser, String index) throws IOException {
-            Request request = new Request(index);
-            PARSER.parse(parser, request, null);
-            return request;
         }
 
         private static final ObjectParser<Request, Void> PARSER = new ObjectParser<>("analyze_request");

@@ -83,16 +83,6 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
         readFrom(in, this);
     }
 
-    public DefaultShardOperationFailedException(OpenSearchException e) {
-        super(
-            e.getIndex() == null ? null : e.getIndex().getName(),
-            e.getShardId() == null ? -1 : e.getShardId().getId(),
-            detailedMessage(e),
-            e.status(),
-            e
-        );
-    }
-
     public DefaultShardOperationFailedException(String index, int shardId, Throwable cause) {
         super(index, shardId, detailedMessage(cause), ExceptionsHelper.status(cause), cause);
     }

@@ -131,10 +131,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
     private DiscoveryNode targetNode;
     private boolean primary;
 
-    public RecoveryState(ShardRouting shardRouting, DiscoveryNode targetNode, @Nullable DiscoveryNode sourceNode) {
-        this(shardRouting, targetNode, sourceNode, new ReplicationLuceneIndex());
-    }
-
     public RecoveryState(
         ShardRouting shardRouting,
         DiscoveryNode targetNode,
@@ -191,13 +187,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
 
     public synchronized Stage getStage() {
         return this.stage;
-    }
-
-    public synchronized void validateCurrentStage(Stage expected) {
-        if (stage != expected) {
-            assert false : "expected stage [" + expected + "]; but current stage is [" + stage + "]";
-            throw new IllegalStateException("expected stage [" + expected + "] but current stage is [" + stage + "]");
-        }
     }
 
     public ReplicationLuceneIndex getIndex() {
@@ -396,38 +385,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             totalLocal = UNKNOWN;
         }
 
-        public synchronized void incrementRecoveredOperations() {
-            recovered++;
-            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total ["
-                + total
-                + "], recovered ["
-                + recovered
-                + "]";
-        }
-
-        public synchronized void incrementRecoveredOperations(int ops) {
-            recovered += ops;
-            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total ["
-                + total
-                + "], recovered ["
-                + recovered
-                + "]";
-        }
-
-        public synchronized void decrementRecoveredOperations(int ops) {
-            recovered -= ops;
-            assert recovered >= 0 : "recovered operations must be non-negative. Because ["
-                + recovered
-                + "] after decrementing ["
-                + ops
-                + "]";
-            assert total == UNKNOWN || total >= recovered : "total, if known, should be > recovered. total ["
-                + total
-                + "], recovered ["
-                + recovered
-                + "]";
-        }
-
         /**
          * returns the total number of translog operations recovered so far
          */
@@ -445,15 +402,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             return total;
         }
 
-        public synchronized void totalOperations(int total) {
-            this.total = totalLocal == UNKNOWN ? total : totalLocal + total;
-            assert total == UNKNOWN || this.total >= recovered : "total, if known, should be > recovered. total ["
-                + total
-                + "], recovered ["
-                + recovered
-                + "]";
-        }
-
         /**
          * returns the total number of translog operations to recovered, on the start of the recovery. Unlike {@link #totalOperations}
          * this does change during recovery.
@@ -462,19 +410,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
          */
         public synchronized int totalOperationsOnStart() {
             return this.totalOnStart;
-        }
-
-        public synchronized void totalOperationsOnStart(int total) {
-            this.totalOnStart = totalLocal == UNKNOWN ? total : totalLocal + total;
-        }
-
-        /**
-         * Sets the total number of translog operations to be recovered locally before performing peer recovery
-         * @see <a href="https://opensearch.org">local recovery up to the global checkpoint</a>
-         */
-        public synchronized void totalLocal(int totalLocal) {
-            assert totalLocal >= recovered : totalLocal + " < " + recovered;
-            this.totalLocal = totalLocal;
         }
 
         public synchronized int totalLocal() {

@@ -124,28 +124,6 @@ public class Lucene {
     }
 
     /**
-     * A variant of {@link #readSegmentInfos(Directory)} that supports reading indices written by
-     * older major versions of Lucene. This leverages Lucene's "expert" readLatestCommit API. The
-     * {@link org.codelibs.fesen.opensearch.Version} parameter determines the minimum supported Lucene major version.
-     */
-    public static SegmentInfos readSegmentInfos(Directory directory, org.codelibs.fesen.opensearch.Version minimumVersion) throws IOException {
-        final int minSupportedLuceneMajor = minimumVersion.minimumIndexCompatibilityVersion().luceneVersion.major;
-        return SegmentInfos.readLatestCommit(directory, minSupportedLuceneMajor);
-    }
-
-    /**
-     * Returns an iterable that allows to iterate over all files in this segments info
-     */
-    public static Iterable<String> files(SegmentInfos infos) throws IOException {
-        final List<Collection<String>> list = new ArrayList<>();
-        list.add(Collections.singleton(infos.getSegmentsFileName()));
-        for (SegmentCommitInfo info : infos) {
-            list.add(info.files());
-        }
-        return Iterables.flatten(list);
-    }
-
-    /**
      * Returns the number of documents in the index referenced by this {@link SegmentInfos}
      */
     public static int getNumDocs(SegmentInfos info) {
@@ -184,14 +162,6 @@ public class Lucene {
         long totalHits = in.readVLong();
         TotalHits.Relation totalHitsRelation = in.readEnum(TotalHits.Relation.class);
         return new TotalHits(totalHits, totalHitsRelation);
-    }
-
-    public static FieldDoc readFieldDoc(StreamInput in) throws IOException {
-        Comparable[] cFields = new Comparable[in.readVInt()];
-        for (int j = 0; j < cFields.length; j++) {
-            cFields[j] = readTypedValue(in);
-        }
-        return new FieldDoc(in.readVInt(), in.readFloat(), cFields);
     }
 
     public static Comparable readSortValue(StreamInput in) throws IOException {
@@ -299,23 +269,6 @@ public class Lucene {
                 throw new IOException("Can't handle sort field value of type [" + type + "]");
             }
         }
-    }
-
-    public static void writeFieldDoc(StreamOutput out, FieldDoc fieldDoc) throws IOException {
-        out.writeVInt(fieldDoc.fields.length);
-        for (Object field : fieldDoc.fields) {
-            writeSortValue(out, field);
-        }
-        out.writeVInt(fieldDoc.doc);
-        out.writeFloat(fieldDoc.score);
-    }
-
-    public static void writeScoreDoc(StreamOutput out, ScoreDoc scoreDoc) throws IOException {
-        if (!scoreDoc.getClass().equals(ScoreDoc.class)) {
-            throw new IllegalArgumentException("This method can only be used to serialize a ScoreDoc, not a " + scoreDoc.getClass());
-        }
-        out.writeVInt(scoreDoc.doc);
-        out.writeFloat(scoreDoc.score);
     }
 
     // LUCENE 4 UPGRADE: We might want to maintain our own ordinal, instead of Lucene's ordinal
@@ -440,37 +393,10 @@ public class Lucene {
     }
 
     /**
-     * Returns {@code true} iff the given exception or
-     * one of it's causes is an instance of {@link CorruptIndexException},
-     * {@link IndexFormatTooOldException}, or {@link IndexFormatTooNewException} otherwise {@code false}.
-     */
-    public static boolean isCorruptionException(Throwable t) {
-        return ExceptionsHelper.unwrapCorruption(t) != null;
-    }
-
-    /**
      * Parses the version string lenient and returns the default value if the given string is null or empty
      */
     public static Version parseVersionLenient(String toParse, Version defaultValue) {
         return LenientParser.parse(toParse, defaultValue);
-    }
-
-    /**
-     * Tries to extract a segment reader from the given index reader.
-     * If no SegmentReader can be extracted an {@link IllegalStateException} is thrown.
-     */
-    public static SegmentReader segmentReader(LeafReader reader) {
-        if (reader instanceof SegmentReader) {
-            return (SegmentReader) reader;
-        } else if (reader instanceof FilterLeafReader) {
-            final FilterLeafReader fReader = (FilterLeafReader) reader;
-            return segmentReader(FilterLeafReader.unwrap(fReader));
-        } else if (reader instanceof FilterCodecReader) {
-            final FilterCodecReader fReader = (FilterCodecReader) reader;
-            return segmentReader(FilterCodecReader.unwrap(fReader));
-        }
-        // hard fail - we can't get a SegmentReader
-        throw new IllegalStateException("Can not extract segment reader from given index reader [" + reader + "]");
     }
 
     @SuppressForbidden(reason = "Version#parseLeniently() used in a central place")
@@ -548,30 +474,6 @@ public class Lucene {
         public void delete() {
             throw new UnsupportedOperationException("This IndexCommit does not support deletions");
         }
-    }
-
-    /**
-     * Whether a query sorted by {@code searchSort} can be early-terminated if the index is sorted by {@code indexSort}.
-     */
-    public static boolean canEarlyTerminate(Sort searchSort, Sort indexSort) {
-        final SortField[] fields1 = searchSort.getSort();
-        final SortField[] fields2 = indexSort.getSort();
-        // early termination is possible if fields1 is a prefix of fields2
-        if (fields1.length > fields2.length) {
-            return false;
-        }
-        return Arrays.asList(fields1).equals(Arrays.asList(fields2).subList(0, fields1.length));
-    }
-
-    private static int popCount(Bits bits) {
-        assert bits != null;
-        int onBits = 0;
-        for (int i = 0; i < bits.length(); i++) {
-            if (bits.get(i)) {
-                onBits++;
-            }
-        }
-        return onBits;
     }
 
     /**

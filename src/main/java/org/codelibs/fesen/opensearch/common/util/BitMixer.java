@@ -42,22 +42,6 @@ public final class BitMixer {
         return (key ^ seed) * PHI_C32;
     }
 
-    public static int mix(short key) {
-        return mixPhi(key);
-    }
-
-    public static int mix(short key, int seed) {
-        return mixPhi(key ^ seed);
-    }
-
-    public static int mix(char key) {
-        return mixPhi(key);
-    }
-
-    public static int mix(char key, int seed) {
-        return mixPhi(key ^ seed);
-    }
-
     public static int mix(double key) {
         return (int) mix64(Double.doubleToLongBits(key));
     }
@@ -97,21 +81,6 @@ public final class BitMixer {
     private static final long PHI_C64 = 0x9e3779b97f4a7c15L;
 
     public static int mixPhi(byte k) {
-        final int h = k * PHI_C32;
-        return h ^ (h >>> 16);
-    }
-
-    public static int mixPhi(char k) {
-        final int h = k * PHI_C32;
-        return h ^ (h >>> 16);
-    }
-
-    public static int mixPhi(short k) {
-        final int h = k * PHI_C32;
-        return h ^ (h >>> 16);
-    }
-
-    public static int mixPhi(int k) {
         final int h = k * PHI_C32;
         return h ^ (h >>> 16);
     }

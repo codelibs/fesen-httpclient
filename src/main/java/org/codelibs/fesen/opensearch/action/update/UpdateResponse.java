@@ -144,16 +144,6 @@ public class UpdateResponse extends DocWriteResponse {
         return builder.append("]").toString();
     }
 
-    public static UpdateResponse fromXContent(XContentParser parser) throws IOException {
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-
-        Builder context = new Builder();
-        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-            parseXContentFields(parser, context);
-        }
-        return context.build();
-    }
-
     /**
      * Parse the current token and update the parsing context appropriately.
      */

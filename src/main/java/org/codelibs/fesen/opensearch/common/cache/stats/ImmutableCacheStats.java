@@ -44,36 +44,6 @@ public class ImmutableCacheStats implements Writeable, ToXContent {
         this(in.readVLong(), in.readVLong(), in.readVLong(), in.readVLong(), in.readVLong());
     }
 
-    public static ImmutableCacheStats addSnapshots(ImmutableCacheStats s1, ImmutableCacheStats s2) {
-        return new ImmutableCacheStats(
-            s1.hits + s2.hits,
-            s1.misses + s2.misses,
-            s1.evictions + s2.evictions,
-            s1.sizeInBytes + s2.sizeInBytes,
-            s1.items + s2.items
-        );
-    }
-
-    public long getHits() {
-        return hits;
-    }
-
-    public long getMisses() {
-        return misses;
-    }
-
-    public long getEvictions() {
-        return evictions;
-    }
-
-    public long getSizeInBytes() {
-        return sizeInBytes;
-    }
-
-    public long getItems() {
-        return items;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVLong(hits);

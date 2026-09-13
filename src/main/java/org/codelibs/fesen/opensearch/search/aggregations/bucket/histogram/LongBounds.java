@@ -197,16 +197,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
         return max;
     }
 
-    public boolean contain(long value) {
-        if (max != null && value >= max) {
-            return false;
-        }
-        if (min != null && value < min) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();

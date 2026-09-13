@@ -148,31 +148,6 @@ public class DirectoryFileTransferTracker {
             this.transferredBytesPerSecMovingAverage = builder.transferredBytesPerSecMovingAverage;
         }
 
-        /**
-         * This constructor will be deprecated starting in version 3.4.0.
-         * Use {@link Builder} instead.
-         */
-        @Deprecated
-        public Stats(
-            long transferredBytesStarted,
-            long transferredBytesFailed,
-            long downloadBytesSucceeded,
-            long lastTransferTimestampMs,
-            long totalTransferTimeInMs,
-            double transferredBytesMovingAverage,
-            long lastSuccessfulTransferInBytes,
-            double transferredBytesPerSecMovingAverage
-        ) {
-            this.transferredBytesStarted = transferredBytesStarted;
-            this.transferredBytesFailed = transferredBytesFailed;
-            this.transferredBytesSucceeded = downloadBytesSucceeded;
-            this.lastTransferTimestampMs = lastTransferTimestampMs;
-            this.totalTransferTimeInMs = totalTransferTimeInMs;
-            this.transferredBytesMovingAverage = transferredBytesMovingAverage;
-            this.lastSuccessfulTransferInBytes = lastSuccessfulTransferInBytes;
-            this.transferredBytesPerSecMovingAverage = transferredBytesPerSecMovingAverage;
-        }
-
         public Stats(StreamInput in) throws IOException {
             this.transferredBytesStarted = in.readLong();
             this.transferredBytesFailed = in.readLong();

@@ -50,14 +50,4 @@ public class RecoveryRequestBuilder extends BroadcastOperationRequestBuilder<Rec
     public RecoveryRequestBuilder(OpenSearchClient client, RecoveryAction action) {
         super(client, action, new RecoveryRequest());
     }
-
-    public RecoveryRequestBuilder setDetailed(boolean detailed) {
-        request.detailed(detailed);
-        return this;
-    }
-
-    public RecoveryRequestBuilder setActiveOnly(boolean activeOnly) {
-        request.activeOnly(activeOnly);
-        return this;
-    }
 }

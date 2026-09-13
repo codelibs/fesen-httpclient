@@ -164,16 +164,6 @@ public abstract class RemoteTransferTracker {
         uploadBytesStarted.addAndGet(count);
     }
 
-    public void addUploadBytesFailed(long count) {
-        checkTotal(uploadBytesStarted.get(), uploadBytesFailed.get(), uploadBytesSucceeded.get(), count);
-        uploadBytesFailed.addAndGet(count);
-    }
-
-    public void addUploadBytesSucceeded(long count) {
-        checkTotal(uploadBytesStarted.get(), uploadBytesFailed.get(), uploadBytesSucceeded.get(), count);
-        uploadBytesSucceeded.addAndGet(count);
-    }
-
     boolean isUploadBytesMovingAverageReady() {
         return uploadBytesMovingAverageReference.get().isReady();
     }

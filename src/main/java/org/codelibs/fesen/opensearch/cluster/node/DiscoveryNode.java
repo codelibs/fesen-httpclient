@@ -65,7 +65,6 @@ import java.util.stream.Stream;
 import static org.codelibs.fesen.opensearch.node.NodeRoleSettings.NODE_ROLES_SETTING;
 import static org.codelibs.fesen.opensearch.node.remotestore.RemoteStoreNodeAttribute.REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX;
 import static org.codelibs.fesen.opensearch.node.remotestore.RemoteStoreNodeAttribute.isClusterStateRepoConfigured;
-import static org.codelibs.fesen.opensearch.node.remotestore.RemoteStoreNodeAttribute.isRoutingTableRepoConfigured;
 
 /**
  * A discovery node represents a node that is part of the cluster.
@@ -87,23 +86,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
     private final Map<String, String> attributes;
     private final Version version;
     private final SortedSet<DiscoveryNodeRole> roles;
-
-    /**
-     * Creates a new {@link DiscoveryNode}
-     * <p>
-     * <b>Note:</b> if the version of the node is unknown {@link Version#minimumCompatibilityVersion()} should be used for the current
-     * version. it corresponds to the minimum version this opensearch version can communicate with. If a higher version is used
-     * the node might not be able to communicate with the remote node. After initial handshakes node versions will be discovered
-     * and updated.
-     * </p>
-     *
-     * @param id               the nodes unique (persistent) node id. This constructor will auto generate a random ephemeral id.
-     * @param address          the nodes transport address
-     * @param version          the version of the node
-     */
-    public DiscoveryNode(final String id, TransportAddress address, Version version) {
-        this(id, address, Collections.emptyMap(), DiscoveryNodeRole.BUILT_IN_ROLES, version);
-    }
 
     /**
      * Creates a new {@link DiscoveryNode}
@@ -239,21 +221,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
         };
         assert predicate.test(attributes) : attributes;
         this.roles = Collections.unmodifiableSortedSet(new TreeSet<>(roles));
-    }
-
-    public DiscoveryNode(DiscoveryNode node, TransportAddress streamAddress) {
-        this(
-            node.getName(),
-            node.getId(),
-            node.getEphemeralId(),
-            node.getHostName(),
-            node.getHostAddress(),
-            node.getAddress(),
-            streamAddress,
-            node.getAttributes(),
-            node.getRoles(),
-            node.getVersion()
-        );
     }
 
     /**
@@ -476,14 +443,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
     }
 
     /**
-     * Returns whether settings required for remote cluster state publication is configured
-     * @return true if the node contains remote cluster state node attribute and remote routing table node attribute
-     */
-    public boolean isRemoteStatePublicationEnabled() {
-        return isClusterStateRepoConfigured(this.getAttributes()) && isRoutingTableRepoConfigured(this.getAttributes());
-    }
-
-    /**
      * Returns a set of all the roles that the node has. The roles are returned in sorted order by the role name.
      * <p>
      * If a node does not have any specific role, the returned set is empty, which means that the node is a coordinating-only node.
@@ -599,17 +558,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     public static Set<DiscoveryNodeRole> getPossibleRoles() {
         return Collections.unmodifiableSet(new HashSet<>(roleMap.values()));
-    }
-
-    /**
-     * Load the deprecated {@link DiscoveryNodeRole#MASTER_ROLE}.
-     * Master role is not added into BUILT_IN_ROLES, because {@link #setAdditionalRoles(Set)} check role name abbreviation duplication,
-     * and CLUSTER_MANAGER_ROLE has the same abbreviation name with MASTER_ROLE.
-     */
-    public static void setDeprecatedMasterRole() {
-        final Map<String, DiscoveryNodeRole> modifiableRoleMap = new HashMap<>(roleMap);
-        modifiableRoleMap.put(DiscoveryNodeRole.MASTER_ROLE.roleName(), DiscoveryNodeRole.MASTER_ROLE);
-        roleMap = Collections.unmodifiableMap(modifiableRoleMap);
     }
 
     public static Set<String> getPossibleRoleNames() {

@@ -65,10 +65,6 @@ public class DeletePipelineRequest extends AcknowledgedRequest<DeletePipelineReq
 
     DeletePipelineRequest() {}
 
-    public void setId(String id) {
-        this.id = Objects.requireNonNull(id);
-    }
-
     public String getId() {
         return id;
     }

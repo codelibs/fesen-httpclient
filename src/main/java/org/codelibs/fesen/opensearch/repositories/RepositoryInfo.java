@@ -56,12 +56,6 @@ public final class RepositoryInfo implements Writeable, ToXContentFragment {
     public final String type;
     public final Map<String, String> location;
 
-    public RepositoryInfo(String name, String type, Map<String, String> location) {
-        this.name = name;
-        this.type = type;
-        this.location = location;
-    }
-
     public RepositoryInfo(StreamInput in) throws IOException {
         this.name = in.readString();
         this.type = in.readString();

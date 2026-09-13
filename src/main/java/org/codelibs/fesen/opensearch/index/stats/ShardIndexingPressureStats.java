@@ -178,10 +178,4 @@ public class ShardIndexingPressureStats implements Writeable, ToXContentFragment
         builder.field("enforced", shardIndexingPressureEnforced);
         return builder.endObject();
     }
-
-    public void addAll(ShardIndexingPressureStats shardIndexingPressureStats) {
-        if (this.shardIndexingPressureStore != null) {
-            this.shardIndexingPressureStore.putAll(shardIndexingPressureStats.shardIndexingPressureStore);
-        }
-    }
 }

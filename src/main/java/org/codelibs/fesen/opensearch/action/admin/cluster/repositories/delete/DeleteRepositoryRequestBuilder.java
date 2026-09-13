@@ -61,14 +61,4 @@ public class DeleteRepositoryRequestBuilder extends AcknowledgedRequestBuilder<
     public DeleteRepositoryRequestBuilder(OpenSearchClient client, DeleteRepositoryAction action, String name) {
         super(client, action, new DeleteRepositoryRequest(name));
     }
-
-    /**
-     * Sets the repository name
-     *
-     * @param name the repository name
-     */
-    public DeleteRepositoryRequestBuilder setName(String name) {
-        request.name(name);
-        return this;
-    }
 }

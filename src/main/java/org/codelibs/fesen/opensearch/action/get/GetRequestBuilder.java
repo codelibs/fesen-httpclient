@@ -93,46 +93,8 @@ public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetReq
         return this;
     }
 
-    /**
-     * Indicates whether the response should contain the stored _source.
-     *
-     * @return this for chaining
-     */
-    public GetRequestBuilder setFetchSource(boolean fetch) {
-        FetchSourceContext context = request.fetchSourceContext() == null ? FetchSourceContext.FETCH_SOURCE : request.fetchSourceContext();
-        request.fetchSourceContext(new FetchSourceContext(fetch, context.includes(), context.excludes()));
-        return this;
-    }
-
-    /**
-     * Should a refresh be executed before this get operation causing the operation to
-     * return the latest value. Note, heavy get should not set this to {@code true}. Defaults
-     * to {@code false}.
-     */
-    public GetRequestBuilder setRefresh(boolean refresh) {
-        request.refresh(refresh);
-        return this;
-    }
-
     public GetRequestBuilder setRealtime(boolean realtime) {
         request.realtime(realtime);
-        return this;
-    }
-
-    /**
-     * Sets the version, which will cause the get operation to only be performed if a matching
-     * version exists and no changes happened on the doc since then.
-     */
-    public GetRequestBuilder setVersion(long version) {
-        request.version(version);
-        return this;
-    }
-
-    /**
-     * Sets the versioning type. Defaults to {@link org.codelibs.fesen.opensearch.index.VersionType#INTERNAL}.
-     */
-    public GetRequestBuilder setVersionType(VersionType versionType) {
-        request.versionType(versionType);
         return this;
     }
 }

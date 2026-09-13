@@ -63,23 +63,6 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
         super((String[]) null);
     }
 
-    public NodesStatsRequest(StreamInput in) throws IOException {
-        super(in);
-
-        indices = new CommonStatsFlags(in);
-        requestedMetrics.clear();
-        requestedMetrics.addAll(in.readStringList());
-        fileCacheDetailed = in.getVersion().onOrAfter(Version.V_3_7_0) && in.readBoolean();
-    }
-
-    /**
-     * Get stats from nodes based on the nodes ids specified. If none are passed, stats
-     * for all nodes will be returned.
-     */
-    public NodesStatsRequest(String... nodesIds) {
-        super(nodesIds);
-    }
-
     /**
      * Sets all the request flags.
      */
@@ -90,44 +73,12 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
     }
 
     /**
-     * Clears all the request flags.
-     */
-    public NodesStatsRequest clear() {
-        this.indices.clear();
-        this.requestedMetrics.clear();
-        return this;
-    }
-
-    /**
      * Get indices. Handles separately from other metrics because it may or
      * may not have submetrics.
      * @return flags indicating which indices stats to return
      */
     public CommonStatsFlags indices() {
         return indices;
-    }
-
-    /**
-     * Set indices. Handles separately from other metrics because it may or
-     * may not involve submetrics.
-     * @param indices flags indicating which indices stats to return
-     * @return This object, for request chaining.
-     */
-    public NodesStatsRequest indices(CommonStatsFlags indices) {
-        this.indices = indices;
-        return this;
-    }
-
-    /**
-     * Should indices stats be returned.
-     */
-    public NodesStatsRequest indices(boolean indices) {
-        if (indices) {
-            this.indices.all();
-        } else {
-            this.indices.clear();
-        }
-        return this;
     }
 
     /**
@@ -161,17 +112,6 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
             throw new IllegalStateException("Used illegal metric" + plural + ": " + metricsSet);
         }
         requestedMetrics.addAll(metricsSet);
-        return this;
-    }
-
-    /**
-     * Remove metric
-     */
-    public NodesStatsRequest removeMetric(String metric) {
-        if (Metric.allMetrics().contains(metric) == false) {
-            throw new IllegalStateException("Used an illegal metric: " + metric);
-        }
-        requestedMetrics.remove(metric);
         return this;
     }
 

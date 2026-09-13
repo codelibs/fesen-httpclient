@@ -65,10 +65,6 @@ public class IndexResponse extends DocWriteResponse {
         super(in);
     }
 
-    public IndexResponse(ShardId shardId, String id, long seqNo, long primaryTerm, long version, boolean created) {
-        this(shardId, id, seqNo, primaryTerm, version, created ? Result.CREATED : Result.UPDATED);
-    }
-
     private IndexResponse(ShardId shardId, String id, long seqNo, long primaryTerm, long version, Result result) {
         super(shardId, id, seqNo, primaryTerm, version, assertCreatedOrUpdated(result));
     }
@@ -95,16 +91,6 @@ public class IndexResponse extends DocWriteResponse {
         builder.append(",primaryTerm=").append(getPrimaryTerm());
         builder.append(",shards=").append(Strings.toString(MediaTypeRegistry.JSON, getShardInfo()));
         return builder.append("]").toString();
-    }
-
-    public static IndexResponse fromXContent(XContentParser parser) throws IOException {
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-
-        Builder context = new Builder();
-        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-            parseXContentFields(parser, context);
-        }
-        return context.build();
     }
 
     /**

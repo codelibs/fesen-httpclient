@@ -70,10 +70,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
             this.shardTuple = new Tuple(primaryShards, replicaShards);
         }
 
-        public boolean isEmpty() {
-            return this.shardTuple.v1().isEmpty() && this.shardTuple.v2().isEmpty();
-        }
-
         public int size() {
             return this.shardTuple.v1().size() + this.shardTuple.v2().size();
         }
@@ -113,10 +109,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
                 Collections.unmodifiableCollection(this.shardTuple.v2().values()).stream()
             ).iterator();
         }
-
-        public int numberOfPrimaryShards() {
-            return this.shardTuple.v1().size();
-        }
     }
 
     static class RelocatingShardsBucket {
@@ -138,10 +130,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
 
         public int size() {
             return relocatingShards.size();
-        }
-
-        public int primarySize() {
-            return relocatingPrimaryShards.size();
         }
 
         public Set<ShardRouting> getRelocatingShards() {
@@ -297,33 +285,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
         return shards.size() - relocatingShardsBucket.size();
     }
 
-    public int numberOfOwningPrimaryShards() {
-        return shards.numberOfPrimaryShards() - relocatingShardsBucket.primarySize();
-    }
-
-    public int numberOfOwningShardsForIndex(final Index index) {
-        final LinkedHashSet<ShardRouting> shardRoutings = shardsByIndex.get(index);
-        if (shardRoutings == null) {
-            return 0;
-        } else {
-            return Math.toIntExact(shardRoutings.stream().filter(sr -> sr.relocating() == false).count());
-        }
-    }
-
-    public int numberOfOwningPrimaryShardsForIndex(final Index index) {
-        final LinkedHashSet<ShardRouting> shardRoutings = shardsByIndex.get(index);
-        if (shardRoutings == null) {
-            return 0;
-        } else {
-            return Math.toIntExact(
-                shardRoutings.stream()
-                    .filter(sr -> sr.relocating() == false)
-                    .filter(ShardRouting::primary)    // Add this filter for primary shards
-                    .count()
-            );
-        }
-    }
-
     public String prettyPrint() {
         StringBuilder sb = new StringBuilder();
         sb.append("-----node_id[").append(nodeId).append("][").append(node == null ? "X" : "V").append("]\n");
@@ -347,10 +308,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
         sb.append(shards.size());
         sb.append(" assigned shards])");
         return sb.toString();
-    }
-
-    public boolean isEmpty() {
-        return shards.isEmpty();
     }
 
     boolean invariant() {

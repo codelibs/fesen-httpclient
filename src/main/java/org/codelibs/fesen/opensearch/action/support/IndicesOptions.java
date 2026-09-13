@@ -281,26 +281,6 @@ public class IndicesOptions implements ToXContentFragment {
         boolean allowNoIndices,
         boolean expandToOpenIndices,
         boolean expandToClosedIndices,
-        IndicesOptions defaultOptions
-    ) {
-        return fromOptions(
-            ignoreUnavailable,
-            allowNoIndices,
-            expandToOpenIndices,
-            expandToClosedIndices,
-            defaultOptions.expandWildcardsHidden(),
-            defaultOptions.allowAliasesToMultipleIndices(),
-            defaultOptions.forbidClosedIndices(),
-            defaultOptions.ignoreAliases(),
-            defaultOptions.ignoreThrottled()
-        );
-    }
-
-    public static IndicesOptions fromOptions(
-        boolean ignoreUnavailable,
-        boolean allowNoIndices,
-        boolean expandToOpenIndices,
-        boolean expandToClosedIndices,
         boolean allowAliasesToMultipleIndices,
         boolean forbidClosedIndices,
         boolean ignoreAliases,

@@ -103,36 +103,6 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
          */
         private final Supplier<PipelineTree> pipelineTreeForBwcSerialization;
 
-        /**
-         * Build a {@linkplain ReduceContext} to perform a partial reduction.
-         */
-        public static ReduceContext forPartialReduction(
-            BigArrays bigArrays,
-            ScriptService scriptService,
-            Supplier<PipelineTree> pipelineTreeForBwcSerialization
-        ) {
-            return new ReduceContext(bigArrays, scriptService, (s) -> {}, null, pipelineTreeForBwcSerialization);
-        }
-
-        /**
-         * Build a {@linkplain ReduceContext} to perform the final reduction.
-         * @param pipelineTreeRoot The root of tree of pipeline aggregations for this request
-         */
-        public static ReduceContext forFinalReduction(
-            BigArrays bigArrays,
-            ScriptService scriptService,
-            IntConsumer multiBucketConsumer,
-            PipelineTree pipelineTreeRoot
-        ) {
-            return new ReduceContext(
-                bigArrays,
-                scriptService,
-                multiBucketConsumer,
-                requireNonNull(pipelineTreeRoot, "prefer EMPTY to null"),
-                () -> pipelineTreeRoot
-            );
-        }
-
         private ReduceContext(
             BigArrays bigArrays,
             ScriptService scriptService,

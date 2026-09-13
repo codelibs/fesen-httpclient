@@ -82,15 +82,6 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         this.compilationLimitTriggered = compilationLimitTriggered;
     }
 
-    /**
-     * This constructor will be deprecated starting in version 3.4.0.
-     * Use {@link Builder} instead.
-     */
-    @Deprecated
-    public ScriptStats(ScriptContextStats context) {
-        this(context.getCompilations(), context.getCacheEvictions(), context.getCompilationLimitTriggered());
-    }
-
     public ScriptStats(StreamInput in) throws IOException {
         compilations = in.readVLong();
         cacheEvictions = in.readVLong();

@@ -78,19 +78,6 @@ public final class GeometryParser {
 
     /**
      * Returns a geometry format object that can parse and then serialize the object back to the same format.
-     */
-    public GeometryFormat<Geometry> geometryFormat(String format) {
-        if (format.equals(GeoJsonGeometryFormat.NAME)) {
-            return new GeoJsonGeometryFormat(geoJsonParser);
-        } else if (format.equals(WKTGeometryFormat.NAME)) {
-            return new WKTGeometryFormat(wellKnownTextParser);
-        } else {
-            throw new IllegalArgumentException("Unrecognized geometry format [" + format + "].");
-        }
-    }
-
-    /**
-     * Returns a geometry format object that can parse and then serialize the object back to the same format.
      * This method automatically recognizes the format by examining the provided {@link XContentParser}.
      */
     public GeometryFormat<Geometry> geometryFormat(XContentParser parser) {

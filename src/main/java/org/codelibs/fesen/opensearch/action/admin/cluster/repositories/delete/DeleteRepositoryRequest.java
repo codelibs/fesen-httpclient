@@ -80,16 +80,6 @@ public class DeleteRepositoryRequest extends AcknowledgedRequest<DeleteRepositor
     }
 
     /**
-     * Sets the name of the repository to unregister.
-     *
-     * @param name name of the repository
-     */
-    public DeleteRepositoryRequest name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
      * The name of the repository.
      *
      * @return the name of the repository

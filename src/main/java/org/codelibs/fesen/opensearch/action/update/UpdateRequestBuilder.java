@@ -96,31 +96,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     }
 
     /**
-     * Indicate that _source should be returned, with an
-     * "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param includes
-     *            An optional list of include (optionally wildcarded) pattern to
-     *            filter the returned _source
-     * @param excludes
-     *            An optional list of exclude (optionally wildcarded) pattern to
-     *            filter the returned _source
-     */
-    public UpdateRequestBuilder setFetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
-        request.fetchSource(includes, excludes);
-        return this;
-    }
-
-    /**
-     * Indicates whether the response should contain the updated _source.
-     */
-    public UpdateRequestBuilder setFetchSource(boolean fetchSource) {
-        request.fetchSource(fetchSource);
-        return this;
-    }
-
-    /**
      * Sets the number of retries of a version conflict occurs because the document was updated between
      * getting it and updating it. Defaults to 0.
      */
@@ -173,40 +148,8 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     /**
      * Sets the doc to use for updates when a script is not specified.
      */
-    public UpdateRequestBuilder setDoc(IndexRequest indexRequest) {
-        request.doc(indexRequest);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
     public UpdateRequestBuilder setDoc(XContentBuilder source) {
         request.doc(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequestBuilder setDoc(Map<String, Object> source) {
-        request.doc(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequestBuilder setDoc(Map<String, Object> source, MediaType contentType) {
-        request.doc(source, contentType);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequestBuilder setDoc(String source, MediaType mediaType) {
-        request.doc(source, mediaType);
         return this;
     }
 
@@ -220,70 +163,10 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     }
 
     /**
-     * Sets the doc to use for updates when a script is not specified, the doc provided
-     * is a field and value pairs.
-     */
-    public UpdateRequestBuilder setDoc(MediaType mediaType, Object... source) {
-        request.doc(mediaType, source);
-        return this;
-    }
-
-    /**
-     * Sets the index request to be used if the document does not exists. Otherwise, a
-     * {@link org.codelibs.fesen.opensearch.index.engine.DocumentMissingException} is thrown.
-     */
-    public UpdateRequestBuilder setUpsert(IndexRequest indexRequest) {
-        request.upsert(indexRequest);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequestBuilder setUpsert(XContentBuilder source) {
-        request.upsert(source);
-        return this;
-    }
-
-    /**
      * Sets the doc source of the update request to be used when the document does not exists.
      */
     public UpdateRequestBuilder setUpsert(Map<String, Object> source) {
         request.upsert(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequestBuilder setUpsert(Map<String, Object> source, MediaType mediaType) {
-        request.upsert(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequestBuilder setUpsert(String source, MediaType mediaType) {
-        request.upsert(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists. The doc
-     * includes field and value pairs.
-     */
-    public UpdateRequestBuilder setUpsert(Object... source) {
-        request.upsert(source);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists. The doc
-     * includes field and value pairs.
-     */
-    public UpdateRequestBuilder setUpsert(MediaType mediaType, Object... source) {
-        request.upsert(mediaType, source);
         return this;
     }
 

@@ -517,20 +517,6 @@ public class JsonXContentGenerator implements XContentGenerator {
 
     /**
      * possibly copy the whole structure to correctly filter
-     *
-     * @deprecated use {@link #mayWriteRawData(MediaType)} instead
-     */
-    @Deprecated
-    private boolean mayWriteRawData(XContentType contentType) {
-        // When the current generator is filtered (ie filter != null)
-        // or the content is in a different format than the current generator,
-        // we need to copy the whole structure so that it will be correctly
-        // filtered or converted
-        return supportsRawWrites() && isFiltered() == false && contentType == contentType() && prettyPrint == false;
-    }
-
-    /**
-     * possibly copy the whole structure to correctly filter
      */
     private boolean mayWriteRawData(MediaType contentType) {
         // When the current generator is filtered (ie filter != null)

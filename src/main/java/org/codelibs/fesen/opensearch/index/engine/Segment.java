@@ -100,11 +100,6 @@ public class Segment implements Writeable {
         }
     }
 
-    public Segment(String name) {
-        this.name = name;
-        this.generation = Long.parseLong(name.substring(1), Character.MAX_RADIX);
-    }
-
     public String getName() {
         return this.name;
     }

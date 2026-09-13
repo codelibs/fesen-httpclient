@@ -102,11 +102,6 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         return indicesRouting.containsKey(index);
     }
 
-    public boolean hasIndex(Index index) {
-        IndexRoutingTable indexRouting = index(index.getName());
-        return indexRouting != null && indexRouting.getIndex().equals(index);
-    }
-
     public IndexRoutingTable index(String index) {
         return indicesRouting.get(index);
     }
@@ -243,10 +238,6 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         return new Builder();
     }
 
-    public static Builder builder(RoutingTable routingTable) {
-        return new Builder(routingTable);
-    }
-
     /**
      * Builder for the routing table. Note that build can only be called one time.
      *
@@ -262,26 +253,11 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
 
         }
 
-        public Builder(RoutingTable routingTable) {
-            version = routingTable.version;
-            for (IndexRoutingTable indexRoutingTable : routingTable) {
-                indicesRouting.put(indexRoutingTable.getIndex().getName(), indexRoutingTable);
-            }
-        }
-
         public Builder add(IndexRoutingTable indexRoutingTable) {
             if (indicesRouting == null) {
                 throw new IllegalStateException("once build is called the builder cannot be reused");
             }
             indicesRouting.put(indexRoutingTable.getIndex().getName(), indexRoutingTable);
-            return this;
-        }
-
-        public Builder remove(String index) {
-            if (indicesRouting == null) {
-                throw new IllegalStateException("once build is called the builder cannot be reused");
-            }
-            indicesRouting.remove(index);
             return this;
         }
 

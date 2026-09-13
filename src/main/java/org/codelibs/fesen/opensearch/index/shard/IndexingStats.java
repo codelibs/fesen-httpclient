@@ -90,25 +90,6 @@ public class IndexingStats implements Writeable, ToXContentFragment {
             }
 
             /**
-             * Increment counter for status
-             *
-             * @param status {@link RestStatus}
-             */
-            public void inc(final RestStatus status) {
-                add(status, 1L);
-            }
-
-            /**
-             * Increment counter for status by count
-             *
-             * @param status {@link RestStatus}
-             * @param delta The value to add
-             */
-            void add(final RestStatus status, final long delta) {
-                docStatusCounter[status.getStatusFamilyCode() - 1].addAndGet(delta);
-            }
-
-            /**
              * Accumulate stats from the passed Object
              *
              * @param stats Instance storing {@link DocStatusStats}

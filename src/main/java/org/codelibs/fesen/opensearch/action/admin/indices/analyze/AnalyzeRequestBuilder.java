@@ -76,68 +76,10 @@ public class AnalyzeRequestBuilder extends SingleShardOperationRequestBuilder<
     }
 
     /**
-     * Instead of setting the analyzer, sets the tokenizer as name that will be used as part of a custom
-     * analyzer.
-     */
-    public AnalyzeRequestBuilder setTokenizer(String tokenizer) {
-        request.tokenizer(tokenizer);
-        return this;
-    }
-
-    /**
-     * Instead of setting the analyzer, sets the tokenizer using custom settings that will be used as part of a custom
-     * analyzer.
-     */
-    public AnalyzeRequestBuilder setTokenizer(Map<String, ?> tokenizer) {
-        request.tokenizer(tokenizer);
-        return this;
-    }
-
-    /**
-     * Add token filter setting that will be used on top of a tokenizer provided.
-     */
-    public AnalyzeRequestBuilder addTokenFilter(Map<String, ?> tokenFilter) {
-        request.addTokenFilter(tokenFilter);
-        return this;
-    }
-
-    /**
-     * Add a name of token filter that will be used on top of a tokenizer provided.
-     */
-    public AnalyzeRequestBuilder addTokenFilter(String tokenFilter) {
-        request.addTokenFilter(tokenFilter);
-        return this;
-    }
-
-    /**
-     * Add char filter setting that will be used on top of a tokenizer provided.
-     */
-    public AnalyzeRequestBuilder addCharFilter(Map<String, ?> charFilter) {
-        request.addCharFilter(charFilter);
-        return this;
-    }
-
-    /**
-     * Add a name of char filter that will be used before the tokenizer.
-     */
-    public AnalyzeRequestBuilder addCharFilter(String tokenFilter) {
-        request.addCharFilter(tokenFilter);
-        return this;
-    }
-
-    /**
      * Sets explain
      */
     public AnalyzeRequestBuilder setExplain(boolean explain) {
         request.explain(explain);
-        return this;
-    }
-
-    /**
-     * Sets attributes that will include results
-     */
-    public AnalyzeRequestBuilder setAttributes(String... attributes) {
-        request.attributes(attributes);
         return this;
     }
 

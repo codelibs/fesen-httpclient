@@ -144,14 +144,6 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
         return this.retryable;
     }
 
-    /**
-     * Should global state persistence be disabled when this block is present. Note,
-     * only relevant for global blocks.
-     */
-    public boolean disableStatePersistence() {
-        return this.disableStatePersistence;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Integer.toString(id));

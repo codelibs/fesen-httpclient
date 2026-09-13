@@ -77,13 +77,6 @@ public class NamedXContentRegistry {
         /** A parser capability of parser the entry's class. */
         private final ContextParser<Object, ?> parser;
 
-        /** Creates a new entry which can be stored by the registry. */
-        public <T> Entry(Class<T> categoryClass, ParseField name, CheckedFunction<XContentParser, ? extends T, IOException> parser) {
-            this.categoryClass = Objects.requireNonNull(categoryClass);
-            this.name = Objects.requireNonNull(name);
-            this.parser = Objects.requireNonNull((p, c) -> parser.apply(p));
-        }
-
         /**
          * Creates a new entry which can be stored by the registry.
          * Prefer {@link Entry#Entry(Class, ParseField, CheckedFunction)} unless you need a context to carry around while parsing.

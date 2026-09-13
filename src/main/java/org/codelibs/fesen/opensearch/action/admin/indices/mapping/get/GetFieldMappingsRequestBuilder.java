@@ -60,20 +60,9 @@ public class GetFieldMappingsRequestBuilder extends ActionRequestBuilder<GetFiel
         return this;
     }
 
-    public GetFieldMappingsRequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
-        return this;
-    }
-
     /** Sets the fields to retrieve. */
     public GetFieldMappingsRequestBuilder setFields(String... fields) {
         request.fields(fields);
-        return this;
-    }
-
-    /** Indicates whether default mapping settings should be returned */
-    public GetFieldMappingsRequestBuilder includeDefaults(boolean includeDefaults) {
-        request.includeDefaults(includeDefaults);
         return this;
     }
 }

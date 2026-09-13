@@ -87,11 +87,6 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
         return this;
     }
 
-    public GetFieldMappingsRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public String[] indices() {
         return indices;
@@ -119,12 +114,6 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
 
     public boolean includeDefaults() {
         return includeDefaults;
-    }
-
-    /** Indicates whether default mapping settings should be returned */
-    public GetFieldMappingsRequest includeDefaults(boolean includeDefaults) {
-        this.includeDefaults = includeDefaults;
-        return this;
     }
 
     @Override

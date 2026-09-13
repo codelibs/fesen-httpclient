@@ -64,26 +64,6 @@ public class MergedSegmentWarmerStats implements Writeable, ToXContentFragment {
         ongoingCount = in.readVLong();
     }
 
-    public synchronized void add(
-        long totalInvocationsCount,
-        long totalTimeMillis,
-        long totalFailureCount,
-        long totalBytesSent,
-        long totalBytesReceived,
-        long totalSendTimeMillis,
-        long totalReceiveTimeMillis,
-        long ongoingCount
-    ) {
-        this.totalInvocationsCount += totalInvocationsCount;
-        this.totalTimeMillis += totalTimeMillis;
-        this.totalFailureCount += totalFailureCount;
-        this.totalBytesSent += totalBytesSent;
-        this.totalBytesReceived += totalBytesReceived;
-        this.totalSendTimeMillis += totalSendTimeMillis;
-        this.totalReceiveTimeMillis += totalReceiveTimeMillis;
-        this.ongoingCount += ongoingCount;
-    }
-
     public void add(MergedSegmentWarmerStats mergedSegmentWarmerStats) {
         this.ongoingCount += mergedSegmentWarmerStats.ongoingCount;
     }

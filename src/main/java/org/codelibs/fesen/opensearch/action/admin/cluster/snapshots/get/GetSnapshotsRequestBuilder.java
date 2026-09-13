@@ -62,40 +62,4 @@ public class GetSnapshotsRequestBuilder extends ClusterManagerNodeOperationReque
         super(client, action, new GetSnapshotsRequest(repository));
     }
 
-    /**
-     * Sets the repository name
-     *
-     * @param repository repository name
-     * @return this builder
-     */
-    public GetSnapshotsRequestBuilder setRepository(String repository) {
-        request.repository(repository);
-        return this;
-    }
-
-    /**
-     * Makes the request ignore unavailable snapshots
-     *
-     * @param ignoreUnavailable true to ignore unavailable snapshots.
-     * @return this builder
-     */
-    public GetSnapshotsRequestBuilder setIgnoreUnavailable(boolean ignoreUnavailable) {
-        request.ignoreUnavailable(ignoreUnavailable);
-        return this;
-    }
-
-    /**
-     * Set to {@code false} to only show the snapshot names and the indices they contain.
-     * This is useful when the snapshots belong to a cloud-based repository where each
-     * blob read is a concern (cost wise and performance wise), as the snapshot names and
-     * indices they contain can be retrieved from a single index blob in the repository,
-     * whereas the rest of the information requires reading a snapshot metadata file for
-     * each snapshot requested.  Defaults to {@code true}, which returns all information
-     * about each requested snapshot.
-     */
-    public GetSnapshotsRequestBuilder setVerbose(boolean verbose) {
-        request.verbose(verbose);
-        return this;
-    }
-
 }

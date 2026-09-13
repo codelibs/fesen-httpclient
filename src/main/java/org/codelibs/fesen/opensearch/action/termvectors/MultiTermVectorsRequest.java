@@ -69,16 +69,6 @@ public class MultiTermVectorsRequest extends ActionRequest
 
     final Set<String> ids = new HashSet<>();
 
-    public MultiTermVectorsRequest(StreamInput in) throws IOException {
-        super(in);
-        preference = in.readOptionalString();
-        int size = in.readVInt();
-        requests = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            requests.add(new TermVectorsRequest(in));
-        }
-    }
-
     public MultiTermVectorsRequest() {}
 
     public MultiTermVectorsRequest add(TermVectorsRequest termVectorsRequest) {
@@ -124,12 +114,6 @@ public class MultiTermVectorsRequest extends ActionRequest
         super.writeTo(out);
         out.writeOptionalString(preference);
         out.writeCollection(requests);
-    }
-
-    public void ids(String[] ids) {
-        for (String id : ids) {
-            this.ids.add(id.replaceAll("\\s", ""));
-        }
     }
 
     public int size() {

@@ -60,17 +60,6 @@ public class UpgradeResponse extends BroadcastResponse {
         versions = in.readMap(StreamInput::readString, i -> Tuple.tuple(i.readVersion(), i.readString()));
     }
 
-    UpgradeResponse(
-        Map<String, Tuple<Version, String>> versions,
-        int totalShards,
-        int successfulShards,
-        int failedShards,
-        List<DefaultShardOperationFailedException> shardFailures
-    ) {
-        super(totalShards, successfulShards, failedShards, shardFailures);
-        this.versions = versions;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

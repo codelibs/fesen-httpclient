@@ -316,11 +316,6 @@ public class OpenSearchExecutors {
         return daemonThreadFactory(threadName(settings, namePrefix));
     }
 
-    public static ThreadFactory daemonThreadFactory(String nodeName, String namePrefix) {
-        assert nodeName != null && false == nodeName.isEmpty();
-        return daemonThreadFactory(threadName(nodeName, namePrefix));
-    }
-
     public static ThreadFactory daemonThreadFactory(String namePrefix) {
         return new OpenSearchThreadFactory(namePrefix);
     }

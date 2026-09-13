@@ -194,13 +194,6 @@ public class AggregationBuilders {
     }
 
     /**
-     * Create a new {@link AdjacencyMatrix} aggregation with the given name and separator
-     */
-    public static AdjacencyMatrixAggregationBuilder adjacencyMatrix(String name, String separator, Map<String, QueryBuilder> filters) {
-        return new AdjacencyMatrixAggregationBuilder(name, separator, filters);
-    }
-
-    /**
      * Create a new {@link Sampler} aggregation with the given name.
      */
     public static SamplerAggregationBuilder sampler(String name) {

@@ -86,12 +86,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
     // expressions only against indices
     private static final IndicesOptions INDICES_OPTIONS = IndicesOptions.fromOptions(false, false, true, false, true, false, true, false);
 
-    public IndicesAliasesRequest(StreamInput in) throws IOException {
-        super(in);
-        allAliasActions = in.readList(AliasActions::new);
-        origin = in.readOptionalString();
-    }
-
     public IndicesAliasesRequest() {}
 
     /**
@@ -617,14 +611,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         aliasAction.validate();
         allAliasActions.add(aliasAction);
         return this;
-    }
-
-    List<AliasActions> aliasActions() {
-        return this.allAliasActions;
-    }
-
-    public List<AliasActions> getAliasActions() {
-        return aliasActions();
     }
 
     @Override

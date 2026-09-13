@@ -43,13 +43,6 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public final class IndexNotFoundException extends ResourceNotFoundException {
-    /**
-     * Construct with a custom message.
-     */
-    public IndexNotFoundException(String message, String index) {
-        super("no such index [" + index + "] and " + message);
-        setIndex(index);
-    }
 
     public IndexNotFoundException(String index) {
         this(index, (Throwable) null);

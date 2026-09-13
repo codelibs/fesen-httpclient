@@ -273,38 +273,6 @@ public final class Settings implements ToXContentFragment {
     }
 
     /**
-     * Returns the setting value (as float) associated with the setting key. If it does not exists,
-     * returns the default value provided.
-     */
-    public Float getAsFloat(String setting, Float defaultValue) {
-        String sValue = get(setting);
-        if (sValue == null) {
-            return defaultValue;
-        }
-        try {
-            return Float.parseFloat(sValue);
-        } catch (NumberFormatException e) {
-            throw new SettingsException("Failed to parse float setting [" + setting + "] with value [" + sValue + "]", e);
-        }
-    }
-
-    /**
-     * Returns the setting value (as double) associated with the setting key. If it does not exists,
-     * returns the default value provided.
-     */
-    public Double getAsDouble(String setting, Double defaultValue) {
-        String sValue = get(setting);
-        if (sValue == null) {
-            return defaultValue;
-        }
-        try {
-            return Double.parseDouble(sValue);
-        } catch (NumberFormatException e) {
-            throw new SettingsException("Failed to parse double setting [" + setting + "] with value [" + sValue + "]", e);
-        }
-    }
-
-    /**
      * Returns the setting value (as int) associated with the setting key. If it does not exists,
      * returns the default value provided.
      */
@@ -536,17 +504,6 @@ public final class Settings implements ToXContentFragment {
             }
         }
         return firstLevelNames.get();
-    }
-
-    /**
-     * Returns the settings as delimited string.
-     */
-    public String toDelimitedString(char delimiter) {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> entry : settings.entrySet()) {
-            sb.append(entry.getKey()).append("=").append(entry.getValue()).append(delimiter);
-        }
-        return sb.toString();
     }
 
     @Override
@@ -845,17 +802,6 @@ public final class Settings implements ToXContentFragment {
         }
 
         /**
-         * Sets a time value setting with the provided setting key and value.
-         *
-         * @param key  The setting key
-         * @param timeValue The setting timeValue
-         * @return The builder
-         */
-        public Builder put(final String key, final TimeValue timeValue) {
-            return put(key, timeValue.getStringRep());
-        }
-
-        /**
          * Sets a byteSizeValue setting with the provided setting key and byteSizeValue.
          *
          * @param key  The setting key
@@ -864,17 +810,6 @@ public final class Settings implements ToXContentFragment {
          */
         public Builder put(final String key, final ByteSizeValue byteSizeValue) {
             return put(key, byteSizeValue.getStringRep());
-        }
-
-        /**
-         * Sets an enum setting with the provided setting key and enum instance.
-         *
-         * @param key  The setting key
-         * @param enumValue The setting value
-         * @return The builder
-         */
-        public Builder put(String key, Enum<?> enumValue) {
-            return put(key, enumValue.toString());
         }
 
         /**
@@ -980,18 +915,6 @@ public final class Settings implements ToXContentFragment {
          */
         public Builder put(String setting, double value) {
             put(setting, String.valueOf(value));
-            return this;
-        }
-
-        /**
-         * Sets the setting with the provided setting key and the time value.
-         *
-         * @param setting The setting key
-         * @param value   The time value
-         * @return The builder
-         */
-        public Builder put(final String setting, final long value, final TimeUnit timeUnit) {
-            put(setting, new TimeValue(value, timeUnit));
             return this;
         }
 
@@ -1112,14 +1035,6 @@ public final class Settings implements ToXContentFragment {
                 this.put(fromXContent(parser, true, true));
             } catch (Exception e) {
                 throw new SettingsException("Failed to load settings from [" + source + "]", e);
-            }
-            return this;
-        }
-
-        public Builder putProperties(final Map<String, String> esSettings, final Function<String, String> keyFunction) {
-            for (final Map.Entry<String, String> esSetting : esSettings.entrySet()) {
-                final String key = esSetting.getKey();
-                put(keyFunction.apply(key), esSetting.getValue());
             }
             return this;
         }

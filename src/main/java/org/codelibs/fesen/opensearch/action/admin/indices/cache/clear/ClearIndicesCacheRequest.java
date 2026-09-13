@@ -55,17 +55,6 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
     private boolean fileCache = false;
     private String[] fields = Strings.EMPTY_ARRAY;
 
-    public ClearIndicesCacheRequest(StreamInput in) throws IOException {
-        super(in);
-        queryCache = in.readBoolean();
-        fieldDataCache = in.readBoolean();
-        fields = in.readStringArray();
-        requestCache = in.readBoolean();
-        if (in.getVersion().onOrAfter(Version.V_2_8_0)) {
-            fileCache = in.readBoolean();
-        }
-    }
-
     public ClearIndicesCacheRequest(String... indices) {
         super(indices);
     }
@@ -74,41 +63,16 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
         return queryCache;
     }
 
-    public ClearIndicesCacheRequest queryCache(boolean queryCache) {
-        this.queryCache = queryCache;
-        return this;
-    }
-
     public boolean requestCache() {
         return this.requestCache;
-    }
-
-    public ClearIndicesCacheRequest requestCache(boolean requestCache) {
-        this.requestCache = requestCache;
-        return this;
     }
 
     public boolean fieldDataCache() {
         return this.fieldDataCache;
     }
 
-    public ClearIndicesCacheRequest fieldDataCache(boolean fieldDataCache) {
-        this.fieldDataCache = fieldDataCache;
-        return this;
-    }
-
     public boolean fileCache() {
         return this.fileCache;
-    }
-
-    public ClearIndicesCacheRequest fileCache(boolean fileCache) {
-        this.fileCache = fileCache;
-        return this;
-    }
-
-    public ClearIndicesCacheRequest fields(String... fields) {
-        this.fields = fields == null ? Strings.EMPTY_ARRAY : fields;
-        return this;
     }
 
     public String[] fields() {

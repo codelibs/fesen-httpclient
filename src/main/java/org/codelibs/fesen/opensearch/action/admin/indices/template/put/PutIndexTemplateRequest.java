@@ -161,25 +161,8 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this.version;
     }
 
-    /**
-     * Set to {@code true} to force only creation, not an update of an index template. If it already
-     * exists, it will fail with an {@link IllegalArgumentException}.
-     */
-    public PutIndexTemplateRequest create(boolean create) {
-        this.create = create;
-        return this;
-    }
-
     public boolean create() {
         return create;
-    }
-
-    /**
-     * The settings to create the index template with.
-     */
-    public PutIndexTemplateRequest settings(Settings settings) {
-        this.settings = settings;
-        return this;
     }
 
     /**
@@ -190,24 +173,8 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this;
     }
 
-    /**
-     * The settings to create the index template with (either json/yaml format).
-     */
-    public PutIndexTemplateRequest settings(String source, MediaType mediaType) {
-        this.settings = Settings.builder().loadFromSource(source, mediaType).build();
-        return this;
-    }
-
     public Settings settings() {
         return this.settings;
-    }
-
-    /**
-     * The cause for this index template creation.
-     */
-    public PutIndexTemplateRequest cause(String cause) {
-        this.cause = cause;
-        return this;
     }
 
     public String cause() {

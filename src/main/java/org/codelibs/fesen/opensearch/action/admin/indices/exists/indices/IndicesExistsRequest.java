@@ -65,12 +65,6 @@ public class IndicesExistsRequest extends ClusterManagerNodeReadRequest<IndicesE
         this.indices = indices;
     }
 
-    public IndicesExistsRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -92,26 +86,6 @@ public class IndicesExistsRequest extends ClusterManagerNodeReadRequest<IndicesE
     @Override
     public IndicesOptions indicesOptions() {
         return indicesOptions;
-    }
-
-    public IndicesExistsRequest expandWilcardsOpen(boolean expandWildcardsOpen) {
-        this.indicesOptions = IndicesOptions.fromOptions(
-            indicesOptions.ignoreUnavailable(),
-            indicesOptions.allowNoIndices(),
-            expandWildcardsOpen,
-            indicesOptions.expandWildcardsClosed()
-        );
-        return this;
-    }
-
-    public IndicesExistsRequest expandWilcardsClosed(boolean expandWildcardsClosed) {
-        this.indicesOptions = IndicesOptions.fromOptions(
-            indicesOptions.ignoreUnavailable(),
-            indicesOptions.allowNoIndices(),
-            indicesOptions.expandWildcardsOpen(),
-            expandWildcardsClosed
-        );
-        return this;
     }
 
     @Override

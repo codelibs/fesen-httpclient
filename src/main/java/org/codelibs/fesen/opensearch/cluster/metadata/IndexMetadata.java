@@ -618,24 +618,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return block;
         }
 
-        public static APIBlock fromName(String name) {
-            for (APIBlock block : APIBlock.values()) {
-                if (block.name.equals(name)) {
-                    return block;
-                }
-            }
-            throw new IllegalArgumentException("No block found with name " + name);
-        }
-
-        public static APIBlock fromSetting(String settingName) {
-            for (APIBlock block : APIBlock.values()) {
-                if (block.settingName.equals(settingName)) {
-                    return block;
-                }
-            }
-            throw new IllegalArgumentException("No block found with setting name " + settingName);
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeVInt(ordinal());
@@ -1297,18 +1279,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return index.getUUID();
     }
 
-    /**
-     * Test whether the current index UUID is the same as the given one. Returns true if either are _na_
-     */
-    public boolean isSameUUID(String otherUUID) {
-        assert otherUUID != null;
-        assert getIndexUUID() != null;
-        if (INDEX_UUID_NA_VALUE.equals(otherUUID) || INDEX_UUID_NA_VALUE.equals(getIndexUUID())) {
-            return true;
-        }
-        return otherUUID.equals(getIndexUUID());
-    }
-
     public long getVersion() {
         return this.version;
     }
@@ -1346,11 +1316,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      */
     public Version getCreationVersion() {
         return indexCreatedVersion;
-    }
-
-    public boolean useIngestionSource() {
-        final String ingestionSourceType = INGESTION_SOURCE_TYPE_SETTING.get(settings);
-        return ingestionSourceType != null && !(NONE_INGESTION_SOURCE_TYPE.equals(ingestionSourceType));
     }
 
     public boolean isAllActiveIngestionEnabled() {
@@ -2136,11 +2101,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
 
         public Builder putAlias(AliasMetadata aliasMetadata) {
             aliases.put(aliasMetadata.alias(), aliasMetadata);
-            return this;
-        }
-
-        public Builder putAlias(AliasMetadata.Builder aliasMetadata) {
-            aliases.put(aliasMetadata.alias(), aliasMetadata.build());
             return this;
         }
 

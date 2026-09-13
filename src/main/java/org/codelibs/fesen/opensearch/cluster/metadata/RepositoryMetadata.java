@@ -74,23 +74,8 @@ public class RepositoryMetadata implements Writeable {
      */
     private final long pendingGeneration;
 
-    /**
-     * Constructs new repository metadata
-     *
-     * @param name     repository name
-     * @param type     repository type
-     * @param settings repository settings
-     */
-    public RepositoryMetadata(String name, String type, Settings settings) {
-        this(name, type, settings, UNKNOWN_REPO_GEN, EMPTY_REPO_GEN, null);
-    }
-
     public RepositoryMetadata(String name, String type, Settings settings, CryptoMetadata cryptoMetadata) {
         this(name, type, settings, UNKNOWN_REPO_GEN, EMPTY_REPO_GEN, cryptoMetadata);
-    }
-
-    public RepositoryMetadata(String name, String type, Settings settings, long generation, long pendingGeneration) {
-        this(name, type, settings, generation, pendingGeneration, null);
     }
 
     public RepositoryMetadata(

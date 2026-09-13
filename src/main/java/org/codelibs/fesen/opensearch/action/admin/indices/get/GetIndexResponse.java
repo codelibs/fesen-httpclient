@@ -205,14 +205,6 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
         return settings;
     }
 
-    public Map<String, String> dataStreams() {
-        return dataStreams;
-    }
-
-    public Map<String, String> getDataStreams() {
-        return dataStreams();
-    }
-
     /**
      * If the originating {@link GetIndexRequest} object was configured to include
      * defaults, this will contain a mapping of index name to {@link Settings} objects.
@@ -231,30 +223,6 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
 
     public Map<String, Context> contexts() {
         return contexts;
-    }
-
-    /**
-     * Returns the string value for the specified index and setting.  If the includeDefaults flag was not set or set to
-     * false on the {@link GetIndexRequest}, this method will only return a value where the setting was explicitly set
-     * on the index.  If the includeDefaults flag was set to true on the {@link GetIndexRequest}, this method will fall
-     * back to return the default value if the setting was not explicitly set.
-     */
-    public String getSetting(String index, String setting) {
-        Settings indexSettings = settings.get(index);
-        if (setting != null) {
-            if (indexSettings != null && indexSettings.hasValue(setting)) {
-                return indexSettings.get(setting);
-            } else {
-                Settings defaultIndexSettings = defaultSettings.get(index);
-                if (defaultIndexSettings != null) {
-                    return defaultIndexSettings.get(setting);
-                } else {
-                    return null;
-                }
-            }
-        } else {
-            return null;
-        }
     }
 
     @Override

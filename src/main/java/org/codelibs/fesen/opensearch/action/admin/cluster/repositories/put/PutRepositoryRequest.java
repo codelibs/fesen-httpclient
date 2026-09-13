@@ -73,18 +73,6 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
 
     private CryptoSettings cryptoSettings;
 
-    public PutRepositoryRequest(StreamInput in) throws IOException {
-        super(in);
-        name = in.readString();
-        type = in.readString();
-        settings = readSettingsFromStream(in);
-        verify = in.readBoolean();
-
-        if (in.getVersion().onOrAfter(Version.V_2_10_0)) {
-            cryptoSettings = in.readOptionalWriteable(CryptoSettings::new);
-        }
-    }
-
     public PutRepositoryRequest() {}
 
     /**
@@ -107,16 +95,6 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
             validationException = cryptoSettings.validate();
         }
         return validationException;
-    }
-
-    /**
-     * Sets the name of the repository.
-     *
-     * @param name repository name
-     */
-    public PutRepositoryRequest name(String name) {
-        this.name = name;
-        return this;
     }
 
     /**
@@ -163,43 +141,12 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
     }
 
     /**
-     * Sets the repository settings
-     *
-     * @param settings repository settings
-     * @return this request
-     */
-    public PutRepositoryRequest settings(Settings.Builder settings) {
-        this.settings = settings.build();
-        return this;
-    }
-
-    /**
-     * Sets the repository settings.
-     *
-     * @param source repository settings in json or yaml format
-     * @param mediaType the content type of the source
-     * @return this request
-     */
-    public PutRepositoryRequest settings(String source, final MediaType mediaType) {
-        this.settings = Settings.builder().loadFromSource(source, mediaType).build();
-        return this;
-    }
-
-    /**
      * Returns repository settings
      *
      * @return repository settings
      */
     public Settings settings() {
         return this.settings;
-    }
-
-    /**
-     * Sets whether or not the repository should be verified after creation
-     */
-    public PutRepositoryRequest verify(boolean verify) {
-        this.verify = verify;
-        return this;
     }
 
     /**

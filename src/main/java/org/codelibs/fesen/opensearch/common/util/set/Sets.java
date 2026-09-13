@@ -68,28 +68,6 @@ public final class Sets {
         return Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
-    public static <T> boolean haveEmptyIntersection(Set<T> left, Set<T> right) {
-        Objects.requireNonNull(left);
-        Objects.requireNonNull(right);
-        return left.stream().noneMatch(right::contains);
-    }
-
-    /**
-     * The relative complement, or difference, of the specified left and right set, returned as a sorted set. Namely, the resulting set
-     * contains all the elements that are in the left set but not in the right set, and the set is sorted using the natural ordering of
-     * element type. Neither input is mutated by this operation, an entirely new set is returned.
-     *
-     * @param left  the left set
-     * @param right the right set
-     * @param <T>   the type of the elements of the sets
-     * @return the sorted relative complement of the left set with respect to the right set
-     */
-    public static <T> SortedSet<T> sortedDifference(Set<T> left, Set<T> right) {
-        Objects.requireNonNull(left);
-        Objects.requireNonNull(right);
-        return left.stream().filter(k -> !right.contains(k)).collect(new SortedSetCollector<>());
-    }
-
     /**
      * A sorted set collector
      *

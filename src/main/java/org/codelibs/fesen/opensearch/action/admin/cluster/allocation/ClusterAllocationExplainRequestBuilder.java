@@ -69,34 +69,12 @@ public class ClusterAllocationExplainRequestBuilder extends ClusterManagerNodeOp
         return this;
     }
 
-    /** Whether to include "YES" decider decisions in the response instead of only "NO" decisions */
-    public ClusterAllocationExplainRequestBuilder setIncludeYesDecisions(boolean includeYesDecisions) {
-        request.includeYesDecisions(includeYesDecisions);
-        return this;
-    }
-
-    /** Whether to include information about the gathered disk information of nodes in the cluster */
-    public ClusterAllocationExplainRequestBuilder setIncludeDiskInfo(boolean includeDiskInfo) {
-        request.includeDiskInfo(includeDiskInfo);
-        return this;
-    }
-
     /**
      * Requests the explain API to explain an already assigned replica shard currently allocated to
      * the given node.
      */
     public ClusterAllocationExplainRequestBuilder setCurrentNode(String currentNode) {
         request.setCurrentNode(currentNode);
-        return this;
-    }
-
-    /**
-     * Signal that the first unassigned shard should be used
-     */
-    public ClusterAllocationExplainRequestBuilder useAnyUnassignedShard() {
-        request.setIndex(null);
-        request.setShard(null);
-        request.setPrimary(null);
         return this;
     }
 

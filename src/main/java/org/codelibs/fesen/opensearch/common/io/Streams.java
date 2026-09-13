@@ -81,41 +81,9 @@ public abstract class Streams {
         }
     };
 
-    /**
-     * Copy the contents of the given byte array to the given OutputStream.
-     * Closes the stream when done.
-     *
-     * @param in  the byte array to copy from
-     * @param out the OutputStream to copy to
-     * @throws IOException in case of I/O errors
-     */
-    public static void copy(byte[] in, OutputStream out) throws IOException {
-        Objects.requireNonNull(in, "No input byte array specified");
-        Objects.requireNonNull(out, "No OutputStream specified");
-        try (OutputStream out2 = out) {
-            out2.write(in);
-        }
-    }
-
     // ---------------------------------------------------------------------
     // Copy methods for java.io.Reader / java.io.Writer
     // ---------------------------------------------------------------------
-
-    /**
-     * Copy the contents of the given String to the given output Writer.
-     * Closes the write when done.
-     *
-     * @param in  the String to copy from
-     * @param out the Writer to copy to
-     * @throws IOException in case of I/O errors
-     */
-    public static void copy(String in, Writer out) throws IOException {
-        Objects.requireNonNull(in, "No input String specified");
-        Objects.requireNonNull(out, "No Writer specified");
-        try (Writer out2 = out) {
-            out2.write(in);
-        }
-    }
 
     @Deprecated
     public static int readFully(InputStream reader, byte[] dest) throws IOException {

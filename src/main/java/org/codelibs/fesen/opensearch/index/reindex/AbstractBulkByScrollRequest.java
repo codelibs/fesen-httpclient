@@ -209,17 +209,6 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * Maximum number of processed documents. Defaults to -1 meaning process all
      * documents.
-     *
-     * @deprecated please use setMaxDocs(int) instead.
-     */
-    @Deprecated
-    public Self setSize(int size) {
-        return setMaxDocs(size);
-    }
-
-    /**
-     * Maximum number of processed documents. Defaults to -1 meaning process all
-     * documents.
      */
     public int getMaxDocs() {
         return maxDocs;
@@ -305,14 +294,6 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
      */
     public Self setTimeout(TimeValue timeout) {
         this.timeout = timeout;
-        return self();
-    }
-
-    /**
-     * Timeout to wait for the shards on to be available for each bulk request?
-     */
-    public Self setTimeout(String timeout) {
-        this.timeout = TimeValue.parseTimeValue(timeout, this.timeout, getClass().getSimpleName() + ".timeout");
         return self();
     }
 
@@ -406,14 +387,6 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     @Override
     public boolean getShouldStoreResult() {
         return shouldStoreResult;
-    }
-
-    /**
-     * Set scroll timeout for {@link SearchRequest}
-     */
-    public Self setScroll(TimeValue keepAlive) {
-        searchRequest.scroll(new Scroll(keepAlive));
-        return self();
     }
 
     /**

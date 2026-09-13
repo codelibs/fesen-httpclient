@@ -62,19 +62,4 @@ public class GetSettingsRequestBuilder extends ClusterManagerNodeReadOperationRe
         request.indices(ArrayUtils.concat(request.indices(), indices));
         return this;
     }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions.
-     * <p>
-     * For example indices that don't exist.
-     */
-    public GetSettingsRequestBuilder setIndicesOptions(IndicesOptions options) {
-        request.indicesOptions(options);
-        return this;
-    }
-
-    public GetSettingsRequestBuilder setNames(String... names) {
-        request.names(names);
-        return this;
-    }
 }

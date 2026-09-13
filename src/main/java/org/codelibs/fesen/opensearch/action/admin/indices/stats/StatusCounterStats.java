@@ -53,36 +53,6 @@ public class StatusCounterStats implements Writeable, ToXContentFragment {
         }
     }
 
-    public DocStatusStats getDocStatusStats() {
-        return docStatusStats;
-    }
-
-    public SearchResponseStatusStats getSearchResponseStatusStats() {
-        return searchResponseStatusStats;
-    }
-
-    /**
-     * Gets a snapshot of the current state of the REST status counters.
-     */
-    public StatusCounterStats getSnapshot() {
-        StatusCounterStats stats = new StatusCounterStats();
-        stats.getDocStatusStats().add(docStatusStats);
-        stats.getSearchResponseStatusStats().add(searchResponseStatusStats);
-        return stats;
-    }
-
-    public void add(StatusCounterStats stats) {
-        if (stats == null) {
-            return;
-        }
-        if (docStatusStats != null) {
-            docStatusStats.add(stats.docStatusStats);
-        }
-        if (searchResponseStatusStats != null) {
-            searchResponseStatusStats.add(stats.searchResponseStatusStats);
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         if (out.getVersion().onOrAfter(Version.V_3_4_0)) {

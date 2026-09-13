@@ -183,49 +183,16 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         return levels;
     }
 
-    /**
-     * Sets specific search group stats to retrieve the stats for. Mainly affects search
-     * when enabled.
-     */
-    public CommonStatsFlags groups(String... groups) {
-        this.groups = groups;
-        return this;
-    }
-
     public String[] groups() {
         return this.groups;
-    }
-
-    /**
-     * Sets specific search group stats to retrieve the stats for. Mainly affects search
-     * when enabled.
-     */
-    public CommonStatsFlags fieldDataFields(String... fieldDataFields) {
-        this.fieldDataFields = fieldDataFields;
-        return this;
     }
 
     public String[] fieldDataFields() {
         return this.fieldDataFields;
     }
 
-    public CommonStatsFlags completionDataFields(String... completionDataFields) {
-        this.completionDataFields = completionDataFields;
-        return this;
-    }
-
     public String[] completionDataFields() {
         return this.completionDataFields;
-    }
-
-    public CommonStatsFlags includeSegmentFileSizes(boolean includeSegmentFileSizes) {
-        this.includeSegmentFileSizes = includeSegmentFileSizes;
-        return this;
-    }
-
-    public CommonStatsFlags includeUnloadedSegments(boolean includeUnloadedSegments) {
-        this.includeUnloadedSegments = includeUnloadedSegments;
-        return this;
     }
 
     public CommonStatsFlags includeAllShardIndexingPressureTrackers(boolean includeAllShardPressureTrackers) {

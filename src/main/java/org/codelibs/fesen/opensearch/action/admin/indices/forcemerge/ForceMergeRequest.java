@@ -100,23 +100,6 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
         forceMergeUUID = UUIDs.randomBase64UUID();
     }
 
-    public ForceMergeRequest(StreamInput in) throws IOException {
-        super(in);
-        maxNumSegments = in.readInt();
-        onlyExpungeDeletes = in.readBoolean();
-        flush = in.readBoolean();
-        if (in.getVersion().onOrAfter(Version.V_2_13_0)) {
-            primaryOnly = in.readBoolean();
-        }
-        if (in.getVersion().onOrAfter(FORCE_MERGE_UUID_VERSION)) {
-            forceMergeUUID = in.readString();
-        } else if ((forceMergeUUID = in.readOptionalString()) == null) {
-            throw new IllegalStateException(
-                "As of legacy version 7.7 [" + FORCE_MERGE_UUID_KEY + "] is no longer optional in force merge requests."
-            );
-        }
-    }
-
     /**
      * Will merge the index down to &lt;= maxNumSegments. By default, will cause the merge
      * process to merge down to half the configured number of segments.
@@ -126,29 +109,11 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
     }
 
     /**
-     * Will merge the index down to &lt;= maxNumSegments. By default, will cause the merge
-     * process to merge down to half the configured number of segments.
-     */
-    public ForceMergeRequest maxNumSegments(int maxNumSegments) {
-        this.maxNumSegments = maxNumSegments;
-        return this;
-    }
-
-    /**
      * Should the merge only expunge deletes from the index, without full merging.
      * Defaults to full merging ({@code false}).
      */
     public boolean onlyExpungeDeletes() {
         return onlyExpungeDeletes;
-    }
-
-    /**
-     * Should the merge only expunge deletes from the index, without full merge.
-     * Defaults to full merging ({@code false}).
-     */
-    public ForceMergeRequest onlyExpungeDeletes(boolean onlyExpungeDeletes) {
-        this.onlyExpungeDeletes = onlyExpungeDeletes;
-        return this;
     }
 
     /**
@@ -164,14 +129,6 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
      */
     public boolean flush() {
         return flush;
-    }
-
-    /**
-     * Should flush be performed after the merge. Defaults to {@code true}.
-     */
-    public ForceMergeRequest flush(boolean flush) {
-        this.flush = flush;
-        return this;
     }
 
     /**

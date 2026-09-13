@@ -166,29 +166,6 @@ public final class InternalAggregations extends Aggregations implements Writeabl
     }
 
     /**
-     * Returns the number of bytes required to serialize these aggregations in binary form.
-     */
-    public long getSerializedSize() {
-        try (CountingStreamOutput out = new CountingStreamOutput()) {
-            out.setVersion(Version.CURRENT);
-            writeTo(out);
-            return out.size;
-        } catch (IOException exc) {
-            // should never happen
-            throw new RuntimeException(exc);
-        }
-    }
-
-    public static InternalAggregations merge(InternalAggregations first, InternalAggregations second) {
-        final List<InternalAggregation> fromFirst = first.getInternalAggregations();
-        final List<InternalAggregation> fromSecond = second.getInternalAggregations();
-        final List<InternalAggregation> mergedAggregation = new ArrayList<>(fromFirst.size() + fromSecond.size());
-        mergedAggregation.addAll(fromFirst);
-        mergedAggregation.addAll(fromSecond);
-        return new InternalAggregations(mergedAggregation);
-    }
-
-    /**
      * A counting stream output
      *
      * @opensearch.internal

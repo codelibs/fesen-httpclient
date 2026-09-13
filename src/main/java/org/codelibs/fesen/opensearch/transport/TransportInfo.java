@@ -67,10 +67,6 @@ public class TransportInfo implements ReportingService.Info {
     private Map<String, BoundTransportAddress> profileAddresses;
     private final boolean cnameInPublishAddress;
 
-    public TransportInfo(BoundTransportAddress address, @Nullable Map<String, BoundTransportAddress> profileAddresses) {
-        this(address, profileAddresses, CNAME_IN_PUBLISH_ADDRESS);
-    }
-
     public TransportInfo(
         BoundTransportAddress address,
         @Nullable Map<String, BoundTransportAddress> profileAddresses,
@@ -163,13 +159,5 @@ public class TransportInfo implements ReportingService.Info {
 
     public BoundTransportAddress getAddress() {
         return address();
-    }
-
-    public Map<String, BoundTransportAddress> getProfileAddresses() {
-        return profileAddresses();
-    }
-
-    public Map<String, BoundTransportAddress> profileAddresses() {
-        return profileAddresses;
     }
 }

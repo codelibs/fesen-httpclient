@@ -53,22 +53,6 @@ public class IndexFieldCapabilities implements Writeable {
     private final boolean isAggregatable;
     private final Map<String, String> meta;
 
-    /**
-     * @param name The name of the field.
-     * @param type The type associated with the field.
-     * @param isSearchable Whether this field is indexed for search.
-     * @param isAggregatable Whether this field can be aggregated on.
-     * @param meta Metadata about the field.
-     */
-    IndexFieldCapabilities(String name, String type, boolean isSearchable, boolean isAggregatable, Map<String, String> meta) {
-
-        this.name = name;
-        this.type = type;
-        this.isSearchable = isSearchable;
-        this.isAggregatable = isAggregatable;
-        this.meta = meta;
-    }
-
     IndexFieldCapabilities(StreamInput in) throws IOException {
         this.name = in.readString();
         this.type = in.readString();

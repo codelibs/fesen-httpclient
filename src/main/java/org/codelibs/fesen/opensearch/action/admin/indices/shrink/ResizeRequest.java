@@ -92,17 +92,6 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
     private ByteSizeValue maxShardSize;
     private boolean shouldStoreResult;
 
-    public ResizeRequest(StreamInput in) throws IOException {
-        super(in);
-        targetIndexRequest = new CreateIndexRequest(in);
-        sourceIndex = in.readString();
-        type = in.readEnum(ResizeType.class);
-        copySettings = in.readOptionalBoolean();
-        if (in.getVersion().onOrAfter(Version.V_2_5_0)) {
-            maxShardSize = in.readOptionalWriteable(ByteSizeValue::new);
-        }
-    }
-
     ResizeRequest() {}
 
     public ResizeRequest(String targetIndex, String sourceIndex) {
@@ -229,13 +218,6 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
      */
     public ResizeType getResizeType() {
         return type;
-    }
-
-    public void setCopySettings(final Boolean copySettings) {
-        if (copySettings != null && copySettings == false) {
-            throw new IllegalArgumentException("[copySettings] can not be explicitly set to [false]");
-        }
-        this.copySettings = copySettings;
     }
 
     public Boolean getCopySettings() {

@@ -68,17 +68,6 @@ public class PutPipelineRequest extends AcknowledgedRequest<PutPipelineRequest> 
         this.mediaType = Objects.requireNonNull(mediaType);
     }
 
-    public PutPipelineRequest(StreamInput in) throws IOException {
-        super(in);
-        id = in.readString();
-        source = in.readBytesReference();
-        if (in.getVersion().onOrAfter(Version.V_2_10_0)) {
-            mediaType = in.readMediaType();
-        } else {
-            mediaType = in.readEnum(XContentType.class);
-        }
-    }
-
     PutPipelineRequest() {}
 
     @Override

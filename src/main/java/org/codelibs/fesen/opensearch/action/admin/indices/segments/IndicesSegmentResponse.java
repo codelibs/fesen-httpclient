@@ -69,17 +69,6 @@ public class IndicesSegmentResponse extends BroadcastResponse {
         shards = in.readArray(ShardSegments::new, ShardSegments[]::new);
     }
 
-    IndicesSegmentResponse(
-        ShardSegments[] shards,
-        int totalShards,
-        int successfulShards,
-        int failedShards,
-        List<DefaultShardOperationFailedException> shardFailures
-    ) {
-        super(totalShards, successfulShards, failedShards, shardFailures);
-        this.shards = shards;
-    }
-
     public Map<String, IndexSegments> getIndices() {
         if (indicesSegments != null) {
             return indicesSegments;

@@ -63,22 +63,4 @@ public class QueryValidationException extends ValidationException {
         validationException.addValidationError("[" + queryId + "] " + validationError);
         return validationException;
     }
-
-    /**
-     * Helper method than can be used to add error messages to an existing {@link QueryValidationException}.
-     * When passing {@code null} as the initial exception, a new exception is created.
-     * @param validationErrors the error messages to add to an initial exception
-     * @param validationException an initial exception. Can be {@code null}, in which case a new exception is created.
-     * @return a {@link QueryValidationException} with added validation error message
-     */
-    public static QueryValidationException addValidationErrors(
-        List<String> validationErrors,
-        QueryValidationException validationException
-    ) {
-        if (validationException == null) {
-            validationException = new QueryValidationException();
-        }
-        validationException.addValidationErrors(validationErrors);
-        return validationException;
-    }
 }

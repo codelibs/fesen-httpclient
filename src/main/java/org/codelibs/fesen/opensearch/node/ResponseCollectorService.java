@@ -71,31 +71,6 @@ public final class ResponseCollectorService {
         nodeIdToStats.remove(nodeId);
     }
 
-    public void addNodeStatistics(String nodeId, int queueSize, long responseTimeNanos, long avgServiceTimeNanos) {
-        nodeIdToStats.compute(nodeId, (id, ns) -> {
-            if (ns == null) {
-                ExponentiallyWeightedMovingAverage queueEWMA = new ExponentiallyWeightedMovingAverage(ALPHA, queueSize);
-                ExponentiallyWeightedMovingAverage responseEWMA = new ExponentiallyWeightedMovingAverage(ALPHA, responseTimeNanos);
-                return new NodeStatistics(nodeId, queueEWMA, responseEWMA, avgServiceTimeNanos);
-            } else {
-                ns.queueSize.addValue((double) queueSize);
-                ns.responseTime.addValue((double) responseTimeNanos);
-                ns.serviceTime = avgServiceTimeNanos;
-                return ns;
-            }
-        });
-    }
-
-    /**
-     * Optionally return a {@code NodeStatistics} for the given nodeid, if
-     * response information exists for the given node. Returns an empty
-     * {@code Optional} if the node was not found.
-     */
-    public Optional<ComputedNodeStats> getNodeStatistics(final String nodeId) {
-        final int clientNum = nodeIdToStats.size();
-        return Optional.ofNullable(nodeIdToStats.get(nodeId)).map(ns -> new ComputedNodeStats(clientNum, ns));
-    }
-
     /**
      * Struct-like class encapsulating a point-in-time snapshot of a particular
      * node's statistics. This includes the EWMA of queue size, response time,

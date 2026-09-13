@@ -85,13 +85,6 @@ public class RestoreSnapshotResponse extends ActionResponse implements ToXConten
         out.writeOptionalWriteable(restoreInfo);
     }
 
-    public RestStatus status() {
-        if (restoreInfo == null) {
-            return RestStatus.ACCEPTED;
-        }
-        return restoreInfo.status();
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject();

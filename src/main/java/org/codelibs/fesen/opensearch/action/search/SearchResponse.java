@@ -136,19 +136,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         int successfulShards,
         int skippedShards,
         long tookInMillis,
-        ShardSearchFailure[] shardFailures,
-        Clusters clusters
-    ) {
-        this(internalResponse, scrollId, totalShards, successfulShards, skippedShards, tookInMillis, null, shardFailures, clusters, null);
-    }
-
-    public SearchResponse(
-        SearchResponseSections internalResponse,
-        String scrollId,
-        int totalShards,
-        int successfulShards,
-        int skippedShards,
-        long tookInMillis,
         PhaseTook phaseTook,
         ShardSearchFailure[] shardFailures,
         Clusters clusters,
@@ -190,10 +177,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     public Aggregations getAggregations() {
         return internalResponse.aggregations();
-    }
-
-    public Suggest getSuggest() {
-        return internalResponse.suggest();
     }
 
     /**
@@ -282,17 +265,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
      */
     public String pointInTimeId() {
         return pointInTimeId;
-    }
-
-    /**
-     * If profiling was enabled, this returns an object containing the profile results from
-     * each shard.  If profiling was not enabled, this will return null
-     *
-     * @return The profile results or an empty map
-     */
-    @Nullable
-    public Map<String, ProfileShardResult> getProfileResults() {
-        return internalResponse.profile();
     }
 
     /**

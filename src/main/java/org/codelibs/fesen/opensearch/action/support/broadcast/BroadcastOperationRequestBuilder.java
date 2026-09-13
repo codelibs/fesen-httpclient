@@ -58,10 +58,4 @@ public abstract class BroadcastOperationRequestBuilder<
         request.indices(indices);
         return (RequestBuilder) this;
     }
-
-    @SuppressWarnings("unchecked")
-    public final RequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
-        return (RequestBuilder) this;
-    }
 }

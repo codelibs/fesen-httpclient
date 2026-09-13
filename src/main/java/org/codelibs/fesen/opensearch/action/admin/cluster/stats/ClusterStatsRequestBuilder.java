@@ -55,24 +55,4 @@ public class ClusterStatsRequestBuilder extends NodesOperationRequestBuilder<
     public ClusterStatsRequestBuilder(OpenSearchClient client, ClusterStatsAction action) {
         super(client, action, new ClusterStatsRequest());
     }
-
-    public final ClusterStatsRequestBuilder useAggregatedNodeLevelResponses(boolean useAggregatedNodeLevelResponses) {
-        request.useAggregatedNodeLevelResponses(useAggregatedNodeLevelResponses);
-        return this;
-    }
-
-    public final ClusterStatsRequestBuilder computeAllMetrics(boolean applyMetricFiltering) {
-        request.computeAllMetrics(applyMetricFiltering);
-        return this;
-    }
-
-    public final ClusterStatsRequestBuilder requestMetrics(Set<Metric> requestMetrics) {
-        requestMetrics.forEach(request::addMetric);
-        return this;
-    }
-
-    public final ClusterStatsRequestBuilder indexMetrics(Set<IndexMetric> indexMetrics) {
-        indexMetrics.forEach(request::addIndexMetric);
-        return this;
-    }
 }

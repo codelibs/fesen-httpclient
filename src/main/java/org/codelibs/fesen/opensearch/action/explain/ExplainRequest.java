@@ -80,21 +80,6 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
         this.id = id;
     }
 
-    ExplainRequest(StreamInput in) throws IOException {
-        super(in);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            in.readString();
-        }
-        id = in.readString();
-        routing = in.readOptionalString();
-        preference = in.readOptionalString();
-        query = in.readNamedWriteable(QueryBuilder.class);
-        filteringAlias = new AliasFilter(in);
-        storedFields = in.readOptionalStringArray();
-        fetchSourceContext = in.readOptionalWriteable(FetchSourceContext::new);
-        nowInMillis = in.readVLong();
-    }
-
     public String id() {
         return id;
     }
@@ -108,26 +93,8 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
         return routing;
     }
 
-    public ExplainRequest routing(String routing) {
-        this.routing = routing;
-        return this;
-    }
-
-    /**
-     * Simple sets the routing. Since the parent is only used to get to the right shard.
-     */
-    public ExplainRequest parent(String parent) {
-        this.routing = parent;
-        return this;
-    }
-
     public String preference() {
         return preference;
-    }
-
-    public ExplainRequest preference(String preference) {
-        this.preference = preference;
-        return this;
     }
 
     public QueryBuilder query() {
@@ -153,11 +120,6 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
 
     public String[] storedFields() {
         return storedFields;
-    }
-
-    public ExplainRequest storedFields(String[] fields) {
-        this.storedFields = fields;
-        return this;
     }
 
     public AliasFilter filteringAlias() {

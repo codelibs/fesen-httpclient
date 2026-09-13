@@ -283,10 +283,6 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         return new Version(id ^ MASK, luceneVersion);
     }
 
-    public static int computeID(int major, int minor, int revision, int build) {
-        return (major * MAJOR_SHIFT + minor * MINOR_SHIFT + revision * REVISION_SHIFT + build) ^ MASK;
-    }
-
     /**
      * Returns the minimum version between the 2.
      */
@@ -401,18 +397,6 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         return version.id >= id;
     }
 
-    public int compareMajor(Version other) {
-        // comparing Legacy 7x for bwc
-        // todo: remove the following when removing legacy support in 3.0.0
-        if (major == 7 || other.major == 7 || major == 6 || other.major == 6) {
-            // opensearch v1.x and v2.x need major translation to compare w/ legacy versions
-            int m = major == 1 ? 7 : major == 2 ? 8 : major;
-            int om = other.major == 1 ? 7 : other.major == 2 ? 8 : other.major;
-            return Integer.compare(m, om);
-        }
-        return Integer.compare(major, other.major);
-    }
-
     @Override
     public int compareTo(Version other) {
         return Integer.compare(this.id, other.id);
@@ -501,45 +485,6 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         final int bwcMajor = major - 1;
         final int bwcMinor = 0;
         return Version.min(this, fromId((bwcMajor * MAJOR_SHIFT + bwcMinor * MINOR_SHIFT + 99) ^ MASK));
-    }
-
-    /**
-     * Returns <code>true</code> iff both version are compatible. Otherwise <code>false</code>
-     */
-    public boolean isCompatible(Version version) {
-        boolean compatible = onOrAfter(version.minimumCompatibilityVersion()) && version.onOrAfter(minimumCompatibilityVersion());
-
-        // OpenSearch version 1 is the functional equivalent of predecessor version 7
-        // OpenSearch version 2 is the functional equivalent of predecessor version 8
-        // todo refactor this logic after removing deprecated features
-        int a = major;
-        int b = version.major;
-
-        if (a == 7 || b == 7 || a == 6 || b == 6) {
-            if (major <= 2) {
-                a += 6; // for legacy compatibility up to version 2.x (to compare minCompat)
-            }
-            if (version.major <= 2) {
-                b += 6; // for legacy compatibility up to version 2.x (to compare minCompat)
-            }
-        }
-
-        assert compatible == false || Math.max(a, b) - Math.min(a, b) <= 1;
-        return compatible;
-    }
-
-    @SuppressForbidden(reason = "System.out.*")
-    public static void main(String[] args) {
-        final String versionOutput = String.format(
-            Locale.ROOT,
-            "Version: %s, Build: %s/%s/%s/%s, JVM: %s",
-            Build.CURRENT.getQualifiedVersion(),
-            Build.CURRENT.type().displayName(),
-            Build.CURRENT.hash(),
-            Build.CURRENT.date(),
-            System.getProperty("java.version")  // TODO switch back to JvmInfo.jvmInfo().version() after refactoring to core lib
-        );
-        System.out.println(versionOutput);
     }
 
     @Override

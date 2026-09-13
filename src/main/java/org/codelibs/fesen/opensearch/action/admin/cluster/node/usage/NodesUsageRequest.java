@@ -50,12 +50,6 @@ public class NodesUsageRequest extends BaseNodesRequest<NodesUsageRequest> {
     private boolean restActions;
     private boolean aggregations;
 
-    public NodesUsageRequest(StreamInput in) throws IOException {
-        super(in);
-        this.restActions = in.readBoolean();
-        this.aggregations = in.readBoolean();
-    }
-
     /**
      * Get usage from nodes based on the nodes ids specified. If none are
      * passed, usage for all nodes will be returned.

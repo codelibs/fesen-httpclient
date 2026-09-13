@@ -74,14 +74,6 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
     private Settings settings = EMPTY_SETTINGS;
     private boolean preserveExisting = false;
 
-    public UpdateSettingsRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        settings = readSettingsFromStream(in);
-        preserveExisting = in.readBoolean();
-    }
-
     public UpdateSettingsRequest() {}
 
     /**
@@ -89,14 +81,6 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
      */
     public UpdateSettingsRequest(String... indices) {
         this.indices = indices;
-    }
-
-    /**
-     * Constructs a new request to update settings for one or more indices
-     */
-    public UpdateSettingsRequest(Settings settings, String... indices) {
-        this.indices = indices;
-        this.settings = settings;
     }
 
     @Override
@@ -131,22 +115,9 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
         return indicesOptions;
     }
 
-    public UpdateSettingsRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public boolean includeDataStreams() {
         return true;
-    }
-
-    /**
-     * Sets the settings to be updated
-     */
-    public UpdateSettingsRequest settings(Settings settings) {
-        this.settings = settings;
-        return this;
     }
 
     /**
@@ -158,28 +129,11 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
     }
 
     /**
-     * Sets the settings to be updated (either json or yaml format)
-     */
-    public UpdateSettingsRequest settings(String source, MediaType mediaType) {
-        this.settings = Settings.builder().loadFromSource(source, mediaType).build();
-        return this;
-    }
-
-    /**
      * Returns <code>true</code> iff the settings update should only add but not update settings. If the setting already exists
      * it should not be overwritten by this update. The default is <code>false</code>
      */
     public boolean isPreserveExisting() {
         return preserveExisting;
-    }
-
-    /**
-     * Iff set to <code>true</code> this settings update will only add settings not already set on an index. Existing settings remain
-     * unchanged.
-     */
-    public UpdateSettingsRequest setPreserveExisting(boolean preserveExisting) {
-        this.preserveExisting = preserveExisting;
-        return this;
     }
 
     @Override

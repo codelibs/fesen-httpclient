@@ -83,10 +83,6 @@ public class DataStreamMetadata implements Metadata.Custom {
         this.dataStreams = dataStreams;
     }
 
-    public DataStreamMetadata(StreamInput in) throws IOException {
-        this.dataStreams = in.readMap(StreamInput::readString, DataStream::new);
-    }
-
     public Map<String, DataStream> dataStreams() {
         return this.dataStreams;
     }

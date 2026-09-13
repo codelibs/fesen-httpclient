@@ -94,17 +94,6 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
         this.queryBuilder = builder;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public QueryRescorerBuilder(StreamInput in) throws IOException {
-        super(in);
-        queryBuilder = in.readNamedWriteable(QueryBuilder.class);
-        scoreMode = QueryRescoreMode.readFromStream(in);
-        rescoreQueryWeight = in.readFloat();
-        queryWeight = in.readFloat();
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         out.writeNamedWriteable(queryBuilder);
@@ -180,11 +169,6 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
         builder.endObject();
     }
 
-    public static QueryRescorerBuilder fromXContent(XContentParser parser) throws IOException {
-        InnerBuilder innerBuilder = QUERY_RESCORE_PARSER.parse(parser, new InnerBuilder(), null);
-        return innerBuilder.build();
-    }
-
     @Override
     public final int hashCode() {
         int result = super.hashCode();
@@ -221,14 +205,6 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
 
         void setQueryBuilder(QueryBuilder builder) {
             this.queryBuilder = builder;
-        }
-
-        QueryRescorerBuilder build() {
-            QueryRescorerBuilder queryRescoreBuilder = new QueryRescorerBuilder(queryBuilder);
-            queryRescoreBuilder.setQueryWeight(queryWeight);
-            queryRescoreBuilder.setRescoreQueryWeight(rescoreQueryWeight);
-            queryRescoreBuilder.setScoreMode(scoreMode);
-            return queryRescoreBuilder;
         }
 
         void setQueryWeight(float queryWeight) {

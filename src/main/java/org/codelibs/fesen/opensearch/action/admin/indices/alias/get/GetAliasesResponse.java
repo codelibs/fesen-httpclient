@@ -54,10 +54,6 @@ public class GetAliasesResponse extends ActionResponse {
 
     private final Map<String, List<AliasMetadata>> aliases;
 
-    public GetAliasesResponse(final Map<String, List<AliasMetadata>> aliases) {
-        this.aliases = Collections.unmodifiableMap(aliases);
-    }
-
     public GetAliasesResponse(StreamInput in) throws IOException {
         super(in);
         aliases = in.readMap(StreamInput::readString, i -> i.readList(AliasMetadata::new));

@@ -73,43 +73,10 @@ public class PutIndexTemplateRequestBuilder extends ClusterManagerNodeOperationR
     }
 
     /**
-     * Set to {@code true} to force only creation, not an update of an index template. If it already
-     * exists, it will fail with an {@link IllegalArgumentException}.
-     */
-    public PutIndexTemplateRequestBuilder setCreate(boolean create) {
-        request.create(create);
-        return this;
-    }
-
-    /**
-     * The settings to created the index template with.
-     */
-    public PutIndexTemplateRequestBuilder setSettings(Settings settings) {
-        request.settings(settings);
-        return this;
-    }
-
-    /**
      * The settings to created the index template with.
      */
     public PutIndexTemplateRequestBuilder setSettings(Settings.Builder settings) {
         request.settings(settings);
-        return this;
-    }
-
-    /**
-     * The settings to crete the index template with (either json or yaml format)
-     */
-    public PutIndexTemplateRequestBuilder setSettings(String source, MediaType mediaType) {
-        request.settings(source, mediaType);
-        return this;
-    }
-
-    /**
-     * The cause for this index template creation.
-     */
-    public PutIndexTemplateRequestBuilder cause(String cause) {
-        request.cause(cause);
         return this;
     }
 }

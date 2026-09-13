@@ -66,11 +66,6 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
         return this;
     }
 
-    public GetSettingsRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     /**
      * When include_defaults is set, return default values which are normally suppressed.
      * This flag is specific to the rest client.
@@ -81,15 +76,6 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
     }
 
     public GetSettingsRequest() {}
-
-    public GetSettingsRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        names = in.readStringArray();
-        humanReadable = in.readBoolean();
-        includeDefaults = in.readBoolean();
-    }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
@@ -118,11 +104,6 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
 
     public String[] names() {
         return names;
-    }
-
-    public GetSettingsRequest names(String... names) {
-        this.names = names;
-        return this;
     }
 
     public boolean humanReadable() {

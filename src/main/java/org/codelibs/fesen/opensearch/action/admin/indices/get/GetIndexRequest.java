@@ -100,13 +100,6 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
 
     }
 
-    public GetIndexRequest(StreamInput in) throws IOException {
-        super(in);
-        features = in.readArray(i -> Feature.fromId(i.readByte()), Feature[]::new);
-        humanReadable = in.readBoolean();
-        includeDefaults = in.readBoolean();
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

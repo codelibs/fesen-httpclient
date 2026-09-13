@@ -72,18 +72,6 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
 
     SimulatePipelineRequest() {}
 
-    SimulatePipelineRequest(StreamInput in) throws IOException {
-        super(in);
-        id = in.readOptionalString();
-        verbose = in.readBoolean();
-        source = in.readBytesReference();
-        if (in.getVersion().onOrAfter(Version.V_2_10_0)) {
-            mediaType = in.readMediaType();
-        } else {
-            mediaType = in.readEnum(XContentType.class);
-        }
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;
@@ -93,16 +81,8 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public boolean isVerbose() {
         return verbose;
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
     }
 
     public BytesReference getSource() {

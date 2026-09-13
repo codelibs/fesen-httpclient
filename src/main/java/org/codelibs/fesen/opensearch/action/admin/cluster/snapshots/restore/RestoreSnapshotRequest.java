@@ -228,34 +228,12 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sets the name of the snapshot.
-     *
-     * @param snapshot snapshot name
-     * @return this request
-     */
-    public RestoreSnapshotRequest snapshot(String snapshot) {
-        this.snapshot = snapshot;
-        return this;
-    }
-
-    /**
      * Returns the name of the snapshot.
      *
      * @return snapshot name
      */
     public String snapshot() {
         return this.snapshot;
-    }
-
-    /**
-     * Sets repository name
-     *
-     * @param repository repository name
-     * @return this request
-     */
-    public RestoreSnapshotRequest repository(String repository) {
-        this.repository = repository;
-        return this;
     }
 
     /**
@@ -357,19 +335,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * If set to true the restore procedure will restore global cluster state.
-     * <p>
-     * The global cluster state includes persistent settings and index template definitions.
-     *
-     * @param includeGlobalState true if global state should be restored from the snapshot
-     * @return this request
-     */
-    public RestoreSnapshotRequest includeGlobalState(boolean includeGlobalState) {
-        this.includeGlobalState = includeGlobalState;
-        return this;
-    }
-
-    /**
      * Returns true if global state should be restored from this snapshot
      *
      * @return true if global state should be restored
@@ -379,47 +344,12 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * If set to true the restore procedure will restore aliases
-     *
-     * @param includeAliases true if aliases should be restored from the snapshot
-     * @return this request
-     */
-    public RestoreSnapshotRequest includeAliases(boolean includeAliases) {
-        this.includeAliases = includeAliases;
-        return this;
-    }
-
-    /**
      * Returns true if aliases should be restored from this snapshot
      *
      * @return true if aliases should be restored
      */
     public boolean includeAliases() {
         return includeAliases;
-    }
-
-    /**
-     * Sets settings that should be added/changed in all restored indices
-     */
-    public RestoreSnapshotRequest indexSettings(Settings settings) {
-        this.indexSettings = settings;
-        return this;
-    }
-
-    /**
-     * Sets settings that should be added/changed in all restored indices
-     */
-    public RestoreSnapshotRequest indexSettings(Settings.Builder settings) {
-        this.indexSettings = settings.build();
-        return this;
-    }
-
-    /**
-     * Sets settings that should be added/changed in all restored indices
-     */
-    public RestoreSnapshotRequest indexSettings(String source, XContentType xContentType) {
-        this.indexSettings = Settings.builder().loadFromSource(source, xContentType).build();
-        return this;
     }
 
     /**

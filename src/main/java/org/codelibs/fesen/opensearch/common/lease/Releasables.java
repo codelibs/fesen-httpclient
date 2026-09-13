@@ -88,20 +88,6 @@ public enum Releasables {
         closeWhileHandlingException(Arrays.asList(releasables));
     }
 
-    /** Release the provided {@link Releasable}s, ignoring exceptions if <code>success</code> is {@code false}. */
-    public static void close(boolean success, Iterable<Releasable> releasables) {
-        if (success) {
-            close(releasables);
-        } else {
-            closeWhileHandlingException(releasables);
-        }
-    }
-
-    /** Release the provided {@link Releasable}s, ignoring exceptions if <code>success</code> is {@code false}. */
-    public static void close(boolean success, Releasable... releasables) {
-        close(success, Arrays.asList(releasables));
-    }
-
     /** Wrap several releasables into a single one. This is typically useful for use with try-with-resources: for example let's assume
      *  that you store in a list several resources that you would like to see released after execution of the try block:
      *

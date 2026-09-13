@@ -251,69 +251,12 @@ public class RemoteStoreNodeAttribute {
         return repoNamesWithPrefix;
     }
 
-    public static boolean isRemoteStoreAttributePresent(Settings settings) {
-        for (String prefix : REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX) {
-            if (settings.getByPrefix(Node.NODE_ATTRIBUTES.getKey() + prefix).isEmpty() == false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isRemoteClusterStateConfigured(Settings settings) {
-        for (String prefix : REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
-            if (settings.getByPrefix(Node.NODE_ATTRIBUTES.getKey() + prefix).isEmpty() == false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static String getRemoteStoreSegmentRepo(Settings settings) {
-        for (String prefix : REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
-            if (settings.get(Node.NODE_ATTRIBUTES.getKey() + prefix) != null) {
-                return settings.get(Node.NODE_ATTRIBUTES.getKey() + prefix);
-            }
-        }
-        return null;
-    }
-
-    public static String getRemoteStoreTranslogRepo(Settings settings) {
-        for (String prefix : REMOTE_TRANSLOG_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
-            if (settings.get(Node.NODE_ATTRIBUTES.getKey() + prefix) != null) {
-                return settings.get(Node.NODE_ATTRIBUTES.getKey() + prefix);
-            }
-        }
-        return null;
-    }
-
-    public static boolean isRemoteStoreClusterStateEnabled(Settings settings) {
-        return REMOTE_CLUSTER_STATE_ENABLED_SETTING.get(settings) && isRemoteClusterStateConfigured(settings);
-    }
-
-    private static boolean isRemoteRoutingTableAttributePresent(Settings settings) {
-        for (String prefix : REMOTE_ROUTING_TABLE_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
-            if (settings.getByPrefix(Node.NODE_ATTRIBUTES.getKey() + prefix).isEmpty() == false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isRemoteRoutingTableConfigured(Settings settings) {
-        return isRemoteRoutingTableAttributePresent(settings);
-    }
-
     public RepositoriesMetadata getRepositoriesMetadata() {
         return this.repositoriesMetadata;
     }
 
     public static boolean isClusterStateRepoConfigured(Map<String, String> attributes) {
         return containsKey(attributes, REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    public static boolean isRoutingTableRepoConfigured(Map<String, String> attributes) {
-        return containsKey(attributes, REMOTE_ROUTING_TABLE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
     }
 
     public static boolean isSegmentRepoConfigured(Map<String, String> attributes) {

@@ -758,23 +758,6 @@ public abstract class StreamInput extends InputStream {
         }
     }
 
-    /**
-     * Read an {@link Instant} from the stream with nanosecond resolution
-     */
-    public final Instant readInstant() throws IOException {
-        return Instant.ofEpochSecond(readLong(), readInt());
-    }
-
-    /**
-     * Read an optional {@link Instant} from the stream. Returns <code>null</code> when
-     * no instant is present.
-     */
-    @Nullable
-    public final Instant readOptionalInstant() throws IOException {
-        final boolean present = readBoolean();
-        return present ? readInstant() : null;
-    }
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private List readArrayList(int depth) throws IOException {
         int size = readArraySize();
@@ -1265,25 +1248,6 @@ public abstract class StreamInput extends InputStream {
             res.add(readEnum(enumClass, values));
         }
         return res;
-    }
-
-    /**
-     * Reads an optional enum set with type E that was serialized based on the value of each enum's ordinal
-     * The set is expected to have been written using {@link StreamOutput#writeOptionalEnumSet(EnumSet)}
-     *
-     * @return the enum set of strings
-     * @throws IOException if an I/O exception occurs reading the set
-     */
-    public <E extends Enum<E>> EnumSet<E> readOptionalEnumSet(Class<E> enumClass) throws IOException {
-        if (readBoolean()) {
-            return readEnumSet(enumClass);
-        } else {
-            return EnumSet.noneOf(enumClass);
-        }
-    }
-
-    public static StreamInput wrap(byte[] bytes) {
-        return wrap(bytes, 0, bytes.length);
     }
 
     public static StreamInput wrap(byte[] bytes, int offset, int length) {

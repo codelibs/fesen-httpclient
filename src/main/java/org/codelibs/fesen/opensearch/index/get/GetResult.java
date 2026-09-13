@@ -90,7 +90,6 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
     private final Map<String, DocumentField> metaFields;
     private Map<String, Object> sourceAsMap;
     private BytesReference source;
-    private byte[] sourceAsBytes;
 
     public GetResult(StreamInput in) throws IOException {
         index = in.readString();
@@ -165,13 +164,6 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
     }
 
     /**
-     * The version of the doc.
-     */
-    public long getVersion() {
-        return version;
-    }
-
-    /**
      * The sequence number assigned to the last operation that has changed this document, if found.
      */
     public long getSeqNo() {
@@ -183,20 +175,6 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
      */
     public long getPrimaryTerm() {
         return primaryTerm;
-    }
-
-    /**
-     * The source of the document if exists.
-     */
-    public byte[] source() {
-        if (source == null) {
-            return null;
-        }
-        if (sourceAsBytes != null) {
-            return sourceAsBytes;
-        }
-        this.sourceAsBytes = BytesReference.toBytes(sourceRef());
-        return this.sourceAsBytes;
     }
 
     /**
@@ -227,21 +205,6 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
      */
     public boolean isSourceEmpty() {
         return source == null;
-    }
-
-    /**
-     * The source of the document (as a string).
-     */
-    public String sourceAsString() {
-        if (source == null) {
-            return null;
-        }
-        BytesReference source = sourceRef();
-        try {
-            return XContentHelper.convertToJson(source, false);
-        } catch (IOException e) {
-            throw new OpenSearchParseException("failed to convert source to a json string");
-        }
     }
 
     /**

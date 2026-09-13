@@ -232,30 +232,12 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
     }
 
     /**
-     * Returns a {@link List} of active shards
-     *
-     * @return a {@link List} of shards
-     */
-    public List<ShardRouting> activeShards() {
-        return this.activeShards;
-    }
-
-    /**
      * Returns a {@link List} of all initializing shards, including target shards of relocations
      *
      * @return a {@link List} of shards
      */
     public List<ShardRouting> getAllInitializingShards() {
         return this.allInitializingShards;
-    }
-
-    /**
-     * Returns a {@link List} of active shards
-     *
-     * @return a {@link List} of shards
-     */
-    public List<ShardRouting> getActiveShards() {
-        return activeShards();
     }
 
     public Map<WeightedRoutingKey, WeightedShardRoutings> getActiveShardsByWeight() {
@@ -268,14 +250,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
 
     public ShardIterator shardsIt(int seed) {
         return new PlainShardIterator(shardId, shuffler.shuffle(shards, seed));
-    }
-
-    private static Set<String> getAllNodeIds(final List<ShardRouting> shards) {
-        final Set<String> nodeIds = new HashSet<>();
-        for (ShardRouting shard : shards) {
-            nodeIds.add(shard.currentNodeId());
-        }
-        return nodeIds;
     }
 
     @Override
@@ -436,14 +410,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         }
     }
 
-    public static IndexShardRoutingTable readFrom(StreamInput in) throws IOException {
-        return IndexShardRoutingTable.Builder.readFrom(in);
-    }
-
-    public static Diff<IndexShardRoutingTable> readDiffFrom(StreamInput in) throws IOException {
-        return readDiffFrom(IndexShardRoutingTable::readFrom, in);
-    }
-
     /**
      * Builder of an index shard routing table.
      *
@@ -485,11 +451,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
                 }
             }
             return true;
-        }
-
-        public static IndexShardRoutingTable readFrom(StreamInput in) throws IOException {
-            Index index = new Index(in);
-            return readFromThin(in, index);
         }
 
         public static IndexShardRoutingTable readFromThin(StreamInput in, Index index) throws IOException {

@@ -58,13 +58,6 @@ public class CloseIndexRequest extends AcknowledgedRequest<CloseIndexRequest> im
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
     private ActiveShardCount waitForActiveShards = ActiveShardCount.NONE;
 
-    public CloseIndexRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        waitForActiveShards = ActiveShardCount.readFrom(in);
-    }
-
     public CloseIndexRequest() {}
 
     /**
@@ -112,18 +105,6 @@ public class CloseIndexRequest extends AcknowledgedRequest<CloseIndexRequest> im
     @Override
     public IndicesOptions indicesOptions() {
         return indicesOptions;
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and how to deal wild wildcard expressions.
-     * For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices to ignore and wildcard indices expressions
-     * @return the request itself
-     */
-    public CloseIndexRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
     }
 
     public ActiveShardCount waitForActiveShards() {

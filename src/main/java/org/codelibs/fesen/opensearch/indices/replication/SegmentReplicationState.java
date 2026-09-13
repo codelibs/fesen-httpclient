@@ -68,13 +68,6 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
         public byte id() {
             return id;
         }
-
-        public static Stage fromId(byte id) {
-            if (id < 0 || id >= STAGES.length) {
-                throw new IllegalArgumentException("No mapping for id [" + id + "]");
-            }
-            return STAGES[id];
-        }
     }
 
     private Stage stage;

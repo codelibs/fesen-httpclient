@@ -69,71 +69,12 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
     /**
      * Adds an alias to the index.
      *
-     * @param indices The indices
-     * @param alias   The alias
-     */
-    public IndicesAliasesRequestBuilder addAlias(String[] indices, String alias) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().indices(indices).alias(alias));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
      * @param index  The index
      * @param alias  The alias
      * @param filter The filter
      */
     public IndicesAliasesRequestBuilder addAlias(String index, String alias, String filter) {
         request.addAliasAction(IndicesAliasesRequest.AliasActions.add().index(index).alias(alias).filter(filter));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
-     * @param indices The indices
-     * @param alias   The alias
-     * @param filter  The filter
-     */
-    public IndicesAliasesRequestBuilder addAlias(String indices[], String alias, String filter) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().indices(indices).alias(alias).filter(filter));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
-     * @param indices The indices
-     * @param alias   The alias
-     * @param filter  The filter
-     */
-    public IndicesAliasesRequestBuilder addAlias(String[] indices, String alias, Map<String, Object> filter) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().indices(indices).alias(alias).filter(filter));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
-     * @param index  The indices
-     * @param alias  The alias
-     * @param filter The filter
-     */
-    public IndicesAliasesRequestBuilder addAlias(String index, String alias, Map<String, Object> filter) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().index(index).alias(alias).filter(filter));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
-     * @param index         The index
-     * @param alias         The alias
-     * @param writeIndex    write index flag
-     */
-    public IndicesAliasesRequestBuilder addAlias(String index, String alias, boolean writeIndex) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().index(index).alias(alias).writeIndex(writeIndex));
         return this;
     }
 
@@ -145,17 +86,6 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
      */
     public IndicesAliasesRequestBuilder removeAlias(String index, String alias) {
         request.addAliasAction(IndicesAliasesRequest.AliasActions.remove().index(index).alias(alias));
-        return this;
-    }
-
-    /**
-     * Removes aliases from the index.
-     *
-     * @param indices The indices
-     * @param aliases The aliases
-     */
-    public IndicesAliasesRequestBuilder removeAlias(String[] indices, String... aliases) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.remove().indices(indices).aliases(aliases));
         return this;
     }
 

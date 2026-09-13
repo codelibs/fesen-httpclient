@@ -89,15 +89,6 @@ public final class LinearInterpolation extends SmoothingModel {
         this.unigramLambda = unigramLambda;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public LinearInterpolation(StreamInput in) throws IOException {
-        trigramLambda = in.readDouble();
-        bigramLambda = in.readDouble();
-        unigramLambda = in.readDouble();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeDouble(trigramLambda);

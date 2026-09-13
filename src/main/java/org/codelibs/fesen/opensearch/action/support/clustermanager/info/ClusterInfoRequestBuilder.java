@@ -56,20 +56,8 @@ public abstract class ClusterInfoRequestBuilder<
     }
 
     @SuppressWarnings("unchecked")
-    public Builder setIndices(String... indices) {
-        request.indices(indices);
-        return (Builder) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public Builder addIndices(String... indices) {
         request.indices(ArrayUtils.concat(request.indices(), indices));
-        return (Builder) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Builder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
         return (Builder) this;
     }
 }

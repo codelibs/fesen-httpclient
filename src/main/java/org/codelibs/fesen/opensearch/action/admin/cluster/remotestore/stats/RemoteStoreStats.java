@@ -38,16 +38,6 @@ public class RemoteStoreStats implements Writeable, ToXContentFragment {
     private final RemoteTranslogTransferTracker.Stats remoteTranslogShardStats;
     private final ShardRouting shardRouting;
 
-    RemoteStoreStats(
-        RemoteSegmentTransferTracker.Stats remoteSegmentUploadShardStats,
-        RemoteTranslogTransferTracker.Stats remoteTranslogShardStats,
-        ShardRouting shardRouting
-    ) {
-        this.remoteSegmentShardStats = remoteSegmentUploadShardStats;
-        this.remoteTranslogShardStats = remoteTranslogShardStats;
-        this.shardRouting = shardRouting;
-    }
-
     RemoteStoreStats(StreamInput in) throws IOException {
         remoteSegmentShardStats = in.readOptionalWriteable(RemoteSegmentTransferTracker.Stats::new);
         remoteTranslogShardStats = in.readOptionalWriteable(RemoteTranslogTransferTracker.Stats::new);

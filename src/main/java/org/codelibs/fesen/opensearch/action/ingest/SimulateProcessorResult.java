@@ -159,30 +159,6 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         this.type = type;
     }
 
-    public SimulateProcessorResult(
-        String type,
-        String processorTag,
-        String description,
-        IngestDocument ingestDocument,
-        Tuple<String, Boolean> conditionalWithResult
-    ) {
-        this(type, processorTag, description, ingestDocument, null, conditionalWithResult);
-    }
-
-    public SimulateProcessorResult(
-        String type,
-        String processorTag,
-        String description,
-        Exception failure,
-        Tuple<String, Boolean> conditionalWithResult
-    ) {
-        this(type, processorTag, description, null, failure, conditionalWithResult);
-    }
-
-    public SimulateProcessorResult(String type, String processorTag, String description, Tuple<String, Boolean> conditionalWithResult) {
-        this(type, processorTag, description, null, null, conditionalWithResult);
-    }
-
     /**
      * Read from a stream.
      */

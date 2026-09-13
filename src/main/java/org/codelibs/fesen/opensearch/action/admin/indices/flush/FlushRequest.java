@@ -70,28 +70,12 @@ public class FlushRequest extends BroadcastRequest<FlushRequest> {
         super(indices);
     }
 
-    public FlushRequest(StreamInput in) throws IOException {
-        super(in);
-        force = in.readBoolean();
-        waitIfOngoing = in.readBoolean();
-    }
-
     /**
      * Returns {@code true} iff a flush should block
      * if a another flush operation is already running. Otherwise {@code false}
      */
     public boolean waitIfOngoing() {
         return this.waitIfOngoing;
-    }
-
-    /**
-     * if set to {@code true} the flush will block
-     * if a another flush operation is already running until the flush can be performed.
-     * The default is <code>true</code>
-     */
-    public FlushRequest waitIfOngoing(boolean waitIfOngoing) {
-        this.waitIfOngoing = waitIfOngoing;
-        return this;
     }
 
     /**

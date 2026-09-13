@@ -104,29 +104,6 @@ public final class TermsAggregator {
             );
         }
 
-        public void ensureValidity() {
-
-            // shard_size cannot be smaller than size as we need to at least fetch <size> entries from every shards in order to return
-            // <size>
-            if (shardSize < requiredSize) {
-                setShardSize(requiredSize);
-            }
-
-            // shard_min_doc_count should not be larger than min_doc_count because this can cause buckets to be removed that would match
-            // the min_doc_count criteria
-            if (shardMinDocCount > minDocCount) {
-                setShardMinDocCount(minDocCount);
-            }
-
-            if (requiredSize <= 0 || shardSize <= 0) {
-                throw new OpenSearchException("parameters [required_size] and [shard_size] must be >0 in terms aggregation.");
-            }
-
-            if (minDocCount < 0 || shardMinDocCount < 0) {
-                throw new OpenSearchException("parameter [min_doc_count] and [shardMinDocCount] must be >=0 in terms aggregation.");
-            }
-        }
-
         public long getShardMinDocCount() {
             return shardMinDocCount;
         }

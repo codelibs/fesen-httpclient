@@ -78,26 +78,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         targetThrottleTimeInNanos = UNKNOWN;
     }
 
-    public synchronized void setFileDetailsComplete() {
-        filesDetails.setComplete();
-    }
-
-    public synchronized void addSourceThrottling(long timeInNanos) {
-        if (sourceThrottlingInNanos == UNKNOWN) {
-            sourceThrottlingInNanos = timeInNanos;
-        } else {
-            sourceThrottlingInNanos += timeInNanos;
-        }
-    }
-
-    public synchronized void addTargetThrottling(long timeInNanos) {
-        if (targetThrottleTimeInNanos == UNKNOWN) {
-            targetThrottleTimeInNanos = timeInNanos;
-        } else {
-            targetThrottleTimeInNanos += timeInNanos;
-        }
-    }
-
     public synchronized TimeValue sourceThrottling() {
         return TimeValue.timeValueNanos(sourceThrottlingInNanos);
     }
@@ -111,19 +91,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
      */
     public synchronized int totalFileCount() {
         return filesDetails.size();
-    }
-
-    /**
-     * total number of files to be recovered (potentially not yet done)
-     */
-    public synchronized int totalRecoverFiles() {
-        int total = 0;
-        for (FileMetadata file : filesDetails.values()) {
-            if (file.reused() == false) {
-                total++;
-            }
-        }
-        return total;
     }
 
     /**
@@ -184,19 +151,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
             recovered += file.recovered();
         }
         return recovered;
-    }
-
-    /**
-     * total bytes of files to be recovered (potentially not yet done)
-     */
-    public synchronized long totalRecoverBytes() {
-        long total = 0;
-        for (FileMetadata file : filesDetails.values()) {
-            if (file.reused() == false) {
-                total += file.length();
-            }
-        }
-        return total;
     }
 
     /**
@@ -278,10 +232,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         }
     }
 
-    public synchronized FileMetadata getFileDetails(String dest) {
-        return filesDetails.get(dest);
-    }
-
     /**
      * Details about the files
      *
@@ -323,14 +273,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
             }
 
             return builder;
-        }
-
-        public FileMetadata get(String name) {
-            return fileMetadataMap.get(name);
-        }
-
-        public void setComplete() {
-            complete = true;
         }
 
         public int size() {

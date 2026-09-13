@@ -83,33 +83,7 @@ public class IndexShardStats implements Iterable<ShardStats>, Writeable {
 
     private CommonStats total = null;
 
-    public CommonStats getTotal() {
-        if (total != null) {
-            return total;
-        }
-        CommonStats stats = new CommonStats();
-        for (ShardStats shard : shards) {
-            stats.add(shard.getStats());
-        }
-        total = stats;
-        return stats;
-    }
-
     private CommonStats primary = null;
-
-    public CommonStats getPrimary() {
-        if (primary != null) {
-            return primary;
-        }
-        CommonStats stats = new CommonStats();
-        for (ShardStats shard : shards) {
-            if (shard.getShardRouting().primary()) {
-                stats.add(shard.getStats());
-            }
-        }
-        primary = stats;
-        return stats;
-    }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {

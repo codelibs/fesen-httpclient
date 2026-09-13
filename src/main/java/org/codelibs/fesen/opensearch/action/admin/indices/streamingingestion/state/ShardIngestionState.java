@@ -79,18 +79,6 @@ public class ShardIngestionState implements Writeable, ToXContentFragment {
         @Nullable String errorPolicy,
         boolean isPollerPaused,
         boolean isWriteBlockEnabled,
-        String batchStartPointer
-    ) {
-        this(index, shardId, pollerState, errorPolicy, isPollerPaused, isWriteBlockEnabled, batchStartPointer, true, "");
-    }
-
-    public ShardIngestionState(
-        String index,
-        int shardId,
-        @Nullable String pollerState,
-        @Nullable String errorPolicy,
-        boolean isPollerPaused,
-        boolean isWriteBlockEnabled,
         String batchStartPointer,
         boolean isPrimary,
         String nodeName

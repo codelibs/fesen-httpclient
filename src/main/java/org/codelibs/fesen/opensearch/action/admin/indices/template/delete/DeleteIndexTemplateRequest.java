@@ -65,14 +65,6 @@ public class DeleteIndexTemplateRequest extends ClusterManagerNodeRequest<Delete
         this.name = name;
     }
 
-    /**
-     * Set the index template name to delete.
-     */
-    public DeleteIndexTemplateRequest name(String name) {
-        this.name = name;
-        return this;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;

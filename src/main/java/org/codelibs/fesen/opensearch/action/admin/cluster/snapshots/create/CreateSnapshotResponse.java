@@ -103,21 +103,6 @@ public class CreateSnapshotResponse extends ActionResponse implements ToXContent
         out.writeOptionalWriteable(snapshotInfo);
     }
 
-    /**
-     * Returns HTTP status
-     * <ul>
-     * <li>{@link RestStatus#ACCEPTED} if snapshot is still in progress</li>
-     * <li>{@link RestStatus#OK} if snapshot was successful or partially successful</li>
-     * <li>{@link RestStatus#INTERNAL_SERVER_ERROR} if snapshot failed completely</li>
-     * </ul>
-     */
-    public RestStatus status() {
-        if (snapshotInfo == null) {
-            return RestStatus.ACCEPTED;
-        }
-        return snapshotInfo.status();
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

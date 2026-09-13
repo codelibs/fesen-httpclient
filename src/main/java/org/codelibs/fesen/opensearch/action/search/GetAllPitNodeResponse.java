@@ -34,14 +34,6 @@ public class GetAllPitNodeResponse extends BaseNodeResponse implements ToXConten
      */
     private final List<ListPitInfo> pitInfos;
 
-    public GetAllPitNodeResponse(DiscoveryNode node, List<ListPitInfo> pitInfos) {
-        super(node);
-        if (pitInfos == null) {
-            throw new IllegalArgumentException("Pits info cannot be null");
-        }
-        this.pitInfos = Collections.unmodifiableList(pitInfos);
-    }
-
     public GetAllPitNodeResponse(StreamInput in) throws IOException {
         super(in);
         this.pitInfos = Collections.unmodifiableList(in.readList(ListPitInfo::new));

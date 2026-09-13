@@ -161,24 +161,6 @@ public class Strings {
     }
 
     /**
-     * Trim all occurrences of the supplied leading character from the given String.
-     *
-     * @param str              the String to check
-     * @param leadingCharacter the leading character to be trimmed
-     * @return the trimmed String
-     */
-    public static String trimLeadingCharacter(String str, char leadingCharacter) {
-        if (hasLength(str) == false) {
-            return str;
-        }
-        StringBuilder sb = new StringBuilder(str);
-        while (sb.length() > 0 && sb.charAt(0) == leadingCharacter) {
-            sb.deleteCharAt(0);
-        }
-        return sb.toString();
-    }
-
-    /**
      * Test whether the given string matches the given substring
      * at the given index.
      *
@@ -231,73 +213,6 @@ public class Strings {
      */
     public static String quote(String str) {
         return (str != null ? "'" + str + "'" : null);
-    }
-
-    /**
-     * Capitalize a <code>String</code>, changing the first letter to
-     * upper case as per {@link Character#toUpperCase(char)}.
-     * No other letters are changed.
-     *
-     * @param str the String to capitalize, may be <code>null</code>
-     * @return the capitalized String, <code>null</code> if null
-     */
-    public static String capitalize(String str) {
-        return changeFirstCharacterCase(str, true);
-    }
-
-    private static String changeFirstCharacterCase(String str, boolean capitalize) {
-        if (str == null || str.length() == 0) {
-            return str;
-        }
-        StringBuilder sb = new StringBuilder(str.length());
-        if (capitalize) {
-            sb.append(Character.toUpperCase(str.charAt(0)));
-        } else {
-            sb.append(Character.toLowerCase(str.charAt(0)));
-        }
-        sb.append(str.substring(1));
-        return sb.toString();
-    }
-
-    public static boolean validFileName(String fileName) {
-        for (int i = 0; i < fileName.length(); i++) {
-            char c = fileName.charAt(i);
-            if (INVALID_FILENAME_CHARS.contains(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean validFileNameExcludingAsterisk(String fileName) {
-        for (int i = 0; i < fileName.length(); i++) {
-            char c = fileName.charAt(i);
-            if (c != '*' && INVALID_FILENAME_CHARS.contains(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean validFileNameExcludingSlash(String fileName) {
-        // Reject absolute paths
-        if (fileName.startsWith("/") || fileName.startsWith("\\")) {
-            return false;
-        }
-        // Reject invalid characters (excluding slashes)
-        for (int i = 0; i < fileName.length(); i++) {
-            char c = fileName.charAt(i);
-            if (c != '/' && c != '\\' && INVALID_FILENAME_CHARS.contains(c)) {
-                return false;
-            }
-        }
-        // Reject path traversal: ".." as a path segment
-        for (String segment : fileName.split("[/\\\\]")) {
-            if (segment.equals("..")) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -603,47 +518,6 @@ public class Strings {
         return (array == null || array.length == 0);
     }
 
-    public static byte[] toUTF8Bytes(CharSequence charSequence) {
-        return toUTF8Bytes(charSequence, new BytesRefBuilder());
-    }
-
-    public static byte[] toUTF8Bytes(CharSequence charSequence, BytesRefBuilder spare) {
-        spare.copyChars(charSequence);
-        return Arrays.copyOf(spare.bytes(), spare.length());
-    }
-
-    /**
-     * Return substring(beginIndex, endIndex) that is impervious to string length.
-     */
-    public static String substring(String s, int beginIndex, int endIndex) {
-        if (s == null) {
-            return s;
-        }
-
-        int realEndIndex = s.length() > 0 ? s.length() - 1 : 0;
-
-        if (endIndex > realEndIndex) {
-            return s.substring(beginIndex);
-        } else {
-            return s.substring(beginIndex, endIndex);
-        }
-    }
-
-    /**
-     * If an array only consists of zero or one element, which is "*" or "_all" return an empty array
-     * which is usually used as everything
-     */
-    public static boolean isAllOrWildcard(String[] data) {
-        return CollectionUtils.isEmpty(data) || data.length == 1 && isAllOrWildcard(data[0]);
-    }
-
-    /**
-     * Returns `true` if the string is `_all` or `*`.
-     */
-    public static boolean isAllOrWildcard(String data) {
-        return "_all".equals(data) || "*".equals(data);
-    }
-
     /**
      * Return a {@link String} that is the json representation of the provided {@link ToXContent}.
      * Wraps the output into an anonymous object if needed. The content is not pretty-printed
@@ -715,49 +589,8 @@ public class Strings {
         return builder;
     }
 
-    /**
-     * Truncates string to a length less than length. Backtracks to throw out
-     * high surrogates.
-     */
-    public static String cleanTruncate(String s, int length) {
-        if (s == null) {
-            return s;
-        }
-        /*
-         * Its pretty silly for you to truncate to 0 length but just in case
-         * someone does this shouldn't break.
-         */
-        if (length == 0) {
-            return "";
-        }
-        if (length >= s.length()) {
-            return s;
-        }
-        if (Character.isHighSurrogate(s.charAt(length - 1))) {
-            length--;
-        }
-        return s.substring(0, length);
-    }
-
     public static boolean isNullOrEmpty(@Nullable String s) {
         return s == null || s.isEmpty();
-    }
-
-    public static String padStart(String s, int minimumLength, char c) {
-        if (s == null) {
-            throw new NullPointerException("s");
-        }
-        if (s.length() >= minimumLength) {
-            return s;
-        } else {
-            StringBuilder sb = new StringBuilder(minimumLength);
-            for (int i = s.length(); i < minimumLength; i++) {
-                sb.append(c);
-            }
-
-            sb.append(s);
-            return sb.toString();
-        }
     }
 
     public static String toLowercaseAscii(String in) {

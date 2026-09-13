@@ -256,17 +256,6 @@ public class XContentHelper {
     }
 
     /**
-     * Converts the XContentType to a json string
-     *
-     * @deprecated use {@link #convertToJson(BytesReference, boolean, boolean, MediaType)} instead
-     */
-    @Deprecated
-    public static String convertToJson(BytesReference bytes, boolean reformatJson, boolean prettyPrint, XContentType xContentType)
-        throws IOException {
-        return convertToJson(bytes, reformatJson, prettyPrint, (MediaType) xContentType);
-    }
-
-    /**
      * Converts the given {@link MediaType} to a json string
      */
     public static String convertToJson(BytesReference bytes, boolean reformatJson, boolean prettyPrint, MediaType mediaType)
@@ -329,36 +318,5 @@ public class XContentHelper {
                 builder.rawField(field, stream);
             }
         }
-    }
-
-    /**
-     * Returns the bytes that represent the XContent output of the provided {@link ToXContent} object, using the provided
-     * {@link XContentType}. Wraps the output into a new anonymous object according to the value returned
-     * by the {@link ToXContent#isFragment()} method returns.
-     */
-    @Deprecated
-    public static BytesReference toXContent(ToXContent toXContent, XContentType xContentType, boolean humanReadable) throws IOException {
-        return org.codelibs.fesen.opensearch.core.xcontent.XContentHelper.toXContent(toXContent, xContentType, ToXContent.EMPTY_PARAMS, humanReadable);
-    }
-
-    /**
-     * Returns the contents of an object as an unparsed BytesReference
-     * <p>
-     * This is useful for things like mappings where we're copying bytes around but don't
-     * actually need to parse their contents, and so avoids building large maps of maps
-     * unnecessarily
-     */
-    public static BytesReference childBytes(XContentParser parser) throws IOException {
-        if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
-            if (parser.nextToken() != XContentParser.Token.START_OBJECT) {
-                throw new XContentParseException(
-                    parser.getTokenLocation(),
-                    "Expected [START_OBJECT] but got [" + parser.currentToken() + "]"
-                );
-            }
-        }
-        XContentBuilder builder = XContentBuilder.builder(parser.contentType().xContent());
-        builder.copyCurrentStructure(parser);
-        return BytesReference.bytes(builder);
     }
 }

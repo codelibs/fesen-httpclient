@@ -149,28 +149,6 @@ public final class IOUtils {
     }
 
     /**
-     * Closes all given {@link Closeable}s, suppressing all thrown exceptions. Some of the {@link Closeable}s may be null, they are ignored.
-     *
-     * @param objects objects to close
-     */
-    public static void closeWhileHandlingException(final Closeable... objects) {
-        closeWhileHandlingException(Arrays.asList(objects));
-    }
-
-    /**
-     * Closes all given {@link Closeable}s, suppressing all thrown exceptions.
-     *
-     * @param objects objects to close
-     *
-     * @see #closeWhileHandlingException(Closeable...)
-     */
-    public static void closeWhileHandlingException(final Iterable<? extends Closeable> objects) {
-        for (final Closeable object : objects) {
-            closeWhileHandlingException(object);
-        }
-    }
-
-    /**
      * @see #closeWhileHandlingException(Closeable...)
      */
     public static void closeWhileHandlingException(final Closeable closeable) {
@@ -178,33 +156,6 @@ public final class IOUtils {
         try {
             close(closeable);
         } catch (final IOException | RuntimeException e) {}
-    }
-
-    /**
-     * Deletes all given files, suppressing all thrown {@link IOException}s. Some of the files may be null, if so they are ignored.
-     *
-     * @param files the paths of files to delete
-     */
-    public static void deleteFilesIgnoringExceptions(final Path... files) {
-        deleteFilesIgnoringExceptions(Arrays.asList(files));
-    }
-
-    /**
-     * Deletes all given files, suppressing all thrown {@link IOException}s. Some of the files may be null, if so they are ignored.
-     *
-     * @param files the paths of files to delete
-     */
-    public static void deleteFilesIgnoringExceptions(final Collection<? extends Path> files) {
-        for (final Path name : files) {
-            if (name != null) {
-                // noinspection EmptyCatchBlock
-                try {
-                    Files.delete(name);
-                } catch (final IOException ignored) {
-
-                }
-            }
-        }
     }
 
     // TODO: replace with constants class if needed (cf. org.apache.lucene.util.Constants)

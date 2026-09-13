@@ -104,10 +104,6 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
 
     private final Map<String, Map<String, FieldMappingMetadata>> mappings;
 
-    GetFieldMappingsResponse(Map<String, Map<String, FieldMappingMetadata>> mappings) {
-        this.mappings = mappings;
-    }
-
     GetFieldMappingsResponse(StreamInput in) throws IOException {
         super(in);
         int size = in.readVInt();
@@ -139,20 +135,6 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
     /** returns the retrieved field mapping. The return map keys are index, type, field (as specified in the request). */
     public Map<String, Map<String, FieldMappingMetadata>> mappings() {
         return mappings;
-    }
-
-    /**
-     * Returns the mappings of a specific field.
-     *
-     * @param field field name as specified in the {@link GetFieldMappingsRequest}
-     * @return FieldMappingMetadata for the requested field or null if not found.
-     */
-    public FieldMappingMetadata fieldMappings(String index, String field) {
-        Map<String, FieldMappingMetadata> indexMapping = mappings.get(index);
-        if (indexMapping == null) {
-            return null;
-        }
-        return indexMapping.get(field);
     }
 
     @Override

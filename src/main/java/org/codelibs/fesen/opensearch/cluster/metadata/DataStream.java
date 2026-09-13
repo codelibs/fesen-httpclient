@@ -99,10 +99,6 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         assert indices.get(indices.size() - 1).getName().equals(getDefaultBackingIndexName(name, generation));
     }
 
-    public DataStream(String name, TimestampField timeStampField, List<Index> indices) {
-        this(name, timeStampField, indices, indices.size());
-    }
-
     public String getName() {
         return name;
     }
@@ -117,54 +113,6 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
     public long getGeneration() {
         return generation;
-    }
-
-    /**
-     * Performs a rollover on a {@code DataStream} instance and returns a new instance containing
-     * the updated list of backing indices and incremented generation.
-     *
-     * @param newWriteIndex the new write backing index. Must conform to the naming convention for
-     *                      backing indices on data streams. See {@link #getDefaultBackingIndexName}.
-     * @return new {@code DataStream} instance with the rollover operation applied
-     */
-    public DataStream rollover(Index newWriteIndex) {
-        assert newWriteIndex.getName().equals(getDefaultBackingIndexName(name, generation + 1));
-        List<Index> backingIndices = new ArrayList<>(indices);
-        backingIndices.add(newWriteIndex);
-        return new DataStream(name, timeStampField, backingIndices, generation + 1);
-    }
-
-    /**
-     * Removes the specified backing index and returns a new {@code DataStream} instance with
-     * the remaining backing indices.
-     *
-     * @param index the backing index to remove
-     * @return new {@code DataStream} instance with the remaining backing indices
-     */
-    public DataStream removeBackingIndex(Index index) {
-        List<Index> backingIndices = new ArrayList<>(indices);
-        backingIndices.remove(index);
-        assert backingIndices.size() == indices.size() - 1;
-        return new DataStream(name, timeStampField, backingIndices, generation);
-    }
-
-    /**
-     * Adds the given index to the data stream's backing indices and returns a new {@code DataStream} instance. Backing
-     * indices are ordered oldest-to-newest so the write index remains last: convention-named indices
-     * ({@code .ds-<name>-NNNNNN}) order by their counter, and non-convention names sort first. The generation is derived
-     * as the highest backing-index counter, so adding an index whose counter exceeds the current generation advances
-     * the generation and makes it the new write index; adding a lower-counter or non-convention index leaves the
-     * generation unchanged.
-     *
-     * @param index the backing index to add
-     * @return new {@code DataStream} instance with the index added
-     */
-    public DataStream addBackingIndex(Index index) {
-        List<Index> backingIndices = new ArrayList<>(indices);
-        backingIndices.add(index);
-        backingIndices.sort(Comparator.comparingLong(i -> backingIndexCounterOrMin(name, i.getName())));
-        long newGeneration = Math.max(generation, backingIndexCounterOrMin(name, index.getName()));
-        return new DataStream(name, timeStampField, backingIndices, newGeneration);
     }
 
     /**

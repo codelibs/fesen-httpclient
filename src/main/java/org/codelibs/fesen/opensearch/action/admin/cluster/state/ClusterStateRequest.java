@@ -66,19 +66,6 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
 
     public ClusterStateRequest() {}
 
-    public ClusterStateRequest(StreamInput in) throws IOException {
-        super(in);
-        routingTable = in.readBoolean();
-        nodes = in.readBoolean();
-        metadata = in.readBoolean();
-        blocks = in.readBoolean();
-        customs = in.readBoolean();
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        waitForTimeout = in.readTimeValue();
-        waitForMetadataVersion = in.readOptionalLong();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -98,60 +85,20 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
         return null;
     }
 
-    public ClusterStateRequest all() {
-        routingTable = true;
-        nodes = true;
-        metadata = true;
-        blocks = true;
-        customs = true;
-        indices = Strings.EMPTY_ARRAY;
-        return this;
-    }
-
-    public ClusterStateRequest clear() {
-        routingTable = false;
-        nodes = false;
-        metadata = false;
-        blocks = false;
-        customs = false;
-        indices = Strings.EMPTY_ARRAY;
-        return this;
-    }
-
     public boolean routingTable() {
         return routingTable;
-    }
-
-    public ClusterStateRequest routingTable(boolean routingTable) {
-        this.routingTable = routingTable;
-        return this;
     }
 
     public boolean nodes() {
         return nodes;
     }
 
-    public ClusterStateRequest nodes(boolean nodes) {
-        this.nodes = nodes;
-        return this;
-    }
-
     public boolean metadata() {
         return metadata;
     }
 
-    public ClusterStateRequest metadata(boolean metadata) {
-        this.metadata = metadata;
-        return this;
-    }
-
     public boolean blocks() {
         return blocks;
-    }
-
-    public ClusterStateRequest blocks(boolean blocks) {
-        this.blocks = blocks;
-        return this;
     }
 
     @Override
@@ -170,19 +117,9 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
         return this.indicesOptions;
     }
 
-    public final ClusterStateRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public boolean includeDataStreams() {
         return true;
-    }
-
-    public ClusterStateRequest customs(boolean customs) {
-        this.customs = customs;
-        return this;
     }
 
     public boolean customs() {
@@ -193,23 +130,8 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
         return waitForTimeout;
     }
 
-    public ClusterStateRequest waitForTimeout(TimeValue waitForTimeout) {
-        this.waitForTimeout = waitForTimeout;
-        return this;
-    }
-
     public Long waitForMetadataVersion() {
         return waitForMetadataVersion;
-    }
-
-    public ClusterStateRequest waitForMetadataVersion(long waitForMetadataVersion) {
-        if (waitForMetadataVersion < 1) {
-            throw new IllegalArgumentException(
-                "provided waitForMetadataVersion should be >= 1, but instead is [" + waitForMetadataVersion + "]"
-            );
-        }
-        this.waitForMetadataVersion = waitForMetadataVersion;
-        return this;
     }
 
 }

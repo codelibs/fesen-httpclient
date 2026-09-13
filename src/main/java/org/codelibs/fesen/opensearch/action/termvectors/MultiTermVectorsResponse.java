@@ -65,12 +65,6 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
         private final String id;
         private final Exception cause;
 
-        public Failure(String index, String id, Exception cause) {
-            this.index = index;
-            this.id = id;
-            this.cause = cause;
-        }
-
         public Failure(StreamInput in) throws IOException {
             index = in.readString();
             if (in.getVersion().before(Version.V_2_0_0)) {

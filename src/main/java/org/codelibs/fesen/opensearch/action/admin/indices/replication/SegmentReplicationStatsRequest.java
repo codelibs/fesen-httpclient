@@ -35,12 +35,6 @@ public class SegmentReplicationStatsRequest extends BroadcastRequest<SegmentRepl
         this(Strings.EMPTY_ARRAY);
     }
 
-    public SegmentReplicationStatsRequest(StreamInput in) throws IOException {
-        super(in);
-        detailed = in.readBoolean();
-        activeOnly = in.readBoolean();
-    }
-
     /**
      * Constructs a request for segment replication stats information for all shards for the given indices
      *
@@ -95,16 +89,6 @@ public class SegmentReplicationStatsRequest extends BroadcastRequest<SegmentRepl
      */
     public String[] shards() {
         return shards;
-    }
-
-    /**
-     * Set value of the shards. If shard id's are passed, this request will only respond with
-     * given specific shard's segment replication event information, instead of all shards.
-     *
-     * @param shards    contains list of shard id's.
-     */
-    public void shards(String[] shards) {
-        this.shards = shards;
     }
 
     @Override

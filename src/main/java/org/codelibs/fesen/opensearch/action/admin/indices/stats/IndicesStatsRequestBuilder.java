@@ -57,40 +57,4 @@ public class IndicesStatsRequestBuilder extends BroadcastOperationRequestBuilder
     public IndicesStatsRequestBuilder(OpenSearchClient client, IndicesStatsAction action) {
         super(client, action, new IndicesStatsRequest());
     }
-
-    /**
-     * Sets all flags to return all stats.
-     */
-    public IndicesStatsRequestBuilder all() {
-        request.all();
-        return this;
-    }
-
-    /**
-     * Clears all stats.
-     */
-    public IndicesStatsRequestBuilder clear() {
-        request.clear();
-        return this;
-    }
-
-    public IndicesStatsRequestBuilder setGroups(String... groups) {
-        request.groups(groups);
-        return this;
-    }
-
-    public IndicesStatsRequestBuilder setFieldDataFields(String... fields) {
-        request.fieldDataFields(fields);
-        return this;
-    }
-
-    public IndicesStatsRequestBuilder setCompletionFields(String... fields) {
-        request.completionFields(fields);
-        return this;
-    }
-
-    public IndicesStatsRequestBuilder setIncludeSegmentFileSizes(boolean includeSegmentFileSizes) {
-        request.includeSegmentFileSizes(includeSegmentFileSizes);
-        return this;
-    }
 }

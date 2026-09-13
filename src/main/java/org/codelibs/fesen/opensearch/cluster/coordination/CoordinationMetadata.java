@@ -139,10 +139,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         return new Builder();
     }
 
-    public static Builder builder(CoordinationMetadata coordinationMetadata) {
-        return new Builder(coordinationMetadata);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeLong(term);
@@ -230,13 +226,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
 
         public Builder() {
 
-        }
-
-        public Builder(CoordinationMetadata state) {
-            this.term = state.term;
-            this.lastCommittedConfiguration = state.lastCommittedConfiguration;
-            this.lastAcceptedConfiguration = state.lastAcceptedConfiguration;
-            this.votingConfigExclusions.addAll(state.votingConfigExclusions);
         }
 
         public Builder term(long term) {
@@ -396,12 +385,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeStringArray(nodeIds.toArray(new String[0]));
-        }
-
-        public boolean hasQuorum(Collection<String> votes) {
-            final HashSet<String> intersection = new HashSet<>(nodeIds);
-            intersection.retainAll(votes);
-            return intersection.size() * 2 > nodeIds.size();
         }
 
         public Set<String> getNodeIds() {

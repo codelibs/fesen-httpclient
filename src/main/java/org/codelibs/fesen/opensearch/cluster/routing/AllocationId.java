@@ -102,10 +102,6 @@ public class AllocationId implements ToXContentObject, Writeable {
         public void setParentAllocationId(String parentAllocationId) {
             this.parentAllocationId = parentAllocationId;
         }
-
-        public AllocationId build() {
-            return new AllocationId(id, relocationId, splitChildAllocationIds, parentAllocationId);
-        }
     }
 
     private final String id;
@@ -216,9 +212,5 @@ public class AllocationId implements ToXContentObject, Writeable {
         }
         builder.endObject();
         return builder;
-    }
-
-    public static AllocationId fromXContent(XContentParser parser) throws IOException {
-        return ALLOCATION_ID_PARSER.parse(parser, new AllocationId.Builder(), null).build();
     }
 }

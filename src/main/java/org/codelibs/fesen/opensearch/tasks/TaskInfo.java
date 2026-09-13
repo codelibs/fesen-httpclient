@@ -109,37 +109,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
         boolean cancelled,
         TaskId parentTaskId,
         Map<String, String> headers,
-        TaskResourceStats resourceStats
-    ) {
-        this(
-            taskId,
-            type,
-            action,
-            description,
-            status,
-            startTime,
-            runningTimeNanos,
-            cancellable,
-            cancelled,
-            parentTaskId,
-            headers,
-            resourceStats,
-            null
-        );
-    }
-
-    public TaskInfo(
-        TaskId taskId,
-        String type,
-        String action,
-        String description,
-        Task.Status status,
-        long startTime,
-        long runningTimeNanos,
-        boolean cancellable,
-        boolean cancelled,
-        TaskId parentTaskId,
-        Map<String, String> headers,
         TaskResourceStats resourceStats,
         Long cancellationStartTime
     ) {

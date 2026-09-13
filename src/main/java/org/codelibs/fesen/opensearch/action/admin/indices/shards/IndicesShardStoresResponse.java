@@ -144,13 +144,6 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
             }
         }
 
-        public StoreStatus(DiscoveryNode node, String allocationId, AllocationStatus allocationStatus, Exception storeException) {
-            this.node = node;
-            this.allocationId = allocationId;
-            this.allocationStatus = allocationStatus;
-            this.storeException = storeException;
-        }
-
         /**
          * Node the store belongs to
          */
@@ -243,11 +236,6 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
     @PublicApi(since = "1.0.0")
     public static class Failure extends DefaultShardOperationFailedException {
         private String nodeId;
-
-        public Failure(String nodeId, String index, int shardId, Throwable reason) {
-            super(index, shardId, reason);
-            this.nodeId = nodeId;
-        }
 
         private Failure(StreamInput in) throws IOException {
             readFrom(in, this);

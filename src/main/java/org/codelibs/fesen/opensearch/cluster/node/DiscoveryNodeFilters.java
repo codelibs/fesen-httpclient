@@ -119,33 +119,6 @@ public class DiscoveryNodeFilters {
     }
 
     /**
-     * Removes any filters that should not be considered, returning a new
-     * {@link DiscoveryNodeFilters} object. If the filtered object has no
-     * filters after trimming, {@code null} is returned.
-     */
-    @Nullable
-    public static DiscoveryNodeFilters trimTier(@Nullable DiscoveryNodeFilters original) {
-        if (original == null) {
-            return null;
-        }
-
-        Map<String, String[]> newFilters = original.filters.entrySet()
-            .stream()
-            // Remove all entries that start with "_tier", as these will be handled elsewhere
-            .filter(entry -> {
-                String attr = entry.getKey();
-                return attr != null && attr.startsWith("_tier") == false;
-            })
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        if (newFilters.size() == 0) {
-            return null;
-        } else {
-            return new DiscoveryNodeFilters(original.opType, newFilters);
-        }
-    }
-
-    /**
      * Generates a human-readable string for the DiscoverNodeFilters.
      * Example: {@code _id:"id1 OR blah",name:"blah OR name2"}
      */

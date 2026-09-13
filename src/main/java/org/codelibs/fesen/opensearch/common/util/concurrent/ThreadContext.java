@@ -309,43 +309,6 @@ public final class ThreadContext implements Writeable {
         };
     }
 
-    /**
-     * Returns a supplier that gathers a {@link #newStoredContext(boolean)} and restores it once the
-     * returned supplier is invoked. The context returned from the supplier is a stored version of the
-     * suppliers callers context that should be restored once the originally gathered context is not needed anymore.
-     * For instance this method should be used like this:
-     *
-     * <pre>
-     *     Supplier&lt;ThreadContext.StoredContext&gt; restorable = context.newRestorableContext(true);
-     *     new Thread() {
-     *         public void run() {
-     *             try (ThreadContext.StoredContext ctx = restorable.get()) {
-     *                 // execute with the parents context and restore the threads context afterwards
-     *             }
-     *         }
-     *
-     *     }.start();
-     * </pre>
-     *
-     * @param preserveResponseHeaders if set to <code>true</code> the response headers of the restore thread will be preserved.
-     * @return a restorable context supplier
-     */
-    public Supplier<StoredContext> newRestorableContext(boolean preserveResponseHeaders) {
-        return wrapRestorable(newStoredContext(preserveResponseHeaders));
-    }
-
-    /**
-     * Same as {@link #newRestorableContext(boolean)} but wraps an existing context to restore.
-     * @param storedContext the context to restore
-     */
-    public Supplier<StoredContext> wrapRestorable(StoredContext storedContext) {
-        return () -> {
-            StoredContext context = newStoredContext(false);
-            storedContext.restore();
-            return context;
-        };
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         final ThreadContextStruct context = threadLocal.get();
@@ -372,69 +335,10 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Returns all of the request headers from the thread's context.<br>
-     * <b>Be advised, headers might contain credentials.</b>
-     * In order to avoid storing, and erroneously exposing, such headers,
-     * it is recommended to instead store security headers that prove
-     * the credentials have been verified successfully, and which are
-     * internal to the system, in the sense that they cannot be sent
-     * by the clients.
-     */
-    public Map<String, String> getHeaders() {
-        HashMap<String, String> map = new HashMap<>(defaultHeader);
-        map.putAll(threadLocal.get().requestHeaders);
-        return Collections.unmodifiableMap(map);
-    }
-
-    /**
      * Returns the request headers, without the default headers
      */
     public Map<String, String> getRequestHeadersOnly() {
         return Collections.unmodifiableMap(new HashMap<>(threadLocal.get().requestHeaders));
-    }
-
-    /**
-     * Get a copy of all <em>response</em> headers.
-     *
-     * @return Never {@code null}.
-     */
-    public Map<String, List<String>> getResponseHeaders() {
-        Map<String, Set<String>> responseHeaders = threadLocal.get().responseHeaders;
-        HashMap<String, List<String>> map = new HashMap<>(responseHeaders.size());
-
-        for (Map.Entry<String, Set<String>> entry : responseHeaders.entrySet()) {
-            map.put(entry.getKey(), Collections.unmodifiableList(new ArrayList<>(entry.getValue())));
-        }
-
-        return Collections.unmodifiableMap(map);
-    }
-
-    /**
-     * Puts a header into the context
-     */
-    public void putHeader(String key, String value) {
-        threadLocal.set(threadLocal.get().putRequest(key, value));
-    }
-
-    /**
-     * Puts all of the given headers into this context
-     */
-    public void putHeader(Map<String, String> header) {
-        threadLocal.set(threadLocal.get().putHeaders(header));
-    }
-
-    /**
-     * Puts a persistent header into the context - persistent headers cannot be stashed
-     */
-    public void putPersistent(String key, Object value) {
-        threadLocal.set(threadLocal.get().putPersistent(key, value));
-    }
-
-    /**
-     * Puts all of the given headers into this persistent context - persistent headers cannot be stashed
-     */
-    public void putPersistent(Map<String, Object> persistentHeaders) {
-        threadLocal.set(threadLocal.get().putPersistent(persistentHeaders));
     }
 
     /**
@@ -486,22 +390,6 @@ public final class ThreadContext implements Writeable {
      */
     boolean isDefaultContext() {
         return threadLocal.get() == DEFAULT_CONTEXT;
-    }
-
-    /**
-     * Marks this thread context as an internal system context. This signals that actions in this context are issued
-     * by the system itself rather than by a user action.
-     *
-     * Usage of markAsSystemContext is guarded by a ThreadContextPermission. In order to use
-     * markAsSystemContext, the codebase needs to explicitly be granted permission in the JSM policy file.
-     *
-     * Add an entry in the grant portion of the policy file like this:
-     *
-     * permission org.codelibs.fesen.opensearch.secure_sm.ThreadContextPermission "markAsSystemContext";
-     */
-    @SuppressWarnings("removal")
-    public void markAsSystemContext() {
-        threadLocal.set(threadLocal.get().setSystemContext(propagators));
     }
 
     /**
@@ -570,15 +458,6 @@ public final class ThreadContext implements Writeable {
         // saving current warning headers' size not to recalculate the size with every new warning header
         private final long warningHeadersSize;
 
-        private ThreadContextStruct setSystemContext(final List<ThreadContextStatePropagator> propagators) {
-            if (isSystemContext) {
-                return this;
-            }
-            final Map<String, Object> transients = new HashMap<>();
-            propagators.forEach(p -> transients.putAll(p.transients(transientHeaders, true)));
-            return new ThreadContextStruct(requestHeaders, responseHeaders, transients, persistentHeaders, true);
-        }
-
         private ThreadContextStruct(
             Map<String, String> requestHeaders,
             Map<String, Set<String>> responseHeaders,
@@ -617,12 +496,6 @@ public final class ThreadContext implements Writeable {
             this(Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(), false);
         }
 
-        private ThreadContextStruct putRequest(String key, String value) {
-            Map<String, String> newRequestHeaders = new HashMap<>(this.requestHeaders);
-            putSingleHeader(key, value, newRequestHeaders);
-            return new ThreadContextStruct(newRequestHeaders, responseHeaders, transientHeaders, persistentHeaders, isSystemContext);
-        }
-
         private static <T> void putSingleHeader(String key, T value, Map<String, T> newHeaders) {
             if (newHeaders.putIfAbsent(key, value) != null) {
                 throw new IllegalArgumentException("value for key [" + key + "] already present");
@@ -639,12 +512,6 @@ public final class ThreadContext implements Writeable {
                 }
                 return new ThreadContextStruct(newHeaders, responseHeaders, transientHeaders, persistentHeaders, isSystemContext);
             }
-        }
-
-        private ThreadContextStruct putPersistent(String key, Object value) {
-            Map<String, Object> newPersistentHeaders = new HashMap<>(this.persistentHeaders);
-            putSingleHeader(key, value, newPersistentHeaders);
-            return new ThreadContextStruct(requestHeaders, responseHeaders, transientHeaders, newPersistentHeaders, isSystemContext);
         }
 
         private ThreadContextStruct putPersistent(Map<String, Object> headers) {

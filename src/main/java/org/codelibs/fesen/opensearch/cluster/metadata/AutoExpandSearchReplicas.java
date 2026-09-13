@@ -114,22 +114,6 @@ public final class AutoExpandSearchReplicas {
         return enabled;
     }
 
-    // package private for testing
-    OptionalInt calculateNumberOfSearchReplicas(int numMatchingSearchNodes) {
-        // Calculate the maximum possible number of search replicas
-        int maxPossibleReplicas = Math.min(numMatchingSearchNodes, maxSearchReplicas);
-
-        // Determine the number of search replicas
-        int numberOfSearchReplicas = Math.max(minSearchReplicas, maxPossibleReplicas);
-
-        // Additional check to ensure we don't exceed max possible search replicas
-        if (numberOfSearchReplicas <= maxPossibleReplicas) {
-            return OptionalInt.of(numberOfSearchReplicas);
-        }
-
-        return OptionalInt.empty();
-    }
-
     @Override
     public String toString() {
         return enabled ? minSearchReplicas + "-" + maxSearchReplicas : "false";

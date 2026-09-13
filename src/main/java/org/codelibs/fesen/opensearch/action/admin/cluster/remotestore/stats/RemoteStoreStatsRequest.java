@@ -31,12 +31,6 @@ public class RemoteStoreStatsRequest extends BroadcastRequest<RemoteStoreStatsRe
         shards = new String[0];
     }
 
-    public RemoteStoreStatsRequest(StreamInput in) throws IOException {
-        super(in);
-        shards = in.readStringArray();
-        local = in.readBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -51,10 +45,6 @@ public class RemoteStoreStatsRequest extends BroadcastRequest<RemoteStoreStatsRe
 
     public String[] shards() {
         return this.shards;
-    }
-
-    public void local(boolean local) {
-        this.local = local;
     }
 
     public boolean local() {

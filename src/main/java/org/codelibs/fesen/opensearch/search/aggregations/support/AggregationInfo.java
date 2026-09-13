@@ -57,13 +57,6 @@ public class AggregationInfo implements ReportingService.Info {
 
     private final Map<String, Set<String>> aggs;
 
-    AggregationInfo(Map<String, Map<String, LongAdder>> aggs) {
-        // we use a treemap/treeset here to have a test-able / predictable order
-        Map<String, Set<String>> aggsMap = new TreeMap<>();
-        aggs.forEach((s, m) -> aggsMap.put(s, Collections.unmodifiableSet(new TreeSet<>(m.keySet()))));
-        this.aggs = Collections.unmodifiableMap(aggsMap);
-    }
-
     /**
      * Read from a stream.
      */

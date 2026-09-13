@@ -74,10 +74,6 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
         this(indices, responseMap, Collections.emptyList());
     }
 
-    FieldCapabilitiesResponse(List<FieldCapabilitiesIndexResponse> indexResponses) {
-        this(Strings.EMPTY_ARRAY, Collections.emptyMap(), indexResponses);
-    }
-
     private FieldCapabilitiesResponse(
         String[] indices,
         Map<String, Map<String, FieldCapabilities>> responseMap,

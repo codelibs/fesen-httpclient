@@ -49,19 +49,6 @@ class ScaleIndexRequest extends AcknowledgedRequest<ScaleIndexRequest> {
     }
 
     /**
-     * Deserialization constructor.
-     *
-     * @param in the stream input to read from
-     * @throws IOException if there is an I/O error during deserialization
-     */
-    ScaleIndexRequest(StreamInput in) throws IOException {
-        super(in);
-        this.index = in.readString();
-        this.scaleDown = in.readBoolean();
-        this.indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
-    /**
      * Validates this request.
      * <p>
      * Ensures that the index name is provided and not empty.

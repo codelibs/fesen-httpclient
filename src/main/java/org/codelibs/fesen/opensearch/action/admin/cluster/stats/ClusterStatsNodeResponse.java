@@ -85,38 +85,6 @@ public class ClusterStatsNodeResponse extends BaseNodeResponse {
         }
     }
 
-    public ClusterStatsNodeResponse(
-        DiscoveryNode node,
-        @Nullable ClusterHealthStatus clusterStatus,
-        NodeInfo nodeInfo,
-        NodeStats nodeStats,
-        ShardStats[] shardsStats
-    ) {
-        super(node);
-        this.nodeInfo = nodeInfo;
-        this.nodeStats = nodeStats;
-        this.shardsStats = shardsStats;
-        this.clusterStatus = clusterStatus;
-    }
-
-    public ClusterStatsNodeResponse(
-        DiscoveryNode node,
-        @Nullable ClusterHealthStatus clusterStatus,
-        NodeInfo nodeInfo,
-        NodeStats nodeStats,
-        ShardStats[] shardsStats,
-        boolean useAggregatedNodeLevelResponses
-    ) {
-        super(node);
-        this.nodeInfo = nodeInfo;
-        this.nodeStats = nodeStats;
-        if (useAggregatedNodeLevelResponses) {
-            this.aggregatedNodeLevelStats = new AggregatedNodeLevelStats(node, shardsStats);
-        }
-        this.shardsStats = shardsStats;
-        this.clusterStatus = clusterStatus;
-    }
-
     public NodeInfo nodeInfo() {
         return this.nodeInfo;
     }

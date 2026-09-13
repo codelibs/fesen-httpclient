@@ -86,29 +86,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
      * @param shardSizes a shardkey to size in bytes mapping per shard.
      * @param routingToDataPath the shard routing to datapath mapping
      * @param reservedSpace reserved space per shard broken down by node and data path
-     * @param nodeFileCacheStats node file cache stats
-     * @see #shardIdentifierFromRouting
-     */
-    @Deprecated(forRemoval = true)
-    public ClusterInfo(
-        final Map<String, DiskUsage> leastAvailableSpaceUsage,
-        final Map<String, DiskUsage> mostAvailableSpaceUsage,
-        final Map<String, Long> shardSizes,
-        final Map<ShardRouting, String> routingToDataPath,
-        final Map<NodeAndPath, ReservedSpace> reservedSpace,
-        final Map<String, AggregateFileCacheStats> nodeFileCacheStats
-    ) {
-        this(leastAvailableSpaceUsage, mostAvailableSpaceUsage, shardSizes, routingToDataPath, reservedSpace, nodeFileCacheStats, Map.of());
-    }
-
-    /**
-     * Creates a new ClusterInfo instance.
-     *
-     * @param leastAvailableSpaceUsage a node id to disk usage mapping for the path that has the least available space on the node.
-     * @param mostAvailableSpaceUsage  a node id to disk usage mapping for the path that has the most available space on the node.
-     * @param shardSizes a shardkey to size in bytes mapping per shard.
-     * @param routingToDataPath the shard routing to datapath mapping
-     * @param reservedSpace reserved space per shard broken down by node and data path
      * @see #shardIdentifierFromRouting
      */
     public ClusterInfo(
@@ -303,14 +280,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     }
 
     /**
-     * Returns the reserved space for each shard on the given node/path pair
-     */
-    public ReservedSpace getReservedSpace(String nodeId, String dataPath) {
-        final ReservedSpace result = reservedSpace.get(new NodeAndPath(nodeId, dataPath));
-        return result == null ? ReservedSpace.EMPTY : result;
-    }
-
-    /**
      * Represents a data path on a node
      *
      * @opensearch.internal
@@ -318,11 +287,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     public static class NodeAndPath implements Writeable {
         public final String nodeId;
         public final String path;
-
-        public NodeAndPath(String nodeId, String path) {
-            this.nodeId = Objects.requireNonNull(nodeId);
-            this.path = Objects.requireNonNull(path);
-        }
 
         public NodeAndPath(StreamInput in) throws IOException {
             this.nodeId = in.readString();

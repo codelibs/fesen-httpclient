@@ -70,30 +70,6 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
     private final Decision canAllocateDecision;
     private final int weightRanking;
 
-    public NodeAllocationResult(DiscoveryNode node, ShardStoreInfo shardStoreInfo, @Nullable Decision decision) {
-        this.node = node;
-        this.shardStoreInfo = shardStoreInfo;
-        this.canAllocateDecision = decision;
-        this.nodeDecision = decision != null ? AllocationDecision.fromDecisionType(canAllocateDecision.type()) : AllocationDecision.NO;
-        this.weightRanking = 0;
-    }
-
-    public NodeAllocationResult(DiscoveryNode node, AllocationDecision nodeDecision, Decision canAllocate, int weightRanking) {
-        this.node = node;
-        this.shardStoreInfo = null;
-        this.canAllocateDecision = canAllocate;
-        this.nodeDecision = nodeDecision;
-        this.weightRanking = weightRanking;
-    }
-
-    public NodeAllocationResult(DiscoveryNode node, Decision decision, int weightRanking) {
-        this.node = node;
-        this.shardStoreInfo = null;
-        this.canAllocateDecision = decision;
-        this.nodeDecision = AllocationDecision.fromDecisionType(decision.type());
-        this.weightRanking = weightRanking;
-    }
-
     public NodeAllocationResult(StreamInput in) throws IOException {
         node = new DiscoveryNode(in);
         shardStoreInfo = in.readOptionalWriteable(ShardStoreInfo::new);
@@ -203,20 +179,6 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
         private final long matchingBytes;
         @Nullable
         private final Exception storeException;
-
-        public ShardStoreInfo(String allocationId, boolean inSync, Exception storeException) {
-            this.inSync = inSync;
-            this.allocationId = allocationId;
-            this.matchingBytes = -1;
-            this.storeException = storeException;
-        }
-
-        public ShardStoreInfo(long matchingBytes) {
-            this.inSync = false;
-            this.allocationId = null;
-            this.matchingBytes = matchingBytes;
-            this.storeException = null;
-        }
 
         public ShardStoreInfo(StreamInput in) throws IOException {
             this.inSync = in.readBoolean();

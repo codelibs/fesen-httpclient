@@ -69,17 +69,6 @@ public final class SetOnce<T> implements Cloneable {
         set = new AtomicReference<>();
     }
 
-    /**
-     * Creates a new instance with the internal object set to the given object. Note that any calls to
-     * {@link #set(Object)} afterwards will result in {@link AlreadySetException}
-     *
-     * @throws AlreadySetException if called more than once
-     * @see #set(Object)
-     */
-    public SetOnce(T obj) {
-        set = new AtomicReference<>(new Wrapper<>(obj));
-    }
-
     /** Sets the given object. If the object has already been set, an exception is thrown. */
     public final void set(T obj) {
         if (!trySet(obj)) {

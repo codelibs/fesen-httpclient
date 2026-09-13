@@ -95,12 +95,6 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             return null;
         }
 
-        public Request(StreamInput in) throws IOException {
-            super(in);
-            this.names = in.readStringArray();
-            this.indicesOptions = IndicesOptions.readIndicesOptions(in);
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             super.writeTo(out);
@@ -192,17 +186,6 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             this.dataStream = in.readOptionalString();
         }
 
-        ResolvedIndex(String name, String[] aliases, String[] attributes, @Nullable String dataStream) {
-            super(name);
-            this.aliases = aliases;
-            this.attributes = attributes;
-            this.dataStream = dataStream;
-        }
-
-        public ResolvedIndex copy(String newName) {
-            return new ResolvedIndex(newName, aliases, attributes, dataStream);
-        }
-
         public String[] getAliases() {
             return aliases;
         }
@@ -275,15 +258,6 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             this.indices = in.readStringArray();
         }
 
-        ResolvedAlias(String name, String[] indices) {
-            super(name);
-            this.indices = indices;
-        }
-
-        public ResolvedAlias copy(String newName) {
-            return new ResolvedAlias(newName, indices);
-        }
-
         public String[] getIndices() {
             return indices;
         }
@@ -339,16 +313,6 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             setName(in.readString());
             this.backingIndices = in.readStringArray();
             this.timestampField = in.readString();
-        }
-
-        ResolvedDataStream(String name, String[] backingIndices, String timestampField) {
-            super(name);
-            this.backingIndices = backingIndices;
-            this.timestampField = timestampField;
-        }
-
-        public ResolvedDataStream copy(String newName) {
-            return new ResolvedDataStream(newName, backingIndices, timestampField);
         }
 
         public String[] getBackingIndices() {
@@ -409,12 +373,6 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
         private final List<ResolvedIndex> indices;
         private final List<ResolvedAlias> aliases;
         private final List<ResolvedDataStream> dataStreams;
-
-        public Response(List<ResolvedIndex> indices, List<ResolvedAlias> aliases, List<ResolvedDataStream> dataStreams) {
-            this.indices = indices;
-            this.aliases = aliases;
-            this.dataStreams = dataStreams;
-        }
 
         public Response(StreamInput in) throws IOException {
             this.indices = in.readList(ResolvedIndex::new);

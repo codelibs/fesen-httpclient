@@ -66,41 +66,10 @@ public class UpdateSettingsRequestBuilder extends AcknowledgedRequestBuilder<
     }
 
     /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions.
-     * <p>
-     * For example indices that don't exist.
-     */
-    public UpdateSettingsRequestBuilder setIndicesOptions(IndicesOptions options) {
-        request.indicesOptions(options);
-        return this;
-    }
-
-    /**
-     * Sets the settings to be updated
-     */
-    public UpdateSettingsRequestBuilder setSettings(Settings settings) {
-        request.settings(settings);
-        return this;
-    }
-
-    /**
      * Sets the settings to be updated
      */
     public UpdateSettingsRequestBuilder setSettings(Settings.Builder settings) {
         request.settings(settings);
-        return this;
-    }
-
-    /**
-     * Sets the settings to be updated (either json or yaml format)
-     */
-    public UpdateSettingsRequestBuilder setSettings(String source, XContentType xContentType) {
-        request.settings(source, xContentType);
-        return this;
-    }
-
-    public UpdateSettingsRequestBuilder setPreserveExisting(boolean preserveExisting) {
-        request.setPreserveExisting(preserveExisting);
         return this;
     }
 }

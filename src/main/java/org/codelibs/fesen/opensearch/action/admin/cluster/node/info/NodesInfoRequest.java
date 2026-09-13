@@ -56,41 +56,12 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
     private Set<String> requestedMetrics = Metric.defaultMetrics();
 
     /**
-     * Create a new NodeInfoRequest from a {@link StreamInput} object.
-     *
-     * @param in A stream input object.
-     * @throws IOException if the stream cannot be deserialized.
-     */
-    public NodesInfoRequest(StreamInput in) throws IOException {
-        super(in);
-        requestedMetrics.clear();
-        requestedMetrics.addAll(Arrays.asList(in.readStringArray()));
-    }
-
-    /**
      * Get information from nodes based on the nodes ids specified. If none are passed, information
      * for all nodes will be returned.
      */
     public NodesInfoRequest(String... nodesIds) {
         super(nodesIds);
         defaultMetrics();
-    }
-
-    /**
-     * Clears all info flags.
-     */
-    public NodesInfoRequest clear() {
-        requestedMetrics.clear();
-        return this;
-    }
-
-    /**
-     * Sets to return data for all the metrics.
-     * See {@link Metric}
-     */
-    public NodesInfoRequest all() {
-        requestedMetrics.addAll(Metric.allMetrics());
-        return this;
     }
 
     /**
@@ -108,28 +79,6 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
      */
     public Set<String> requestedMetrics() {
         return new HashSet<>(requestedMetrics);
-    }
-
-    /**
-     * Add metric
-     */
-    public NodesInfoRequest addMetric(String metric) {
-        if (Metric.allMetrics().contains(metric) == false) {
-            throw new IllegalStateException("Used an illegal metric: " + metric);
-        }
-        requestedMetrics.add(metric);
-        return this;
-    }
-
-    /**
-     * Remove metric
-     */
-    public NodesInfoRequest removeMetric(String metric) {
-        if (Metric.allMetrics().contains(metric) == false) {
-            throw new IllegalStateException("Used an illegal metric: " + metric);
-        }
-        requestedMetrics.remove(metric);
-        return this;
     }
 
     @Override

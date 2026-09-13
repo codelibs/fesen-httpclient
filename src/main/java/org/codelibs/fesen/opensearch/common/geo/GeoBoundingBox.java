@@ -84,13 +84,6 @@ public class GeoBoundingBox implements ToXContentObject, Writeable {
         this.bottomRight = new GeoPoint(input);
     }
 
-    public boolean isUnbounded() {
-        return Double.isNaN(topLeft.lon())
-            || Double.isNaN(topLeft.lat())
-            || Double.isNaN(bottomRight.lon())
-            || Double.isNaN(bottomRight.lat());
-    }
-
     public GeoPoint topLeft() {
         return topLeft;
     }

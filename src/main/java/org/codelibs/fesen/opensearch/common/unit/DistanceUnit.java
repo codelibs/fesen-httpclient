@@ -197,24 +197,6 @@ public enum DistanceUnit implements Writeable {
     }
 
     /**
-     * Parses the suffix of a given distance string and return the corresponding {@link DistanceUnit}
-     *
-     * @param distance string representing a distance
-     * @param defaultUnit default unit to use, if no unit is provided by the string
-     * @return unit of the given distance
-     */
-    public static DistanceUnit parseUnit(String distance, DistanceUnit defaultUnit) {
-        for (DistanceUnit unit : values()) {
-            for (String name : unit.names) {
-                if (distance.endsWith(name)) {
-                    return unit;
-                }
-            }
-        }
-        return defaultUnit;
-    }
-
-    /**
      * This class implements a value+unit tuple.
      *
      * @opensearch.internal

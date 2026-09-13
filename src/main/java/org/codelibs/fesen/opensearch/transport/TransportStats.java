@@ -104,46 +104,6 @@ public class TransportStats implements Writeable, ToXContentFragment {
         out.writeVLong(txSize);
     }
 
-    public long serverOpen() {
-        return this.serverOpen;
-    }
-
-    public long getServerOpen() {
-        return serverOpen();
-    }
-
-    public long rxCount() {
-        return rxCount;
-    }
-
-    public long getRxCount() {
-        return rxCount();
-    }
-
-    public ByteSizeValue rxSize() {
-        return new ByteSizeValue(rxSize);
-    }
-
-    public ByteSizeValue getRxSize() {
-        return rxSize();
-    }
-
-    public long txCount() {
-        return txCount;
-    }
-
-    public long getTxCount() {
-        return txCount();
-    }
-
-    public ByteSizeValue txSize() {
-        return new ByteSizeValue(txSize);
-    }
-
-    public ByteSizeValue getTxSize() {
-        return txSize();
-    }
-
     /**
      * Builder for the {@link TransportStats} class.
      * Provides a fluent API for constructing a TransportStats object.

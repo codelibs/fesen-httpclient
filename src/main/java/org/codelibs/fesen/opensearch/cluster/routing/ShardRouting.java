@@ -457,46 +457,6 @@ public class ShardRouting implements Writeable, ToXContentObject {
         writeToThin(out);
     }
 
-    /**
-     * Make the active primary shard as replica
-     *
-     * @throws IllegalShardRoutingStateException if shard is already a replica
-     */
-    public ShardRouting moveActivePrimaryToReplica() {
-        assert active() : "expected an active shard " + this;
-        if (!primary) {
-            throw new IllegalShardRoutingStateException(this, "Not a primary shard, can't move to replica");
-        }
-        if (searchOnly) {
-            throw new IllegalShardRoutingStateException(this, "Cannot move a primary to a search only replica");
-        }
-        return new ShardRouting(
-            shardId,
-            currentNodeId,
-            relocatingNodeId,
-            false,
-            false,
-            state,
-            recoverySource,
-            unassignedInfo,
-            allocationId,
-            expectedShardSize
-        );
-    }
-
-    /**
-     * returns true if this routing has the same allocation ID as another.
-     * <p>
-     * Note: if both shard routing has a null as their {@link #allocationId()}, this method returns false as the routing describe
-     * no allocation at all..
-     **/
-    public boolean isSameAllocation(ShardRouting other) {
-        boolean b = this.allocationId != null && other.allocationId != null && this.allocationId.getId().equals(other.allocationId.getId());
-        assert b == false || this.currentNodeId.equals(other.currentNodeId)
-            : "ShardRoutings have the same allocation id but not the same node. This [" + this + "], other [" + other + "]";
-        return b;
-    }
-
     /** returns true if the current routing is identical to the other routing in all but meta fields, i.e., unassigned info */
     public boolean equalsIgnoringMetadata(ShardRouting other) {
         if (primary != other.primary) {

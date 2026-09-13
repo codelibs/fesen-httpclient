@@ -194,16 +194,6 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
         return this.storedFields;
     }
 
-    /**
-     * Should a refresh be executed before this get operation causing the operation to
-     * return the latest value. Note, heavy get should not set this to {@code true}. Defaults
-     * to {@code false}.
-     */
-    public GetRequest refresh(boolean refresh) {
-        this.refresh = refresh;
-        return this;
-    }
-
     public boolean refresh() {
         return this.refresh;
     }
@@ -224,19 +214,6 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
      */
     public long version() {
         return version;
-    }
-
-    public GetRequest version(long version) {
-        this.version = version;
-        return this;
-    }
-
-    /**
-     * Sets the versioning type. Defaults to {@link org.codelibs.fesen.opensearch.index.VersionType#INTERNAL}.
-     */
-    public GetRequest versionType(VersionType versionType) {
-        this.versionType = versionType;
-        return this;
     }
 
     public VersionType versionType() {

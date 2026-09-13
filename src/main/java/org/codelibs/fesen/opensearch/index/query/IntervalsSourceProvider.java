@@ -141,15 +141,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.useField = useField;
         }
 
-        public Match(StreamInput in) throws IOException {
-            this.query = in.readString();
-            this.maxGaps = in.readVInt();
-            this.mode = IntervalMode.readFromStream(in);
-            this.analyzer = in.readOptionalString();
-            this.filter = in.readOptionalWriteable(IntervalFilter::new);
-            this.useField = in.readOptionalString();
-        }
-
         @Override
         public void extractFields(Set<String> fields) {
             if (useField != null) {
@@ -285,11 +276,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.filter = filter;
         }
 
-        public Disjunction(StreamInput in) throws IOException {
-            this.subSources = in.readNamedWriteableList(IntervalsSourceProvider.class);
-            this.filter = in.readOptionalWriteable(IntervalFilter::new);
-        }
-
         @Override
         public void extractFields(Set<String> fields) {
             for (IntervalsSourceProvider provider : subSources) {
@@ -384,13 +370,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.mode = mode;
             this.maxGaps = maxGaps;
             this.filter = filter;
-        }
-
-        public Combine(StreamInput in) throws IOException {
-            this.mode = IntervalMode.readFromStream(in);
-            this.subSources = in.readNamedWriteableList(IntervalsSourceProvider.class);
-            this.maxGaps = in.readInt();
-            this.filter = in.readOptionalWriteable(IntervalFilter::new);
         }
 
         @Override
@@ -518,12 +497,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.useField = useField;
         }
 
-        public Prefix(StreamInput in) throws IOException {
-            this.prefix = in.readString();
-            this.analyzer = in.readOptionalString();
-            this.useField = in.readOptionalString();
-        }
-
         @Override
         public void extractFields(Set<String> fields) {
             if (useField != null) {
@@ -629,14 +602,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.useField = useField;
             this.maxExpansions = (maxExpansions != null && maxExpansions > 0) ? maxExpansions : null;
             this.caseInsensitive = caseInsensitive;
-        }
-
-        public Regexp(StreamInput in) throws IOException {
-            this.pattern = in.readString();
-            this.flags = in.readVInt();
-            this.useField = in.readOptionalString();
-            this.maxExpansions = in.readOptionalVInt();
-            this.caseInsensitive = in.readBoolean();
         }
 
         @Override
@@ -768,13 +733,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.maxExpansions = (maxExpansions != null && maxExpansions > 0) ? maxExpansions : null;
         }
 
-        public Wildcard(StreamInput in) throws IOException {
-            this.pattern = in.readString();
-            this.analyzer = in.readOptionalString();
-            this.useField = in.readOptionalString();
-            this.maxExpansions = in.readOptionalVInt();
-        }
-
         @Override
         public void extractFields(Set<String> fields) {
             if (useField != null) {
@@ -886,15 +844,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.fuzziness = fuzziness;
             this.analyzer = analyzer;
             this.useField = useField;
-        }
-
-        public Fuzzy(StreamInput in) throws IOException {
-            this.term = in.readString();
-            this.prefixLength = in.readVInt();
-            this.transpositions = in.readBoolean();
-            this.fuzziness = new Fuzziness(in);
-            this.analyzer = in.readOptionalString();
-            this.useField = in.readOptionalString();
         }
 
         @Override

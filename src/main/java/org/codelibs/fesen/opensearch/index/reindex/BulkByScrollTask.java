@@ -120,20 +120,6 @@ public class BulkByScrollTask extends CancellableTask {
     }
 
     /**
-     * Sets this task to be a leader task for {@code slices} sliced subtasks
-     */
-    public void setWorkerCount(int slices) {
-        if (isLeader()) {
-            throw new IllegalStateException("This task is already a leader for other slice subtasks");
-        }
-        if (isWorker()) {
-            throw new IllegalStateException("This task is already a worker");
-        }
-
-        leaderState = new LeaderBulkByScrollTaskState(this, slices);
-    }
-
-    /**
      * Returns the object that tracks the state of sliced subtasks. Throws IllegalStateException if this task is not set to be
      * a leader task.
      */
@@ -149,25 +135,6 @@ public class BulkByScrollTask extends CancellableTask {
      */
     public boolean isWorker() {
         return workerState != null;
-    }
-
-    /**
-     * Sets this task to be a worker task that performs search requests
-     * @param requestsPerSecond How many search requests per second this task should make
-     * @param sliceId If this is a sliced task, which slice number this task corresponds to. Null if not sliced.
-     */
-    public void setWorker(float requestsPerSecond, @Nullable Integer sliceId) {
-        if (isWorker()) {
-            throw new IllegalStateException("This task is already a worker");
-        }
-        if (isLeader()) {
-            throw new IllegalStateException("This task is already a leader for other slice subtasks");
-        }
-
-        workerState = new WorkerBulkByScrollTaskState(this, sliceId, requestsPerSecond);
-        if (isCancelled()) {
-            workerState.handleCancel();
-        }
     }
 
     /**
@@ -637,19 +604,6 @@ public class BulkByScrollTask extends CancellableTask {
             return builder;
         }
 
-        public static Status fromXContent(XContentParser parser) throws IOException {
-            XContentParser.Token token;
-            if (parser.currentToken() == Token.START_OBJECT) {
-                token = parser.nextToken();
-            } else {
-                token = parser.nextToken();
-            }
-            ensureExpectedToken(Token.START_OBJECT, token, parser);
-            token = parser.nextToken();
-            ensureExpectedToken(Token.FIELD_NAME, token, parser);
-            return innerFromXContent(parser);
-        }
-
         public static Status innerFromXContent(XContentParser parser) throws IOException {
             Token token = parser.currentToken();
             String fieldName = parser.currentName();
@@ -814,13 +768,6 @@ public class BulkByScrollTask extends CancellableTask {
          */
         public float getRequestsPerSecond() {
             return requestsPerSecond;
-        }
-
-        /**
-         * The reason that the request was canceled or null if it hasn't been.
-         */
-        public String getReasonCancelled() {
-            return reasonCancelled;
         }
 
         /**

@@ -84,27 +84,6 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
     }
 
     /**
-     * The index the document was fetched from.
-     */
-    public String getIndex() {
-        return getResult.getIndex();
-    }
-
-    /**
-     * The id of the document.
-     */
-    public String getId() {
-        return getResult.getId();
-    }
-
-    /**
-     * The version of the doc.
-     */
-    public long getVersion() {
-        return getResult.getVersion();
-    }
-
-    /**
      * The sequence number assigned to the last operation that has changed this document, if found.
      */
     public long getSeqNo() {
@@ -116,13 +95,6 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
      */
     public long getPrimaryTerm() {
         return getResult.getPrimaryTerm();
-    }
-
-    /**
-     * The source of the document if exists.
-     */
-    public byte[] getSourceAsBytes() {
-        return getResult.source();
     }
 
     /**
@@ -145,13 +117,6 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
      */
     public boolean isSourceEmpty() {
         return getResult.isSourceEmpty();
-    }
-
-    /**
-     * The source of the document (as a string).
-     */
-    public String getSourceAsString() {
-        return getResult.sourceAsString();
     }
 
     /**

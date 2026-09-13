@@ -49,89 +49,16 @@ public class ScoreFunctionBuilders {
         return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, null);
     }
 
-    public static ExponentialDecayFunctionBuilder exponentialDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        @Nullable String functionName
-    ) {
-        return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, null, functionName);
-    }
-
     public static ExponentialDecayFunctionBuilder exponentialDecayFunction(String fieldName, Object origin, Object scale, Object offset) {
         return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, offset);
-    }
-
-    public static ExponentialDecayFunctionBuilder exponentialDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        @Nullable String functionName
-    ) {
-        return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, offset, functionName);
-    }
-
-    public static ExponentialDecayFunctionBuilder exponentialDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        double decay
-    ) {
-        return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, offset, decay);
-    }
-
-    public static ExponentialDecayFunctionBuilder exponentialDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        double decay,
-        @Nullable String functionName
-    ) {
-        return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, offset, decay, functionName);
     }
 
     public static GaussDecayFunctionBuilder gaussDecayFunction(String fieldName, Object origin, Object scale) {
         return new GaussDecayFunctionBuilder(fieldName, origin, scale, null);
     }
 
-    public static GaussDecayFunctionBuilder gaussDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        @Nullable String functionName
-    ) {
-        return new GaussDecayFunctionBuilder(fieldName, origin, scale, null, functionName);
-    }
-
     public static GaussDecayFunctionBuilder gaussDecayFunction(String fieldName, Object origin, Object scale, Object offset) {
         return new GaussDecayFunctionBuilder(fieldName, origin, scale, offset);
-    }
-
-    public static GaussDecayFunctionBuilder gaussDecayFunction(String fieldName, Object origin, Object scale, Object offset, double decay) {
-        return new GaussDecayFunctionBuilder(fieldName, origin, scale, offset, decay);
-    }
-
-    public static GaussDecayFunctionBuilder gaussDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        double decay,
-        @Nullable String functionName
-    ) {
-        return new GaussDecayFunctionBuilder(fieldName, origin, scale, offset, decay, functionName);
-    }
-
-    public static LinearDecayFunctionBuilder linearDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        @Nullable String functionName
-    ) {
-        return new LinearDecayFunctionBuilder(fieldName, origin, scale, null, functionName);
     }
 
     public static LinearDecayFunctionBuilder linearDecayFunction(String fieldName, Object origin, Object scale) {
@@ -140,45 +67,6 @@ public class ScoreFunctionBuilders {
 
     public static LinearDecayFunctionBuilder linearDecayFunction(String fieldName, Object origin, Object scale, Object offset) {
         return new LinearDecayFunctionBuilder(fieldName, origin, scale, offset);
-    }
-
-    public static LinearDecayFunctionBuilder linearDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        @Nullable String functionName
-    ) {
-        return new LinearDecayFunctionBuilder(fieldName, origin, scale, offset, functionName);
-    }
-
-    public static LinearDecayFunctionBuilder linearDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        double decay
-    ) {
-        return new LinearDecayFunctionBuilder(fieldName, origin, scale, offset, decay);
-    }
-
-    public static LinearDecayFunctionBuilder linearDecayFunction(
-        String fieldName,
-        Object origin,
-        Object scale,
-        Object offset,
-        double decay,
-        @Nullable String functionName
-    ) {
-        return new LinearDecayFunctionBuilder(fieldName, origin, scale, offset, decay, functionName);
-    }
-
-    public static ScriptScoreFunctionBuilder scriptFunction(Script script) {
-        return scriptFunction(script, null);
-    }
-
-    public static ScriptScoreFunctionBuilder scriptFunction(String script) {
-        return scriptFunction(script, null);
     }
 
     public static RandomScoreFunctionBuilder randomFunction() {
@@ -191,14 +79,6 @@ public class ScoreFunctionBuilders {
 
     public static FieldValueFactorFunctionBuilder fieldValueFactorFunction(String fieldName) {
         return fieldValueFactorFunction(fieldName, null);
-    }
-
-    public static ScriptScoreFunctionBuilder scriptFunction(Script script, @Nullable String functionName) {
-        return new ScriptScoreFunctionBuilder(script, functionName);
-    }
-
-    public static ScriptScoreFunctionBuilder scriptFunction(String script, @Nullable String functionName) {
-        return new ScriptScoreFunctionBuilder(new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG, script, emptyMap()), functionName);
     }
 
     public static RandomScoreFunctionBuilder randomFunction(@Nullable String functionName) {

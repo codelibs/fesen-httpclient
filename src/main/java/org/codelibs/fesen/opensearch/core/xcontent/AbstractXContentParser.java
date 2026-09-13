@@ -407,10 +407,6 @@ public abstract class AbstractXContentParser implements XContentParser {
         return list;
     }
 
-    public static Object readValue(XContentParser parser, Supplier<Map<String, Object>> mapFactory) throws IOException {
-        return readValueUnsafe(parser.currentToken(), parser, mapFactory, 0);
-    }
-
     /**
      * Reads next value from the parser that is assumed to be at the given current token without any additional checks.
      *

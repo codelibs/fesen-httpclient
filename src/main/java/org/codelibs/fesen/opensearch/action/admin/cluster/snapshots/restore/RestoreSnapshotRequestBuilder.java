@@ -68,28 +68,6 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
     }
 
     /**
-     * Sets snapshot name
-     *
-     * @param snapshot snapshot name
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setSnapshot(String snapshot) {
-        request.snapshot(snapshot);
-        return this;
-    }
-
-    /**
-     * Sets repository name
-     *
-     * @param repository repository name
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setRepository(String repository) {
-        request.repository(repository);
-        return this;
-    }
-
-    /**
      * If this parameter is set to true the operation will wait for completion of restore process before returning.
      *
      * @param waitForCompletion if true the operation will wait for completion
@@ -97,64 +75,6 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
      */
     public RestoreSnapshotRequestBuilder setWaitForCompletion(boolean waitForCompletion) {
         request.waitForCompletion(waitForCompletion);
-        return this;
-    }
-
-    /**
-     * If set to true the restore procedure will restore global cluster state.
-     * <p>
-     * The global cluster state includes persistent settings and index template definitions.
-     *
-     * @param restoreGlobalState true if global state should be restored from the snapshot
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setRestoreGlobalState(boolean restoreGlobalState) {
-        request.includeGlobalState(restoreGlobalState);
-        return this;
-    }
-
-    /**
-     * If set to true the restore procedure will restore aliases
-     *
-     * @param restoreAliases true if aliases should be restored from the snapshot
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIncludeAliases(boolean restoreAliases) {
-        request.includeAliases(restoreAliases);
-        return this;
-    }
-
-    /**
-     * Sets index settings that should be added or replaced during restore
-     *
-     * @param settings index settings
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIndexSettings(Settings settings) {
-        request.indexSettings(settings);
-        return this;
-    }
-
-    /**
-     * Sets index settings that should be added or replaced during restore
-     *
-     * @param settings index settings
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIndexSettings(Settings.Builder settings) {
-        request.indexSettings(settings);
-        return this;
-    }
-
-    /**
-     * Sets index settings that should be added or replaced during restore
-     *
-     * @param source index settings
-     * @param xContentType the content type of the source
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIndexSettings(String source, XContentType xContentType) {
-        request.indexSettings(source, xContentType);
         return this;
     }
 }

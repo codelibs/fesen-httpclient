@@ -97,12 +97,6 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
         this.destination = destination;
     }
 
-    public ReindexRequest(StreamInput in) throws IOException {
-        super(in);
-        destination = new IndexRequest(in);
-        remoteInfo = in.readOptionalWriteable(RemoteInfo::new);
-    }
-
     @Override
     protected ReindexRequest self() {
         return this;
@@ -183,20 +177,6 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
         if (queryBuilder != null) {
             this.getSearchRequest().source().query(queryBuilder);
         }
-        return this;
-    }
-
-    /**
-     * Add a sort against the given field name.
-     *
-     * @param name The name of the field to sort by
-     * @param order The order in which to sort
-     * @deprecated Specifying a sort field for reindex is deprecated. If using this in combination with maxDocs, consider using a
-     * query filter instead.
-     */
-    @Deprecated
-    public ReindexRequest addSortField(String name, SortOrder order) {
-        this.getSearchRequest().source().sort(name, order);
         return this;
     }
 
@@ -380,12 +360,6 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
         PARSER.declareInt(ReindexRequest::setMaxDocsValidateIdentical, new ParseField("max_docs", "size"));
         PARSER.declareField((p, v, c) -> v.setScript(Script.parse(p)), new ParseField("script"), ObjectParser.ValueType.OBJECT);
         PARSER.declareString(ReindexRequest::setConflicts, new ParseField("conflicts"));
-    }
-
-    public static ReindexRequest fromXContent(XContentParser parser) throws IOException {
-        ReindexRequest reindexRequest = new ReindexRequest();
-        PARSER.parse(parser, reindexRequest, null);
-        return reindexRequest;
     }
 
     /**

@@ -214,14 +214,6 @@ public interface DocValueFormat extends NamedWriteable {
         }
     };
 
-    static DocValueFormat withNanosecondResolution(final DocValueFormat format) {
-        if (format instanceof DateTime dateTime) {
-            return new DateTime(dateTime.formatter, dateTime.timeZone, DateFieldMapper.Resolution.NANOSECONDS);
-        } else {
-            throw new IllegalArgumentException("trying to convert a known date time formatter to a nanosecond one, wrong field used?");
-        }
-    }
-
     /**
      * Date time doc value format
      *

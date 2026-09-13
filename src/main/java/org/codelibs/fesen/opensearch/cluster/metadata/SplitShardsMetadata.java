@@ -129,14 +129,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
         return activeShardIds.size();
     }
 
-    public List<Integer> getRootShards() {
-        List<Integer> rootShardList = new ArrayList<>();
-        for (int i = 0; i < rootShardsToAllChildren.length; i++) {
-            rootShardList.add(i);
-        }
-        return rootShardList;
-    }
-
     public ShardRange[] getChildShardsOfParent(int shardId) {
         if (parentToChildShards.containsKey(shardId) == false) {
             return null;
@@ -148,26 +140,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
             childShards[childShardIdx++] = childShard;
         }
         return childShards;
-    }
-
-    public Set<Integer> getChildShardIdsOfParent(int shardId) {
-        Set<Integer> childShardIds = new HashSet<>();
-        if (parentToChildShards.containsKey(shardId) == false) {
-            return childShardIds;
-        }
-
-        for (ShardRange childShard : parentToChildShards.get(shardId)) {
-            childShardIds.add(childShard.shardId());
-        }
-        return childShardIds;
-    }
-
-    public int inProgressChildShardsCount() {
-        int total = 0;
-        for (Integer parent : inProgressSplitShardIds) {
-            total += parentToChildShards.get(parent).length;
-        }
-        return total;
     }
 
     public Iterator<Integer> getActiveShardIterator() {
@@ -197,12 +169,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
             }
         }
 
-        public void cancelSplit(int sourceShardId) {
-            assert inProgressSplitShardIds.contains(sourceShardId);
-            inProgressSplitShardIds.remove(sourceShardId);
-            parentToChildShards.remove(sourceShardId);
-        }
-
         public SplitShardsMetadata build() {
             return new SplitShardsMetadata(
                 this.rootShardsToAllChildren,
@@ -220,23 +186,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
 
     public boolean isSplitOfShardInProgress(int shardId) {
         return inProgressSplitShardIds.contains(shardId);
-    }
-
-    public boolean isSplitParent(int shardId) {
-        return activeShardIds.contains(shardId) == false && parentToChildShards.containsKey(shardId);
-    }
-
-    public boolean isRecoveringChild(int shardId, int parentShardId) {
-        if (!inProgressSplitShardIds.contains(parentShardId)) {
-            return false;
-        }
-
-        for (ShardRange childShard : parentToChildShards.get(parentShardId)) {
-            if (childShard.shardId() == shardId) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

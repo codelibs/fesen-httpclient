@@ -84,10 +84,6 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
         shardResults = Collections.unmodifiableMap(shardResults);
     }
 
-    public Map<String, ProfileShardResult> getShardResults() {
-        return this.shardResults;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeInt(shardResults.size());

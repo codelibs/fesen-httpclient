@@ -35,12 +35,4 @@ public class RemoteStoreStatsRequestBuilder extends BroadcastOperationRequestBui
         request.shards(shards);
         return this;
     }
-
-    /**
-     * Sets local shards preference of request.
-     */
-    public final RemoteStoreStatsRequestBuilder setLocal(boolean local) {
-        request.local(local);
-        return this;
-    }
 }

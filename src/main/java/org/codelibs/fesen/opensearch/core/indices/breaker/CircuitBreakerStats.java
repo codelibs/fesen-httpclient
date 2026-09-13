@@ -113,14 +113,6 @@ public class CircuitBreakerStats implements Writeable, ToXContentObject {
     }
 
     /**
-     * Returns the name of the circuit breaker
-     * @return The name of the circuit breaker
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
      * Returns the limit size in byte of the circuit breaker
      * @return The limit size in byte of the circuit breaker
      */

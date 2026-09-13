@@ -323,40 +323,6 @@ public class Task {
     }
 
     /**
-     * This method is used to update the resource consumption stats so that the data isn't too stale for long-running task.
-     * If active thread entry is present in the list, the entry is updated. If one is not found, it throws an exception.
-     * @param threadId ID of the thread
-     * @param statsType stats type
-     * @param resourceUsageMetrics resource consumption metrics of the thread
-     * @throws IllegalStateException if no matching active thread entry was found.
-     */
-    public void updateThreadResourceStats(long threadId, ResourceStatsType statsType, ResourceUsageMetric... resourceUsageMetrics) {
-        final List<ThreadResourceInfo> threadResourceInfoList = resourceStats.get(threadId);
-        if (threadResourceInfoList != null) {
-            for (ThreadResourceInfo threadResourceInfo : threadResourceInfoList) {
-                // the active entry present in the list is updated
-                if (threadResourceInfo.getStatsType() == statsType && threadResourceInfo.isActive()) {
-                    threadResourceInfo.recordResourceUsageMetrics(resourceUsageMetrics);
-                    return;
-                }
-            }
-        }
-        throw new IllegalStateException("cannot update if active thread resource entry is not present");
-    }
-
-    public ThreadResourceInfo getActiveThreadResourceInfo(long threadId, ResourceStatsType statsType) {
-        final List<ThreadResourceInfo> threadResourceInfoList = resourceStats.get(threadId);
-        if (threadResourceInfoList != null) {
-            for (ThreadResourceInfo threadResourceInfo : threadResourceInfoList) {
-                if (threadResourceInfo.getStatsType() == statsType && threadResourceInfo.isActive()) {
-                    return threadResourceInfo;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Individual tasks can override this if they want to support task resource tracking. We just need to make sure that
      * the ThreadPool on which the task runs on have runnable wrapper similar to
      * {@link org.codelibs.fesen.opensearch.common.util.concurrent.OpenSearchExecutors#newResizable}
@@ -389,18 +355,5 @@ public class Task {
      */
     public String getHeader(String header) {
         return headers.get(header);
-    }
-
-    /**
-     * Registers a task resource tracking completion listener on this task if resource tracking is still active.
-     * Returns true on successful subscription, false otherwise.
-     */
-    public boolean addResourceTrackingCompletionListener(NotifyOnceListener<Task> listener) {
-        if (numActiveResourceTrackingThreads.get() > 0) {
-            resourceTrackingCompletionListeners.add(listener);
-            return true;
-        }
-
-        return false;
     }
 }

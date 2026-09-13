@@ -65,16 +65,4 @@ public final class MapperService {
     public static boolean isMappingSourceTyped(String type, Map<String, Object> mapping) {
         return mapping.size() == 1 && mapping.keySet().iterator().next().equals(type);
     }
-
-    /**
-     * Returns whether the given compressed mapping source is wrapped in its type name.
-     *
-     * @param type the mapping type name
-     * @param mappingSource the compressed mapping source
-     * @return {@code true} if the body has exactly the type name as its single root key
-     */
-    public static boolean isMappingSourceTyped(String type, CompressedXContent mappingSource) {
-        Map<String, Object> root = XContentHelper.convertToMap(mappingSource.compressedReference(), true, MediaTypeRegistry.JSON).v2();
-        return isMappingSourceTyped(type, root);
-    }
 }

@@ -63,14 +63,6 @@ public class BoundTransportAddress implements Writeable {
         publishAddress = new TransportAddress(in);
     }
 
-    public BoundTransportAddress(TransportAddress[] boundAddresses, TransportAddress publishAddress) {
-        if (boundAddresses == null || boundAddresses.length < 1) {
-            throw new IllegalArgumentException("at least one bound address must be provided");
-        }
-        this.boundAddresses = boundAddresses;
-        this.publishAddress = publishAddress;
-    }
-
     public TransportAddress[] boundAddresses() {
         return boundAddresses;
     }

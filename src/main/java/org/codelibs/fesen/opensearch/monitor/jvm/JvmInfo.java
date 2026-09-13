@@ -353,13 +353,6 @@ public class JvmInfo implements ReportingService.Info {
     /**
      * The process id.
      */
-    public long pid() {
-        return this.pid;
-    }
-
-    /**
-     * The process id.
-     */
     public long getPid() {
         return pid;
     }
@@ -370,27 +363,6 @@ public class JvmInfo implements ReportingService.Info {
 
     public String getVersion() {
         return this.version;
-    }
-
-    public int versionAsInteger() {
-        try {
-            int i = 0;
-            StringBuilder sVersion = new StringBuilder();
-            for (; i < version.length(); i++) {
-                if (!Character.isDigit(version.charAt(i)) && version.charAt(i) != '.') {
-                    break;
-                }
-                if (version.charAt(i) != '.') {
-                    sVersion.append(version.charAt(i));
-                }
-            }
-            if (i == 0) {
-                return -1;
-            }
-            return Integer.parseInt(sVersion.toString());
-        } catch (Exception e) {
-            return -1;
-        }
     }
 
     public String getVmName() {

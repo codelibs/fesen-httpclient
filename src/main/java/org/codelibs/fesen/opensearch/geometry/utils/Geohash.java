@@ -153,16 +153,6 @@ public class Geohash {
         }
     }
 
-    /** Array of geohashes one level below the baseGeohash. Sorted. */
-    public static String[] getSubGeohashes(String baseGeohash) {
-        String[] hashes = new String[BASE_32.length];
-        for (int i = 0; i < BASE_32.length; i++) {// note: already sorted
-            char c = BASE_32[i];
-            hashes[i] = baseGeohash + c;
-        }
-        return hashes;
-    }
-
     /**
      * Encode a string geohash to the geohash based long format (lon/lat interleaved, 4 least significant bits = level)
      */

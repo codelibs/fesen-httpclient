@@ -405,11 +405,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
      */
     // TODO: This can be moved to IndexNameExpressionResolver too, but this means that we will support wildcards and other expressions
 
-    public boolean hasIndex(Index index) {
-        IndexMetadata metadata = index(index.getName());
-        return metadata != null && metadata.getIndexUUID().equals(index.getUUID());
-    }
-
     public IndexMetadata index(String index) {
         return indices.get(index);
     }
@@ -427,48 +422,16 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return indices.get(indexMetadata.getIndex().getName()) == indexMetadata;
     }
 
-    public Map<String, IndexTemplateMetadata> templates() {
-        return this.templates.getTemplates();
-    }
-
-    public Map<String, IndexTemplateMetadata> getTemplates() {
-        return templates();
-    }
-
     public TemplatesMetadata templatesMetadata() {
         return this.templates;
-    }
-
-    public Map<String, ComponentTemplate> componentTemplates() {
-        return Optional.ofNullable((ComponentTemplateMetadata) this.custom(ComponentTemplateMetadata.TYPE))
-            .map(ComponentTemplateMetadata::componentTemplates)
-            .orElse(Collections.emptyMap());
     }
 
     public Map<String, SortedMap<Long, String>> systemTemplatesLookup() {
         return systemTemplatesLookup;
     }
 
-    public Map<String, ComposableIndexTemplate> templatesV2() {
-        return Optional.ofNullable((ComposableIndexTemplateMetadata) this.custom(ComposableIndexTemplateMetadata.TYPE))
-            .map(ComposableIndexTemplateMetadata::indexTemplates)
-            .orElse(Collections.emptyMap());
-    }
-
-    public Map<String, DataStream> dataStreams() {
-        return Optional.ofNullable((DataStreamMetadata) this.custom(DataStreamMetadata.TYPE))
-            .map(DataStreamMetadata::dataStreams)
-            .orElse(Collections.emptyMap());
-    }
-
     public Map<String, View> views() {
         return Optional.ofNullable((ViewMetadata) this.custom(ViewMetadata.TYPE)).map(ViewMetadata::views).orElse(Collections.emptyMap());
-    }
-
-    public Map<String, WorkloadGroup> workloadGroups() {
-        return Optional.ofNullable((WorkloadGroupMetadata) this.custom(WorkloadGroupMetadata.TYPE))
-            .map(WorkloadGroupMetadata::workloadGroups)
-            .orElse(Collections.emptyMap());
     }
 
     public DecommissionAttributeMetadata decommissionAttributeMetadata() {
@@ -527,28 +490,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
      */
     public int getTotalOpenRemoteCapableIndexShards() {
         return this.totalOpenRemoteCapableIndexShards;
-    }
-
-    /**
-     * Identifies whether the array containing type names given as argument refers to all types
-     * The empty or null array identifies all types
-     *
-     * @param types the array containing types
-     * @return true if the provided array maps to all types, false otherwise
-     */
-    public static boolean isAllTypes(String[] types) {
-        return types == null || types.length == 0 || isExplicitAllType(types);
-    }
-
-    /**
-     * Identifies whether the array containing type names given as argument explicitly refers to all types
-     * The empty or null array doesn't explicitly map to all types
-     *
-     * @param types the array containing index names
-     * @return true if the provided array explicitly maps to all types, false otherwise
-     */
-    public static boolean isExplicitAllType(String[] types) {
-        return types != null && types.length == 1 && ALL.equals(types[0]);
     }
 
     @Override
@@ -808,84 +749,8 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
-        public Builder put(String name, ComponentTemplate componentTemplate) {
-            Objects.requireNonNull(componentTemplate, "it is invalid to add a null component template: " + name);
-            Map<String, ComponentTemplate> existingTemplates = Optional.ofNullable(
-                (ComponentTemplateMetadata) this.customs.get(ComponentTemplateMetadata.TYPE)
-            ).map(ctm -> new HashMap<>(ctm.componentTemplates())).orElse(new HashMap<>());
-            existingTemplates.put(name, componentTemplate);
-            this.customs.put(ComponentTemplateMetadata.TYPE, new ComponentTemplateMetadata(existingTemplates));
-            return this;
-        }
-
-        public Builder removeComponentTemplate(String name) {
-            Map<String, ComponentTemplate> existingTemplates = Optional.ofNullable(
-                (ComponentTemplateMetadata) this.customs.get(ComponentTemplateMetadata.TYPE)
-            ).map(ctm -> new HashMap<>(ctm.componentTemplates())).orElse(new HashMap<>());
-            existingTemplates.remove(name);
-            this.customs.put(ComponentTemplateMetadata.TYPE, new ComponentTemplateMetadata(existingTemplates));
-            return this;
-        }
-
-        public Builder componentTemplates(Map<String, ComponentTemplate> componentTemplates) {
-            this.customs.put(ComponentTemplateMetadata.TYPE, new ComponentTemplateMetadata(componentTemplates));
-            return this;
-        }
-
-        public Builder indexTemplates(Map<String, ComposableIndexTemplate> indexTemplates) {
-            this.customs.put(ComposableIndexTemplateMetadata.TYPE, new ComposableIndexTemplateMetadata(indexTemplates));
-            return this;
-        }
-
-        public Builder put(String name, ComposableIndexTemplate indexTemplate) {
-            Objects.requireNonNull(indexTemplate, "it is invalid to add a null index template: " + name);
-            Map<String, ComposableIndexTemplate> existingTemplates = Optional.ofNullable(
-                (ComposableIndexTemplateMetadata) this.customs.get(ComposableIndexTemplateMetadata.TYPE)
-            ).map(itmd -> new HashMap<>(itmd.indexTemplates())).orElse(new HashMap<>());
-            existingTemplates.put(name, indexTemplate);
-            this.customs.put(ComposableIndexTemplateMetadata.TYPE, new ComposableIndexTemplateMetadata(existingTemplates));
-            return this;
-        }
-
-        public Builder removeIndexTemplate(String name) {
-            Map<String, ComposableIndexTemplate> existingTemplates = Optional.ofNullable(
-                (ComposableIndexTemplateMetadata) this.customs.get(ComposableIndexTemplateMetadata.TYPE)
-            ).map(itmd -> new HashMap<>(itmd.indexTemplates())).orElse(new HashMap<>());
-            existingTemplates.remove(name);
-            this.customs.put(ComposableIndexTemplateMetadata.TYPE, new ComposableIndexTemplateMetadata(existingTemplates));
-            return this;
-        }
-
         public DataStream dataStream(String dataStreamName) {
             return ((DataStreamMetadata) customs.get(DataStreamMetadata.TYPE)).dataStreams().get(dataStreamName);
-        }
-
-        public Builder dataStreams(Map<String, DataStream> dataStreams) {
-            this.customs.put(DataStreamMetadata.TYPE, new DataStreamMetadata(dataStreams));
-            return this;
-        }
-
-        public Builder put(DataStream dataStream) {
-            Objects.requireNonNull(dataStream, "it is invalid to add a null data stream");
-            Map<String, DataStream> existingDataStreams = Optional.ofNullable(
-                (DataStreamMetadata) this.customs.get(DataStreamMetadata.TYPE)
-            ).map(dsmd -> new HashMap<>(dsmd.dataStreams())).orElse(new HashMap<>());
-            existingDataStreams.put(dataStream.getName(), dataStream);
-            this.customs.put(DataStreamMetadata.TYPE, new DataStreamMetadata(existingDataStreams));
-            return this;
-        }
-
-        public Builder removeDataStream(String name) {
-            Map<String, DataStream> existingDataStreams = Optional.ofNullable(
-                (DataStreamMetadata) this.customs.get(DataStreamMetadata.TYPE)
-            ).map(dsmd -> new HashMap<>(dsmd.dataStreams())).orElse(new HashMap<>());
-            existingDataStreams.remove(name);
-            this.customs.put(DataStreamMetadata.TYPE, new DataStreamMetadata(existingDataStreams));
-            return this;
-        }
-
-        public Custom getCustom(String type) {
-            return customs.get(type);
         }
 
         public Builder putCustom(String type, Custom custom) {
@@ -910,18 +775,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
-        public IndexGraveyard indexGraveyard() {
-            IndexGraveyard graveyard = (IndexGraveyard) getCustom(IndexGraveyard.TYPE);
-            return graveyard;
-        }
-
         public Builder decommissionAttributeMetadata(final DecommissionAttributeMetadata decommissionAttributeMetadata) {
             putCustom(DecommissionAttributeMetadata.TYPE, decommissionAttributeMetadata);
             return this;
-        }
-
-        public DecommissionAttributeMetadata decommissionAttributeMetadata() {
-            return (DecommissionAttributeMetadata) getCustom(DecommissionAttributeMetadata.TYPE);
         }
 
         public Builder coordinationMetadata(CoordinationMetadata coordinationMetadata) {

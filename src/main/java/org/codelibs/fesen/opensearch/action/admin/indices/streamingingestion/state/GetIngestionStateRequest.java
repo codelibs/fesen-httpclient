@@ -100,18 +100,6 @@ public class GetIngestionStateRequest extends BroadcastRequest<GetIngestionState
         indexShardPairsList.add(new IndexShardPair(indexName, shard));
     }
 
-    /**
-     * Returns a map of index name and respective shards to be considered.
-     */
-    public Map<String, Set<Integer>> getIndexShardPairsAsMap() {
-        Map<String, Set<Integer>> indexShardMap = new HashMap<>();
-        for (IndexShardPair indexShardPair : indexShardPairsList) {
-            indexShardMap.computeIfAbsent(indexShardPair.indexName, indexName -> new HashSet<>()).add(indexShardPair.shard);
-        }
-
-        return indexShardMap;
-    }
-
     private class IndexShardPair implements Writeable {
         String indexName;
         int shard;

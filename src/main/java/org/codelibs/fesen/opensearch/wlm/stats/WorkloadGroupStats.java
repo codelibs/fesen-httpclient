@@ -40,10 +40,6 @@ import java.util.Objects;
 public class WorkloadGroupStats implements ToXContentObject, Writeable {
     private final Map<String, WorkloadGroupStatsHolder> stats;
 
-    public WorkloadGroupStats(Map<String, WorkloadGroupStatsHolder> stats) {
-        this.stats = stats;
-    }
-
     public WorkloadGroupStats(StreamInput in) throws IOException {
         stats = in.readMap(StreamInput::readString, WorkloadGroupStatsHolder::new);
     }
@@ -103,20 +99,6 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
 
         // this is needed to support the factory method
         public WorkloadGroupStatsHolder() {}
-
-        public WorkloadGroupStatsHolder(
-            long completions,
-            long rejections,
-            long failures,
-            long cancellations,
-            Map<ResourceType, ResourceStats> resourceStats
-        ) {
-            this.completions = completions;
-            this.rejections = rejections;
-            this.failures = failures;
-            this.cancellations = cancellations;
-            this.resourceStats = resourceStats;
-        }
 
         public WorkloadGroupStatsHolder(StreamInput in) throws IOException {
             this.completions = in.readVLong();

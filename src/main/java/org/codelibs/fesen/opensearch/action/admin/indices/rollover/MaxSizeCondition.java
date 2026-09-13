@@ -55,11 +55,6 @@ public class MaxSizeCondition extends Condition<ByteSizeValue> {
         this.value = value;
     }
 
-    public MaxSizeCondition(StreamInput in) throws IOException {
-        super(NAME);
-        this.value = new ByteSizeValue(in.readVLong(), ByteSizeUnit.BYTES);
-    }
-
     @Override
     public Result evaluate(Stats stats) {
         return new Result(this, stats.indexSize.getBytes() >= value.getBytes());
@@ -82,13 +77,5 @@ public class MaxSizeCondition extends Condition<ByteSizeValue> {
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         return builder.field(NAME, value.getStringRep());
-    }
-
-    public static MaxSizeCondition fromXContent(XContentParser parser) throws IOException {
-        if (parser.nextToken() == XContentParser.Token.VALUE_STRING) {
-            return new MaxSizeCondition(ByteSizeValue.parseBytesSizeValue(parser.text(), NAME));
-        } else {
-            throw new IllegalArgumentException("invalid token: " + parser.currentToken());
-        }
     }
 }

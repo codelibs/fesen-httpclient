@@ -51,29 +51,4 @@ public class ClearIndicesCacheRequestBuilder extends BroadcastOperationRequestBu
         super(client, action, new ClearIndicesCacheRequest());
     }
 
-    public ClearIndicesCacheRequestBuilder setQueryCache(boolean queryCache) {
-        request.queryCache(queryCache);
-        return this;
-    }
-
-    public ClearIndicesCacheRequestBuilder setRequestCache(boolean requestCache) {
-        request.requestCache(requestCache);
-        return this;
-    }
-
-    public ClearIndicesCacheRequestBuilder setFileCache(boolean fileCache) {
-        request.fileCache(fileCache);
-        return this;
-    }
-
-    public ClearIndicesCacheRequestBuilder setFieldDataCache(boolean fieldDataCache) {
-        request.fieldDataCache(fieldDataCache);
-        return this;
-    }
-
-    public ClearIndicesCacheRequestBuilder setFields(String... fields) {
-        request.fields(fields);
-        return this;
-    }
-
 }

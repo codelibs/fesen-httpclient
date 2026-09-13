@@ -102,17 +102,6 @@ public class CollectionUtils {
     }
 
     /**
-     * Converts a collection of Integers to an array of ints.
-     * @param ints The collection of Integers to convert
-     * @return The array of ints
-     * @throws NullPointerException if ints is null
-     */
-    public static int[] toArray(Collection<Integer> ints) {
-        Objects.requireNonNull(ints);
-        return ints.stream().mapToInt(s -> s).toArray();
-    }
-
-    /**
      * Deeply inspects a Map, Iterable, or Object array looking for references back to itself.
      * @throws IllegalArgumentException if a self-reference is found
      * @param value The object to evaluate looking for self references
@@ -160,19 +149,6 @@ public class CollectionUtils {
     }
 
     /**
-     * Returns an unmodifiable copy of the given map.
-     * @param map Map to copy
-     * @return unmodifiable copy of the map
-     */
-    public static <R, T> Map<R, T> copyMap(Map<R, T> map) {
-        if (map.isEmpty()) {
-            return Collections.emptyMap();
-        } else {
-            return Collections.unmodifiableMap(new HashMap<>(map));
-        }
-    }
-
-    /**
      * A rotated list
      *
      * @opensearch.internal
@@ -212,29 +188,6 @@ public class CollectionUtils {
         @Override
         public int size() {
             return in.size();
-        }
-    }
-
-    /**
-     * Converts an {@link Iterable} to an {@link ArrayList}.
-     * @param elements The iterable to convert
-     * @param <E> the type the elements
-     * @return an {@link ArrayList}
-     * @throws NullPointerException if elements is null
-     */
-    @SuppressWarnings("unchecked")
-    public static <E> ArrayList<E> iterableAsArrayList(Iterable<? extends E> elements) {
-        if (elements == null) {
-            throw new NullPointerException("elements");
-        }
-        if (elements instanceof Collection) {
-            return new ArrayList<>((Collection) elements);
-        } else {
-            ArrayList<E> list = new ArrayList<>();
-            for (E element : elements) {
-                list.add(element);
-            }
-            return list;
         }
     }
 

@@ -62,12 +62,6 @@ public abstract class ClusterManagerNodeReadRequest<Request extends ClusterManag
         out.writeBoolean(local);
     }
 
-    @SuppressWarnings("unchecked")
-    public final Request local(boolean local) {
-        this.local = local;
-        return (Request) this;
-    }
-
     /**
      * Return local information, do not retrieve the state from cluster-manager node (default: false).
      * @return <code>true</code> if local information is to be returned;

@@ -104,17 +104,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         this.isHidden = isHidden;
     }
 
-    private AliasMetadata(AliasMetadata aliasMetadata, String alias) {
-        this(
-            alias,
-            aliasMetadata.filter(),
-            aliasMetadata.indexRouting(),
-            aliasMetadata.searchRouting(),
-            aliasMetadata.writeIndex(),
-            aliasMetadata.isHidden
-        );
-    }
-
     public String alias() {
         return alias;
     }
@@ -166,13 +155,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
 
     public static Builder newAliasMetadataBuilder(String alias) {
         return new Builder(alias);
-    }
-
-    /**
-     * Creates a new AliasMetadata instance with same content as the given one, but with a different alias name
-     */
-    public static AliasMetadata newAliasMetadata(AliasMetadata aliasMetadata, String newAlias) {
-        return new AliasMetadata(aliasMetadata, newAlias);
     }
 
     @Override
@@ -290,10 +272,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
 
         public Builder(String alias) {
             this.alias = alias;
-        }
-
-        public String alias() {
-            return alias;
         }
 
         public Builder filter(CompressedXContent filter) {

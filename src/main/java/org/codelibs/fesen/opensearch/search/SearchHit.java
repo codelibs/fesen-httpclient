@@ -438,15 +438,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         }
     }
 
-    /*
-     * Adds a new DocumentField to the map in case both parameters are not null.
-     * */
-    public void setDocumentField(String fieldName, DocumentField field) {
-        if (fieldName == null || field == null) return;
-        if (documentFields.isEmpty()) this.documentFields = new HashMap<>();
-        this.documentFields.put(fieldName, field);
-    }
-
     public DocumentField removeDocumentField(String fieldName) {
         return documentFields.remove(fieldName);
     }
@@ -459,34 +450,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         if (!metaFields.isEmpty() || !documentFields.isEmpty()) {
             final Map<String, DocumentField> fields = new HashMap<>();
             fields.putAll(metaFields);
-            fields.putAll(documentFields);
-            return fields;
-        } else {
-            return emptyMap();
-        }
-    }
-
-    /**
-     * A map of hit fields (from field name to hit fields) if additional fields
-     * were required to be loaded.
-     */
-    public Map<String, DocumentField> getMetaFields() {
-        if (!metaFields.isEmpty()) {
-            final Map<String, DocumentField> fields = new HashMap<>();
-            fields.putAll(metaFields);
-            return fields;
-        } else {
-            return emptyMap();
-        }
-    }
-
-    /**
-     * A map of hit fields (from field name to hit fields) if additional fields
-     * were required to be loaded.
-     */
-    public Map<String, DocumentField> getDocumentFields() {
-        if (!documentFields.isEmpty()) {
-            final Map<String, DocumentField> fields = new HashMap<>();
             fields.putAll(documentFields);
             return fields;
         } else {
@@ -514,13 +477,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
      */
     public Object[] getSortValues() {
         return sortValues.getFormattedSortValues();
-    }
-
-    /**
-     * An array of the (raw) sort values used.
-     */
-    public Object[] getRawSortValues() {
-        return sortValues.getRawSortValues();
     }
 
     /**
@@ -562,14 +518,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
      */
     public String getClusterAlias() {
         return clusterAlias;
-    }
-
-    public void matchedQueries(String[] matchedQueries) {
-        if (matchedQueries != null) {
-            for (String query : matchedQueries) {
-                this.matchedQueries.put(query, Float.NaN);
-            }
-        }
     }
 
     public void matchedQueriesWithScores(Map<String, Float> matchedQueries) {

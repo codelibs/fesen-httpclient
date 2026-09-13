@@ -102,13 +102,6 @@ public class SearchSortValues implements ToXContentFragment, Writeable {
         return formattedSortValues;
     }
 
-    /**
-     * Returns the raw version of the values that sorting was performed against
-     */
-    public Object[] getRawSortValues() {
-        return rawSortValues;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

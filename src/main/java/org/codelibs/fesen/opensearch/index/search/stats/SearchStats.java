@@ -862,11 +862,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
         return this.openContexts;
     }
 
-    @Nullable
-    public Map<String, Stats> getGroupStats() {
-        return this.groupStats != null ? Collections.unmodifiableMap(this.groupStats) : null;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject(Fields.SEARCH);

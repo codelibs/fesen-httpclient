@@ -116,19 +116,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
         this.repository = repository;
     }
 
-    public CreateSnapshotRequest(StreamInput in) throws IOException {
-        super(in);
-        snapshot = in.readString();
-        repository = in.readString();
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        settings = readSettingsFromStream(in);
-        includeGlobalState = in.readBoolean();
-        waitForCompletion = in.readBoolean();
-        partial = in.readBoolean();
-        userMetadata = in.readMap();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -193,33 +180,12 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
     }
 
     /**
-     * Sets the snapshot name
-     *
-     * @param snapshot snapshot name
-     */
-    public CreateSnapshotRequest snapshot(String snapshot) {
-        this.snapshot = snapshot;
-        return this;
-    }
-
-    /**
      * The snapshot name
      *
      * @return snapshot name
      */
     public String snapshot() {
         return this.snapshot;
-    }
-
-    /**
-     * Sets repository name
-     *
-     * @param repository name
-     * @return this request
-     */
-    public CreateSnapshotRequest repository(String repository) {
-        this.repository = repository;
-        return this;
     }
 
     /**
@@ -304,49 +270,12 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
     }
 
     /**
-     * Sets repository-specific snapshot settings.
-     * <p>
-     * See repository documentation for more information.
-     *
-     * @param settings repository-specific snapshot settings
-     * @return this request
-     */
-    public CreateSnapshotRequest settings(Settings settings) {
-        this.settings = settings;
-        return this;
-    }
-
-    /**
-     * Sets repository-specific snapshot settings.
-     * <p>
-     * See repository documentation for more information.
-     *
-     * @param settings repository-specific snapshot settings
-     * @return this request
-     */
-    public CreateSnapshotRequest settings(Settings.Builder settings) {
-        this.settings = settings.build();
-        return this;
-    }
-
-    /**
      * Returns repository-specific snapshot settings
      *
      * @return repository-specific snapshot settings
      */
     public Settings settings() {
         return this.settings;
-    }
-
-    /**
-     * Set to true if global state should be stored as part of the snapshot
-     *
-     * @param includeGlobalState true if global state should be stored
-     * @return this request
-     */
-    public CreateSnapshotRequest includeGlobalState(boolean includeGlobalState) {
-        this.includeGlobalState = includeGlobalState;
-        return this;
     }
 
     /**

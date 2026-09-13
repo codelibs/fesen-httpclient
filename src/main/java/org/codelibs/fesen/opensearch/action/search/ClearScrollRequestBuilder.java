@@ -50,11 +50,6 @@ public class ClearScrollRequestBuilder extends ActionRequestBuilder<ClearScrollR
         super(client, action, new ClearScrollRequest());
     }
 
-    public ClearScrollRequestBuilder setScrollIds(List<String> cursorIds) {
-        request.setScrollIds(cursorIds);
-        return this;
-    }
-
     public ClearScrollRequestBuilder addScrollId(String cursorId) {
         request.addScrollId(cursorId);
         return this;

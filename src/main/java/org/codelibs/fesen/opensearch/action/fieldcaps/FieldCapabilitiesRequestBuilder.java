@@ -60,9 +60,4 @@ public class FieldCapabilitiesRequestBuilder extends ActionRequestBuilder<FieldC
         request().includeUnmapped(includeUnmapped);
         return this;
     }
-
-    public FieldCapabilitiesRequestBuilder setIndexFilter(QueryBuilder indexFilter) {
-        request().indexFilter(indexFilter);
-        return this;
-    }
 }

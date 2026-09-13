@@ -179,21 +179,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     // built on demand
     private volatile RoutingNodes routingNodes;
 
-    public ClusterState(long version, String stateUUID, ClusterState state) {
-        this(
-            state.clusterName,
-            version,
-            stateUUID,
-            state.metadata(),
-            state.routingTable(),
-            state.nodes(),
-            state.blocks(),
-            state.customs(),
-            -1,
-            false
-        );
-    }
-
     public ClusterState(
         ClusterName clusterName,
         long version,
@@ -218,23 +203,12 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         this.wasReadFromDiff = wasReadFromDiff;
     }
 
-    public long term() {
-        return coordinationMetadata().term();
-    }
-
     public long version() {
         return this.version;
     }
 
     public long getVersion() {
         return version();
-    }
-
-    public long getVersionOrMetadataVersion() {
-        // When following a Zen1 cluster-manager (term 0), the cluster state version is not guaranteed to
-        // increase, so instead it is preferable to use the metadata version to determine the freshest node.
-        // However when following a Zen2 cluster-manager the cluster state version should be used.
-        return term() == ZEN1_BWC_TERM ? metadata().version() : version();
     }
 
     /** The term a Zen1 cluster-manager publishes with. */
@@ -294,11 +268,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
 
     public <T extends Custom> T custom(String type) {
         return (T) customs.get(type);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends Custom> T custom(String type, T defaultValue) {
-        return (T) customs.getOrDefault(type, defaultValue);
     }
 
     public ClusterName getClusterName() {
@@ -394,19 +363,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * a cluster state supersedes another state if they are from the same cluster-manager and the version of this state is higher than that of the
-     * other state.
-     * <p>
-     * In essence that means that all the changes from the other cluster state are also reflected by the current one
-     */
-    public boolean supersedes(ClusterState other) {
-        return this.nodes().getClusterManagerNodeId() != null
-            && this.nodes().getClusterManagerNodeId().equals(other.nodes().getClusterManagerNodeId())
-            && this.version() > other.version();
-
     }
 
     /**
@@ -708,22 +664,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
                 minimumClusterManagerNodesOnPublishingClusterManager,
                 fromDiff
             );
-        }
-
-        public static byte[] toBytes(ClusterState state) throws IOException {
-            BytesStreamOutput os = new BytesStreamOutput();
-            state.writeTo(os);
-            return BytesReference.toBytes(os.bytes());
-        }
-
-        /**
-         * @param data      input bytes
-         * @param localNode used to set the local node in the cluster state.
-         */
-        public static ClusterState fromBytes(byte[] data, DiscoveryNode localNode, NamedWriteableRegistry registry) throws IOException {
-            StreamInput in = new NamedWriteableAwareStreamInput(StreamInput.wrap(data), registry);
-            return readFrom(in, localNode);
-
         }
     }
 

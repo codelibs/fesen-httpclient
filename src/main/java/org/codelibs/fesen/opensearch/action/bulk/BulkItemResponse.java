@@ -169,51 +169,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
             PARSER.declareInt(constructorArg(), new ParseField(STATUS_FIELD));
         }
 
-        /**
-         * For write failures before operation was assigned a sequence number.
-         * <p>
-         * use @{link {@link #Failure(String, String, Exception, long, long)}}
-         * to record operation sequence no with failure
-         */
-        public Failure(String index, String id, Exception cause) {
-            this(
-                index,
-                id,
-                cause,
-                ExceptionsHelper.status(cause),
-                SequenceNumbers.UNASSIGNED_SEQ_NO,
-                SequenceNumbers.UNASSIGNED_PRIMARY_TERM,
-                false,
-                FailureSource.UNKNOWN
-            );
-        }
-
-        public Failure(String index, String id, Exception cause, FailureSource source) {
-            this(
-                index,
-                id,
-                cause,
-                ExceptionsHelper.status(cause),
-                SequenceNumbers.UNASSIGNED_SEQ_NO,
-                SequenceNumbers.UNASSIGNED_PRIMARY_TERM,
-                false,
-                source
-            );
-        }
-
-        public Failure(String index, String id, Exception cause, boolean aborted) {
-            this(
-                index,
-                id,
-                cause,
-                ExceptionsHelper.status(cause),
-                SequenceNumbers.UNASSIGNED_SEQ_NO,
-                SequenceNumbers.UNASSIGNED_PRIMARY_TERM,
-                aborted,
-                FailureSource.UNKNOWN
-            );
-        }
-
         public Failure(String index, String id, Exception cause, RestStatus status) {
             this(
                 index,
@@ -225,11 +180,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
                 false,
                 FailureSource.UNKNOWN
             );
-        }
-
-        /** For write failures after operation was assigned a sequence number. */
-        public Failure(String index, String id, Exception cause, long seqNo, long term) {
-            this(index, id, cause, ExceptionsHelper.status(cause), seqNo, term, false, FailureSource.UNKNOWN);
         }
 
         private Failure(
@@ -507,24 +457,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
         } else {
             writeResponseType(out);
             response.writeTo(out);
-        }
-        if (failure == null) {
-            out.writeBoolean(false);
-        } else {
-            out.writeBoolean(true);
-            failure.writeTo(out);
-        }
-    }
-
-    public void writeThin(StreamOutput out) throws IOException {
-        out.writeVInt(id);
-        out.writeByte(opType.getId());
-
-        if (response == null) {
-            out.writeByte((byte) 2);
-        } else {
-            writeResponseType(out);
-            response.writeThin(out);
         }
         if (failure == null) {
             out.writeBoolean(false);

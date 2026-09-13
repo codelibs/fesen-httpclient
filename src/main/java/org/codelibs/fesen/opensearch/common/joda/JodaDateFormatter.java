@@ -113,13 +113,6 @@ public class JodaDateFormatter implements DateFormatter {
         return printer.print(millis);
     }
 
-    public JodaDateFormatter withYear(int year) {
-        if (parser.getDefaultYear() == year) {
-            return this;
-        }
-        return new JodaDateFormatter(pattern, parser.withDefaultYear(year), printer.withDefaultYear(year));
-    }
-
     @Override
     public String pattern() {
         return pattern;

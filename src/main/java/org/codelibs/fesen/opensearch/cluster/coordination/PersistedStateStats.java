@@ -33,10 +33,6 @@ public class PersistedStateStats implements Writeable, ToXContentObject {
     private AtomicLong successCount = new AtomicLong(0);
     private Map<String, AtomicLong> extendedFields = new HashMap<>(); // keeping minimal extensibility
 
-    public PersistedStateStats(String statsName) {
-        this.statsName = statsName;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(statsName);

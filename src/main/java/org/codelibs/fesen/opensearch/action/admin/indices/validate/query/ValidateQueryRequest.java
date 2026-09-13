@@ -71,22 +71,6 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
         this(Strings.EMPTY_ARRAY);
     }
 
-    public ValidateQueryRequest(StreamInput in) throws IOException {
-        super(in);
-        query = in.readNamedWriteable(QueryBuilder.class);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            int typesSize = in.readVInt();
-            if (typesSize > 0) {
-                for (int i = 0; i < typesSize; i++) {
-                    in.readString();
-                }
-            }
-        }
-        explain = in.readBoolean();
-        rewrite = in.readBoolean();
-        allShards = in.readBoolean();
-    }
-
     /**
      * Constructs a new validate request against the provided indices. No indices provided means it will
      * run against all indices.
@@ -134,22 +118,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
     /**
      * Indicates whether the query should be rewritten into primitive queries
      */
-    public void rewrite(boolean rewrite) {
-        this.rewrite = rewrite;
-    }
-
-    /**
-     * Indicates whether the query should be rewritten into primitive queries
-     */
     public boolean rewrite() {
         return rewrite;
-    }
-
-    /**
-     * Indicates whether the query should be validated on all shards instead of one random shard
-     */
-    public void allShards(boolean allShards) {
-        this.allShards = allShards;
     }
 
     /**

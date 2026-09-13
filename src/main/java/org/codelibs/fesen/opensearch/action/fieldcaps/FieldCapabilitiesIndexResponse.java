@@ -51,12 +51,6 @@ public class FieldCapabilitiesIndexResponse extends ActionResponse implements Wr
     private final Map<String, IndexFieldCapabilities> responseMap;
     private final boolean canMatch;
 
-    FieldCapabilitiesIndexResponse(String indexName, Map<String, IndexFieldCapabilities> responseMap, boolean canMatch) {
-        this.indexName = indexName;
-        this.responseMap = responseMap;
-        this.canMatch = canMatch;
-    }
-
     FieldCapabilitiesIndexResponse(StreamInput in) throws IOException {
         super(in);
         this.indexName = in.readString();

@@ -52,12 +52,4 @@ public class NetworkTime implements Writeable {
     public long getOutboundNetworkTime() {
         return this.outboundNetworkTime;
     }
-
-    public void setInboundNetworkTime(long newTime) {
-        this.inboundNetworkTime = newTime;
-    }
-
-    public void setOutboundNetworkTime(long newTime) {
-        this.outboundNetworkTime = newTime;
-    }
 }

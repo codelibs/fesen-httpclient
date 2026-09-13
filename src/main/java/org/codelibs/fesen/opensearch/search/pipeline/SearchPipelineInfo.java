@@ -32,13 +32,6 @@ public class SearchPipelineInfo implements ReportingService.Info {
 
     private final Map<String, Set<ProcessorInfo>> processors = new TreeMap<>();
 
-    public SearchPipelineInfo(Map<String, List<ProcessorInfo>> processors) {
-        for (Map.Entry<String, List<ProcessorInfo>> processorsEntry : processors.entrySet()) {
-            // we use a treeset here to have a test-able / predictable order
-            this.processors.put(processorsEntry.getKey(), new TreeSet<>(processorsEntry.getValue()));
-        }
-    }
-
     /**
      * Read from a stream.
      */
@@ -102,10 +95,6 @@ public class SearchPipelineInfo implements ReportingService.Info {
                 }
             }
         }
-    }
-
-    public boolean containsProcessor(String processorType, String type) {
-        return processors.containsKey(processorType) && processors.get(processorType).contains(new ProcessorInfo(type));
     }
 
     @Override

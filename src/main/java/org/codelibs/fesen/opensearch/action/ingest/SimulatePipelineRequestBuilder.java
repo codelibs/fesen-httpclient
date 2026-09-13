@@ -65,20 +65,4 @@ public class SimulatePipelineRequestBuilder extends ActionRequestBuilder<Simulat
         super(client, action, new SimulatePipelineRequest(source, mediaType));
     }
 
-    /**
-     * Set the id for the pipeline to simulate
-     */
-    public SimulatePipelineRequestBuilder setId(String id) {
-        request.setId(id);
-        return this;
-    }
-
-    /**
-     * Enable or disable verbose mode
-     */
-    public SimulatePipelineRequestBuilder setVerbose(boolean verbose) {
-        request.setVerbose(verbose);
-        return this;
-    }
-
 }

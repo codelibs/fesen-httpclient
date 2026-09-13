@@ -62,31 +62,8 @@ public abstract class BaseAliasesRequestBuilder<
     }
 
     @SuppressWarnings("unchecked")
-    public Builder addAliases(String... aliases) {
-        request.aliases(ArrayUtils.concat(request.aliases(), aliases));
-        return (Builder) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public Builder setIndices(String... indices) {
         request.indices(indices);
-        return (Builder) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Builder addIndices(String... indices) {
-        request.indices(ArrayUtils.concat(request.indices(), indices));
-        return (Builder) this;
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions.
-     * <p>
-     * For example indices that don't exist.
-     */
-    @SuppressWarnings("unchecked")
-    public Builder setIndicesOptions(IndicesOptions options) {
-        request.indicesOptions(options);
         return (Builder) this;
     }
 

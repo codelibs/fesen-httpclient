@@ -166,47 +166,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         this.source = source;
     }
 
-    /**
-     * Deep clone a SearchRequest
-     *
-     * @return a copy of the current SearchRequest
-     */
-    public SearchRequest deepCopy() throws IOException {
-        BytesStreamOutput out = new BytesStreamOutput();
-        this.writeTo(out);
-        StreamInput in = out.bytes().streamInput();
-        return new SearchRequest(in);
-    }
-
-    /**
-     * Creates a new sub-search request starting from the original search request that is provided.
-     * For internal use only, allows to fork a search request into multiple search requests that will be executed independently.
-     * Such requests will not be finally reduced, so that their results can be merged together in one response at completion.
-     * Used when a {@link SearchRequest} is created and executed as part of a cross-cluster search request
-     * performing reduction on each cluster in order to minimize network round-trips between the coordinating node and the remote clusters.
-     *
-     * @param originalSearchRequest the original search request
-     * @param indices the indices to search against
-     * @param clusterAlias the alias to prefix index names with in the returned search results
-     * @param absoluteStartMillis the absolute start time to be used on the remote clusters to ensure that the same value is used
-     * @param finalReduce whether the reduction should be final or not
-     */
-    static SearchRequest subSearchRequest(
-        SearchRequest originalSearchRequest,
-        String[] indices,
-        String clusterAlias,
-        long absoluteStartMillis,
-        boolean finalReduce
-    ) {
-        Objects.requireNonNull(originalSearchRequest, "search request must not be null");
-        validateIndices(indices);
-        Objects.requireNonNull(clusterAlias, "cluster alias must not be null");
-        if (absoluteStartMillis < 0) {
-            throw new IllegalArgumentException("absoluteStartMillis must not be negative but was [" + absoluteStartMillis + "]");
-        }
-        return new SearchRequest(originalSearchRequest, indices, clusterAlias, absoluteStartMillis, finalReduce);
-    }
-
     private SearchRequest(
         SearchRequest searchRequest,
         String[] indices,
@@ -571,30 +530,12 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         return scroll(new Scroll(keepAlive));
     }
 
-    /**
-     * If set, will enable scrolling of the search request for the specified timeout.
-     */
-    public SearchRequest scroll(String keepAlive) {
-        return scroll(new Scroll(TimeValue.parseTimeValue(keepAlive, null, getClass().getSimpleName() + ".Scroll.keepAlive")));
-    }
-
     public Boolean requestCache() {
         return this.requestCache;
     }
 
     public Boolean allowPartialSearchResults() {
         return this.allowPartialSearchResults;
-    }
-
-    /**
-     * Sets the number of shard results that should be reduced at once on the coordinating node. This value should be used as a protection
-     * mechanism to reduce the memory overhead per search request if the potential number of shards in the request can be large.
-     */
-    public void setBatchedReduceSize(int batchedReduceSize) {
-        if (batchedReduceSize <= 1) {
-            throw new IllegalArgumentException("batchedReduceSize must be >= 2");
-        }
-        this.batchedReduceSize = batchedReduceSize;
     }
 
     /**
@@ -624,38 +565,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     }
 
     /**
-     * Sets the number of shard requests that should be executed concurrently on a single node. This value should be used as a
-     * protection mechanism to reduce the number of shard requests fired per high level search request. Searches that hit the entire
-     * cluster can be throttled with this number to reduce the cluster load. The default is {@code 5}
-     */
-    public void setMaxConcurrentShardRequests(int maxConcurrentShardRequests) {
-        if (maxConcurrentShardRequests < 1) {
-            throw new IllegalArgumentException("maxConcurrentShardRequests must be >= 1");
-        }
-        this.maxConcurrentShardRequests = maxConcurrentShardRequests;
-    }
-
-    /**
-     * Sets a threshold that enforces a pre-filter roundtrip to pre-filter search shards based on query rewriting if the number of shards
-     * the search request expands to exceeds the threshold. This filter roundtrip can limit the number of shards significantly if for
-     * instance a shard can not match any documents based on its rewrite method ie. if date filters are mandatory to match but the shard
-     * bounds and the query are disjoint.
-     * <p>
-     * When unspecified, the pre-filter phase is executed if any of these conditions is met:
-     * <ul>
-     * <li>The request targets more than 128 shards</li>
-     * <li>The request targets one or more read-only index</li>
-     * <li>The primary sort of the query targets an indexed field</li>
-     * </ul>
-     */
-    public void setPreFilterShardSize(int preFilterShardSize) {
-        if (preFilterShardSize < 1) {
-            throw new IllegalArgumentException("preFilterShardSize must be >= 1");
-        }
-        this.preFilterShardSize = preFilterShardSize;
-    }
-
-    /**
      * Returns value of user-provided phase_took query parameter for this search request.
      */
     public Boolean isPhaseTook() {
@@ -679,27 +588,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     @Nullable
     public Integer getPreFilterShardSize() {
         return preFilterShardSize;
-    }
-
-    /**
-     * @return true if the request only has suggest
-     */
-    public boolean isSuggestOnly() {
-        return source != null && source.isSuggestOnly();
-    }
-
-    public int resolveTrackTotalHitsUpTo() {
-        return resolveTrackTotalHitsUpTo(scroll, source);
-    }
-
-    public static int resolveTrackTotalHitsUpTo(Scroll scroll, SearchSourceBuilder source) {
-        if (scroll != null) {
-            // no matter what the value of track_total_hits is
-            return SearchContext.TRACK_TOTAL_HITS_ACCURATE;
-        }
-        return source == null ? SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO
-            : source.trackTotalHitsUpTo() == null ? SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO
-            : source.trackTotalHitsUpTo();
     }
 
     public TimeValue getCancelAfterTimeInterval() {

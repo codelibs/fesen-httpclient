@@ -89,20 +89,6 @@ public class AllCircuitBreakerStats implements Writeable, ToXContentFragment {
         return this.allStats;
     }
 
-    /**
-     * Returns the stats for a specific circuit breaker
-     * @param name the name of the circuit breaker
-     * @return  the {@link CircuitBreakerStats} for the circuit breaker, null if the circuit breaker with such name does not exist
-     */
-    public CircuitBreakerStats getStats(String name) {
-        for (CircuitBreakerStats stats : allStats) {
-            if (stats.getName().equals(name)) {
-                return stats;
-            }
-        }
-        return null;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.BREAKERS);

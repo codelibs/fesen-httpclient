@@ -67,17 +67,6 @@ public class UpgradeStatusResponse extends BroadcastResponse {
         }
     }
 
-    UpgradeStatusResponse(
-        ShardUpgradeStatus[] shards,
-        int totalShards,
-        int successfulShards,
-        int failedShards,
-        List<DefaultShardOperationFailedException> shardFailures
-    ) {
-        super(totalShards, successfulShards, failedShards, shardFailures);
-        this.shards = shards;
-    }
-
     public Map<String, IndexUpgradeStatus> getIndices() {
         if (indicesUpgradeStatus != null) {
             return indicesUpgradeStatus;

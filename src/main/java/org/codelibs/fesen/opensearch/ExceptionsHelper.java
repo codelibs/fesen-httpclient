@@ -110,13 +110,6 @@ public final class ExceptionsHelper {
     // utility class: no ctor
     private ExceptionsHelper() {}
 
-    public static OpenSearchException convertToOpenSearchException(Exception e) {
-        return switch (e) {
-            case OpenSearchException oe -> oe;
-            default -> new OpenSearchException(e);
-        };
-    }
-
     public static RestStatus status(Throwable t) {
         return switch (t) {
             case OpenSearchException ose -> ose.status();
@@ -247,23 +240,6 @@ public final class ExceptionsHelper {
         IndexFormatTooOldException.class,
         IndexFormatTooNewException.class
     );
-
-    /**
-     * Looks at the given Throwable's and its cause(s) as well as any suppressed exceptions on the Throwable as well as its causes
-     * and returns the first corruption indicating exception (as defined by {@link #CORRUPTION_EXCEPTIONS}) it finds.
-     * @param t Throwable
-     * @return Corruption indicating exception if one is found, otherwise {@code null}
-     */
-    public static IOException unwrapCorruption(Throwable t) {
-        return t == null ? null : ExceptionsHelper.<IOException>unwrapCausesAndSuppressed(t, cause -> {
-            for (Class<?> clazz : CORRUPTION_EXCEPTIONS) {
-                if (clazz.isInstance(cause)) {
-                    return true;
-                }
-            }
-            return false;
-        }).orElse(null);
-    }
 
     /**
      * Looks at the given Throwable and its cause(s) and returns the first Throwable that is of one of the given classes or {@code null}

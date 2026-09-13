@@ -489,16 +489,6 @@ public class Setting<T> implements ToXContentObject {
     }
 
     /**
-     * Returns true if and only if this setting including fallback settings is present in the given settings instance.
-     *
-     * @param settings the settings
-     * @return true if the setting including fallback settings is present in the given settings instance, otherwise false
-     */
-    public boolean existsOrFallbackExists(final Settings settings) {
-        return settings.keySet().contains(getKey()) || (fallbackSetting != null && fallbackSetting.existsOrFallbackExists(settings));
-    }
-
-    /**
      * Returns the settings value. If the setting is not present in the given settings object the default value is returned
      * instead.
      */
@@ -635,25 +625,6 @@ public class Setting<T> implements ToXContentObject {
     @Override
     public String toString() {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, true);
-    }
-
-    /**
-     * Returns the value for this setting but falls back to the second provided settings object
-     */
-    public final T get(Settings primary, Settings secondary) {
-        if (exists(primary)) {
-            return get(primary);
-        }
-        if (exists(secondary)) {
-            return get(secondary);
-        }
-        if (fallbackSetting == null) {
-            return get(primary);
-        }
-        if (fallbackSetting.exists(primary)) {
-            return fallbackSetting.get(primary);
-        }
-        return fallbackSetting.get(secondary);
     }
 
     public Setting<T> getConcreteSetting(String key) {
@@ -818,22 +789,6 @@ public class Setting<T> implements ToXContentObject {
         @Override
         public void diff(Settings.Builder builder, Settings source, Settings defaultSettings) {
             matchStream(defaultSettings).forEach((key) -> getConcreteSetting(key).diff(builder, source, defaultSettings));
-        }
-
-        /**
-         * Returns the namespace for a concrete setting. Ie. an affix setting with prefix: {@code search.} and suffix: {@code username}
-         * will return {@code remote} as a namespace for the setting {@code cluster.remote.username}
-         */
-        public String getNamespace(Setting<T> concreteSetting) {
-            return key.getNamespace(concreteSetting.getKey());
-        }
-
-        /**
-         * Returns a stream of all concrete setting instances for the given settings. AffixSetting is only a specification, concrete
-         * settings depend on an actual set of setting keys.
-         */
-        public Stream<Setting<T>> getAllConcreteSettings(Settings settings) {
-            return matchStream(settings).distinct().map(this::getConcreteSetting);
         }
 
         /**
@@ -1167,16 +1122,6 @@ public class Setting<T> implements ToXContentObject {
         String key,
         int defaultValue,
         int minValue,
-        Validator<Integer> validator,
-        Property... properties
-    ) {
-        return intSetting(key, defaultValue, minValue, Integer.MAX_VALUE, validator, properties);
-    }
-
-    public static Setting<Integer> intSetting(
-        String key,
-        int defaultValue,
-        int minValue,
         int maxValue,
         Validator<Integer> validator,
         Property... properties
@@ -1205,13 +1150,6 @@ public class Setting<T> implements ToXContentObject {
             this.maxValue = maxValue;
             this.key = key;
             this.isFiltered = isFiltered;
-        }
-
-        public IntegerParser(StreamInput in) throws IOException {
-            minValue = in.readInt();
-            maxValue = in.readInt();
-            key = in.readString();
-            isFiltered = in.readBoolean();
         }
 
         @Override
@@ -1351,13 +1289,6 @@ public class Setting<T> implements ToXContentObject {
             this.isFiltered = isFiltered;
         }
 
-        public LongParser(StreamInput in) throws IOException {
-            minValue = in.readLong();
-            maxValue = in.readLong();
-            key = in.readString();
-            isFiltered = in.readBoolean();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeLong(minValue);
@@ -1450,10 +1381,6 @@ public class Setting<T> implements ToXContentObject {
         );
     }
 
-    public static Setting<Double> doubleSetting(String key, double defaultValue, Validator<Double> validator, Property... properties) {
-        return new Setting<>(key, Double.toString(defaultValue), Double::parseDouble, validator, properties);
-    }
-
     /**
      * A writeable parser for double
      *
@@ -1469,13 +1396,6 @@ public class Setting<T> implements ToXContentObject {
             this.maxValue = maxValue;
             this.key = key;
             this.isFiltered = isFiltered;
-        }
-
-        public DoubleParser(StreamInput in) throws IOException {
-            minValue = in.readDouble();
-            maxValue = in.readDouble();
-            key = in.readString();
-            isFiltered = in.readBoolean();
         }
 
         @Override
@@ -1524,15 +1444,6 @@ public class Setting<T> implements ToXContentObject {
 
     // Setting<Double> with fallback
 
-    public static Setting<Double> doubleSetting(
-        String key,
-        Setting<Double> fallbackSetting,
-        Validator<Double> validator,
-        Property... properties
-    ) {
-        return new Setting<>(new SimpleKey(key), fallbackSetting, fallbackSetting::getRaw, Double::parseDouble, validator, properties);
-    }
-
     /// simpleString
 
     public static Setting<String> simpleString(String key, Property... properties) {
@@ -1543,26 +1454,9 @@ public class Setting<T> implements ToXContentObject {
         return new Setting<>(new SimpleKey(key), null, s -> "", Function.identity(), validator, properties);
     }
 
-    public static Setting<String> simpleString(String key, Validator<String> validator, Setting<String> fallback, Property... properties) {
-        return new Setting<>(new SimpleKey(key), fallback, fallback::getRaw, Function.identity(), validator, properties);
-    }
-
     public static Setting<String> simpleString(String key, String defaultValue, Validator<String> validator, Property... properties) {
         validator.validate(defaultValue);
         return new Setting<>(new SimpleKey(key), null, s -> defaultValue, Function.identity(), validator, properties);
-    }
-
-    public static Setting<String> simpleString(String key, Setting<String> fallback, Property... properties) {
-        return simpleString(key, fallback, Function.identity(), properties);
-    }
-
-    public static Setting<String> simpleString(
-        final String key,
-        final Setting<String> fallback,
-        final Function<String, String> parser,
-        final Property... properties
-    ) {
-        return new Setting<>(key, fallback, parser, properties);
     }
 
     /**
@@ -1577,14 +1471,6 @@ public class Setting<T> implements ToXContentObject {
         return new Setting<>(key, s -> defaultValue, Function.identity(), properties);
     }
 
-    public static TimeValue parseTimeValue(String s, TimeValue minValue, String key) {
-        TimeValue timeValue = TimeValue.parseTimeValue(s, null, key);
-        if (timeValue.millis() < minValue.millis()) {
-            throw new IllegalArgumentException("Failed to parse value [" + s + "] for setting [" + key + "] must be >= " + minValue);
-        }
-        return timeValue;
-    }
-
     public static Setting<Boolean> boolSetting(String key, boolean defaultValue, Property... properties) {
         return new Setting<>(key, (s) -> Boolean.toString(defaultValue), b -> parseBoolean(b, key, isFiltered(properties)), properties);
     }
@@ -1593,28 +1479,8 @@ public class Setting<T> implements ToXContentObject {
         return new Setting<>(key, fallbackSetting, b -> parseBoolean(b, key, isFiltered(properties)), properties);
     }
 
-    public static Setting<Boolean> boolSetting(
-        String key,
-        Setting<Boolean> fallbackSetting,
-        Validator<Boolean> validator,
-        Property... properties
-    ) {
-        return new Setting<>(
-            new SimpleKey(key),
-            fallbackSetting,
-            fallbackSetting::getRaw,
-            b -> parseBoolean(b, key, isFiltered(properties)),
-            validator,
-            properties
-        );
-    }
-
     public static Setting<Boolean> boolSetting(String key, boolean defaultValue, Validator<Boolean> validator, Property... properties) {
         return new Setting<>(key, Boolean.toString(defaultValue), b -> parseBoolean(b, key, isFiltered(properties)), validator, properties);
-    }
-
-    public static Setting<Boolean> boolSetting(String key, Function<Settings, String> defaultValueFn, Property... properties) {
-        return new Setting<>(key, defaultValueFn, b -> parseBoolean(b, key, isFiltered(properties)), properties);
     }
 
     static boolean parseBoolean(String b, String key, boolean isFiltered) {
@@ -1633,32 +1499,8 @@ public class Setting<T> implements ToXContentObject {
         return byteSizeSetting(key, (s) -> value.getBytes() + ByteSizeUnit.BYTES.getSuffix(), properties);
     }
 
-    public static Setting<ByteSizeValue> byteSizeSetting(String key, Setting<ByteSizeValue> fallbackSetting, Property... properties) {
-        return new Setting<>(key, fallbackSetting, new ByteSizeValueParser(key), properties);
-    }
-
     public static Setting<ByteSizeValue> byteSizeSetting(String key, Function<Settings, String> defaultValue, Property... properties) {
         return new Setting<>(key, defaultValue, new ByteSizeValueParser(key), properties);
-    }
-
-    public static Setting<ByteSizeValue> byteSizeSetting(
-        String key,
-        ByteSizeValue defaultValue,
-        ByteSizeValue minValue,
-        ByteSizeValue maxValue,
-        Property... properties
-    ) {
-        return byteSizeSetting(key, (s) -> defaultValue.getStringRep(), minValue, maxValue, properties);
-    }
-
-    public static Setting<ByteSizeValue> byteSizeSetting(
-        String key,
-        Function<Settings, String> defaultValue,
-        ByteSizeValue minValue,
-        ByteSizeValue maxValue,
-        Property... properties
-    ) {
-        return new Setting<>(key, defaultValue, new ByteSizeValueParser(minValue, maxValue, key), properties);
     }
 
     /**
@@ -1678,12 +1520,6 @@ public class Setting<T> implements ToXContentObject {
 
         public ByteSizeValueParser(String key) {
             this(new ByteSizeValue(-1), new ByteSizeValue(Long.MAX_VALUE), key);
-        }
-
-        public ByteSizeValueParser(StreamInput in) throws IOException {
-            minValue = new ByteSizeValue(in);
-            maxValue = new ByteSizeValue(in);
-            key = in.readString();
         }
 
         @Override
@@ -1753,34 +1589,6 @@ public class Setting<T> implements ToXContentObject {
      * memory.
      *
      * @param key the key for the setting
-     * @param defaultValue the default value for this setting
-     * @param properties properties for this setting like scope, filtering...
-     * @return the setting object
-     */
-    public static Setting<ByteSizeValue> memorySizeSetting(String key, ByteSizeValue defaultValue, Property... properties) {
-        return memorySizeSetting(key, (s) -> defaultValue.toString(), properties);
-    }
-
-    /**
-     * Creates a setting which specifies a memory size. This can either be
-     * specified as an absolute bytes value or as a percentage of the heap
-     * memory.
-     *
-     * @param key the key for the setting
-     * @param defaultValue a function that supplies the default value for this setting
-     * @param properties properties for this setting like scope, filtering...
-     * @return the setting object
-     */
-    public static Setting<ByteSizeValue> memorySizeSetting(String key, Function<Settings, String> defaultValue, Property... properties) {
-        return new Setting<>(key, defaultValue, new MemorySizeValueParser(key), properties);
-    }
-
-    /**
-     * Creates a setting which specifies a memory size. This can either be
-     * specified as an absolute bytes value or as a percentage of the heap
-     * memory.
-     *
-     * @param key the key for the setting
      * @param defaultPercentage the default value of this setting as a percentage of the heap memory
      * @param properties properties for this setting like scope, filtering...
      * @return the setting object
@@ -1804,11 +1612,6 @@ public class Setting<T> implements ToXContentObject {
         public MemorySizeValueParser(String key, boolean useNativeMemory) {
             this.key = key;
             this.useNativeMemory = useNativeMemory;
-        }
-
-        public MemorySizeValueParser(StreamInput in) throws IOException {
-            key = in.readString();
-            useNativeMemory = in.readBoolean();
         }
 
         @Override
@@ -1838,53 +1641,6 @@ public class Setting<T> implements ToXContentObject {
         public int hashCode() {
             return Objects.hash(key, useNativeMemory);
         }
-    }
-
-    /**
-     * Creates a setting which specifies a memory size. This can either be
-     * specified as an absolute bytes value or as a percentage of the heap
-     * memory.
-     *
-     * @param key the key for the setting
-     * @param fallbackSetting a memory size setting to use as fallback
-     * @param properties properties for this setting like scope, filtering...
-     * @return the setting object
-     */
-    public static Setting<ByteSizeValue> memorySizeSetting(String key, Setting<ByteSizeValue> fallbackSetting, Property... properties) {
-        return new Setting<>(key, fallbackSetting, (s) -> MemorySizeValue.parseBytesSizeValueOrHeapRatio(s, key), properties);
-    }
-
-    /**
-     * Creates a setting which specifies a memory size as either an absolute bytes value or
-     * a percentage of available native memory (total physical memory minus JVM heap).
-     *
-     * @param key the key for the setting
-     * @param defaultPercentage the default value of this setting as a percentage of native memory
-     * @param properties properties for this setting like scope, filtering...
-     * @return the setting object
-     */
-    public static Setting<ByteSizeValue> nativeMemorySizeSetting(String key, String defaultPercentage, Property... properties) {
-        return new Setting<>(key, (s) -> defaultPercentage, new MemorySizeValueParser(key, true), properties);
-    }
-
-    public static <T> Setting<List<T>> listSetting(
-        final String key,
-        final List<String> defaultStringValue,
-        final Function<String, T> singleValueParser,
-        final Validator<List<T>> validator,
-        final Property... properties
-    ) {
-        return listSetting(key, null, singleValueParser, (s) -> defaultStringValue, validator, properties);
-    }
-
-    public static <T> Setting<List<T>> listSetting(
-        final String key,
-        final Function<String, T> singleValueParser,
-        final Function<Settings, List<String>> defaultStringValue,
-        final Validator<List<T>> validator,
-        final Property... properties
-    ) {
-        return listSetting(key, null, singleValueParser, defaultStringValue, validator, properties);
     }
 
     public static <T> Setting<List<T>> listSetting(
@@ -1992,16 +1748,6 @@ public class Setting<T> implements ToXContentObject {
         }
     }
 
-    static void logSettingUpdate(Setting setting, Settings current, Settings previous, Logger logger) {
-        if (logger.isInfoEnabled()) {
-            if (setting.isFiltered()) {
-                logger.info("updating [{}]", setting.key);
-            } else {
-                logger.info("updating [{}] from [{}] to [{}]", setting.key, setting.getRaw(previous), setting.getRaw(current));
-            }
-        }
-    }
-
     /**
      * Creates a group of settings prefixed by a key.
      *
@@ -2038,12 +1784,6 @@ public class Setting<T> implements ToXContentObject {
             this.key = key;
             this.minValue = minValue;
             this.isFiltered = isFiltered;
-        }
-
-        public MinTimeValueParser(StreamInput in) throws IOException {
-            key = in.readString();
-            minValue = in.readTimeValue();
-            isFiltered = in.readBoolean();
         }
 
         @Override
@@ -2093,22 +1833,6 @@ public class Setting<T> implements ToXContentObject {
             simpleKey,
             s -> defaultValue.apply(s).getStringRep(),
             new MinTimeValueParser(key, minValue, isFiltered(properties)),
-            properties
-        );
-    }
-
-    public static Setting<TimeValue> timeSetting(
-        final String key,
-        TimeValue defaultValue,
-        final TimeValue minValue,
-        final TimeValue maxValue,
-        final Property... properties
-    ) {
-        final SimpleKey simpleKey = new SimpleKey(key);
-        return new Setting<>(
-            simpleKey,
-            s -> defaultValue.getStringRep(),
-            new MinMaxTimeValueParser(key, minValue, maxValue, isFiltered(properties)),
             properties
         );
     }
@@ -2246,43 +1970,6 @@ public class Setting<T> implements ToXContentObject {
         return new Setting<>(key, (s) -> defaultValue.getStringRep(), (s) -> TimeValue.parseTimeValue(s, key), properties);
     }
 
-    public static Setting<TimeValue> timeSetting(String key, Setting<TimeValue> fallbackSetting, Property... properties) {
-        return new Setting<>(key, fallbackSetting, (s) -> TimeValue.parseTimeValue(s, key), properties);
-    }
-
-    public static Setting<TimeValue> timeSetting(
-        String key,
-        TimeValue defaultValue,
-        TimeValue minValue,
-        Validator<TimeValue> validator,
-        Property... properties
-    ) {
-        final SimpleKey simpleKey = new SimpleKey(key);
-        return new Setting<>(
-            simpleKey,
-            s -> defaultValue.getStringRep(),
-            minTimeValueParser(key, minValue, isFiltered(properties)),
-            validator,
-            properties
-        );
-    }
-
-    public static Setting<TimeValue> timeSetting(
-        String key,
-        Setting<TimeValue> fallBackSetting,
-        Validator<TimeValue> validator,
-        Property... properties
-    ) {
-        return new Setting<>(
-            new SimpleKey(key),
-            fallBackSetting,
-            fallBackSetting::getRaw,
-            (s) -> TimeValue.parseTimeValue(s, key),
-            validator,
-            properties
-        );
-    }
-
     public static Setting<TimeValue> positiveTimeSetting(String key, TimeValue defaultValue, Property... properties) {
         return timeSetting(key, defaultValue, TimeValue.timeValueMillis(0), properties);
     }
@@ -2308,37 +1995,6 @@ public class Setting<T> implements ToXContentObject {
     public static <T> AffixSetting<T> prefixKeySetting(String prefix, Function<String, Setting<T>> delegateFactory) {
         BiFunction<String, String, Setting<T>> delegateFactoryWithNamespace = (ns, k) -> delegateFactory.apply(k);
         return affixKeySetting(new AffixKey(prefix), delegateFactoryWithNamespace);
-    }
-
-    public static <T> AffixSetting<T> suffixKeySetting(String suffix, Function<String, Setting<T>> delegateFactory) {
-        BiFunction<String, String, Setting<T>> delegateFactoryWithNamespace = (ns, k) -> delegateFactory.apply(k);
-        AffixKey affixKey = new AffixKey(null, suffix);
-        return affixKeySetting(affixKey, delegateFactoryWithNamespace);
-    }
-
-    /**
-     * This setting type allows to validate settings that have the same type and a common prefix and suffix. For instance
-     * storage.${backend}.enable=[true|false] can easily be added with this setting. Yet, affix key settings don't support updaters
-     * out of the box unless {@link #getConcreteSetting(String)} is used to pull the updater.
-     */
-    public static <T> AffixSetting<T> affixKeySetting(
-        String prefix,
-        String suffix,
-        Function<String, Setting<T>> delegateFactory,
-        AffixSettingDependency... dependencies
-    ) {
-        BiFunction<String, String, Setting<T>> delegateFactoryWithNamespace = (ns, k) -> delegateFactory.apply(k);
-        return affixKeySetting(new AffixKey(prefix, suffix), delegateFactoryWithNamespace, dependencies);
-    }
-
-    public static <T> AffixSetting<T> affixKeySetting(
-        String prefix,
-        String suffix,
-        BiFunction<String, String, Setting<T>> delegateFactory,
-        AffixSettingDependency... dependencies
-    ) {
-        Setting<T> delegate = delegateFactory.apply("_na_", "_na_");
-        return new AffixSetting<>(new AffixKey(prefix, suffix), delegate, delegateFactory, dependencies);
     }
 
     private static <T> AffixSetting<T> affixKeySetting(

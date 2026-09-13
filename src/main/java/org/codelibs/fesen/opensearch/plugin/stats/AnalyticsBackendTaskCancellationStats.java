@@ -31,26 +31,6 @@ public class AnalyticsBackendTaskCancellationStats implements Writeable, ToXCont
     private final long searchShardTaskTotal;
 
     /**
-     * Construct from individual counter values.
-     *
-     * @param searchTaskCurrent      current count of search tasks executing post-cancellation
-     * @param searchTaskTotal        total count of search tasks that executed post-cancellation
-     * @param searchShardTaskCurrent current count of search shard tasks executing post-cancellation
-     * @param searchShardTaskTotal   total count of search shard tasks that executed post-cancellation
-     */
-    public AnalyticsBackendTaskCancellationStats(
-        long searchTaskCurrent,
-        long searchTaskTotal,
-        long searchShardTaskCurrent,
-        long searchShardTaskTotal
-    ) {
-        this.searchTaskCurrent = searchTaskCurrent;
-        this.searchTaskTotal = searchTaskTotal;
-        this.searchShardTaskCurrent = searchShardTaskCurrent;
-        this.searchShardTaskTotal = searchShardTaskTotal;
-    }
-
-    /**
      * Deserialize from stream.
      *
      * @param in the stream input

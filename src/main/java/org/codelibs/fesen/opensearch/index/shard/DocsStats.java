@@ -116,14 +116,6 @@ public class DocsStats implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Returns the average size in bytes of all documents in this stats.
-     */
-    public long getAverageSizeInBytes() {
-        long totalDocs = count + deleted;
-        return totalDocs == 0 ? 0 : totalSizeInBytes / totalDocs;
-    }
-
-    /**
      * Builder for the {@link DocsStats} class.
      * Provides a fluent API for constructing a DocsStats object.
      */

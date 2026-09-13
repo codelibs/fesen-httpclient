@@ -52,10 +52,6 @@ public class IngestInfo implements ReportingService.Info {
 
     private final Set<ProcessorInfo> processors;
 
-    public IngestInfo(List<ProcessorInfo> processors) {
-        this.processors = new TreeSet<>(processors);  // we use a treeset here to have a test-able / predictable order
-    }
-
     /**
      * Read from a stream.
      */
@@ -77,10 +73,6 @@ public class IngestInfo implements ReportingService.Info {
 
     public Iterable<ProcessorInfo> getProcessors() {
         return processors;
-    }
-
-    public boolean containsProcessor(String type) {
-        return processors.contains(new ProcessorInfo(type));
     }
 
     @Override

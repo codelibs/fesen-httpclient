@@ -55,33 +55,7 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
     private boolean explain;
     private boolean retryFailed;
 
-    public ClusterRerouteRequest(StreamInput in) throws IOException {
-        super(in);
-        commands = AllocationCommands.readFrom(in);
-        dryRun = in.readBoolean();
-        explain = in.readBoolean();
-        retryFailed = in.readBoolean();
-    }
-
     public ClusterRerouteRequest() {}
-
-    /**
-     * Adds allocation commands to be applied to the cluster. Note, can be empty, in which case
-     * will simply run a simple "reroute".
-     */
-    public ClusterRerouteRequest add(AllocationCommand... commands) {
-        this.commands.add(commands);
-        return this;
-    }
-
-    /**
-     * Sets a dry run flag (defaults to {@code false}) allowing to run the commands without
-     * actually applying them to the cluster state, and getting the resulting cluster state back.
-     */
-    public ClusterRerouteRequest dryRun(boolean dryRun) {
-        this.dryRun = dryRun;
-        return this;
-    }
 
     /**
      * Returns the current dry run flag which allows to run the commands without actually applying them,
@@ -89,25 +63,6 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
      */
     public boolean dryRun() {
         return this.dryRun;
-    }
-
-    /**
-     * Sets the explain flag, which will collect information about the reroute
-     * request without executing the actions. Similar to dryRun,
-     * but human-readable.
-     */
-    public ClusterRerouteRequest explain(boolean explain) {
-        this.explain = explain;
-        return this;
-    }
-
-    /**
-     * Sets the retry failed flag (defaults to {@code false}). If true, the
-     * request will retry allocating shards that can't currently be allocated due to too many allocation failures.
-     */
-    public ClusterRerouteRequest setRetryFailed(boolean retryFailed) {
-        this.retryFailed = retryFailed;
-        return this;
     }
 
     /**

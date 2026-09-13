@@ -77,12 +77,4 @@ public class MaxDocsCondition extends Condition<Long> {
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         return builder.field(NAME, value);
     }
-
-    public static MaxDocsCondition fromXContent(XContentParser parser) throws IOException {
-        if (parser.nextToken() == XContentParser.Token.VALUE_NUMBER) {
-            return new MaxDocsCondition(parser.longValue());
-        } else {
-            throw new IllegalArgumentException("invalid token: " + parser.currentToken());
-        }
-    }
 }

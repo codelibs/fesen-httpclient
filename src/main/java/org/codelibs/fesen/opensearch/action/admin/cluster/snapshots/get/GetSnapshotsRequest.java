@@ -66,31 +66,12 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
     public GetSnapshotsRequest() {}
 
     /**
-     * Constructs a new get snapshots request with given repository name and list of snapshots
-     *
-     * @param repository repository name
-     * @param snapshots  list of snapshots
-     */
-    public GetSnapshotsRequest(String repository, String[] snapshots) {
-        this.repository = repository;
-        this.snapshots = snapshots;
-    }
-
-    /**
      * Constructs a new get snapshots request with given repository name
      *
      * @param repository repository name
      */
     public GetSnapshotsRequest(String repository) {
         this.repository = repository;
-    }
-
-    public GetSnapshotsRequest(StreamInput in) throws IOException {
-        super(in);
-        repository = in.readString();
-        snapshots = in.readStringArray();
-        ignoreUnavailable = in.readBoolean();
-        verbose = in.readBoolean();
     }
 
     @Override
@@ -112,17 +93,6 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
     }
 
     /**
-     * Sets repository name
-     *
-     * @param repository repository name
-     * @return this request
-     */
-    public GetSnapshotsRequest repository(String repository) {
-        this.repository = repository;
-        return this;
-    }
-
-    /**
      * Returns repository name
      *
      * @return repository name
@@ -141,34 +111,10 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
     }
 
     /**
-     * Set to true to ignore unavailable snapshots
-     *
-     * @return this request
-     */
-    public GetSnapshotsRequest ignoreUnavailable(boolean ignoreUnavailable) {
-        this.ignoreUnavailable = ignoreUnavailable;
-        return this;
-    }
-
-    /**
      * @return Whether snapshots should be ignored when unavailable (corrupt or temporarily not fetchable)
      */
     public boolean ignoreUnavailable() {
         return ignoreUnavailable;
-    }
-
-    /**
-     * Set to {@code false} to only show the snapshot names and the indices they contain.
-     * This is useful when the snapshots belong to a cloud-based repository where each
-     * blob read is a concern (cost wise and performance wise), as the snapshot names and
-     * indices they contain can be retrieved from a single index blob in the repository,
-     * whereas the rest of the information requires reading a snapshot metadata file for
-     * each snapshot requested.  Defaults to {@code true}, which returns all information
-     * about each requested snapshot.
-     */
-    public GetSnapshotsRequest verbose(boolean verbose) {
-        this.verbose = verbose;
-        return this;
     }
 
     /**

@@ -126,52 +126,12 @@ public class TimeValue implements Comparable<TimeValue> {
         return nanos();
     }
 
-    public long micros() {
-        return timeUnit.toMicros(duration);
-    }
-
-    public long getMicros() {
-        return micros();
-    }
-
     public long millis() {
         return timeUnit.toMillis(duration);
     }
 
     public long getMillis() {
         return millis();
-    }
-
-    public long seconds() {
-        return timeUnit.toSeconds(duration);
-    }
-
-    public long getSeconds() {
-        return seconds();
-    }
-
-    public long minutes() {
-        return timeUnit.toMinutes(duration);
-    }
-
-    public long getMinutes() {
-        return minutes();
-    }
-
-    public long hours() {
-        return timeUnit.toHours(duration);
-    }
-
-    public long getHours() {
-        return hours();
-    }
-
-    public long days() {
-        return timeUnit.toDays(duration);
-    }
-
-    public long getDays() {
-        return days();
     }
 
     public double microsFrac() {

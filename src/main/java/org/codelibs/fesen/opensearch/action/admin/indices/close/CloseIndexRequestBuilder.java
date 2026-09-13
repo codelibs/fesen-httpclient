@@ -64,43 +64,4 @@ public class CloseIndexRequestBuilder extends AcknowledgedRequestBuilder<CloseIn
         request.indices(indices);
         return this;
     }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions
-     * For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices to ignore and indices wildcard expressions
-     * @return the request itself
-     */
-    public CloseIndexRequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
-        return this;
-    }
-
-    /**
-     * Sets the number of shard copies that should be active for indices closing to return.
-     * Defaults to {@link ActiveShardCount#DEFAULT}, which will wait for one shard copy
-     * (the primary) to become active. Set this value to {@link ActiveShardCount#ALL} to
-     * wait for all shards (primary and all replicas) to be active before returning.
-     * Otherwise, use {@link ActiveShardCount#from(int)} to set this value to any
-     * non-negative integer, up to the number of copies per shard (number of replicas + 1),
-     * to wait for the desired amount of shard copies to become active before returning.
-     * Indices closing will only wait up until the timeout value for the number of shard copies
-     * to be active before returning.
-     *
-     * @param waitForActiveShards number of active shard copies to wait on
-     */
-    public CloseIndexRequestBuilder setWaitForActiveShards(final ActiveShardCount waitForActiveShards) {
-        request.waitForActiveShards(waitForActiveShards);
-        return this;
-    }
-
-    /**
-     * A shortcut for {@link #setWaitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public CloseIndexRequestBuilder setWaitForActiveShards(final int waitForActiveShards) {
-        return setWaitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
 }

@@ -127,10 +127,6 @@ public class CollectorResult implements ToXContentObject, Writeable {
      */
     private List<CollectorResult> children;
 
-    public CollectorResult(String collectorName, String reason, long time, List<CollectorResult> children) {
-        this(collectorName, reason, time, 0L, time, time, time, 1, children);
-    }
-
     public CollectorResult(
         String collectorName,
         String reason,

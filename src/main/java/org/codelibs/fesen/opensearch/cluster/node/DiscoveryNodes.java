@@ -180,27 +180,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     }
 
     /**
-     * Get a {@link Map} of the discovered cluster-manager and data nodes arranged by their ids
-     *
-     * @return {@link Map} of the discovered cluster-manager and data nodes arranged by their ids
-     */
-    public Map<String, DiscoveryNode> getClusterManagerAndDataNodes() {
-        final Map<String, DiscoveryNode> nodes = new HashMap<>(dataNodes);
-        nodes.putAll(clusterManagerNodes);
-        return Collections.unmodifiableMap(nodes);
-    }
-
-    /**
-     * Returns a stream of all nodes, with cluster-manager nodes at the front
-     */
-    public Stream<DiscoveryNode> clusterManagersFirstStream() {
-        return Stream.concat(
-            StreamSupport.stream(Spliterators.spliterator(clusterManagerNodes.entrySet(), 0), false).map(cur -> cur.getValue()),
-            StreamSupport.stream(this.spliterator(), false).filter(n -> n.isClusterManagerNode() == false)
-        );
-    }
-
-    /**
      * Get a node by its id
      *
      * @param nodeId id of the wanted node
@@ -208,15 +187,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
      */
     public DiscoveryNode get(String nodeId) {
         return nodes.get(nodeId);
-    }
-
-    /**
-     * Determine if the given node exists and has the right roles. Supported roles vary by version, and our local cluster state might
-     * have come via an older cluster-manager, so the roles may differ even if the node is otherwise identical.
-     */
-    public boolean nodeExistsWithSameRoles(DiscoveryNode discoveryNode) {
-        final DiscoveryNode existing = nodes.get(discoveryNode.getId());
-        return existing != null && existing.equals(discoveryNode) && existing.getRoles().equals(discoveryNode.getRoles());
     }
 
     /**
@@ -253,21 +223,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     public DiscoveryNode getClusterManagerNode() {
         if (clusterManagerNodeId != null) {
             return nodes.get(clusterManagerNodeId);
-        }
-        return null;
-    }
-
-    /**
-     * Get a node by its address
-     *
-     * @param address {@link TransportAddress} of the wanted node
-     * @return node identified by the given address or <code>null</code> if no such node exists
-     */
-    public DiscoveryNode findByAddress(TransportAddress address) {
-        for (final DiscoveryNode node : nodes.values()) {
-            if (node.getAddress().equals(address)) {
-                return node;
-            }
         }
         return null;
     }
@@ -558,13 +513,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
 
         public Builder remove(String nodeId) {
             nodes.remove(nodeId);
-            return this;
-        }
-
-        public Builder remove(DiscoveryNode node) {
-            if (node.equals(nodes.get(node.getId()))) {
-                nodes.remove(node.getId());
-            }
             return this;
         }
 

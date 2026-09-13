@@ -99,17 +99,6 @@ public final class ProfileResult implements Writeable, ToXContentObject {
         Map<String, Long> breakdown,
         Map<String, Object> debug,
         long nodeTime,
-        List<ProfileResult> children
-    ) {
-        this(type, description, breakdown, debug, nodeTime, children, null, null, null);
-    }
-
-    public ProfileResult(
-        String type,
-        String description,
-        Map<String, Long> breakdown,
-        Map<String, Object> debug,
-        long nodeTime,
         List<ProfileResult> children,
         Long maxSliceNodeTime,
         Long minSliceNodeTime,

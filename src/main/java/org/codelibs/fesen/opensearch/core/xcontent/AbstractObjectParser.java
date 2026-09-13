@@ -204,55 +204,14 @@ public abstract class AbstractObjectParser<Value, Context> {
         declareField(consumer, (p, c) -> objectParser.parse(p, c), field, ValueType.OBJECT);
     }
 
-    /**
-     * Declare an object field that parses explicit {@code null}s in the json to a default value.
-     */
-    public <T> void declareObjectOrNull(
-        BiConsumer<Value, T> consumer,
-        ContextParser<Context, T> objectParser,
-        T nullValue,
-        ParseField field
-    ) {
-        declareField(
-            consumer,
-            (p, c) -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : objectParser.parse(p, c),
-            field,
-            ValueType.OBJECT_OR_NULL
-        );
-    }
-
     public void declareFloat(BiConsumer<Value, Float> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.floatValue(), field, ValueType.FLOAT);
     }
 
-    /**
-     * Declare a float field that parses explicit {@code null}s in the json to a default value.
-     */
-    public void declareFloatOrNull(BiConsumer<Value, Float> consumer, float nullValue, ParseField field) {
-        declareField(
-            consumer,
-            p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.floatValue(),
-            field,
-            ValueType.FLOAT_OR_NULL
-        );
-    }
-
     public void declareDouble(BiConsumer<Value, Double> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.doubleValue(), field, ValueType.DOUBLE);
-    }
-
-    /**
-     * Declare a double field that parses explicit {@code null}s in the json to a default value.
-     */
-    public void declareDoubleOrNull(BiConsumer<Value, Double> consumer, double nullValue, ParseField field) {
-        declareField(
-            consumer,
-            p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.doubleValue(),
-            field,
-            ValueType.DOUBLE_OR_NULL
-        );
     }
 
     public void declareLong(BiConsumer<Value, Long> consumer, ParseField field) {
@@ -273,18 +232,6 @@ public abstract class AbstractObjectParser<Value, Context> {
     public void declareInt(BiConsumer<Value, Integer> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.intValue(), field, ValueType.INT);
-    }
-
-    /**
-     * Declare a double field that parses explicit {@code null}s in the json to a default value.
-     */
-    public void declareIntOrNull(BiConsumer<Value, Integer> consumer, int nullValue, ParseField field) {
-        declareField(
-            consumer,
-            p -> p.currentToken() == XContentParser.Token.VALUE_NULL ? nullValue : p.intValue(),
-            field,
-            ValueType.INT_OR_NULL
-        );
     }
 
     public void declareString(BiConsumer<Value, String> consumer, ParseField field) {
@@ -339,18 +286,6 @@ public abstract class AbstractObjectParser<Value, Context> {
 
     public void declareDoubleArray(BiConsumer<Value, List<Double>> consumer, ParseField field) {
         declareFieldArray(consumer, (p, c) -> p.doubleValue(), field, ValueType.DOUBLE_ARRAY);
-    }
-
-    public void declareFloatArray(BiConsumer<Value, List<Float>> consumer, ParseField field) {
-        declareFieldArray(consumer, (p, c) -> p.floatValue(), field, ValueType.FLOAT_ARRAY);
-    }
-
-    public void declareLongArray(BiConsumer<Value, List<Long>> consumer, ParseField field) {
-        declareFieldArray(consumer, (p, c) -> p.longValue(), field, ValueType.LONG_ARRAY);
-    }
-
-    public void declareIntArray(BiConsumer<Value, List<Integer>> consumer, ParseField field) {
-        declareFieldArray(consumer, (p, c) -> p.intValue(), field, ValueType.INT_ARRAY);
     }
 
     /**

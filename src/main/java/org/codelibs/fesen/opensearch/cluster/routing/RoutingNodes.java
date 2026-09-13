@@ -238,17 +238,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
         }
     }
 
-    public int getOutgoingRecoveries(String nodeId) {
-        return recoveriesPerNode.getOrDefault(nodeId, Recoveries.EMPTY).getOutgoing();
-    }
-
-    /**
-     * Recoveries started from node as a result of new index creation.
-     */
-    public int getInitialOutgoingRecoveries(String nodeId) {
-        return initialReplicaRecoveries.getOrDefault(nodeId, Recoveries.EMPTY).getOutgoing();
-    }
-
     @Override
     public Iterator<RoutingNode> iterator() {
         return Collections.unmodifiableCollection(nodesToShards.values()).iterator();
@@ -266,41 +255,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
         return nodesToShards.values().stream();
     }
 
-    /**
-     * Retrieves all unique values for a specific awareness attribute across all nodes
-     * Eg: "zone" : ["zone1", "zone2", "zone3"]
-     * @param attributeName The name of the awareness attribute to collect values for
-     * @return A set of unique attribute values for the specified attribute
-     */
-    public Set<String> nodesPerAttributesCounts(String attributeName) {
-        return nodesPerAttributesCounts(attributeName, routingNode -> true);
-    }
-
-    /**
-     * Retrieves all unique values for a specific awareness attribute across filtered nodes
-     * Eg: "zone" : ["zone1", "zone2", "zone3"]
-     * @param attributeName The name of the awareness attribute to collect values for
-     * @param routingNodeFilter filters the routing nodes based on given condition
-     * @return A set of unique attribute values for the specified attribute
-     */
-    public Set<String> nodesPerAttributesCounts(String attributeName, Predicate<RoutingNode> routingNodeFilter) {
-
-        return nodesPerAttributeNames.computeIfAbsent(
-            attributeName,
-            ignored -> stream().filter(routingNodeFilter).map(r -> r.node().getAttributes().get(attributeName)).collect(Collectors.toSet())
-        );
-    }
-
-    /**
-     * Returns <code>true</code> iff this {@link RoutingNodes} instance has any unassigned shards even if the
-     * shards are marked as temporarily ignored.
-     * @see UnassignedShards#isEmpty()
-     * @see UnassignedShards#isIgnoredEmpty()
-     */
-    public boolean hasUnassignedShards() {
-        return unassignedShards.isEmpty() == false || unassignedShards.isIgnoredEmpty() == false;
-    }
-
     public boolean hasInactivePrimaries() {
         return inactivePrimaryCount > 0;
     }
@@ -316,19 +270,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
     public List<ShardRouting> assignedShards(ShardId shardId) {
         final List<ShardRouting> replicaSet = assignedShards.get(shardId);
         return replicaSet == null ? EMPTY : Collections.unmodifiableList(replicaSet);
-    }
-
-    /**
-     * Returns the active primary shard for the given shard id or <code>null</code> if
-     * no primary is found or the primary is not active.
-     */
-    public ShardRouting activePrimary(ShardId shardId) {
-        for (ShardRouting shardRouting : assignedShards(shardId)) {
-            if (shardRouting.primary() && shardRouting.active()) {
-                return shardRouting;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -444,22 +385,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
                 );
             }
         }
-
-        /**
-         * Returns <code>true</code> iff this collection contains one or more non-ignored unassigned shards.
-         */
-        public boolean isEmpty() {
-            return unassigned.isEmpty();
-        }
-
-        /**
-         * Returns <code>true</code> iff any unassigned shards are marked as temporarily ignored.
-         * @see UnassignedShards#ignoreShard(ShardRouting, AllocationStatus, RoutingChangesObserver)
-         * @see UnassignedIterator#removeAndIgnore(AllocationStatus, RoutingChangesObserver)
-         */
-        public boolean isIgnoredEmpty() {
-            return ignored.isEmpty();
-        }
     }
 
     private static boolean isNonRelocatingPrimary(ShardRouting routing) {
@@ -484,10 +409,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
         void addIncoming(int howMany) {
             assert incoming + howMany >= 0 : incoming + howMany + " must be >= 0";
             incoming += howMany;
-        }
-
-        int getOutgoing() {
-            return outgoing;
         }
 
         public static Recoveries getOrAdd(Map<String, Recoveries> map, String key) {

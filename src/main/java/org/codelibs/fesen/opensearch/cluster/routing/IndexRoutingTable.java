@@ -132,50 +132,6 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
         return shards();
     }
 
-    /**
-     * Returns <code>true</code> if all shards are primary and active. Otherwise <code>false</code>.
-     */
-    public boolean allPrimaryShardsActive() {
-        return primaryShardsActive() == shards().size();
-    }
-
-    /**
-     * Calculates the number of primary shards in active state in routing table
-     *
-     * @return number of active primary shards
-     */
-    public int primaryShardsActive() {
-        int counter = 0;
-        for (IndexShardRoutingTable shardRoutingTable : this) {
-            if (shardRoutingTable.primaryShard() != null && shardRoutingTable.primaryShard().active()) {
-                counter++;
-            }
-        }
-        return counter;
-    }
-
-    /**
-     * Returns <code>true</code> if all primary shards are in
-     * {@link ShardRoutingState#UNASSIGNED} state. Otherwise <code>false</code>.
-     */
-    public boolean allPrimaryShardsUnassigned() {
-        return primaryShardsUnassigned() == shards.size();
-    }
-
-    /**
-     * Calculates the number of primary shards in the routing table the are in
-     * {@link ShardRoutingState#UNASSIGNED} state.
-     */
-    public int primaryShardsUnassigned() {
-        int counter = 0;
-        for (IndexShardRoutingTable shardRoutingTable : this) {
-            if (shardRoutingTable.primaryShard().unassigned()) {
-                counter++;
-            }
-        }
-        return counter;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

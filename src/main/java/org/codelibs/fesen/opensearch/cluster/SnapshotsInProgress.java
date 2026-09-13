@@ -100,76 +100,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
     }
 
     /**
-     * Creates the initial snapshot clone entry
-     *
-     * @param snapshot snapshot to clone into
-     * @param source   snapshot to clone from
-     * @param indices  indices to clone
-     * @param startTime start time
-     * @param repositoryStateId repository state id that this clone is based on
-     * @param version repository metadata version to write
-     * @return snapshot clone entry
-     */
-    public static Entry startClone(
-        Snapshot snapshot,
-        SnapshotId source,
-        List<IndexId> indices,
-        long startTime,
-        long repositoryStateId,
-        Version version
-    ) {
-        return new SnapshotsInProgress.Entry(
-            snapshot,
-            true,
-            false,
-            State.STARTED,
-            indices,
-            Collections.emptyList(),
-            startTime,
-            repositoryStateId,
-            Map.of(),
-            null,
-            Collections.emptyMap(),
-            version,
-            source,
-            Map.of(),
-            false,
-            false// initialising to false, will be updated in startCloning method of SnapshotsService while updating entry with
-                 // clone jobs
-        );
-    }
-
-    public static Entry startClone(
-        Snapshot snapshot,
-        SnapshotId source,
-        List<IndexId> indices,
-        long startTime,
-        long repositoryStateId,
-        Version version,
-        boolean remoteStoreIndexShallowCopyV2
-    ) {
-        return new SnapshotsInProgress.Entry(
-            snapshot,
-            true,
-            false,
-            State.STARTED,
-            indices,
-            Collections.emptyList(),
-            startTime,
-            repositoryStateId,
-            Map.of(),
-            null,
-            Collections.emptyMap(),
-            version,
-            source,
-            Map.of(),
-            remoteStoreIndexShallowCopyV2,
-            remoteStoreIndexShallowCopyV2// initialising to false, will be updated in startCloning method of SnapshotsService
-            // while updating entry with clone jobs
-        );
-    }
-
-    /**
      * Entry in the collection.
      *
      * @opensearch.internal
@@ -447,53 +377,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
                 entry.userMetadata,
                 version,
                 entry.remoteStoreIndexShallowCopy
-            );
-        }
-
-        public Entry withRepoGen(long newRepoGen) {
-            assert newRepoGen > repositoryStateId : "Updated repository generation ["
-                + newRepoGen
-                + "] must be higher than current generation ["
-                + repositoryStateId
-                + "]";
-            return new Entry(
-                snapshot,
-                includeGlobalState,
-                partial,
-                state,
-                indices,
-                dataStreams,
-                startTime,
-                newRepoGen,
-                shards,
-                failure,
-                userMetadata,
-                version,
-                source,
-                clones,
-                remoteStoreIndexShallowCopy,
-                remoteStoreIndexShallowCopyV2
-            );
-        }
-
-        public Entry withRemoteStoreIndexShallowCopy(final boolean remoteStoreIndexShallowCopy) {
-            return new Entry(
-                snapshot,
-                includeGlobalState,
-                partial,
-                state,
-                indices,
-                dataStreams,
-                startTime,
-                repositoryStateId,
-                shards,
-                failure,
-                userMetadata,
-                version,
-                source,
-                clones,
-                remoteStoreIndexShallowCopy,
-                remoteStoreIndexShallowCopyV2
             );
         }
 
@@ -796,15 +679,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return reason;
         }
 
-        /**
-         * Checks if this shard snapshot is actively executing.
-         * A shard is defined as actively executing if it either is in a state that may write to the repository
-         * ({@link ShardState#INIT} or {@link ShardState#ABORTED}) or about to write to it in state {@link ShardState#WAITING}.
-         */
-        public boolean isActive() {
-            return state == ShardState.INIT || state == ShardState.ABORTED || state == ShardState.WAITING;
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeOptionalString(nodeId);
@@ -892,29 +766,12 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
 
     private final List<Entry> entries;
 
-    public static SnapshotsInProgress of(List<Entry> entries) {
-        if (entries.isEmpty()) {
-            return EMPTY;
-        }
-        return new SnapshotsInProgress(Collections.unmodifiableList(entries));
-    }
-
     private SnapshotsInProgress(List<Entry> entries) {
         this.entries = entries;
     }
 
     public List<Entry> entries() {
         return this.entries;
-    }
-
-    public Entry snapshot(final Snapshot snapshot) {
-        for (Entry entry : entries) {
-            final Snapshot curr = entry.snapshot();
-            if (curr.equals(snapshot)) {
-                return entry;
-            }
-        }
-        return null;
     }
 
     @Override

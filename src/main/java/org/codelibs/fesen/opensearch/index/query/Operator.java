@@ -61,17 +61,6 @@ public enum Operator implements Writeable {
         }
     }
 
-    public QueryParser.Operator toQueryParserOperator() {
-        switch (this) {
-            case OR:
-                return QueryParser.Operator.OR;
-            case AND:
-                return QueryParser.Operator.AND;
-            default:
-                throw Operator.newOperatorException(this.toString());
-        }
-    }
-
     public static Operator readFromStream(StreamInput in) throws IOException {
         return in.readEnum(Operator.class);
     }

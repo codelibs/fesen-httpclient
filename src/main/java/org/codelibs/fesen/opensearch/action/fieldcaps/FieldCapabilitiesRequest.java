@@ -69,17 +69,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
     private QueryBuilder indexFilter;
     private Long nowInMillis;
 
-    public FieldCapabilitiesRequest(StreamInput in) throws IOException {
-        super(in);
-        fields = in.readStringArray();
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        mergeResults = in.readBoolean();
-        includeUnmapped = in.readBoolean();
-        indexFilter = in.readOptionalNamedWriteable(QueryBuilder.class);
-        nowInMillis = in.readOptionalLong();
-    }
-
     public FieldCapabilitiesRequest() {}
 
     /**
@@ -174,14 +163,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
 
     public boolean includeUnmapped() {
         return includeUnmapped;
-    }
-
-    /**
-     * Allows to filter indices if the provided {@link QueryBuilder} rewrites to `match_none` on every shard.
-     */
-    public FieldCapabilitiesRequest indexFilter(QueryBuilder indexFilter) {
-        this.indexFilter = indexFilter;
-        return this;
     }
 
     public QueryBuilder indexFilter() {

@@ -123,11 +123,6 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
 
     RolloverRequest() {}
 
-    public RolloverRequest(String rolloverTarget, String newIndexName) {
-        this.rolloverTarget = rolloverTarget;
-        this.newIndexName = newIndexName;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = createIndexRequest.validate();
@@ -182,50 +177,10 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
     }
 
     /**
-     * Sets if the rollover should not be executed when conditions are met
-     */
-    public void dryRun(boolean dryRun) {
-        this.dryRun = dryRun;
-    }
-
-    /**
      * Sets the wait for active shards configuration for the rolled index that gets created.
      */
     public void setWaitForActiveShards(ActiveShardCount waitForActiveShards) {
         createIndexRequest.waitForActiveShards(waitForActiveShards);
-    }
-
-    /**
-     * Adds condition to check if the index is at least <code>age</code> old
-     */
-    public void addMaxIndexAgeCondition(TimeValue age) {
-        MaxAgeCondition maxAgeCondition = new MaxAgeCondition(age);
-        if (this.conditions.containsKey(maxAgeCondition.name)) {
-            throw new IllegalArgumentException(maxAgeCondition.name + " condition is already set");
-        }
-        this.conditions.put(maxAgeCondition.name, maxAgeCondition);
-    }
-
-    /**
-     * Adds condition to check if the index has at least <code>numDocs</code>
-     */
-    public void addMaxIndexDocsCondition(long numDocs) {
-        MaxDocsCondition maxDocsCondition = new MaxDocsCondition(numDocs);
-        if (this.conditions.containsKey(maxDocsCondition.name)) {
-            throw new IllegalArgumentException(maxDocsCondition.name + " condition is already set");
-        }
-        this.conditions.put(maxDocsCondition.name, maxDocsCondition);
-    }
-
-    /**
-     * Adds a size-based condition to check if the index size is at least <code>size</code>.
-     */
-    public void addMaxIndexSizeCondition(ByteSizeValue size) {
-        MaxSizeCondition maxSizeCondition = new MaxSizeCondition(size);
-        if (this.conditions.containsKey(maxSizeCondition.name)) {
-            throw new IllegalArgumentException(maxSizeCondition + " condition is already set");
-        }
-        this.conditions.put(maxSizeCondition.name, maxSizeCondition);
     }
 
     public boolean isDryRun() {

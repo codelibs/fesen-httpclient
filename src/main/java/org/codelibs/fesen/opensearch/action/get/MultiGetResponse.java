@@ -98,20 +98,6 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         }
 
         /**
-         * The index name of the action.
-         */
-        public String getIndex() {
-            return this.index;
-        }
-
-        /**
-         * The id of the action.
-         */
-        public String getId() {
-            return id;
-        }
-
-        /**
          * The failure message.
          */
         public String getMessage() {

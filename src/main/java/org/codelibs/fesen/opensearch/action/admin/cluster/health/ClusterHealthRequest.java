@@ -89,10 +89,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
 
     public ClusterHealthRequest() {}
 
-    public ClusterHealthRequest(String... indices) {
-        this.indices = indices;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -147,11 +143,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return indicesOptions;
     }
 
-    public ClusterHealthRequest indicesOptions(final IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public boolean includeDataStreams() {
         return true;
@@ -170,10 +161,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return this;
     }
 
-    public ClusterHealthRequest waitForGreenStatus() {
-        return waitForStatus(ClusterHealthStatus.GREEN);
-    }
-
     public ClusterHealthRequest waitForYellowStatus() {
         return waitForStatus(ClusterHealthStatus.YELLOW);
     }
@@ -182,30 +169,8 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return waitForNoRelocatingShards;
     }
 
-    /**
-     * Sets whether the request should wait for there to be no relocating shards before
-     * retrieving the cluster health status.  Defaults to {@code false}, meaning the
-     * operation does not wait on there being no more relocating shards.  Set to <code>true</code>
-     * to wait until the number of relocating shards in the cluster is 0.
-     */
-    public ClusterHealthRequest waitForNoRelocatingShards(boolean waitForNoRelocatingShards) {
-        this.waitForNoRelocatingShards = waitForNoRelocatingShards;
-        return this;
-    }
-
     public boolean waitForNoInitializingShards() {
         return waitForNoInitializingShards;
-    }
-
-    /**
-     * Sets whether the request should wait for there to be no initializing shards before
-     * retrieving the cluster health status.  Defaults to {@code false}, meaning the
-     * operation does not wait on there being no more initializing shards.  Set to <code>true</code>
-     * to wait until the number of initializing shards in the cluster is 0.
-     */
-    public ClusterHealthRequest waitForNoInitializingShards(boolean waitForNoInitializingShards) {
-        this.waitForNoInitializingShards = waitForNoInitializingShards;
-        return this;
     }
 
     public ActiveShardCount waitForActiveShards() {
@@ -214,19 +179,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
 
     public String waitForNodes() {
         return waitForNodes;
-    }
-
-    /**
-     * Waits for N number of nodes. Use "12" for exact mapping, "&gt;12" and "&lt;12" for range.
-     */
-    public ClusterHealthRequest waitForNodes(String waitForNodes) {
-        this.waitForNodes = waitForNodes;
-        return this;
-    }
-
-    public ClusterHealthRequest waitForEvents(Priority waitForEvents) {
-        this.waitForEvents = waitForEvents;
-        return this;
     }
 
     public Priority waitForEvents() {
@@ -241,18 +193,8 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return level;
     }
 
-    public ClusterHealthRequest setAwarenessAttribute(String awarenessAttribute) {
-        this.awarenessAttribute = awarenessAttribute;
-        return this;
-    }
-
     public String getAwarenessAttribute() {
         return awarenessAttribute;
-    }
-
-    public final ClusterHealthRequest ensureNodeWeighedIn(boolean ensureNodeWeighedIn) {
-        this.ensureNodeWeighedIn = ensureNodeWeighedIn;
-        return this;
     }
 
     /**
@@ -266,10 +208,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
 
     public boolean isApplyLevelAtTransportLayer() {
         return applyLevelAtTransportLayer;
-    }
-
-    public void setApplyLevelAtTransportLayer(boolean applyLevelAtTransportLayer) {
-        this.applyLevelAtTransportLayer = applyLevelAtTransportLayer;
     }
 
     @Override

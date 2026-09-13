@@ -87,25 +87,6 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
     }
 
     /**
-     * Returns an array of byte buffers from the given BytesReference.
-     */
-    static ByteBuffer[] toByteBuffers(BytesReference reference) {
-        BytesRefIterator byteRefIterator = reference.iterator();
-        BytesRef r;
-        try {
-            ArrayList<ByteBuffer> buffers = new ArrayList<>();
-            while ((r = byteRefIterator.next()) != null) {
-                buffers.add(ByteBuffer.wrap(r.bytes, r.offset, r.length));
-            }
-            return buffers.toArray(new ByteBuffer[0]);
-
-        } catch (IOException e) {
-            // this is really an error since we don't do IO in our bytesreferences
-            throw new AssertionError("won't happen", e);
-        }
-    }
-
-    /**
      * Returns BytesReference either wrapping the provided {@link ByteArray} or in case the has a backing raw byte array one that wraps
      * that backing array directly.
      */

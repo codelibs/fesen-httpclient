@@ -104,12 +104,6 @@ public abstract class BaseNodesRequest<Request extends BaseNodesRequest<Request>
     }
 
     @SuppressWarnings("unchecked")
-    public final Request timeout(TimeValue timeout) {
-        this.timeout = timeout;
-        return (Request) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public final Request timeout(String timeout) {
         this.timeout = TimeValue.parseTimeValue(timeout, DEFAULT_TIMEOUT_SECS, getClass().getSimpleName() + ".timeout");
         return (Request) this;

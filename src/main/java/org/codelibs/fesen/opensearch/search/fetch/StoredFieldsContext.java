@@ -114,17 +114,6 @@ public class StoredFieldsContext implements Writeable {
     }
 
     /**
-     * Adds a field name {@code field} to the list of fields to load.
-     */
-    public StoredFieldsContext addFieldName(String field) {
-        if (fetchFields == false || _NONE_.equals(field)) {
-            throw new IllegalArgumentException("cannot combine _none_ with other fields");
-        }
-        this.fieldNames.add(field);
-        return this;
-    }
-
-    /**
      * Returns true if the stored fields should be fetched, false otherwise.
      */
     public boolean fetchFields() {

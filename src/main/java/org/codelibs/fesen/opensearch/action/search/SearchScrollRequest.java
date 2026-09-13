@@ -67,12 +67,6 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
         this.scrollId = scrollId;
     }
 
-    public SearchScrollRequest(StreamInput in) throws IOException {
-        super(in);
-        scrollId = in.readString();
-        scroll = in.readOptionalWriteable(Scroll::new);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -116,13 +110,6 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
      */
     public SearchScrollRequest scroll(TimeValue keepAlive) {
         return scroll(new Scroll(keepAlive));
-    }
-
-    /**
-     * If set, will enable scrolling of the search request for the specified timeout.
-     */
-    public SearchScrollRequest scroll(String keepAlive) {
-        return scroll(new Scroll(TimeValue.parseTimeValue(keepAlive, null, getClass().getSimpleName() + ".keepAlive")));
     }
 
     @Override

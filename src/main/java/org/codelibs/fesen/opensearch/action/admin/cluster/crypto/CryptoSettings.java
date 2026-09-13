@@ -63,30 +63,6 @@ public class CryptoSettings implements Writeable, ToXContentObject {
     }
 
     /**
-     * Returns key provider name
-     * @return keyProviderName
-     */
-    public String getKeyProviderName() {
-        return keyProviderName;
-    }
-
-    /**
-     * Returns key provider type
-     * @return keyProviderType
-     */
-    public String getKeyProviderType() {
-        return keyProviderType;
-    }
-
-    /**
-     * Returns crypto settings
-     * @return settings
-     */
-    public Settings getSettings() {
-        return settings;
-    }
-
-    /**
      * Constructs a new crypto settings with provided key provider name.
      * @param keyProviderName Name of the key provider
      */

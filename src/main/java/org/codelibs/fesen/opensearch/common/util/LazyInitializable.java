@@ -99,18 +99,6 @@ public final class LazyInitializable<T, E extends Exception> {
     }
 
     /**
-     * Clears the value, if it has been previously created by calling
-     * {@code #getOrCompute()}. The <code>onReset</code> will be called on this
-     * value. The next call to {@code #getOrCompute()} will recreate the value.
-     */
-    public synchronized void reset() {
-        if (value != null) {
-            onReset.accept(value);
-            value = null;
-        }
-    }
-
-    /**
      * Creates a new value thread safely.
      */
     private synchronized T maybeCompute(CheckedSupplier<T, E> supplier) throws E {

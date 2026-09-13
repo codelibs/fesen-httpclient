@@ -68,24 +68,8 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
         return useAggregatedNodeLevelResponses;
     }
 
-    public void useAggregatedNodeLevelResponses(boolean useAggregatedNodeLevelResponses) {
-        this.useAggregatedNodeLevelResponses = useAggregatedNodeLevelResponses;
-    }
-
     public boolean computeAllMetrics() {
         return computeAllMetrics;
-    }
-
-    public void computeAllMetrics(boolean computeAllMetrics) {
-        this.computeAllMetrics = computeAllMetrics;
-    }
-
-    /**
-     * Add Metric
-     */
-    public ClusterStatsRequest addMetric(Metric metric) {
-        requestedMetrics.add(metric);
-        return this;
     }
 
     /**
@@ -93,14 +77,6 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
      */
     public Set<Metric> requestedMetrics() {
         return new HashSet<>(requestedMetrics);
-    }
-
-    /**
-     * Add IndexMetric
-     */
-    public ClusterStatsRequest addIndexMetric(IndexMetric indexMetric) {
-        indexMetricsRequested.add(indexMetric);
-        return this;
     }
 
     public Set<IndexMetric> indicesMetrics() {

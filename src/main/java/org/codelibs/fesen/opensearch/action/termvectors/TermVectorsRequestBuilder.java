@@ -89,17 +89,6 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
     }
 
     /**
-     * Sets the preference to execute the search. Defaults to randomize across shards. Can be set to
-     * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
-     * or a custom value, which guarantees that the same order
-     * will be used across different requests.
-     */
-    public TermVectorsRequestBuilder setPreference(String preference) {
-        request.preference(preference);
-        return this;
-    }
-
-    /**
      * Sets whether to return the start and stop offsets for each term if they were stored or
      * skip offsets.
      */
@@ -171,14 +160,6 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
      */
     public TermVectorsRequestBuilder setVersionType(VersionType versionType) {
         request.versionType(versionType);
-        return this;
-    }
-
-    /**
-     * Sets the analyzer used at each field when generating term vectors.
-     */
-    public TermVectorsRequestBuilder setPerFieldAnalyzer(Map<String, String> perFieldAnalyzer) {
-        request.perFieldAnalyzer(perFieldAnalyzer);
         return this;
     }
 }

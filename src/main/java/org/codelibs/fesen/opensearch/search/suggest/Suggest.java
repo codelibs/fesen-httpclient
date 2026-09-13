@@ -156,16 +156,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         return new Suggest(suggestions);
     }
 
-    /**
-     * @return only suggestions of type <code>suggestionType</code> contained in this {@link Suggest} instance
-     */
-    public <T extends Suggestion> List<T> filter(Class<T> suggestionType) {
-        return suggestions.stream()
-            .filter(suggestion -> suggestion.getClass() == suggestionType)
-            .map(suggestion -> (T) suggestion)
-            .collect(Collectors.toList());
-    }
-
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -328,12 +318,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
             protected List<O> options = new ArrayList<>(5);
 
-            public Entry(Text text, int offset, int length) {
-                this.text = text;
-                this.offset = offset;
-                this.length = length;
-            }
-
             protected Entry() {}
 
             /**
@@ -418,12 +402,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 }
                 builder.endArray();
                 return builder;
-            }
-
-            protected static void declareCommonFields(ObjectParser<? extends Entry<? extends Option>, Void> parser) {
-                parser.declareString((entry, text) -> entry.text = new Text(text), new ParseField(TEXT));
-                parser.declareInt((entry, offset) -> entry.offset = offset, new ParseField(OFFSET));
-                parser.declareInt((entry, length) -> entry.length = length, new ParseField(LENGTH));
             }
 
             /**

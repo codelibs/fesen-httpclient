@@ -69,13 +69,6 @@ public class RestoreInfo implements ToXContentObject, Writeable {
 
     RestoreInfo() {}
 
-    public RestoreInfo(String name, List<String> indices, int totalShards, int successfulShards) {
-        this.name = name;
-        this.indices = indices;
-        this.totalShards = totalShards;
-        this.successfulShards = successfulShards;
-    }
-
     public RestoreInfo(StreamInput in) throws IOException {
         name = in.readString();
         indices = Collections.unmodifiableList(in.readStringList());
@@ -126,15 +119,6 @@ public class RestoreInfo implements ToXContentObject, Writeable {
      */
     public int successfulShards() {
         return successfulShards;
-    }
-
-    /**
-     * REST status of the operation
-     *
-     * @return REST status
-     */
-    public RestStatus status() {
-        return RestStatus.OK;
     }
 
     static final class Fields {

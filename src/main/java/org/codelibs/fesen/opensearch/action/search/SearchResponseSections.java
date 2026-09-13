@@ -84,28 +84,6 @@ public class SearchResponseSections implements ToXContentFragment {
         boolean timedOut,
         Boolean terminatedEarly,
         SearchProfileShardResults profileResults,
-        int numReducePhases
-    ) {
-        this(
-            hits,
-            aggregations,
-            suggest,
-            timedOut,
-            terminatedEarly,
-            profileResults,
-            numReducePhases,
-            Collections.emptyList(),
-            Collections.emptyList()
-        );
-    }
-
-    public SearchResponseSections(
-        SearchHits hits,
-        Aggregations aggregations,
-        Suggest suggest,
-        boolean timedOut,
-        Boolean terminatedEarly,
-        SearchProfileShardResults profileResults,
         int numReducePhases,
         List<SearchExtBuilder> searchExtBuilders,
         List<ProcessorExecutionDetail> processorResult
@@ -119,29 +97,6 @@ public class SearchResponseSections implements ToXContentFragment {
         this.numReducePhases = numReducePhases;
         this.processorResult.addAll(processorResult);
         this.searchExtBuilders.addAll(Objects.requireNonNull(searchExtBuilders, "searchExtBuilders must not be null"));
-    }
-
-    public SearchResponseSections(
-        SearchHits hits,
-        Aggregations aggregations,
-        Suggest suggest,
-        boolean timedOut,
-        Boolean terminatedEarly,
-        SearchProfileShardResults profileResults,
-        int numReducePhases,
-        List<SearchExtBuilder> searchExtBuilders
-    ) {
-        this(
-            hits,
-            aggregations,
-            suggest,
-            timedOut,
-            terminatedEarly,
-            profileResults,
-            numReducePhases,
-            searchExtBuilders,
-            Collections.emptyList()
-        );
     }
 
     public final boolean timedOut() {
@@ -160,28 +115,11 @@ public class SearchResponseSections implements ToXContentFragment {
         return aggregations;
     }
 
-    public final Suggest suggest() {
-        return suggest;
-    }
-
     /**
      * Returns the number of reduce phases applied to obtain this search response
      */
     public final int getNumReducePhases() {
         return numReducePhases;
-    }
-
-    /**
-     * Returns the profile results for this search response (including all shards).
-     * An empty map is returned if profiling was not enabled
-     *
-     * @return Profile results
-     */
-    public final Map<String, ProfileShardResult> profile() {
-        if (profileResults == null) {
-            return Collections.emptyMap();
-        }
-        return profileResults.getShardResults();
     }
 
     @Override

@@ -68,17 +68,6 @@ public class PutRepositoryRequestBuilder extends AcknowledgedRequestBuilder<
     }
 
     /**
-     * Sets the repository name
-     *
-     * @param name repository name
-     * @return this builder
-     */
-    public PutRepositoryRequestBuilder setName(String name) {
-        request.name(name);
-        return this;
-    }
-
-    /**
      * Sets the repository type
      *
      * @param type repository type
@@ -97,40 +86,6 @@ public class PutRepositoryRequestBuilder extends AcknowledgedRequestBuilder<
      */
     public PutRepositoryRequestBuilder setSettings(Settings settings) {
         request.settings(settings);
-        return this;
-    }
-
-    /**
-     * Sets the repository settings
-     *
-     * @param settings repository settings builder
-     * @return this builder
-     */
-    public PutRepositoryRequestBuilder setSettings(Settings.Builder settings) {
-        request.settings(settings);
-        return this;
-    }
-
-    /**
-     * Sets the repository settings in Json or Yaml format
-     *
-     * @param source repository settings
-     * @param xContentType the content type of the source
-     * @return this builder
-     */
-    public PutRepositoryRequestBuilder setSettings(String source, XContentType xContentType) {
-        request.settings(source, xContentType);
-        return this;
-    }
-
-    /**
-     * Sets whether or not repository should be verified after creation
-     *
-     * @param verify true if repository should be verified after registration, false otherwise
-     * @return this builder
-     */
-    public PutRepositoryRequestBuilder setVerify(boolean verify) {
-        request.verify(verify);
         return this;
     }
 }

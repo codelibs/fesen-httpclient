@@ -173,16 +173,6 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
         return bounds == null || bounds.max == null ? Double.NEGATIVE_INFINITY : bounds.max;
     }
 
-    public boolean contain(double value) {
-        if (max != null && value > max) {
-            return false;
-        }
-        if (min != null && value < min) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();

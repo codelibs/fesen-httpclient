@@ -77,17 +77,6 @@ public class SnapshotShardFailure extends ShardOperationFailedException {
      * @param nodeId  node where failure occurred
      * @param shardId shard id
      * @param reason  failure reason
-     */
-    public SnapshotShardFailure(@Nullable String nodeId, ShardId shardId, String reason) {
-        this(nodeId, shardId, reason, RestStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * Constructs new snapshot shard failure object
-     *
-     * @param nodeId  node where failure occurred
-     * @param shardId shard id
-     * @param reason  failure reason
      * @param status  rest status
      */
     private SnapshotShardFailure(@Nullable String nodeId, ShardId shardId, String reason, RestStatus status) {

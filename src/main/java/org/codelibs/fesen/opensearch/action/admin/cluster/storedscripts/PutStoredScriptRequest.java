@@ -66,30 +66,8 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
     private MediaType mediaType;
     private StoredScriptSource source;
 
-    public PutStoredScriptRequest(StreamInput in) throws IOException {
-        super(in);
-        id = in.readOptionalString();
-        content = in.readBytesReference();
-        if (in.getVersion().onOrAfter(Version.V_2_10_0)) {
-            mediaType = in.readMediaType();
-        } else {
-            mediaType = in.readEnum(XContentType.class);
-        }
-        context = in.readOptionalString();
-        source = new StoredScriptSource(in);
-    }
-
     public PutStoredScriptRequest() {
         super();
-    }
-
-    public PutStoredScriptRequest(String id, String context, BytesReference content, MediaType mediaType, StoredScriptSource source) {
-        super();
-        this.id = id;
-        this.context = context;
-        this.content = content;
-        this.mediaType = Objects.requireNonNull(mediaType);
-        this.source = source;
     }
 
     @Override

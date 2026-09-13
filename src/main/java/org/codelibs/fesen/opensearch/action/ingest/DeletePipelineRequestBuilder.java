@@ -53,12 +53,4 @@ public class DeletePipelineRequestBuilder extends ActionRequestBuilder<DeletePip
         super(client, action, new DeletePipelineRequest(id));
     }
 
-    /**
-     * Sets the id of the pipeline to delete.
-     */
-    public DeletePipelineRequestBuilder setId(String id) {
-        request.setId(id);
-        return this;
-    }
-
 }

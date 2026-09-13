@@ -55,16 +55,6 @@ public class NodesHotThreadsRequest extends BaseNodesRequest<NodesHotThreadsRequ
     int snapshots = 10;
     boolean ignoreIdleThreads = true;
 
-    // for serialization
-    public NodesHotThreadsRequest(StreamInput in) throws IOException {
-        super(in);
-        threads = in.readInt();
-        ignoreIdleThreads = in.readBoolean();
-        type = in.readString();
-        interval = in.readTimeValue();
-        snapshots = in.readInt();
-    }
-
     /**
      * Get hot threads from nodes based on the nodes ids specified. If none are passed, hot
      * threads for all nodes is used.

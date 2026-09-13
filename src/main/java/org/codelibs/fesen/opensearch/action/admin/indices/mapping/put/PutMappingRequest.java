@@ -109,22 +109,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     private boolean writeIndexOnly;
 
-    public PutMappingRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            String type = in.readOptionalString();
-            if (MapperService.SINGLE_MAPPING_NAME.equals(type) == false) {
-                throw new IllegalArgumentException("Expected type [_doc] but received [" + type + "]");
-            }
-        }
-        source = in.readString();
-        concreteIndex = in.readOptionalWriteable(Index::new);
-        origin = in.readOptionalString();
-        writeIndexOnly = in.readBoolean();
-    }
-
     public PutMappingRequest() {}
 
     /**
@@ -165,15 +149,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
     }
 
     /**
-     * Sets a concrete index for this put mapping request.
-     */
-    public PutMappingRequest setConcreteIndex(Index index) {
-        Objects.requireNonNull(index, "index must not be null");
-        this.concreteIndex = index;
-        return this;
-    }
-
-    /**
      * Returns a concrete index for this mapping or <code>null</code> if no concrete index is defined
      */
     public Index getConcreteIndex() {
@@ -193,11 +168,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
         return indicesOptions;
     }
 
-    public PutMappingRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public boolean includeDataStreams() {
         return true;
@@ -208,17 +178,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
      */
     public String source() {
         return source;
-    }
-
-    /**
-     * A specialized simplified mapping source method, takes the form of simple properties definition:
-     * ("field1", "type=string,store=true").
-     * <p>
-     * Also supports metadata mapping fields such as `_all` and `_parent` as property definition, these metadata
-     * mapping fields will automatically be put on the top level mapping object.
-     */
-    public PutMappingRequest source(String... source) {
-        return source(simpleMapping(source));
     }
 
     public String origin() {
@@ -294,19 +253,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
      */
     public PutMappingRequest source(XContentBuilder mappingBuilder) {
         return source(BytesReference.bytes(mappingBuilder), mappingBuilder.contentType());
-    }
-
-    /**
-     * The mapping source definition.
-     */
-    public PutMappingRequest source(Map<String, ?> mappingSource) {
-        try {
-            XContentBuilder builder = MediaTypeRegistry.contentBuilder(MediaTypeRegistry.JSON);
-            builder.map(mappingSource);
-            return source(BytesReference.bytes(builder), builder.contentType());
-        } catch (IOException e) {
-            throw new OpenSearchGenerationException("Failed to generate [" + mappingSource + "]", e);
-        }
     }
 
     /**

@@ -67,17 +67,6 @@ public class IndicesShardStoresRequest extends ClusterManagerNodeReadRequest<Ind
 
     public IndicesShardStoresRequest() {}
 
-    public IndicesShardStoresRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        int nStatus = in.readVInt();
-        statuses = EnumSet.noneOf(ClusterHealthStatus.class);
-        for (int i = 0; i < nStatus; i++) {
-            statuses.add(ClusterHealthStatus.fromValue(in.readByte()));
-        }
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -87,15 +76,6 @@ public class IndicesShardStoresRequest extends ClusterManagerNodeReadRequest<Ind
             out.writeByte(status.value());
         }
         indicesOptions.writeIndicesOptions(out);
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions
-     * By default, expands wildcards to both open and closed indices
-     */
-    public IndicesShardStoresRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
     }
 
     /**

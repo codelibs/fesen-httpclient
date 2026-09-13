@@ -312,23 +312,5 @@ public class FeatureFlags {
         public interface ThrowingRunnable {
             void run() throws Exception;
         }
-
-        /**
-         * Executes runnable test action with the provided feature flag enabled.
-         * Returns feature flag to previous value.
-         * @param flag feature flag setting.
-         * @param action critical section to run while feature flag is set.
-         */
-        public static void with(String flag, ThrowingRunnable action) throws Exception {
-            try (FlagWriteLock ignored = new FlagWriteLock(flag)) {
-                action.run();
-            }
-        }
-
-        public static void with(String flag, Boolean value, ThrowingRunnable action) throws Exception {
-            try (FlagWriteLock ignored = new FlagWriteLock(flag, value)) {
-                action.run();
-            }
-        }
     }
 }

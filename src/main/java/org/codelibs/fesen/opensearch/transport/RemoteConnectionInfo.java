@@ -57,13 +57,6 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
     final String clusterAlias;
     final boolean skipUnavailable;
 
-    public RemoteConnectionInfo(String clusterAlias, ModeInfo modeInfo, TimeValue initialConnectionTimeout, boolean skipUnavailable) {
-        this.clusterAlias = clusterAlias;
-        this.modeInfo = modeInfo;
-        this.initialConnectionTimeout = initialConnectionTimeout;
-        this.skipUnavailable = skipUnavailable;
-    }
-
     public RemoteConnectionInfo(StreamInput input) throws IOException {
         modeInfo = null;
         initialConnectionTimeout = input.readTimeValue();

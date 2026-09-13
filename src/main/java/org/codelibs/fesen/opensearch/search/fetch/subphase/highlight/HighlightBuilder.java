@@ -167,31 +167,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         return field(new Field(name).fragmentSize(fragmentSize));
     }
 
-    /**
-     * Adds a field to be highlighted with a provided fragment size (in characters), and
-     * a provided (maximum) number of fragments.
-     *
-     * @param name              The field to highlight
-     * @param fragmentSize      The size of a fragment in characters
-     * @param numberOfFragments The (maximum) number of fragments
-     */
-    public HighlightBuilder field(String name, int fragmentSize, int numberOfFragments) {
-        return field(new Field(name).fragmentSize(fragmentSize).numOfFragments(numberOfFragments));
-    }
-
-    /**
-     * Adds a field to be highlighted with a provided fragment size (in characters), and
-     * a provided (maximum) number of fragments.
-     *
-     * @param name              The field to highlight
-     * @param fragmentSize      The size of a fragment in characters
-     * @param numberOfFragments The (maximum) number of fragments
-     * @param fragmentOffset    The offset from the start of the fragment to the start of the highlight
-     */
-    public HighlightBuilder field(String name, int fragmentSize, int numberOfFragments, int fragmentOffset) {
-        return field(new Field(name).fragmentSize(fragmentSize).numOfFragments(numberOfFragments).fragmentOffset(fragmentOffset));
-    }
-
     public HighlightBuilder field(Field field) {
         fields.add(field);
         return this;

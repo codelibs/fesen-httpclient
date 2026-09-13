@@ -57,11 +57,6 @@ public abstract class OpenSearchLogMessage extends ParameterizedMessage {
         this.fields = fields;
     }
 
-    public String getValueFor(String key) {
-        Object value = fields.get(key);
-        return value != null ? value.toString() : null;
-    }
-
     public Object[] getArguments() {
         return super.getParameters();
     }

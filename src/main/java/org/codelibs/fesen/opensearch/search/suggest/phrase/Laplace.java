@@ -75,13 +75,6 @@ public final class Laplace extends SmoothingModel {
         this.alpha = alpha;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public Laplace(StreamInput in) throws IOException {
-        alpha = in.readDouble();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeDouble(alpha);

@@ -65,53 +65,10 @@ public class ExplainRequestBuilder extends SingleShardOperationRequestBuilder<Ex
     }
 
     /**
-     * Sets the routing for sharding.
-     */
-    public ExplainRequestBuilder setRouting(String routing) {
-        request().routing(routing);
-        return this;
-    }
-
-    /**
-     * Simple sets the routing. Since the parent is only used to get to the right shard.
-     */
-    public ExplainRequestBuilder setParent(String parent) {
-        request().parent(parent);
-        return this;
-    }
-
-    /**
-     * Sets the shard preference.
-     */
-    public ExplainRequestBuilder setPreference(String preference) {
-        request().preference(preference);
-        return this;
-    }
-
-    /**
      * Sets the query to get a score explanation for.
      */
     public ExplainRequestBuilder setQuery(QueryBuilder query) {
         request.query(query);
-        return this;
-    }
-
-    /**
-     * Explicitly specify the stored fields that will be returned for the explained document. By default, nothing is returned.
-     */
-    public ExplainRequestBuilder setStoredFields(String... fields) {
-        request.storedFields(fields);
-        return this;
-    }
-
-    /**
-     * Indicates whether the response should contain the stored _source
-     */
-    public ExplainRequestBuilder setFetchSource(boolean fetch) {
-        FetchSourceContext fetchSourceContext = request.fetchSourceContext() != null
-            ? request.fetchSourceContext()
-            : FetchSourceContext.FETCH_SOURCE;
-        request.fetchSourceContext(new FetchSourceContext(fetch, fetchSourceContext.includes(), fetchSourceContext.excludes()));
         return this;
     }
 }

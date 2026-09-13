@@ -83,30 +83,6 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
         this.currentNode = null;
     }
 
-    public ClusterAllocationExplainRequest(StreamInput in) throws IOException {
-        super(in);
-        this.index = in.readOptionalString();
-        this.shard = in.readOptionalVInt();
-        this.primary = in.readOptionalBoolean();
-        this.currentNode = in.readOptionalString();
-        this.includeYesDecisions = in.readBoolean();
-        this.includeDiskInfo = in.readBoolean();
-    }
-
-    /**
-     * Create a new allocation explain request. If {@code primary} is false, the first unassigned replica
-     * will be picked for explanation. If no replicas are unassigned, the first assigned replica will
-     * be explained.
-     * <p>
-     * Package private for testing.
-     */
-    ClusterAllocationExplainRequest(String index, int shard, boolean primary, @Nullable String currentNode) {
-        this.index = index;
-        this.shard = shard;
-        this.primary = primary;
-        this.currentNode = currentNode;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -212,25 +188,11 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
     }
 
     /**
-     * Set to {@code true} to include yes decisions for a particular node.
-     */
-    public void includeYesDecisions(boolean includeYesDecisions) {
-        this.includeYesDecisions = includeYesDecisions;
-    }
-
-    /**
      * Returns {@code true} if yes decisions should be included.  Otherwise only "no" and "throttle"
      * decisions are returned.
      */
     public boolean includeYesDecisions() {
         return this.includeYesDecisions;
-    }
-
-    /**
-     * Set to {@code true} to include information about the gathered disk information of nodes in the cluster.
-     */
-    public void includeDiskInfo(boolean includeDiskInfo) {
-        this.includeDiskInfo = includeDiskInfo;
     }
 
     /**

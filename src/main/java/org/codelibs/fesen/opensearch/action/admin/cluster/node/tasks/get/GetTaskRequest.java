@@ -60,13 +60,6 @@ public class GetTaskRequest extends ActionRequest {
      */
     public GetTaskRequest() {}
 
-    public GetTaskRequest(StreamInput in) throws IOException {
-        super(in);
-        taskId = TaskId.readFromStream(in);
-        timeout = in.readOptionalTimeValue();
-        waitForCompletion = in.readBoolean();
-    }
-
     public TaskId getTaskId() {
         return taskId;
     }

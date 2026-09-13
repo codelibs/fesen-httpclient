@@ -60,13 +60,6 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
     private ActiveShardCount waitForActiveShards = ActiveShardCount.DEFAULT;
     private boolean shouldStoreResult;
 
-    public OpenIndexRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        waitForActiveShards = ActiveShardCount.readFrom(in);
-    }
-
     public OpenIndexRequest() {}
 
     /**
@@ -114,18 +107,6 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
     @Override
     public IndicesOptions indicesOptions() {
         return indicesOptions;
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and how to deal with wildcard expressions.
-     * For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices to ignore and wildcard indices expressions
-     * @return the request itself
-     */
-    public OpenIndexRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
     }
 
     @Override

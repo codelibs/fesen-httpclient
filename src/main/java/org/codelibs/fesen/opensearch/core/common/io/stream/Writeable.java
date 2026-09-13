@@ -60,34 +60,6 @@ public interface Writeable {
         private static final Map<Byte, Reader<?>> READER_REGISTRY = new ConcurrentHashMap<>();
 
         /**
-         * registers a streamable writer
-         *
-         * @opensearch.internal
-         */
-        public static <W extends Writer<?>> void registerWriter(final Class<?> clazz, final W writer) {
-            if (WRITER_REGISTRY.putIfAbsent(clazz, writer) != null) {
-                throw new IllegalArgumentException("Streamable writer already registered for type [" + clazz.getName() + "]");
-            }
-        }
-
-        /**
-         * registers a streamable reader
-         *
-         * @opensearch.internal
-         */
-        public static <R extends Reader<?>> void registerReader(final byte ordinal, final R reader) {
-            if (READER_REGISTRY.putIfAbsent(ordinal, reader) != null) {
-                throw new IllegalArgumentException("Streamable reader already registered for ordinal [" + (int) ordinal + "]");
-            }
-        }
-
-        public static void registerClassAlias(final Class<?> classInstance, final Class<?> classGeneric) {
-            if (WRITER_CUSTOM_CLASS_MAP.putIfAbsent(classInstance, classGeneric) != null) {
-                throw new IllegalArgumentException("Streamable custom class already registered [" + classInstance.getName() + "]");
-            }
-        }
-
-        /**
          * Returns the registered writer keyed by the class type
          */
         @SuppressWarnings("unchecked")

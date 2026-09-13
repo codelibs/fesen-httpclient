@@ -54,13 +54,6 @@ public class ScriptContextStats implements Writeable, ToXContentFragment, Compar
     private final long cacheEvictions;
     private final long compilationLimitTriggered;
 
-    public ScriptContextStats(String context, long compilations, long cacheEvictions, long compilationLimitTriggered) {
-        this.context = Objects.requireNonNull(context);
-        this.compilations = compilations;
-        this.cacheEvictions = cacheEvictions;
-        this.compilationLimitTriggered = compilationLimitTriggered;
-    }
-
     public ScriptContextStats(StreamInput in) throws IOException {
         context = in.readString();
         compilations = in.readVLong();

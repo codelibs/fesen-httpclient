@@ -28,10 +28,6 @@ public class ProcessorInfo implements Writeable, ToXContentObject, Comparable<Pr
 
     private final String type;
 
-    public ProcessorInfo(String type) {
-        this.type = type;
-    }
-
     /**
      * Read from a stream.
      */

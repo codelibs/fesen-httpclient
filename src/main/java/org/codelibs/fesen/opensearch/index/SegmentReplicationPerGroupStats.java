@@ -31,12 +31,6 @@ public class SegmentReplicationPerGroupStats implements Writeable, ToXContentFra
     private final Set<SegmentReplicationShardStats> replicaStats;
     private final long rejectedRequestCount;
 
-    public SegmentReplicationPerGroupStats(ShardId shardId, Set<SegmentReplicationShardStats> replicaStats, long rejectedRequestCount) {
-        this.shardId = shardId;
-        this.replicaStats = replicaStats;
-        this.rejectedRequestCount = rejectedRequestCount;
-    }
-
     public SegmentReplicationPerGroupStats(StreamInput in) throws IOException {
         this.shardId = new ShardId(in);
         this.replicaStats = in.readSet(SegmentReplicationShardStats::new);

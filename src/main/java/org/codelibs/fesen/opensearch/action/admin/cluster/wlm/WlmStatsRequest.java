@@ -26,12 +26,6 @@ public class WlmStatsRequest extends BaseNodesRequest<WlmStatsRequest> {
     private final Set<String> workloadGroupIds;
     private final Boolean breach;
 
-    public WlmStatsRequest(StreamInput in) throws IOException {
-        super(in);
-        this.workloadGroupIds = new HashSet<>(Set.of(in.readStringArray()));
-        this.breach = in.readOptionalBoolean();
-    }
-
     /**
      * Get WorkloadGroup stats from nodes based on the nodes ids specified. If none are passed, stats
      * for all nodes will be returned.

@@ -137,15 +137,6 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Returns a map of node id to the ranking of the nodes based on the adaptive replica formula
-     */
-    public Map<String, Double> getRanks() {
-        return nodeComputedStats.entrySet()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().rank(clientOutgoingConnections.getOrDefault(e.getKey(), 0L))));
-    }
-
-    /**
      * Builder for the {@link AdaptiveSelectionStats} class.
      * Provides a fluent API for constructing a AdaptiveSelectionStats object.
      */

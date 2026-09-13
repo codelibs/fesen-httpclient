@@ -137,16 +137,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     public static final ParseField SEARCH_PIPELINE = new ParseField("search_pipeline");
     public static final ParseField VERBOSE_SEARCH_PIPELINE = new ParseField("verbose_pipeline");
 
-    public static SearchSourceBuilder fromXContent(XContentParser parser) throws IOException {
-        return fromXContent(parser, true);
-    }
-
-    public static SearchSourceBuilder fromXContent(XContentParser parser, boolean checkTrailingTokens) throws IOException {
-        SearchSourceBuilder builder = new SearchSourceBuilder();
-        builder.parseXContent(parser, checkTrailingTokens);
-        return builder;
-    }
-
     /**
      * A static factory method to construct a new search source.
      */
@@ -413,16 +403,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Sets a filter that will be executed after the query has been executed and
-     * only has affect on the search hits (not aggregations). This filter is
-     * always executed as last filtering mechanism.
-     */
-    public SearchSourceBuilder postFilter(QueryBuilder postFilter) {
-        this.postQueryBuilder = postFilter;
-        return this;
-    }
-
-    /**
      * Gets the post filter for this request
      */
     public QueryBuilder postFilter() {
@@ -612,24 +592,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Applies when sorting, and controls if scores will be tracked as well.
-     * Defaults to {@code false}.
-     */
-    public SearchSourceBuilder trackScores(boolean trackScores) {
-        this.trackScores = trackScores;
-        return this;
-    }
-
-    /**
-     * Applies when there are named queries, to return the scores along as well
-     * Defaults to {@code false}.
-     */
-    public SearchSourceBuilder includeNamedQueriesScores(boolean includeNamedQueriesScore) {
-        this.includeNamedQueriesScore = includeNamedQueriesScore;
-        return this;
-    }
-
-    /**
      * Indicates whether scores will be returned as part of every search matched query.s
      */
     public boolean includeNamedQueriesScore() {
@@ -692,15 +654,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Sets a filter that will restrict the search hits, the top hits and the aggregations to a slice of the results
-     * of the main query.
-     */
-    public SearchSourceBuilder slice(SliceBuilder builder) {
-        this.sliceBuilder = builder;
-        return this;
-    }
-
-    /**
      * Gets the slice used to filter the search hits, the top hits and the aggregations.
      */
     public SliceBuilder slice() {
@@ -728,17 +681,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Add an aggregation to perform as part of the search.
-     */
-    public SearchSourceBuilder aggregation(PipelineAggregationBuilder aggregation) {
-        if (aggregations == null) {
-            aggregations = AggregatorFactories.builder();
-        }
-        aggregations.addPipelineAggregator(aggregation);
-        return this;
-    }
-
-    /**
      * Gets the bytes representing the aggregation builders for this request.
      */
     public AggregatorFactories.Builder aggregations() {
@@ -760,11 +702,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         return highlightBuilder;
     }
 
-    public SearchSourceBuilder suggest(SuggestBuilder suggestBuilder) {
-        this.suggestBuilder = suggestBuilder;
-        return this;
-    }
-
     /**
      * Gets the suggester builder for this request.
      */
@@ -782,14 +719,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     public SearchSourceBuilder clearRescorers() {
         rescoreBuilders = null;
-        return this;
-    }
-
-    /**
-     * Should the query be profiled. Defaults to {@code false}
-     */
-    public SearchSourceBuilder profile(boolean profile) {
-        this.profile = profile;
         return this;
     }
 
@@ -938,35 +867,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Adds a derived field with the given name with provided type and script
-     * @param name name of the derived field
-     * @param type type of the derived field
-     * @param script script associated with derived field
-     */
-    public SearchSourceBuilder derivedField(String name, String type, Script script) {
-        if (derivedFields == null) {
-            derivedFields = new ArrayList<>();
-        }
-        derivedFields.add(new DerivedField(name, type, script));
-        return this;
-    }
-
-    /**
-     * Sets the boost a specific index or alias will receive when the query is executed
-     * against it.
-     *
-     * @param index
-     *            The index or alias to apply the boost against
-     * @param indexBoost
-     *            The boost to apply to the index
-     */
-    public SearchSourceBuilder indexBoost(String index, float indexBoost) {
-        Objects.requireNonNull(index, "index must not be null");
-        this.indexBoosts.add(new IndexBoost(index, indexBoost));
-        return this;
-    }
-
-    /**
      * Gets the boost a specific indices or aliases will receive when the query is
      * executed against them.
      */
@@ -981,20 +881,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         return stats;
     }
 
-    public SearchSourceBuilder ext(List<SearchExtBuilder> searchExtBuilders) {
-        this.extBuilders = Objects.requireNonNull(searchExtBuilders, "searchExtBuilders must not be null");
-        return this;
-    }
-
     public List<SearchExtBuilder> ext() {
         return extBuilders;
-    }
-
-    /**
-     * @return true if the source only has suggest
-     */
-    public boolean isSuggestOnly() {
-        return suggestBuilder != null && queryBuilder == null && aggregations == null;
     }
 
     /**

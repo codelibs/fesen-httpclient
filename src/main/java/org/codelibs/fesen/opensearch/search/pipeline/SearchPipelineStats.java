@@ -390,12 +390,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
         private final OperationStats evaluationStats;
         private final OperationStats generationStats;
 
-        FactoryStats(String factoryType, OperationStats evaluationStats, OperationStats generationStats) {
-            this.factoryType = factoryType;
-            this.evaluationStats = evaluationStats;
-            this.generationStats = generationStats;
-        }
-
         FactoryStats(StreamInput in) throws IOException {
             factoryType = in.readString();
             evaluationStats = new OperationStats(in);

@@ -91,18 +91,6 @@ public final class IngestDocument {
     }
 
     /**
-     * one time operation that extracts the metadata fields from the ingest document and returns them.
-     * Metadata fields that used to be accessible as ordinary top level fields will be removed as part of this call.
-     */
-    public Map<Metadata, Object> extractMetadata() {
-        Map<Metadata, Object> metadataMap = new EnumMap<>(Metadata.class);
-        for (Metadata metadata : Metadata.values()) {
-            metadataMap.put(metadata, sourceAndMetadata.remove(metadata.getFieldName()));
-        }
-        return metadataMap;
-    }
-
-    /**
      * Does the same thing as {@link #extractMetadata} but does not mutate the map.
      */
     public Map<Metadata, Object> getMetadata() {
@@ -168,15 +156,6 @@ public final class IngestDocument {
             } else {
                 throw new IllegalArgumentException("unexpected value type [" + value.getClass() + "]");
             }
-    }
-
-    /**
-     * @return a pipeline stack; all pipelines that are in execution by this document in reverse order
-     */
-    List<String> getPipelineStack() {
-        List<String> pipelineStack = new ArrayList<>(executedPipelines);
-        Collections.reverse(pipelineStack);
-        return pipelineStack;
     }
 
     @Override

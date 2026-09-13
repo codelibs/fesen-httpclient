@@ -108,18 +108,6 @@ public class TaskResourceUsageTrackers {
          */
         public abstract Stats stats(List<? extends Task> activeTasks);
 
-        /**
-         * Method to get taskCancellations due to this tracker for the given {@link CancellableTask} tasks
-         * @param tasks cancellation eligible tasks due to node duress and search traffic threshold breach
-         * @return the list of tasks which are breaching task level thresholds for this {@link TaskResourceUsageTracker}
-         */
-        public List<TaskCancellation> getTaskCancellations(List<CancellableTask> tasks) {
-            return tasks.stream()
-                .map(task -> this.getTaskCancellation(task, List.of(this::incrementCancellations)))
-                .filter(TaskCancellation::isEligibleForCancellation)
-                .collect(Collectors.toList());
-        }
-
         private TaskCancellation getTaskCancellation(final CancellableTask task, final List<Runnable> cancellationCallback) {
             Optional<TaskCancellation.Reason> reason = checkAndMaybeGetCancellationReason(task);
             List<TaskCancellation.Reason> reasons = new ArrayList<>();

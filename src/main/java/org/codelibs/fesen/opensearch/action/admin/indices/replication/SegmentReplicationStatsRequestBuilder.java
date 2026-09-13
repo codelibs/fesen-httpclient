@@ -37,9 +37,4 @@ public class SegmentReplicationStatsRequestBuilder extends BroadcastOperationReq
         return this;
     }
 
-    public SegmentReplicationStatsRequestBuilder shards(String... indices) {
-        request.shards(indices);
-        return this;
-    }
-
 }

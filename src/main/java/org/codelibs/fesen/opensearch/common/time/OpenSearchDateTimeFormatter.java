@@ -55,10 +55,6 @@ class OpenSearchDateTimeFormatter implements OpenSearchDateTimePrinter {
         return this.getFormatter().parse(text);
     }
 
-    public <T> T parse(CharSequence text, TemporalQuery<T> query) {
-        return this.getFormatter().parse(text, query);
-    }
-
     public ZoneId getZone() {
         return this.getFormatter().getZone();
     }

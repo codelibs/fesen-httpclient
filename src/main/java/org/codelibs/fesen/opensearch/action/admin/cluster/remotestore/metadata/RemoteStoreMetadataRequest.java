@@ -40,11 +40,6 @@ public class RemoteStoreMetadataRequest extends BroadcastRequest<RemoteStoreMeta
         out.writeStringArray(shards);
     }
 
-    public RemoteStoreMetadataRequest shards(String... shards) {
-        this.shards = shards;
-        return this;
-    }
-
     public String[] shards() {
         return this.shards;
     }

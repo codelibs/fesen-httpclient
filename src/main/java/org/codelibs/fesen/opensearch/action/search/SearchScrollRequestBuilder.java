@@ -69,12 +69,4 @@ public class SearchScrollRequestBuilder extends ActionRequestBuilder<SearchScrol
         request.scroll(keepAlive);
         return this;
     }
-
-    /**
-     * If set, will enable scrolling of the search request for the specified timeout.
-     */
-    public SearchScrollRequestBuilder setScroll(String keepAlive) {
-        request.scroll(keepAlive);
-        return this;
-    }
 }

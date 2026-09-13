@@ -423,23 +423,6 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
         declareField((p, v, c) -> consumer.accept(v, parser.parse(p, c)), parseField, type);
     }
 
-    public <T> void declareObjectOrDefault(
-        BiConsumer<Value, T> consumer,
-        BiFunction<XContentParser, Context, T> objectParser,
-        Supplier<T> defaultValue,
-        ParseField field
-    ) {
-        declareField((p, v, c) -> {
-            if (p.currentToken() == XContentParser.Token.VALUE_BOOLEAN) {
-                if (p.booleanValue()) {
-                    consumer.accept(v, defaultValue.get());
-                }
-            } else {
-                consumer.accept(v, objectParser.apply(p, c));
-            }
-        }, field, ValueType.OBJECT_OR_BOOLEAN);
-    }
-
     @Override
     public <T> void declareNamedObject(BiConsumer<Value, T> consumer, NamedObjectParser<T, Context> namedObjectParser, ParseField field) {
 

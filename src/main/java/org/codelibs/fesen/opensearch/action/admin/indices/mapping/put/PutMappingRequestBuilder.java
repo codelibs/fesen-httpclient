@@ -63,21 +63,6 @@ public class PutMappingRequestBuilder extends AcknowledgedRequestBuilder<
         return this;
     }
 
-    public PutMappingRequestBuilder setConcreteIndex(Index index) {
-        request.setConcreteIndex(index);
-        return this;
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions.
-     * <p>
-     * For example indices that don't exist.
-     */
-    public PutMappingRequestBuilder setIndicesOptions(IndicesOptions options) {
-        request.indicesOptions(options);
-        return this;
-    }
-
     /**
      * The mapping source definition.
      */
@@ -89,25 +74,8 @@ public class PutMappingRequestBuilder extends AcknowledgedRequestBuilder<
     /**
      * The mapping source definition.
      */
-    public PutMappingRequestBuilder setSource(Map mappingSource) {
-        request.source(mappingSource);
-        return this;
-    }
-
-    /**
-     * The mapping source definition.
-     */
     public PutMappingRequestBuilder setSource(String mappingSource, MediaType mediaType) {
         request.source(mappingSource, mediaType);
-        return this;
-    }
-
-    /**
-     * A specialized simplified mapping source method, takes the form of simple properties definition:
-     * ("field1", "type=string,store=true").
-     */
-    public PutMappingRequestBuilder setSource(String... source) {
-        request.source(source);
         return this;
     }
 

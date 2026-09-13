@@ -72,11 +72,6 @@ public class UpgradeRequest extends BroadcastRequest<UpgradeRequest> {
         super(indices);
     }
 
-    public UpgradeRequest(StreamInput in) throws IOException {
-        super(in);
-        upgradeOnlyAncientSegments = in.readBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -89,14 +84,6 @@ public class UpgradeRequest extends BroadcastRequest<UpgradeRequest> {
      */
     public boolean upgradeOnlyAncientSegments() {
         return upgradeOnlyAncientSegments;
-    }
-
-    /**
-     * See {@link #upgradeOnlyAncientSegments()}
-     */
-    public UpgradeRequest upgradeOnlyAncientSegments(boolean upgradeOnlyAncientSegments) {
-        this.upgradeOnlyAncientSegments = upgradeOnlyAncientSegments;
-        return this;
     }
 
     @Override

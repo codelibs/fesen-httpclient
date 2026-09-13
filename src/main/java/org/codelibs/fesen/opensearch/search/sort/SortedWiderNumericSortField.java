@@ -112,23 +112,4 @@ public class SortedWiderNumericSortField extends SortedNumericSortField {
             }
         };
     }
-
-    /**
-     * The only below types would be considered for widening during merging topDocs results for sort,
-     * This will support indices having different Numeric types to be sorted together.
-     * @param type SortField.Type
-     * @return returns true if type is supported for widened numeric comparisons
-     */
-    public static boolean isTypeSupported(Type type) {
-        // Only below 4 numeric types supported as of now for widened merge
-        switch (type) {
-            case INT:
-            case LONG:
-            case FLOAT:
-            case DOUBLE:
-                return true;
-            default:
-                return false;
-        }
-    }
 }

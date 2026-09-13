@@ -82,12 +82,6 @@ public final class OriginalIndices implements IndicesRequest {
         return new OriginalIndices(in.readStringArray(), IndicesOptions.readIndicesOptions(in));
     }
 
-    public static void writeOriginalIndices(OriginalIndices originalIndices, StreamOutput out) throws IOException {
-        assert originalIndices != NONE;
-        out.writeStringArrayNullable(originalIndices.indices);
-        originalIndices.indicesOptions.writeIndicesOptions(out);
-    }
-
     @Override
     public String toString() {
         return "OriginalIndices{" + "indices=" + Arrays.toString(indices) + ", indicesOptions=" + indicesOptions + '}';
