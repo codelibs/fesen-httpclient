@@ -46,7 +46,7 @@ public class ParsedTDigestPercentiles extends ParsedPercentiles implements Perce
 
     @Override
     public String getType() {
-        return InternalTDigestPercentiles.NAME;
+        return "tdigest_percentiles";
     }
 
     @Override

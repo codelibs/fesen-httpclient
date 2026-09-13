@@ -47,7 +47,7 @@ public class ParsedHDRPercentileRanks extends ParsedPercentileRanks {
 
     @Override
     public String getType() {
-        return InternalHDRPercentileRanks.NAME;
+        return "hdr_percentile_ranks";
     }
 
     @Override

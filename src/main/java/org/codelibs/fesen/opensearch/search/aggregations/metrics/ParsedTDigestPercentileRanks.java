@@ -47,7 +47,7 @@ public class ParsedTDigestPercentileRanks extends ParsedPercentileRanks {
 
     @Override
     public String getType() {
-        return InternalTDigestPercentileRanks.NAME;
+        return "tdigest_percentile_ranks";
     }
 
     @Override

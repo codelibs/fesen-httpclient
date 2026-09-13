@@ -78,7 +78,6 @@ import org.codelibs.fesen.opensearch.search.aggregations.metrics.GeoCentroid;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.GeoCentroidAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.Max;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.MaxAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.MedianAbsoluteDeviation;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.MedianAbsoluteDeviationAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.Min;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.MinAggregationBuilder;

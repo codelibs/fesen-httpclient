@@ -46,7 +46,7 @@ public class ParsedHDRPercentiles extends ParsedPercentiles implements Percentil
 
     @Override
     public String getType() {
-        return InternalHDRPercentiles.NAME;
+        return "hdr_percentiles";
     }
 
     @Override

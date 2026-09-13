@@ -469,10 +469,6 @@ import org.codelibs.fesen.opensearch.search.aggregations.metrics.AvgAggregationB
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.ExtendedStatsAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.GeoCentroidAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.InternalHDRPercentileRanks;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.InternalHDRPercentiles;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.InternalTDigestPercentileRanks;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.InternalTDigestPercentiles;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.MaxAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.MinAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.metrics.ParsedAvg;
@@ -1518,10 +1514,10 @@ public class HttpClient extends HttpAbstractClient {
         // Maintain the aggregation parser mappings manually.
         final Map<String, ContextParser<Object, ? extends Aggregation>> map = new HashMap<>();
         map.put(CardinalityAggregationBuilder.NAME, (p, c) -> ParsedCardinality.fromXContent(p, (String) c));
-        map.put(InternalHDRPercentiles.NAME, (p, c) -> ParsedHDRPercentiles.fromXContent(p, (String) c));
-        map.put(InternalHDRPercentileRanks.NAME, (p, c) -> ParsedHDRPercentileRanks.fromXContent(p, (String) c));
-        map.put(InternalTDigestPercentiles.NAME, (p, c) -> ParsedTDigestPercentiles.fromXContent(p, (String) c));
-        map.put(InternalTDigestPercentileRanks.NAME, (p, c) -> ParsedTDigestPercentileRanks.fromXContent(p, (String) c));
+        map.put("hdr_percentiles", (p, c) -> ParsedHDRPercentiles.fromXContent(p, (String) c));
+        map.put("hdr_percentile_ranks", (p, c) -> ParsedHDRPercentileRanks.fromXContent(p, (String) c));
+        map.put("tdigest_percentiles", (p, c) -> ParsedTDigestPercentiles.fromXContent(p, (String) c));
+        map.put("tdigest_percentile_ranks", (p, c) -> ParsedTDigestPercentileRanks.fromXContent(p, (String) c));
         map.put(PercentilesBucketPipelineAggregationBuilder.NAME, (p, c) -> ParsedPercentilesBucket.fromXContent(p, (String) c));
         map.put(MinAggregationBuilder.NAME, (p, c) -> ParsedMin.fromXContent(p, (String) c));
         map.put(MaxAggregationBuilder.NAME, (p, c) -> ParsedMax.fromXContent(p, (String) c));

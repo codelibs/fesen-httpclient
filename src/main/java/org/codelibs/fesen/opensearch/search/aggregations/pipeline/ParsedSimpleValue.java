@@ -48,7 +48,7 @@ public class ParsedSimpleValue extends ParsedSingleValueNumericMetricsAggregatio
 
     @Override
     public String getType() {
-        return InternalSimpleValue.NAME;
+        return "simple_value";
     }
 
     private static final ObjectParser<ParsedSimpleValue, Void> PARSER = new ObjectParser<>(
