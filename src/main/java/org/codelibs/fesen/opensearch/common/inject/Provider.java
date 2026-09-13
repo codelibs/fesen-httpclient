@@ -43,10 +43,10 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  * instances, instances you wish to safely mutate and discard, instances which are out of scope
  * (e.g. using a {@code @RequestScoped} object from within a {@code @SessionScoped} object), or
  * instances that will be initialized lazily.
- * <li>A custom {@link Scope} is implemented as a decorator of {@code Provider<T>}, which decides
+ * <li>A custom {@code Scope} is implemented as a decorator of {@code Provider<T>}, which decides
  * when to delegate to the backing provider and when to provide the instance some other way.
- * <li>The {@link Injector} offers access to the {@code Provider<T>} it uses to fulfill requests
- * for a given key, via the {@link Injector#getProvider} methods.
+ * <li>The {@code Injector} offers access to the {@code Provider<T>} it uses to fulfill requests
+ * for a given key, via the {@code Injector#getProvider} methods.
  * </ul>
  *
  * @param <T> the type of object this provides
@@ -60,10 +60,10 @@ public interface Provider<T> {
     /**
      * Provides an instance of {@code T}. Must never return {@code null}.
      *
-     * @throws OutOfScopeException when an attempt is made to access a scoped object while the scope
-     *                             in question is not currently active
-     * @throws ProvisionException  if an instance cannot be provided. Such exceptions include messages
-     *                             and throwables to describe why provision failed.
+     * <p>Throws {@code OutOfScopeException} when an attempt is made to access a scoped object
+     * while the scope in question is not currently active, and {@code ProvisionException} if an
+     * instance cannot be provided. Such exceptions include messages and throwables to describe
+     * why provision failed.
      */
     T get();
 }

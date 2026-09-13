@@ -137,7 +137,7 @@ public final class Booleans {
      * Parses a string representation of a boolean value to <code>boolean</code>.
      * Note the subtle difference between this and {@link #parseBoolean(char[], int, int, boolean)}; this returns the
      * default value even when the value is non-zero length containing all whitespaces (possibly overlooked, but
-     * preserving this behavior for compatibility reasons). Use {@link #parseBooleanStrict(String, boolean)} instead.
+     * preserving this behavior for compatibility reasons). Use {@code #parseBooleanStrict(String, boolean)} instead.
      *
      * @param value text to parse.
      * @param defaultValue The default value to return if the provided value is <code>null</code> or blank.

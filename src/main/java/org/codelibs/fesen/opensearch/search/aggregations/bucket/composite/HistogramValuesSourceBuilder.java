@@ -48,7 +48,7 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceTyp
 import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
- * A {@link CompositeValuesSourceBuilder} that builds a {@link HistogramValuesSource} from another numeric values source
+ * A {@link CompositeValuesSourceBuilder} that builds a {@code HistogramValuesSource} from another numeric values source
  * using the provided interval.
  *
  * @opensearch.internal

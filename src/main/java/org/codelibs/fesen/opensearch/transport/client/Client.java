@@ -103,8 +103,6 @@ import java.util.concurrent.CompletionStage;
  * <p>
  * A client can be retrieved from a started {@link org.codelibs.fesen.opensearch.node.Node}.
  *
- * @see org.codelibs.fesen.opensearch.node.Node#client()
- *
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -132,7 +130,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request The index request
      * @return The result future
-     * @see Requests#indexRequest(String)
      */
     ActionFuture<IndexResponse> index(IndexRequest request);
 
@@ -143,7 +140,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request  The index request
      * @param listener A listener to be notified with a result
-     * @see Requests#indexRequest(String)
      */
     void index(IndexRequest request, ActionListener<IndexResponse> listener);
 
@@ -194,7 +190,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request The delete request
      * @return The result future
-     * @see Requests#deleteRequest(String)
      */
     ActionFuture<DeleteResponse> delete(DeleteRequest request);
 
@@ -203,7 +198,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request  The delete request
      * @param listener A listener to be notified with a result
-     * @see Requests#deleteRequest(String)
      */
     void delete(DeleteRequest request, ActionListener<DeleteResponse> listener);
 
@@ -225,7 +219,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request The bulk request
      * @return The result future
-     * @see Requests#bulkRequest()
      */
     ActionFuture<BulkResponse> bulk(BulkRequest request);
 
@@ -234,7 +227,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request  The bulk request
      * @param listener A listener to be notified with a result
-     * @see Requests#bulkRequest()
      */
     void bulk(BulkRequest request, ActionListener<BulkResponse> listener);
 
@@ -253,7 +245,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request The get request
      * @return The result future
-     * @see Requests#getRequest(String)
      */
     ActionFuture<GetResponse> get(GetRequest request);
 
@@ -262,7 +253,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request  The get request
      * @param listener A listener to be notified with a result
-     * @see Requests#getRequest(String)
      */
     void get(GetRequest request, ActionListener<GetResponse> listener);
 
@@ -296,7 +286,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request The search request
      * @return The result future
-     * @see Requests#searchRequest(String...)
      */
     ActionFuture<SearchResponse> search(SearchRequest request);
 
@@ -305,7 +294,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request  The search request
      * @param listener A listener to be notified of the result
-     * @see Requests#searchRequest(String...)
      */
     void search(SearchRequest request, ActionListener<SearchResponse> listener);
 
@@ -324,7 +312,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request The search scroll request
      * @return The result future
-     * @see Requests#searchScrollRequest(String)
      */
     ActionFuture<SearchResponse> searchScroll(SearchScrollRequest request);
 
@@ -333,7 +320,6 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param request  The search scroll request
      * @param listener A listener to be notified of the result
-     * @see Requests#searchScrollRequest(String)
      */
     void searchScroll(SearchScrollRequest request, ActionListener<SearchResponse> listener);
 

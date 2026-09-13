@@ -42,7 +42,7 @@ import org.codelibs.fesen.opensearch.search.aggregations.ParsedAggregation;
 import java.io.IOException;
 
 /**
- * Serialization and merge logic for {@link GeoCentroidAggregator}.
+ * Serialization and merge logic for {@code GeoCentroidAggregator}.
  *
  * @opensearch.internal
  */

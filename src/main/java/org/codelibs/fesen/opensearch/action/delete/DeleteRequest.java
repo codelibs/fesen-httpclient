@@ -57,14 +57,13 @@ import static org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers.UNASSIGN
 
 /**
  * A request to delete a document from an index based on its type and id. Best created using
- * {@link Requests#deleteRequest(String)}.
+ * {@code Requests#deleteRequest(String)}.
  * <p>
  * The operation requires the {@link #index()}, and {@link #id(String)} to
  * be set.
  *
  * @see DeleteResponse
  * @see Client#delete(DeleteRequest)
- * @see Requests#deleteRequest(String)
  *
  * @opensearch.api
  */

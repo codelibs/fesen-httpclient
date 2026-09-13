@@ -209,7 +209,7 @@ public class OpenSearchThreadPoolExecutor extends ThreadPoolExecutor {
     /**
      * Returns the cumulative wait time of the ThreadPool. If the ThreadPool does not support tracking the cumulative pool wait time
      * then this should return -1 which will prevent the value from showing up in {@link org.codelibs.fesen.opensearch.threadpool.ThreadPoolStats}.
-     * ThreadPools that do support this metric should override this method. For example, {@link QueueResizingOpenSearchThreadPoolExecutor}
+     * ThreadPools that do support this metric should override this method. For example, {@code QueueResizingOpenSearchThreadPoolExecutor}
      * does so using the {@link TimedRunnable} to get the difference between Runnable creation and execution.
      *
      */

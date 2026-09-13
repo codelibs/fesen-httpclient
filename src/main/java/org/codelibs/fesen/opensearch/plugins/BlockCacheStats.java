@@ -18,7 +18,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import java.io.IOException;
 
 /**
- * Point-in-time snapshot of {@link BlockCache} counters.
+ * Point-in-time snapshot of {@code BlockCache} counters.
  *
  * <p>Emitted for node-stats reporting and merging into
  * {@link org.codelibs.fesen.opensearch.index.store.remote.filecache.AggregateFileCacheStats}.

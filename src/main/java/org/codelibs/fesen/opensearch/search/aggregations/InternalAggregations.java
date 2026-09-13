@@ -127,7 +127,7 @@ public final class InternalAggregations extends Aggregations implements Writeabl
      * Reduces the given list of aggregations as well as the top-level pipeline aggregators extracted from the first
      * {@link InternalAggregations} object found in the list.
      * Note that pipeline aggregations _are not_ reduced by this method.  Pipelines are handled
-     * separately by {@link InternalAggregations#topLevelReduce(List, ReduceContext)}
+     * separately by {@code InternalAggregations#topLevelReduce(List, ReduceContext)}
      */
     public static InternalAggregations reduce(List<InternalAggregations> aggregationsList, ReduceContext context) {
         if (aggregationsList.isEmpty()) {

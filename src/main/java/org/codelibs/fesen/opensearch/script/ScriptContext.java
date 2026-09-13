@@ -42,14 +42,14 @@ import java.lang.reflect.Method;
  * The information necessary to compile and run a script.
  * <p>
  * A {@link ScriptContext} contains the information related to a single use case and the interfaces
- * and methods necessary for a {@link ScriptEngine} to implement.
+ * and methods necessary for a {@code ScriptEngine} to implement.
  * <p>
  * There are at least two (and optionally a third) related classes which must be defined.
  * <p>
  * The <i>InstanceType</i> is a class which users of the script api call to execute a script. It
  * may be stateful. Instances of
  * the <i>InstanceType</i> may be executed multiple times by a caller with different arguments. This
- * class must have an abstract method named {@code execute} which {@link ScriptEngine} implementations
+ * class must have an abstract method named {@code execute} which {@code ScriptEngine} implementations
  * will define.
  * <p>
  * The <i>FactoryType</i> is a factory class returned by the {@link ScriptService} when compiling

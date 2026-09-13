@@ -150,21 +150,21 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         }
 
         /**
-         * Build a new {@link AliasAction} to add aliases.
+         * Build a new {@code AliasAction} to add aliases.
          */
         public static AliasActions add() {
             return new AliasActions(AliasActions.Type.ADD);
         }
 
         /**
-         * Build a new {@link AliasAction} to remove aliases.
+         * Build a new {@code AliasAction} to remove aliases.
          */
         public static AliasActions remove() {
             return new AliasActions(AliasActions.Type.REMOVE);
         }
 
         /**
-         * Build a new {@link AliasAction} to remove an index.
+         * Build a new {@code AliasAction} to remove an index.
          */
         public static AliasActions removeIndex() {
             return new AliasActions(AliasActions.Type.REMOVE_INDEX);
@@ -225,7 +225,7 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         );
 
         /**
-         * Parser for any one {@link AliasAction}.
+         * Parser for any one {@code AliasAction}.
          */
         public static final ConstructingObjectParser<AliasActions, Void> PARSER = new ConstructingObjectParser<>("alias_action", a -> {
             // Take the first action and complain if there are more than one actions

@@ -40,10 +40,10 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * A request to get indices level stats. Allow to enable different stats to be returned.
  * <p>
- * By default, the {@link #setDocs(boolean)}, {@link #setStore(boolean)}, {@link #setIndexing(boolean)}
+ * By default, the {@code #setDocs(boolean)}, {@code #setStore(boolean)}, {@code #setIndexing(boolean)}
  * are enabled. Other stats can be enabled as well.
  * <p>
- * All the stats to be returned can be cleared using {@link #clear()}, at which point, specific
+ * All the stats to be returned can be cleared using {@code #clear()}, at which point, specific
  * stats can be enabled.
  *
  * @opensearch.api

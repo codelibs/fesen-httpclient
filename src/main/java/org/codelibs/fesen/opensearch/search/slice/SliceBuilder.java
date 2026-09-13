@@ -56,14 +56,14 @@ import java.util.Set;
 
 /**
  *  A slice builder allowing to split a scroll in multiple partitions.
- *  If the provided field is the "_uid" it uses a {@link org.codelibs.fesen.opensearch.search.slice.TermsSliceQuery}
+ *  If the provided field is the "_uid" it uses a {@code org.codelibs.fesen.opensearch.search.slice.TermsSliceQuery}
  *  to do the slicing. The slicing is done at the shard level first and then each shard is split into multiple slices.
  *  For instance if the number of shards is equal to 2 and the user requested 4 slices
  *  then the slices 0 and 2 are assigned to the first shard and the slices 1 and 3 are assigned to the second shard.
  *  This way the total number of bitsets that we need to build on each shard is bounded by the number of slices
  *  (instead of {@code numShards*numSlices}).
  *  Otherwise the provided field must be a numeric and doc_values must be enabled. In that case a
- *  {@link org.codelibs.fesen.opensearch.search.slice.DocValuesSliceQuery} is used to filter the results.
+ *  {@code org.codelibs.fesen.opensearch.search.slice.DocValuesSliceQuery} is used to filter the results.
  *
  * @opensearch.api
  */

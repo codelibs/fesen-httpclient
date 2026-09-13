@@ -35,7 +35,7 @@ package org.codelibs.fesen.opensearch.action.admin.indices.shards;
 import org.codelibs.fesen.opensearch.action.ActionType;
 
 /**
- * ActionType for {@link TransportIndicesShardStoresAction}
+ * ActionType for {@code TransportIndicesShardStoresAction}
  *
  * Exposes shard store information for requested indices.
  * Shard store information reports which nodes hold shard copies, how recent they are

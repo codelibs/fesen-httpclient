@@ -76,7 +76,7 @@ public class GetSettingsResponse extends ActionResponse implements ToXContentObj
     /**
      * Returns a map of index name to {@link Settings} object.  The returned {@link Settings}
      * objects contain only those settings explicitly set on a given index.  Any settings
-     * taking effect as defaults must be accessed via {@link #getIndexToDefaultSettings()}.
+     * taking effect as defaults must be accessed via {@code #getIndexToDefaultSettings()}.
      */
     public Map<String, Settings> getIndexToSettings() {
         return indexToSettings;

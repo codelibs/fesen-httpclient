@@ -73,10 +73,10 @@ import java.util.stream.Stream;
  * <p>
  * The main methods used to update routing entries are:
  * <ul>
- * <li> {@link #initializeShard} initializes an unassigned shard.
- * <li> {@link #startShard} starts an initializing shard / completes relocation of a shard.
- * <li> {@link #relocateShard} starts relocation of a started shard.
- * <li> {@link #failShard} fails/cancels an assigned shard.
+ * <li> {@code #initializeShard} initializes an unassigned shard.
+ * <li> {@code #startShard} starts an initializing shard / completes relocation of a shard.
+ * <li> {@code #relocateShard} starts relocation of a started shard.
+ * <li> {@code #failShard} fails/cancels an assigned shard.
  * </ul>
  *
  * @opensearch.api
@@ -353,8 +353,8 @@ public class RoutingNodes implements Iterable<RoutingNode> {
 
             /**
              * Unsupported operation, just there for the interface. Use
-             * {@link #removeAndIgnore(AllocationStatus, RoutingChangesObserver)} or
-             * {@link #initialize(String, String, long, RoutingChangesObserver)}.
+             * {@code #removeAndIgnore(AllocationStatus, RoutingChangesObserver)} or
+             * {@code #initialize(String, String, long, RoutingChangesObserver)}.
              */
             @Override
             public void remove() {

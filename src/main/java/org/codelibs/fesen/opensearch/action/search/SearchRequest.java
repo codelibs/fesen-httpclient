@@ -66,13 +66,12 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 
 /**
  * A request to execute search against one or more indices (or all). Best created using
- * {@link Requests#searchRequest(String...)}.
+ * {@code Requests#searchRequest(String...)}.
  * <p>
  * Note, the search {@link #source(org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder)}
  * is required. The search source is the different search options, including aggregations and such.
  * </p>
  *
- * @see Requests#searchRequest(String...)
  * @see Client#search(SearchRequest)
  * @see SearchResponse
  *

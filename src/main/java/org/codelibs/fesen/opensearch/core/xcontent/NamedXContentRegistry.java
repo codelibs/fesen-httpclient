@@ -79,7 +79,7 @@ public class NamedXContentRegistry {
 
         /**
          * Creates a new entry which can be stored by the registry.
-         * Prefer {@link Entry#Entry(Class, ParseField, CheckedFunction)} unless you need a context to carry around while parsing.
+         * Prefer {@code Entry#Entry(Class, ParseField, CheckedFunction)} unless you need a context to carry around while parsing.
          */
         public <T> Entry(Class<T> categoryClass, ParseField name, ContextParser<Object, ? extends T> parser) {
             this.categoryClass = Objects.requireNonNull(categoryClass);

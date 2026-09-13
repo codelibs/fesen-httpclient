@@ -44,7 +44,7 @@ import java.io.IOException;
  * <p>
  * By default, all statistics are enabled.
  * <p>
- * All the stats to be returned can be cleared using {@link #clear()}, at which point, specific
+ * All the stats to be returned can be cleared using {@code #clear()}, at which point, specific
  * stats can be enabled.
  *
  * @opensearch.api

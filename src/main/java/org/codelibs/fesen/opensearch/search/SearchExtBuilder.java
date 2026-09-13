@@ -51,9 +51,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
  * the incoming request from the REST layer into the proper {@link SearchExtBuilder} subclass.
  * <p>
  * {@link #getWriteableName()} must return the same name as the one used for the registration
- * of the {@link SearchExtSpec}.
- *
- * @see SearchExtSpec
+ * of the {@code SearchExtSpec}.
  *
  * @opensearch.api
  */

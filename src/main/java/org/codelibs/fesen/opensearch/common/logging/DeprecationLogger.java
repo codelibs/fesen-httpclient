@@ -44,10 +44,10 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  * <code>deprecation</code> logger defined in log4j2.properties.
  * <p>
  * Logs are emitted at the custom {@link #DEPRECATION} level, and routed wherever they need to go using log4j. For example,
- * to disk using a rolling file appender, or added as a response header using {@link HeaderWarningAppender}.
+ * to disk using a rolling file appender, or added as a response header using {@code HeaderWarningAppender}.
  * <p>
  * Deprecation messages include a <code>key</code>, which is used for rate-limiting purposes. The log4j configuration
- * uses {@link RateLimitingFilter} to prevent the same message being logged repeatedly in a short span of time. This
+ * uses {@code RateLimitingFilter} to prevent the same message being logged repeatedly in a short span of time. This
  * key is combined with the <code>X-Opaque-Id</code> request header value, if supplied, which allows for per-client
  * message limiting.
  *

@@ -42,7 +42,7 @@ import java.security.GeneralSecurityException;
 import java.util.Set;
 
 /**
- * An accessor for settings which are securely stored. See {@link SecureSetting}.
+ * An accessor for settings which are securely stored. See {@code SecureSetting}.
  *
  * @opensearch.api
  */

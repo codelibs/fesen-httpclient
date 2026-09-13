@@ -40,7 +40,7 @@ package org.codelibs.fesen.opensearch.common.util;
  * {@link BinarySearcher} knows nothing about the value being searched for or the underlying data structure.
  * These things should be determined by the subclass in its overridden methods.
  * <p>
- * Refer to {@link BigArrays.DoubleBinarySearcher} for an example.
+ * Refer to {@code BigArrays.DoubleBinarySearcher} for an example.
  * <p>
  * NOTE: this class is not thread safe
  *

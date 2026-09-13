@@ -83,7 +83,7 @@ public final class IngestDocument {
     }
 
     /**
-     * Does the same thing as {@link #extractMetadata} but does not mutate the map.
+     * Does the same thing as {@code #extractMetadata} but does not mutate the map.
      */
     public Map<Metadata, Object> getMetadata() {
         Map<Metadata, Object> metadataMap = new EnumMap<>(Metadata.class);
@@ -95,16 +95,16 @@ public final class IngestDocument {
 
     /**
      * Returns the available ingest metadata fields, by default only timestamp, but it is possible to set additional ones.
-     * Use only for reading values, modify them instead using {@link #setFieldValue(String, Object)} and {@link #removeField(String)}
+     * Use only for reading values, modify them instead using {@code #setFieldValue(String, Object)} and {@code #removeField(String)}
      */
     public Map<String, Object> getIngestMetadata() {
         return this.ingestMetadata;
     }
 
     /**
-     * Returns the document including its metadata fields, unless {@link #extractMetadata()} has been called, in which case the
+     * Returns the document including its metadata fields, unless {@code #extractMetadata()} has been called, in which case the
      * metadata fields will not be present anymore.
-     * Modify the document instead using {@link #setFieldValue(String, Object)} and {@link #removeField(String)}
+     * Modify the document instead using {@code #setFieldValue(String, Object)} and {@code #removeField(String)}
      */
     public Map<String, Object> getSourceAndMetadata() {
         return this.sourceAndMetadata;

@@ -43,15 +43,15 @@ import java.io.IOException;
 
 /**
  * Represents the decision taken for the allocation of a single shard.  If
- * the shard is unassigned, {@link #getAllocateDecision()} will return an
+ * the shard is unassigned, {@code #getAllocateDecision()} will return an
  * object containing the decision and its explanation, and {@link #getMoveDecision()}
  * will return an object for which {@link MoveDecision#isDecisionTaken()} returns
  * {@code false}.  If the shard is in the started state, then {@link #getMoveDecision()}
  * will return an object containing the decision to move/rebalance the shard, and
- * {@link #getAllocateDecision()} will return an object for which
+ * {@code #getAllocateDecision()} will return an object for which
  * {@link AllocateUnassignedDecision#isDecisionTaken()} returns {@code false}.  If
  * the shard is neither unassigned nor started (i.e. it is initializing or relocating),
- * then both {@link #getAllocateDecision()} and {@link #getMoveDecision()} will return
+ * then both {@code #getAllocateDecision()} and {@link #getMoveDecision()} will return
  * objects whose {@code isDecisionTaken()} method returns {@code false}.
  *
  * @opensearch.api

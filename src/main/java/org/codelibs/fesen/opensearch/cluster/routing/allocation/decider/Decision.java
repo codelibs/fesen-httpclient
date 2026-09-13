@@ -53,8 +53,6 @@ import java.util.Objects;
  * This abstract class defining basic {@link Decision} used during shard
  * allocation process.
  *
- * @see AllocationDecider
- *
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")

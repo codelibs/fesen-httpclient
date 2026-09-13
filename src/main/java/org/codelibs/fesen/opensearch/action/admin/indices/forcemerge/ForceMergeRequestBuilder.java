@@ -39,7 +39,7 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * A request to force merge one or more indices. In order to force merge all
  * indices, pass an empty array or {@code null} for the indices.
- * {@link #setMaxNumSegments(int)} allows to control the number of segments to force
+ * {@code #setMaxNumSegments(int)} allows to control the number of segments to force
  * merge down to. By default, will cause the force merge process to merge down
  * to half the configured number of segments.
  *

@@ -65,8 +65,6 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.fromList;
  * A builder for search highlighting. Settings can control how large fields
  * are summarized to show only selected snippets ("fragments") containing search terms.
  *
- * @see org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder#highlight()
- *
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")

@@ -55,7 +55,7 @@ public enum ScriptType implements Writeable {
      * INLINE scripts are specified in numerous queries and compiled on-the-fly.
      * They will be cached based on the lang and code of the script.
      * They are turned off by default because most languages are insecure
-     * (Groovy and others), but can be overridden by the specific {@link ScriptEngine}
+     * (Groovy and others), but can be overridden by the specific {@code ScriptEngine}
      * if the language is naturally secure (Painless, Mustache, and Expressions).
      */
     INLINE(0, new ParseField("source", "inline")),
@@ -64,7 +64,7 @@ public enum ScriptType implements Writeable {
      * STORED scripts are saved as part of the {@link org.codelibs.fesen.opensearch.cluster.ClusterState}
      * based on user requests.  They will be cached when they are first used in a query.
      * They are turned off by default because most languages are insecure
-     * (Groovy and others), but can be overridden by the specific {@link ScriptEngine}
+     * (Groovy and others), but can be overridden by the specific {@code ScriptEngine}
      * if the language is naturally secure (Painless, Mustache, and Expressions).
      */
     STORED(1, new ParseField("id", "stored"));

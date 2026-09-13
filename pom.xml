@@ -45,6 +45,37 @@
 		<testcontainers.version>1.21.4</testcontainers.version>
 	</properties>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.12.0</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<docencoding>UTF-8</docencoding>
+						<charset>UTF-8</charset>
+						<!-- Block tags the forked OpenSearch sources carry; javadoc rejects them unless declared. -->
+						<tags>
+							<tag>
+								<name>opensearch.api</name>
+								<placement>a</placement>
+								<head>OpenSearch API:</head>
+							</tag>
+							<tag>
+								<name>opensearch.internal</name>
+								<placement>a</placement>
+								<head>OpenSearch internal:</head>
+							</tag>
+							<tag>
+								<name>opensearch.experimental</name>
+								<placement>a</placement>
+								<head>OpenSearch experimental:</head>
+							</tag>
+						</tags>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -160,12 +191,6 @@
 					</plugin>
 					<plugin>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.12.0</version>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<docencoding>UTF-8</docencoding>
-							<charset>UTF-8</charset>
-						</configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>

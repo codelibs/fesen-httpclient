@@ -89,7 +89,7 @@ import static org.codelibs.fesen.opensearch.search.internal.SearchContext.TRACK_
 /**
  * A search source builder allowing to easily build search source. Simple
  * construction using
- * {@link org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder#searchSource()}.
+ * {@code org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder#searchSource()}.
  *
  * @see org.codelibs.fesen.opensearch.action.search.SearchRequest#source(SearchSourceBuilder)
  *
@@ -746,14 +746,14 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * @return a search pipeline defined within the search source (see {@link org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService})
+     * @return a search pipeline defined within the search source (see {@code org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService})
      */
     public Map<String, Object> searchPipelineSource() {
         return searchPipelineSource;
     }
 
     /**
-     * Define a search pipeline to process this search request and/or its response. See {@link org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService}.
+     * Define a search pipeline to process this search request and/or its response. See {@code org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService}.
      */
     public SearchSourceBuilder searchPipelineSource(Map<String, Object> searchPipelineSource) {
         this.searchPipelineSource = searchPipelineSource;
@@ -857,7 +857,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Parse some xContent into this SearchSourceBuilder, overwriting any values specified in the xContent. Use this if you need to set up
-     * different defaults than a regular SearchSourceBuilder would have and use {@link #fromXContent(XContentParser, boolean)} if you have
+     * different defaults than a regular SearchSourceBuilder would have and use {@code #fromXContent(XContentParser, boolean)} if you have
      * normal defaults.
      *
      * @param parser The xContent parser.
