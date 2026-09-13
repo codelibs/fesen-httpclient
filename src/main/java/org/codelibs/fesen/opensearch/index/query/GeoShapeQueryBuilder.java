@@ -36,14 +36,14 @@ import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.geo.ShapeRelation;
 import org.codelibs.fesen.opensearch.common.geo.SpatialStrategy;
-import org.codelibs.fesen.opensearch.common.geo.builders.ShapeBuilder;
-import org.codelibs.fesen.opensearch.common.geo.parsers.ShapeParser;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.OpenSearchParseException;
+import org.codelibs.fesen.opensearch.common.geo.GeometryParser;
 import org.codelibs.fesen.opensearch.geometry.Geometry;
 
 import java.io.IOException;
@@ -74,22 +74,6 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
      *            Shape used in the Query
      */
     public GeoShapeQueryBuilder(String fieldName, Geometry shape) {
-        super(fieldName, shape);
-    }
-
-    /**
-     * Creates a new GeoShapeQueryBuilder whose Query will be against the given
-     * field name using the given Shape
-     *
-     * @param fieldName
-     *            Name of the field that will be queried
-     * @param shape
-     *            Shape used in the Query
-     *
-     * @deprecated use {@link #GeoShapeQueryBuilder(String, Geometry)} instead
-     */
-    @Deprecated
-    public GeoShapeQueryBuilder(String fieldName, ShapeBuilder shape) {
         super(fieldName, shape);
     }
 
@@ -229,7 +213,14 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
         protected boolean parseXContentField(XContentParser parser) throws IOException {
             SpatialStrategy strategy;
             if (SHAPE_FIELD.match(parser.currentName(), parser.getDeprecationHandler())) {
-                this.shape = ShapeParser.parse(parser);
+                // Parses the same GeoJSON-object / WKT-string shapes ShapeParser did, but
+                // into the jts-free geometry model, with the same flags as the
+                // indexed-shape fetch path in AbstractGeometryQueryBuilder.
+                try {
+                    this.shape = new GeometryParser(true, true, true).parse(parser);
+                } catch (final java.text.ParseException e) {
+                    throw new OpenSearchParseException("Failed to parse shape", e);
+                }
                 return true;
             } else if (STRATEGY_FIELD.match(parser.currentName(), parser.getDeprecationHandler())) {
                 String strategyName = parser.text();

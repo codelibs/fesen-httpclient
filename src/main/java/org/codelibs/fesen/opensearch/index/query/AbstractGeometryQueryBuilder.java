@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.common.geo.GeoJson;
 import org.codelibs.fesen.opensearch.common.geo.GeometryIO;
 import org.codelibs.fesen.opensearch.common.geo.GeometryParser;
 import org.codelibs.fesen.opensearch.common.geo.ShapeRelation;
-import org.codelibs.fesen.opensearch.common.geo.builders.ShapeBuilder;
 import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -99,21 +98,6 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     protected ShapeRelation relation = DEFAULT_SHAPE_RELATION;
 
     protected boolean ignoreUnmapped = DEFAULT_IGNORE_UNMAPPED;
-
-    /**
-     * Creates a new ShapeQueryBuilder whose Query will be against the given
-     * field name using the given Shape
-     *
-     * @param fieldName
-     *            Name of the field that will be queried
-     * @param shape
-     *            Shape used in the Query
-     * @deprecated use {@link #AbstractGeometryQueryBuilder(String, Geometry)} instead
-     */
-    @Deprecated
-    protected AbstractGeometryQueryBuilder(String fieldName, ShapeBuilder shape) {
-        this(fieldName, shape == null ? null : shape.buildGeometry(), null);
-    }
 
     /**
      * Creates a new AbstractGeometryQueryBuilder whose Query will be against the given
@@ -515,7 +499,7 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     protected abstract static class ParsedGeometryQueryParams {
         public String fieldName;
         public ShapeRelation relation;
-        public ShapeBuilder shape;
+        public Geometry shape;
 
         public String id = null;
         public String index = null;
