@@ -192,53 +192,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         this.phaseTook = searchRequest.phaseTook;
     }
 
-    /**
-     * Constructs a new search request from reading the specified stream.
-     *
-     * @param in The stream the request is read from
-     * @throws IOException if there is an issue reading the stream
-     */
-    public SearchRequest(StreamInput in) throws IOException {
-        super(in);
-        searchType = SearchType.fromId(in.readByte());
-        indices = in.readStringArray();
-        routing = in.readOptionalString();
-        preference = in.readOptionalString();
-        scroll = in.readOptionalWriteable(Scroll::new);
-        source = in.readOptionalWriteable(SearchSourceBuilder::new);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            // types no longer relevant so ignore
-            String[] types = in.readStringArray();
-            if (types.length > 0) {
-                throw new IllegalStateException(
-                    "types are no longer supported in search requests but found [" + Arrays.toString(types) + "]"
-                );
-            }
-        }
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        requestCache = in.readOptionalBoolean();
-        batchedReduceSize = in.readVInt();
-        maxConcurrentShardRequests = in.readVInt();
-        preFilterShardSize = in.readOptionalVInt();
-        allowPartialSearchResults = in.readOptionalBoolean();
-        localClusterAlias = in.readOptionalString();
-        if (localClusterAlias != null) {
-            absoluteStartMillis = in.readVLong();
-            finalReduce = in.readBoolean();
-        } else {
-            absoluteStartMillis = DEFAULT_ABSOLUTE_START_MILLIS;
-            finalReduce = true;
-        }
-        ccsMinimizeRoundtrips = in.readBoolean();
-        cancelAfterTimeInterval = in.readOptionalTimeValue();
-        if (in.getVersion().onOrAfter(Version.V_2_7_0)) {
-            pipeline = in.readOptionalString();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_12_0)) {
-            phaseTook = in.readOptionalBoolean();
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

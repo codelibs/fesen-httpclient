@@ -134,13 +134,6 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
         super(name, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    protected InternalNumericMetricsAggregation(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public final double sortValue(AggregationPath.PathElement head, Iterator<AggregationPath.PathElement> tail) {
         throw new IllegalArgumentException("Metrics aggregations cannot have sub-aggregations (at [>" + head + "]");

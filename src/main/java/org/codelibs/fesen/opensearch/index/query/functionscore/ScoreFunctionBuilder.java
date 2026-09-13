@@ -56,14 +56,6 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
      */
     public ScoreFunctionBuilder() {}
 
-    /**
-     * Read from a stream.
-     */
-    public ScoreFunctionBuilder(StreamInput in) throws IOException {
-        weight = checkWeight(in.readOptionalFloat());
-        functionName = in.readOptionalString();
-    }
-
     @Override
     public final void writeTo(StreamOutput out) throws IOException {
         out.writeOptionalFloat(weight);

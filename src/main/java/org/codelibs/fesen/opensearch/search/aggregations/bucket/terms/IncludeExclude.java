@@ -525,43 +525,6 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
 
     }
 
-    /**
-     * Read from a stream.
-     */
-    public IncludeExclude(StreamInput in) throws IOException {
-        if (in.readBoolean()) {
-            includeValues = null;
-            excludeValues = null;
-            incZeroBasedPartition = 0;
-            incNumPartitions = 0;
-            include = in.readOptionalString();
-            exclude = in.readOptionalString();
-            return;
-        }
-        include = null;
-        exclude = null;
-        if (in.readBoolean()) {
-            int size = in.readVInt();
-            includeValues = new TreeSet<>();
-            for (int i = 0; i < size; i++) {
-                includeValues.add(in.readBytesRef());
-            }
-        } else {
-            includeValues = null;
-        }
-        if (in.readBoolean()) {
-            int size = in.readVInt();
-            excludeValues = new TreeSet<>();
-            for (int i = 0; i < size; i++) {
-                excludeValues.add(in.readBytesRef());
-            }
-        } else {
-            excludeValues = null;
-        }
-        incNumPartitions = in.readVInt();
-        incZeroBasedPartition = in.readVInt();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         boolean regexBased = isRegexBased();

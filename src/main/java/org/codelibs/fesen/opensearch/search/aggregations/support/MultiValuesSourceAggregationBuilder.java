@@ -111,14 +111,6 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
     /**
      * Read from a stream.
      */
-    protected MultiValuesSourceAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        read(in);
-    }
-
-    /**
-     * Read from a stream.
-     */
     @SuppressWarnings("unchecked")
     private void read(StreamInput in) throws IOException {
         fields = in.readMap(StreamInput::readString, MultiValuesSourceFieldConfig::new);

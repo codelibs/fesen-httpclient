@@ -62,11 +62,6 @@ public abstract class ClusterManagerNodeRequest<Request extends ClusterManagerNo
 
     protected ClusterManagerNodeRequest() {}
 
-    protected ClusterManagerNodeRequest(StreamInput in) throws IOException {
-        super(in);
-        clusterManagerNodeTimeout = in.readTimeValue();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
