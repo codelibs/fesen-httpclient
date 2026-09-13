@@ -120,15 +120,6 @@ public class OpenSearchExecutors {
         return NODE_PROCESSORS_SETTING.get(settings);
     }
 
-    public static PrioritizedOpenSearchThreadPoolExecutor newSinglePrioritizing(
-        String name,
-        ThreadFactory threadFactory,
-        ThreadContext contextHolder,
-        ScheduledExecutorService timer
-    ) {
-        return new PrioritizedOpenSearchThreadPoolExecutor(name, 1, 1, 0L, TimeUnit.MILLISECONDS, threadFactory, contextHolder, timer);
-    }
-
     public static OpenSearchThreadPoolExecutor newScaling(
         String name,
         int min,
@@ -211,53 +202,6 @@ public class OpenSearchExecutors {
             TimeUnit.MILLISECONDS,
             new ResizableBlockingQueue<>(ConcurrentCollections.<Runnable>newBlockingQueue(), queueCapacity),
             runnableWrapper,
-            threadFactory,
-            new OpenSearchAbortPolicy(),
-            contextHolder
-        );
-    }
-
-    /**
-     * Return a new executor that will automatically adjust the queue size based on queue throughput.
-     *
-     * @param size number of fixed threads to use for executing tasks
-     * @param initialQueueCapacity initial size of the executor queue
-     * @param minQueueSize minimum queue size that the queue can be adjusted to
-     * @param maxQueueSize maximum queue size that the queue can be adjusted to
-     * @param frameSize number of tasks during which stats are collected before adjusting queue size
-     */
-    public static OpenSearchThreadPoolExecutor newAutoQueueFixed(
-        String name,
-        int size,
-        int initialQueueCapacity,
-        int minQueueSize,
-        int maxQueueSize,
-        int frameSize,
-        TimeValue targetedResponseTime,
-        ThreadFactory threadFactory,
-        ThreadContext contextHolder
-    ) {
-        if (initialQueueCapacity <= 0) {
-            throw new IllegalArgumentException(
-                "initial queue capacity for [" + name + "] executor must be positive, got: " + initialQueueCapacity
-            );
-        }
-        ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<>(
-            ConcurrentCollections.<Runnable>newBlockingQueue(),
-            initialQueueCapacity
-        );
-        return new QueueResizingOpenSearchThreadPoolExecutor(
-            name,
-            size,
-            size,
-            0,
-            TimeUnit.MILLISECONDS,
-            queue,
-            minQueueSize,
-            maxQueueSize,
-            TimedRunnable::new,
-            frameSize,
-            targetedResponseTime,
             threadFactory,
             new OpenSearchAbortPolicy(),
             contextHolder

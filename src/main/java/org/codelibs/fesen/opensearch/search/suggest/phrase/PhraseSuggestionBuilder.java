@@ -89,7 +89,11 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     // gramSize needs to be optional although there is a default, if unset parser try to detect and use shingle size
     private Integer gramSize;
     private boolean forceUnigrams = true;
-    private int tokenLimit = NoisyChannelSpellChecker.DEFAULT_TOKEN_LIMIT;
+    /** Was NoisyChannelSpellChecker.DEFAULT_TOKEN_LIMIT; inlined so the builder does not
+     *  drag in the node-side spell-checker it only borrowed a default from. */
+    private static final int DEFAULT_TOKEN_LIMIT = 10;
+
+    private int tokenLimit = DEFAULT_TOKEN_LIMIT;
     private String preTag;
     private String postTag;
     private Script collateQuery;
