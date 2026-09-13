@@ -388,9 +388,10 @@ import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.client.AdminClient;
 import org.codelibs.fesen.opensearch.transport.client.Client;
 import org.codelibs.fesen.opensearch.transport.client.ClusterAdminClient;
-import org.codelibs.fesen.opensearch.transport.client.FilterClient;
 import org.codelibs.fesen.opensearch.transport.client.IndicesAdminClient;
 import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction;
 
 /**
  * Base client used to create concrete client implementations
@@ -1896,15 +1897,60 @@ public abstract class HttpAbstractClient implements Client {
 
     @Override
     public Client filterWithHeader(final Map<String, String> headers) {
-        return new FilterClient(this) {
+        final HttpAbstractClient delegate = this;
+        // Based on this class rather than OpenSearch's FilterClient. FilterClient extends
+        // AbstractClient, the node-side implementation of every Client method in terms of
+        // execute(); this class already implements all of them the same way, so basing the
+        // wrapper here gives identical behaviour without the 185 KB base. The semantics are
+        // unchanged: merge the headers into the thread context, then run the original
+        // client's doExecute inside that scope.
+        return new HttpAbstractClient(settings(), threadPool()) {
             @Override
             protected <Request extends ActionRequest, Response extends ActionResponse> void doExecute(final ActionType<Response> action,
                     final Request request, final ActionListener<Response> listener) {
                 final ThreadContext threadContext = threadPool().getThreadContext();
                 try (ThreadContext.StoredContext ctx = threadContext.stashAndMergeHeaders(headers)) {
-                    super.doExecute(action, request, listener);
+                    delegate.doExecute(action, request, listener);
                 }
+            }
+
+            @Override
+            public void close() {
+                // same as FilterClient.close(), which closed the client it wrapped
+                delegate.close();
             }
         };
     }
+
+    // The view operations live here rather than in HttpClient so that every Client method has
+    // an implementation on this class: filterWithHeader builds an anonymous subclass of it.
+    @Override
+    public void searchView(org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request,
+            ActionListener<SearchResponse> listener) {
+        execute(SearchViewAction.INSTANCE, request, listener);
+    }
+
+    @Override
+    public ActionFuture<SearchResponse> searchView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
+        return execute(SearchViewAction.INSTANCE, request);
+    }
+
+    @Override
+    public void listViewNames(org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Request request,
+            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listener) {
+        execute(ListViewNamesAction.INSTANCE, request, listener);
+    }
+
+    @Override
+    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listViewNames(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Request request) {
+        return execute(ListViewNamesAction.INSTANCE, request);
+    }
+
+    @Override
+    public SearchRequestBuilder prepareStreamSearch(final String... indices) {
+        return new SearchRequestBuilder(this, SearchAction.INSTANCE).setIndices(indices);
+    }
+
 }

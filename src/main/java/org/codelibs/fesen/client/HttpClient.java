@@ -1614,33 +1614,4 @@ public class HttpClient extends HttpAbstractClient {
         }
     }
 
-    @Override
-    public void searchView(org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request,
-            ActionListener<SearchResponse> listener) {
-        execute(SearchViewAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public ActionFuture<SearchResponse> searchView(
-            org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
-        return execute(SearchViewAction.INSTANCE, request);
-    }
-
-    @Override
-    public void listViewNames(org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Request request,
-            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listener) {
-        execute(ListViewNamesAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listViewNames(
-            org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Request request) {
-        return execute(ListViewNamesAction.INSTANCE, request);
-    }
-
-    @Override
-    public SearchRequestBuilder prepareStreamSearch(final String... indices) {
-        return new SearchRequestBuilder(this, SearchAction.INSTANCE).setIndices(indices);
-    }
-
 }
