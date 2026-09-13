@@ -139,10 +139,12 @@ public class HttpCreateIndexAction extends HttpAction {
 
         builder.startObject(ALIASES.getPreferredName());
         for (final Alias alias : request.aliases()) {
-            // Leave is_write_index unset when the caller did not ask for it. Forcing false here
-            // made every alias created through this action read-only, so indexing through an
-            // alias failed with "no write index is defined for alias [...]" even when the alias
-            // pointed at a single index - which the transport client accepts as writable.
+            // Alias.toXContent omits is_write_index when the caller did not set it. Forcing
+            // false made every alias created through this action read-only, so indexing through
+            // an alias failed with "no write index is defined for alias [...]" even when the
+            // alias pointed at a single index - which the transport client accepts as writable;
+            // rendering it as null is rejected outright by Elasticsearch 8 with
+            // "Unknown token [VALUE_NULL] in alias [...]".
             alias.toXContent(builder, params);
         }
         builder.endObject();

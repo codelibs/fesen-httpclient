@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
@@ -109,5 +110,46 @@ class HttpCreateIndexActionTest {
         assertTrue(result.contains("field1"));
         // The _doc wrapper should be unwrapped
         assertFalse(result.contains("_doc"));
+    }
+
+    /**
+     * An alias the caller did not mark must not carry is_write_index at all. Sending false makes
+     * the alias read-only, so indexing through it fails with "no write index is defined for
+     * alias"; sending null is rejected outright by Elasticsearch 8 with
+     * "Unknown token [VALUE_NULL] in alias". Omitting the field is the only rendering both
+     * engines read as "the caller did not decide".
+     */
+    @Test
+    void test_innerToXContent_aliasWriteIndexOmittedWhenCallerDidNotSetIt() throws IOException {
+        final String rendered = renderAliases(new Alias("test-alias"));
+        assertFalse(rendered.contains("is_write_index"));
+        assertTrue(rendered.contains("\"test-alias\""));
+    }
+
+    @Test
+    void test_innerToXContent_aliasWriteIndexKeptWhenCallerSetIt() throws IOException {
+        assertTrue(renderAliases(new Alias("test-alias").writeIndex(true)).contains("\"is_write_index\":true"));
+        assertTrue(renderAliases(new Alias("test-alias").writeIndex(false)).contains("\"is_write_index\":false"));
+    }
+
+    @Test
+    void test_innerToXContent_aliasOptionalFieldsOmittedUnlessSet() throws IOException {
+        assertFalse(renderAliases(new Alias("test-alias")).contains("is_hidden"));
+        assertFalse(renderAliases(new Alias("test-alias")).contains("routing"));
+        assertTrue(renderAliases(new Alias("test-alias").isHidden(true)).contains("\"is_hidden\":true"));
+        assertTrue(renderAliases(new Alias("test-alias").routing("r")).contains("\"routing\":\"r\""));
+        final String split = renderAliases(new Alias("test-alias").indexRouting("i").searchRouting("s"));
+        assertTrue(split.contains("\"index_routing\":\"i\""));
+        assertTrue(split.contains("\"search_routing\":\"s\""));
+    }
+
+    private String renderAliases(final Alias alias) throws IOException {
+        final HttpCreateIndexAction action = new HttpCreateIndexAction(null, CreateIndexAction.INSTANCE);
+        final CreateIndexRequest request = new CreateIndexRequest("test-index").alias(alias);
+        final XContentBuilder builder = JsonXContent.contentBuilder();
+        builder.startObject();
+        action.innerToXContent(request, builder, ToXContent.EMPTY_PARAMS);
+        builder.endObject();
+        return BytesReference.bytes(builder).utf8ToString();
     }
 }
