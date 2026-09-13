@@ -36,19 +36,15 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.Map;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 
 /**
  * Aggregation Builder for geo_centroid agg
@@ -59,21 +55,12 @@ public class GeoCentroidAggregationBuilder extends ValuesSourceAggregationBuilde
     ValuesSource.GeoPoint,
     GeoCentroidAggregationBuilder> {
     public static final String NAME = "geo_centroid";
-    public static final ValuesSourceRegistry.RegistryKey<MetricAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        MetricAggregatorSupplier.class
-    );
-
     public static final ObjectParser<GeoCentroidAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         GeoCentroidAggregationBuilder::new
     );
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, false, false);
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        GeoCentroidAggregatorFactory.registerAggregators(builder);
     }
 
     public GeoCentroidAggregationBuilder(String name) {
@@ -111,16 +98,6 @@ public class GeoCentroidAggregationBuilder extends ValuesSourceAggregationBuilde
     }
 
     @Override
-    protected GeoCentroidAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        return new GeoCentroidAggregatorFactory(name, config, queryShardContext, parent, subFactoriesBuilder, metadata);
-    }
-
-    @Override
     public XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         return builder;
     }
@@ -130,8 +107,4 @@ public class GeoCentroidAggregationBuilder extends ValuesSourceAggregationBuilde
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

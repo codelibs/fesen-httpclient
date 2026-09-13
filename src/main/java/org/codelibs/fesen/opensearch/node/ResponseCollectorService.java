@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.node;
 import org.codelibs.fesen.opensearch.cluster.ClusterChangedEvent;
 import org.codelibs.fesen.opensearch.cluster.ClusterStateListener;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.ExponentiallyWeightedMovingAverage;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ConcurrentCollections;
@@ -63,10 +62,6 @@ public final class ResponseCollectorService implements ClusterStateListener {
     private static final double ALPHA = 0.3;
 
     private final ConcurrentMap<String, NodeStatistics> nodeIdToStats = ConcurrentCollections.newConcurrentMap();
-
-    public ResponseCollectorService(ClusterService clusterService) {
-        clusterService.addListener(this);
-    }
 
     @Override
     public void clusterChanged(ClusterChangedEvent event) {

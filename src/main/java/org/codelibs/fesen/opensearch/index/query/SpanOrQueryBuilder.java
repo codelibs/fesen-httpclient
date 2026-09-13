@@ -33,9 +33,7 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.queries.spans.SpanOrQuery;
-import org.apache.lucene.queries.spans.SpanQuery;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -162,17 +160,6 @@ public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder>
         queryBuilder.boost(boost);
         queryBuilder.queryName(queryName);
         return queryBuilder;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        SpanQuery[] spanQueries = new SpanQuery[clauses.size()];
-        for (int i = 0; i < clauses.size(); i++) {
-            Query query = clauses.get(i).toQuery(context);
-            assert query instanceof SpanQuery;
-            spanQueries[i] = (SpanQuery) query;
-        }
-        return new SpanOrQuery(spanQueries);
     }
 
     @Override

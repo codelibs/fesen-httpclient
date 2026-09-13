@@ -37,10 +37,7 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.transport.TransportResponse;
-import org.codelibs.fesen.opensearch.search.fetch.FetchSearchResult;
 import org.codelibs.fesen.opensearch.search.internal.ShardSearchContextId;
-import org.codelibs.fesen.opensearch.search.internal.ShardSearchRequest;
-import org.codelibs.fesen.opensearch.search.query.QuerySearchResult;
 
 import java.io.IOException;
 
@@ -60,7 +57,6 @@ public abstract class SearchPhaseResult extends TransportResponse {
     private SearchShardTarget searchShardTarget;
     private int shardIndex = -1;
     protected ShardSearchContextId contextId;
-    private ShardSearchRequest shardSearchRequest;
     private RescoreDocIds rescoreDocIds = RescoreDocIds.EMPTY;
 
     protected SearchPhaseResult() {
@@ -100,29 +96,6 @@ public abstract class SearchPhaseResult extends TransportResponse {
     public void setShardIndex(int shardIndex) {
         assert shardIndex >= 0 : "shardIndex must be >= 0 but was: " + shardIndex;
         this.shardIndex = shardIndex;
-    }
-
-    /**
-     * Returns the query result iff it's included in this response otherwise <code>null</code>
-     */
-    public QuerySearchResult queryResult() {
-        return null;
-    }
-
-    /**
-     * Returns the fetch result iff it's included in this response otherwise <code>null</code>
-     */
-    public FetchSearchResult fetchResult() {
-        return null;
-    }
-
-    @Nullable
-    public ShardSearchRequest getShardSearchRequest() {
-        return shardSearchRequest;
-    }
-
-    public void setShardSearchRequest(ShardSearchRequest shardSearchRequest) {
-        this.shardSearchRequest = shardSearchRequest;
     }
 
     public RescoreDocIds getRescoreDocIds() {

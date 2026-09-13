@@ -46,10 +46,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.NamedObjectNotFoundException;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
-import org.codelibs.fesen.opensearch.index.mapper.ObjectMapper;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.QueryShardException;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
@@ -76,17 +73,6 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
     public static final ParseField ORDER_FIELD = new ParseField("order");
     public static final ParseField NESTED_FILTER_FIELD = new ParseField("nested_filter");
     public static final ParseField NESTED_PATH_FIELD = new ParseField("nested_path");
-
-    /**
-     * Create a {@linkplain SortFieldAndFormat} from this builder.
-     */
-    protected abstract SortFieldAndFormat build(QueryShardContext context) throws IOException;
-
-    /**
-     * Create a {@linkplain BucketedSort} which is useful for sorting inside of aggregations.
-     */
-    public abstract BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra)
-        throws IOException;
 
     /**
      * Set the order of sorting.
@@ -160,120 +146,6 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
                     }
                 }
             }
-        }
-    }
-
-    public static Optional<SortAndFormats> buildSort(List<SortBuilder<?>> sortBuilders, QueryShardContext context) throws IOException {
-        List<SortField> sortFields = new ArrayList<>(sortBuilders.size());
-        List<DocValueFormat> sortFormats = new ArrayList<>(sortBuilders.size());
-        for (SortBuilder<?> builder : sortBuilders) {
-            SortFieldAndFormat sf = builder.build(context);
-            sortFields.add(sf.field);
-            sortFormats.add(sf.format);
-        }
-        if (!sortFields.isEmpty()) {
-            // optimize if we just sort on score non reversed, we don't really
-            // need sorting
-            boolean sort;
-            if (sortFields.size() > 1) {
-                sort = true;
-            } else {
-                SortField sortField = sortFields.get(0);
-                if (sortField.getType() == SortField.Type.SCORE && !sortField.getReverse()) {
-                    sort = false;
-                } else {
-                    sort = true;
-                }
-            }
-            if (sort) {
-                return Optional.of(
-                    new SortAndFormats(new Sort(sortFields.toArray(new SortField[0])), sortFormats.toArray(new DocValueFormat[0]))
-                );
-            }
-        }
-        return Optional.empty();
-    }
-
-    protected static Nested resolveNested(QueryShardContext context, String nestedPath, QueryBuilder nestedFilter) throws IOException {
-        NestedSortBuilder nestedSortBuilder = new NestedSortBuilder(nestedPath);
-        nestedSortBuilder.setFilter(nestedFilter);
-        return resolveNested(context, nestedSortBuilder);
-    }
-
-    protected static Nested resolveNested(QueryShardContext context, NestedSortBuilder nestedSort) throws IOException {
-        final Query childQuery = resolveNestedQuery(context, nestedSort, null);
-        if (childQuery == null) {
-            return null;
-        }
-        final ObjectMapper objectMapper = context.nestedScope().getObjectMapper();
-        final Query parentQuery;
-        if (objectMapper == null) {
-            parentQuery = Queries.newNonNestedFilter();
-        } else {
-            parentQuery = objectMapper.nestedTypeFilter();
-        }
-        return new Nested(context.bitsetFilter(parentQuery), childQuery, nestedSort, context.searcher());
-    }
-
-    private static Query resolveNestedQuery(QueryShardContext context, NestedSortBuilder nestedSort, Query parentQuery) throws IOException {
-        if (nestedSort == null || nestedSort.getPath() == null) {
-            return null;
-        }
-
-        String nestedPath = nestedSort.getPath();
-        QueryBuilder nestedFilter = nestedSort.getFilter();
-        NestedSortBuilder nestedNestedSort = nestedSort.getNestedSort();
-
-        // verify our nested path
-        ObjectMapper nestedObjectMapper = context.getObjectMapper(nestedPath);
-
-        if (nestedObjectMapper == null) {
-            throw new QueryShardException(context, "[nested] failed to find nested object under path [" + nestedPath + "]");
-        }
-        if (!nestedObjectMapper.nested().isNested()) {
-            throw new QueryShardException(context, "[nested] nested object under path [" + nestedPath + "] is not of nested type");
-        }
-        ObjectMapper objectMapper = context.nestedScope().getObjectMapper();
-
-        // get our child query, potentially applying a users filter
-        Query childQuery;
-        try {
-            context.nestedScope().nextLevel(nestedObjectMapper);
-            if (nestedFilter != null) {
-                assert nestedFilter == Rewriteable.rewrite(nestedFilter, context) : "nested filter is not rewritten";
-                if (parentQuery == null) {
-                    // this is for back-compat, original single level nested sorting never applied a nested type filter
-                    childQuery = nestedFilter.toQuery(context);
-                } else {
-                    childQuery = Queries.filtered(nestedObjectMapper.nestedTypeFilter(), nestedFilter.toQuery(context));
-                }
-            } else {
-                childQuery = nestedObjectMapper.nestedTypeFilter();
-            }
-        } finally {
-            context.nestedScope().previousLevel();
-        }
-
-        // apply filters from the previous nested level
-        if (parentQuery != null) {
-            if (objectMapper != null) {
-                childQuery = Queries.filtered(
-                    childQuery,
-                    new ToChildBlockJoinQuery(parentQuery, context.bitsetFilter(objectMapper.nestedTypeFilter()))
-                );
-            }
-        }
-
-        // wrap up our parent and child and either process the next level of nesting or return
-        if (nestedNestedSort != null) {
-            try {
-                context.nestedScope().nextLevel(nestedObjectMapper);
-                return resolveNestedQuery(context, nestedNestedSort, childQuery);
-            } finally {
-                context.nestedScope().previousLevel();
-            }
-        } else {
-            return childQuery;
         }
     }
 

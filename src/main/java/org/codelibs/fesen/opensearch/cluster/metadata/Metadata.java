@@ -67,10 +67,8 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.gateway.MetadataStateFormat;
 import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
 import org.codelibs.fesen.opensearch.indices.replication.common.ReplicationType;
-import org.codelibs.fesen.opensearch.plugins.MapperPlugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -493,29 +491,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     }
 
     /**
-     * Finds all mappings for concrete indices. Only fields that match the provided field
-     * filter will be returned (default is a predicate that always returns true, which can be
-     * overridden via plugins)
-     *
-     * @see MapperPlugin#getFieldFilter()
-     *
-     */
-    public Map<String, MappingMetadata> findMappings(String[] concreteIndices, Function<String, Predicate<String>> fieldFilter)
-        throws IOException {
-        assert concreteIndices != null;
-        if (concreteIndices.length == 0) {
-            return Map.of();
-        }
-
-        final Map<String, MappingMetadata> indexMapBuilder = new HashMap<>();
-        Arrays.stream(concreteIndices)
-            .filter(indices.keySet()::contains)
-            .forEach((idx) -> indexMapBuilder.put(idx, filterFields(indices.get(idx).mapping(), fieldFilter.apply(idx))));
-
-        return Collections.unmodifiableMap(indexMapBuilder);
-    }
-
-    /**
      * Finds the parent data streams, if any, for the specified concrete indices.
      */
     public Map<String, IndexAbstraction.DataStream> findDataStreams(String[] concreteIndices) {
@@ -531,79 +506,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             }
         }
         return Collections.unmodifiableMap(builder);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static MappingMetadata filterFields(MappingMetadata mappingMetadata, Predicate<String> fieldPredicate) {
-        if (mappingMetadata == null) {
-            return MappingMetadata.EMPTY_MAPPINGS;
-        }
-        if (fieldPredicate == MapperPlugin.NOOP_FIELD_PREDICATE) {
-            return mappingMetadata;
-        }
-        Map<String, Object> sourceAsMap = XContentHelper.convertToMap(mappingMetadata.source().compressedReference(), true).v2();
-        Map<String, Object> mapping;
-        if (sourceAsMap.size() == 1 && sourceAsMap.containsKey(mappingMetadata.type())) {
-            mapping = (Map<String, Object>) sourceAsMap.get(mappingMetadata.type());
-        } else {
-            mapping = sourceAsMap;
-        }
-
-        Map<String, Object> properties = (Map<String, Object>) mapping.get("properties");
-        if (properties == null || properties.isEmpty()) {
-            return mappingMetadata;
-        }
-
-        filterFields("", properties, fieldPredicate);
-
-        return new MappingMetadata(mappingMetadata.type(), sourceAsMap);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static boolean filterFields(String currentPath, Map<String, Object> fields, Predicate<String> fieldPredicate) {
-        assert fieldPredicate != MapperPlugin.NOOP_FIELD_PREDICATE;
-        Iterator<Map.Entry<String, Object>> entryIterator = fields.entrySet().iterator();
-        while (entryIterator.hasNext()) {
-            Map.Entry<String, Object> entry = entryIterator.next();
-            String newPath = mergePaths(currentPath, entry.getKey());
-            Object value = entry.getValue();
-            boolean mayRemove = true;
-            boolean isMultiField = false;
-            if (value instanceof Map) {
-                Map<String, Object> map = (Map<String, Object>) value;
-                Map<String, Object> properties = (Map<String, Object>) map.get("properties");
-                if (properties != null) {
-                    mayRemove = filterFields(newPath, properties, fieldPredicate);
-                } else {
-                    Map<String, Object> subFields = (Map<String, Object>) map.get("fields");
-                    if (subFields != null) {
-                        isMultiField = true;
-                        if (mayRemove = filterFields(newPath, subFields, fieldPredicate)) {
-                            map.remove("fields");
-                        }
-                    }
-                }
-            } else {
-                throw new IllegalStateException("cannot filter mappings, found unknown element of type [" + value.getClass() + "]");
-            }
-
-            // only remove a field if it has no sub-fields left and it has to be excluded
-            if (fieldPredicate.test(newPath) == false) {
-                if (mayRemove) {
-                    entryIterator.remove();
-                } else if (isMultiField) {
-                    // multi fields that should be excluded but hold subfields that don't have to be excluded are converted to objects
-                    Map<String, Object> map = (Map<String, Object>) value;
-                    Map<String, Object> subFields = (Map<String, Object>) map.get("fields");
-                    assert subFields.size() > 0;
-                    map.put("properties", subFields);
-                    map.remove("fields");
-                    map.remove("type");
-                }
-            }
-        }
-        // return true if the ancestor may be removed, as it has no sub-fields left
-        return fields.size() == 0;
     }
 
     private static String mergePaths(String path, String field) {
@@ -1638,7 +1540,7 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
                     .map(ComponentTemplateMetadata::componentTemplates)
                     .orElseGet(Collections::emptyMap)
                     .forEach((k, v) -> {
-                        if (MetadataIndexTemplateService.isSystemTemplate(v)) {
+                        if (v.metadata() != null && "system".equals(v.metadata().get("_type"))) {
                             SystemTemplateMetadata templateMetadata = SystemTemplateMetadata.fromComponentTemplate(k);
                             systemTemplatesLookup.compute(templateMetadata.name(), (ik, iv) -> {
                                 if (iv == null) {
@@ -2017,21 +1919,5 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         params.put(Metadata.CONTEXT_MODE_PARAM, Metadata.CONTEXT_MODE_GATEWAY);
         FORMAT_PARAMS = new MapParams(params);
     }
-
-    /**
-     * State format for {@link Metadata} to write to and load from disk
-     */
-    public static final MetadataStateFormat<Metadata> FORMAT = new MetadataStateFormat<Metadata>(GLOBAL_STATE_FILE_PREFIX) {
-
-        @Override
-        public void toXContent(XContentBuilder builder, Metadata state) throws IOException {
-            Builder.toXContent(state, builder, FORMAT_PARAMS);
-        }
-
-        @Override
-        public Metadata fromXContent(XContentParser parser) throws IOException {
-            return Builder.fromXContent(parser);
-        }
-    };
 
 }

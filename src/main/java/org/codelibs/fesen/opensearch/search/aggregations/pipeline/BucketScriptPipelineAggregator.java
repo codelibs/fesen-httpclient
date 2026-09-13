@@ -32,14 +32,13 @@
 
 package org.codelibs.fesen.opensearch.search.aggregations.pipeline;
 
-import org.codelibs.fesen.opensearch.script.BucketAggregationScript;
-import org.codelibs.fesen.opensearch.script.Script;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation.ReduceContext;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregations;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalMultiBucketAggregation;
 import org.codelibs.fesen.opensearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
+import org.codelibs.fesen.opensearch.script.Script;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,49 +77,6 @@ public class BucketScriptPipelineAggregator extends PipelineAggregator {
 
     @Override
     public InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext) {
-        InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket> originalAgg =
-            (InternalMultiBucketAggregation<InternalMultiBucketAggregation, InternalMultiBucketAggregation.InternalBucket>) aggregation;
-        List<? extends InternalMultiBucketAggregation.InternalBucket> buckets = originalAgg.getBuckets();
-
-        BucketAggregationScript.Factory factory = reduceContext.scriptService().compile(script, BucketAggregationScript.CONTEXT);
-        List<InternalMultiBucketAggregation.InternalBucket> newBuckets = new ArrayList<>();
-        for (InternalMultiBucketAggregation.InternalBucket bucket : buckets) {
-            Map<String, Object> vars = new HashMap<>();
-            if (script.getParams() != null) {
-                vars.putAll(script.getParams());
-            }
-            boolean skipBucket = false;
-            for (Map.Entry<String, String> entry : bucketsPathsMap.entrySet()) {
-                String varName = entry.getKey();
-                String bucketsPath = entry.getValue();
-                Double value = resolveBucketValue(originalAgg, bucket, bucketsPath, gapPolicy);
-                if (GapPolicy.SKIP == gapPolicy && (value == null || Double.isNaN(value))) {
-                    skipBucket = true;
-                    break;
-                }
-                vars.put(varName, value);
-            }
-            if (skipBucket) {
-                newBuckets.add(bucket);
-            } else {
-                Number returned = factory.newInstance(vars).execute();
-                if (returned == null) {
-                    newBuckets.add(bucket);
-                } else {
-                    final List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false)
-                        .map((p) -> (InternalAggregation) p)
-                        .collect(Collectors.toList());
-
-                    InternalSimpleValue simpleValue = new InternalSimpleValue(name(), returned.doubleValue(), formatter, metadata());
-                    aggs.add(simpleValue);
-                    InternalMultiBucketAggregation.InternalBucket newBucket = originalAgg.createBucket(
-                        InternalAggregations.from(aggs),
-                        bucket
-                    );
-                    newBuckets.add(newBucket);
-                }
-            }
-        }
-        return originalAgg.create(newBuckets);
+        throw new UnsupportedOperationException("aggregation results are reduced on the node, not in the HTTP client");
     }
 }

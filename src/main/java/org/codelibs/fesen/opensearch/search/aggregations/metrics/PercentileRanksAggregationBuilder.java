@@ -36,18 +36,13 @@ import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.Map;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Aggregation Builder for percentile_ranks agg
@@ -56,9 +51,6 @@ import java.util.Map;
  */
 public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggregationBuilder<PercentileRanksAggregationBuilder> {
     public static final String NAME = PercentileRanks.TYPE_NAME;
-    public static final ValuesSourceRegistry.RegistryKey<PercentilesAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, PercentilesAggregatorSupplier.class);
-
     private static final ParseField VALUES_FIELD = new ParseField("values");
     private static final ConstructingObjectParser<PercentileRanksAggregationBuilder, String> PARSER;
     static {
@@ -72,10 +64,6 @@ public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggreg
 
     public static AggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, aggregationName);
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        PercentileRanksAggregatorFactory.registerAggregators(builder);
     }
 
     public PercentileRanksAggregationBuilder(String name, double[] values) {
@@ -116,32 +104,8 @@ public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggreg
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        return new PercentileRanksAggregatorFactory(
-            name,
-            config,
-            values,
-            configOrDefault(),
-            keyed,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
-    }
-
-    @Override
     public String getType() {
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

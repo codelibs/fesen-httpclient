@@ -41,9 +41,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.ConstantFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.NumberFieldMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,7 +51,7 @@ import java.util.Objects;
  *
  * @opensearch.internal
  */
-public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> implements ComplementAwareQueryBuilder {
+public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> {
     public static final String NAME = "term";
     public static final boolean DEFAULT_CASE_INSENSITIVITY = false;
     private static final ParseField CASE_INSENSITIVE_FIELD = new ParseField("case_insensitive");
@@ -184,48 +181,6 @@ public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> imp
     }
 
     @Override
-    protected QueryBuilder doRewrite(QueryRewriteContext queryRewriteContext) throws IOException {
-        QueryShardContext context = queryRewriteContext.convertToShardContext();
-        if (context != null) {
-            MappedFieldType fieldType = context.fieldMapper(this.fieldName);
-            if (fieldType == null) {
-                return new MatchNoneQueryBuilder();
-            } else if (fieldType.unwrap() instanceof ConstantFieldType) {
-                // This logic is correct for all field types, but by only applying it to constant
-                // fields we also have the guarantee that it doesn't perform I/O, which is important
-                // since rewrites might happen on a network thread.
-                Query query = null;
-                if (caseInsensitive) {
-                    query = fieldType.termQueryCaseInsensitive(value, context);
-                } else {
-                    query = fieldType.termQuery(value, context);
-                }
-
-                if (query instanceof MatchAllDocsQuery) {
-                    return new MatchAllQueryBuilder();
-                } else if (query instanceof MatchNoDocsQuery) {
-                    return new MatchNoneQueryBuilder();
-                } else {
-                    assert false : "Constant fields must produce match-all or match-none queries, got " + query;
-                }
-            }
-        }
-        return super.doRewrite(queryRewriteContext);
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType mapper = context.fieldMapper(this.fieldName);
-        if (mapper == null) {
-            throw new IllegalStateException("Rewrite first");
-        }
-        if (caseInsensitive) {
-            return mapper.termQueryCaseInsensitive(value, context);
-        }
-        return mapper.termQuery(value, context);
-    }
-
-    @Override
     public String getWriteableName() {
         return NAME;
     }
@@ -240,12 +195,4 @@ public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> imp
         return super.doEquals(other) && Objects.equals(caseInsensitive, other.caseInsensitive);
     }
 
-    @Override
-    public List<QueryBuilder> getComplement(QueryShardContext context) {
-        // If this is a term query on a numeric field, we can provide the complement using RangeQueryBuilder.
-        NumberFieldMapper.NumberFieldType nft = ComplementHelperUtils.getNumberFieldType(context, fieldName);
-        if (nft == null) return null;
-        Number numberValue = nft.parse(value);
-        return ComplementHelperUtils.numberValueToComplement(fieldName, numberValue);
-    }
 }

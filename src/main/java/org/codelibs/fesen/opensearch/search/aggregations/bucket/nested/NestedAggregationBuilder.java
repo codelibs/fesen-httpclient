@@ -37,13 +37,9 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.ObjectMapper;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregationExecutionException;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -107,34 +103,6 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.ONE;
-    }
-
-    @Override
-    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
-        throws IOException {
-        ObjectMapper childObjectMapper = queryShardContext.getObjectMapper(path);
-        if (childObjectMapper == null) {
-            // in case the path has been unmapped:
-            return new NestedAggregatorFactory(name, null, null, queryShardContext, parent, subFactoriesBuilder, metadata);
-        }
-
-        if (childObjectMapper.nested().isNested() == false) {
-            throw new AggregationExecutionException("[nested] nested path [" + path + "] is not nested");
-        }
-        try {
-            ObjectMapper parentObjectMapper = queryShardContext.nestedScope().nextLevel(childObjectMapper);
-            return new NestedAggregatorFactory(
-                name,
-                parentObjectMapper,
-                childObjectMapper,
-                queryShardContext,
-                parent,
-                subFactoriesBuilder,
-                metadata
-            );
-        } finally {
-            queryShardContext.nestedScope().previousLevel();
-        }
     }
 
     @Override

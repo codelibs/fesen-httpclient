@@ -33,7 +33,6 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.OpenSearchParseException;
 import org.codelibs.fesen.opensearch.common.unit.Fuzziness;
 import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
@@ -46,14 +45,10 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
 import org.codelibs.fesen.opensearch.index.search.MatchQuery;
-import org.codelibs.fesen.opensearch.index.search.MultiMatchQuery;
-import org.codelibs.fesen.opensearch.index.search.QueryParserHelper;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -803,63 +798,6 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MultiMatchQuery multiMatchQuery = new MultiMatchQuery(context);
-        if (analyzer != null) {
-            if (context.getIndexAnalyzers().get(analyzer) == null) {
-                throw new QueryShardException(context, "[" + NAME + "] analyzer [" + analyzer + "] not found");
-            }
-            multiMatchQuery.setAnalyzer(analyzer);
-        }
-        multiMatchQuery.setPhraseSlop(slop);
-        if (fuzziness != null) {
-            multiMatchQuery.setFuzziness(fuzziness);
-        }
-        multiMatchQuery.setFuzzyPrefixLength(prefixLength);
-        multiMatchQuery.setMaxExpansions(maxExpansions);
-        multiMatchQuery.setOccur(operator.toBooleanClauseOccur());
-        if (fuzzyRewrite != null) {
-            multiMatchQuery.setFuzzyRewriteMethod(
-                QueryParsers.parseRewriteMethod(
-                    fuzzyRewrite,
-                    FuzzyQuery.defaultRewriteMethod(maxExpansions),
-                    LoggingDeprecationHandler.INSTANCE
-                )
-            );
-        }
-        if (tieBreaker != null) {
-            multiMatchQuery.setTieBreaker(tieBreaker);
-        }
-        if (cutoffFrequency != null) {
-            multiMatchQuery.setCommonTermsCutoff(cutoffFrequency);
-        }
-        if (lenient != null) {
-            multiMatchQuery.setLenient(lenient);
-        }
-        multiMatchQuery.setZeroTermsQuery(zeroTermsQuery);
-        multiMatchQuery.setAutoGenerateSynonymsPhraseQuery(autoGenerateSynonymsPhraseQuery);
-        multiMatchQuery.setTranspositions(fuzzyTranspositions);
-
-        Map<String, Float> newFieldsBoosts;
-        boolean isAllField;
-        if (fieldsBoosts.isEmpty()) {
-            // no fields provided, defaults to index.query.default_field
-            List<String> defaultFields = context.defaultFields();
-            newFieldsBoosts = QueryParserHelper.resolveMappingFields(context, QueryParserHelper.parseFieldsAndWeights(defaultFields));
-            isAllField = QueryParserHelper.hasAllFieldsWildcard(defaultFields);
-        } else {
-            newFieldsBoosts = QueryParserHelper.resolveMappingFields(context, fieldsBoosts);
-            isAllField = QueryParserHelper.hasAllFieldsWildcard(fieldsBoosts.keySet());
-        }
-        if (isAllField && lenient == null) {
-            // Sets leniency to true if not explicitly
-            // set in the request
-            multiMatchQuery.setLenient(true);
-        }
-        return multiMatchQuery.parse(type, newFieldsBoosts, value, minimumShouldMatch);
     }
 
     @Override

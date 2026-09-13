@@ -44,8 +44,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.suggest.SuggestionSearchContext.SuggestionContext;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -184,21 +182,6 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
             }
         }
         return suggestBuilder;
-    }
-
-    public SuggestionSearchContext build(QueryShardContext context) throws IOException {
-        SuggestionSearchContext suggestionSearchContext = new SuggestionSearchContext();
-        for (Entry<String, SuggestionBuilder<?>> suggestion : suggestions.entrySet()) {
-            SuggestionContext suggestionContext = suggestion.getValue().build(context);
-            if (suggestionContext.getText() == null) {
-                if (globalText == null) {
-                    throw new IllegalArgumentException("The required text option is missing");
-                }
-                suggestionContext.setText(BytesRefs.toBytesRef(globalText));
-            }
-            suggestionSearchContext.addSuggestion(suggestion.getKey(), suggestionContext);
-        }
-        return suggestionSearchContext;
     }
 
     @Override

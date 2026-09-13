@@ -65,6 +65,20 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
     @PublicApi(since = "1.0.0")
     public static class Path implements Writeable, ToXContentObject {
 
+        /**
+         * Filesystems will return a negative size when they are larger than {@code Long.MAX_VALUE}
+         * bytes; treat that as unknown. Inlined from the node-side filesystem probe.
+         *
+         * @param bytes the reported size
+         * @return the size, or {@link Long#MAX_VALUE} when the value overflowed
+         */
+        private static long adjustForHugeFilesystems(long bytes) {
+            if (bytes < 0) {
+                return Long.MAX_VALUE;
+            }
+            return bytes;
+        }
+
         String path;
         @Nullable
         String mount;
@@ -163,11 +177,11 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         }
 
         public void add(Path path) {
-            total = FsProbe.adjustForHugeFilesystems(addLong(total, path.total));
-            free = FsProbe.adjustForHugeFilesystems(addLong(free, path.free));
-            fileCacheReserved = FsProbe.adjustForHugeFilesystems(addLong(fileCacheReserved, path.fileCacheReserved));
-            fileCacheUtilized = FsProbe.adjustForHugeFilesystems(addLong(fileCacheUtilized, path.fileCacheUtilized));
-            available = FsProbe.adjustForHugeFilesystems(addLong(available, path.available));
+            total = adjustForHugeFilesystems(addLong(total, path.total));
+            free = adjustForHugeFilesystems(addLong(free, path.free));
+            fileCacheReserved = adjustForHugeFilesystems(addLong(fileCacheReserved, path.fileCacheReserved));
+            fileCacheUtilized = adjustForHugeFilesystems(addLong(fileCacheUtilized, path.fileCacheUtilized));
+            available = adjustForHugeFilesystems(addLong(available, path.available));
         }
 
         static final class Fields {

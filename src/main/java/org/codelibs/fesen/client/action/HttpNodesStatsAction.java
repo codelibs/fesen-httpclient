@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.stats.CommonStats;
 import org.codelibs.fesen.opensearch.action.admin.indices.stats.CommonStatsFlags;
 import org.codelibs.fesen.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
 import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndexShardStats;
-import org.codelibs.fesen.opensearch.action.search.SearchRequestStats;
 import org.codelibs.fesen.opensearch.cluster.ClusterName;
 import org.codelibs.fesen.opensearch.cluster.DiskUsage;
 import org.codelibs.fesen.opensearch.cluster.coordination.PendingClusterStateStats;
@@ -52,10 +51,6 @@ import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerThrottlingSta
 import org.codelibs.fesen.opensearch.cluster.service.ClusterStateStats;
 import org.codelibs.fesen.opensearch.common.cache.service.NodeCacheStats;
 import org.codelibs.fesen.opensearch.common.metrics.OperationStats;
-import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
-import org.codelibs.fesen.opensearch.common.settings.FeatureFlagSettings;
-import org.codelibs.fesen.opensearch.common.settings.IndexScopedSettings;
-import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.InputStreamStreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -128,11 +123,8 @@ public class HttpNodesStatsAction extends HttpAction {
     /** The nodes stats action definition. */
     protected NodesStatsAction action;
 
-    /** Node-scoped cluster settings used when constructing parsed statistics. */
-    protected ClusterSettings clusterSettings;
-
     /**
-     * Creates a new HttpNodesStatsAction and initializes node-scoped cluster settings used for parsing.
+     * Creates a new HttpNodesStatsAction.
      *
      * @param client the HTTP client
      * @param action the nodes stats action
@@ -140,23 +132,6 @@ public class HttpNodesStatsAction extends HttpAction {
     public HttpNodesStatsAction(final HttpClient client, final NodesStatsAction action) {
         super(client);
         this.action = action;
-        final Map<String, Setting<?>> nodeSettings = new HashMap<>();
-        for (Setting<?> setting : ClusterSettings.BUILT_IN_CLUSTER_SETTINGS) {
-            if (setting.hasNodeScope()) {
-                nodeSettings.put(setting.getKey(), setting);
-            }
-        }
-        for (Setting<?> setting : IndexScopedSettings.BUILT_IN_INDEX_SETTINGS) {
-            if (setting.hasNodeScope()) {
-                nodeSettings.put(setting.getKey(), setting);
-            }
-        }
-        for (Setting<?> setting : FeatureFlagSettings.BUILT_IN_FEATURE_FLAGS) {
-            if (setting.hasNodeScope()) {
-                nodeSettings.put(setting.getKey(), setting);
-            }
-        }
-        this.clusterSettings = new ClusterSettings(client.settings(), new HashSet<>(nodeSettings.values()), Collections.emptySet());
     }
 
     /**
@@ -2712,7 +2687,6 @@ public class HttpNodesStatsAction extends HttpAction {
         TranslogStats translog = null;
         RequestCacheStats requestCache = null;
         RecoveryStats recoveryStats = null;
-        SearchRequestStats searchRequestStats = new SearchRequestStats(clusterSettings);
         final Map<Index, List<IndexShardStats>> statsByShard = Collections.emptyMap();
         XContentParser.Token token;
         while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
@@ -2777,7 +2751,7 @@ public class HttpNodesStatsAction extends HttpAction {
             out.writeOptionalWriteable(requestCache);
             out.writeOptionalWriteable(recoveryStats);
             try (StreamInput in = new InputStreamStreamInput(new ByteArrayInputStream(out.toByteArray()))) {
-                return new NodeIndicesStats(new CommonStats(in), statsByShard, searchRequestStats);
+                return new NodeIndicesStats(new CommonStats(in), statsByShard);
             }
         }
     }

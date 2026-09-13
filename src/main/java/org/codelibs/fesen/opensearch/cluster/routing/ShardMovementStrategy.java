@@ -8,7 +8,6 @@
 
 package org.codelibs.fesen.opensearch.cluster.routing;
 
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.allocator.BalancedShardsAllocator;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 
 import java.util.Locale;

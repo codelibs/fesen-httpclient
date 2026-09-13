@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
-import org.codelibs.fesen.opensearch.transport.RemoteClusterService;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -288,7 +287,7 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
             // copy the setting here so we can mark it private in org.codelibs.fesen.opensearch.node.Node
             return Setting.boolSetting(
                 "node.remote_cluster_client",
-                RemoteClusterService.ENABLE_REMOTE_CLUSTERS,
+                Setting.boolSetting("cluster.remote.connect", true, Property.Deprecated, Property.NodeScope),
                 Property.Deprecated,
                 Property.NodeScope
             );

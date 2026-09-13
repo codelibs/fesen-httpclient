@@ -55,10 +55,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
-import org.codelibs.fesen.opensearch.index.mapper.ConstantFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.opensearch.indices.TermsLookup;
 import org.codelibs.fesen.opensearch.search.SearchHit;
 import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder;
@@ -87,7 +83,7 @@ import java.util.stream.IntStream;
  *
  * @opensearch.internal
  */
-public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> implements ComplementAwareQueryBuilder, WithFieldName {
+public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> implements WithFieldName {
     public static final String NAME = "terms";
 
     private final String fieldName;
@@ -536,40 +532,6 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
         return NAME;
     }
 
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        // This section ensures no on-demand fetching for other cases as well
-        if (termsLookup != null || supplier != null || values == null || values.isEmpty()) {
-            throw new UnsupportedOperationException("query must be rewritten first");
-        }
-        int maxTermsCount = context.getIndexSettings().getMaxTermsCount();
-        if (values.size() > maxTermsCount) {
-            throw new IllegalArgumentException(
-                "The number of terms ["
-                    + values.size()
-                    + "] used in the Terms Query request has exceeded "
-                    + "the allowed maximum of ["
-                    + maxTermsCount
-                    + "]. "
-                    + "This maximum can be set by changing the ["
-                    + IndexSettings.MAX_TERMS_COUNT_SETTING.getKey()
-                    + "] index level setting."
-            );
-        }
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType == null) {
-            throw new IllegalStateException("Rewrite first");
-        }
-
-        if (valueType == ValueType.BITMAP
-            && values.size() == 1
-            && values.get(0) instanceof BytesArray bytesArray
-            && fieldType.unwrap() instanceof NumberFieldMapper.NumberFieldType numberFieldType) {
-            return numberFieldType.bitmapQuery(bytesArray);
-        }
-        return fieldType.termsQuery(values, context);
-    }
-
     private void fetch(TermsLookup termsLookup, Client client, ActionListener<List<Object>> actionListener) {
         if (termsLookup.id() != null) {
             GetRequest getRequest = new GetRequest(termsLookup.index(), termsLookup.id());
@@ -607,8 +569,8 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
                         Settings idxSettings = settingsResponse.getIndexToSettings().getOrDefault(termsLookup.index(), Settings.EMPTY);
 
                         // Get max_terms_count, max_result_window, and max_clause_count, fallback to their defaults
-                        int maxTermsCount = IndexSettings.MAX_TERMS_COUNT_SETTING.get(idxSettings);
-                        int maxResultWindow = IndexSettings.MAX_RESULT_WINDOW_SETTING.get(idxSettings);
+                        int maxTermsCount = idxSettings.getAsInt("index.max_terms_count", 65536);
+                        int maxResultWindow = idxSettings.getAsInt("index.max_result_window", 10000);
                         // Reads the cluster-level max_clause_count, propagated via SearchService's
                         // dynamic setting update consumer to IndexSearcher's static field.
                         int maxClauseCount = IndexSearcher.getMaxClauseCount();
@@ -705,70 +667,6 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
             && Objects.equals(termsLookup, other.termsLookup)
             && Objects.equals(supplier, other.supplier)
             && Objects.equals(valueType, other.valueType);
-    }
-
-    @Override
-    protected QueryBuilder doRewrite(QueryRewriteContext queryRewriteContext) throws IOException {
-        if (supplier != null) {
-            return supplier.get() == null ? this : new TermsQueryBuilder(this.fieldName, supplier.get(), valueType);
-        }
-        // Support: terms lookup by document id && Support: terms lookup by subquery
-        else if (this.termsLookup != null && (this.termsLookup.id() != null || this.termsLookup.query() != null)) {
-            SetOnce<List<?>> supplier = new SetOnce<>();
-            queryRewriteContext.registerAsyncAction((client, listener) -> fetch(termsLookup, client, ActionListener.map(listener, list -> {
-                supplier.set(list);
-                return null;
-            })));
-            return new TermsQueryBuilder(this.fieldName, supplier::get, valueType);
-        }
-
-        if (values == null || values.isEmpty()) {
-            return new MatchNoneQueryBuilder();
-        }
-
-        QueryShardContext context = queryRewriteContext.convertToShardContext();
-        if (context != null) {
-            MappedFieldType fieldType = context.fieldMapper(this.fieldName);
-            if (fieldType == null) {
-                return new MatchNoneQueryBuilder();
-            } else if (fieldType.unwrap() instanceof ConstantFieldType) {
-                // This logic is correct for all field types, but by only applying it to constant
-                // fields we also have the guarantee that it doesn't perform I/O, which is important
-                // since rewrites might happen on a network thread.
-                Query query = fieldType.termsQuery(values, context);
-                if (query instanceof MatchAllDocsQuery) {
-                    return new MatchAllQueryBuilder();
-                } else if (query instanceof MatchNoDocsQuery) {
-                    return new MatchNoneQueryBuilder();
-                } else {
-                    assert false : "Constant fields must produce match-all or match-none queries, got " + query;
-                }
-            }
-        }
-
-        return this;
-    }
-
-    @Override
-    public List<QueryBuilder> getComplement(QueryShardContext context) {
-        // If this uses BITMAP value type, or if we're using termsLookup, we can't provide the complement.
-        if (valueType.equals(ValueType.BITMAP)) return null;
-        if (values == null || termsLookup != null) return null;
-        // If this is a terms query on a numeric field, we can provide the complement using RangeQueryBuilder.
-        NumberFieldMapper.NumberFieldType nft = ComplementHelperUtils.getNumberFieldType(context, fieldName);
-        if (nft == null) return null;
-        List<Number> numberValues = new ArrayList<>();
-        for (Object value : values) {
-            numberValues.add(nft.parse(value));
-        }
-        numberValues.sort(Comparator.comparingDouble(Number::doubleValue)); // For sorting purposes, use double value.
-        NumberFieldMapper.NumberType numberType = nft.numberType();
-        // If there is some other field type that's a whole number, this will still be correct, the complement may just have some
-        // unnecessary components like "x < value < x + 1"
-        boolean isWholeNumber = numberType.equals(NumberFieldMapper.NumberType.INTEGER)
-            || numberType.equals(NumberFieldMapper.NumberType.LONG)
-            || numberType.equals(NumberFieldMapper.NumberType.SHORT);
-        return ComplementHelperUtils.numberValuesToComplement(fieldName, numberValues, isWholeNumber);
     }
 
 }

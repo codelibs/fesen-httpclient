@@ -56,7 +56,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static org.codelibs.fesen.opensearch.index.mapper.AbstractPointGeometryFieldMapper.Names.IGNORE_Z_VALUE;
 
 /**
  * Core geo point
@@ -293,7 +292,7 @@ public class GeoPoint implements ToXContentFragment {
             throw new OpenSearchParseException(
                 "Exception parsing coordinates: found Z value [{}] but [{}] " + "parameter is [{}]",
                 zValue,
-                IGNORE_Z_VALUE,
+                "ignore_z_value",
                 ignoreZValue
             );
         }

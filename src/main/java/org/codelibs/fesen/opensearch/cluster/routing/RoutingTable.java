@@ -61,7 +61,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateService.isIndexVerifiedBeforeClosed;
 
 /**
  * Represents a global cluster-wide routing table for all indices including the
@@ -73,6 +72,19 @@ import static org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateS
  */
 @PublicApi(since = "1.0.0")
 public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<RoutingTable>, VerifiableWriteable {
+
+    /**
+     * Whether a closed index was verified before it was closed, so its shards still have routing.
+     * Read straight off the index setting because the node-side index state service is not carried
+     * over.
+     *
+     * @param indexMetadata the index metadata
+     * @return {@code true} if the index is closed and was verified before closing
+     */
+    private static boolean isIndexVerifiedBeforeClosed(final IndexMetadata indexMetadata) {
+        return indexMetadata.getState() == IndexMetadata.State.CLOSE
+            && indexMetadata.getSettings().getAsBoolean("index.verified_before_close", false);
+    }
 
     public static final RoutingTable EMPTY_ROUTING_TABLE = builder().build();
 

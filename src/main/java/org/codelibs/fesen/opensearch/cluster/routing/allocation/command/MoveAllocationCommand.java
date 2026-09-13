@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingNode;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRoutingState;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -110,108 +109,6 @@ public class MoveAllocationCommand implements AllocationCommand {
 
     public String toNode() {
         return this.toNode;
-    }
-
-    @Override
-    public RerouteExplanation execute(RoutingAllocation allocation, boolean explain) {
-        DiscoveryNode fromDiscoNode = allocation.nodes().resolveNode(fromNode);
-        DiscoveryNode toDiscoNode = allocation.nodes().resolveNode(toNode);
-        Decision decision = null;
-
-        boolean found = false;
-        RoutingNode fromRoutingNode = allocation.routingNodes().node(fromDiscoNode.getId());
-        if (fromRoutingNode == null && !fromDiscoNode.isDataNode()) {
-            throw new IllegalArgumentException(
-                "[move_allocation] can't move ["
-                    + index
-                    + "]["
-                    + shardId
-                    + "] from "
-                    + fromDiscoNode
-                    + " to "
-                    + toDiscoNode
-                    + ": source ["
-                    + fromDiscoNode.getName()
-                    + "] is not a data node."
-            );
-        }
-        RoutingNode toRoutingNode = allocation.routingNodes().node(toDiscoNode.getId());
-        if (toRoutingNode == null && !toDiscoNode.isDataNode()) {
-            throw new IllegalArgumentException(
-                "[move_allocation] can't move ["
-                    + index
-                    + "]["
-                    + shardId
-                    + "] from "
-                    + fromDiscoNode
-                    + " to "
-                    + toDiscoNode
-                    + ": source ["
-                    + toDiscoNode.getName()
-                    + "] is not a data node."
-            );
-        }
-
-        for (ShardRouting shardRouting : fromRoutingNode) {
-            if (!shardRouting.shardId().getIndexName().equals(index)) {
-                continue;
-            }
-            if (shardRouting.shardId().id() != shardId) {
-                continue;
-            }
-            found = true;
-
-            // TODO we can possibly support also relocating cases, where we cancel relocation and move...
-            if (!shardRouting.started()) {
-                if (explain) {
-                    return new RerouteExplanation(
-                        this,
-                        allocation.decision(Decision.NO, "move_allocation_command", "shard " + shardId + " has not been started")
-                    );
-                }
-                throw new IllegalArgumentException(
-                    "[move_allocation] can't move " + shardId + ", shard is not started (state = " + shardRouting.state() + "]"
-                );
-            }
-
-            decision = allocation.deciders().canAllocate(shardRouting, toRoutingNode, allocation);
-            if (decision.type() == Decision.Type.NO) {
-                if (explain) {
-                    return new RerouteExplanation(this, decision);
-                }
-                throw new IllegalArgumentException(
-                    "[move_allocation] can't move "
-                        + shardId
-                        + ", from "
-                        + fromDiscoNode
-                        + ", to "
-                        + toDiscoNode
-                        + ", since its not allowed, reason: "
-                        + decision
-                );
-            }
-            if (decision.type() == Decision.Type.THROTTLE) {
-                // its being throttled, maybe have a flag to take it into account and fail? for now, just do it since the "user" wants it...
-            }
-            allocation.routingNodes()
-                .relocateShard(
-                    shardRouting,
-                    toRoutingNode.nodeId(),
-                    allocation.clusterInfo().getShardSize(shardRouting, ShardRouting.UNAVAILABLE_EXPECTED_SHARD_SIZE),
-                    allocation.changes()
-                );
-        }
-
-        if (!found) {
-            if (explain) {
-                return new RerouteExplanation(
-                    this,
-                    allocation.decision(Decision.NO, "move_allocation_command", "shard " + shardId + " not found")
-                );
-            }
-            throw new IllegalArgumentException("[move_allocation] can't move " + shardId + ", failed to find it on node " + fromDiscoNode);
-        }
-        return new RerouteExplanation(this, decision);
     }
 
     @Override

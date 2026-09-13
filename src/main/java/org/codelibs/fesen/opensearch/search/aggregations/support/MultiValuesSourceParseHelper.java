@@ -37,6 +37,7 @@ import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.xcontent.AbstractObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 
 /**
  * Helper class to parse multi values sources

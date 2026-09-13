@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @opensearch.api
  */
 @PublicApi(since = "2.5.0")
-public class ClusterManagerThrottlingStats implements ClusterManagerTaskThrottlerListener, Writeable, ToXContentFragment {
+public class ClusterManagerThrottlingStats implements Writeable, ToXContentFragment {
 
     private Map<String, CounterMetric> throttledTasksCount;
 
@@ -50,7 +50,6 @@ public class ClusterManagerThrottlingStats implements ClusterManagerTaskThrottle
         return totalCount.count();
     }
 
-    @Override
     public void onThrottle(String type, int counts) {
         incrementThrottlingCount(type, counts);
     }

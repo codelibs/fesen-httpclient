@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.common.UUIDs;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.index.engine.Engine;
 import org.codelibs.fesen.opensearch.transport.client.IndicesAdminClient;
 import org.codelibs.fesen.opensearch.transport.client.Requests;
 
@@ -62,6 +61,9 @@ import java.util.Arrays;
 @PublicApi(since = "1.0.0")
 public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
+    /** The commit metadata key a force merge stamps its UUID into. */
+    private static final String FORCE_MERGE_UUID_KEY = "force_merge_uuid";
+
     /**
      * Defaults for the Force Merge Request
      *
@@ -83,7 +85,7 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
     /**
      * Force merge UUID to store in the live commit data of a shard under
-     * {@link org.codelibs.fesen.opensearch.index.engine.Engine#FORCE_MERGE_UUID_KEY} after force merging it.
+     * the force-merge UUID commit key after force merging it.
      */
     private final String forceMergeUUID;
 
@@ -111,7 +113,7 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
             forceMergeUUID = in.readString();
         } else if ((forceMergeUUID = in.readOptionalString()) == null) {
             throw new IllegalStateException(
-                "As of legacy version 7.7 [" + Engine.FORCE_MERGE_UUID_KEY + "] is no longer optional in force merge requests."
+                "As of legacy version 7.7 [" + FORCE_MERGE_UUID_KEY + "] is no longer optional in force merge requests."
             );
         }
     }

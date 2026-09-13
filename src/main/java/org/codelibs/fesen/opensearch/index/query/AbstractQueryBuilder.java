@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
@@ -54,10 +52,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -135,24 +131,6 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
             builder.field(NAME_FIELD.getPreferredName(), queryName);
         }
     }
-
-    @Override
-    public final Query toQuery(QueryShardContext context) throws IOException {
-        Query query = doToQuery(context);
-        if (query != null) {
-            if (boost != DEFAULT_BOOST) {
-                if (query instanceof MatchNoDocsQuery == false) {
-                    query = new BoostQuery(query, boost);
-                }
-            }
-            if (queryName != null) {
-                context.addNamedQuery(queryName, query);
-            }
-        }
-        return query;
-    }
-
-    protected abstract Query doToQuery(QueryShardContext context) throws IOException;
 
     /**
      * Sets the query name for the query.
@@ -261,24 +239,6 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return obj;
     }
 
-    /**
-     * Helper method to convert collection of {@link QueryBuilder} instances to lucene
-     * {@link Query} instances. {@link QueryBuilder} that return {@code null} calling
-     * their {@link QueryBuilder#toQuery(QueryShardContext)} method are not added to the
-     * resulting collection.
-     */
-    static Collection<Query> toQueries(Collection<QueryBuilder> queryBuilders, QueryShardContext context) throws QueryShardException,
-        IOException {
-        List<Query> queries = new ArrayList<>(queryBuilders.size());
-        for (QueryBuilder queryBuilder : queryBuilders) {
-            Query query = queryBuilder.rewrite(context).toQuery(context);
-            if (query != null) {
-                queries.add(query);
-            }
-        }
-        return queries;
-    }
-
     @Override
     public String getName() {
         // default impl returns the same as writeable name, but we keep the distinction between the two just to make sure
@@ -319,14 +279,6 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
     protected QueryBuilder doRewrite(QueryRewriteContext queryShardContext) throws IOException {
         return this;
     }
-
-    /**
-     * For internal usage only!
-     * <p>
-     * Extracts the inner hits from the query tree.
-     * While it extracts inner hits, child inner hits are inlined into the inner hit builder they belong to.
-     */
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {}
 
     /**
      * Parses a query excluding the query element that wraps it

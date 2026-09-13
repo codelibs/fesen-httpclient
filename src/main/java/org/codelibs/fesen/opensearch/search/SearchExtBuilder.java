@@ -39,8 +39,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
-import org.codelibs.fesen.opensearch.plugins.SearchPlugin;
-import org.codelibs.fesen.opensearch.plugins.SearchPlugin.SearchExtSpec;
 
 /**
  * Intermediate serializable representation of a search ext section. To be subclassed by plugins that support
@@ -49,7 +47,7 @@ import org.codelibs.fesen.opensearch.plugins.SearchPlugin.SearchExtSpec;
  * read from the incoming stream, usually done adding a constructor that takes {@link StreamInput} as
  * an argument.
  * <p>
- * Registration happens through {@link SearchPlugin#getSearchExts()}, which also needs a {@link CheckedFunction} that's able to parse
+ * Registration happens node-side through a search plugin, which also needs a {@link CheckedFunction} that's able to parse
  * the incoming request from the REST layer into the proper {@link SearchExtBuilder} subclass.
  * <p>
  * {@link #getWriteableName()} must return the same name as the one used for the registration

@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
@@ -112,51 +111,6 @@ public class ScoreSortBuilder extends SortBuilder<ScoreSortBuilder> {
 
     static {
         PARSER.declareString((builder, order) -> builder.order(SortOrder.fromString(order)), ORDER_FIELD);
-    }
-
-    @Override
-    public SortFieldAndFormat build(QueryShardContext context) {
-        if (order == SortOrder.DESC) {
-            return SORT_SCORE;
-        } else {
-            return SORT_SCORE_REVERSE;
-        }
-    }
-
-    @Override
-    public BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra) throws IOException {
-        return new BucketedSort.ForFloats(context.bigArrays(), order, DocValueFormat.RAW, bucketSize, extra) {
-            @Override
-            public boolean needsScores() {
-                return true;
-            }
-
-            @Override
-            public Leaf forLeaf(LeafReaderContext ctx) throws IOException {
-                return new BucketedSort.ForFloats.Leaf(ctx) {
-                    private Scorable scorer;
-                    private float score;
-
-                    @Override
-                    public void setScorer(Scorable scorer) {
-                        this.scorer = scorer;
-                    }
-
-                    @Override
-                    protected boolean advanceExact(int doc) throws IOException {
-                        /* We will never be called by documents that don't match the
-                         * query and they'll all have a score, thus `true`. */
-                        score = scorer.score();
-                        return true;
-                    }
-
-                    @Override
-                    protected float docValue() {
-                        return score;
-                    }
-                };
-            }
-        };
     }
 
     @Override

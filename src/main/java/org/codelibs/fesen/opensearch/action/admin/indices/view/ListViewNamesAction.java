@@ -11,17 +11,12 @@ package org.codelibs.fesen.opensearch.action.admin.indices.view;
 import org.codelibs.fesen.opensearch.action.ActionRequest;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.ActionType;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
-import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.tasks.Task;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 import java.util.List;
@@ -107,25 +102,6 @@ public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response
             builder.endObject();
             return builder;
         }
-    }
-
-    /**
-     * Transport Action for getting a View
-     */
-    public static class TransportAction extends HandledTransportAction<Request, Response> {
-
-        private final ViewService viewService;
-
-        public TransportAction(final TransportService transportService, final ActionFilters actionFilters, final ViewService viewService) {
-            super(NAME, transportService, actionFilters, Request::new);
-            this.viewService = viewService;
-        }
-
-        @Override
-        protected void doExecute(Task task, Request request, ActionListener<Response> listener) {
-            viewService.listViewNames(listener);
-        }
-
     }
 
 }

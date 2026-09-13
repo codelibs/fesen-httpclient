@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.action.support.replication;
 import org.codelibs.fesen.opensearch.action.ActionRequest;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.IndicesRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.refresh.TransportShardRefreshAction;
 import org.codelibs.fesen.opensearch.action.index.IndexRequest;
 import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
 import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
@@ -55,7 +54,7 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 
 /**
  * Requests that are run on a particular replica, first on the primary and then on the replicas like {@link IndexRequest} or
- * {@link TransportShardRefreshAction}.
+ * the shard refresh action.
  *
  * @opensearch.internal
  */

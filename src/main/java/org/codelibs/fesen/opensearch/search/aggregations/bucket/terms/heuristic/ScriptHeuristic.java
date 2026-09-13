@@ -36,9 +36,7 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.script.Script;
-import org.codelibs.fesen.opensearch.script.SignificantTermsHeuristicScoreScript;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation;
 
 import java.io.IOException;
@@ -65,44 +63,6 @@ public class ScriptHeuristic extends SignificanceHeuristic {
 
     private final Script script;
 
-    /**
-     * This class holds an executable form of the script with private variables ready for execution
-     * on a single search thread.
-     *
-     * @opensearch.internal
-     */
-    static class ExecutableScriptHeuristic extends ScriptHeuristic {
-        private final LongAccessor subsetSizeHolder;
-        private final LongAccessor supersetSizeHolder;
-        private final LongAccessor subsetDfHolder;
-        private final LongAccessor supersetDfHolder;
-        private final SignificantTermsHeuristicScoreScript executableScript;
-        private final Map<String, Object> params = new HashMap<>();
-
-        ExecutableScriptHeuristic(Script script, SignificantTermsHeuristicScoreScript executableScript) {
-            super(script);
-            subsetSizeHolder = new LongAccessor();
-            supersetSizeHolder = new LongAccessor();
-            subsetDfHolder = new LongAccessor();
-            supersetDfHolder = new LongAccessor();
-            this.executableScript = executableScript;
-            params.putAll(script.getParams());
-            params.put("_subset_freq", subsetDfHolder);
-            params.put("_subset_size", subsetSizeHolder);
-            params.put("_superset_freq", supersetDfHolder);
-            params.put("_superset_size", supersetSizeHolder);
-        }
-
-        @Override
-        public double getScore(long subsetFreq, long subsetSize, long supersetFreq, long supersetSize) {
-            subsetSizeHolder.value = subsetSize;
-            supersetSizeHolder.value = supersetSize;
-            subsetDfHolder.value = subsetFreq;
-            supersetDfHolder.value = supersetFreq;
-            return executableScript.execute(params);
-        }
-    }
-
     public ScriptHeuristic(Script script) {
         this.script = script;
     }
@@ -121,18 +81,7 @@ public class ScriptHeuristic extends SignificanceHeuristic {
 
     @Override
     public SignificanceHeuristic rewrite(InternalAggregation.ReduceContext context) {
-        SignificantTermsHeuristicScoreScript.Factory factory = context.scriptService()
-            .compile(script, SignificantTermsHeuristicScoreScript.CONTEXT);
-        return new ExecutableScriptHeuristic(script, factory.newInstance());
-    }
-
-    @Override
-    public SignificanceHeuristic rewrite(QueryShardContext queryShardContext) {
-        SignificantTermsHeuristicScoreScript.Factory compiledScript = queryShardContext.compile(
-            script,
-            SignificantTermsHeuristicScoreScript.CONTEXT
-        );
-        return new ExecutableScriptHeuristic(script, compiledScript.newInstance());
+        throw new UnsupportedOperationException("aggregation results are reduced on the node, not in the HTTP client");
     }
 
     /**

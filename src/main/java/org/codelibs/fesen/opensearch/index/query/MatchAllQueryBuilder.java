@@ -32,16 +32,12 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.approximate.ApproximateMatchAllQuery;
-import org.codelibs.fesen.opensearch.search.approximate.ApproximateScoreQuery;
 
 import java.io.IOException;
 
@@ -86,11 +82,6 @@ public class MatchAllQueryBuilder extends AbstractQueryBuilder<MatchAllQueryBuil
         } catch (IllegalArgumentException e) {
             throw new ParsingException(parser.getTokenLocation(), e.getMessage(), e);
         }
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) {
-        return new ApproximateScoreQuery(Queries.newMatchAllQuery(), new ApproximateMatchAllQuery());
     }
 
     @Override

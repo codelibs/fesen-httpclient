@@ -60,17 +60,6 @@ public interface QueryRewriteContext {
     NamedWriteableRegistry getWriteableRegistry();
 
     /**
-     * Returns an instance of {@link QueryShardContext} if available of null otherwise
-     */
-    default QueryShardContext convertToShardContext() {
-        return null;
-    }
-
-    default QueryCoordinatorContext convertToCoordinatorContext() {
-        return null;
-    }
-
-    /**
      * Registers an async action that must be executed before the next rewrite round in order to make progress.
      * This should be used if a rewriteabel needs to fetch some external resources in order to be executed ie. a document
      * from an index.

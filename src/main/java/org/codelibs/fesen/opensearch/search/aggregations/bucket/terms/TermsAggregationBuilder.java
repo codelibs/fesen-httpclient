@@ -39,26 +39,21 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.Aggregator.SubAggCollectionMode;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.BucketOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder.CompoundOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.TermsAggregator.BucketCountThresholds;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Aggregation Builder for terms agg
@@ -67,11 +62,6 @@ import java.util.Objects;
  */
 public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<TermsAggregationBuilder> {
     public static final String NAME = "terms";
-    public static final ValuesSourceRegistry.RegistryKey<TermsAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        TermsAggregatorSupplier.class
-    );
-
     public static final ParseField EXECUTION_HINT_FIELD_NAME = new ParseField("execution_hint");
     public static final ParseField SHARD_SIZE_FIELD_NAME = new ParseField("shard_size");
     public static final ParseField MIN_DOC_COUNT_FIELD_NAME = new ParseField("min_doc_count");
@@ -129,10 +119,6 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
             IncludeExclude.EXCLUDE_FIELD,
             ObjectParser.ValueType.STRING_ARRAY
         );
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        TermsAggregatorFactory.registerAggregators(builder);
     }
 
     private BucketOrder order = BucketOrder.compound(BucketOrder.count(false)); // automatically adds tie-breaker key asc order
@@ -385,29 +371,6 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        return new TermsAggregatorFactory(
-            name,
-            config,
-            order,
-            includeExclude,
-            executionHint,
-            collectMode,
-            bucketCountThresholds,
-            showTermDocCountError,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
-    }
-
-    @Override
     protected XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         bucketCountThresholds.toXContent(builder, params);
         builder.field(SHOW_TERM_DOC_COUNT_ERROR.getPreferredName(), showTermDocCountError);
@@ -462,8 +425,4 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
         return super.doRewrite(queryShardContext);
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

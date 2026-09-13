@@ -33,24 +33,15 @@
 package org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram;
 
 import org.codelibs.fesen.opensearch.common.Rounding;
-import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.MultiBucketConsumerService;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -58,6 +49,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Aggregation Builder for auto_gate_histogram agg
@@ -67,9 +60,6 @@ import java.util.Objects;
 public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregationBuilder<AutoDateHistogramAggregationBuilder> {
 
     public static final String NAME = "auto_date_histogram";
-    public static final ValuesSourceRegistry.RegistryKey<AutoDateHistogramAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, AutoDateHistogramAggregatorSupplier.class);
-
     private static final ParseField NUM_BUCKETS_FIELD = new ParseField("buckets");
     private static final ParseField MINIMUM_INTERVAL_FIELD = new ParseField("minimum_interval");
 
@@ -91,10 +81,6 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         ALLOWED_INTERVALS.put(Rounding.DateTimeUnit.HOUR_OF_DAY, "hour");
         ALLOWED_INTERVALS.put(Rounding.DateTimeUnit.MINUTES_OF_HOUR, "minute");
         ALLOWED_INTERVALS.put(Rounding.DateTimeUnit.SECOND_OF_MINUTE, "second");
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        AutoDateHistogramAggregatorFactory.registerAggregators(builder);
     }
 
     /**
@@ -183,11 +169,6 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
-
     public String getMinimumIntervalExpression() {
         return minimumIntervalExpression;
     }
@@ -217,38 +198,6 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.MANY;
-    }
-
-    @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException {
-        RoundingInfo[] roundings = buildRoundings(timeZone(), getMinimumIntervalExpression());
-        int maxRoundingInterval = Arrays.stream(roundings, 0, roundings.length - 1)
-            .map(rounding -> rounding.innerIntervals)
-            .flatMapToInt(Arrays::stream)
-            .boxed()
-            .reduce(Integer::max)
-            .get();
-        Settings settings = queryShardContext.getIndexSettings().getNodeSettings();
-        int maxBuckets = MultiBucketConsumerService.MAX_BUCKET_SETTING.get(settings);
-        int bucketCeiling = maxBuckets / maxRoundingInterval;
-        if (numBuckets > bucketCeiling) {
-            throw new IllegalArgumentException(NUM_BUCKETS_FIELD.getPreferredName() + " must be less than " + bucketCeiling);
-        }
-        return new AutoDateHistogramAggregatorFactory(
-            name,
-            config,
-            numBuckets,
-            roundings,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
     }
 
     static Rounding createRounding(Rounding.DateTimeUnit interval, ZoneId timeZone) {

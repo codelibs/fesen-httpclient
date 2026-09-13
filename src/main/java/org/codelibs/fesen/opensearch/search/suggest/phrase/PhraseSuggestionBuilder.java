@@ -43,18 +43,9 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.analysis.AnalyzerComponentsProvider;
-import org.codelibs.fesen.opensearch.index.analysis.NamedAnalyzer;
-import org.codelibs.fesen.opensearch.index.analysis.ShingleTokenFilterFactory;
-import org.codelibs.fesen.opensearch.index.analysis.TokenFilterFactory;
-import org.codelibs.fesen.opensearch.index.mapper.MapperService;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.script.Script;
 import org.codelibs.fesen.opensearch.script.ScriptType;
-import org.codelibs.fesen.opensearch.script.TemplateScript;
 import org.codelibs.fesen.opensearch.search.suggest.SuggestionBuilder;
-import org.codelibs.fesen.opensearch.search.suggest.SuggestionSearchContext.SuggestionContext;
-import org.codelibs.fesen.opensearch.search.suggest.phrase.PhraseSuggestionContext.DirectCandidateGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,19 +82,19 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     protected static final ParseField COLLATE_QUERY_PARAMS = new ParseField("params");
     protected static final ParseField COLLATE_QUERY_PRUNE = new ParseField("prune");
 
-    private float maxErrors = PhraseSuggestionContext.DEFAULT_MAX_ERRORS;
-    private String separator = PhraseSuggestionContext.DEFAULT_SEPARATOR;
-    private float realWordErrorLikelihood = PhraseSuggestionContext.DEFAULT_RWE_ERRORLIKELIHOOD;
-    private float confidence = PhraseSuggestionContext.DEFAULT_CONFIDENCE;
+    private float maxErrors = 0.5f;
+    private String separator = " ";
+    private float realWordErrorLikelihood = 0.95f;
+    private float confidence = 1.0f;
     // gramSize needs to be optional although there is a default, if unset parser try to detect and use shingle size
     private Integer gramSize;
-    private boolean forceUnigrams = PhraseSuggestionContext.DEFAULT_REQUIRE_UNIGRAM;
+    private boolean forceUnigrams = true;
     private int tokenLimit = NoisyChannelSpellChecker.DEFAULT_TOKEN_LIMIT;
     private String preTag;
     private String postTag;
     private Script collateQuery;
     private Map<String, Object> collateParams;
-    private boolean collatePrune = PhraseSuggestionContext.DEFAULT_COLLATE_PRUNE;
+    private boolean collatePrune = false;
     private SmoothingModel model;
     private final Map<String, List<CandidateGenerator>> generators = new HashMap<>();
 
@@ -627,100 +618,6 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
         return new PhraseSuggestionBuilder(fieldname, tmpSuggestion);
     }
 
-    @Override
-    public SuggestionContext build(QueryShardContext context) throws IOException {
-        PhraseSuggestionContext suggestionContext = new PhraseSuggestionContext(context);
-        MapperService mapperService = context.getMapperService();
-        // copy over common settings to each suggestion builder
-        populateCommonFields(mapperService, suggestionContext);
-
-        suggestionContext.setSeparator(BytesRefs.toBytesRef(this.separator));
-        suggestionContext.setRealWordErrorLikelihood(this.realWordErrorLikelihood);
-        suggestionContext.setConfidence(this.confidence);
-        suggestionContext.setMaxErrors(this.maxErrors);
-        suggestionContext.setRequireUnigram(this.forceUnigrams);
-        suggestionContext.setTokenLimit(this.tokenLimit);
-        suggestionContext.setPreTag(BytesRefs.toBytesRef(this.preTag));
-        suggestionContext.setPostTag(BytesRefs.toBytesRef(this.postTag));
-
-        if (this.gramSize != null) {
-            suggestionContext.setGramSize(this.gramSize);
-        }
-
-        for (List<CandidateGenerator> candidateGenerators : this.generators.values()) {
-            for (CandidateGenerator candidateGenerator : candidateGenerators) {
-                suggestionContext.addGenerator(candidateGenerator.build(mapperService));
-            }
-        }
-
-        if (this.model != null) {
-            suggestionContext.setModel(this.model.buildWordScorerFactory());
-        }
-
-        if (this.collateQuery != null) {
-            TemplateScript.Factory scriptFactory = context.compile(this.collateQuery, TemplateScript.CONTEXT);
-            suggestionContext.setCollateQueryScript(scriptFactory);
-            if (this.collateParams != null) {
-                suggestionContext.setCollateScriptParams(this.collateParams);
-            }
-            suggestionContext.setCollatePrune(this.collatePrune);
-        }
-
-        if (this.gramSize == null || suggestionContext.generators().isEmpty()) {
-            final ShingleTokenFilterFactory.Factory shingleFilterFactory = getShingleFilterFactory(suggestionContext.getAnalyzer());
-            if (this.gramSize == null) {
-                // try to detect the shingle size
-                if (shingleFilterFactory != null) {
-                    suggestionContext.setGramSize(shingleFilterFactory.getMaxShingleSize());
-                    if (suggestionContext.getAnalyzer() == null
-                        && shingleFilterFactory.getMinShingleSize() > 1
-                        && !shingleFilterFactory.getOutputUnigrams()) {
-                        throw new IllegalArgumentException(
-                            "The default analyzer for field: ["
-                                + suggestionContext.getField()
-                                + "] doesn't emit unigrams. If this is intentional try to set the analyzer explicitly"
-                        );
-                    }
-                }
-            }
-            if (suggestionContext.generators().isEmpty()) {
-                if (shingleFilterFactory != null
-                    && shingleFilterFactory.getMinShingleSize() > 1
-                    && !shingleFilterFactory.getOutputUnigrams()
-                    && suggestionContext.getRequireUnigram()) {
-                    throw new IllegalArgumentException(
-                        "The default candidate generator for phrase suggest can't operate on field: ["
-                            + suggestionContext.getField()
-                            + "] since it doesn't emit unigrams. "
-                            + "If this is intentional try to set the candidate generator field explicitly"
-                    );
-                }
-                // use a default generator on the same field
-                DirectCandidateGenerator generator = new DirectCandidateGenerator();
-                generator.setField(suggestionContext.getField());
-                suggestionContext.addGenerator(generator);
-            }
-        }
-        return suggestionContext;
-    }
-
-    private static ShingleTokenFilterFactory.Factory getShingleFilterFactory(Analyzer analyzer) {
-        if (analyzer instanceof NamedAnalyzer namedAnalyzer) {
-            analyzer = namedAnalyzer.analyzer();
-        }
-        if (analyzer instanceof AnalyzerComponentsProvider analyzerComponentsProvider) {
-            final TokenFilterFactory[] tokenFilters = analyzerComponentsProvider.getComponents().getTokenFilters();
-            for (TokenFilterFactory tokenFilterFactory : tokenFilters) {
-                if (tokenFilterFactory instanceof ShingleTokenFilterFactory shingleTokenFilterFactory) {
-                    return shingleTokenFilterFactory.getInnerFactory();
-                } else if (tokenFilterFactory instanceof ShingleTokenFilterFactory.Factory factory) {
-                    return factory;
-                }
-            }
-        }
-        return null;
-    }
-
     private static void ensureNoSmoothing(PhraseSuggestionBuilder suggestion) {
         if (suggestion.smoothingModel() != null) {
             throw new IllegalArgumentException("only one smoothing model supported");
@@ -778,6 +675,5 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     public interface CandidateGenerator extends Writeable, ToXContentObject {
         String getType();
 
-        PhraseSuggestionContext.DirectCandidateGenerator build(MapperService mapperService) throws IOException;
     }
 }

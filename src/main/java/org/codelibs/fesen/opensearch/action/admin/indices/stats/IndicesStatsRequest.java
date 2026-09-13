@@ -36,12 +36,8 @@ import org.codelibs.fesen.opensearch.action.support.broadcast.BroadcastRequest;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.core.tasks.TaskId;
-import org.codelibs.fesen.opensearch.rest.action.admin.cluster.ClusterAdminTask;
-import org.codelibs.fesen.opensearch.tasks.Task;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * A request to get indices level stats. Allow to enable different stats to be returned.
@@ -105,15 +101,6 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
     public IndicesStatsRequest groups(String... groups) {
         flags.groups(groups);
         return this;
-    }
-
-    @Override
-    public Task createTask(long id, String type, String action, TaskId parentTaskId, Map<String, String> headers) {
-        if (this.getShouldCancelOnTimeout()) {
-            return new ClusterAdminTask(id, type, action, parentTaskId, headers);
-        } else {
-            return super.createTask(id, type, action, parentTaskId, headers);
-        }
     }
 
     public String[] groups() {

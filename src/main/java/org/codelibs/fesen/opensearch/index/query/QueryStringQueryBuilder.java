@@ -32,24 +32,16 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.util.automaton.Operations;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
-import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.unit.Fuzziness;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.analysis.NamedAnalyzer;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
 import org.codelibs.fesen.opensearch.index.search.QueryParserHelper;
-import org.codelibs.fesen.opensearch.index.search.QueryStringQueryParser;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -897,113 +889,4 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         );
     }
 
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        String rewrittenQueryString = escape ? org.apache.lucene.queryparser.classic.QueryParser.escape(this.queryString) : queryString;
-        if (fieldsAndWeights.size() > 0 && this.defaultField != null) {
-            throw addValidationError("cannot use [fields] parameter in conjunction with [default_field]", null);
-        }
-
-        QueryStringQueryParser queryParser;
-        boolean isLenient = lenient == null ? context.queryStringLenient() : lenient;
-        if (defaultField != null) {
-            if (Regex.isMatchAllPattern(defaultField)) {
-                queryParser = new QueryStringQueryParser(context, lenient == null ? true : lenient);
-            } else {
-                queryParser = new QueryStringQueryParser(context, defaultField, isLenient);
-            }
-        } else if (fieldsAndWeights.size() > 0) {
-            final Map<String, Float> resolvedFields = QueryParserHelper.resolveMappingFields(context, fieldsAndWeights);
-            if (QueryParserHelper.hasAllFieldsWildcard(fieldsAndWeights.keySet())) {
-                queryParser = new QueryStringQueryParser(context, resolvedFields, lenient == null ? true : lenient);
-            } else {
-                queryParser = new QueryStringQueryParser(context, resolvedFields, isLenient);
-            }
-        } else {
-            List<String> defaultFields = context.defaultFields();
-            if (QueryParserHelper.hasAllFieldsWildcard(defaultFields)) {
-                queryParser = new QueryStringQueryParser(context, lenient == null ? true : lenient);
-            } else {
-                final Map<String, Float> resolvedFields = QueryParserHelper.resolveMappingFields(
-                    context,
-                    QueryParserHelper.parseFieldsAndWeights(defaultFields)
-                );
-                queryParser = new QueryStringQueryParser(context, resolvedFields, isLenient);
-            }
-        }
-
-        if (analyzer != null) {
-            NamedAnalyzer namedAnalyzer = context.getIndexAnalyzers().get(analyzer);
-            if (namedAnalyzer == null) {
-                throw new QueryShardException(context, "[query_string] analyzer [" + analyzer + "] not found");
-            }
-            queryParser.setForceAnalyzer(namedAnalyzer);
-        }
-
-        if (quoteAnalyzer != null) {
-            NamedAnalyzer forceQuoteAnalyzer = context.getIndexAnalyzers().get(quoteAnalyzer);
-            if (forceQuoteAnalyzer == null) {
-                throw new QueryShardException(context, "[query_string] quote_analyzer [" + quoteAnalyzer + "] not found");
-            }
-            queryParser.setForceQuoteAnalyzer(forceQuoteAnalyzer);
-        }
-
-        queryParser.setDefaultOperator(defaultOperator.toQueryParserOperator());
-        queryParser.setType(type);
-        if (tieBreaker != null) {
-            queryParser.setGroupTieBreaker(tieBreaker);
-        } else {
-            queryParser.setGroupTieBreaker(type.tieBreaker());
-        }
-        queryParser.setPhraseSlop(phraseSlop);
-        queryParser.setQuoteFieldSuffix(quoteFieldSuffix);
-        queryParser.setAllowLeadingWildcard(
-            allowLeadingWildcard == null ? context.queryStringAllowLeadingWildcard() : allowLeadingWildcard
-        );
-        queryParser.setAnalyzeWildcard(analyzeWildcard == null ? context.queryStringAnalyzeWildcard() : analyzeWildcard);
-        queryParser.setEnablePositionIncrements(enablePositionIncrements);
-        queryParser.setFuzziness(fuzziness);
-        queryParser.setFuzzyPrefixLength(fuzzyPrefixLength);
-        queryParser.setFuzzyMaxExpansions(fuzzyMaxExpansions);
-        queryParser.setFuzzyRewriteMethod(
-            QueryParsers.parseRewriteMethod(
-                this.fuzzyRewrite,
-                FuzzyQuery.defaultRewriteMethod(fuzzyMaxExpansions),
-                LoggingDeprecationHandler.INSTANCE
-            )
-        );
-        queryParser.setMultiTermRewriteMethod(QueryParsers.parseRewriteMethod(this.rewrite, LoggingDeprecationHandler.INSTANCE));
-        queryParser.setTimeZone(timeZone);
-        queryParser.setDeterminizeWorkLimit(maxDeterminizedStates);
-        queryParser.setAutoGenerateMultiTermSynonymsPhraseQuery(autoGenerateSynonymsPhraseQuery);
-        queryParser.setFuzzyTranspositions(fuzzyTranspositions);
-
-        Query query;
-        try {
-            query = queryParser.parse(rewrittenQueryString);
-        } catch (org.apache.lucene.queryparser.classic.ParseException e) {
-            throw new QueryShardException(context, "Failed to parse query [" + this.queryString + "]", e);
-        }
-
-        if (query == null) {
-            return null;
-        }
-
-        // save the BoostQuery wrapped structure if present
-        List<Float> boosts = new ArrayList<>();
-        while (query instanceof BoostQuery boostQuery) {
-            boosts.add(boostQuery.getBoost());
-            query = boostQuery.getQuery();
-        }
-
-        query = Queries.fixNegativeQueryIfNeeded(query);
-        query = Queries.maybeApplyMinimumShouldMatch(query, this.minimumShouldMatch);
-
-        // restore the previous BoostQuery wrapping
-        for (int i = boosts.size() - 1; i >= 0; i--) {
-            query = new BoostQuery(query, boosts.get(i));
-        }
-
-        return query;
-    }
 }

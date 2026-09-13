@@ -15,8 +15,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -90,18 +88,6 @@ public class ShardDocSortBuilder extends SortBuilder<ShardDocSortBuilder> {
         builder.endObject();
         builder.endObject();
         return builder;
-    }
-
-    @Override
-    protected SortFieldAndFormat build(QueryShardContext context) {
-        final int shardId = context.getShardId();
-        SortField sf = new SortField(NAME, new ShardDocFieldComparatorSource(shardId), order == SortOrder.DESC);
-        return new SortFieldAndFormat(sf, DocValueFormat.RAW);
-    }
-
-    @Override
-    public BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra) throws IOException {
-        throw new UnsupportedOperationException("bucketed sort not supported for " + NAME);
     }
 
     @Override

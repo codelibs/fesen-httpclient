@@ -17,7 +17,7 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.rest.RestStatus;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.rest.action.RestActions;
+import org.codelibs.fesen.opensearch.action.support.broadcast.BroadcastShardsHeader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         builder.field(ID.getPreferredName(), id);
-        RestActions.buildBroadcastShardsHeader(
+        BroadcastShardsHeader.buildBroadcastShardsHeader(
             builder,
             params,
             getTotalShards(),
@@ -130,24 +130,24 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
                     parser.skipChildren();
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
-                if (RestActions._SHARDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                if (BroadcastShardsHeader._SHARDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                         if (token == XContentParser.Token.FIELD_NAME) {
                             currentFieldName = parser.currentName();
                         } else if (token.isValue()) {
-                            if (RestActions.FAILED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            if (BroadcastShardsHeader.FAILED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 failedShards = parser.intValue(); // we don't need it but need to consume it
-                            } else if (RestActions.SUCCESSFUL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            } else if (BroadcastShardsHeader.SUCCESSFUL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 successfulShards = parser.intValue();
-                            } else if (RestActions.TOTAL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            } else if (BroadcastShardsHeader.TOTAL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 totalShards = parser.intValue();
-                            } else if (RestActions.SKIPPED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            } else if (BroadcastShardsHeader.SKIPPED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 skippedShards = parser.intValue();
                             } else {
                                 parser.skipChildren();
                             }
                         } else if (token == XContentParser.Token.START_ARRAY) {
-                            if (RestActions.FAILURES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            if (BroadcastShardsHeader.FAILURES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                                     failures.add(ShardSearchFailure.fromXContent(parser));
                                 }

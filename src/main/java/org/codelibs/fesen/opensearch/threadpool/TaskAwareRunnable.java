@@ -14,13 +14,11 @@ import org.codelibs.fesen.opensearch.ExceptionsHelper;
 import org.codelibs.fesen.opensearch.common.util.concurrent.AbstractRunnable;
 import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContext;
 import org.codelibs.fesen.opensearch.common.util.concurrent.WrappedRunnable;
-import org.codelibs.fesen.opensearch.tasks.TaskManager;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.currentThread;
-import static org.codelibs.fesen.opensearch.tasks.TaskResourceTrackingService.TASK_ID;
 
 /**
  * Responsible for wrapping the original task's runnable and sending updates on when it starts and finishes to
@@ -30,7 +28,7 @@ import static org.codelibs.fesen.opensearch.tasks.TaskResourceTrackingService.TA
  */
 public class TaskAwareRunnable extends AbstractRunnable implements WrappedRunnable {
 
-    private static final Logger logger = LogManager.getLogger(TaskManager.class);
+    private static final Logger logger = LogManager.getLogger(TaskAwareRunnable.class);
 
     private final Runnable original;
     private final ThreadContext threadContext;
@@ -68,7 +66,7 @@ public class TaskAwareRunnable extends AbstractRunnable implements WrappedRunnab
     @Override
     protected void doRun() throws Exception {
         assert runnableTaskListener.get() != null : "Listener should be attached";
-        Long taskId = threadContext.getTransient(TASK_ID);
+        Long taskId = threadContext.getTransient("TASK_ID");
         if (Objects.nonNull(taskId)) {
             runnableTaskListener.get().taskExecutionStartedOnThread(taskId, currentThread().threadId());
         } else {

@@ -34,17 +34,14 @@ package org.codelibs.fesen.opensearch.search.fetch;
 
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
-import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.rest.RestRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -208,12 +205,4 @@ public class StoredFieldsContext implements Writeable {
         }
     }
 
-    public static StoredFieldsContext fromRestRequest(String name, RestRequest request) {
-        String sField = request.param(name);
-        if (sField != null) {
-            String[] sFields = Strings.splitStringByCommaToArray(sField);
-            return fromList(Arrays.asList(sFields));
-        }
-        return null;
-    }
 }

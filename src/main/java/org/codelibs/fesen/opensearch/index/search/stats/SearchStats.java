@@ -36,7 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.action.search.SearchPhaseName;
-import org.codelibs.fesen.opensearch.action.search.SearchRequestStats;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -846,35 +845,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
 
     public SearchStats() {
         totalStats = new Stats();
-    }
-
-    // Set the different Request Stats fields in here
-    public void setSearchRequestStats(SearchRequestStats searchRequestStats) {
-        if (totalStats.requestStatsLongHolder == null) {
-            totalStats.requestStatsLongHolder = new RequestStatsLongHolder();
-        }
-
-        // Set took stats
-        totalStats.requestStatsLongHolder.requestStatsHolder.put(
-            Fields.TOOK,
-            new PhaseStatsLongHolder(
-                searchRequestStats.getTookCurrent(),
-                searchRequestStats.getTookTotal(),
-                searchRequestStats.getTookMetric()
-            )
-        );
-
-        // Set phase stats
-        for (SearchPhaseName searchPhaseName : SearchPhaseName.values()) {
-            totalStats.requestStatsLongHolder.requestStatsHolder.put(
-                searchPhaseName.getName(),
-                new PhaseStatsLongHolder(
-                    searchRequestStats.getPhaseCurrent(searchPhaseName),
-                    searchRequestStats.getPhaseTotal(searchPhaseName),
-                    searchRequestStats.getPhaseMetric(searchPhaseName)
-                )
-            );
-        }
     }
 
     public SearchStats(Stats totalStats, long openContexts, @Nullable Map<String, Stats> groupStats) {

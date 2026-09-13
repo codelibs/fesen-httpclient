@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.DataStreamFieldMapper;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 
 import java.io.IOException;
@@ -328,6 +327,9 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
     @PublicApi(since = "1.0.0")
     public static class DataStreamTemplate implements Writeable, ToXContentObject {
 
+        /** The default timestamp field of a data stream. */
+        private static final TimestampField DEFAULT_TIMESTAMP_FIELD = new TimestampField("@timestamp");
+
         private static final ParseField TIMESTAMP_FIELD_FIELD = new ParseField("timestamp_field");
 
         private static final ConstructingObjectParser<DataStreamTemplate, Void> PARSER = new ConstructingObjectParser<>(
@@ -343,7 +345,7 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
         private final TimestampField timestampField;
 
         public DataStreamTemplate() {
-            this(DataStreamFieldMapper.Defaults.TIMESTAMP_FIELD);
+            this(DEFAULT_TIMESTAMP_FIELD);
         }
 
         public DataStreamTemplate(TimestampField timestampField) {
@@ -355,7 +357,7 @@ public class ComposableIndexTemplate extends AbstractDiffable<ComposableIndexTem
         }
 
         public TimestampField getTimestampField() {
-            return timestampField == null ? DataStreamFieldMapper.Defaults.TIMESTAMP_FIELD : timestampField;
+            return timestampField == null ? DEFAULT_TIMESTAMP_FIELD : timestampField;
         }
 
         /**

@@ -40,12 +40,10 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.filter.FiltersAggregator.KeyedFilter;
 
 import java.io.IOException;
@@ -238,22 +236,6 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
         } else {
             return this;
         }
-    }
-
-    @Override
-    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
-        throws IOException {
-        return new FiltersAggregatorFactory(
-            name,
-            filters,
-            keyed,
-            otherBucket,
-            otherBucketKey,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

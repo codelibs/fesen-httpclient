@@ -104,23 +104,6 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
         return this;
     }
 
-    public ParsedScrollId parseScrollId() {
-        if (parsedScrollId == null && scrollId != null) {
-            parsedScrollId = TransportSearchHelper.parseScrollId(scrollId);
-        }
-        return parsedScrollId;
-    }
-
-    public String[] originalIndicesOrEmpty() {
-        try {
-            ParsedScrollId parsed = parseScrollId();
-            String[] orig = parsed == null ? null : parsed.getOriginalIndices();
-            return orig == null || orig.length == 0 ? Strings.EMPTY_ARRAY : orig;
-        } catch (IllegalArgumentException e) {
-            return Strings.EMPTY_ARRAY;
-        }
-    }
-
     /**
      * If set, will enable scrolling of the search request.
      */
@@ -148,11 +131,6 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
      */
     public SearchScrollRequest scroll(String keepAlive) {
         return scroll(new Scroll(TimeValue.parseTimeValue(keepAlive, null, getClass().getSimpleName() + ".keepAlive")));
-    }
-
-    @Override
-    public Task createTask(long id, String type, String action, TaskId parentTaskId, Map<String, String> headers) {
-        return new SearchTask(id, type, action, this::getDescription, parentTaskId, headers);
     }
 
     @Override

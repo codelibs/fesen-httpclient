@@ -36,20 +36,16 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 
 /**
  * Aggregation Builder for extended stats agg
@@ -60,9 +56,6 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
     ValuesSource.Numeric,
     ExtendedStatsAggregationBuilder> {
     public static final String NAME = "extended_stats";
-    public static final ValuesSourceRegistry.RegistryKey<ExtendedStatsAggregatorProvider> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, ExtendedStatsAggregatorProvider.class);
-
     public static final ObjectParser<ExtendedStatsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         ExtendedStatsAggregationBuilder::new
@@ -70,10 +63,6 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
         PARSER.declareDouble(ExtendedStatsAggregationBuilder::sigma, ExtendedStatsAggregator.SIGMA_FIELD);
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        ExtendedStatsAggregatorFactory.registerAggregators(builder);
     }
 
     private double sigma = 2.0;
@@ -127,16 +116,6 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
     }
 
     @Override
-    protected ExtendedStatsAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        return new ExtendedStatsAggregatorFactory(name, config, sigma, queryShardContext, parent, subFactoriesBuilder, metadata);
-    }
-
-    @Override
     public XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         builder.field(ExtendedStatsAggregator.SIGMA_FIELD.getPreferredName(), sigma);
         return builder;
@@ -161,8 +140,4 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

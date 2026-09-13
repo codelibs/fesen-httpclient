@@ -18,7 +18,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.shard.IndexShard;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -106,7 +105,7 @@ public class RemoteSegmentStats implements Writeable, ToXContentFragment {
      * Constructor to retrieve metrics from {@link RemoteSegmentTransferTracker.Stats} which is used in {@link RemoteStoreStats} and
      * provides verbose index level stats of segments transferred to the remote store.
      * <p>
-     * This method is used in {@link IndexShard} to port over a subset of metrics to be displayed in IndexStats and subsequently rolled up to NodesStats
+     * This method is used in the index shard to port over a subset of metrics to be displayed in IndexStats and subsequently rolled up to NodesStats
      *
      * @param trackerStats: Source {@link RemoteSegmentTransferTracker.Stats} object from which metrics would be retrieved
      */

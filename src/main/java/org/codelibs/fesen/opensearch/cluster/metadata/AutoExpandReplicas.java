@@ -31,7 +31,6 @@
 
 package org.codelibs.fesen.opensearch.cluster.metadata;
 
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.common.Booleans;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 
-import static org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateService.isIndexVerifiedBeforeClosed;
 
 /**
  * This class acts as a functional wrapper around the {@code index.auto_expand_replicas} setting.
@@ -143,61 +141,9 @@ public final class AutoExpandReplicas {
         return enabled && maxReplicas == Integer.MAX_VALUE;
     }
 
-    private OptionalInt getDesiredNumberOfReplicas(IndexMetadata indexMetadata, RoutingAllocation allocation) {
-        if (enabled) {
-            int numMatchingDataNodes = (int) allocation.nodes()
-                .getDataNodes()
-                .values()
-                .stream()
-                .filter(node -> node.isSearchNode() == false)
-                .map(node -> allocation.deciders().shouldAutoExpandToNode(indexMetadata, node, allocation))
-                .filter(decision -> decision.type() != Decision.Type.NO)
-                .count();
-
-            final int min = getMinReplicas();
-            final int max = getMaxReplicas(numMatchingDataNodes);
-            int numberOfReplicas = numMatchingDataNodes - 1;
-            if (numberOfReplicas < min) {
-                numberOfReplicas = min;
-            } else if (numberOfReplicas > max) {
-                numberOfReplicas = max;
-            }
-
-            if (numberOfReplicas >= min && numberOfReplicas <= max) {
-                return OptionalInt.of(numberOfReplicas);
-            }
-        }
-        return OptionalInt.empty();
-    }
-
     @Override
     public String toString() {
         return enabled ? minReplicas + "-" + maxReplicas : "false";
     }
 
-    /**
-     * Checks if there are replicas with the auto-expand feature that need to be adapted.
-     * Returns a map of updates, which maps the indices to be updated to the desired number of replicas.
-     * The map has the desired number of replicas as key and the indices to update as value, as this allows the result
-     * of this method to be directly applied to RoutingTable.Builder#updateNumberOfReplicas.
-     */
-    public static Map<Integer, List<String>> getAutoExpandReplicaChanges(Metadata metadata, RoutingAllocation allocation) {
-        Map<Integer, List<String>> nrReplicasChanged = new HashMap<>();
-
-        for (final IndexMetadata indexMetadata : metadata) {
-            if (indexMetadata.getState() == IndexMetadata.State.OPEN || isIndexVerifiedBeforeClosed(indexMetadata)) {
-                // Skip the replica auto-expansion for indices in search_only mode with the SEARCH_ONLY block
-                if (indexMetadata.getSettings().getAsBoolean(IndexMetadata.INDEX_BLOCKS_SEARCH_ONLY_SETTING.getKey(), false)) {
-                    continue;
-                }
-                AutoExpandReplicas autoExpandReplicas = SETTING.get(indexMetadata.getSettings());
-                autoExpandReplicas.getDesiredNumberOfReplicas(indexMetadata, allocation).ifPresent(numberOfReplicas -> {
-                    if (numberOfReplicas != indexMetadata.getNumberOfReplicas()) {
-                        nrReplicasChanged.computeIfAbsent(numberOfReplicas, ArrayList::new).add(indexMetadata.getIndex().getName());
-                    }
-                });
-            }
-        }
-        return nrReplicasChanged;
-    }
 }

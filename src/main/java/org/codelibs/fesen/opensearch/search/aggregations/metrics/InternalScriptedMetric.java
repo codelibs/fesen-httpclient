@@ -36,9 +36,8 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.util.CollectionUtils;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.script.Script;
-import org.codelibs.fesen.opensearch.script.ScriptedMetricAggContexts;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation;
+import org.codelibs.fesen.opensearch.script.Script;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,35 +96,7 @@ public class InternalScriptedMetric extends InternalAggregation implements Scrip
 
     @Override
     public InternalAggregation reduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
-        List<Object> aggregationObjects = new ArrayList<>();
-        for (InternalAggregation aggregation : aggregations) {
-            InternalScriptedMetric mapReduceAggregation = (InternalScriptedMetric) aggregation;
-            aggregationObjects.addAll(mapReduceAggregation.aggregations);
-        }
-        InternalScriptedMetric firstAggregation = ((InternalScriptedMetric) aggregations.get(0));
-        List<Object> aggregation;
-        if (firstAggregation.reduceScript != null && reduceContext.isFinalReduce()) {
-            Map<String, Object> params = new HashMap<>();
-            if (firstAggregation.reduceScript.getParams() != null) {
-                params.putAll(firstAggregation.reduceScript.getParams());
-            }
-
-            ScriptedMetricAggContexts.ReduceScript.Factory factory = reduceContext.scriptService()
-                .compile(firstAggregation.reduceScript, ScriptedMetricAggContexts.ReduceScript.CONTEXT);
-            ScriptedMetricAggContexts.ReduceScript script = factory.newInstance(params, aggregationObjects);
-
-            Object scriptResult = script.execute();
-            CollectionUtils.ensureNoSelfReferences(scriptResult, "reduce script");
-
-            aggregation = Collections.singletonList(scriptResult);
-        } else if (reduceContext.isFinalReduce()) {
-            aggregation = Collections.singletonList(aggregationObjects);
-        } else {
-            // if we are not an final reduce we have to maintain all the aggs from all the incoming one
-            // until we hit the final reduce phase.
-            aggregation = aggregationObjects;
-        }
-        return new InternalScriptedMetric(firstAggregation.getName(), aggregation, firstAggregation.reduceScript, getMetadata());
+        throw new UnsupportedOperationException("aggregation results are reduced on the node, not in the HTTP client");
     }
 
     @Override

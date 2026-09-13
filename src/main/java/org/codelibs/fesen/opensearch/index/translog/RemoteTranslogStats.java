@@ -71,15 +71,6 @@ public class RemoteTranslogStats implements ToXContentFragment, Writeable {
         this.uploadBytesSucceeded = in.readVLong();
     }
 
-    public RemoteTranslogStats(RemoteTranslogTransferTracker.Stats transferTrackerStats) {
-        this.totalUploadsStarted = transferTrackerStats.totalUploadsStarted;
-        this.totalUploadsFailed = transferTrackerStats.totalUploadsFailed;
-        this.totalUploadsSucceeded = transferTrackerStats.totalUploadsSucceeded;
-        this.uploadBytesStarted = transferTrackerStats.uploadBytesStarted;
-        this.uploadBytesFailed = transferTrackerStats.uploadBytesFailed;
-        this.uploadBytesSucceeded = transferTrackerStats.uploadBytesSucceeded;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVLong(totalUploadsStarted);

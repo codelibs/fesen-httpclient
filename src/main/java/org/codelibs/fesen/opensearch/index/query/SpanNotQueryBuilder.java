@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.queries.spans.SpanNotQuery;
-import org.apache.lucene.queries.spans.SpanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -255,17 +253,6 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
         spanNotQuery.boost(boost);
         spanNotQuery.queryName(queryName);
         return spanNotQuery;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-
-        Query includeQuery = this.include.toQuery(context);
-        assert includeQuery instanceof SpanQuery;
-        Query excludeQuery = this.exclude.toQuery(context);
-        assert excludeQuery instanceof SpanQuery;
-
-        return new SpanNotQuery((SpanQuery) includeQuery, (SpanQuery) excludeQuery, pre, post);
     }
 
     @Override

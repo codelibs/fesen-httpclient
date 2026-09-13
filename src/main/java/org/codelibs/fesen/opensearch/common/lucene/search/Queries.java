@@ -48,7 +48,6 @@ import org.apache.lucene.search.ScorerSupplier;
 import org.apache.lucene.search.Weight;
 import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.index.mapper.SeqNoFieldMapper;
 import org.codelibs.fesen.opensearch.lucene.queries.ExtendedCommonTermsQuery;
 
 import java.io.IOException;
@@ -91,7 +90,7 @@ public class Queries {
      * Creates a new non-nested docs query
      */
     public static Query newNonNestedFilter() {
-        return new FieldExistsQuery(SeqNoFieldMapper.PRIMARY_TERM_NAME);
+        return new FieldExistsQuery("_primary_term");
     }
 
     public static BooleanQuery filtered(@Nullable Query query, @Nullable Query filter) {

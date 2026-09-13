@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.cluster.routing.UnassignedInfo.AllocationStatus;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.ExistingShardsAllocator;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.Randomness;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
@@ -66,7 +65,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.codelibs.fesen.opensearch.node.remotestore.RemoteStoreNodeService.isMigratingToRemoteStore;
 
 /**
  * {@link RoutingNodes} represents a copy the routing information contained in the {@link ClusterState cluster state}.
@@ -85,6 +83,19 @@ import static org.codelibs.fesen.opensearch.node.remotestore.RemoteStoreNodeServ
  */
 @PublicApi(since = "1.0.0")
 public class RoutingNodes implements Iterable<RoutingNode> {
+
+    /**
+     * Whether the cluster is in the middle of a document-replication to remote-store migration.
+     * Read straight off the two cluster settings because the node-side remote-store service is not
+     * carried over.
+     *
+     * @param metadata the cluster metadata
+     * @return {@code true} while a remote-store migration is in progress
+     */
+    private static boolean isMigratingToRemoteStore(Metadata metadata) {
+        return "mixed".equalsIgnoreCase(metadata.settings().get("cluster.remote_store.compatibility_mode", "strict"))
+            && "remote_store".equalsIgnoreCase(metadata.settings().get("cluster.migration.direction", "none"));
+    }
     private final Metadata metadata;
 
     private final Map<String, RoutingNode> nodesToShards = new HashMap<>();
@@ -1098,7 +1109,7 @@ public class RoutingNodes implements Iterable<RoutingNode> {
          * @opensearch.api
          */
         @PublicApi(since = "1.0.0")
-        public class UnassignedIterator implements Iterator<ShardRouting>, ExistingShardsAllocator.UnassignedAllocationHandler {
+        public class UnassignedIterator implements Iterator<ShardRouting> {
 
             private final ListIterator<ShardRouting> iterator;
             private ShardRouting current;
@@ -1122,7 +1133,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
              *
              * @param existingAllocationId allocation id to use. If null, a fresh allocation id is generated.
              */
-            @Override
             public ShardRouting initialize(
                 String nodeId,
                 @Nullable String existingAllocationId,
@@ -1142,7 +1152,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
              *
              * @param attempt the result of the allocation attempt
              */
-            @Override
             public void removeAndIgnore(AllocationStatus attempt, RoutingChangesObserver changes) {
                 nodes.ensureMutable();
                 innerRemove();
@@ -1161,7 +1170,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
              * @param  recoverySource the new recovery source to use
              * @return the shard with unassigned info updated
              */
-            @Override
             public ShardRouting updateUnassigned(
                 UnassignedInfo unassignedInfo,
                 RecoverySource recoverySource,

@@ -41,8 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.DiffableUtils;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlock;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNodeFilters;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.IndexMetadataUpdater;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.ShardsLimitAllocationDecider;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.collect.MapBuilder;
@@ -66,15 +64,12 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.gateway.MetadataStateFormat;
 import org.codelibs.fesen.opensearch.index.IndexModule;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers;
 import org.codelibs.fesen.opensearch.indices.pollingingest.IngestionErrorStrategy;
 import org.codelibs.fesen.opensearch.indices.pollingingest.StreamPoller;
 import org.codelibs.fesen.opensearch.indices.pollingingest.mappers.IngestionMessageMapper;
-import org.codelibs.fesen.opensearch.indices.replication.SegmentReplicationSource;
 import org.codelibs.fesen.opensearch.indices.replication.common.ReplicationType;
 
 import java.io.IOException;
@@ -297,7 +292,7 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Setting to control the number of search only replicas for an index.
      * A search only replica exists solely to perform read operations for a shard and are designed to achieve
      * isolation from writers (primary shards).  This means they are not primary eligible and do not have any direct communication
-     * with their primary.  Search replicas require the use of Segment Replication on the index and poll their {@link SegmentReplicationSource} for
+     * with their primary.  Search replicas require the use of Segment Replication on the index and poll their segment replication source for
      * updates.  //TODO: Once physical isolation is introduced, reference the setting here.
      */
     public static final String SETTING_NUMBER_OF_SEARCH_REPLICAS = "index.number_of_search_replicas";
@@ -1105,6 +1100,53 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     public static final String INGESTION_SOURCE_KEY = "ingestion_source";
     public static final String INGESTION_STATUS_KEY = "ingestion_status";
 
+    /**
+     * Whether the index stores its data through a pluggable data format. Declared here because the
+     * node-side index settings class is not carried over.
+     */
+    /** The maximum number of shards of this index one node may hold. */
+    public static final Setting<Integer> INDEX_TOTAL_SHARDS_PER_NODE_SETTING = Setting.intSetting(
+        "index.routing.allocation.total_shards_per_node",
+        -1,
+        -1,
+        Property.Dynamic,
+        Property.IndexScope
+    );
+
+    /** The maximum number of primary shards of this index one node may hold. */
+    public static final Setting<Integer> INDEX_TOTAL_PRIMARY_SHARDS_PER_NODE_SETTING = Setting.intSetting(
+        "index.routing.allocation.total_primary_shards_per_node",
+        -1,
+        -1,
+        Property.Dynamic,
+        Property.IndexScope
+    );
+
+    /** The maximum number of shards of this index one remote-capable node may hold. */
+    public static final Setting<Integer> INDEX_TOTAL_REMOTE_CAPABLE_SHARDS_PER_NODE_SETTING = Setting.intSetting(
+        "index.routing.allocation.total_remote_capable_shards_per_node",
+        -1,
+        -1,
+        Property.Dynamic,
+        Property.IndexScope
+    );
+
+    /** The maximum number of primary shards of this index one remote-capable node may hold. */
+    public static final Setting<Integer> INDEX_TOTAL_REMOTE_CAPABLE_PRIMARY_SHARDS_PER_NODE_SETTING = Setting.intSetting(
+        "index.routing.allocation.total_remote_capable_primary_shards_per_node",
+        -1,
+        -1,
+        Property.Dynamic,
+        Property.IndexScope
+    );
+
+    public static final Setting<Boolean> PLUGGABLE_DATAFORMAT_ENABLED_SETTING = Setting.boolSetting(
+        "index.pluggable.dataformat.enabled",
+        false,
+        Property.IndexScope,
+        Property.Final
+    );
+
     public static final String INDEX_STATE_FILE_PREFIX = "state-";
 
     private final int routingNumShards;
@@ -1297,7 +1339,7 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * a primary shard is assigned after a full cluster restart or a replica shard is promoted to a primary.
      * <p>
      * Note: since we increment the term every time a shard is assigned, the term for any operational shard (i.e., a shard
-     * that can be indexed into) is larger than 0. See {@link IndexMetadataUpdater#applyChanges}.
+     * that can be indexed into) is larger than 0. See how the cluster-manager applies routing changes.
      **/
     public long primaryTerm(int shardId) {
         Long pTerm = this.primaryTermsMap.get(shardId);
@@ -2483,16 +2525,16 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
                 );
             }
 
-            final int indexTotalShardsPerNodeLimit = ShardsLimitAllocationDecider.INDEX_TOTAL_SHARDS_PER_NODE_SETTING.get(settings);
-            final int indexTotalPrimaryShardsPerNodeLimit = ShardsLimitAllocationDecider.INDEX_TOTAL_PRIMARY_SHARDS_PER_NODE_SETTING.get(
+            final int indexTotalShardsPerNodeLimit = INDEX_TOTAL_SHARDS_PER_NODE_SETTING.get(settings);
+            final int indexTotalPrimaryShardsPerNodeLimit = INDEX_TOTAL_PRIMARY_SHARDS_PER_NODE_SETTING.get(
                 settings
             );
             final int indexTotalRemoteCapableShardsPerNodeLimit =
-                ShardsLimitAllocationDecider.INDEX_TOTAL_REMOTE_CAPABLE_SHARDS_PER_NODE_SETTING.get(settings);
+                INDEX_TOTAL_REMOTE_CAPABLE_SHARDS_PER_NODE_SETTING.get(settings);
             final int indexTotalRemoteCapablePrimaryShardsPerNodeLimit =
-                ShardsLimitAllocationDecider.INDEX_TOTAL_REMOTE_CAPABLE_PRIMARY_SHARDS_PER_NODE_SETTING.get(settings);
+                INDEX_TOTAL_REMOTE_CAPABLE_PRIMARY_SHARDS_PER_NODE_SETTING.get(settings);
             final boolean isAppendOnlyIndex = INDEX_APPEND_ONLY_ENABLED_SETTING.get(settings)
-                || IndexSettings.PLUGGABLE_DATAFORMAT_ENABLED_SETTING.get(settings);
+                || PLUGGABLE_DATAFORMAT_ENABLED_SETTING.get(settings);
 
             final String uuid = settings.get(SETTING_INDEX_UUID, INDEX_UUID_NA_VALUE);
 
@@ -2884,22 +2926,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         }
         return indexVersion;
     }
-
-    /**
-     * State format for {@link IndexMetadata} to write to and load from disk
-     */
-    public static final MetadataStateFormat<IndexMetadata> FORMAT = new MetadataStateFormat<>(INDEX_STATE_FILE_PREFIX) {
-
-        @Override
-        public void toXContent(XContentBuilder builder, IndexMetadata state) throws IOException {
-            Builder.toXContent(state, builder, FORMAT_PARAMS);
-        }
-
-        @Override
-        public IndexMetadata fromXContent(XContentParser parser) throws IOException {
-            return Builder.fromXContent(parser);
-        }
-    };
 
     /**
      * Returns the number of shards that should be used for routing. This basically defines the hash space we use in

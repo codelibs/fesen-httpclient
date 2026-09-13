@@ -51,8 +51,8 @@ public class SearchPipelineInfo implements ReportingService.Info {
             for (int i = 0; i < size; i++) {
                 processorInfos.add(new ProcessorInfo(in));
             }
-            processors.put(Pipeline.REQUEST_PROCESSORS_KEY, processorInfos);
-            processors.put(Pipeline.RESPONSE_PROCESSORS_KEY, processorInfos);
+            processors.put("request_processors", processorInfos);
+            processors.put("response_processors", processorInfos);
         } else {
             final int numTypes = in.readVInt();
             for (int i = 0; i < numTypes; i++) {
@@ -86,8 +86,8 @@ public class SearchPipelineInfo implements ReportingService.Info {
         if (out.getVersion().before(Version.V_2_8_0)) {
             // Prior to version 2.8, we grouped all processors into a single list.
             Set<ProcessorInfo> processorInfos = new TreeSet<>();
-            processorInfos.addAll(processors.getOrDefault(Pipeline.REQUEST_PROCESSORS_KEY, Collections.emptySet()));
-            processorInfos.addAll(processors.getOrDefault(Pipeline.RESPONSE_PROCESSORS_KEY, Collections.emptySet()));
+            processorInfos.addAll(processors.getOrDefault("request_processors", Collections.emptySet()));
+            processorInfos.addAll(processors.getOrDefault("response_processors", Collections.emptySet()));
             out.writeVInt(processorInfos.size());
             for (ProcessorInfo processorInfo : processorInfos) {
                 processorInfo.writeTo(out);

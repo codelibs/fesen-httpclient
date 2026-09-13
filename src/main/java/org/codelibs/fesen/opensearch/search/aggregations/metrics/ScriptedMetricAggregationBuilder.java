@@ -37,16 +37,12 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.script.Script;
-import org.codelibs.fesen.opensearch.script.ScriptedMetricAggContexts;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -233,64 +229,6 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.NONE;
-    }
-
-    @Override
-    protected ScriptedMetricAggregatorFactory doBuild(
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        Builder subfactoriesBuilder
-    ) throws IOException {
-
-        if (combineScript == null) {
-            throw new IllegalArgumentException("[combineScript] must not be null: [" + name + "]");
-        }
-
-        if (reduceScript == null) {
-            throw new IllegalArgumentException("[reduceScript] must not be null: [" + name + "]");
-        }
-
-        // Extract params from scripts and pass them along to ScriptedMetricAggregatorFactory, since it won't have
-        // access to them for the scripts it's given precompiled.
-
-        ScriptedMetricAggContexts.InitScript.Factory compiledInitScript;
-        Map<String, Object> initScriptParams;
-        if (initScript != null) {
-            compiledInitScript = queryShardContext.compile(initScript, ScriptedMetricAggContexts.InitScript.CONTEXT);
-            initScriptParams = initScript.getParams();
-        } else {
-            compiledInitScript = null;
-            initScriptParams = Collections.emptyMap();
-        }
-
-        ScriptedMetricAggContexts.MapScript.Factory compiledMapScript = queryShardContext.compile(
-            mapScript,
-            ScriptedMetricAggContexts.MapScript.CONTEXT
-        );
-        Map<String, Object> mapScriptParams = mapScript.getParams();
-
-        ScriptedMetricAggContexts.CombineScript.Factory compiledCombineScript = queryShardContext.compile(
-            combineScript,
-            ScriptedMetricAggContexts.CombineScript.CONTEXT
-        );
-        Map<String, Object> combineScriptParams = combineScript.getParams();
-
-        return new ScriptedMetricAggregatorFactory(
-            name,
-            compiledMapScript,
-            mapScriptParams,
-            compiledInitScript,
-            initScriptParams,
-            compiledCombineScript,
-            combineScriptParams,
-            reduceScript,
-            params,
-            queryShardContext.lookup(),
-            queryShardContext,
-            parent,
-            subfactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

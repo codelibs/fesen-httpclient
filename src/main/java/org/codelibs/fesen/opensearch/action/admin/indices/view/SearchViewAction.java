@@ -12,15 +12,10 @@ import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.ActionType;
 import org.codelibs.fesen.opensearch.action.search.SearchRequest;
 import org.codelibs.fesen.opensearch.action.search.SearchResponse;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
-import org.codelibs.fesen.opensearch.action.support.HandledTransportAction;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.tasks.Task;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -106,21 +101,4 @@ public class SearchViewAction extends ActionType<SearchResponse> {
         }
     }
 
-    /**
-     * Transport Action for searching a View
-     */
-    public static class TransportAction extends HandledTransportAction<Request, SearchResponse> {
-
-        private final ViewService viewService;
-
-        public TransportAction(final TransportService transportService, final ActionFilters actionFilters, final ViewService viewService) {
-            super(NAME, transportService, actionFilters, Request::new);
-            this.viewService = viewService;
-        }
-
-        @Override
-        protected void doExecute(final Task task, final Request request, final ActionListener<SearchResponse> listener) {
-            viewService.searchView(request, listener);
-        }
-    }
 }

@@ -44,16 +44,9 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +57,8 @@ import java.util.Objects;
 import static org.codelibs.fesen.opensearch.search.aggregations.bucket.range.RangeAggregator.Range.FROM_FIELD;
 import static org.codelibs.fesen.opensearch.search.aggregations.bucket.range.RangeAggregator.Range.KEY_FIELD;
 import static org.codelibs.fesen.opensearch.search.aggregations.bucket.range.RangeAggregator.Range.TO_FIELD;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Aggregation Builder for geo_distance agg
@@ -72,8 +67,6 @@ import static org.codelibs.fesen.opensearch.search.aggregations.bucket.range.Ran
  */
 public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilder<GeoDistanceAggregationBuilder> {
     public static final String NAME = "geo_distance";
-    public static final ValuesSourceRegistry.RegistryKey<GeoDistanceAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, GeoDistanceAggregatorSupplier.class);
     static final ParseField ORIGIN_FIELD = new ParseField("origin", "center", "point", "por");
     static final ParseField UNIT_FIELD = new ParseField("unit");
     static final ParseField DISTANCE_TYPE_FIELD = new ParseField("distance_type");
@@ -257,10 +250,6 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         }
     }
 
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        GeoDistanceRangeAggregatorFactory.registerAggregators(builder);
-    }
-
     private GeoPoint origin;
     private List<Range> ranges = new ArrayList<>();
     private DistanceUnit unit = DistanceUnit.DEFAULT;
@@ -431,11 +420,6 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
-
     public GeoDistanceAggregationBuilder unit(DistanceUnit unit) {
         if (unit == null) {
             throw new IllegalArgumentException("[unit] must not be null: [" + name + "]");
@@ -472,32 +456,6 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.MANY;
-    }
-
-    @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException {
-        Range[] ranges = this.ranges.toArray(new Range[this.range().size()]);
-        if (ranges.length == 0) {
-            throw new IllegalArgumentException("No [ranges] specified for the [" + this.getName() + "] aggregation");
-        }
-        return new GeoDistanceRangeAggregatorFactory(
-            name,
-            config,
-            origin,
-            ranges,
-            unit,
-            distanceType,
-            keyed,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

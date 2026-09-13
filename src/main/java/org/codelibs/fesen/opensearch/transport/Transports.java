@@ -29,64 +29,42 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
-
 package org.codelibs.fesen.opensearch.transport;
 
-import org.codelibs.fesen.opensearch.common.util.concurrent.ThreadContext;
-import org.codelibs.fesen.opensearch.http.HttpServerTransport;
-import org.codelibs.fesen.opensearch.tasks.Task;
-
-import java.util.Arrays;
-import java.util.Map;
-
 /**
- * Utility class for transport
+ * The client-side remnant of the transport thread helpers: the assertions other code makes about
+ * not blocking a transport thread. A client has no transport threads, so the checks are trivially
+ * satisfied.
  *
  * @opensearch.internal
  */
-public enum Transports {
-    ;
+public final class Transports {
 
-    /** threads whose name is prefixed by this string will be considered network threads, even though they aren't */
+    /** The thread-name prefix a mock transport uses in tests. */
     public static final String TEST_MOCK_TRANSPORT_THREAD_PREFIX = "__mock_network_thread";
 
+    private Transports() {
+    }
+
     /**
-     * Utility method to detect whether a thread is a network thread. Typically
-     * used in assertions to make sure that we do not call blocking code from
-     * networking threads.
+     * Returns whether the given thread is a transport worker. A client never has one.
+     *
+     * @param t the thread to test
+     * @return {@code true} if the thread is a transport worker
      */
     public static boolean isTransportThread(Thread t) {
-        final String threadName = t.getName();
-        for (String s : Arrays.asList(
-            HttpServerTransport.HTTP_SERVER_WORKER_THREAD_NAME_PREFIX,
-            TcpTransport.TRANSPORT_WORKER_THREAD_NAME_PREFIX,
-            TEST_MOCK_TRANSPORT_THREAD_PREFIX
-        )) {
-            if (threadName.contains(s)) {
-                return true;
-            }
-        }
-        return false;
+        return t.getName().contains(TEST_MOCK_TRANSPORT_THREAD_PREFIX);
     }
 
-    public static boolean assertTransportThread() {
-        final Thread t = Thread.currentThread();
-        assert isTransportThread(t) : "Expected transport thread but got [" + t + "]";
-        return true;
-    }
-
+    /**
+     * Asserts that the current thread is not a transport worker.
+     *
+     * @param reason why the caller must not be on a transport thread
+     * @return always {@code true}
+     */
     public static boolean assertNotTransportThread(String reason) {
         final Thread t = Thread.currentThread();
         assert isTransportThread(t) == false : "Expected current thread [" + t + "] to not be a transport thread. Reason: [" + reason + "]";
-        return true;
-    }
-
-    public static boolean assertDefaultThreadContext(ThreadContext threadContext) {
-        final Map<String, String> requestHeaders = threadContext.getRequestHeadersOnly();
-        assert requestHeaders.isEmpty() || Task.REQUEST_HEADERS.containsAll(requestHeaders.keySet()) : "expected empty context but was "
-            + requestHeaders
-            + " on "
-            + Thread.currentThread().getName();
         return true;
     }
 }

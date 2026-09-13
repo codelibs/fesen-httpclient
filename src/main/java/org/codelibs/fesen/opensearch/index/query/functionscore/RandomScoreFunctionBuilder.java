@@ -33,16 +33,11 @@ package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.RandomScoreFunction;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScoreFunction;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -166,42 +161,6 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
     @Override
     protected int doHashCode() {
         return Objects.hash(this.seed);
-    }
-
-    @Override
-    protected ScoreFunction doToFunction(QueryShardContext context) {
-        final int salt = (context.index().getName().hashCode() << 10) | context.getShardId();
-        if (seed == null) {
-            // DocID-based random score generation
-            return new RandomScoreFunction(hash(context.nowInMillis()), salt, null, getFunctionName());
-        } else {
-            final MappedFieldType fieldType;
-            if (field != null) {
-                fieldType = context.getMapperService().fieldType(field);
-            } else {
-                deprecationLogger.deprecate(
-                    "seed_requires_field",
-                    "OpenSearch requires that a [field] parameter is provided when a [seed] is set"
-                );
-                fieldType = context.getMapperService().fieldType(IdFieldMapper.NAME);
-            }
-            if (fieldType == null) {
-                if (context.getMapperService().documentMapper() == null) {
-                    // no mappings: the index is empty anyway
-                    return new RandomScoreFunction(hash(context.nowInMillis()), salt, null, getFunctionName());
-                }
-                throw new IllegalArgumentException(
-                    "Field [" + field + "] is not mapped on [" + context.index() + "] and cannot be used as a source of random numbers."
-                );
-            }
-            int seed;
-            if (this.seed != null) {
-                seed = this.seed;
-            } else {
-                seed = hash(context.nowInMillis());
-            }
-            return new RandomScoreFunction(seed, salt, context.getForField(fieldType), getFunctionName());
-        }
     }
 
     private static int hash(long value) {

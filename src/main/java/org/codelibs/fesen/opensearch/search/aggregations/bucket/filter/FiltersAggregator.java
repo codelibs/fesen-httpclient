@@ -32,11 +32,6 @@
 
 package org.codelibs.fesen.opensearch.search.aggregations.bucket.filter;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdStream;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.Bits;
-import org.codelibs.fesen.opensearch.common.lucene.Lucene;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -44,33 +39,32 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.Aggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.CardinalityUpperBound;
-import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregations;
-import org.codelibs.fesen.opensearch.search.aggregations.LeafBucketCollector;
-import org.codelibs.fesen.opensearch.search.aggregations.LeafBucketCollectorBase;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.BucketsAggregator;
-import org.codelibs.fesen.opensearch.search.internal.SearchContext;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
- * Aggregate all docs that match multiple filters.
+ * Namespace for the filters-aggregation request types shared by builders and responses.
+ *
+ * <p>The aggregator itself is node-side and is not carried over; only the keyed filter a client
+ * sends and reads back survives here.</p>
  *
  * @opensearch.internal
  */
-public class FiltersAggregator extends BucketsAggregator {
+public final class FiltersAggregator {
 
+    /** The {@code filters} of a filters aggregation. */
     public static final ParseField FILTERS_FIELD = new ParseField("filters");
+
+    /** The {@code other_bucket} flag of a filters aggregation. */
     public static final ParseField OTHER_BUCKET_FIELD = new ParseField("other_bucket");
+
+    /** The {@code other_bucket_key} of a filters aggregation. */
     public static final ParseField OTHER_BUCKET_KEY_FIELD = new ParseField("other_bucket_key");
+
+    private FiltersAggregator() {
+    }
+
 
     /**
      * Keyed filter for the filters agg
@@ -137,109 +131,4 @@ public class FiltersAggregator extends BucketsAggregator {
             return Objects.equals(key, other.key) && Objects.equals(filter, other.filter);
         }
     }
-
-    private final String[] keys;
-    private Supplier<Weight[]> filters;
-    private final boolean keyed;
-    private final boolean showOtherBucket;
-    private final String otherBucketKey;
-    private final int totalNumKeys;
-
-    public FiltersAggregator(
-        String name,
-        AggregatorFactories factories,
-        String[] keys,
-        Supplier<Weight[]> filters,
-        boolean keyed,
-        String otherBucketKey,
-        SearchContext context,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        super(name, factories, context, parent, cardinality.multiply(keys.length + (otherBucketKey == null ? 0 : 1)), metadata);
-        this.keyed = keyed;
-        this.keys = keys;
-        this.filters = filters;
-        this.showOtherBucket = otherBucketKey != null;
-        this.otherBucketKey = otherBucketKey;
-        if (showOtherBucket) {
-            this.totalNumKeys = keys.length + 1;
-        } else {
-            this.totalNumKeys = keys.length;
-        }
-    }
-
-    @Override
-    public LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
-        // no need to provide deleted docs to the filter
-        Weight[] filters = this.filters.get();
-        final Bits[] bits = new Bits[filters.length];
-        for (int i = 0; i < filters.length; ++i) {
-            bits[i] = Lucene.asSequentialAccessBits(ctx.reader().maxDoc(), filters[i].scorerSupplier(ctx));
-        }
-        return new LeafBucketCollectorBase(sub, null) {
-            @Override
-            public void collect(int doc, long bucket) throws IOException {
-                boolean matched = false;
-                for (int i = 0; i < bits.length; i++) {
-                    if (bits[i].get(doc)) {
-                        collectBucket(sub, doc, bucketOrd(bucket, i));
-                        matched = true;
-                    }
-                }
-                if (showOtherBucket && !matched) {
-                    collectBucket(sub, doc, bucketOrd(bucket, bits.length));
-                }
-            }
-
-            @Override
-            public void collect(DocIdStream stream, long owningBucketOrd) throws IOException {
-                super.collect(stream, owningBucketOrd);
-            }
-
-            @Override
-            public void collectRange(int min, int max) throws IOException {
-                super.collectRange(min, max);
-            }
-        };
-    }
-
-    @Override
-    public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForFixedBucketCount(
-            owningBucketOrds,
-            keys.length + (showOtherBucket ? 1 : 0),
-            (offsetInOwningOrd, docCount, subAggregationResults) -> {
-                checkCancelled();
-                if (offsetInOwningOrd < keys.length) {
-                    return new InternalFilters.InternalBucket(keys[offsetInOwningOrd], docCount, subAggregationResults, keyed);
-                }
-                return new InternalFilters.InternalBucket(otherBucketKey, docCount, subAggregationResults, keyed);
-            },
-            buckets -> new InternalFilters(name, buckets, keyed, metadata())
-        );
-    }
-
-    @Override
-    public InternalAggregation buildEmptyAggregation() {
-        InternalAggregations subAggs = buildEmptySubAggregations();
-        List<InternalFilters.InternalBucket> buckets = new ArrayList<>(keys.length);
-        for (int i = 0; i < keys.length; i++) {
-            InternalFilters.InternalBucket bucket = new InternalFilters.InternalBucket(keys[i], 0, subAggs, keyed);
-            buckets.add(bucket);
-        }
-
-        if (showOtherBucket) {
-            InternalFilters.InternalBucket bucket = new InternalFilters.InternalBucket(otherBucketKey, 0, subAggs, keyed);
-            buckets.add(bucket);
-        }
-
-        return new InternalFilters(name, buckets, keyed, metadata());
-    }
-
-    final long bucketOrd(long owningBucketOrdinal, int filterOrd) {
-        return owningBucketOrdinal * totalNumKeys + filterOrd;
-    }
-
 }

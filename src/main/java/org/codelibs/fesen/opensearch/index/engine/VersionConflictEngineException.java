@@ -45,10 +45,6 @@ import java.io.IOException;
  */
 public class VersionConflictEngineException extends EngineException {
 
-    public VersionConflictEngineException(ShardId shardId, Engine.Operation op, long currentVersion, boolean deleted) {
-        this(shardId, op.id(), op.versionType().explainConflictForWrites(currentVersion, op.version(), deleted));
-    }
-
     public VersionConflictEngineException(
         ShardId shardId,
         String id,

@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.cluster.routing.allocation.command;
 
 import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.OpenSearchParseException;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingExplanations;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -90,19 +89,6 @@ public class AllocationCommands implements ToXContentFragment {
      */
     public List<AllocationCommand> commands() {
         return this.commands;
-    }
-
-    /**
-     * Executes all wrapped commands on a given {@link RoutingAllocation}
-     * @param allocation {@link RoutingAllocation} to apply this command to
-     * @throws OpenSearchException if something happens during execution
-     */
-    public RoutingExplanations execute(RoutingAllocation allocation, boolean explain) {
-        RoutingExplanations explanations = new RoutingExplanations();
-        for (AllocationCommand command : commands) {
-            explanations.add(command.execute(allocation, explain));
-        }
-        return explanations;
     }
 
     /**

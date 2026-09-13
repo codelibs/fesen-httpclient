@@ -35,11 +35,6 @@ package org.codelibs.fesen.opensearch.ingest;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.util.CollectionUtils;
 import org.codelibs.fesen.opensearch.index.VersionType;
-import org.codelibs.fesen.opensearch.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.IndexFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.RoutingFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.SourceFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.VersionFieldMapper;
 import org.codelibs.fesen.opensearch.script.TemplateScript;
 
 import java.time.ZoneOffset;
@@ -68,7 +63,7 @@ public final class IngestDocument {
     public static final String INGEST_KEY = "_ingest";
     public static final String PIPELINE_CYCLE_ERROR_MESSAGE = "Cycle detected for pipeline: ";
     private static final String INGEST_KEY_PREFIX = INGEST_KEY + ".";
-    private static final String SOURCE_PREFIX = SourceFieldMapper.NAME + ".";
+    private static final String SOURCE_PREFIX = "_source" + ".";
 
     static final String TIMESTAMP = "timestamp";
 
@@ -434,41 +429,6 @@ public final class IngestDocument {
     }
 
     /**
-     * Appends the provided value to the provided path in the document.
-     * Any non existing path element will be created.
-     * If the path identifies a list, the value will be appended to the existing list.
-     * If the path identifies a scalar, the scalar will be converted to a list and
-     * the provided value will be added to the newly created list.
-     * Supports multiple values too provided in forms of list, in that case all the values will be appended to the
-     * existing (or newly created) list.
-     * @param fieldPathTemplate Resolves to the path with dot-notation within the document
-     * @param valueSource The value source that will produce the value or values to append to the existing ones
-     * @throws IllegalArgumentException if the path is null, empty or invalid.
-     */
-    public void appendFieldValue(TemplateScript.Factory fieldPathTemplate, ValueSource valueSource) {
-        Map<String, Object> model = createTemplateModel();
-        appendFieldValue(fieldPathTemplate.newInstance(model).execute(), valueSource.copyAndResolve(model));
-    }
-
-    /**
-     * Appends the provided value to the provided path in the document.
-     * Any non existing path element will be created.
-     * If the path identifies a list, the value will be appended to the existing list.
-     * If the path identifies a scalar, the scalar will be converted to a list and
-     * the provided value will be added to the newly created list.
-     * Supports multiple values too provided in forms of list, in that case all the values will be appended to the
-     * existing (or newly created) list.
-     * @param fieldPathTemplate Resolves to the path with dot-notation within the document
-     * @param valueSource The value source that will produce the value or values to append to the existing ones
-     * @param allowDuplicates When false, any values that already exist in the field will not be added
-     * @throws IllegalArgumentException if the path is null, empty or invalid.
-     */
-    public void appendFieldValue(TemplateScript.Factory fieldPathTemplate, ValueSource valueSource, boolean allowDuplicates) {
-        Map<String, Object> model = createTemplateModel();
-        appendFieldValue(fieldPathTemplate.newInstance(model).execute(), valueSource.copyAndResolve(model), allowDuplicates);
-    }
-
-    /**
      * Sets the provided value to the provided path in the document.
      * Any non existing path element will be created.
      * If the last item in the path is a list, the value will replace the existing list as a whole.
@@ -480,46 +440,6 @@ public final class IngestDocument {
      */
     public void setFieldValue(String path, Object value) {
         setFieldValue(path, value, false);
-    }
-
-    /**
-     * Sets the provided value to the provided path in the document.
-     * Any non existing path element will be created. If the last element is a list,
-     * the value will replace the existing list.
-     * @param fieldPathTemplate Resolves to the path with dot-notation within the document
-     * @param valueSource The value source that will produce the value to put in for the path key
-     * @throws IllegalArgumentException if the path is null, empty, invalid or if the value cannot be set to the
-     * item identified by the provided path.
-     */
-    public void setFieldValue(TemplateScript.Factory fieldPathTemplate, ValueSource valueSource) {
-        Map<String, Object> model = createTemplateModel();
-        setFieldValue(fieldPathTemplate.newInstance(model).execute(), valueSource.copyAndResolve(model), false);
-    }
-
-    /**
-     * Sets the provided value to the provided path in the document.
-     * Any non existing path element will be created. If the last element is a list,
-     * the value will replace the existing list.
-     * @param fieldPathTemplate Resolves to the path with dot-notation within the document
-     * @param valueSource The value source that will produce the value to put in for the path key
-     * @param ignoreEmptyValue The flag to determine whether to exit quietly when the value produced by TemplatedValue is null or empty
-     * @throws IllegalArgumentException if the path is null, empty, invalid or if the value cannot be set to the
-     * item identified by the provided path.
-     */
-    public void setFieldValue(TemplateScript.Factory fieldPathTemplate, ValueSource valueSource, boolean ignoreEmptyValue) {
-        Map<String, Object> model = createTemplateModel();
-        Object value = valueSource.copyAndResolve(model);
-        if (ignoreEmptyValue && valueSource instanceof ValueSource.TemplatedValue) {
-            if (value == null) {
-                return;
-            }
-            String valueStr = (String) value;
-            if (valueStr.isEmpty()) {
-                return;
-            }
-        }
-
-        setFieldValue(fieldPathTemplate.newInstance(model).execute(), value, false);
     }
 
     private void setFieldValue(String path, Object value, boolean append) {
@@ -700,7 +620,7 @@ public final class IngestDocument {
 
     private Map<String, Object> createTemplateModel() {
         Map<String, Object> model = new HashMap<>(sourceAndMetadata);
-        model.put(SourceFieldMapper.NAME, sourceAndMetadata);
+        model.put("_source", sourceAndMetadata);
         // If there is a field in the source with the name '_ingest' it gets overwritten here,
         // if access to that field is required then it get accessed via '_source._ingest'
         model.put(INGEST_KEY, ingestMetadata);
@@ -788,30 +708,6 @@ public final class IngestDocument {
     }
 
     /**
-     * Executes the given pipeline with for this document unless the pipeline has already been executed
-     * for this document.
-     *
-     * @param pipeline the pipeline to execute
-     * @param handler handles the result or failure
-     */
-    public void executePipeline(Pipeline pipeline, BiConsumer<IngestDocument, Exception> handler) {
-        if (executedPipelines.add(pipeline.getId())) {
-            Object previousPipeline = ingestMetadata.put("pipeline", pipeline.getId());
-            pipeline.execute(this, (result, e) -> {
-                executedPipelines.remove(pipeline.getId());
-                if (previousPipeline != null) {
-                    ingestMetadata.put("pipeline", previousPipeline);
-                } else {
-                    ingestMetadata.remove("pipeline");
-                }
-                handler.accept(result, e);
-            });
-        } else {
-            handler.accept(null, new IllegalStateException(PIPELINE_CYCLE_ERROR_MESSAGE + pipeline.getId()));
-        }
-    }
-
-    /**
      * @return a pipeline stack; all pipelines that are in execution by this document in reverse order
      */
     List<String> getPipelineStack() {
@@ -849,10 +745,10 @@ public final class IngestDocument {
      * @opensearch.internal
      */
     public enum Metadata {
-        INDEX(IndexFieldMapper.NAME),
-        ID(IdFieldMapper.NAME),
-        ROUTING(RoutingFieldMapper.NAME),
-        VERSION(VersionFieldMapper.NAME),
+        INDEX("_index"),
+        ID("_id"),
+        ROUTING("_routing"),
+        VERSION("_version"),
         VERSION_TYPE("_version_type"),
         IF_SEQ_NO("_if_seq_no"),
         IF_PRIMARY_TERM("_if_primary_term");

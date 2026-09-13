@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.queries.spans.SpanQuery;
 import org.apache.lucene.queries.spans.SpanWithinQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Query;
@@ -173,15 +172,6 @@ public class SpanWithinQueryBuilder extends AbstractQueryBuilder<SpanWithinQuery
         SpanWithinQueryBuilder query = new SpanWithinQueryBuilder(big, little);
         query.boost(boost).queryName(queryName);
         return query;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        Query innerBig = big.toQuery(context);
-        assert innerBig instanceof SpanQuery;
-        Query innerLittle = little.toQuery(context);
-        assert innerLittle instanceof SpanQuery;
-        return new SpanWithinQuery((SpanQuery) innerBig, (SpanQuery) innerLittle);
     }
 
     @Override

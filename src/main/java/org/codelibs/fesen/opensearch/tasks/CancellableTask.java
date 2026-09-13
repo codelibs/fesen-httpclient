@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.core.tasks.TaskId;
 
 import java.util.Map;
 
-import static org.codelibs.fesen.opensearch.search.SearchService.NO_TIMEOUT;
 
 /**
  * A task that can be canceled
@@ -70,7 +69,7 @@ public abstract class CancellableTask extends Task {
     private final TimeValue cancelAfterTimeInterval;
 
     public CancellableTask(long id, String type, String action, String description, TaskId parentTaskId, Map<String, String> headers) {
-        this(id, type, action, description, parentTaskId, headers, NO_TIMEOUT);
+        this(id, type, action, description, parentTaskId, headers, TimeValue.MINUS_ONE);
     }
 
     public CancellableTask(

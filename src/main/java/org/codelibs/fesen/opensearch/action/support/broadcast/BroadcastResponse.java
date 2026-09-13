@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.core.rest.RestStatus;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.rest.action.RestActions;
 
 import java.io.IOException;
 import java.util.List;
@@ -171,7 +170,7 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
-        RestActions.buildBroadcastShardsHeader(builder, params, this);
+        BroadcastShardsHeader.buildBroadcastShardsHeader(builder, params, this);
         addCustomXContentFields(builder, params);
         builder.endObject();
         return builder;

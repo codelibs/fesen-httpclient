@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.search.fetch.subphase;
 
-import org.codelibs.fesen.opensearch.common.Booleans;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapValues;
@@ -46,7 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.logging.LoggerMessageFormat;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.rest.RestRequest;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -130,38 +128,6 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
 
     public String[] excludes() {
         return this.excludes;
-    }
-
-    public static FetchSourceContext parseFromRestRequest(RestRequest request) {
-        Boolean fetchSource = null;
-        String[] sourceExcludes = null;
-        String[] sourceIncludes = null;
-
-        String source = request.param("_source");
-        if (source != null) {
-            if (Booleans.isTrue(source)) {
-                fetchSource = true;
-            } else if (Booleans.isFalse(source)) {
-                fetchSource = false;
-            } else {
-                sourceIncludes = Strings.splitStringByCommaToArray(source);
-            }
-        }
-
-        String sIncludes = request.param("_source_includes");
-        if (sIncludes != null) {
-            sourceIncludes = Strings.splitStringByCommaToArray(sIncludes);
-        }
-
-        String sExcludes = request.param("_source_excludes");
-        if (sExcludes != null) {
-            sourceExcludes = Strings.splitStringByCommaToArray(sExcludes);
-        }
-
-        if (fetchSource != null || sourceIncludes != null || sourceExcludes != null) {
-            return new FetchSourceContext(fetchSource == null ? true : fetchSource, sourceIncludes, sourceExcludes);
-        }
-        return null;
     }
 
     public static FetchSourceContext fromXContent(XContentParser parser) throws IOException {

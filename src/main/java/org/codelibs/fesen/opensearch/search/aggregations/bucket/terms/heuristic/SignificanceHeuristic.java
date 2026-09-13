@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.heuristic
 
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.SignificantTerms;
 
@@ -83,13 +82,4 @@ public abstract class SignificanceHeuristic implements NamedWriteable, ToXConten
         return this;
     }
 
-    /**
-     * Provides a hook for subclasses to provide a version of the heuristic
-     * prepared for execution on data on a shard.
-     * @param queryShardContext the shard context on the data node
-     * @return a version of this heuristic suitable for execution
-     */
-    public SignificanceHeuristic rewrite(QueryShardContext queryShardContext) {
-        return this;
-    }
 }

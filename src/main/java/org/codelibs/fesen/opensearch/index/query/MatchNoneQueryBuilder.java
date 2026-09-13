@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -102,11 +100,6 @@ public class MatchNoneQueryBuilder extends AbstractQueryBuilder<MatchNoneQueryBu
         matchNoneQueryBuilder.boost(boost);
         matchNoneQueryBuilder.queryName(queryName);
         return matchNoneQueryBuilder;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        return Queries.newMatchNoDocsQuery("User requested \"" + this.getName() + "\" query.");
     }
 
     @Override

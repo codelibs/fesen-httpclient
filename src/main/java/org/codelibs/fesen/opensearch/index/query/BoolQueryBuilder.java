@@ -37,7 +37,6 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -49,13 +48,11 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static org.codelibs.fesen.opensearch.common.lucene.search.Queries.fixNegativeQueryIfNeeded;
 
 /**
  * A Query that matches documents matching boolean combinations of other queries.
@@ -323,34 +320,6 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
-        addBooleanClauses(context, booleanQueryBuilder, mustClauses, BooleanClause.Occur.MUST);
-        addBooleanClauses(context, booleanQueryBuilder, mustNotClauses, BooleanClause.Occur.MUST_NOT);
-        addBooleanClauses(context, booleanQueryBuilder, shouldClauses, BooleanClause.Occur.SHOULD);
-        addBooleanClauses(context, booleanQueryBuilder, filterClauses, BooleanClause.Occur.FILTER);
-        BooleanQuery booleanQuery = booleanQueryBuilder.build();
-        if (booleanQuery.clauses().isEmpty()) {
-            return new MatchAllDocsQuery();
-        }
-
-        Query query = Queries.applyMinimumShouldMatch(booleanQuery, minimumShouldMatch);
-        return adjustPureNegative ? fixNegativeQueryIfNeeded(query) : query;
-    }
-
-    private static void addBooleanClauses(
-        QueryShardContext context,
-        BooleanQuery.Builder booleanQueryBuilder,
-        List<QueryBuilder> clauses,
-        Occur occurs
-    ) throws IOException {
-        for (QueryBuilder query : clauses) {
-            Query luceneQuery = query.toQuery(context);
-            booleanQueryBuilder.add(new BooleanClause(luceneQuery, occurs));
-        }
-    }
-
-    @Override
     protected int doHashCode() {
         return Objects.hash(adjustPureNegative, minimumShouldMatch, mustClauses, shouldClauses, mustNotClauses, filterClauses);
     }
@@ -403,17 +372,6 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
             return newBuilder;
         }
         return this;
-    }
-
-    @Override
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {
-        List<QueryBuilder> clauses = new ArrayList<>(filter());
-        clauses.addAll(must());
-        clauses.addAll(should());
-        // no need to include must_not (since there will be no hits for it)
-        for (QueryBuilder clause : clauses) {
-            InnerHitContextBuilder.extractInnerHits(clause, innerHits);
-        }
     }
 
     private static boolean rewriteClauses(

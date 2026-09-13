@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -160,95 +159,6 @@ public abstract class AbstractAllocateAllocationCommand implements AllocationCom
      */
     public String node() {
         return this.node;
-    }
-
-    /**
-     * Handle case where a disco node cannot be found in the routing table. Usually means that it's not a data node.
-     */
-    protected RerouteExplanation explainOrThrowMissingRoutingNode(RoutingAllocation allocation, boolean explain, DiscoveryNode discoNode) {
-        if (!discoNode.isDataNode()) {
-            return explainOrThrowRejectedCommand(explain, allocation, "allocation can only be done on data nodes, not [" + node + "]");
-        } else {
-            return explainOrThrowRejectedCommand(explain, allocation, "could not find [" + node + "] among the routing nodes");
-        }
-    }
-
-    /**
-     * Utility method for rejecting the current allocation command based on provided reason
-     */
-    protected RerouteExplanation explainOrThrowRejectedCommand(boolean explain, RoutingAllocation allocation, String reason) {
-        if (explain) {
-            return new RerouteExplanation(this, allocation.decision(Decision.NO, name() + " (allocation command)", reason));
-        }
-        throw new IllegalArgumentException("[" + name() + "] " + reason);
-    }
-
-    /**
-     * Utility method for rejecting the current allocation command based on provided exception
-     */
-    protected RerouteExplanation explainOrThrowRejectedCommand(boolean explain, RoutingAllocation allocation, RuntimeException rte) {
-        if (explain) {
-            return new RerouteExplanation(this, allocation.decision(Decision.NO, name() + " (allocation command)", rte.getMessage()));
-        }
-        throw rte;
-    }
-
-    /**
-     * Initializes an unassigned shard on a node and removes it from the unassigned
-     *
-     * @param allocation the allocation
-     * @param routingNodes the routing nodes
-     * @param routingNode the node to initialize it to
-     * @param shardRouting the shard routing that is to be matched in unassigned shards
-     */
-    protected void initializeUnassignedShard(
-        RoutingAllocation allocation,
-        RoutingNodes routingNodes,
-        RoutingNode routingNode,
-        ShardRouting shardRouting
-    ) {
-        initializeUnassignedShard(allocation, routingNodes, routingNode, shardRouting, null, null);
-    }
-
-    /**
-     * Initializes an unassigned shard on a node and removes it from the unassigned
-     *
-     * @param allocation the allocation
-     * @param routingNodes the routing nodes
-     * @param routingNode the node to initialize it to
-     * @param shardRouting the shard routing that is to be matched in unassigned shards
-     * @param unassignedInfo unassigned info to override
-     * @param recoverySource recovery source to override
-     */
-    protected void initializeUnassignedShard(
-        RoutingAllocation allocation,
-        RoutingNodes routingNodes,
-        RoutingNode routingNode,
-        ShardRouting shardRouting,
-        @Nullable UnassignedInfo unassignedInfo,
-        @Nullable RecoverySource recoverySource
-    ) {
-        for (RoutingNodes.UnassignedShards.UnassignedIterator it = routingNodes.unassigned().iterator(); it.hasNext();) {
-            ShardRouting unassigned = it.next();
-            if (!unassigned.equalsIgnoringMetadata(shardRouting)) {
-                continue;
-            }
-            if (unassignedInfo != null || recoverySource != null) {
-                unassigned = it.updateUnassigned(
-                    unassignedInfo != null ? unassignedInfo : unassigned.unassignedInfo(),
-                    recoverySource != null ? recoverySource : unassigned.recoverySource(),
-                    allocation.changes()
-                );
-            }
-            it.initialize(
-                routingNode.nodeId(),
-                null,
-                allocation.clusterInfo().getShardSize(unassigned, ShardRouting.UNAVAILABLE_EXPECTED_SHARD_SIZE),
-                allocation.changes()
-            );
-            return;
-        }
-        assert false : "shard to initialize not found in list of unassigned shards";
     }
 
     @Override

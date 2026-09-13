@@ -33,7 +33,6 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -198,24 +197,6 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
         printBoostAndQueryName(builder);
         builder.endObject();
         builder.endObject();
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        // validate context specific fields
-        if (analyzer != null && context.getIndexAnalyzers().get(analyzer) == null) {
-            throw new QueryShardException(context, "[" + NAME + "] analyzer [" + analyzer + "] not found");
-        }
-
-        MatchQuery matchQuery = new MatchQuery(context);
-        if (analyzer != null) {
-            matchQuery.setAnalyzer(analyzer);
-        }
-        matchQuery.setPhraseSlop(slop);
-        matchQuery.setMaxExpansions(maxExpansions);
-        matchQuery.setZeroTermsQuery(zeroTermsQuery);
-
-        return matchQuery.parse(MatchQuery.Type.PHRASE_PREFIX, fieldName, value);
     }
 
     @Override

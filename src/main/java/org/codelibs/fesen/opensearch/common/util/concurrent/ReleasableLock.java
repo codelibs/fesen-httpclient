@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.common.util.concurrent;
 import org.codelibs.fesen.opensearch.common.lease.Releasable;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.Assertions;
-import org.codelibs.fesen.opensearch.index.engine.EngineException;
 
 import java.util.concurrent.locks.Lock;
 
@@ -65,7 +64,7 @@ public class ReleasableLock implements Releasable {
         assert removeCurrentThread();
     }
 
-    public ReleasableLock acquire() throws EngineException {
+    public ReleasableLock acquire() {
         lock.lock();
         assert addCurrentThread();
         return this;

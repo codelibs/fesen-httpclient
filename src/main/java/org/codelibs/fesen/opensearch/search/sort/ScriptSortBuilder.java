@@ -49,24 +49,9 @@ import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.opensearch.core.xcontent.XContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.fielddata.AbstractBinaryDocValues;
-import org.codelibs.fesen.opensearch.index.fielddata.FieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
-import org.codelibs.fesen.opensearch.index.fielddata.NumericDoubleValues;
-import org.codelibs.fesen.opensearch.index.fielddata.SortedBinaryDocValues;
-import org.codelibs.fesen.opensearch.index.fielddata.SortedNumericDoubleValues;
-import org.codelibs.fesen.opensearch.index.fielddata.fieldcomparator.BytesRefFieldComparatorSource;
-import org.codelibs.fesen.opensearch.index.fielddata.fieldcomparator.DoubleValuesComparatorSource;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardException;
-import org.codelibs.fesen.opensearch.script.NumberSortScript;
 import org.codelibs.fesen.opensearch.script.Script;
-import org.codelibs.fesen.opensearch.script.StringSortScript;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
-import org.codelibs.fesen.opensearch.search.MultiValueMode;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -76,7 +61,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser.constructorArg;
-import static org.codelibs.fesen.opensearch.search.sort.FieldSortBuilder.validateMaxChildrenExistOnlyInTopLevelNestedSort;
 import static org.codelibs.fesen.opensearch.search.sort.NestedSortBuilder.NESTED_FIELD;
 
 /**
@@ -320,136 +304,6 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
      */
     public static ScriptSortBuilder fromXContent(XContentParser parser, String elementName) {
         return PARSER.apply(parser, null);
-    }
-
-    @Override
-    public SortFieldAndFormat build(QueryShardContext context) throws IOException {
-        return new SortFieldAndFormat(
-            new SortField("_script", fieldComparatorSource(context), order == SortOrder.DESC),
-            DocValueFormat.RAW
-        );
-    }
-
-    @Override
-    public BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra) throws IOException {
-        return fieldComparatorSource(context).newBucketedSort(context.bigArrays(), order, DocValueFormat.RAW, bucketSize, extra);
-    }
-
-    private IndexFieldData.XFieldComparatorSource fieldComparatorSource(QueryShardContext context) throws IOException {
-        MultiValueMode valueMode = null;
-        if (sortMode != null) {
-            valueMode = MultiValueMode.fromString(sortMode.toString());
-        }
-        if (valueMode == null) {
-            valueMode = order == SortOrder.DESC ? MultiValueMode.MAX : MultiValueMode.MIN;
-        }
-
-        final Nested nested;
-        if (nestedSort != null) {
-            // new nested sorts takes priority
-            validateMaxChildrenExistOnlyInTopLevelNestedSort(context, nestedSort);
-            nested = resolveNested(context, nestedSort);
-        } else {
-            nested = resolveNested(context, nestedPath, nestedFilter);
-        }
-
-        switch (type) {
-            case STRING:
-                final StringSortScript.Factory factory = context.compile(script, StringSortScript.CONTEXT);
-                final StringSortScript.LeafFactory searchScript = factory.newFactory(script.getParams(), context.lookup());
-                return new BytesRefFieldComparatorSource(null, null, valueMode, nested) {
-                    // introducing a map to keep a mapping between the leaf reader context and leaf script
-                    // such that the functions of the class are thread safe in case of concurrent search
-                    final Map<LeafReaderContext, StringSortScript> leafContextSortScriptMap = new ConcurrentHashMap<>();
-
-                    @Override
-                    protected SortedBinaryDocValues getValues(LeafReaderContext context) throws IOException {
-                        final StringSortScript leafScript = leafContextSortScriptMap.computeIfAbsent(context, ctx -> {
-                            try {
-                                return searchScript.newInstance(ctx);
-                            } catch (IOException e) {
-                                throw new UncheckedIOException(e);
-                            }
-                        });
-                        final BinaryDocValues values = new AbstractBinaryDocValues() {
-                            final BytesRefBuilder spare = new BytesRefBuilder();
-
-                            @Override
-                            public boolean advanceExact(int doc) throws IOException {
-                                leafScript.setDocument(doc);
-                                return true;
-                            }
-
-                            @Override
-                            public BytesRef binaryValue() {
-                                spare.copyChars(leafScript.execute());
-                                return spare.get();
-                            }
-                        };
-                        return FieldData.singleton(values);
-                    }
-
-                    @Override
-                    protected void setScorer(Scorable scorer, LeafReaderContext context) {
-                        leafContextSortScriptMap.get(context).setScorer(scorer);
-                    }
-
-                    @Override
-                    public BucketedSort newBucketedSort(
-                        BigArrays bigArrays,
-                        SortOrder sortOrder,
-                        DocValueFormat format,
-                        int bucketSize,
-                        BucketedSort.ExtraData extra
-                    ) {
-                        throw new IllegalArgumentException(
-                            "error building sort for [_script]: "
-                                + "script sorting only supported on [numeric] scripts but was ["
-                                + type
-                                + "]"
-                        );
-                    }
-                };
-            case NUMBER:
-                final NumberSortScript.Factory numberSortFactory = context.compile(script, NumberSortScript.CONTEXT);
-                final NumberSortScript.LeafFactory numberSortScript = numberSortFactory.newFactory(script.getParams(), context.lookup());
-                return new DoubleValuesComparatorSource(null, Double.MAX_VALUE, valueMode, nested) {
-                    // introducing a map to keep a mapping between the leaf reader context and leaf script
-                    // such that the functions of the class are thread safe in case of concurrent search
-                    final Map<LeafReaderContext, NumberSortScript> leafContextSortScriptMap = new ConcurrentHashMap<>();
-
-                    @Override
-                    protected SortedNumericDoubleValues getValues(LeafReaderContext context) throws IOException {
-                        final NumberSortScript leafScript = leafContextSortScriptMap.computeIfAbsent(context, ctx -> {
-                            try {
-                                return numberSortScript.newInstance(ctx);
-                            } catch (IOException e) {
-                                throw new UncheckedIOException(e);
-                            }
-                        });
-                        final NumericDoubleValues values = new NumericDoubleValues() {
-                            @Override
-                            public boolean advanceExact(int doc) throws IOException {
-                                leafScript.setDocument(doc);
-                                return true;
-                            }
-
-                            @Override
-                            public double doubleValue() {
-                                return leafScript.execute();
-                            }
-                        };
-                        return FieldData.singleton(values);
-                    }
-
-                    @Override
-                    protected void setScorer(Scorable scorer, LeafReaderContext context) {
-                        leafContextSortScriptMap.get(context).setScorer(scorer);
-                    }
-                };
-            default:
-                throw new QueryShardException(context, "custom script sort type [" + type + "] not supported");
-        }
     }
 
     @Override

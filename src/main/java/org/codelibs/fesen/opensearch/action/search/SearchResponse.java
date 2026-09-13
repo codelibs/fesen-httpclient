@@ -51,7 +51,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParseException;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.rest.action.RestActions;
+import org.codelibs.fesen.opensearch.action.support.broadcast.BroadcastShardsHeader;
 import org.codelibs.fesen.opensearch.search.GenericSearchExtBuilder;
 import org.codelibs.fesen.opensearch.search.SearchExtBuilder;
 import org.codelibs.fesen.opensearch.search.SearchHit;
@@ -355,7 +355,7 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         if (getNumReducePhases() != 1) {
             builder.field(NUM_REDUCE_PHASES.getPreferredName(), getNumReducePhases());
         }
-        RestActions.buildBroadcastShardsHeader(
+        BroadcastShardsHeader.buildBroadcastShardsHeader(
             builder,
             params,
             getTotalShards(),
@@ -425,24 +425,24 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
                     suggest = Suggest.fromXContent(parser);
                 } else if (SearchProfileShardResults.PROFILE_FIELD.equals(currentFieldName)) {
                     profile = SearchProfileShardResults.fromXContent(parser);
-                } else if (RestActions._SHARDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                } else if (BroadcastShardsHeader._SHARDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                     while ((token = parser.nextToken()) != Token.END_OBJECT) {
                         if (token == Token.FIELD_NAME) {
                             currentFieldName = parser.currentName();
                         } else if (token.isValue()) {
-                            if (RestActions.FAILED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            if (BroadcastShardsHeader.FAILED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 parser.intValue(); // we don't need it but need to consume it
-                            } else if (RestActions.SUCCESSFUL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            } else if (BroadcastShardsHeader.SUCCESSFUL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 successfulShards = parser.intValue();
-                            } else if (RestActions.TOTAL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            } else if (BroadcastShardsHeader.TOTAL_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 totalShards = parser.intValue();
-                            } else if (RestActions.SKIPPED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            } else if (BroadcastShardsHeader.SKIPPED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 skippedShards = parser.intValue();
                             } else {
                                 parser.skipChildren();
                             }
                         } else if (token == Token.START_ARRAY) {
-                            if (RestActions.FAILURES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
+                            if (BroadcastShardsHeader.FAILURES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
                                 while ((token = parser.nextToken()) != Token.END_ARRAY) {
                                     failures.add(ShardSearchFailure.fromXContent(parser));
                                 }

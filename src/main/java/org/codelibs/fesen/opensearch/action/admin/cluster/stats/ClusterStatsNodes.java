@@ -49,7 +49,6 @@ import org.codelibs.fesen.opensearch.core.common.transport.TransportAddress;
 import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.discovery.DiscoveryModule;
 import org.codelibs.fesen.opensearch.monitor.fs.FsInfo;
 import org.codelibs.fesen.opensearch.monitor.jvm.JvmInfo;
 import org.codelibs.fesen.opensearch.monitor.os.OsInfo;
@@ -774,7 +773,7 @@ public class ClusterStatsNodes implements ToXContentFragment {
             final Map<String, AtomicInteger> discoveryTypes = new HashMap<>();
             for (final NodeInfo nodeInfo : nodeInfos) {
                 final Settings settings = nodeInfo.getSettings();
-                final String discoveryType = DiscoveryModule.DISCOVERY_TYPE_SETTING.get(settings);
+                final String discoveryType = settings.get("discovery.type", "zen");
                 discoveryTypes.computeIfAbsent(discoveryType, k -> new AtomicInteger()).incrementAndGet();
             }
             this.discoveryTypes = Collections.unmodifiableMap(discoveryTypes);

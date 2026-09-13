@@ -38,7 +38,6 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.SizeValue;
@@ -54,8 +53,6 @@ import org.codelibs.fesen.opensearch.core.concurrency.OpenSearchRejectedExecutio
 import org.codelibs.fesen.opensearch.core.service.ReportingService;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.gateway.remote.ClusterStateChecksum;
-import org.codelibs.fesen.opensearch.node.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -250,12 +247,15 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         this(settings, null, customBuilders);
     }
 
+    /** The number of cluster-state components the remote-state checksum pool sizes itself for. */
+    private static final int REMOTE_STATE_CHECKSUM_COMPONENT_SIZE = 11;
+
     public ThreadPool(
         final Settings settings,
         final AtomicReference<RunnableTaskExecutionListener> runnableTaskListener,
         final ExecutorBuilder<?>... customBuilders
     ) {
-        assert Node.NODE_NAME_SETTING.exists(settings);
+        assert settings.hasValue("node.name");
 
         final Map<String, ExecutorBuilder> builders = new HashMap<>();
         final int allocatedProcessors = OpenSearchExecutors.allocatedProcessors(settings);
@@ -356,7 +356,7 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         );
         builders.put(
             Names.REMOTE_STATE_CHECKSUM,
-            new FixedExecutorBuilder(settings, Names.REMOTE_STATE_CHECKSUM, ClusterStateChecksum.COMPONENT_SIZE, 1000)
+            new FixedExecutorBuilder(settings, Names.REMOTE_STATE_CHECKSUM, REMOTE_STATE_CHECKSUM_COMPONENT_SIZE, 1000)
         );
 
         for (final ExecutorBuilder<?> builder : customBuilders) {
@@ -450,10 +450,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
             return null;
         }
         return holder.info;
-    }
-
-    public void registerClusterSettingsListeners(ClusterSettings clusterSettings) {
-        clusterSettings.addSettingsUpdateConsumer(CLUSTER_THREAD_POOL_SIZE_SETTING, this::setThreadPool, this::validateSetting);
     }
 
     /*

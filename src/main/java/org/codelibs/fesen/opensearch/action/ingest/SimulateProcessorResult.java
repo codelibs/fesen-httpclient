@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.ingest.ConfigurationUtils;
 import org.codelibs.fesen.opensearch.ingest.IngestDocument;
 
 import java.io.IOException;
@@ -132,8 +131,8 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
     );
     static {
         PARSER.declareString(optionalConstructorArg(), new ParseField(TYPE_FIELD));
-        PARSER.declareString(optionalConstructorArg(), new ParseField(ConfigurationUtils.TAG_KEY));
-        PARSER.declareString(optionalConstructorArg(), new ParseField(ConfigurationUtils.DESCRIPTION_KEY));
+        PARSER.declareString(optionalConstructorArg(), new ParseField("tag"));
+        PARSER.declareString(optionalConstructorArg(), new ParseField("description"));
         PARSER.declareObject(optionalConstructorArg(), IF_CONDITION_PARSER, new ParseField("if"));
         PARSER.declareObject(
             optionalConstructorArg(),
@@ -253,11 +252,11 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         builder.field(STATUS_FIELD, getStatus(type));
 
         if (description != null) {
-            builder.field(ConfigurationUtils.DESCRIPTION_KEY, description);
+            builder.field("description", description);
         }
 
         if (processorTag != null) {
-            builder.field(ConfigurationUtils.TAG_KEY, processorTag);
+            builder.field("tag", processorTag);
         }
 
         if (conditionalWithResult != null) {

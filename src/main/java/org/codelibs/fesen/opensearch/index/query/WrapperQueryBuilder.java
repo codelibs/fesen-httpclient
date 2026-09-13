@@ -158,11 +158,6 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        throw new UnsupportedOperationException("this query must be rewritten first");
-    }
-
-    @Override
     protected int doHashCode() {
         return Arrays.hashCode(source);
     }

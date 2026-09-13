@@ -38,20 +38,16 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 
 /**
  * Aggregation Builder for cardinality agg
@@ -63,9 +59,6 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
     CardinalityAggregationBuilder> {
 
     public static final String NAME = "cardinality";
-    public static final ValuesSourceRegistry.RegistryKey<CardinalityAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, CardinalityAggregatorSupplier.class);
-
     private static final ParseField REHASH = new ParseField("rehash").withAllDeprecated("no replacement - values will always be rehashed");
     public static final ParseField PRECISION_THRESHOLD_FIELD = new ParseField("precision_threshold");
     public static final ParseField EXECUTION_HINT_FIELD = new ParseField("execution_hint");
@@ -79,10 +72,6 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
         PARSER.declareLong(CardinalityAggregationBuilder::precisionThreshold, CardinalityAggregationBuilder.PRECISION_THRESHOLD_FIELD);
         PARSER.declareString(CardinalityAggregationBuilder::executionHint, CardinalityAggregationBuilder.EXECUTION_HINT_FIELD);
         PARSER.declareLong((b, v) -> {/*ignore*/}, REHASH);
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        CardinalityAggregatorFactory.registerAggregators(builder);
     }
 
     private Long precisionThreshold = null;
@@ -163,25 +152,6 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
     }
 
     @Override
-    protected CardinalityAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        return new CardinalityAggregatorFactory(
-            name,
-            config,
-            precisionThreshold,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata,
-            executionHint
-        );
-    }
-
-    @Override
     public XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         if (precisionThreshold != null) {
             builder.field(PRECISION_THRESHOLD_FIELD.getPreferredName(), precisionThreshold);
@@ -211,8 +181,4 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

@@ -11,18 +11,10 @@ package org.codelibs.fesen.opensearch.action.admin.indices.view;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.ActionType;
 import org.codelibs.fesen.opensearch.action.ValidateActions;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.ClusterManagerNodeRequest;
-import org.codelibs.fesen.opensearch.action.support.clustermanager.TransportClusterManagerNodeAction;
-import org.codelibs.fesen.opensearch.cluster.ClusterState;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.codelibs.fesen.opensearch.cluster.metadata.View;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
 import org.codelibs.fesen.opensearch.core.ParseField;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -32,8 +24,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent.Params;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -169,44 +159,4 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
         }
     }
 
-    /**
-     * Transport Action for getting a View
-     */
-    public static class TransportAction extends TransportClusterManagerNodeAction<Request, Response> {
-
-        private final ViewService viewService;
-
-        public TransportAction(
-            final TransportService transportService,
-            final ClusterService clusterService,
-            final ThreadPool threadPool,
-            final ActionFilters actionFilters,
-            final IndexNameExpressionResolver indexNameExpressionResolver,
-            final ViewService viewService
-        ) {
-            super(NAME, transportService, clusterService, threadPool, actionFilters, Request::new, indexNameExpressionResolver);
-            this.viewService = viewService;
-        }
-
-        @Override
-        protected String executor() {
-            return ThreadPool.Names.MANAGEMENT;
-        }
-
-        @Override
-        protected Response read(final StreamInput in) throws IOException {
-            return new Response(in);
-        }
-
-        @Override
-        protected void clusterManagerOperation(final Request request, final ClusterState state, final ActionListener<Response> listener)
-            throws Exception {
-            viewService.getView(request, listener);
-        }
-
-        @Override
-        protected ClusterBlockException checkBlock(final Request request, final ClusterState state) {
-            return state.blocks().globalBlockedException(ClusterBlockLevel.METADATA_READ);
-        }
-    }
 }

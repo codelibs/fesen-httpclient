@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.common.util.concurrent;
 
-import org.codelibs.fesen.opensearch.cluster.service.ClusterApplierService;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterManagerService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
 import org.codelibs.fesen.opensearch.transport.Transports;
@@ -107,9 +105,7 @@ public abstract class BaseFuture<V> implements Future<V> {
     // protected so that it can be overridden in specific instances
     protected boolean blockingAllowed() {
         return Transports.assertNotTransportThread(BLOCKING_OP_REASON)
-            && ThreadPool.assertNotScheduleThread(BLOCKING_OP_REASON)
-            && ClusterApplierService.assertNotClusterStateUpdateThread(BLOCKING_OP_REASON)
-            && ClusterManagerService.assertNotClusterManagerUpdateThread(BLOCKING_OP_REASON);
+            && ThreadPool.assertNotScheduleThread(BLOCKING_OP_REASON);
     }
 
     @Override

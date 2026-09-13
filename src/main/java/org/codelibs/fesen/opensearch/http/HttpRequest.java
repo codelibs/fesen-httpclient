@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
 import org.codelibs.fesen.opensearch.core.rest.RestStatus;
-import org.codelibs.fesen.opensearch.rest.RestRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,14 +62,6 @@ public interface HttpRequest {
         HTTP_2_0,
         HTTP_3_0
     }
-
-    /**
-     * Returns the HTTP method used in the HTTP request.
-     *
-     * @return the {@link RestRequest.Method} used in the REST request
-     * @throws IllegalArgumentException if the HTTP method is invalid
-     */
-    RestRequest.Method method();
 
     /**
      * The uri of the rest request, with the query string.

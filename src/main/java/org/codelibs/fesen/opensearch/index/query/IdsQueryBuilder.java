@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -43,11 +42,8 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -150,28 +146,6 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected QueryBuilder doRewrite(QueryRewriteContext queryRewriteContext) throws IOException {
-        if (ids.isEmpty()) {
-            return new MatchNoneQueryBuilder();
-        }
-        QueryShardContext context = queryRewriteContext.convertToShardContext();
-        if (context != null && context.fieldMapper(IdFieldMapper.NAME) == null) {
-            // no mappings yet
-            return new MatchNoneQueryBuilder();
-        }
-        return super.doRewrite(queryRewriteContext);
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType idField = context.getFieldType(IdFieldMapper.NAME);
-        if (idField == null || ids.isEmpty()) {
-            throw new IllegalStateException("Rewrite first");
-        }
-        return idField.termsQuery(new ArrayList<>(ids), context);
     }
 
     @Override

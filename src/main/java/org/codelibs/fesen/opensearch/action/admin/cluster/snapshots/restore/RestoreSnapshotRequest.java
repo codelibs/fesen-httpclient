@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.ClusterManagerNodeRequest;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateIndexService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
@@ -71,6 +70,9 @@ import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapV
  */
 @PublicApi(since = "1.0.0")
 public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSnapshotRequest> implements ToXContentObject {
+
+    /** The longest an index name may be, in bytes. */
+    private static final int MAX_INDEX_NAME_BYTES = 255;
 
     private static final DeprecationLogger DEPRECATION_LOGGER = DeprecationLogger.getLogger(RestoreSnapshotRequest.class);
 
@@ -269,12 +271,12 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
             validationException = addValidationError("ignoreIndexSettings are missing", validationException);
         }
         if (Strings.isNullOrEmpty(renameReplacement) == false
-            && renameReplacement.getBytes(StandardCharsets.UTF_8).length > MetadataCreateIndexService.MAX_INDEX_NAME_BYTES) {
+            && renameReplacement.getBytes(StandardCharsets.UTF_8).length > MAX_INDEX_NAME_BYTES) {
             validationException = addValidationError(
                 String.format(
                     Locale.ROOT,
                     "rename_replacement string size exceeds max allowed size of %s bytes",
-                    MetadataCreateIndexService.MAX_INDEX_NAME_BYTES
+                    MAX_INDEX_NAME_BYTES
                 ),
                 validationException
             );

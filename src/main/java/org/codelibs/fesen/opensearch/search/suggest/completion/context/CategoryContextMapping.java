@@ -41,9 +41,6 @@ import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.mapper.KeywordFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.ParseContext;
-import org.codelibs.fesen.opensearch.index.mapper.ParseContext.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -113,61 +110,6 @@ public class CategoryContextMapping extends ContextMapping<CategoryQueryContext>
             builder.field(FIELD_FIELDNAME, fieldName);
         }
         return builder;
-    }
-
-    /**
-     * Parse a set of {@link CharSequence} contexts at index-time.
-     * Acceptable formats:
-     *
-     *  <ul>
-     *     <li>Array: <pre>[<i>&lt;string&gt;</i>, ..]</pre></li>
-     *     <li>String: <pre>&quot;string&quot;</pre></li>
-     *  </ul>
-     */
-    @Override
-    public Set<String> parseContext(ParseContext parseContext, XContentParser parser) throws IOException, OpenSearchParseException {
-        final Set<String> contexts = new HashSet<>();
-        Token token = parser.currentToken();
-        if (token == Token.VALUE_STRING || token == Token.VALUE_NUMBER || token == Token.VALUE_BOOLEAN) {
-            contexts.add(parser.text());
-        } else if (token == Token.START_ARRAY) {
-            while ((token = parser.nextToken()) != Token.END_ARRAY) {
-                if (token == Token.VALUE_STRING || token == Token.VALUE_NUMBER || token == Token.VALUE_BOOLEAN) {
-                    contexts.add(parser.text());
-                } else {
-                    throw new OpenSearchParseException("context array must have string, number or boolean values, but was [" + token + "]");
-                }
-            }
-        } else {
-            throw new OpenSearchParseException(
-                "contexts must be a string, number or boolean or a list of string, number or boolean, but was [" + token + "]"
-            );
-        }
-        return contexts;
-    }
-
-    @Override
-    public Set<String> parseContext(Document document) {
-        Set<String> values = null;
-        if (fieldName != null) {
-            IndexableField[] fields = document.getFields(fieldName);
-            values = new HashSet<>(fields.length);
-            // TODO we should be checking mapped field types, not lucene field types
-            for (IndexableField field : fields) {
-                if (field instanceof SortedDocValuesField || field instanceof SortedSetDocValuesField || field instanceof StoredField) {
-                    // Ignore doc values and stored fields
-                } else if (field instanceof KeywordFieldMapper.KeywordField) {
-                    values.add(field.binaryValue().utf8ToString());
-                } else if (field.stringValue() != null) {
-                    values.add(field.stringValue());
-                } else {
-                    throw new IllegalArgumentException(
-                        "Failed to parse context field [" + fieldName + "], only keyword and text fields are accepted"
-                    );
-                }
-            }
-        }
-        return (values == null) ? Collections.emptySet() : values;
     }
 
     @Override

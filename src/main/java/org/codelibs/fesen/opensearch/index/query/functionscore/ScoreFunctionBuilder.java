@@ -32,14 +32,11 @@
 
 package org.codelibs.fesen.opensearch.index.query.functionscore;
 
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScoreFunction;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.WeightFactorFunction;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -175,20 +172,4 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
      */
     protected abstract int doHashCode();
 
-    /**
-     * Called on a data node, converts this ScoreFunctionBuilder into its corresponding Lucene function object.
-     */
-    public final ScoreFunction toFunction(QueryShardContext context) throws IOException {
-        ScoreFunction scoreFunction = doToFunction(context);
-        if (weight == null) {
-            return scoreFunction;
-        }
-        return new WeightFactorFunction(weight, scoreFunction, getFunctionName());
-    }
-
-    /**
-     * Build the Lucene ScoreFunction for this builder. Implementers should ignore things defined in ScoreFunctionBuilder like weight as
-     * they will be handled by the function that calls this one.
-     */
-    protected abstract ScoreFunction doToFunction(QueryShardContext context) throws IOException;
 }

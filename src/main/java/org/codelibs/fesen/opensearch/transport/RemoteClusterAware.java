@@ -29,135 +29,36 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
-
 package org.codelibs.fesen.opensearch.transport;
 
-import org.codelibs.fesen.opensearch.cluster.metadata.ClusterNameExpressionResolver;
-import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
-import org.codelibs.fesen.opensearch.common.settings.Setting;
-import org.codelibs.fesen.opensearch.common.settings.Settings;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 
 /**
- * Base class for all services and components that need up-to-date information about the registered remote clusters
+ * The client-side remnant of the remote-cluster awareness base class: the naming convention that
+ * qualifies an index with the cluster alias it came from. Connecting to remote clusters is a
+ * node-side concern and is not carried over.
  *
- * @opensearch.internal
+ * @opensearch.api
  */
-public abstract class RemoteClusterAware {
+@PublicApi(since = "1.0.0")
+public final class RemoteClusterAware {
 
+    /** The character that separates a cluster alias from an index name. */
     public static final char REMOTE_CLUSTER_INDEX_SEPARATOR = ':';
+
+    /** The cluster-alias key the local cluster's indices are grouped under. */
     public static final String LOCAL_CLUSTER_GROUP_KEY = "";
 
-    protected final Settings settings;
-    private final ClusterNameExpressionResolver clusterNameResolver;
+    private RemoteClusterAware() {
+    }
 
     /**
-     * Creates a new {@link RemoteClusterAware} instance
+     * Qualifies an index name with the alias of the cluster it came from.
      *
-     * @param settings the nodes level settings
+     * @param clusterAlias the cluster alias, or {@code null} for the local cluster
+     * @param indexName the index name
+     * @return the qualified index name
      */
-    protected RemoteClusterAware(Settings settings) {
-        this.settings = settings;
-        this.clusterNameResolver = new ClusterNameExpressionResolver();
-    }
-
-    /**
-     * Returns remote clusters that are enabled in these settings
-     */
-    protected static Set<String> getEnabledRemoteClusters(final Settings settings) {
-        return RemoteConnectionStrategy.getRemoteClusters(settings);
-    }
-
-    /**
-     * Groups indices per cluster by splitting remote cluster-alias, index-name pairs on {@link #REMOTE_CLUSTER_INDEX_SEPARATOR}. All
-     * indices per cluster are collected as a list in the returned map keyed by the cluster alias. Local indices are grouped under
-     * {@link #LOCAL_CLUSTER_GROUP_KEY}. The returned map is mutable.
-     *
-     * @param remoteClusterNames the remote cluster names
-     * @param requestIndices     the indices in the search request to filter
-     * @param indexExists        a predicate that can test if a certain index or alias exists in the local cluster
-     * @return a map of grouped remote and local indices
-     */
-    protected Map<String, List<String>> groupClusterIndices(
-        Set<String> remoteClusterNames,
-        String[] requestIndices,
-        Predicate<String> indexExists
-    ) {
-        Map<String, List<String>> perClusterIndices = new HashMap<>();
-        for (String index : requestIndices) {
-            int i = index.indexOf(RemoteClusterService.REMOTE_CLUSTER_INDEX_SEPARATOR);
-            if (i >= 0) {
-                String remoteClusterName = index.substring(0, i);
-                List<String> clusters = clusterNameResolver.resolveClusterNames(remoteClusterNames, remoteClusterName);
-                if (clusters.isEmpty() == false) {
-                    if (indexExists.test(index)) {
-                        // We use ":" as a separator for remote clusters. There may be a conflict if there is an index that is named
-                        // remote_cluster_alias:index_name - for this case we fail the request. The user can easily change the cluster alias
-                        // if that happens. Note that indices and aliases can be created with ":" in their names names up to 6.last, which
-                        // means such names need to be supported until 7.last. It will be possible to remove this check from 8.0 on.
-                        throw new IllegalArgumentException(
-                            "Can not filter indices; index "
-                                + index
-                                + " exists but there is also a remote cluster named: "
-                                + remoteClusterName
-                        );
-                    }
-                    String indexName = index.substring(i + 1);
-                    for (String clusterName : clusters) {
-                        perClusterIndices.computeIfAbsent(clusterName, k -> new ArrayList<>()).add(indexName);
-                    }
-                } else {
-                    // Indices and aliases can be created with ":" in their names up to 6.last (although deprecated), and still be
-                    // around in 7.x. That's why we need to be lenient here and treat the index as local although it contains ":".
-                    // It will be possible to remove such leniency and assume that no local indices contain ":" only from 8.0 on.
-                    perClusterIndices.computeIfAbsent(RemoteClusterAware.LOCAL_CLUSTER_GROUP_KEY, k -> new ArrayList<>()).add(index);
-                }
-            } else {
-                perClusterIndices.computeIfAbsent(RemoteClusterAware.LOCAL_CLUSTER_GROUP_KEY, k -> new ArrayList<>()).add(index);
-            }
-        }
-        return perClusterIndices;
-    }
-
-    void validateAndUpdateRemoteCluster(String clusterAlias, Settings settings) {
-        if (RemoteClusterAware.LOCAL_CLUSTER_GROUP_KEY.equals(clusterAlias)) {
-            throw new IllegalArgumentException("remote clusters must not have the empty string as its key");
-        }
-        updateRemoteCluster(clusterAlias, settings);
-    }
-
-    /**
-     * Subclasses must implement this to receive information about updated cluster aliases.
-     */
-    protected abstract void updateRemoteCluster(String clusterAlias, Settings settings);
-
-    /**
-     * Registers this instance to listen to updates on the cluster settings.
-     */
-    public void listenForUpdates(ClusterSettings clusterSettings) {
-        List<Setting.AffixSetting<?>> remoteClusterSettings = Arrays.asList(
-            RemoteClusterService.REMOTE_CLUSTER_COMPRESS,
-            RemoteClusterService.REMOTE_CLUSTER_PING_SCHEDULE,
-            RemoteConnectionStrategy.REMOTE_CONNECTION_MODE,
-            RemoteClusterService.REMOTE_CLUSTER_SKIP_UNAVAILABLE,
-            SniffConnectionStrategy.REMOTE_CLUSTERS_PROXY,
-            SniffConnectionStrategy.REMOTE_CLUSTER_SEEDS,
-            SniffConnectionStrategy.REMOTE_NODE_CONNECTIONS,
-            SniffConnectionStrategy.REMOTE_CLUSTER_EXPECTED_NAME,
-            ProxyConnectionStrategy.PROXY_ADDRESS,
-            ProxyConnectionStrategy.REMOTE_SOCKET_CONNECTIONS,
-            ProxyConnectionStrategy.SERVER_NAME
-        );
-        clusterSettings.addAffixGroupUpdateConsumer(remoteClusterSettings, this::validateAndUpdateRemoteCluster);
-    }
-
     public static String buildRemoteIndexName(String clusterAlias, String indexName) {
         return clusterAlias == null || LOCAL_CLUSTER_GROUP_KEY.equals(clusterAlias)
             ? indexName

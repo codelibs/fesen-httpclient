@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.rest.action.search.RestSearchAction;
 import org.codelibs.fesen.opensearch.script.ScriptService;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.LocalBucketCountThresholds;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.TermsAggregator;
@@ -361,7 +360,7 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     @Override
     public final XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        if (params.paramAsBoolean(RestSearchAction.TYPED_KEYS_PARAM, false)) {
+        if (params.paramAsBoolean("typed_keys", false)) {
             // Concatenates the type and the name of the aggregation (ex: top_hits#foo)
             builder.startObject(String.join(TYPED_KEYS_DELIMITER, getType(), getName()));
         } else {

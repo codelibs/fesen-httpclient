@@ -45,11 +45,6 @@ import java.util.Map;
 public interface BlobStore extends Closeable {
 
     /**
-     * Get a blob container instance for storing blobs at the given {@link BlobPath}.
-     */
-    BlobContainer blobContainer(BlobPath path);
-
-    /**
      * Returns statistics on the count of operations that have been performed on this blob store
      */
     /**

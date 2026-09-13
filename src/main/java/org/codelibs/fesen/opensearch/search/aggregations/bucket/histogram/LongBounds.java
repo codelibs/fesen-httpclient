@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
@@ -161,39 +160,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
         out.writeOptionalLong(max);
         out.writeOptionalString(minAsStr);
         out.writeOptionalString(maxAsStr);
-    }
-
-    /**
-     * Parse the bounds and perform any delayed validation. Returns the result of the parsing.
-     */
-    LongBounds parseAndValidate(String aggName, String boundsName, QueryShardContext queryShardContext, DocValueFormat format) {
-        Long min = this.min;
-        Long max = this.max;
-        assert format != null;
-        if (minAsStr != null) {
-            min = format.parseLong(minAsStr, false, queryShardContext::nowInMillis);
-        }
-        if (maxAsStr != null) {
-            // TODO: Should we rather pass roundUp=true?
-            max = format.parseLong(maxAsStr, false, queryShardContext::nowInMillis);
-        }
-        if (min != null && max != null && min.compareTo(max) > 0) {
-            throw new IllegalArgumentException(
-                "["
-                    + boundsName
-                    + ".min]["
-                    + min
-                    + "] cannot be greater than "
-                    + "["
-                    + boundsName
-                    + ".max]["
-                    + max
-                    + "] for histogram aggregation ["
-                    + aggName
-                    + "]"
-            );
-        }
-        return new LongBounds(min, max, minAsStr, maxAsStr);
     }
 
     LongBounds round(Rounding rounding) {

@@ -77,13 +77,6 @@ public class TemplateQueryBuilder extends AbstractQueryBuilder<TemplateQueryBuil
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        throw new IllegalStateException(
-            "Template queries cannot be converted directly to a query. Template Query must be rewritten first during doRewrite."
-        );
-    }
-
-    @Override
     protected boolean doEquals(TemplateQueryBuilder other) {
         return Objects.equals(this.content, other.content);
     }
@@ -105,59 +98,6 @@ public class TemplateQueryBuilder extends AbstractQueryBuilder<TemplateQueryBuil
      */
     public Map<String, Object> getContent() {
         return content;
-    }
-
-    /**
-     * Rewrites the template query by substituting variables from the context.
-     *
-     * @param queryCoordinatorContext The context for query rewriting.
-     * @return A rewritten QueryBuilder.
-     * @throws IOException If there's an error during rewriting.
-     */
-    @Override
-    protected QueryBuilder doRewrite(QueryRewriteContext queryCoordinatorContext) throws IOException {
-        // the queryRewrite is expected at QueryCoordinator level
-        if (!(queryCoordinatorContext instanceof QueryCoordinatorContext)) {
-            throw new IllegalStateException(
-                "Template Query must be rewritten at the coordinator node. Rewriting at shard level is not supported."
-            );
-        }
-
-        QueryCoordinatorContext convertedQueryCoordinateContext = (QueryCoordinatorContext) queryCoordinatorContext;
-        Map<String, Object> contextVariables = convertedQueryCoordinateContext.getContextVariables();
-        String queryString;
-
-        try (XContentBuilder builder = XContentFactory.jsonBuilder()) {
-            builder.map(this.content);
-            queryString = builder.toString();
-        }
-
-        // Convert Map<String, Object> to Map<String, String> with proper JSON escaping
-        Map<String, String> variablesMap = null;
-        if (contextVariables != null) {
-            variablesMap = contextVariables.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                try {
-                    return JsonXContent.contentBuilder().value(entry.getValue()).toString();
-                } catch (IOException e) {
-                    throw new RuntimeException("Error converting contextVariables to JSON string", e);
-                }
-            }));
-        }
-        String newQueryContent = replaceVariables(queryString, variablesMap);
-
-        try {
-            XContentParser parser = XContentType.JSON.xContent()
-                .createParser(queryCoordinatorContext.getXContentRegistry(), LoggingDeprecationHandler.INSTANCE, newQueryContent);
-
-            ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-
-            QueryBuilder newQueryBuilder = parseInnerQueryBuilder(parser);
-
-            return newQueryBuilder;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to rewrite template query: " + newQueryContent, e);
-        }
     }
 
     private String replaceVariables(String template, Map<String, String> variables) {

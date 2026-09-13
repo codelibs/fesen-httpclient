@@ -13,7 +13,6 @@ import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
-import org.codelibs.fesen.opensearch.index.shard.IndexShard;
 
 import java.io.IOException;
 
@@ -24,14 +23,6 @@ import java.io.IOException;
  */
 @PublicApi(since = "2.2.0")
 public class ReplicationFailedException extends OpenSearchException {
-
-    public ReplicationFailedException(IndexShard shard, Throwable cause) {
-        this(shard, null, cause);
-    }
-
-    public ReplicationFailedException(IndexShard shard, @Nullable String extraInfo, Throwable cause) {
-        this(shard.shardId(), extraInfo, cause);
-    }
 
     public ReplicationFailedException(ShardId shardId, @Nullable String extraInfo, Throwable cause) {
         super(shardId + ": Replication failed on " + (extraInfo == null ? "" : " (" + extraInfo + ")"), cause);

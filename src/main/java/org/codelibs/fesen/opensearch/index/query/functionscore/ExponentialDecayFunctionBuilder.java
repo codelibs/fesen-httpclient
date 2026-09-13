@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.apache.lucene.search.Explanation;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.Functions;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 
@@ -112,7 +111,7 @@ public class ExponentialDecayFunctionBuilder extends DecayFunctionBuilder<Expone
         public Explanation explainFunction(String valueExpl, double value, double scale, @Nullable String functionName) {
             return Explanation.match(
                 (float) evaluate(value, scale),
-                "exp(- " + valueExpl + " * " + -1 * scale + Functions.nameOrEmptyArg(functionName) + ")"
+                "exp(- " + valueExpl + " * " + -1 * scale + (functionName == null ? "" : ", _name: " + functionName) + ")"
             );
         }
 

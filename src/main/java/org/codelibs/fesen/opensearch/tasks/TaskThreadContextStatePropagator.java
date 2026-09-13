@@ -14,10 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.codelibs.fesen.opensearch.tasks.TaskResourceTrackingService.TASK_ID;
 
 /**
- * Propagates TASK_ID across thread contexts
+ * Propagates "TASK_ID" across thread contexts
  */
 public class TaskThreadContextStatePropagator implements ThreadContextStatePropagator {
 
@@ -26,8 +25,8 @@ public class TaskThreadContextStatePropagator implements ThreadContextStatePropa
     public Map<String, Object> transients(Map<String, Object> source) {
         final Map<String, Object> transients = new HashMap<>();
 
-        if (source.containsKey(TASK_ID)) {
-            transients.put(TASK_ID, source.get(TASK_ID));
+        if (source.containsKey("TASK_ID")) {
+            transients.put("TASK_ID", source.get("TASK_ID"));
         }
 
         return transients;

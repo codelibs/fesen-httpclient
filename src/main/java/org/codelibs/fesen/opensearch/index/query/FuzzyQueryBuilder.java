@@ -33,10 +33,8 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.unit.Fuzziness;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -44,8 +42,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -336,33 +332,6 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected QueryBuilder doRewrite(QueryRewriteContext queryRewriteContext) throws IOException {
-        QueryShardContext context = queryRewriteContext.convertToShardContext();
-        if (context != null) {
-            MappedFieldType fieldType = context.fieldMapper(fieldName);
-            if (fieldType == null) {
-                return new MatchNoneQueryBuilder();
-            }
-        }
-        return super.doRewrite(context);
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType == null) {
-            throw new IllegalStateException("Rewrite first");
-        }
-        String rewrite = this.rewrite;
-        MultiTermQuery.RewriteMethod rewriteMethod = QueryParsers.parseRewriteMethod(
-            rewrite,
-            FuzzyQuery.defaultRewriteMethod(maxExpansions),
-            LoggingDeprecationHandler.INSTANCE
-        );
-        return fieldType.fuzzyQuery(value, fuzziness, prefixLength, maxExpansions, transpositions, rewriteMethod, context);
     }
 
     @Override

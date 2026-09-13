@@ -39,21 +39,16 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram.Histogram;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.missing.MissingOrder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.opensearch.search.sort.SortOrder;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.LongConsumer;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * A {@link CompositeValuesSourceBuilder} that builds a {@link HistogramValuesSource} from another numeric values source
@@ -62,31 +57,7 @@ import java.util.function.LongConsumer;
  * @opensearch.internal
  */
 public class HistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<HistogramValuesSourceBuilder> {
-    /**
-     * Composite histogram supplier
-     *
-     * @opensearch.internal
-     */
-    @FunctionalInterface
-    public interface HistogramCompositeSupplier {
-        CompositeValuesSourceConfig apply(
-            ValuesSourceConfig config,
-            double interval,
-            String name,
-            boolean hasScript, // probably redundant with the config, but currently we check this two different ways...
-            String format,
-            boolean missingBucket,
-            MissingOrder missingOrder,
-            SortOrder order
-        );
-    }
-
     static final String TYPE = "histogram";
-    static final ValuesSourceRegistry.RegistryKey<HistogramCompositeSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        TYPE,
-        HistogramCompositeSupplier.class
-    );
-
     private static final ObjectParser<HistogramValuesSourceBuilder, Void> PARSER;
     static {
         PARSER = new ObjectParser<>(HistogramValuesSourceBuilder.TYPE);
@@ -96,47 +67,6 @@ public class HistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<H
 
     static HistogramValuesSourceBuilder parse(String name, XContentParser parser) throws IOException {
         return PARSER.parse(parser, new HistogramValuesSourceBuilder(name), null);
-    }
-
-    public static void register(ValuesSourceRegistry.Builder builder) {
-        builder.register(
-            REGISTRY_KEY,
-            List.of(CoreValuesSourceType.DATE, CoreValuesSourceType.NUMERIC),
-            (valuesSourceConfig, interval, name, hasScript, format, missingBucket, missingOrder, order) -> {
-                ValuesSource.Numeric numeric = (ValuesSource.Numeric) valuesSourceConfig.getValuesSource();
-                final HistogramValuesSource vs = new HistogramValuesSource(numeric, interval);
-                final MappedFieldType fieldType = valuesSourceConfig.fieldType();
-                return new CompositeValuesSourceConfig(
-                    name,
-                    fieldType,
-                    vs,
-                    valuesSourceConfig.format(),
-                    order,
-                    missingBucket,
-                    missingOrder,
-                    hasScript,
-                    (
-                        BigArrays bigArrays,
-                        IndexReader reader,
-                        int size,
-                        LongConsumer addRequestCircuitBreakerBytes,
-                        CompositeValuesSourceConfig compositeValuesSourceConfig) -> {
-                        final ValuesSource.Numeric numericValuesSource = (ValuesSource.Numeric) compositeValuesSourceConfig.valuesSource();
-                        return new DoubleValuesSource(
-                            bigArrays,
-                            compositeValuesSourceConfig.fieldType(),
-                            numericValuesSource::doubleValues,
-                            compositeValuesSourceConfig.format(),
-                            compositeValuesSourceConfig.missingBucket(),
-                            compositeValuesSourceConfig.missingOrder(),
-                            size,
-                            compositeValuesSourceConfig.reverseMul()
-                        );
-                    }
-                );
-            },
-            false
-        );
     }
 
     private double interval = 0;
@@ -202,10 +132,4 @@ public class HistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<H
         return CoreValuesSourceType.NUMERIC;
     }
 
-    @Override
-    protected CompositeValuesSourceConfig innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config) throws IOException {
-        return queryShardContext.getValuesSourceRegistry()
-            .getAggregator(REGISTRY_KEY, config)
-            .apply(config, interval, name, script() != null, format(), missingBucket(), missingOrder(), order());
-    }
 }

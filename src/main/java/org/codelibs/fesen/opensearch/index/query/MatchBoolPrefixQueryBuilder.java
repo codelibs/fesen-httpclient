@@ -33,18 +33,13 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.common.unit.Fuzziness;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
-import org.codelibs.fesen.opensearch.index.search.MatchQuery;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -367,27 +362,6 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
             .fuzzyTranspositions(fuzzyTranspositions)
             .fuzzyRewrite(fuzzyRewrite);
         return queryBuilder;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        if (analyzer != null && context.getIndexAnalyzers().get(analyzer) == null) {
-            throw new QueryShardException(context, "[" + NAME + "] analyzer [" + analyzer + "] not found");
-        }
-
-        final MatchQuery matchQuery = new MatchQuery(context);
-        if (analyzer != null) {
-            matchQuery.setAnalyzer(analyzer);
-        }
-        matchQuery.setOccur(operator.toBooleanClauseOccur());
-        matchQuery.setFuzziness(fuzziness);
-        matchQuery.setFuzzyPrefixLength(prefixLength);
-        matchQuery.setMaxExpansions(maxExpansions);
-        matchQuery.setTranspositions(fuzzyTranspositions);
-        matchQuery.setFuzzyRewriteMethod(QueryParsers.parseRewriteMethod(fuzzyRewrite, null, LoggingDeprecationHandler.INSTANCE));
-
-        final Query query = matchQuery.parse(MatchQuery.Type.BOOLEAN_PREFIX, fieldName, value);
-        return Queries.maybeApplyMinimumShouldMatch(query, minimumShouldMatch);
     }
 
     @Override

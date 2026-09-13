@@ -45,11 +45,8 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.suggest.DirectSpellcheckerSettings;
 import org.codelibs.fesen.opensearch.search.suggest.SortBy;
 import org.codelibs.fesen.opensearch.search.suggest.SuggestionBuilder;
-import org.codelibs.fesen.opensearch.search.suggest.SuggestionSearchContext.SuggestionContext;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -455,26 +452,6 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
             throw new OpenSearchParseException("the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new TermSuggestionBuilder(fieldname, tmpSuggestion);
-    }
-
-    @Override
-    public SuggestionContext build(QueryShardContext context) throws IOException {
-        TermSuggestionContext suggestionContext = new TermSuggestionContext(context);
-        // copy over common settings to each suggestion builder
-        populateCommonFields(context.getMapperService(), suggestionContext);
-        // Transfers the builder settings to the target TermSuggestionContext
-        DirectSpellcheckerSettings settings = suggestionContext.getDirectSpellCheckerSettings();
-        settings.accuracy(accuracy);
-        settings.maxEdits(maxEdits);
-        settings.maxInspections(maxInspections);
-        settings.maxTermFreq(maxTermFreq);
-        settings.minDocFreq(minDocFreq);
-        settings.minWordLength(minWordLength);
-        settings.prefixLength(prefixLength);
-        settings.sort(sort);
-        settings.stringDistance(stringDistance.toLucene());
-        settings.suggestMode(suggestMode.toLucene());
-        return suggestionContext;
     }
 
     @Override

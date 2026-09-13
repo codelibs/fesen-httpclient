@@ -41,9 +41,6 @@ import org.codelibs.fesen.opensearch.OpenSearchParseException;
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.mapper.CompletionFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.DocumentMapperParser;
-import org.codelibs.fesen.opensearch.index.mapper.ParseContext;
 import org.codelibs.fesen.opensearch.search.suggest.completion.context.ContextMapping.Type;
 
 import java.io.IOException;
@@ -107,70 +104,9 @@ public class ContextMappings implements ToXContent, Iterable<ContextMapping<?>> 
         return contextMapping;
     }
 
-    /**
-     * Adds a context-enabled field for all the defined mappings to <code>document</code>
-     * see {@link org.codelibs.fesen.opensearch.search.suggest.completion.context.ContextMappings.TypedContextField}
-     */
-    public void addField(ParseContext.Document document, String name, String input, int weight, Map<String, Set<String>> contexts) {
-        document.add(new TypedContextField(name, input, weight, contexts, document));
-    }
-
     @Override
     public Iterator<ContextMapping<?>> iterator() {
         return contextMappings.iterator();
-    }
-
-    /**
-     * Field prepends context values with a suggestion
-     * Context values are associated with a type, denoted by
-     * a type id, which is prepended to the context value.
-     * <p>
-     * Every defined context mapping yields a unique type id (index of the
-     * corresponding context mapping in the context mappings list)
-     * for all its context values
-     * <p>
-     * The type, context and suggestion values are encoded as follows:
-     * <p>
-     *     TYPE_ID | CONTEXT_VALUE | CONTEXT_SEP | SUGGESTION_VALUE
-     * </p>
-     *
-     * Field can also use values of other indexed fields as contexts
-     * at index time
-     */
-    private class TypedContextField extends ContextSuggestField {
-        private final Map<String, Set<String>> contexts;
-        private final ParseContext.Document document;
-
-        TypedContextField(String name, String value, int weight, Map<String, Set<String>> contexts, ParseContext.Document document) {
-            super(name, value, weight);
-            this.contexts = contexts;
-            this.document = document;
-        }
-
-        @Override
-        protected Iterable<CharSequence> contexts() {
-            Set<CharsRef> typedContexts = new HashSet<>();
-            final CharsRefBuilder scratch = new CharsRefBuilder();
-            scratch.grow(1);
-            for (int typeId = 0; typeId < contextMappings.size(); typeId++) {
-                scratch.setCharAt(0, (char) typeId);
-                scratch.setLength(1);
-                ContextMapping<?> mapping = contextMappings.get(typeId);
-                Set<String> contexts = new HashSet<>(mapping.parseContext(document));
-                if (this.contexts.get(mapping.name()) != null) {
-                    contexts.addAll(this.contexts.get(mapping.name()));
-                }
-                for (String context : contexts) {
-                    scratch.append(context);
-                    typedContexts.add(scratch.toCharsRef());
-                    scratch.setLength(1);
-                }
-            }
-            if (typedContexts.isEmpty()) {
-                throw new IllegalArgumentException("Contexts are mandatory in context enabled completion field [" + name + "]");
-            }
-            return new ArrayList<CharSequence>(typedContexts);
-        }
     }
 
     /**
@@ -271,7 +207,6 @@ public class ContextMappings implements ToXContent, Iterable<ContextMapping<?>> 
             default:
                 throw new OpenSearchParseException("unknown context type[" + type + "]");
         }
-        DocumentMapperParser.checkNoRemainingFields(name, contextConfig, indexVersionCreated);
         return contextMapping;
     }
 

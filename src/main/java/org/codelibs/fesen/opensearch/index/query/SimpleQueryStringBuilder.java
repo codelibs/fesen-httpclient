@@ -32,10 +32,8 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -402,42 +400,6 @@ public class SimpleQueryStringBuilder extends AbstractQueryBuilder<SimpleQuerySt
     public SimpleQueryStringBuilder fuzzyTranspositions(boolean fuzzyTranspositions) {
         this.settings.fuzzyTranspositions(fuzzyTranspositions);
         return this;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        Settings newSettings = new Settings(settings);
-        final Map<String, Float> resolvedFieldsAndWeights;
-        boolean isAllField;
-        if (fieldsAndWeights.isEmpty() == false) {
-            resolvedFieldsAndWeights = QueryParserHelper.resolveMappingFields(context, fieldsAndWeights);
-            isAllField = QueryParserHelper.hasAllFieldsWildcard(fieldsAndWeights.keySet());
-        } else {
-            List<String> defaultFields = context.defaultFields();
-            resolvedFieldsAndWeights = QueryParserHelper.resolveMappingFields(
-                context,
-                QueryParserHelper.parseFieldsAndWeights(defaultFields)
-            );
-            isAllField = QueryParserHelper.hasAllFieldsWildcard(defaultFields);
-        }
-
-        if (isAllField) {
-            newSettings.lenient(lenientSet ? settings.lenient() : true);
-        }
-
-        final SimpleQueryStringQueryParser sqp;
-        if (analyzer == null) {
-            sqp = new SimpleQueryStringQueryParser(resolvedFieldsAndWeights, flags, newSettings, context);
-        } else {
-            Analyzer luceneAnalyzer = context.getIndexAnalyzers().get(analyzer);
-            if (luceneAnalyzer == null) {
-                throw new QueryShardException(context, "[" + SimpleQueryStringBuilder.NAME + "] analyzer [" + analyzer + "] not found");
-            }
-            sqp = new SimpleQueryStringQueryParser(luceneAnalyzer, resolvedFieldsAndWeights, flags, newSettings, context);
-        }
-        sqp.setDefaultOperator(defaultOperator.toBooleanClauseOccur());
-        Query query = sqp.parse(queryText);
-        return Queries.maybeApplyMinimumShouldMatch(query, minimumShouldMatch);
     }
 
     @Override

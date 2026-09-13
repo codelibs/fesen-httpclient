@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.stats.CommonStats;
 import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndexShardStats;
 import org.codelibs.fesen.opensearch.action.admin.indices.stats.ShardStats;
 import org.codelibs.fesen.opensearch.action.admin.indices.stats.StatusCounterStats;
-import org.codelibs.fesen.opensearch.action.search.SearchRequestStats;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -83,6 +82,12 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
     protected Map<Index, List<IndexShardStats>> statsByShard;
     protected StatusCounterStats statusCounterStats;
 
+    /**
+     * Reads node-level indices stats off the wire.
+     *
+     * @param in the stream to read from
+     * @throws IOException if reading fails
+     */
     public NodeIndicesStats(StreamInput in) throws IOException {
         stats = new CommonStats(in);
         if (in.getVersion().onOrAfter(Version.V_2_17_0)) {
@@ -103,11 +108,13 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Without passing the information of the levels to the constructor, we return the Node-level aggregated stats as
-     * {@link CommonStats} along with a hash-map containing Index to List of Shard Stats.
+     * Aggregates node-level stats from an existing {@link CommonStats} and a map of index to shard
+     * stats.
+     *
+     * @param oldStats the node-level stats to aggregate into
+     * @param statsByShard the per-index shard stats
      */
-    @Deprecated(since = "3.4.0")
-    public NodeIndicesStats(CommonStats oldStats, Map<Index, List<IndexShardStats>> statsByShard, SearchRequestStats searchRequestStats) {
+    public NodeIndicesStats(CommonStats oldStats, Map<Index, List<IndexShardStats>> statsByShard) {
         this.statsByShard = statsByShard;
 
         // make a total common stats from old ones and current ones
@@ -117,119 +124,6 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
                 for (ShardStats shardStats : indexShardStats.getShards()) {
                     stats.add(shardStats.getStats());
                 }
-            }
-        }
-        if (this.stats.search != null) {
-            this.stats.search.setSearchRequestStats(searchRequestStats);
-        }
-    }
-
-    /**
-     * Without passing the information of the levels to the constructor, we return the Node-level aggregated stats as
-     * {@link CommonStats} along with a hash-map containing Index to List of Shard Stats and the StatusCounterStats.
-     */
-    public NodeIndicesStats(
-        CommonStats oldStats,
-        Map<Index, List<IndexShardStats>> statsByShard,
-        SearchRequestStats searchRequestStats,
-        StatusCounterStats statusCounterStats
-    ) {
-        this.statsByShard = statsByShard;
-
-        // statusCounterStats should be a snapshot of the statusCounters at a point in time, just like all the items in
-        // NodeIndicesStats should be.
-        this.statusCounterStats = statusCounterStats;
-
-        // make a total common stats from old ones and current ones
-        this.stats = oldStats;
-        for (List<IndexShardStats> shardStatsList : statsByShard.values()) {
-            for (IndexShardStats indexShardStats : shardStatsList) {
-                for (ShardStats shardStats : indexShardStats.getShards()) {
-                    stats.add(shardStats.getStats());
-                }
-            }
-        }
-        if (this.stats.search != null) {
-            this.stats.search.setSearchRequestStats(searchRequestStats);
-        }
-    }
-
-    /**
-     * Passing the level information to the nodes allows us to aggregate the stats based on the level passed. This
-     * allows us to aggregate based on NodeLevel (default - if no level is passed) or Index level if `indices` level is
-     * passed and finally return the statsByShards map if `shards` level is passed. This allows us to reduce ser/de of
-     * stats and return only the information that is required while returning to the client.
-     */
-    @Deprecated(since = "3.4.0")
-    public NodeIndicesStats(
-        CommonStats oldStats,
-        Map<Index, List<IndexShardStats>> statsByShard,
-        SearchRequestStats searchRequestStats,
-        StatsLevel level
-    ) {
-        // make a total common stats from old ones and current ones
-        this.stats = oldStats;
-        for (List<IndexShardStats> shardStatsList : statsByShard.values()) {
-            for (IndexShardStats indexShardStats : shardStatsList) {
-                for (ShardStats shardStats : indexShardStats.getShards()) {
-                    stats.add(shardStats.getStats());
-                }
-            }
-        }
-
-        if (this.stats.search != null) {
-            this.stats.search.setSearchRequestStats(searchRequestStats);
-        }
-
-        if (level != null) {
-            switch (level) {
-                case INDICES:
-                    this.statsByIndex = createStatsByIndex(statsByShard);
-                    break;
-                case SHARDS:
-                    this.statsByShard = statsByShard;
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Passing the level information to the nodes allows us to aggregate the stats based on the level passed. This
-     * allows us to aggregate based on NodeLevel (default - if no level is passed) or Index level if `indices` level is
-     * passed and finally return the statsByShards map if `shards` level is passed. This allows us to reduce ser/de of
-     * stats and return only the information that is required while returning to the client.
-     */
-    public NodeIndicesStats(
-        CommonStats oldStats,
-        Map<Index, List<IndexShardStats>> statsByShard,
-        SearchRequestStats searchRequestStats,
-        StatusCounterStats statusCounterStats,
-        StatsLevel level
-    ) {
-        // make a total common stats from old ones and current ones
-        this.stats = oldStats;
-        for (List<IndexShardStats> shardStatsList : statsByShard.values()) {
-            for (IndexShardStats indexShardStats : shardStatsList) {
-                for (ShardStats shardStats : indexShardStats.getShards()) {
-                    stats.add(shardStats.getStats());
-                }
-            }
-        }
-
-        if (this.stats.search != null) {
-            this.stats.search.setSearchRequestStats(searchRequestStats);
-        }
-
-        this.statusCounterStats = statusCounterStats;
-
-        if (level != null) {
-            switch (level) {
-                case INDICES:
-                    this.statsByIndex = createStatsByIndex(statsByShard);
-                    break;
-                case SHARDS:
-                    this.statsByShard = statsByShard;
-                    break;
             }
         }
     }

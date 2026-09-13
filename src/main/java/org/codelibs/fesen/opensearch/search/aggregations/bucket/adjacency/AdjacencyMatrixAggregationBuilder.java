@@ -39,15 +39,12 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregator.KeyedFilter;
 
 import java.io.IOException;
@@ -287,34 +284,6 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
                 .setShowOnlyIntersecting(showOnlyIntersecting);
         }
         return this;
-    }
-
-    @Override
-    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
-        throws IOException {
-        int maxFilters = queryShardContext.getIndexSettings().getMaxAdjacencyMatrixFilters();
-        if (filters.size() > maxFilters) {
-            throw new IllegalArgumentException(
-                "Number of filters is too large, must be less than or equal to: ["
-                    + maxFilters
-                    + "] but was ["
-                    + filters.size()
-                    + "]."
-                    + "This limit can be set by changing the ["
-                    + IndexSettings.MAX_ADJACENCY_MATRIX_FILTERS_SETTING.getKey()
-                    + "] index level setting."
-            );
-        }
-        return new AdjacencyMatrixAggregatorFactory(
-            name,
-            filters,
-            showOnlyIntersecting,
-            separator,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

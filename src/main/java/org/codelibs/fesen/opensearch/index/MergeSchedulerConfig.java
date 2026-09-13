@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.util.concurrent.OpenSearchExecutors;
-import org.codelibs.fesen.opensearch.indices.ClusterMergeSchedulerConfig;
 
 import java.util.Objects;
 
@@ -138,7 +137,7 @@ public final class MergeSchedulerConfig {
         Property.NodeScope
     );
 
-    private final String indexName;
+    private final String indexName = "";
     private volatile boolean autoThrottle;
     private volatile int maxThreadCount;
     private volatile int maxMergeCount;
@@ -146,12 +145,6 @@ public final class MergeSchedulerConfig {
     private static volatile Boolean clusterAutoThrottleEnabledDefault;
     private static volatile Integer clusterMaxThreadCountDefault;
     private static volatile Integer clusterMaxMergeCountDefault;
-
-    MergeSchedulerConfig(IndexSettings indexSettings) {
-        indexName = indexSettings.getIndex().getName();
-        initMergeConfigs(indexSettings);
-        updateMaxForceMergeMBPerSec(indexSettings);
-    }
 
     /**
      * Sets the default maximum thread and merge count for the cluster.
@@ -192,58 +185,6 @@ public final class MergeSchedulerConfig {
         if (overrideExistingConfigs == true) {
             setAutoThrottle(enabled);
         }
-    }
-
-    /**
-     * Initializes merge scheduler configuration for an index.
-     * <p>
-     * This method figures out which settings to use (index-level, cluster-level, or absolute defaults)
-     * and applies them to this merge scheduler instance.
-     * </p>
-     *
-     * <p><b>Decision Logic:</b>
-     * <ul>
-     *   <li>If <b>no index-level settings</b> are explicitly set for thread/merge count,
-     *       AND cluster defaults exist → use cluster defaults</li>
-     *   <li>Otherwise → use the settings as-is (which may include index-level values
-     *       or fall back to absolute defaults)</li>
-     * </ul>
-     *
-     * <p><b>What gets initialized:</b></p>
-     * <ul>
-     *   <li>{@code maxThreadCount} - Maximum number of merge threads</li>
-     *   <li>{@code maxMergeCount} - Maximum number of concurrent merges</li>
-     *   <li>{@code autoThrottle} - Whether merge I/O throttling is enabled</li>
-     * </ul>
-     **
-     * @param indexSettings the settings for the index being initialized
-     */
-    private void initMergeConfigs(IndexSettings indexSettings) {
-        Settings settings = indexSettings.getSettings();
-        boolean useCachedClusterDefaults = MAX_THREAD_COUNT_SETTING.exists(settings) == false
-            && MAX_MERGE_COUNT_SETTING.exists(settings) == false
-            && clusterMaxThreadCountDefault != null
-            && clusterMaxMergeCountDefault != null;
-
-        int maxThread = useCachedClusterDefaults ? clusterMaxThreadCountDefault : MAX_THREAD_COUNT_SETTING.get(settings);
-
-        int maxMerge = useCachedClusterDefaults ? clusterMaxMergeCountDefault : MAX_MERGE_COUNT_SETTING.get(settings);
-
-        boolean autoThrottleEnabled = (AUTO_THROTTLE_SETTING.exists(settings) == false && clusterAutoThrottleEnabledDefault != null)
-            ? clusterAutoThrottleEnabledDefault
-            : AUTO_THROTTLE_SETTING.get(settings);
-
-        setAutoThrottle(autoThrottleEnabled);
-        setMaxThreadAndMergeCount(maxThread, maxMerge);
-        logger.info(
-            new ParameterizedMessage(
-                "Initialized index {} with maxMergeCount={}, maxThreadCount={}, autoThrottleEnabled={}",
-                this.indexName,
-                this.maxMergeCount,
-                this.maxThreadCount,
-                this.autoThrottle
-            )
-        );
     }
 
     /**
@@ -335,26 +276,12 @@ public final class MergeSchedulerConfig {
         this.maxForceMergeMBPerSec = maxForceMergeMBPerSec;
     }
 
-    /**
-     * Updates the maximum force merge rate based on index settings, with fallback to cluster settings.
-     * This method handles the case where an index-level setting is removed and should
-     * fall back to the cluster-level setting.
-     */
-    public void updateMaxForceMergeMBPerSec(IndexSettings indexSettings) {
-        boolean hasIndexSetting = MAX_FORCE_MERGE_MB_PER_SEC_SETTING.exists(indexSettings.getSettings());
-        if (hasIndexSetting) {
-            this.maxForceMergeMBPerSec = indexSettings.getValue(MAX_FORCE_MERGE_MB_PER_SEC_SETTING);
-        } else {
-            this.maxForceMergeMBPerSec = CLUSTER_MAX_FORCE_MERGE_MB_PER_SEC_SETTING.get(indexSettings.getNodeSettings());
-        }
-    }
-
     private static String getDefaultMaxThreadCount(Settings settings) {
         // If MAX_MERGE_COUNT_SETTING is set - return the absolute default for MAX_THREAD_COUNT_SETTING
         // If MAX_MERGE_COUNT_SETTING is NOT set - return the cluster default
         // On first invocation, MAX_MERGE_COUNT_SETTING would not have been initialized, hence the null check
         if (MAX_MERGE_COUNT_SETTING == null || MAX_MERGE_COUNT_SETTING.exists(settings) == true || clusterMaxThreadCountDefault == null) {
-            return ClusterMergeSchedulerConfig.getClusterMaxThreadCountDefault(settings);
+            return Integer.toString(Math.max(1, Math.min(4, Runtime.getRuntime().availableProcessors() / 2)));
         }
         return Integer.toString(clusterMaxThreadCountDefault);
     }

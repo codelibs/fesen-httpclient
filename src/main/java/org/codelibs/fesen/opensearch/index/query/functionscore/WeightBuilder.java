@@ -33,11 +33,9 @@
 package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScoreFunction;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 
@@ -89,9 +87,4 @@ public class WeightBuilder extends ScoreFunctionBuilder<WeightBuilder> {
         return 0;
     }
 
-    @Override
-    protected ScoreFunction doToFunction(QueryShardContext context) throws IOException {
-        // nothing to do here, weight will be applied by the parent class, no score function
-        return null;
-    }
 }

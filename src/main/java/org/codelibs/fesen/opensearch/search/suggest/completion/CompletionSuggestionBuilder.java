@@ -46,12 +46,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.CompletionFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.MapperService;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.suggest.SuggestionBuilder;
-import org.codelibs.fesen.opensearch.search.suggest.SuggestionSearchContext.SuggestionContext;
 import org.codelibs.fesen.opensearch.search.suggest.completion.context.ContextMapping;
 import org.codelibs.fesen.opensearch.search.suggest.completion.context.ContextMappings;
 
@@ -293,39 +288,6 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
             throw new OpenSearchParseException("the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new CompletionSuggestionBuilder(field, builder);
-    }
-
-    @Override
-    public SuggestionContext build(QueryShardContext context) throws IOException {
-        CompletionSuggestionContext suggestionContext = new CompletionSuggestionContext(context);
-        // copy over common settings to each suggestion builder
-        final MapperService mapperService = context.getMapperService();
-        populateCommonFields(mapperService, suggestionContext);
-        suggestionContext.setSkipDuplicates(skipDuplicates);
-        suggestionContext.setFuzzyOptions(fuzzyOptions);
-        suggestionContext.setRegexOptions(regexOptions);
-        if (shardSize != null) {
-            suggestionContext.setShardSize(shardSize);
-        }
-        MappedFieldType mappedFieldType = mapperService.fieldType(suggestionContext.getField());
-        if (mappedFieldType == null || mappedFieldType.unwrap() instanceof CompletionFieldMapper.CompletionFieldType == false) {
-            throw new IllegalArgumentException("Field [" + suggestionContext.getField() + "] is not a completion suggest field");
-        }
-        if (mappedFieldType.unwrap() instanceof CompletionFieldMapper.CompletionFieldType type) {
-            suggestionContext.setFieldType(type);
-            if (type.hasContextMappings() && contextBytes != null) {
-                Map<String, List<ContextMapping.InternalQueryContext>> queryContexts = parseContextBytes(
-                    contextBytes,
-                    context.getXContentRegistry(),
-                    type.getContextMappings()
-                );
-                suggestionContext.setQueryContexts(queryContexts);
-            } else if (contextBytes != null) {
-                throw new IllegalArgumentException("suggester [" + type.name() + "] doesn't expect any context");
-            }
-        }
-        assert suggestionContext.getFieldType() != null : "no completion field type set";
-        return suggestionContext;
     }
 
     static Map<String, List<ContextMapping.InternalQueryContext>> parseContextBytes(

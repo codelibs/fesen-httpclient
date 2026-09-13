@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator;
 import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
@@ -85,9 +84,6 @@ public abstract class AggregationBuilder
     public String getName() {
         return name;
     }
-
-    /** Internal: build an {@link AggregatorFactory} based on the configuration of this builder. */
-    protected abstract AggregatorFactory build(QueryShardContext queryShardContext, AggregatorFactory parent) throws IOException;
 
     /** Associate metadata with this {@link AggregationBuilder}. */
     @Override

@@ -14,16 +14,13 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.Aggregator;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.BucketOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.support.MultiTermsValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -165,12 +162,6 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
         );
     }
 
-    public static final ValuesSourceRegistry.RegistryKey<MultiTermsAggregationFactory.InternalValuesSourceSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(
-            MultiTermsAggregationBuilder.NAME,
-            MultiTermsAggregationFactory.InternalValuesSourceSupplier.class
-        );
-
     private List<MultiTermsValuesSourceConfig> terms;
 
     private BucketOrder order = BucketOrder.compound(BucketOrder.count(false)); // automatically adds tie-breaker key asc order
@@ -221,26 +212,6 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
         out.writeOptionalWriteable(collectMode);
         order.writeTo(out);
         out.writeBoolean(showTermDocCountError);
-    }
-
-    @Override
-    protected AggregatorFactory doBuild(
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subfactoriesBuilder
-    ) throws IOException {
-        return new MultiTermsAggregationFactory(
-            name,
-            queryShardContext,
-            parent,
-            subfactoriesBuilder,
-            metadata,
-            terms,
-            order,
-            collectMode,
-            bucketCountThresholds,
-            showTermDocCountError
-        );
     }
 
     @Override

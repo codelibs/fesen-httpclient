@@ -46,10 +46,6 @@ import org.codelibs.fesen.opensearch.common.unit.DistanceUnit;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.mapper.GeoPointFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.ParseContext;
-import org.codelibs.fesen.opensearch.index.mapper.ParseContext.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -146,105 +142,6 @@ public class GeoContextMapping extends ContextMapping<GeoQueryContext> {
         return builder;
     }
 
-    /**
-     * Parse a set of {@link CharSequence} contexts at index-time.
-     * Acceptable formats:
-     *
-     *  <ul>
-     *     <li>Array: <pre>[<i>&lt;GEO POINT&gt;</i>, ..]</pre></li>
-     *     <li>String/Object/Array: <pre>&quot;GEO POINT&quot;</pre></li>
-     *  </ul>
-     *
-     * see {@code GeoPoint(String)} for GEO POINT
-     */
-    @Override
-    public Set<String> parseContext(ParseContext parseContext, XContentParser parser) throws IOException, OpenSearchParseException {
-        if (fieldName != null) {
-            MappedFieldType fieldType = parseContext.mapperService().fieldType(fieldName);
-            if (!(fieldType != null && fieldType.unwrap() instanceof GeoPointFieldMapper.GeoPointFieldType)) {
-                throw new OpenSearchParseException("referenced field must be mapped to geo_point");
-            }
-        }
-        final Set<String> contexts = new HashSet<>();
-        Token token = parser.currentToken();
-        if (token == Token.START_ARRAY) {
-            token = parser.nextToken();
-            // Test if value is a single point in <code>[lon, lat]</code> format
-            if (token == Token.VALUE_NUMBER) {
-                double lon = parser.doubleValue();
-                if (parser.nextToken() == Token.VALUE_NUMBER) {
-                    double lat = parser.doubleValue();
-                    if (parser.nextToken() == Token.END_ARRAY) {
-                        contexts.add(stringEncode(lon, lat, precision));
-                    } else {
-                        throw new OpenSearchParseException("only two values [lon, lat] expected");
-                    }
-                } else {
-                    throw new OpenSearchParseException("latitude must be a numeric value");
-                }
-            } else {
-                while (token != Token.END_ARRAY) {
-                    GeoPoint point = GeoUtils.parseGeoPoint(parser);
-                    contexts.add(stringEncode(point.getLon(), point.getLat(), precision));
-                    token = parser.nextToken();
-                }
-            }
-        } else if (token == Token.VALUE_STRING) {
-            final String geoHash = parser.text();
-            final CharSequence truncatedGeoHash = geoHash.subSequence(0, Math.min(geoHash.length(), precision));
-            contexts.add(truncatedGeoHash.toString());
-        } else {
-            // or a single location
-            GeoPoint point = GeoUtils.parseGeoPoint(parser);
-            contexts.add(stringEncode(point.getLon(), point.getLat(), precision));
-        }
-        return contexts;
-    }
-
-    @Override
-    public Set<String> parseContext(Document document) {
-        final Set<String> geohashes = new HashSet<>();
-
-        if (fieldName != null) {
-            IndexableField[] fields = document.getFields(fieldName);
-            GeoPoint spare = new GeoPoint();
-            if (fields.length == 0) {
-                IndexableField[] lonFields = document.getFields(fieldName + ".lon");
-                IndexableField[] latFields = document.getFields(fieldName + ".lat");
-                if (lonFields.length > 0 && latFields.length > 0) {
-                    for (int i = 0; i < lonFields.length; i++) {
-                        IndexableField lonField = lonFields[i];
-                        IndexableField latField = latFields[i];
-                        assert lonField.fieldType().docValuesType() == latField.fieldType().docValuesType();
-                        // we write doc values fields differently: one field for all values, so we need to only care about indexed fields
-                        if (lonField.fieldType().docValuesType() == DocValuesType.NONE) {
-                            spare.reset(latField.numericValue().doubleValue(), lonField.numericValue().doubleValue());
-                            geohashes.add(stringEncode(spare.getLon(), spare.getLat(), precision));
-                        }
-                    }
-                }
-            } else {
-                for (IndexableField field : fields) {
-                    if (field instanceof StringField) {
-                        spare.resetFromString(field.stringValue());
-                        geohashes.add(spare.geohash());
-                    } else if (field instanceof LatLonPoint || field instanceof LatLonDocValuesField) {
-                        spare.resetFromIndexableField(field);
-                        geohashes.add(spare.geohash());
-                    }
-                }
-            }
-        }
-
-        Set<String> locations = new HashSet<>();
-        for (String geohash : geohashes) {
-            int precision = Math.min(this.precision, geohash.length());
-            String truncatedGeohash = geohash.substring(0, precision);
-            locations.add(truncatedGeohash);
-        }
-        return locations;
-    }
-
     @Override
     protected GeoQueryContext fromXContent(XContentParser parser) throws IOException {
         return GeoQueryContext.fromXContent(parser);
@@ -304,23 +201,6 @@ public class GeoContextMapping extends ContextMapping<GeoQueryContext> {
             );
         }
         return internalQueryContextList;
-    }
-
-    @Override
-    public void validateReferences(Version indexVersionCreated, Function<String, MappedFieldType> fieldResolver) {
-        if (fieldName != null) {
-            MappedFieldType mappedFieldType = fieldResolver.apply(fieldName);
-            if (mappedFieldType == null) {
-                throw new OpenSearchParseException("field [{}] referenced in context [{}] is not defined in the mapping", fieldName, name);
-            } else if (GeoPointFieldMapper.CONTENT_TYPE.equals(mappedFieldType.typeName()) == false) {
-                throw new OpenSearchParseException(
-                    "field [{}] referenced in context [{}] must be mapped to geo_point, found [{}]",
-                    fieldName,
-                    name,
-                    mappedFieldType.typeName()
-                );
-            }
-        }
     }
 
     @Override

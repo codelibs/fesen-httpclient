@@ -53,7 +53,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
@@ -766,7 +765,7 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
                     + maxRegexLength
                     + "]. "
                     + "This maximum can be set by changing the ["
-                    + IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey()
+                    + "index.max_regex_length"
                     + "] index level setting."
             );
         }

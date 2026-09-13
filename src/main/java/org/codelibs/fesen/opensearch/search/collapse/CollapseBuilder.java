@@ -43,11 +43,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.KeywordFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.NumberFieldMapper;
 import org.codelibs.fesen.opensearch.index.query.InnerHitBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -214,25 +210,4 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         return result;
     }
 
-    public CollapseContext build(QueryShardContext queryShardContext) {
-        MappedFieldType fieldType = queryShardContext.fieldMapper(field);
-        if (fieldType == null) {
-            throw new IllegalArgumentException("no mapping found for `" + field + "` in order to collapse on");
-        }
-        if (fieldType.unwrap() instanceof KeywordFieldMapper.KeywordFieldType == false
-            && fieldType.unwrap() instanceof NumberFieldMapper.NumberFieldType == false) {
-            throw new IllegalArgumentException("unknown type for collapse field `" + field + "`, only keywords and numbers are accepted");
-        }
-
-        if (fieldType.hasDocValues() == false) {
-            throw new IllegalArgumentException("cannot collapse on field `" + field + "` without `doc_values`");
-        }
-        if (fieldType.isSearchable() == false && (innerHits != null && !innerHits.isEmpty())) {
-            throw new IllegalArgumentException(
-                "cannot expand `inner_hits` for collapse field `" + field + "`, " + "only indexed field can retrieve `inner_hits`"
-            );
-        }
-
-        return new CollapseContext(field, fieldType, innerHits);
-    }
 }

@@ -44,6 +44,8 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Enum to signal what kind of value type is used in the aggregator

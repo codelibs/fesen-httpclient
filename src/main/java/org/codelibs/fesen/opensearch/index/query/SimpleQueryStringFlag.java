@@ -32,7 +32,7 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.codelibs.fesen.opensearch.core.common.Strings;
-import org.codelibs.fesen.opensearch.index.search.SimpleQueryStringQueryParser;
+import org.apache.lucene.queryparser.simple.SimpleQueryParser;
 
 import java.util.Locale;
 
@@ -44,18 +44,18 @@ import java.util.Locale;
 public enum SimpleQueryStringFlag {
     ALL(-1),
     NONE(0),
-    AND(SimpleQueryStringQueryParser.AND_OPERATOR),
-    NOT(SimpleQueryStringQueryParser.NOT_OPERATOR),
-    OR(SimpleQueryStringQueryParser.OR_OPERATOR),
-    PREFIX(SimpleQueryStringQueryParser.PREFIX_OPERATOR),
-    PHRASE(SimpleQueryStringQueryParser.PHRASE_OPERATOR),
-    PRECEDENCE(SimpleQueryStringQueryParser.PRECEDENCE_OPERATORS),
-    ESCAPE(SimpleQueryStringQueryParser.ESCAPE_OPERATOR),
-    WHITESPACE(SimpleQueryStringQueryParser.WHITESPACE_OPERATOR),
-    FUZZY(SimpleQueryStringQueryParser.FUZZY_OPERATOR),
+    AND(SimpleQueryParser.AND_OPERATOR),
+    NOT(SimpleQueryParser.NOT_OPERATOR),
+    OR(SimpleQueryParser.OR_OPERATOR),
+    PREFIX(SimpleQueryParser.PREFIX_OPERATOR),
+    PHRASE(SimpleQueryParser.PHRASE_OPERATOR),
+    PRECEDENCE(SimpleQueryParser.PRECEDENCE_OPERATORS),
+    ESCAPE(SimpleQueryParser.ESCAPE_OPERATOR),
+    WHITESPACE(SimpleQueryParser.WHITESPACE_OPERATOR),
+    FUZZY(SimpleQueryParser.FUZZY_OPERATOR),
     // NEAR and SLOP are synonymous, since "slop" is a more familiar term than "near"
-    NEAR(SimpleQueryStringQueryParser.NEAR_OPERATOR),
-    SLOP(SimpleQueryStringQueryParser.NEAR_OPERATOR);
+    NEAR(SimpleQueryParser.NEAR_OPERATOR),
+    SLOP(SimpleQueryParser.NEAR_OPERATOR);
 
     final int value;
 

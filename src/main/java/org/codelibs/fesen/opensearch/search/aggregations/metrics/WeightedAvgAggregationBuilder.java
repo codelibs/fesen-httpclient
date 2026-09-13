@@ -38,25 +38,18 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.MultiValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.MultiValuesSourceAggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.support.MultiValuesSourceFieldConfig;
 import org.codelibs.fesen.opensearch.search.aggregations.support.MultiValuesSourceParseHelper;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValueType;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Aggregation Builder for weighted_avg agg
@@ -76,10 +69,6 @@ public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationB
         MultiValuesSourceParseHelper.declareCommon(PARSER, true, ValueType.NUMERIC);
         MultiValuesSourceParseHelper.declareField(VALUE_FIELD.getPreferredName(), PARSER, true, false, false);
         MultiValuesSourceParseHelper.declareField(WEIGHT_FIELD.getPreferredName(), PARSER, true, false, false);
-    }
-
-    public static void registerUsage(ValuesSourceRegistry.Builder builder) {
-        builder.registerUsage(NAME, CoreValuesSourceType.NUMERIC);
     }
 
     public WeightedAvgAggregationBuilder(String name) {
@@ -127,18 +116,6 @@ public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationB
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.NONE;
-    }
-
-    @Override
-    protected MultiValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        Map<String, ValuesSourceConfig> configs,
-        Map<String, QueryBuilder> filters,
-        DocValueFormat format,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException {
-        return new WeightedAvgAggregatorFactory(name, configs, format, queryShardContext, parent, subFactoriesBuilder, metadata);
     }
 
     @Override

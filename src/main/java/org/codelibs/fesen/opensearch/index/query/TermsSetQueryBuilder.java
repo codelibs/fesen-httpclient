@@ -31,34 +31,18 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.sandbox.search.CoveringQuery;
-import org.apache.lucene.search.DoubleValues;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LongValues;
-import org.apache.lucene.search.LongValuesSource;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexNumericFieldData;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 import org.codelibs.fesen.opensearch.script.Script;
-import org.codelibs.fesen.opensearch.script.TermsSetQueryScript;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -242,208 +226,6 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
             queryBuilder.setMinimumShouldMatchScript(minimumShouldMatchScript);
         }
         return queryBuilder;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) {
-        if (values.isEmpty()) {
-            return Queries.newMatchNoDocsQuery("No terms supplied for \"" + getName() + "\" query.");
-        }
-        // Fail before we attempt to create the term queries:
-        if (values.size() > IndexSearcher.getMaxClauseCount()) {
-            throw new IndexSearcher.TooManyClauses();
-        }
-
-        List<Query> queries = createTermQueries(context);
-        LongValuesSource longValuesSource = createValuesSource(context);
-        return new CoveringQuery(queries, longValuesSource);
-    }
-
-    /**
-     * Visible only for testing purposes.
-     */
-    List<Query> createTermQueries(QueryShardContext context) {
-        final MappedFieldType fieldType = context.fieldMapper(fieldName);
-        final List<Query> queries = new ArrayList<>(values.size());
-        for (Object value : values) {
-            if (fieldType != null) {
-                queries.add(fieldType.termQuery(value, context));
-            } else {
-                queries.add(new TermQuery(new Term(fieldName, BytesRefs.toBytesRef(value))));
-            }
-        }
-        return queries;
-    }
-
-    private LongValuesSource createValuesSource(QueryShardContext context) {
-        LongValuesSource longValuesSource;
-        if (minimumShouldMatchField != null) {
-            MappedFieldType msmFieldType = context.fieldMapper(minimumShouldMatchField);
-            if (msmFieldType == null) {
-                throw new QueryShardException(context, "failed to find minimum_should_match field [" + minimumShouldMatchField + "]");
-            }
-
-            IndexNumericFieldData fieldData = context.getForField(msmFieldType);
-            longValuesSource = new FieldValuesSource(fieldData);
-        } else if (minimumShouldMatchScript != null) {
-            TermsSetQueryScript.Factory factory = context.compile(minimumShouldMatchScript, TermsSetQueryScript.CONTEXT);
-            Map<String, Object> params = new HashMap<>();
-            params.putAll(minimumShouldMatchScript.getParams());
-            params.put("num_terms", values.size());
-            longValuesSource = new ScriptLongValueSource(minimumShouldMatchScript, factory.newFactory(params, context.lookup()));
-        } else {
-            throw new IllegalStateException("No minimum should match has been specified");
-        }
-        return longValuesSource;
-    }
-
-    /**
-     * Values Source for scripted long values
-     *
-     * @opensearch.internal
-     */
-    static final class ScriptLongValueSource extends LongValuesSource {
-
-        private final Script script;
-        private final TermsSetQueryScript.LeafFactory leafFactory;
-
-        ScriptLongValueSource(Script script, TermsSetQueryScript.LeafFactory leafFactory) {
-            this.script = script;
-            this.leafFactory = leafFactory;
-        }
-
-        @Override
-        public LongValues getValues(LeafReaderContext ctx, DoubleValues scores) throws IOException {
-            TermsSetQueryScript script = leafFactory.newInstance(ctx);
-            return new LongValues() {
-                @Override
-                public long longValue() throws IOException {
-                    return script.runAsLong();
-                }
-
-                @Override
-                public boolean advanceExact(int doc) throws IOException {
-                    script.setDocument(doc);
-                    return script.execute() != null;
-                }
-            };
-        }
-
-        @Override
-        public boolean needsScores() {
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int h = getClass().hashCode();
-            h = 31 * h + script.hashCode();
-            return h;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            ScriptLongValueSource that = (ScriptLongValueSource) obj;
-            return Objects.equals(script, that.script);
-        }
-
-        @Override
-        public String toString() {
-            return "script(" + script.toString() + ")";
-        }
-
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
-            // TODO: Change this to true when we can assume that scripts are pure functions
-            // ie. the return value is always the same given the same conditions and may not
-            // depend on the current timestamp, other documents, etc.
-            return false;
-        }
-
-        @Override
-        public LongValuesSource rewrite(IndexSearcher searcher) throws IOException {
-            return this;
-        }
-
-    }
-
-    /**
-     * Forked from LongValuesSource.FieldValuesSource and changed getValues() method to always use sorted numeric
-     * doc values, because that is what is being used in NumberFieldMapper.
-     *
-     * @opensearch.internal
-     */
-    static class FieldValuesSource extends LongValuesSource {
-
-        private final String fieldName;
-        private final IndexNumericFieldData fieldData;
-
-        FieldValuesSource(IndexNumericFieldData fieldData) {
-            this.fieldData = fieldData;
-            this.fieldName = fieldData.getFieldName();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            FieldValuesSource that = (FieldValuesSource) o;
-            return Objects.equals(fieldName, that.fieldName);
-        }
-
-        @Override
-        public String toString() {
-            return "long(" + fieldName + ")";
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(fieldName);
-        }
-
-        @Override
-        public LongValues getValues(LeafReaderContext ctx, DoubleValues scores) throws IOException {
-            SortedNumericDocValues values = fieldData.load(ctx).getLongValues();
-            return new LongValues() {
-
-                long current = -1;
-
-                @Override
-                public long longValue() throws IOException {
-                    return current;
-                }
-
-                @Override
-                public boolean advanceExact(int doc) throws IOException {
-                    boolean hasValue = values.advanceExact(doc);
-                    if (hasValue) {
-                        assert values.docValueCount() == 1;
-                        current = values.nextValue();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-        }
-
-        @Override
-        public boolean needsScores() {
-            return false;
-        }
-
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
-            return true;
-        }
-
-        @Override
-        public LongValuesSource rewrite(IndexSearcher searcher) throws IOException {
-            return this;
-        }
     }
 
 }

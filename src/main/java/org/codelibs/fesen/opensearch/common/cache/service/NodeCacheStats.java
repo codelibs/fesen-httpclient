@@ -41,7 +41,12 @@ public class NodeCacheStats implements ToXContentFragment, Writeable {
 
     public NodeCacheStats(StreamInput in) throws IOException {
         this.flags = new CommonStatsFlags(in);
-        this.statsByCache = in.readOrderedMap(i -> i.readEnum(CacheType.class), ImmutableCacheStatsHolder::new);
+        final java.util.SortedMap<CacheType, ImmutableCacheStatsHolder> read = new java.util.TreeMap<>();
+        final int size = in.readVInt();
+        for (int i = 0; i < size; i++) {
+            read.put(in.readEnum(CacheType.class), new ImmutableCacheStatsHolder(in));
+        }
+        this.statsByCache = read;
     }
 
     @Override

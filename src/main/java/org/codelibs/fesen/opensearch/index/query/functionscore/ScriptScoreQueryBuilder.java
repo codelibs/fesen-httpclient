@@ -33,9 +33,6 @@
 package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.OpenSearchException;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScriptScoreQuery;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -43,22 +40,17 @@ import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.InnerHitContextBuilder;
 import org.codelibs.fesen.opensearch.index.query.MatchNoneQueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilderVisitor;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.script.ScoreScript;
 import org.codelibs.fesen.opensearch.script.Script;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
 import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser.constructorArg;
 import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser.optionalConstructorArg;
-import static org.codelibs.fesen.opensearch.search.SearchService.ALLOW_EXPENSIVE_QUERIES;
 
 /**
  * A query that computes a document score based on the provided script
@@ -182,29 +174,6 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        if (context.allowExpensiveQueries() == false) {
-            throw new OpenSearchException(
-                "[script score] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false."
-            );
-        }
-        ScoreScript.Factory factory = context.compile(script, ScoreScript.CONTEXT);
-        ScoreScript.LeafFactory scoreScriptFactory = factory.newFactory(script.getParams(), context.lookup(), context.searcher());
-        final QueryBuilder queryBuilder = this.query;
-        Query query = queryBuilder.toQuery(context);
-        return new ScriptScoreQuery(
-            query,
-            queryBuilder.queryName(),
-            script,
-            scoreScriptFactory,
-            minScore,
-            context.index().getName(),
-            context.getShardId(),
-            context.indexVersionCreated()
-        );
-    }
-
-    @Override
     protected QueryBuilder doRewrite(QueryRewriteContext queryRewriteContext) throws IOException {
         QueryBuilder newQuery = this.query.rewrite(queryRewriteContext);
         if (newQuery instanceof MatchNoneQueryBuilder matchNoneQueryBuilder) {
@@ -219,11 +188,6 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
             return newQueryBuilder;
         }
         return this;
-    }
-
-    @Override
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {
-        InnerHitContextBuilder.extractInnerHits(query(), innerHits);
     }
 
     @Override

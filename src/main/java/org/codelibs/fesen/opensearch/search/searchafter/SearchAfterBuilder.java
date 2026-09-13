@@ -47,9 +47,7 @@ import org.codelibs.fesen.opensearch.core.common.text.Text;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
-import org.codelibs.fesen.opensearch.search.sort.ShardDocFieldComparatorSource;
 import org.codelibs.fesen.opensearch.search.sort.SortAndFormats;
 
 import java.io.IOException;
@@ -119,126 +117,6 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
 
     public Object[] getSortValues() {
         return Arrays.copyOf(sortValues, sortValues.length);
-    }
-
-    public static FieldDoc buildFieldDoc(SortAndFormats sort, Object[] values) {
-        if (sort == null || sort.sort.getSort() == null || sort.sort.getSort().length == 0) {
-            throw new IllegalArgumentException("Sort must contain at least one field.");
-        }
-
-        SortField[] sortFields = sort.sort.getSort();
-        if (sortFields.length != values.length) {
-            throw new IllegalArgumentException(
-                SEARCH_AFTER.getPreferredName() + " has " + values.length + " value(s) but sort has " + sort.sort.getSort().length + "."
-            );
-        }
-        Object[] fieldValues = new Object[sortFields.length];
-        for (int i = 0; i < sortFields.length; i++) {
-            SortField sortField = sortFields[i];
-            DocValueFormat format = sort.formats[i];
-            if (values[i] != null) {
-                fieldValues[i] = convertValueFromSortField(values[i], sortField, format);
-            } else {
-                fieldValues[i] = null;
-            }
-        }
-        /*
-         * We set the doc id to Integer.MAX_VALUE in order to make sure that the search starts "after" the first document that is equal to
-         * the field values.
-         */
-        return new FieldDoc(Integer.MAX_VALUE, 0, fieldValues);
-    }
-
-    /**
-     * Returns the inner {@link SortField.Type} expected for this sort field.
-     */
-    static SortField.Type extractSortType(SortField sortField) {
-        if (sortField.getComparatorSource() instanceof IndexFieldData.XFieldComparatorSource) {
-            return ((IndexFieldData.XFieldComparatorSource) sortField.getComparatorSource()).reducedType();
-        } else if (sortField instanceof SortedSetSortField) {
-            return SortField.Type.STRING;
-        } else if (sortField instanceof SortedNumericSortField) {
-            return ((SortedNumericSortField) sortField).getNumericType();
-        } else if ("LatLonPointSortField".equals(sortField.getClass().getSimpleName())) {
-            // for geo distance sorting
-            return SortField.Type.DOUBLE;
-        } else if (sortField.getComparatorSource() instanceof ShardDocFieldComparatorSource) {
-            return SortField.Type.LONG;
-        } else {
-            return sortField.getType();
-        }
-    }
-
-    static Object convertValueFromSortField(Object value, SortField sortField, DocValueFormat format) {
-        SortField.Type sortType = extractSortType(sortField);
-        return convertValueFromSortType(sortField.getField(), sortType, value, format);
-    }
-
-    private static Object convertValueFromSortType(String fieldName, SortField.Type sortType, Object value, DocValueFormat format) {
-        try {
-            switch (sortType) {
-                case DOC:
-                    if (value instanceof Number) {
-                        return ((Number) value).intValue();
-                    }
-                    return Integer.parseInt(value.toString());
-
-                case SCORE:
-                    if (value instanceof Number) {
-                        return ((Number) value).floatValue();
-                    }
-                    return Float.parseFloat(value.toString());
-
-                case INT:
-                    if (value instanceof Number) {
-                        return ((Number) value).intValue();
-                    }
-                    return Integer.parseInt(value.toString());
-
-                case DOUBLE:
-                    if (value instanceof Number) {
-                        return ((Number) value).doubleValue();
-                    }
-                    return Double.parseDouble(value.toString());
-
-                case LONG:
-                    // for unsigned_long field type we want to pass search_after value through formatting
-                    if (value instanceof Number
-                        && (format != DocValueFormat.UNSIGNED_LONG_SHIFTED && format != DocValueFormat.UNSIGNED_LONG)) {
-                        return ((Number) value).longValue();
-                    } else if (format == DocValueFormat.UNSIGNED_LONG_SHIFTED || format == DocValueFormat.UNSIGNED_LONG) {
-                        return format.parseUnsignedLong(value.toString(), false, () -> {
-                            throw new IllegalStateException("now() is not allowed in [search_after] key");
-                        });
-                    }
-
-                    return format.parseLong(
-                        value.toString(),
-                        false,
-                        () -> { throw new IllegalStateException("now() is not allowed in [search_after] key"); }
-                    );
-
-                case FLOAT:
-                    if (value instanceof Number) {
-                        return ((Number) value).floatValue();
-                    }
-                    return Float.parseFloat(value.toString());
-
-                case STRING_VAL:
-                case STRING:
-                    return format.parseBytesRef(value.toString());
-
-                default:
-                    throw new IllegalArgumentException(
-                        "Comparator type [" + sortType.name() + "] for field [" + fieldName + "] is not supported."
-                    );
-            }
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                "Failed to parse " + SEARCH_AFTER.getPreferredName() + " value for field [" + fieldName + "].",
-                e
-            );
-        }
     }
 
     @Override

@@ -37,12 +37,10 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.script.Script;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.missing.MissingOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValueType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 import org.codelibs.fesen.opensearch.search.sort.SortOrder;
 
@@ -310,32 +308,7 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
         return format;
     }
 
-    /**
-     * Creates a {@link CompositeValuesSourceConfig} for this source.
-     *  @param queryShardContext   The shard context for this source.
-     * @param config    The {@link ValuesSourceConfig} for this source.
-     */
-    protected abstract CompositeValuesSourceConfig innerBuild(QueryShardContext queryShardContext, ValuesSourceConfig config)
-        throws IOException;
-
     protected abstract ValuesSourceType getDefaultValuesSourceType();
-
-    public final CompositeValuesSourceConfig build(QueryShardContext queryShardContext) throws IOException {
-        if (missingBucket == false && missingOrder != MissingOrder.DEFAULT) {
-            throw new IllegalArgumentException(MissingOrder.NAME + " require missing_bucket is true");
-        }
-        ValuesSourceConfig config = ValuesSourceConfig.resolve(
-            queryShardContext,
-            userValueTypeHint,
-            field,
-            script,
-            null,
-            timeZone(),
-            format,
-            getDefaultValuesSourceType()
-        );
-        return innerBuild(queryShardContext, config);
-    }
 
     /**
      * The time zone for this value source. Default implementation returns {@code null}

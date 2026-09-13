@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.common.geo.builders.ShapeBuilder.Orientatio
 import org.codelibs.fesen.opensearch.common.unit.DistanceUnit;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentSubParser;
-import org.codelibs.fesen.opensearch.index.mapper.AbstractShapeGeometryFieldMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,19 +57,15 @@ import org.locationtech.jts.geom.Coordinate;
  * @opensearch.internal
  */
 abstract class GeoJsonParser {
-    protected static ShapeBuilder parse(XContentParser parser, AbstractShapeGeometryFieldMapper shapeMapper) throws IOException {
+    protected static ShapeBuilder parse(XContentParser parser) throws IOException {
         GeoShapeType shapeType = null;
         DistanceUnit.Distance radius = null;
         CoordinateNode coordinateNode = null;
         GeometryCollectionBuilder geometryCollections = null;
 
-        Orientation orientation = (shapeMapper == null)
-            ? AbstractShapeGeometryFieldMapper.Defaults.ORIENTATION.value()
-            : shapeMapper.orientation();
-        Explicit<Boolean> coerce = (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.COERCE : shapeMapper.coerce();
-        Explicit<Boolean> ignoreZValue = (shapeMapper == null)
-            ? AbstractShapeGeometryFieldMapper.Defaults.IGNORE_Z_VALUE
-            : shapeMapper.ignoreZValue();
+        Orientation orientation = Orientation.RIGHT;
+        Explicit<Boolean> coerce = new Explicit<>(false, false);
+        Explicit<Boolean> ignoreZValue = new Explicit<>(true, false);
 
         String malformedException = null;
 
@@ -107,7 +102,7 @@ abstract class GeoJsonParser {
                             malformedException = "cannot have [" + ShapeParser.FIELD_GEOMETRIES + "] with type set to [" + shapeType + "]";
                         }
                         subParser.nextToken();
-                        geometryCollections = parseGeometries(subParser, shapeMapper);
+                        geometryCollections = parseGeometries(subParser);
                     } else if (CircleBuilder.FIELD_RADIUS.match(fieldName, subParser.getDeprecationHandler())) {
                         if (shapeType == null) {
                             shapeType = GeoShapeType.CIRCLE;
@@ -221,7 +216,7 @@ abstract class GeoJsonParser {
      * @return Geometry[] geometries of the GeometryCollection
      * @throws IOException Thrown if an error occurs while reading from the XContentParser
      */
-    static GeometryCollectionBuilder parseGeometries(XContentParser parser, AbstractShapeGeometryFieldMapper mapper) throws IOException {
+    static GeometryCollectionBuilder parseGeometries(XContentParser parser) throws IOException {
         if (parser.currentToken() != XContentParser.Token.START_ARRAY) {
             throw new OpenSearchParseException("geometries must be an array of geojson objects");
         }

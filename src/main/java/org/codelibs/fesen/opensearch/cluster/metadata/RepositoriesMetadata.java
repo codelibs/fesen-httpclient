@@ -37,6 +37,7 @@ import org.codelibs.fesen.opensearch.cluster.AbstractNamedDiffable;
 import org.codelibs.fesen.opensearch.cluster.NamedDiff;
 import org.codelibs.fesen.opensearch.cluster.metadata.Metadata.Custom;
 import org.codelibs.fesen.opensearch.common.Nullable;
+import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -45,7 +46,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.repositories.RepositoryData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,7 +55,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.codelibs.fesen.opensearch.repositories.blobstore.BlobStoreRepository.SYSTEM_REPOSITORY_SETTING;
 
 /**
  * Contains metadata about registered snapshot repositories
@@ -72,6 +71,15 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
      */
     public static final String HIDE_GENERATIONS_PARAM = "hide_generations";
     public static final String HIDE_SYSTEM_REPOSITORY_SETTING = "hide_system_repository_setting";
+
+    /**
+     * Marks a repository the system registered for itself rather than one a user created.
+     */
+    public static final Setting<Boolean> SYSTEM_REPOSITORY_SETTING = Setting.boolSetting(
+        "system_repository",
+        false,
+        Setting.Property.NodeScope
+    );
 
     private final List<RepositoryMetadata> repositories;
 
@@ -261,8 +269,8 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
                 }
                 String type = null;
                 Settings settings = Settings.EMPTY;
-                long generation = RepositoryData.UNKNOWN_REPO_GEN;
-                long pendingGeneration = RepositoryData.EMPTY_REPO_GEN;
+                long generation = RepositoryMetadata.UNKNOWN_REPO_GEN;
+                long pendingGeneration = RepositoryMetadata.EMPTY_REPO_GEN;
                 CryptoMetadata cryptoMetadata = null;
                 while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
                     if (token == XContentParser.Token.FIELD_NAME) {

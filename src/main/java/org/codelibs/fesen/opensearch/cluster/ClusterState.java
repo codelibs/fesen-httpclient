@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingNode;
 import org.codelibs.fesen.opensearch.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.opensearch.cluster.routing.RoutingTable;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.UUIDs;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.io.stream.BytesStreamOutput;
@@ -61,7 +60,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.VersionedNamedWriteable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.discovery.Discovery;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -74,18 +72,14 @@ import java.util.Set;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 
-import static org.codelibs.fesen.opensearch.cluster.coordination.Coordinator.ZEN1_BWC_TERM;
 
 /**
  * Represents the current state of the cluster.
  * <p>
  * The cluster state object is immutable with the exception of the {@link RoutingNodes} structure, which is
  * built on demand from the {@link RoutingTable}.
- * The cluster state can be updated only on the cluster-manager node. All updates are performed by on a
- * single thread and controlled by the {@link ClusterService}. After every update the
- * {@link Discovery#publish} method publishes a new version of the cluster state to all other nodes in the
- * cluster. The actual publishing mechanism is delegated to the {@link Discovery#publish} method and depends on
- * the type of discovery.
+ * The cluster state can be updated only on the cluster-manager node; a client only ever reads the
+ * published state.
  * <p>
  * The cluster state implements the {@link Diffable} interface in order to support publishing of cluster state
  * differences instead of the entire state on each change. The publishing mechanism should only send differences
@@ -237,11 +231,14 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     }
 
     public long getVersionOrMetadataVersion() {
-        // When following a Zen1 cluster-manager, the cluster state version is not guaranteed to increase,
-        // so instead it is preferable to use the metadata version to determine the freshest node.
+        // When following a Zen1 cluster-manager (term 0), the cluster state version is not guaranteed to
+        // increase, so instead it is preferable to use the metadata version to determine the freshest node.
         // However when following a Zen2 cluster-manager the cluster state version should be used.
         return term() == ZEN1_BWC_TERM ? metadata().version() : version();
     }
+
+    /** The term a Zen1 cluster-manager publishes with. */
+    private static final long ZEN1_BWC_TERM = 0;
 
     /**
      * This stateUUID is automatically generated for each version of cluster state. It is used to make sure that

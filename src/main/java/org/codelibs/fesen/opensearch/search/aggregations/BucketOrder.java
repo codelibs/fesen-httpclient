@@ -117,38 +117,6 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
     }
 
     /**
-     * Validate an aggregation against an {@linkplain Aggregator}.
-     * @throws AggregationExecutionException when the ordering is invalid
-     *         for this {@linkplain Aggregator}.
-     */
-    public final void validate(Aggregator aggregator) throws AggregationExecutionException {
-        /*
-         * Building partiallyBuiltBucketComparator and throwing it away is enough
-         * to validate this order because doing so checks all of the appropriate
-         * paths.
-         */
-        partiallyBuiltBucketComparator(null, aggregator);
-    }
-
-    /**
-     * A builds comparator comparing buckets partially built buckets by
-     * delegating comparison of the results of any "child" aggregations to
-     * the provided {@linkplain Aggregator}.
-     * <p>
-     * Warning: This is fairly difficult to use and impossible to use cleanly.
-     * In addition, this exists primarily to return the "top n" buckets based
-     * on the results of a sub aggregation. The trouble is that could end up
-     * throwing away buckets on the data nodes that should ultimately be kept
-     * after reducing all of the results. If you know that this is coming it
-     * is fine, but most folks that use "generic" sorts don't. In other words:
-     * before you use this method think super duper hard if you want to have
-     * these kinds of issues. The terms agg does an folks get into trouble
-     * with it all the time.
-     * </p>
-     */
-    public abstract <T extends Bucket> Comparator<T> partiallyBuiltBucketComparator(ToLongFunction<T> ordinalReader, Aggregator aggregator);
-
-    /**
      * Build a comparator for fully built buckets.
      */
     public abstract Comparator<Bucket> comparator();

@@ -32,15 +32,9 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.RegexpQuery;
 import org.apache.lucene.util.automaton.Operations;
-import org.apache.lucene.util.automaton.RegExp;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
-import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -48,9 +42,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -300,62 +291,6 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws QueryShardException, IOException {
-        final int maxAllowedRegexLength = context.getIndexSettings().getMaxRegexLength();
-        if (value.length() > maxAllowedRegexLength) {
-            throw new IllegalArgumentException(
-                "The length of regex ["
-                    + value.length()
-                    + "] used in the Regexp Query request has exceeded "
-                    + "the allowed maximum of ["
-                    + maxAllowedRegexLength
-                    + "]. "
-                    + "This maximum can be set by changing the ["
-                    + IndexSettings.MAX_REGEX_LENGTH_SETTING.getKey()
-                    + "] index level setting."
-            );
-        }
-
-        // Check if COMPLEMENT flag is being used
-        // The COMPLEMENT flag maps to Lucene's DEPRECATED_COMPLEMENT which is marked for removal in Lucene 11
-        // This deprecation warning helps users migrate their queries before the feature is completely removed
-        if ((syntaxFlagsValue & RegexpFlag.COMPLEMENT.value()) != 0) {
-            deprecationLogger.deprecate(
-                "regexp_complement_operator",
-                "The complement operator (~) for arbitrary patterns in regexp queries is deprecated and will be removed in a future version. "
-                    + "Consider rewriting your query to use character class negation [^...] or other query types."
-            );
-        }
-
-        MultiTermQuery.RewriteMethod method = QueryParsers.parseRewriteMethod(rewrite, null, LoggingDeprecationHandler.INSTANCE);
-
-        int matchFlagsValue = caseInsensitive ? RegExp.ASCII_CASE_INSENSITIVE : 0;
-        Query query = null;
-        // For BWC we mask irrelevant bits (RegExp changed ALL from 0xffff to 0xff)
-        // The hexadecimal for DEPRECATED_COMPLEMENT is 0x10000. The OR condition ensures COMPLEMENT ~ is preserved
-        int sanitisedSyntaxFlag = syntaxFlagsValue & (RegExp.ALL | RegExp.DEPRECATED_COMPLEMENT);
-
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType != null) {
-            query = fieldType.regexpQuery(value, sanitisedSyntaxFlag, matchFlagsValue, maxDeterminizedStates, method, context);
-        }
-        if (query == null) {
-            if (method == null) {
-                method = MultiTermQuery.CONSTANT_SCORE_REWRITE;
-            }
-            query = new RegexpQuery(
-                new Term(fieldName, BytesRefs.toBytesRef(value)),
-                sanitisedSyntaxFlag,
-                matchFlagsValue,
-                RegexpQuery.DEFAULT_PROVIDER,
-                maxDeterminizedStates,
-                method
-            );
-        }
-        return query;
     }
 
     @Override

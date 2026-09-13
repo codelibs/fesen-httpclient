@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodeStats;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
-import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
@@ -85,10 +84,6 @@ class HttpNodesStatsActionTest {
         f.setAccessible(true);
         final Unsafe unsafe = (Unsafe) f.get(null);
         action = (HttpNodesStatsAction) unsafe.allocateInstance(HttpNodesStatsAction.class);
-        // allocateInstance skips the constructor, so wire up the one field the indices parser needs.
-        final Field cs = HttpNodesStatsAction.class.getDeclaredField("clusterSettings");
-        cs.setAccessible(true);
-        cs.set(action, new ClusterSettings(Settings.EMPTY, ClusterSettings.BUILT_IN_CLUSTER_SETTINGS));
     }
 
     private XContentParser createParser(final String json) throws IOException {

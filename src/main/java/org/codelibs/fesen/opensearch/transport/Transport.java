@@ -68,13 +68,6 @@ import java.util.stream.Collectors;
 @PublicApi(since = "1.0.0")
 public interface Transport extends LifecycleComponent {
 
-    /**
-     * Registers a new request handler
-     */
-    default <Request extends TransportRequest> void registerRequestHandler(RequestHandlerRegistry<Request> reg) {
-        getRequestHandlers().registerHandler(reg);
-    }
-
     void setMessageListener(TransportMessageListener listener);
 
     default void setSlowLogThreshold(TimeValue slowLogThreshold) {}
@@ -338,24 +331,5 @@ public interface Transport extends LifecycleComponent {
     @PublicApi(since = "1.0.0")
     final class RequestHandlers {
 
-        private volatile Map<String, RequestHandlerRegistry<? extends TransportRequest>> requestHandlers = Collections.emptyMap();
-
-        synchronized <Request extends TransportRequest> void registerHandler(RequestHandlerRegistry<Request> reg) {
-            if (requestHandlers.containsKey(reg.getAction())) {
-                throw new IllegalArgumentException("transport handlers for action " + reg.getAction() + " is already registered");
-            }
-            requestHandlers = MapBuilder.newMapBuilder(requestHandlers).put(reg.getAction(), reg).immutableMap();
-        }
-
-        // TODO: Only visible for testing. Perhaps move StubbableTransport from
-        // org.codelibs.fesen.opensearch.test.transport to org.codelibs.fesen.opensearch.transport
-        public synchronized <Request extends TransportRequest> void forceRegister(RequestHandlerRegistry<Request> reg) {
-            requestHandlers = MapBuilder.newMapBuilder(requestHandlers).put(reg.getAction(), reg).immutableMap();
-        }
-
-        @SuppressWarnings("unchecked")
-        public <T extends TransportRequest> RequestHandlerRegistry<T> getHandler(String action) {
-            return (RequestHandlerRegistry<T>) requestHandlers.get(action);
-        }
     }
 }

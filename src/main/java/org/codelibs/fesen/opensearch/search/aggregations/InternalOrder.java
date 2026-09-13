@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.aggregations.Aggregator.BucketComparator;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.codelibs.fesen.opensearch.search.aggregations.support.AggregationPath;
 import org.codelibs.fesen.opensearch.search.sort.SortOrder;
@@ -87,16 +86,6 @@ public abstract class InternalOrder extends BucketOrder {
 
         public AggregationPath path() {
             return path;
-        }
-
-        @Override
-        public <T extends Bucket> Comparator<T> partiallyBuiltBucketComparator(ToLongFunction<T> ordinalReader, Aggregator aggregator) {
-            try {
-                BucketComparator bucketComparator = path.bucketComparator(aggregator, order);
-                return (lhs, rhs) -> bucketComparator.compare(ordinalReader.applyAsLong(lhs), ordinalReader.applyAsLong(rhs));
-            } catch (IllegalArgumentException e) {
-                throw new AggregationExecutionException("Invalid aggregation order path [" + path + "]. " + e.getMessage(), e);
-            }
         }
 
         @Override
@@ -199,21 +188,6 @@ public abstract class InternalOrder extends BucketOrder {
         }
 
         @Override
-        public <T extends Bucket> Comparator<T> partiallyBuiltBucketComparator(ToLongFunction<T> ordinalReader, Aggregator aggregator) {
-            List<Comparator<T>> comparators = orderElements.stream()
-                .map(oe -> oe.partiallyBuiltBucketComparator(ordinalReader, aggregator))
-                .collect(toList());
-            return (lhs, rhs) -> {
-                Iterator<Comparator<T>> itr = comparators.iterator();
-                int result;
-                do {
-                    result = itr.next().compare(lhs, rhs);
-                } while (result == 0 && itr.hasNext());
-                return result;
-            };
-        }
-
-        @Override
         public Comparator<Bucket> comparator() {
             List<Comparator<Bucket>> comparators = orderElements.stream().map(BucketOrder::comparator).collect(toList());
             return (lhs, rhs) -> {
@@ -272,12 +246,6 @@ public abstract class InternalOrder extends BucketOrder {
         @Override
         byte id() {
             return id;
-        }
-
-        @Override
-        public <T extends Bucket> Comparator<T> partiallyBuiltBucketComparator(ToLongFunction<T> ordinalReader, Aggregator aggregator) {
-            Comparator<Bucket> comparator = comparator();
-            return (lhs, rhs) -> comparator.compare(lhs, rhs);
         }
 
         @Override

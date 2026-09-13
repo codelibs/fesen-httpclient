@@ -39,24 +39,18 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.script.FieldScript;
 import org.codelibs.fesen.opensearch.script.Script;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationInitializationException;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder;
 import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder.ScriptField;
 import org.codelibs.fesen.opensearch.search.fetch.StoredFieldsContext;
 import org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext;
 import org.codelibs.fesen.opensearch.search.fetch.subphase.FieldAndFormat;
-import org.codelibs.fesen.opensearch.search.fetch.subphase.ScriptFieldsContext;
 import org.codelibs.fesen.opensearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.codelibs.fesen.opensearch.search.sort.ScoreSortBuilder;
-import org.codelibs.fesen.opensearch.search.sort.SortAndFormats;
 import org.codelibs.fesen.opensearch.search.sort.SortBuilder;
 import org.codelibs.fesen.opensearch.search.sort.SortBuilders;
 import org.codelibs.fesen.opensearch.search.sort.SortOrder;
@@ -68,7 +62,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -623,69 +616,6 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.NONE;
-    }
-
-    @Override
-    protected TopHitsAggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subfactoriesBuilder)
-        throws IOException {
-        long innerResultWindow = from() + size();
-        int maxInnerResultWindow = queryShardContext.getMapperService().getIndexSettings().getMaxInnerResultWindow();
-        if (innerResultWindow > maxInnerResultWindow) {
-            throw new IllegalArgumentException(
-                "Top hits result window is too large, the top hits aggregator ["
-                    + name
-                    + "]'s from + size must be less "
-                    + "than or equal to: ["
-                    + maxInnerResultWindow
-                    + "] but was ["
-                    + innerResultWindow
-                    + "]. This limit can be set by changing the ["
-                    + IndexSettings.MAX_INNER_RESULT_WINDOW_SETTING.getKey()
-                    + "] index level setting."
-            );
-        }
-
-        List<ScriptFieldsContext.ScriptField> scriptFields = new ArrayList<>();
-        if (this.scriptFields != null) {
-            for (ScriptField field : this.scriptFields) {
-                FieldScript.Factory factory = queryShardContext.compile(field.script(), FieldScript.CONTEXT);
-                FieldScript.LeafFactory searchScript = factory.newFactory(field.script().getParams(), queryShardContext.lookup());
-                scriptFields.add(
-                    new org.codelibs.fesen.opensearch.search.fetch.subphase.ScriptFieldsContext.ScriptField(
-                        field.fieldName(),
-                        searchScript,
-                        field.ignoreFailure()
-                    )
-                );
-            }
-        }
-
-        final Optional<SortAndFormats> optionalSort;
-        if (sorts == null) {
-            optionalSort = Optional.empty();
-        } else {
-            optionalSort = SortBuilder.buildSort(sorts, queryShardContext);
-        }
-        return new TopHitsAggregatorFactory(
-            name,
-            from,
-            size,
-            explain,
-            version,
-            seqNoAndPrimaryTerm,
-            trackScores,
-            optionalSort,
-            highlightBuilder,
-            storedFieldsContext,
-            docValueFields,
-            fetchFields,
-            scriptFields,
-            fetchSourceContext,
-            queryShardContext,
-            parent,
-            subfactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

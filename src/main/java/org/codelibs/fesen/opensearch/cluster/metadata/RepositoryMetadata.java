@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
-import org.codelibs.fesen.opensearch.repositories.RepositoryData;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -49,6 +48,16 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public class RepositoryMetadata implements Writeable {
+
+    /**
+     * The generation of a repository whose root blob has not been read yet.
+     */
+    public static final long UNKNOWN_REPO_GEN = -2L;
+
+    /**
+     * The generation of an empty repository.
+     */
+    public static final long EMPTY_REPO_GEN = -1L;
 
     private final String name;
     private final String type;
@@ -73,11 +82,11 @@ public class RepositoryMetadata implements Writeable {
      * @param settings repository settings
      */
     public RepositoryMetadata(String name, String type, Settings settings) {
-        this(name, type, settings, RepositoryData.UNKNOWN_REPO_GEN, RepositoryData.EMPTY_REPO_GEN, null);
+        this(name, type, settings, UNKNOWN_REPO_GEN, EMPTY_REPO_GEN, null);
     }
 
     public RepositoryMetadata(String name, String type, Settings settings, CryptoMetadata cryptoMetadata) {
-        this(name, type, settings, RepositoryData.UNKNOWN_REPO_GEN, RepositoryData.EMPTY_REPO_GEN, cryptoMetadata);
+        this(name, type, settings, UNKNOWN_REPO_GEN, EMPTY_REPO_GEN, cryptoMetadata);
     }
 
     public RepositoryMetadata(RepositoryMetadata metadata, long generation, long pendingGeneration) {
@@ -146,8 +155,8 @@ public class RepositoryMetadata implements Writeable {
     }
 
     /**
-     * Returns the safe repository generation. {@link RepositoryData} for this generation is assumed to exist in the repository.
-     * All operations on the repository must be based on the {@link RepositoryData} at this generation.
+     * Returns the safe repository generation. the repository data for this generation is assumed to exist in the repository.
+     * All operations on the repository must be based on the the repository data at this generation.
      * See package level documentation for the blob store based repositories {@link org.codelibs.fesen.opensearch.repositories.blobstore} for details
      * on how this value is used during snapshots.
      * @return safe repository generation
@@ -157,8 +166,8 @@ public class RepositoryMetadata implements Writeable {
     }
 
     /**
-     * Returns the pending repository generation. {@link RepositoryData} for this generation and all generations down to the safe
-     * generation {@link #generation} may exist in the repository and should not be reused for writing new {@link RepositoryData} to the
+     * Returns the pending repository generation. the repository data for this generation and all generations down to the safe
+     * generation {@link #generation} may exist in the repository and should not be reused for writing new the repository data to the
      * repository.
      * See package level documentation for the blob store based repositories {@link org.codelibs.fesen.opensearch.repositories.blobstore} for details
      * on how this value is used during snapshots.

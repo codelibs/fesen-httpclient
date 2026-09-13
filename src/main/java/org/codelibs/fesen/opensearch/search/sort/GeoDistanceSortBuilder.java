@@ -57,19 +57,9 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.fielddata.FieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData.XFieldComparatorSource.Nested;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexGeoPointFieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.MultiGeoPointValues;
-import org.codelibs.fesen.opensearch.index.fielddata.NumericDoubleValues;
-import org.codelibs.fesen.opensearch.index.fielddata.SortedNumericDoubleValues;
-import org.codelibs.fesen.opensearch.index.fielddata.plain.AbstractLatLonPointIndexFieldData.LatLonPointIndexFieldData;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 import org.codelibs.fesen.opensearch.index.query.GeoValidationMethod;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.MultiValueMode;
 
@@ -81,7 +71,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
-import static org.codelibs.fesen.opensearch.search.sort.FieldSortBuilder.validateMaxChildrenExistOnlyInTopLevelNestedSort;
 import static org.codelibs.fesen.opensearch.search.sort.NestedSortBuilder.NESTED_FIELD;
 
 /**
@@ -597,50 +586,6 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
         return result;
     }
 
-    @Override
-    public SortFieldAndFormat build(QueryShardContext context) throws IOException {
-        GeoPoint[] localPoints = localPoints();
-        boolean reverse = order == SortOrder.DESC;
-        MultiValueMode localSortMode = localSortMode();
-        IndexGeoPointFieldData geoIndexFieldData = fieldData(context);
-        Nested nested = nested(context);
-
-        if (geoIndexFieldData.getClass() == LatLonPointIndexFieldData.class // only works with 5.x geo_point
-            && nested == null
-            && localSortMode == MultiValueMode.MIN // LatLonDocValuesField internally picks the closest point
-            && unit == DistanceUnit.METERS
-            && reverse == false
-            && localPoints.length == 1) {
-            return new SortFieldAndFormat(
-                LatLonDocValuesField.newDistanceSort(fieldName, localPoints[0].lat(), localPoints[0].lon()),
-                DocValueFormat.RAW
-            );
-        }
-
-        return new SortFieldAndFormat(
-            new SortField(fieldName, comparatorSource(localPoints, localSortMode, geoIndexFieldData, nested), reverse),
-            DocValueFormat.RAW
-        );
-    }
-
-    @Override
-    public BucketedSort buildBucketedSort(QueryShardContext context, int bucketSize, BucketedSort.ExtraData extra) throws IOException {
-        GeoPoint[] localPoints = localPoints();
-        MultiValueMode localSortMode = localSortMode();
-        IndexGeoPointFieldData geoIndexFieldData = fieldData(context);
-        Nested nested = nested(context);
-
-        // TODO implement the single point optimization above
-
-        return comparatorSource(localPoints, localSortMode, geoIndexFieldData, nested).newBucketedSort(
-            context.bigArrays(),
-            order,
-            DocValueFormat.RAW,
-            bucketSize,
-            extra
-        );
-    }
-
     private GeoPoint[] localPoints() {
         // validation was not available prior to 2.x, so to support bwc percolation queries we only ignore_malformed
         // on 2.x created indexes
@@ -679,109 +624,6 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
         }
 
         return order == SortOrder.DESC ? MultiValueMode.MAX : MultiValueMode.MIN;
-    }
-
-    private IndexGeoPointFieldData fieldData(QueryShardContext context) {
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType == null) {
-            if (ignoreUnmapped) {
-                fieldType = context.getMapperService().unmappedFieldType("geo_point");
-            } else {
-                throw new IllegalArgumentException("failed to find mapper for [" + fieldName + "] for geo distance based sort");
-            }
-        }
-        return context.getForField(fieldType);
-    }
-
-    private Nested nested(QueryShardContext context) throws IOException {
-        // If we have a nestedSort we'll use that. Otherwise, use old style.
-        if (nestedSort == null) {
-            return resolveNested(context, nestedPath, nestedFilter);
-        }
-        validateMaxChildrenExistOnlyInTopLevelNestedSort(context, nestedSort);
-        return resolveNested(context, nestedSort);
-    }
-
-    private IndexFieldData.XFieldComparatorSource comparatorSource(
-        GeoPoint[] localPoints,
-        MultiValueMode localSortMode,
-        IndexGeoPointFieldData geoIndexFieldData,
-        Nested nested
-    ) {
-        return new IndexFieldData.XFieldComparatorSource(null, localSortMode, nested) {
-            @Override
-            public SortField.Type reducedType() {
-                return SortField.Type.DOUBLE;
-            }
-
-            private NumericDoubleValues getNumericDoubleValues(LeafReaderContext context) throws IOException {
-                final MultiGeoPointValues geoPointValues = geoIndexFieldData.load(context).getGeoPointValues();
-                final SortedNumericDoubleValues distanceValues = GeoUtils.distanceValues(geoDistance, unit, geoPointValues, localPoints);
-                if (nested == null) {
-                    return FieldData.replaceMissing(sortMode.select(distanceValues), Double.POSITIVE_INFINITY);
-                } else {
-                    final BitSet rootDocs = nested.rootDocs(context);
-                    final DocIdSetIterator innerDocs = nested.innerDocs(context);
-                    final int maxChildren = nested.getNestedSort() != null ? nested.getNestedSort().getMaxChildren() : Integer.MAX_VALUE;
-                    return localSortMode.select(
-                        distanceValues,
-                        Double.POSITIVE_INFINITY,
-                        rootDocs,
-                        innerDocs,
-                        context.reader().maxDoc(),
-                        maxChildren
-                    );
-                }
-            }
-
-            @Override
-            public FieldComparator<?> newComparator(String fieldname, int numHits, Pruning pruning, boolean reversed) {
-                return new DoubleComparator(numHits, null, null, reversed, filterPruning(pruning)) {
-                    @Override
-                    public LeafFieldComparator getLeafComparator(LeafReaderContext context) throws IOException {
-                        return new DoubleLeafComparator(context) {
-                            @Override
-                            protected NumericDocValues getNumericDocValues(LeafReaderContext context, String field) throws IOException {
-                                return getNumericDoubleValues(context).getRawDoubleValues();
-                            }
-                        };
-                    }
-                };
-            }
-
-            @Override
-            public BucketedSort newBucketedSort(
-                BigArrays bigArrays,
-                SortOrder sortOrder,
-                DocValueFormat format,
-                int bucketSize,
-                BucketedSort.ExtraData extra
-            ) {
-                return new BucketedSort.ForDoubles(bigArrays, sortOrder, format, bucketSize, extra) {
-                    @Override
-                    public Leaf forLeaf(LeafReaderContext ctx) throws IOException {
-                        return new Leaf(ctx) {
-                            private final NumericDoubleValues values = getNumericDoubleValues(ctx);
-                            private double value;
-
-                            @Override
-                            protected boolean advanceExact(int doc) throws IOException {
-                                if (values.advanceExact(doc)) {
-                                    value = values.doubleValue();
-                                    return true;
-                                }
-                                return false;
-                            }
-
-                            @Override
-                            protected double docValue() {
-                                return value;
-                            }
-                        };
-                    }
-                };
-            }
-        };
     }
 
     static void parseGeoPoints(XContentParser parser, List<GeoPoint> geoPoints) throws IOException {

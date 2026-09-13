@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingNode;
 import org.codelibs.fesen.opensearch.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -112,66 +111,6 @@ public class AllocateStalePrimaryAllocationCommand extends BasePrimaryAllocation
             validate();
             return new AllocateStalePrimaryAllocationCommand(index, shard, node, acceptDataLoss);
         }
-    }
-
-    @Override
-    public RerouteExplanation execute(RoutingAllocation allocation, boolean explain) {
-        final DiscoveryNode discoNode;
-        try {
-            discoNode = allocation.nodes().resolveNode(node);
-        } catch (IllegalArgumentException e) {
-            return explainOrThrowRejectedCommand(explain, allocation, e);
-        }
-        final RoutingNodes routingNodes = allocation.routingNodes();
-        RoutingNode routingNode = routingNodes.node(discoNode.getId());
-        if (routingNode == null) {
-            return explainOrThrowMissingRoutingNode(allocation, explain, discoNode);
-        }
-
-        try {
-            allocation.routingTable().shardRoutingTable(index, shardId).primaryShard();
-        } catch (IndexNotFoundException | ShardNotFoundException e) {
-            return explainOrThrowRejectedCommand(explain, allocation, e);
-        }
-
-        ShardRouting shardRouting = null;
-        for (ShardRouting shard : allocation.routingNodes().unassigned()) {
-            if (shard.getIndexName().equals(index) && shard.getId() == shardId && shard.primary()) {
-                shardRouting = shard;
-                break;
-            }
-        }
-        if (shardRouting == null) {
-            return explainOrThrowRejectedCommand(explain, allocation, "primary [" + index + "][" + shardId + "] is already assigned");
-        }
-
-        if (acceptDataLoss == false) {
-            String dataLossWarning = "allocating an empty primary for ["
-                + index
-                + "]["
-                + shardId
-                + "] can result in data loss. Please "
-                + "confirm by setting the accept_data_loss parameter to true";
-            return explainOrThrowRejectedCommand(explain, allocation, dataLossWarning);
-        }
-
-        if (shardRouting.recoverySource().getType() != RecoverySource.Type.EXISTING_STORE) {
-            return explainOrThrowRejectedCommand(
-                explain,
-                allocation,
-                "trying to allocate an existing primary shard [" + index + "][" + shardId + "], while no such shard has ever been active"
-            );
-        }
-
-        initializeUnassignedShard(
-            allocation,
-            routingNodes,
-            routingNode,
-            shardRouting,
-            null,
-            RecoverySource.ExistingStoreRecoverySource.FORCE_STALE_PRIMARY_INSTANCE
-        );
-        return new RerouteExplanation(this, allocation.decision(Decision.YES, name() + " (allocation command)", "ignore deciders"));
     }
 
 }

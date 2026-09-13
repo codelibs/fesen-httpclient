@@ -32,6 +32,8 @@
 
 package org.codelibs.fesen.opensearch.cluster;
 
+import org.codelibs.fesen.opensearch.cluster.block.ClusterBlock;
+import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexGraveyard;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexGraveyard.IndexGraveyardDiff;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
@@ -39,7 +41,7 @@ import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNodes;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.index.Index;
-import org.codelibs.fesen.opensearch.gateway.GatewayService;
+import org.codelibs.fesen.opensearch.core.rest.RestStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +59,20 @@ import java.util.stream.Collectors;
  */
 @PublicApi(since = "1.0.0")
 public class ClusterChangedEvent {
+
+    /**
+     * The global block a cluster-manager publishes while it has not recovered its state yet.
+     * Declared here because the node-side gateway service is not carried over.
+     */
+    public static final ClusterBlock STATE_NOT_RECOVERED_BLOCK = new ClusterBlock(
+        1,
+        "state not recovered / initialized",
+        true,
+        true,
+        false,
+        RestStatus.SERVICE_UNAVAILABLE,
+        ClusterBlockLevel.ALL
+    );
 
     private final String source;
 
@@ -144,7 +160,7 @@ public class ClusterChangedEvent {
      * Returns the indices deleted in this event
      */
     public List<Index> indicesDeleted() {
-        if (previousState.blocks().hasGlobalBlock(GatewayService.STATE_NOT_RECOVERED_BLOCK)) {
+        if (previousState.blocks().hasGlobalBlock(STATE_NOT_RECOVERED_BLOCK)) {
             // working off of a non-initialized previous state, so use the tombstones for index deletions
             return indicesDeletedFromTombstones();
         } else {

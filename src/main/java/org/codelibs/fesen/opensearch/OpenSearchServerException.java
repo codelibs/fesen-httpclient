@@ -784,8 +784,8 @@ public final class OpenSearchServerException {
         );
         registerExceptionHandle(
             new OpenSearchExceptionHandle(
-                org.codelibs.fesen.opensearch.rest.action.admin.indices.AliasesNotFoundException.class,
-                org.codelibs.fesen.opensearch.rest.action.admin.indices.AliasesNotFoundException::new,
+                org.codelibs.fesen.opensearch.action.admin.indices.alias.AliasesNotFoundException.class,
+                org.codelibs.fesen.opensearch.action.admin.indices.alias.AliasesNotFoundException::new,
                 113,
                 UNKNOWN_VERSION_ADDED
             )

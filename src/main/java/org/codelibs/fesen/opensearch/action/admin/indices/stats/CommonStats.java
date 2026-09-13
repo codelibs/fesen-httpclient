@@ -53,12 +53,10 @@ import org.codelibs.fesen.opensearch.index.recovery.RecoveryStats;
 import org.codelibs.fesen.opensearch.index.refresh.RefreshStats;
 import org.codelibs.fesen.opensearch.index.search.stats.SearchStats;
 import org.codelibs.fesen.opensearch.index.shard.DocsStats;
-import org.codelibs.fesen.opensearch.index.shard.IndexShard;
 import org.codelibs.fesen.opensearch.index.shard.IndexingStats;
 import org.codelibs.fesen.opensearch.index.store.StoreStats;
 import org.codelibs.fesen.opensearch.index.translog.TranslogStats;
 import org.codelibs.fesen.opensearch.index.warmer.WarmerStats;
-import org.codelibs.fesen.opensearch.indices.IndicesQueryCache;
 import org.codelibs.fesen.opensearch.search.suggest.completion.CompletionStats;
 
 import java.io.IOException;
@@ -181,68 +179,6 @@ public class CommonStats implements Writeable, ToXContentFragment {
                     break;
                 default:
                     throw new IllegalStateException("Unknown Flag: " + flag);
-            }
-        }
-    }
-
-    public CommonStats(IndicesQueryCache indicesQueryCache, IndexShard indexShard, CommonStatsFlags flags) {
-        CommonStatsFlags.Flag[] setFlags = flags.getFlags();
-        for (CommonStatsFlags.Flag flag : setFlags) {
-            try {
-                switch (flag) {
-                    case Docs:
-                        docs = indexShard.docStats();
-                        break;
-                    case Store:
-                        store = indexShard.storeStats();
-                        break;
-                    case Indexing:
-                        indexing = indexShard.indexingStats();
-                        break;
-                    case Get:
-                        get = indexShard.getStats();
-                        break;
-                    case Search:
-                        search = indexShard.searchStats(flags.groups());
-                        break;
-                    case Merge:
-                        merge = indexShard.mergeStats();
-                        break;
-                    case Refresh:
-                        refresh = indexShard.refreshStats();
-                        break;
-                    case Flush:
-                        flush = indexShard.flushStats();
-                        break;
-                    case Warmer:
-                        warmer = indexShard.warmerStats();
-                        break;
-                    case QueryCache:
-                        queryCache = indicesQueryCache.getStats(indexShard.shardId());
-                        break;
-                    case FieldData:
-                        fieldData = indexShard.fieldDataStats(flags.fieldDataFields());
-                        break;
-                    case Completion:
-                        completion = indexShard.completionStats(flags.completionDataFields());
-                        break;
-                    case Segments:
-                        segments = indexShard.segmentStats(flags.includeSegmentFileSizes(), flags.includeUnloadedSegments());
-                        break;
-                    case Translog:
-                        translog = indexShard.translogStats();
-                        break;
-                    case RequestCache:
-                        requestCache = indexShard.requestCache().stats();
-                        break;
-                    case Recovery:
-                        recoveryStats = indexShard.recoveryStats();
-                        break;
-                    default:
-                        throw new IllegalStateException("Unknown Flag: " + flag);
-                }
-            } catch (AlreadyClosedException e) {
-                // shard is closed - no stats is fine
             }
         }
     }

@@ -10,23 +10,11 @@ package org.codelibs.fesen.opensearch.action.admin.indices.datastream;
 
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.ActionType;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedRequest;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.codelibs.fesen.opensearch.action.support.clustermanager.TransportClusterManagerNodeAction;
-import org.codelibs.fesen.opensearch.cluster.ClusterState;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataDataStreamsService;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataDataStreamsService.ModifyDataStreamsClusterStateUpdateRequest;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,50 +90,4 @@ public class ModifyDataStreamsAction extends ActionType<AcknowledgedResponse> {
         }
     }
 
-    /**
-     * Transport action for modifying data streams.
-     *
-     * @opensearch.internal
-     */
-    public static class TransportAction extends TransportClusterManagerNodeAction<Request, AcknowledgedResponse> {
-
-        private final MetadataDataStreamsService metadataDataStreamsService;
-
-        public TransportAction(
-            TransportService transportService,
-            ClusterService clusterService,
-            ThreadPool threadPool,
-            ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver,
-            MetadataDataStreamsService metadataDataStreamsService
-        ) {
-            super(NAME, transportService, clusterService, threadPool, actionFilters, Request::new, indexNameExpressionResolver);
-            this.metadataDataStreamsService = metadataDataStreamsService;
-        }
-
-        @Override
-        protected String executor() {
-            return ThreadPool.Names.SAME;
-        }
-
-        @Override
-        protected AcknowledgedResponse read(StreamInput in) throws IOException {
-            return new AcknowledgedResponse(in);
-        }
-
-        @Override
-        protected void clusterManagerOperation(Request request, ClusterState state, ActionListener<AcknowledgedResponse> listener) {
-            ModifyDataStreamsClusterStateUpdateRequest updateRequest = new ModifyDataStreamsClusterStateUpdateRequest(
-                request.getActions(),
-                request.clusterManagerNodeTimeout(),
-                request.timeout()
-            );
-            metadataDataStreamsService.modifyDataStream(updateRequest, listener);
-        }
-
-        @Override
-        protected ClusterBlockException checkBlock(Request request, ClusterState state) {
-            return state.blocks().globalBlockedException(ClusterBlockLevel.METADATA_WRITE);
-        }
-    }
 }

@@ -13,7 +13,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.ratelimitting.admissioncontrol.controllers.AdmissionController;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,11 +24,6 @@ import java.util.Map;
 public class AdmissionControllerStats implements Writeable, ToXContentFragment {
     public Map<String, Long> rejectionCount;
     public String admissionControllerName;
-
-    public AdmissionControllerStats(AdmissionController admissionController) {
-        this.rejectionCount = admissionController.getRejectionStats();
-        this.admissionControllerName = admissionController.getName();
-    }
 
     public AdmissionControllerStats(StreamInput in) throws IOException {
         this.rejectionCount = in.readMap(StreamInput::readString, StreamInput::readLong);

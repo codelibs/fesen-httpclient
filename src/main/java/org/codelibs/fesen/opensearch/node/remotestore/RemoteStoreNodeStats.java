@@ -27,12 +27,12 @@ public class RemoteStoreNodeStats implements Writeable, ToXContentFragment {
     public static final String LAST_SUCCESSFUL_FETCH_OF_PINNED_TIMESTAMPS = "last_successful_fetch_of_pinned_timestamps";
 
     /**
-     * Time stamp for the last successful fetch of pinned timestamps by the {@linkplain  RemoteStorePinnedTimestampService}
+     * Time stamp for the last successful fetch of pinned timestamps by the node-side pinned-timestamp service
      */
     private final long lastSuccessfulFetchOfPinnedTimestamps;
 
     public RemoteStoreNodeStats() {
-        this.lastSuccessfulFetchOfPinnedTimestamps = RemoteStorePinnedTimestampService.getPinnedTimestamps().v1();
+        this.lastSuccessfulFetchOfPinnedTimestamps = 0L;
     }
 
     public long getLastSuccessfulFetchOfPinnedTimestamps() {

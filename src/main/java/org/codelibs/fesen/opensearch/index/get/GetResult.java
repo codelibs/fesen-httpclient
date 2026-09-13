@@ -48,9 +48,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.IgnoredFieldMapper;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
-import org.codelibs.fesen.opensearch.index.mapper.SourceFieldMapper;
 import org.codelibs.fesen.opensearch.search.lookup.SourceLookup;
 
 import java.io.IOException;
@@ -299,7 +297,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
         for (DocumentField field : metaFields.values()) {
             // TODO: can we avoid having an exception here?
-            if (field.getName().equals(IgnoredFieldMapper.NAME)) {
+            if (field.getName().equals("_ignored")) {
                 builder.field(field.getName(), field.getValues());
             } else {
                 builder.field(field.getName(), field.<Object>getValue());
@@ -309,7 +307,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         builder.field(FOUND, exists);
 
         if (source != null) {
-            XContentHelper.writeRawField(SourceFieldMapper.NAME, source, builder, params);
+            XContentHelper.writeRawField("_source", source, builder, params);
         }
 
         if (!documentFields.isEmpty()) {
@@ -377,7 +375,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
                     metaFields.put(currentFieldName, new DocumentField(currentFieldName, Collections.singletonList(parser.objectText())));
                 }
             } else if (token == XContentParser.Token.START_OBJECT) {
-                if (SourceFieldMapper.NAME.equals(currentFieldName)) {
+                if ("_source".equals(currentFieldName)) {
                     try (XContentBuilder builder = XContentBuilder.builder(parser.contentType().xContent())) {
                         // the original document gets slightly modified: whitespaces or pretty printing are not preserved,
                         // it all depends on the current builder settings
@@ -393,7 +391,7 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
                     parser.skipChildren(); // skip potential inner objects for forward compatibility
                 }
             } else if (token == XContentParser.Token.START_ARRAY) {
-                if (IgnoredFieldMapper.NAME.equals(currentFieldName)) {
+                if ("_ignored".equals(currentFieldName)) {
                     metaFields.put(currentFieldName, new DocumentField(currentFieldName, parser.list()));
                 } else {
                     parser.skipChildren(); // skip potential inner arrays for forward compatibility

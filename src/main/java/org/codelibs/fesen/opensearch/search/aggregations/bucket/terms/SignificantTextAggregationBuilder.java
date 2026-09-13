@@ -40,12 +40,10 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationInitializationException;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.TermsAggregator.BucketCountThresholds;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.heuristic.SignificanceHeuristic;
 
@@ -338,27 +336,6 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     @Override
     public BucketCardinality bucketCardinality() {
         return BucketCardinality.MANY;
-    }
-
-    @Override
-    protected AggregatorFactory doBuild(QueryShardContext queryShardContext, AggregatorFactory parent, Builder subFactoriesBuilder)
-        throws IOException {
-        SignificanceHeuristic executionHeuristic = this.significanceHeuristic.rewrite(queryShardContext);
-
-        return new SignificantTextAggregatorFactory(
-            name,
-            includeExclude,
-            filterBuilder,
-            bucketCountThresholds,
-            executionHeuristic,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            fieldName,
-            sourceFieldNames,
-            filterDuplicateText,
-            metadata
-        );
     }
 
     @Override

@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.common.Booleans;
 import org.codelibs.fesen.opensearch.common.SetOnce;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
-import org.codelibs.fesen.opensearch.common.logging.LogConfigurator;
 import org.codelibs.fesen.opensearch.common.unit.MemorySizeValue;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.util.io.IOUtils;
@@ -90,7 +89,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.codelibs.fesen.opensearch.common.settings.AbstractScopedSettings.ARCHIVED_SETTINGS_PREFIX;
 import static org.codelibs.fesen.opensearch.common.unit.TimeValue.parseTimeValue;
 import static org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue.parseBytesSizeValue;
 
@@ -101,6 +99,9 @@ import static org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue.parse
  */
 @PublicApi(since = "1.0.0")
 public final class Settings implements ToXContentFragment {
+
+    /** Prefix an upgrade puts on a setting it could not parse. */
+    public static final String ARCHIVED_SETTINGS_PREFIX = "archived.";
 
     public static final Settings EMPTY = new Settings(Collections.emptyMap(), null);
 
@@ -344,7 +345,7 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * We have to lazy initialize the deprecation logger as otherwise a static logger here would be constructed before logging is configured
-     * leading to a runtime failure (see {@link LogConfigurator#checkErrorListener()} ). The premature construction would come from any
+     * leading to a runtime failure (see the node's log configurator error check ). The premature construction would come from any
      * {@link Setting} object constructed in, for example, {@link org.codelibs.fesen.opensearch.env.Environment}.
      *
      * @opensearch.internal

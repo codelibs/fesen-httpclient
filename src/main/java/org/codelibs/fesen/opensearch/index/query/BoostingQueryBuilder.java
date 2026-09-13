@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.queries.function.FunctionScoreQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -43,7 +42,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -214,13 +212,6 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        Query positive = positiveQuery.toQuery(context);
-        Query negative = negativeQuery.toQuery(context);
-        return FunctionScoreQuery.boostByQuery(positive, negative, negativeBoost);
-    }
-
-    @Override
     protected int doHashCode() {
         return Objects.hash(negativeBoost, positiveQuery, negativeQuery);
     }
@@ -246,12 +237,6 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
             return newQueryBuilder;
         }
         return this;
-    }
-
-    @Override
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {
-        InnerHitContextBuilder.extractInnerHits(positiveQuery, innerHits);
-        InnerHitContextBuilder.extractInnerHits(negativeQuery, innerHits);
     }
 
     @Override

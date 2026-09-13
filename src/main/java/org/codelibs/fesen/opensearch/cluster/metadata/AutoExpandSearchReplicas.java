@@ -9,7 +9,6 @@
 package org.codelibs.fesen.opensearch.cluster.metadata;
 
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.common.Booleans;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 
-import static org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateService.isIndexVerifiedBeforeClosed;
 
 /**
  * This class acts as a functional wrapper around the {@code index.auto_expand_search_replicas} setting.
@@ -118,19 +116,6 @@ public final class AutoExpandSearchReplicas {
         return enabled;
     }
 
-    private OptionalInt getDesiredNumberOfSearchReplicas(IndexMetadata indexMetadata, RoutingAllocation allocation) {
-        int numMatchingSearchNodes = (int) allocation.nodes()
-            .getDataNodes()
-            .values()
-            .stream()
-            .filter(DiscoveryNode::isSearchNode)
-            .map(node -> allocation.deciders().shouldAutoExpandToNode(indexMetadata, node, allocation))
-            .filter(decision -> decision.type() != Decision.Type.NO)
-            .count();
-
-        return calculateNumberOfSearchReplicas(numMatchingSearchNodes);
-    }
-
     // package private for testing
     OptionalInt calculateNumberOfSearchReplicas(int numMatchingSearchNodes) {
         // Calculate the maximum possible number of search replicas
@@ -152,29 +137,4 @@ public final class AutoExpandSearchReplicas {
         return enabled ? minSearchReplicas + "-" + maxSearchReplicas : "false";
     }
 
-    /**
-     * Checks if there are search replicas with the auto-expand feature that need to be adapted.
-     * Returns a map of updates, which maps the indices to be updated to the desired number of search replicas.
-     * The map has the desired number of search replicas as key and the indices to update as value, as this allows the result
-     * of this method to be directly applied to RoutingTable.Builder#updateNumberOfSearchReplicas.
-     */
-    public static Map<Integer, List<String>> getAutoExpandSearchReplicaChanges(Metadata metadata, RoutingAllocation allocation) {
-        Map<Integer, List<String>> updatedSearchReplicas = new HashMap<>();
-
-        for (final IndexMetadata indexMetadata : metadata) {
-            if (indexMetadata.getState() == IndexMetadata.State.OPEN || isIndexVerifiedBeforeClosed(indexMetadata)) {
-                AutoExpandSearchReplicas autoExpandSearchReplicas = SETTING.get(indexMetadata.getSettings());
-                if (autoExpandSearchReplicas.isEnabled()) {
-                    autoExpandSearchReplicas.getDesiredNumberOfSearchReplicas(indexMetadata, allocation)
-                        .ifPresent(numberOfSearchReplicas -> {
-                            if (numberOfSearchReplicas != indexMetadata.getNumberOfSearchOnlyReplicas()) {
-                                updatedSearchReplicas.computeIfAbsent(numberOfSearchReplicas, ArrayList::new)
-                                    .add(indexMetadata.getIndex().getName());
-                            }
-                        });
-                }
-            }
-        }
-        return updatedSearchReplicas;
-    }
 }

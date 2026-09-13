@@ -33,12 +33,9 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.MatchNoDocsQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.geo.GeoDistance;
 import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
 import org.codelibs.fesen.opensearch.common.geo.GeoUtils;
-import org.codelibs.fesen.opensearch.common.geo.ShapeRelation;
-import org.codelibs.fesen.opensearch.common.geo.SpatialStrategy;
 import org.codelibs.fesen.opensearch.common.unit.DistanceUnit;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
@@ -47,11 +44,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.geometry.Circle;
-import org.codelibs.fesen.opensearch.index.mapper.GeoPointFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.GeoShapeFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.GeoShapeQueryable;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -241,48 +233,6 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext shardContext) throws IOException {
-        MappedFieldType fieldType = shardContext.fieldMapper(fieldName);
-        if (fieldType == null) {
-            if (ignoreUnmapped) {
-                return new MatchNoDocsQuery();
-            } else {
-                throw new QueryShardException(shardContext, "failed to find geo field [" + fieldName + "]");
-            }
-        }
-
-        if (fieldType instanceof GeoShapeQueryable == false) {
-            throw new QueryShardException(
-                shardContext,
-                "type ["
-                    + fieldType
-                    + "] for field ["
-                    + fieldName
-                    + "] is not supported for ["
-                    + NAME
-                    + "] queries. Must be one of ["
-                    + GeoPointFieldMapper.CONTENT_TYPE
-                    + "] or ["
-                    + GeoShapeFieldMapper.CONTENT_TYPE
-                    + "]"
-            );
-        }
-
-        QueryValidationException exception = checkLatLon();
-        if (exception != null) {
-            throw new QueryShardException(shardContext, "couldn't validate latitude/ longitude values", exception);
-        }
-
-        if (GeoValidationMethod.isCoerce(validationMethod)) {
-            GeoUtils.normalizePoint(center, true, true);
-        }
-
-        final GeoShapeQueryable geoShapeQueryable = (GeoShapeQueryable) fieldType;
-        final Circle circle = new Circle(center.lon(), center.lat(), this.distance);
-        return geoShapeQueryable.geoShapeQuery(circle, fieldType.name(), SpatialStrategy.RECURSIVE, ShapeRelation.INTERSECTS, shardContext);
     }
 
     @Override

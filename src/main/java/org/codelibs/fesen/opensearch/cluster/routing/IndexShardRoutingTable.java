@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.index.Index;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
-import org.codelibs.fesen.opensearch.node.ResponseCollectorService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -325,31 +324,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
     }
 
     /**
-     * Returns an iterator over active and initializing shards, ordered by the adaptive replica
-     * selection formula. Making sure though that its random within the active shards of the same
-     * (or missing) rank, and initializing shards are the last to iterate through.
-     */
-    public ShardIterator activeInitializingShardsRankedIt(
-        @Nullable ResponseCollectorService collector,
-        @Nullable Map<String, Long> nodeSearchCounts
-    ) {
-        final int seed = shuffler.nextSeed();
-        if (allInitializingShards.isEmpty()) {
-            return new PlainShardIterator(
-                shardId,
-                rankShardsAndUpdateStats(shuffler.shuffle(activeShards, seed), collector, nodeSearchCounts)
-            );
-        }
-
-        ArrayList<ShardRouting> ordered = new ArrayList<>(activeShards.size() + allInitializingShards.size());
-        List<ShardRouting> rankedActiveShards = rankShardsAndUpdateStats(shuffler.shuffle(activeShards, seed), collector, nodeSearchCounts);
-        ordered.addAll(rankedActiveShards);
-        List<ShardRouting> rankedInitializingShards = rankShardsAndUpdateStats(allInitializingShards, collector, nodeSearchCounts);
-        ordered.addAll(rankedInitializingShards);
-        return new PlainShardIterator(shardId, ordered);
-    }
-
-    /**
      * Returns an iterator over active and initializing shards, shards are ordered by weighted
      * round-robin scheduling policy.
      *
@@ -463,110 +437,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
             nodeIds.add(shard.currentNodeId());
         }
         return nodeIds;
-    }
-
-    private static Map<String, Optional<ResponseCollectorService.ComputedNodeStats>> getNodeStats(
-        final Set<String> nodeIds,
-        final ResponseCollectorService collector
-    ) {
-
-        final Map<String, Optional<ResponseCollectorService.ComputedNodeStats>> nodeStats = new HashMap<>(nodeIds.size());
-        for (String nodeId : nodeIds) {
-            nodeStats.put(nodeId, collector.getNodeStatistics(nodeId));
-        }
-        return nodeStats;
-    }
-
-    private static Map<String, Double> rankNodes(
-        final Map<String, Optional<ResponseCollectorService.ComputedNodeStats>> nodeStats,
-        final Map<String, Long> nodeSearchCounts
-    ) {
-        final Map<String, Double> nodeRanks = new HashMap<>(nodeStats.size());
-        for (Map.Entry<String, Optional<ResponseCollectorService.ComputedNodeStats>> entry : nodeStats.entrySet()) {
-            Optional<ResponseCollectorService.ComputedNodeStats> maybeStats = entry.getValue();
-            maybeStats.ifPresent(stats -> {
-                final String nodeId = entry.getKey();
-                nodeRanks.put(nodeId, stats.rank(nodeSearchCounts.getOrDefault(nodeId, 1L)));
-            });
-        }
-        return nodeRanks;
-    }
-
-    /**
-     * Adjust the for all other nodes' collected stats. In the original ranking paper there is no need to adjust other nodes' stats because
-     * Cassandra sends occasional requests to all copies of the data, so their stats will be updated during that broadcast phase. In
-     * OpenSearch, however, we do not have that sort of broadcast-to-all behavior. In order to prevent a node that gets a high score and
-     * then never gets any more requests, we must ensure it eventually returns to a more normal score and can be a candidate for serving
-     * requests.
-     * <p>
-     * This adjustment takes the "winning" node's statistics and adds the average of those statistics with each non-winning node. Let's say
-     * the winning node had a queue size of 10 and a non-winning node had a queue of 18. The average queue size is (10 + 18) / 2 = 14 so the
-     * non-winning node will have statistics added for a queue size of 14. This is repeated for the response time and service times as well.
-     */
-    private static void adjustStats(
-        final ResponseCollectorService collector,
-        final Map<String, Optional<ResponseCollectorService.ComputedNodeStats>> nodeStats,
-        final String minNodeId,
-        final ResponseCollectorService.ComputedNodeStats minStats
-    ) {
-        if (minNodeId != null) {
-            for (Map.Entry<String, Optional<ResponseCollectorService.ComputedNodeStats>> entry : nodeStats.entrySet()) {
-                final String nodeId = entry.getKey();
-                final Optional<ResponseCollectorService.ComputedNodeStats> maybeStats = entry.getValue();
-                if (nodeId.equals(minNodeId) == false && maybeStats.isPresent()) {
-                    final ResponseCollectorService.ComputedNodeStats stats = maybeStats.get();
-                    final int updatedQueue = (minStats.queueSize + stats.queueSize) / 2;
-                    final long updatedResponse = (long) (minStats.responseTime + stats.responseTime) / 2;
-                    final long updatedService = (long) (minStats.serviceTime + stats.serviceTime) / 2;
-                    collector.addNodeStatistics(nodeId, updatedQueue, updatedResponse, updatedService);
-                }
-            }
-        }
-    }
-
-    /**
-     * Note that this method mutates the nodeSearchCounts map and calls adjustStats which modifies collector state.
-     */
-    public static List<ShardRouting> rankShardsAndUpdateStats(
-        List<ShardRouting> shards,
-        final ResponseCollectorService collector,
-        final Map<String, Long> nodeSearchCounts
-    ) {
-        if (collector == null || nodeSearchCounts == null || shards.size() <= 1) {
-            return shards;
-        }
-
-        // Retrieve which nodes we can potentially send the query to
-        final Set<String> nodeIds = getAllNodeIds(shards);
-        final Map<String, Optional<ResponseCollectorService.ComputedNodeStats>> nodeStats = getNodeStats(nodeIds, collector);
-
-        // Retrieve all the nodes the shards exist on
-        final Map<String, Double> nodeRanks = rankNodes(nodeStats, nodeSearchCounts);
-
-        // sort all shards based on the shard rank
-        ArrayList<ShardRouting> sortedShards = new ArrayList<>(shards);
-        Collections.sort(sortedShards, new NodeRankComparator(nodeRanks));
-
-        // adjust the non-winner nodes' stats so they will get a chance to receive queries
-        if (sortedShards.size() > 1) {
-            ShardRouting minShard = sortedShards.get(0);
-            // If the winning shard is not started we are ranking initializing
-            // shards, don't bother to do adjustments
-            if (minShard.started()) {
-                String minNodeId = minShard.currentNodeId();
-                Optional<ResponseCollectorService.ComputedNodeStats> maybeMinStats = nodeStats.get(minNodeId);
-                if (maybeMinStats.isPresent()) {
-                    adjustStats(collector, nodeStats, minNodeId, maybeMinStats.get());
-                    // Increase the number of searches for the "winning" node by one.
-                    // Note that this doesn't actually affect the "real" counts, instead
-                    // it only affects the captured node search counts, which is
-                    // captured once for each query in TransportSearchAction
-                    nodeSearchCounts.compute(minNodeId, (id, conns) -> conns == null ? 1 : conns + 1);
-                }
-            }
-        }
-
-        return sortedShards;
     }
 
     @Override

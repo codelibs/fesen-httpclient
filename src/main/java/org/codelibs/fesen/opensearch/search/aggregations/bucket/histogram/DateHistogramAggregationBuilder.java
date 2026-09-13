@@ -39,28 +39,22 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.BucketOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder.CompoundOrder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Collections.unmodifiableMap;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * A builder for histograms on date fields.
@@ -72,9 +66,6 @@ public class DateHistogramAggregationBuilder extends ValuesSourceAggregationBuil
         DateIntervalConsumer {
 
     public static final String NAME = "date_histogram";
-    public static final ValuesSourceRegistry.RegistryKey<DateHistogramAggregationSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, DateHistogramAggregationSupplier.class);
-
     public static final Map<String, Rounding.DateTimeUnit> DATE_FIELD_UNITS;
 
     static {
@@ -137,10 +128,6 @@ public class DateHistogramAggregationBuilder extends ValuesSourceAggregationBuil
             (p, c) -> InternalOrder.Parser.parseOrderParam(p),
             Histogram.ORDER_FIELD
         );
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        DateHistogramAggregatorFactory.registerAggregators(builder);
     }
 
     private DateIntervalWrapper dateHistogramInterval = new DateIntervalWrapper();
@@ -459,75 +446,6 @@ public class DateHistogramAggregationBuilder extends ValuesSourceAggregationBuil
     @Override
     public String getType() {
         return NAME;
-    }
-
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
-
-    @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        final ZoneId tz = timeZone();
-        final Rounding rounding = dateHistogramInterval.createRounding(tz, offset);
-
-        LongBounds roundedBounds = null;
-        if (this.extendedBounds != null) {
-            // parse any string bounds to longs and round
-            roundedBounds = this.extendedBounds.parseAndValidate(name, "extended_bounds", queryShardContext, config.format())
-                .round(rounding);
-        }
-
-        LongBounds roundedHardBounds = null;
-        if (this.hardBounds != null) {
-            // parse any string bounds to longs and round
-            roundedHardBounds = this.hardBounds.parseAndValidate(name, "hard_bounds", queryShardContext, config.format()).round(rounding);
-        }
-
-        if (roundedBounds != null && roundedHardBounds != null) {
-            if (roundedBounds.getMax() != null
-                && roundedHardBounds.getMax() != null
-                && roundedBounds.getMax() > roundedHardBounds.getMax()) {
-                throw new IllegalArgumentException(
-                    "Extended bounds have to be inside hard bounds, hard bounds: ["
-                        + hardBounds
-                        + "], extended bounds: ["
-                        + extendedBounds
-                        + "]"
-                );
-            }
-            if (roundedBounds.getMin() != null
-                && roundedHardBounds.getMin() != null
-                && roundedBounds.getMin() < roundedHardBounds.getMin()) {
-                throw new IllegalArgumentException(
-                    "Extended bounds have to be inside hard bounds, hard bounds: ["
-                        + hardBounds
-                        + "], extended bounds: ["
-                        + extendedBounds
-                        + "]"
-                );
-            }
-        }
-
-        return new DateHistogramAggregatorFactory(
-            name,
-            config,
-            order,
-            keyed,
-            minDocCount,
-            rounding,
-            roundedBounds,
-            roundedHardBounds,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

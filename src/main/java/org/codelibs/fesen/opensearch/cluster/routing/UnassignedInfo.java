@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.cluster.routing;
 import org.codelibs.fesen.opensearch.ExceptionsHelper;
 import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.metadata.Metadata;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
@@ -423,7 +422,7 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
      * This set will be discarded when a shard moves to started. And if a shard is failed while started (i.e., from started to unassigned),
      * the currently assigned node won't be added to this set.
      *
-     * @see org.codelibs.fesen.opensearch.gateway.ReplicaShardAllocator#processExistingRecoveries(RoutingAllocation)
+     * @see <a href="https://opensearch.org">replica shard allocation</a>
      * @see org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService#applyFailedShards(ClusterState, List, List)
      */
     public Set<String> getFailedNodeIds() {

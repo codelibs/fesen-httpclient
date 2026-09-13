@@ -43,7 +43,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.gateway.MetadataStateFormat;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -235,20 +234,6 @@ public class RetentionLeases implements ToXContentFragment, Writeable {
     public static RetentionLeases fromXContent(final XContentParser parser) {
         return PARSER.apply(parser, null);
     }
-
-    static final MetadataStateFormat<RetentionLeases> FORMAT = new MetadataStateFormat<RetentionLeases>("retention-leases-") {
-
-        @Override
-        public void toXContent(final XContentBuilder builder, final RetentionLeases retentionLeases) throws IOException {
-            retentionLeases.toXContent(builder, ToXContent.EMPTY_PARAMS);
-        }
-
-        @Override
-        public RetentionLeases fromXContent(final XContentParser parser) {
-            return RetentionLeases.fromXContent(parser);
-        }
-
-    };
 
     @Override
     public boolean equals(Object o) {

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
-import static org.codelibs.fesen.opensearch.search.SearchService.NO_TIMEOUT;
 
 /**
  * Base class to define WorkloadGroup tasks
@@ -36,7 +35,7 @@ public class WorkloadGroupTask extends CancellableTask {
     private boolean isWorkloadGroupSet = false;
 
     public WorkloadGroupTask(long id, String type, String action, String description, TaskId parentTaskId, Map<String, String> headers) {
-        this(id, type, action, description, parentTaskId, headers, NO_TIMEOUT, System::nanoTime);
+        this(id, type, action, description, parentTaskId, headers, TimeValue.MINUS_ONE, System::nanoTime);
     }
 
     public WorkloadGroupTask(

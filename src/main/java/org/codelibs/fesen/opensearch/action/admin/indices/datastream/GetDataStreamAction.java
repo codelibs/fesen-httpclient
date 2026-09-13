@@ -31,49 +31,27 @@
 
 package org.codelibs.fesen.opensearch.action.admin.indices.datastream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.ActionType;
 import org.codelibs.fesen.opensearch.action.IndicesRequest;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
-import org.codelibs.fesen.opensearch.action.support.TransportIndicesResolvingAction;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.ClusterManagerNodeReadRequest;
-import org.codelibs.fesen.opensearch.action.support.clustermanager.TransportClusterManagerNodeReadAction;
 import org.codelibs.fesen.opensearch.cluster.AbstractDiffable;
-import org.codelibs.fesen.opensearch.cluster.ClusterState;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.health.ClusterHealthStatus;
-import org.codelibs.fesen.opensearch.cluster.health.ClusterStateHealth;
 import org.codelibs.fesen.opensearch.cluster.metadata.DataStream;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexTemplateService;
-import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.ParseField;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.core.index.Index;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Transport action for getting a datastream
@@ -285,85 +263,6 @@ public class GetDataStreamAction extends ActionType<GetDataStreamAction.Response
         @Override
         public int hashCode() {
             return Objects.hash(dataStreams);
-        }
-    }
-
-    /**
-     * Transport Action for getting data streams
-     *
-     * @opensearch.internal
-     */
-    public static class TransportAction extends TransportClusterManagerNodeReadAction<Request, Response>
-        implements
-            TransportIndicesResolvingAction<Request> {
-
-        private static final Logger logger = LogManager.getLogger(TransportAction.class);
-
-        public TransportAction(
-            TransportService transportService,
-            ClusterService clusterService,
-            ThreadPool threadPool,
-            ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver
-        ) {
-            super(NAME, transportService, clusterService, threadPool, actionFilters, Request::new, indexNameExpressionResolver);
-        }
-
-        @Override
-        protected String executor() {
-            return ThreadPool.Names.SAME;
-        }
-
-        @Override
-        protected Response read(StreamInput in) throws IOException {
-            return new Response(in);
-        }
-
-        @Override
-        protected void clusterManagerOperation(Request request, ClusterState state, ActionListener<Response> listener) throws Exception {
-            List<DataStream> dataStreams = getDataStreams(state, indexNameExpressionResolver, request);
-            List<Response.DataStreamInfo> dataStreamInfos = new ArrayList<>(dataStreams.size());
-            for (DataStream dataStream : dataStreams) {
-                String indexTemplate = MetadataIndexTemplateService.findV2Template(state.metadata(), dataStream.getName(), false);
-                String ilmPolicyName = null;
-                if (indexTemplate != null) {
-                    Settings settings = MetadataIndexTemplateService.resolveSettings(state.metadata(), indexTemplate);
-                    ilmPolicyName = settings.get("index.lifecycle.name");
-                } else {
-                    logger.warn(
-                        "couldn't find any matching template for data stream [{}]. has it been restored (and possibly renamed)"
-                            + "from a snapshot?",
-                        dataStream.getName()
-                    );
-                }
-                ClusterStateHealth streamHealth = new ClusterStateHealth(
-                    state,
-                    dataStream.getIndices().stream().map(Index::getName).toArray(String[]::new)
-                );
-                dataStreamInfos.add(new Response.DataStreamInfo(dataStream, streamHealth.getStatus(), indexTemplate));
-            }
-            listener.onResponse(new Response(dataStreamInfos));
-        }
-
-        static List<DataStream> getDataStreams(ClusterState clusterState, IndexNameExpressionResolver iner, Request request) {
-            List<String> results = iner.dataStreamNames(clusterState, request.indicesOptions(), request.names);
-            Map<String, DataStream> dataStreams = clusterState.metadata().dataStreams();
-
-            return results.stream().map(dataStreams::get).sorted(Comparator.comparing(DataStream::getName)).collect(Collectors.toList());
-        }
-
-        @Override
-        protected ClusterBlockException checkBlock(Request request, ClusterState state) {
-            return state.blocks().globalBlockedException(ClusterBlockLevel.METADATA_WRITE);
-        }
-
-        @Override
-        public ResolvedIndices resolveIndices(Request request) {
-            return ResolvedIndices.of(
-                getDataStreams(clusterService.state(), indexNameExpressionResolver, request).stream()
-                    .map(DataStream::getName)
-                    .collect(Collectors.toList())
-            );
         }
     }
 

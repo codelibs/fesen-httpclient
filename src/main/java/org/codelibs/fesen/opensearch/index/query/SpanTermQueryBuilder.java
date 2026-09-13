@@ -32,16 +32,12 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queries.spans.SpanQuery;
 import org.apache.lucene.queries.spans.SpanTermQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 
@@ -91,19 +87,6 @@ public class SpanTermQueryBuilder extends BaseTermQueryBuilder<SpanTermQueryBuil
      */
     public SpanTermQueryBuilder(StreamInput in) throws IOException {
         super(in);
-    }
-
-    @Override
-    protected SpanQuery doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType mapper = context.fieldMapper(fieldName);
-        Term term;
-        if (mapper == null) {
-            term = new Term(fieldName, BytesRefs.toBytesRef(value));
-        } else {
-            Query termQuery = mapper.termQuery(value, context);
-            term = MappedFieldType.extractTerm(termQuery);
-        }
-        return new SpanTermQuery(term);
     }
 
     public static SpanTermQueryBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {

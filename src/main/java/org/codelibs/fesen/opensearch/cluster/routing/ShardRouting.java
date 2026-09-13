@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.cluster.routing;
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.cluster.routing.RecoverySource.ExistingStoreRecoverySource;
 import org.codelibs.fesen.opensearch.cluster.routing.RecoverySource.PeerRecoverySource;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.allocator.BalancedShardsAllocator;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -922,7 +921,7 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * Cache hash code in the same way as {@link String#hashCode()}) using racy single-check idiom
-     * as it is mainly used in single-threaded code ({@link BalancedShardsAllocator}).
+     * as it is mainly used in single-threaded code (the shard allocator).
      */
     private int hashCode; // default to 0
 

@@ -65,10 +65,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.VersionType;
-import org.codelibs.fesen.opensearch.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.KeywordFieldMapper.KeywordFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.TextFieldMapper.TextFieldType;
 import org.codelibs.fesen.opensearch.transport.client.Client;
 
 import java.io.IOException;
@@ -107,10 +103,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     public static final float DEFAULT_BOOST_TERMS = 0;  // no boost terms
     public static final boolean DEFAULT_INCLUDE = false;
     public static final boolean DEFAULT_FAIL_ON_UNSUPPORTED_FIELDS = true;
-
-    private static final Set<Class<? extends MappedFieldType>> SUPPORTED_FIELD_TYPES = new HashSet<>(
-        Arrays.asList(TextFieldType.class, KeywordFieldType.class)
-    );
 
     private static final ParseField FIELDS = new ParseField("fields");
     private static final ParseField LIKE = new ParseField("like");
@@ -956,155 +948,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         return NAME;
     }
 
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        Item[] likeItems = new Item[this.likeItems.length];
-        for (int i = 0; i < likeItems.length; i++) {
-            likeItems[i] = new Item(this.likeItems[i]);
-        }
-        Item[] unlikeItems = new Item[this.unlikeItems.length];
-        for (int i = 0; i < unlikeItems.length; i++) {
-            unlikeItems[i] = new Item(this.unlikeItems[i]);
-        }
-
-        MoreLikeThisQuery mltQuery = new MoreLikeThisQuery();
-
-        // set similarity
-        mltQuery.setSimilarity(context.getSearchSimilarity());
-
-        // set query parameters
-        mltQuery.setMaxQueryTerms(maxQueryTerms);
-        mltQuery.setMinTermFrequency(minTermFreq);
-        mltQuery.setMinDocFreq(minDocFreq);
-        mltQuery.setMaxDocFreq(maxDocFreq);
-        mltQuery.setMinWordLen(minWordLength);
-        mltQuery.setMaxWordLen(maxWordLength);
-        mltQuery.setMinimumShouldMatch(minimumShouldMatch);
-        if (stopWords != null) {
-            mltQuery.setStopWords(new HashSet<>(Arrays.asList(stopWords)));
-        }
-
-        // sets boost terms
-        if (boostTerms != 0) {
-            mltQuery.setBoostTerms(true);
-            mltQuery.setBoostTermsFactor(boostTerms);
-        }
-
-        // set analyzer
-        Analyzer analyzerObj = context.getIndexAnalyzers().get(analyzer);
-        if (analyzerObj == null) {
-            analyzerObj = context.getMapperService().searchAnalyzer();
-        }
-        mltQuery.setAnalyzer(analyzerObj);
-
-        // set like text fields
-        boolean useDefaultField = (fields == null);
-        List<String> moreLikeFields = new ArrayList<>();
-        if (useDefaultField) {
-            moreLikeFields = context.defaultFields();
-            if (moreLikeFields.size() == 1 && moreLikeFields.get(0).equals("*") && (likeTexts.length > 0 || unlikeTexts.length > 0)) {
-                throw new IllegalArgumentException(
-                    "[more_like_this] query cannot infer the field to analyze the free text, "
-                        + "you should update the [index.query.default_field] index setting to a field that exists in the mapping or "
-                        + "set the [fields] option in the query."
-                );
-            }
-        } else {
-            for (String field : fields) {
-                MappedFieldType fieldType = context.fieldMapper(field);
-                if (fieldType != null && SUPPORTED_FIELD_TYPES.contains(fieldType.getClass()) == false) {
-                    if (failOnUnsupportedField) {
-                        throw new IllegalArgumentException("more_like_this only supports text/keyword fields: [" + field + "]");
-                    } else {
-                        // skip
-                        continue;
-                    }
-                }
-                moreLikeFields.add(fieldType == null ? field : fieldType.name());
-            }
-        }
-
-        if (moreLikeFields.isEmpty()) {
-            return null;
-        }
-        mltQuery.setMoreLikeFields(moreLikeFields.toArray(new String[0]));
-
-        // handle like texts
-        if (likeTexts.length > 0) {
-            mltQuery.setLikeText(likeTexts);
-        }
-        if (unlikeTexts.length > 0) {
-            mltQuery.setUnlikeText(unlikeTexts);
-        }
-
-        // handle items
-        if (likeItems.length > 0) {
-            return handleItems(context, mltQuery, likeItems, unlikeItems, include, moreLikeFields, useDefaultField);
-        } else {
-            return mltQuery;
-        }
-    }
-
-    private Query handleItems(
-        QueryShardContext context,
-        MoreLikeThisQuery mltQuery,
-        Item[] likeItems,
-        Item[] unlikeItems,
-        boolean include,
-        List<String> moreLikeFields,
-        boolean useDefaultField
-    ) throws IOException {
-        // set default index, type and fields if not specified
-        for (Item item : likeItems) {
-            setDefaultIndexTypeFields(context, item, moreLikeFields, useDefaultField);
-        }
-        for (Item item : unlikeItems) {
-            setDefaultIndexTypeFields(context, item, moreLikeFields, useDefaultField);
-        }
-
-        // fetching the items with multi-termvectors API
-        MultiTermVectorsResponse likeItemsResponse = fetchResponse(context.getClient(), likeItems);
-        // getting the Fields for liked items
-        mltQuery.setLikeFields(getFieldsFor(likeItemsResponse));
-
-        // getting the Fields for unliked items
-        if (unlikeItems.length > 0) {
-            MultiTermVectorsResponse unlikeItemsResponse = fetchResponse(context.getClient(), unlikeItems);
-            org.apache.lucene.index.Fields[] unlikeFields = getFieldsFor(unlikeItemsResponse);
-            if (unlikeFields.length > 0) {
-                mltQuery.setUnlikeFields(unlikeFields);
-            }
-        }
-
-        BooleanQuery.Builder boolQuery = new BooleanQuery.Builder();
-        boolQuery.add(mltQuery, BooleanClause.Occur.SHOULD);
-
-        // exclude the items from the search
-        if (!include) {
-            handleExclude(boolQuery, likeItems, context);
-        }
-        return boolQuery.build();
-    }
-
-    private static void setDefaultIndexTypeFields(
-        QueryShardContext context,
-        Item item,
-        List<String> moreLikeFields,
-        boolean useDefaultField
-    ) {
-        if (item.index() == null) {
-            item.index(context.index().getName());
-        }
-        // default fields if not present but don't override for artificial docs
-        if ((item.fields() == null || item.fields().length == 0) && item.doc() == null) {
-            if (useDefaultField) {
-                item.fields("*");
-            } else {
-                item.fields(moreLikeFields.toArray(new String[0]));
-            }
-        }
-    }
-
     private MultiTermVectorsResponse fetchResponse(Client client, Item[] items) throws IOException {
         MultiTermVectorsRequest request = new MultiTermVectorsRequest();
         for (Item item : items) {
@@ -1135,26 +978,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         Throwable cause = ExceptionsHelper.unwrap(response.getFailure().getCause(), RoutingMissingException.class);
         if (cause != null) {
             throw ((RoutingMissingException) cause);
-        }
-    }
-
-    private static void handleExclude(BooleanQuery.Builder boolQuery, Item[] likeItems, QueryShardContext context) {
-        MappedFieldType idField = context.fieldMapper(IdFieldMapper.NAME);
-        if (idField == null) {
-            // no mappings, nothing to exclude
-            return;
-        }
-        // artificial docs get assigned a random id and should be disregarded
-        List<String> ids = new ArrayList<>();
-        for (Item item : likeItems) {
-            if (item.doc() != null) {
-                continue;
-            }
-            ids.add(item.id());
-        }
-        if (!ids.isEmpty()) {
-            Query query = idField.termsQuery(ids, context);
-            boolQuery.add(query, BooleanClause.Occur.MUST_NOT);
         }
     }
 

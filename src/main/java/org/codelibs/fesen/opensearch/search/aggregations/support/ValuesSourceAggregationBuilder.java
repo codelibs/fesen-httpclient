@@ -39,19 +39,20 @@ import org.codelibs.fesen.opensearch.core.xcontent.AbstractObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.WithFieldName;
 import org.codelibs.fesen.opensearch.script.Script;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationInitializationException;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 
 /**
  * Base class for all values source agg builders
@@ -188,8 +189,6 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     private String format = null;
     private Object missing = null;
     private ZoneId timeZone = null;
-    protected ValuesSourceConfig config;
-
     protected ValuesSourceAggregationBuilder(String name) {
         super(name);
     }
@@ -205,7 +204,6 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
         this.format = clone.format;
         this.missing = clone.missing;
         this.timeZone = clone.timeZone;
-        this.config = clone.config;
         this.script = clone.script;
     }
 
@@ -400,28 +398,6 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
         return timeZone;
     }
 
-    @Override
-    protected final ValuesSourceAggregatorFactory doBuild(
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException {
-        ValuesSourceConfig config = resolveConfig(queryShardContext);
-        if (queryShardContext.getValuesSourceRegistry().isRegistered(getRegistryKey())) {
-            /*
-            if the aggregation uses the values source registry, test if the resolved values source type is compatible with this aggregation.
-            This call will throw if the mapping isn't registered, which is what we want.  Note that we need to throw from here because
-            AbstractAggregationBuilder#build, which called this, will attempt to register the agg usage next, and if the usage is invalid
-            that will fail with a weird error.
-             */
-            queryShardContext.getValuesSourceRegistry().getAggregator(getRegistryKey(), config);
-        }
-        ValuesSourceAggregatorFactory factory = innerBuild(queryShardContext, config, parent, subFactoriesBuilder);
-        return factory;
-    }
-
-    protected abstract ValuesSourceRegistry.RegistryKey<?> getRegistryKey();
-
     /**
      * Aggregations should use this method to define a {@link ValuesSourceType} of last resort.  This will only be used when the resolver
      * can't find a field and the user hasn't provided a value type hint.
@@ -429,26 +405,6 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
      * @return The CoreValuesSourceType we expect this script to yield.
      */
     protected abstract ValuesSourceType defaultValueSourceType();
-
-    protected ValuesSourceConfig resolveConfig(QueryShardContext queryShardContext) {
-        return ValuesSourceConfig.resolve(
-            queryShardContext,
-            this.userValueTypeHint,
-            field,
-            script,
-            missing,
-            timeZone,
-            format,
-            this.defaultValueSourceType()
-        );
-    }
-
-    protected abstract ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException;
 
     @Override
     public final XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {

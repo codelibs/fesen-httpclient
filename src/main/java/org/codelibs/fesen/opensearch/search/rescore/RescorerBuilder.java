@@ -43,7 +43,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 
 import java.io.IOException;
@@ -137,21 +136,6 @@ public abstract class RescorerBuilder<RB extends RescorerBuilder<RB>>
     }
 
     protected abstract void doXContent(XContentBuilder builder, Params params) throws IOException;
-
-    /**
-     * Build the {@linkplain RescoreContext} that will be used to actually
-     * execute the rescore against a particular shard.
-     */
-    public final RescoreContext buildContext(QueryShardContext context) throws IOException {
-        int finalWindowSize = windowSize == null ? DEFAULT_WINDOW_SIZE : windowSize;
-        RescoreContext rescoreContext = innerBuildContext(finalWindowSize, context);
-        return rescoreContext;
-    }
-
-    /**
-     * Extensions override this to build the context that they need for rescoring.
-     */
-    protected abstract RescoreContext innerBuildContext(int windowSize, QueryShardContext context) throws IOException;
 
     @Override
     public int hashCode() {

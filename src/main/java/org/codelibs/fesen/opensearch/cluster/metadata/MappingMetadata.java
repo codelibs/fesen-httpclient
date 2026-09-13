@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.VerifiableWriteable;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.mapper.DocumentMapper;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 
 import java.io.IOException;
@@ -70,12 +69,6 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
     private final CompressedXContent source;
 
     private final boolean routingRequired;
-
-    public MappingMetadata(DocumentMapper docMapper) {
-        this.type = docMapper.type();
-        this.source = docMapper.mappingSource();
-        this.routingRequired = docMapper.routingFieldMapper().required();
-    }
 
     @SuppressWarnings("unchecked")
     public MappingMetadata(CompressedXContent mapping) {

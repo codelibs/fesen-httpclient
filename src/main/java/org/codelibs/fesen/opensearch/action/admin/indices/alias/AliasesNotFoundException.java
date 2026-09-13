@@ -24,47 +24,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 /*
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
 
-package org.codelibs.fesen.opensearch.indices.recovery;
+package org.codelibs.fesen.opensearch.action.admin.indices.alias;
 
-import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
-import org.codelibs.fesen.opensearch.common.Nullable;
+import org.codelibs.fesen.opensearch.ResourceNotFoundException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
-import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
-import org.codelibs.fesen.opensearch.indices.replication.common.ReplicationFailedException;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Exception thrown if recovery fails
+ * Exception thrown if an alias is not found
  *
- * @opensearch.internal
+ * @opensearch.api
  */
-public class RecoveryFailedException extends ReplicationFailedException {
+public class AliasesNotFoundException extends ResourceNotFoundException {
 
-    public RecoveryFailedException(
-        ShardId shardId,
-        DiscoveryNode sourceNode,
-        DiscoveryNode targetNode,
-        @Nullable String extraInfo,
-        Throwable cause
-    ) {
-        super(
-            shardId
-                + ": Recovery failed "
-                + (sourceNode != null ? "from " + sourceNode + " into " : "on ")
-                + targetNode
-                + (extraInfo == null ? "" : " (" + extraInfo + ")"),
-            cause
-        );
+    public AliasesNotFoundException(String... names) {
+        super("aliases " + Arrays.toString(names) + " missing");
+        this.setResources("aliases", names);
     }
 
-    public RecoveryFailedException(StreamInput in) throws IOException {
+    public AliasesNotFoundException(StreamInput in) throws IOException {
         super(in);
     }
 }

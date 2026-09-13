@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingNode;
 import org.codelibs.fesen.opensearch.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -107,82 +106,4 @@ public class AllocateReplicaAllocationCommand extends AbstractAllocateAllocation
         }
     }
 
-    @Override
-    public RerouteExplanation execute(RoutingAllocation allocation, boolean explain) {
-        final DiscoveryNode discoNode;
-        try {
-            discoNode = allocation.nodes().resolveNode(node);
-        } catch (IllegalArgumentException e) {
-            return explainOrThrowRejectedCommand(explain, allocation, e);
-        }
-        final RoutingNodes routingNodes = allocation.routingNodes();
-        RoutingNode routingNode = routingNodes.node(discoNode.getId());
-        if (routingNode == null) {
-            return explainOrThrowMissingRoutingNode(allocation, explain, discoNode);
-        }
-
-        try {
-            allocation.routingTable().shardRoutingTable(index, shardId).primaryShard();
-        } catch (IndexNotFoundException | ShardNotFoundException e) {
-            return explainOrThrowRejectedCommand(explain, allocation, e);
-        }
-
-        ShardRouting primaryShardRouting = null;
-        for (RoutingNode node : allocation.routingNodes()) {
-            for (ShardRouting shard : node) {
-                if (shard.getIndexName().equals(index) && shard.getId() == shardId && shard.primary()) {
-                    primaryShardRouting = shard;
-                    break;
-                }
-            }
-        }
-        if (primaryShardRouting == null) {
-            return explainOrThrowRejectedCommand(
-                explain,
-                allocation,
-                "trying to allocate a replica shard [" + index + "][" + shardId + "], while corresponding primary shard is still unassigned"
-            );
-        }
-
-        List<ShardRouting> replicaShardRoutings = new ArrayList<>();
-        for (ShardRouting shard : allocation.routingNodes().unassigned()) {
-            if (shard.getIndexName().equals(index) && shard.getId() == shardId && shard.primary() == false) {
-                replicaShardRoutings.add(shard);
-            }
-        }
-
-        ShardRouting shardRouting;
-        if (replicaShardRoutings.isEmpty()) {
-            return explainOrThrowRejectedCommand(
-                explain,
-                allocation,
-                "all copies of [" + index + "][" + shardId + "] are already assigned. Use the move allocation command instead"
-            );
-        } else {
-            shardRouting = replicaShardRoutings.get(0);
-        }
-
-        Decision decision = allocation.deciders().canAllocate(shardRouting, routingNode, allocation);
-        if (decision.type() == Decision.Type.NO) {
-            // don't use explainOrThrowRejectedCommand to keep the original "NO" decision
-            if (explain) {
-                return new RerouteExplanation(this, decision);
-            }
-            throw new IllegalArgumentException(
-                "["
-                    + name()
-                    + "] allocation of ["
-                    + index
-                    + "]["
-                    + shardId
-                    + "] on node "
-                    + discoNode
-                    + " is not allowed, reason: "
-                    + decision
-            );
-        }
-
-        initializeUnassignedShard(allocation, routingNodes, routingNode, shardRouting);
-        return new RerouteExplanation(this, decision);
-    }
 }

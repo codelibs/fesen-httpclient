@@ -35,11 +35,7 @@ package org.codelibs.fesen.opensearch.search.aggregations.support;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationExecutionException;
-import org.codelibs.fesen.opensearch.search.aggregations.Aggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.Aggregator.BucketComparator;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregations;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.SingleBucketAggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.NumericMetricsAggregator;
 import org.codelibs.fesen.opensearch.search.sort.SortOrder;
 
 import java.util.ArrayList;
@@ -216,33 +212,6 @@ public class AggregationPath {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid aggregation order path [" + this + "]. " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Resolves the {@linkplain Aggregator} pointed to by this path against
-     * the given root {@linkplain Aggregator}.
-     */
-    public Aggregator resolveAggregator(Aggregator root) {
-        Iterator<PathElement> path = pathElements.iterator();
-        assert path.hasNext();
-        return root.resolveSortPathOnValidAgg(path.next(), path);
-    }
-
-    /**
-     * Resolves the {@linkplain Aggregator} pointed to by the first element
-     * of this path against the given root {@linkplain Aggregator}.
-     */
-    public Aggregator resolveTopmostAggregator(Aggregator root) {
-        AggregationPath.PathElement token = pathElements.get(0);
-        // TODO both unwrap and subAggregator are only used here!
-        Aggregator aggregator = root.subAggregator(token.name).unwrapAggregator();
-        assert (aggregator instanceof SingleBucketAggregator) || (aggregator instanceof NumericMetricsAggregator)
-            : "this should be picked up before aggregation execution - on validate";
-        return aggregator;
-    }
-
-    public BucketComparator bucketComparator(Aggregator root, SortOrder order) {
-        return resolveAggregator(root).bucketComparator(lastPathElement().key, order);
     }
 
     private static String[] split(String toSplit, int index, String[] result) {

@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
 import org.codelibs.fesen.opensearch.core.rest.RestStatus;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers;
 
@@ -240,7 +239,7 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
     /**
      * Did this request force a refresh? Requests that set {@link WriteRequest#setRefreshPolicy(RefreshPolicy)} to
      * {@link RefreshPolicy#IMMEDIATE} will always return true for this. Requests that set it to {@link RefreshPolicy#WAIT_UNTIL} will
-     * only return true here if they run out of refresh listener slots (see {@link IndexSettings#MAX_REFRESH_LISTENERS_PER_SHARD}).
+     * only return true here if they run out of refresh listener slots (see {@code index.max_refresh_listeners}).
      */
     public boolean forcedRefresh() {
         return forcedRefresh;

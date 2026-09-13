@@ -31,7 +31,6 @@
 
 package org.codelibs.fesen.opensearch.transport;
 
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.liveness.TransportLivenessAction;
 import org.codelibs.fesen.opensearch.common.network.NetworkService;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
@@ -311,7 +310,7 @@ public final class TransportSettings {
     );
     public static final Setting<List<String>> TRACE_LOG_EXCLUDE_SETTING = listSetting(
         "transport.tracer.exclude",
-        Arrays.asList("internal:coordination/fault_detection/*", TransportLivenessAction.NAME),
+        Arrays.asList("internal:coordination/fault_detection/*", "cluster:monitor/nodes/liveness"),
         Function.identity(),
         Setting.Property.Dynamic,
         Setting.Property.NodeScope

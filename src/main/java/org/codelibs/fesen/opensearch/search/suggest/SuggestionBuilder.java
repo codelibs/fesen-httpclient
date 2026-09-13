@@ -44,10 +44,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.MapperService;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.suggest.SuggestionSearchContext.SuggestionContext;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -306,65 +302,6 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
             suggestionBuilder.regex(regex);
         }
         return suggestionBuilder;
-    }
-
-    protected abstract SuggestionContext build(QueryShardContext context) throws IOException;
-
-    /**
-     * Transfers the text, prefix, regex, analyzer, field, size and shard size settings from the
-     * original {@link SuggestionBuilder} to the target {@link SuggestionContext}
-     */
-    protected void populateCommonFields(MapperService mapperService, SuggestionSearchContext.SuggestionContext suggestionContext) {
-
-        Objects.requireNonNull(field, "field must not be null");
-
-        MappedFieldType fieldType = mapperService.fieldType(field);
-        if (fieldType == null) {
-            throw new IllegalArgumentException("no mapping found for field [" + field + "]");
-        } else if (analyzer == null) {
-            // no analyzer name passed in, so try the field's analyzer, or the default analyzer
-            if (fieldType.getTextSearchInfo().getSearchAnalyzer() == null) {
-                suggestionContext.setAnalyzer(mapperService.searchAnalyzer());
-            } else {
-                suggestionContext.setAnalyzer(fieldType.getTextSearchInfo().getSearchAnalyzer());
-            }
-        } else {
-            Analyzer luceneAnalyzer = mapperService.getNamedAnalyzer(analyzer);
-            if (luceneAnalyzer == null) {
-                throw new IllegalArgumentException("analyzer [" + analyzer + "] doesn't exists");
-            }
-            suggestionContext.setAnalyzer(luceneAnalyzer);
-        }
-
-        suggestionContext.setField(fieldType.name());
-
-        if (size != null) {
-            suggestionContext.setSize(size);
-        }
-
-        if (shardSize != null) {
-            suggestionContext.setShardSize(shardSize);
-        } else {
-            // if no shard size is set in builder, use size (or at least 5)
-            suggestionContext.setShardSize(Math.max(suggestionContext.getSize(), 5));
-        }
-
-        if (text != null) {
-            suggestionContext.setText(BytesRefs.toBytesRef(text));
-        }
-        if (prefix != null) {
-            suggestionContext.setPrefix(BytesRefs.toBytesRef(prefix));
-        }
-        if (regex != null) {
-            suggestionContext.setRegex(BytesRefs.toBytesRef(regex));
-        }
-        if (text != null && prefix == null) {
-            suggestionContext.setPrefix(BytesRefs.toBytesRef(text));
-        } else if (text == null && prefix != null) {
-            suggestionContext.setText(BytesRefs.toBytesRef(prefix));
-        } else if (text == null && regex != null) {
-            suggestionContext.setText(BytesRefs.toBytesRef(regex));
-        }
     }
 
     private String getSuggesterName() {

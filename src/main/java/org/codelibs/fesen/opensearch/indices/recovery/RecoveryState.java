@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.shard.IndexShard;
 import org.codelibs.fesen.opensearch.indices.replication.common.ReplicationLuceneIndex;
 import org.codelibs.fesen.opensearch.indices.replication.common.ReplicationState;
 import org.codelibs.fesen.opensearch.indices.replication.common.ReplicationTimer;
@@ -528,7 +527,7 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
 
         /**
          * Sets the total number of translog operations to be recovered locally before performing peer recovery
-         * @see IndexShard#recoverLocallyUpToGlobalCheckpoint()
+         * @see <a href="https://opensearch.org">local recovery up to the global checkpoint</a>
          */
         public synchronized void totalLocal(int totalLocal) {
             assert totalLocal >= recovered : totalLocal + " < " + recovered;

@@ -34,15 +34,10 @@ package org.codelibs.fesen.opensearch.search.aggregations.bucket.range;
 
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.range.RangeAggregator.Range;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
 
 import java.io.IOException;
 import java.util.Map;
@@ -54,11 +49,6 @@ import java.util.Map;
  */
 public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregationBuilder, Range> {
     public static final String NAME = "range";
-    public static final ValuesSourceRegistry.RegistryKey<RangeAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        RangeAggregatorSupplier.class
-    );
-
     public static final ObjectParser<RangeAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, RangeAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
@@ -69,10 +59,6 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
                 agg.addRange(range);
             }
         }, (p, c) -> RangeAggregator.Range.PARSER.parse(p, null), RangeAggregator.RANGES_FIELD);
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        AbstractRangeAggregatorFactory.registerAggregators(builder, REGISTRY_KEY);
     }
 
     public RangeAggregationBuilder(String name) {
@@ -166,49 +152,8 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
     }
 
     @Override
-    protected RangeAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        // We need to call processRanges here so they are parsed before we make the decision of whether to cache the request
-        Range[] ranges = processRanges(range -> {
-            DocValueFormat parser = config.format();
-            assert parser != null;
-            Double from = range.from;
-            Double to = range.to;
-            if (range.fromAsStr != null) {
-                from = parser.parseDouble(range.fromAsStr, false, queryShardContext::nowInMillis);
-            }
-            if (range.toAsStr != null) {
-                to = parser.parseDouble(range.toAsStr, false, queryShardContext::nowInMillis);
-            }
-            return new Range(range.key, from, range.fromAsStr, to, range.toAsStr);
-        });
-        if (ranges.length == 0) {
-            throw new IllegalArgumentException("No [ranges] specified for the [" + this.getName() + "] aggregation");
-        }
-        return new RangeAggregatorFactory(
-            name,
-            config,
-            ranges,
-            keyed,
-            rangeFactory,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
-    }
-
-    @Override
     public String getType() {
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

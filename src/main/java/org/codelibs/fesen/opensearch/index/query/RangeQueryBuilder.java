@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.opensearch.common.geo.ShapeRelation;
@@ -46,8 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.FieldNamesFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.time.DateTimeException;
@@ -63,8 +60,7 @@ import java.util.Objects;
  */
 public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
     implements
-        MultiTermQueryBuilder,
-        ComplementAwareQueryBuilder {
+        MultiTermQueryBuilder {
     public static final String NAME = "range";
 
     public static final boolean DEFAULT_INCLUDE_UPPER = true;
@@ -463,93 +459,6 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
         return NAME;
     }
 
-    // Overridable for testing only
-    protected MappedFieldType.Relation getRelation(QueryRewriteContext queryRewriteContext) throws IOException {
-        QueryShardContext shardContext = queryRewriteContext.convertToShardContext();
-        if (shardContext != null) {
-            final MappedFieldType fieldType = shardContext.fieldMapper(fieldName);
-            if (fieldType == null) {
-                return MappedFieldType.Relation.DISJOINT;
-            }
-            if (shardContext.getIndexReader() == null) {
-                // No reader, this may happen e.g. for percolator queries.
-                return MappedFieldType.Relation.INTERSECTS;
-            }
-
-            DateMathParser dateMathParser = getForceDateParser();
-            final MappedFieldType.Relation relation = fieldType.isFieldWithinQuery(
-                shardContext.getIndexReader(),
-                from,
-                to,
-                includeLower,
-                includeUpper,
-                timeZone,
-                dateMathParser,
-                queryRewriteContext
-            );
-
-            // For validation, always assume that there is an intersection
-            if (relation == MappedFieldType.Relation.DISJOINT && shardContext.validate()) {
-                return MappedFieldType.Relation.INTERSECTS;
-            }
-
-            return relation;
-        }
-
-        // Not on the shard, we have no way to know what the relation is.
-        return MappedFieldType.Relation.INTERSECTS;
-    }
-
-    @Override
-    protected QueryBuilder doRewrite(QueryRewriteContext queryRewriteContext) throws IOException {
-        final MappedFieldType.Relation relation = getRelation(queryRewriteContext);
-        switch (relation) {
-            case DISJOINT:
-                return new MatchNoneQueryBuilder();
-            case WITHIN:
-                if (from != null || to != null || format != null || timeZone != null) {
-                    RangeQueryBuilder newRangeQuery = new RangeQueryBuilder(fieldName);
-                    newRangeQuery.from(null);
-                    newRangeQuery.to(null);
-                    newRangeQuery.format = null;
-                    newRangeQuery.timeZone = null;
-                    return newRangeQuery;
-                } else {
-                    return this;
-                }
-            case INTERSECTS:
-                return this;
-            default:
-                throw new AssertionError();
-        }
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        if (from == null && to == null) {
-            /*
-              Open bounds on both side, we can rewrite to an exists query
-              if the {@link FieldNamesFieldMapper} is enabled.
-             */
-            final FieldNamesFieldMapper.FieldNamesFieldType fieldNamesFieldType = (FieldNamesFieldMapper.FieldNamesFieldType) context
-                .getMapperService()
-                .fieldType(FieldNamesFieldMapper.NAME);
-            if (fieldNamesFieldType == null) {
-                return new MatchNoDocsQuery("No mappings yet");
-            }
-            // Exists query would fail if the fieldNames field is disabled.
-            if (fieldNamesFieldType.isEnabled()) {
-                return ExistsQueryBuilder.newFilter(context, fieldName, false);
-            }
-        }
-        MappedFieldType mapper = context.fieldMapper(this.fieldName);
-        if (mapper == null) {
-            throw new IllegalStateException("Rewrite first");
-        }
-        DateMathParser forcedDateParser = getForceDateParser();
-        return mapper.rangeQuery(from, to, includeLower, includeUpper, relation, timeZone, forcedDateParser, context);
-    }
-
     @Override
     protected int doHashCode() {
         return Objects.hash(fieldName, from, to, timeZone, includeLower, includeUpper, format);
@@ -566,38 +475,4 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
             && Objects.equals(format, other.format);
     }
 
-    @Override
-    public List<? extends QueryBuilder> getComplement(QueryShardContext context) {
-        // This implementation doesn't need info from QueryShardContext
-        if (relation != null && relation != ShapeRelation.INTERSECTS) {
-            return null;
-        }
-        List<RangeQueryBuilder> complement = new ArrayList<>();
-        if (from != null) {
-            RangeQueryBuilder belowRange = new RangeQueryBuilder(fieldName);
-            belowRange.to(from);
-            belowRange.includeUpper(!includeLower);
-            complement.add(belowRange);
-        }
-
-        if (to != null) {
-            RangeQueryBuilder aboveRange = new RangeQueryBuilder(fieldName);
-            aboveRange.from(to);
-            aboveRange.includeLower(!includeUpper);
-            complement.add(aboveRange);
-        }
-
-        if (format != null) {
-            for (RangeQueryBuilder rq : complement) {
-                rq.format(format);
-            }
-        }
-        if (timeZone != null) {
-            for (RangeQueryBuilder rq : complement) {
-                rq.timeZone = timeZone;
-            }
-        }
-
-        return complement;
-    }
 }

@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.cluster.health.ClusterHealthStatus;
 import org.codelibs.fesen.opensearch.cluster.health.ClusterIndexHealth;
 import org.codelibs.fesen.opensearch.cluster.health.ClusterStateHealth;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.xcontent.StatusToXContentObject;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -255,53 +254,6 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
             : new ClusterStateHealth(clusterState, concreteIndices);
         this.clusterHealthStatus = clusterStateHealth.getStatus();
         this.delayedUnassignedShards = clusterStateHealth.getDelayedUnassignedShards();
-    }
-
-    // Awareness Attribute health
-    public ClusterHealthResponse(
-        String clusterName,
-        ClusterState clusterState,
-        ClusterSettings clusterSettings,
-        String[] concreteIndices,
-        String awarenessAttributeName,
-        int numberOfPendingTasks,
-        int numberOfInFlightFetch,
-        int delayedUnassignedShards,
-        TimeValue taskMaxWaitingTime
-    ) {
-        this(
-            clusterName,
-            concreteIndices,
-            clusterState,
-            numberOfPendingTasks,
-            numberOfInFlightFetch,
-            delayedUnassignedShards,
-            taskMaxWaitingTime
-        );
-        this.clusterAwarenessHealth = new ClusterAwarenessHealth(clusterState, clusterSettings, awarenessAttributeName);
-    }
-
-    public ClusterHealthResponse(
-        String clusterName,
-        ClusterHealthRequest clusterHealthRequest,
-        ClusterState clusterState,
-        ClusterSettings clusterSettings,
-        String[] concreteIndices,
-        String awarenessAttributeName,
-        int numberOfPendingTasks,
-        int numberOfInFlightFetch,
-        TimeValue taskMaxWaitingTime
-    ) {
-        this(
-            clusterName,
-            concreteIndices,
-            clusterHealthRequest,
-            clusterState,
-            numberOfPendingTasks,
-            numberOfInFlightFetch,
-            taskMaxWaitingTime
-        );
-        this.clusterAwarenessHealth = new ClusterAwarenessHealth(clusterState, clusterSettings, awarenessAttributeName);
     }
 
     /**

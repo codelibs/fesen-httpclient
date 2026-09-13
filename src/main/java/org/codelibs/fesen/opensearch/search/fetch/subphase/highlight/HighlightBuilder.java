@@ -45,9 +45,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
-import org.codelibs.fesen.opensearch.search.fetch.subphase.highlight.SearchHighlightContext.FieldOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,25 +110,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
     public static final String[] DEFAULT_STYLED_POST_TAGS = { "</em>" };
 
     static final Character[] DEFAULT_BOUNDARY_CHARS = HighlightBuilder.convertCharArray(SimpleBoundaryScanner.DEFAULT_BOUNDARY_CHARS);
-
-    /**
-     * a {@link FieldOptions} with default settings
-     */
-    static final FieldOptions defaultOptions = new SearchHighlightContext.FieldOptions.Builder().preTags(DEFAULT_PRE_TAGS)
-        .postTags(DEFAULT_POST_TAGS)
-        .scoreOrdered(DEFAULT_SCORE_ORDERED)
-        .highlightFilter(DEFAULT_HIGHLIGHT_FILTER)
-        .requireFieldMatch(DEFAULT_REQUIRE_FIELD_MATCH)
-        .forceSource(DEFAULT_FORCE_SOURCE)
-        .fragmentCharSize(DEFAULT_FRAGMENT_CHAR_SIZE)
-        .numberOfFragments(DEFAULT_NUMBER_OF_FRAGMENTS)
-        .encoder(DEFAULT_ENCODER)
-        .boundaryMaxScan(SimpleBoundaryScanner.DEFAULT_MAX_SCAN)
-        .boundaryChars(DEFAULT_BOUNDARY_CHARS)
-        .boundaryScannerLocale(Locale.ROOT)
-        .noMatchSize(DEFAULT_NO_MATCH_SIZE)
-        .phraseLimit(DEFAULT_PHRASE_LIMIT)
-        .build();
 
     private final List<Field> fields;
 
@@ -306,107 +285,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
     public static HighlightBuilder fromXContent(XContentParser p) {
         return PARSER.apply(p, new HighlightBuilder());
-    }
-
-    public SearchHighlightContext build(QueryShardContext context) throws IOException {
-        // create template global options that are later merged with any partial field options
-        final SearchHighlightContext.FieldOptions.Builder globalOptionsBuilder = new SearchHighlightContext.FieldOptions.Builder();
-        globalOptionsBuilder.encoder(this.encoder);
-        transferOptions(this, globalOptionsBuilder, context);
-
-        // overwrite unset global options by default values
-        globalOptionsBuilder.merge(defaultOptions);
-
-        // create field options
-        Collection<SearchHighlightContext.Field> fieldOptions = new ArrayList<>();
-        for (Field field : this.fields) {
-            final SearchHighlightContext.FieldOptions.Builder fieldOptionsBuilder = new SearchHighlightContext.FieldOptions.Builder();
-            fieldOptionsBuilder.fragmentOffset(field.fragmentOffset);
-            if (field.matchedFields != null) {
-                Set<String> matchedFields = new HashSet<>(field.matchedFields.length);
-                Collections.addAll(matchedFields, field.matchedFields);
-                fieldOptionsBuilder.matchedFields(matchedFields);
-            }
-            transferOptions(field, fieldOptionsBuilder, context);
-            fieldOptions.add(
-                new SearchHighlightContext.Field(field.name(), fieldOptionsBuilder.merge(globalOptionsBuilder.build()).build())
-            );
-        }
-        return new SearchHighlightContext(fieldOptions);
-    }
-
-    /**
-     * Transfers field options present in the input {@link AbstractHighlighterBuilder} to the receiving
-     * {@link FieldOptions.Builder}, effectively overwriting existing settings
-     * @param targetOptionsBuilder the receiving options builder
-     * @param highlighterBuilder highlight builder with the input options
-     * @param context needed to convert {@link QueryBuilder} to {@link Query}
-     * @throws IOException on errors parsing any optional nested highlight query
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static void transferOptions(
-        AbstractHighlighterBuilder highlighterBuilder,
-        SearchHighlightContext.FieldOptions.Builder targetOptionsBuilder,
-        QueryShardContext context
-    ) throws IOException {
-        if (highlighterBuilder.preTags != null) {
-            targetOptionsBuilder.preTags(highlighterBuilder.preTags);
-        }
-        if (highlighterBuilder.postTags != null) {
-            targetOptionsBuilder.postTags(highlighterBuilder.postTags);
-        }
-        if (highlighterBuilder.order != null) {
-            targetOptionsBuilder.scoreOrdered(highlighterBuilder.order == Order.SCORE);
-        }
-        if (highlighterBuilder.highlightFilter != null) {
-            targetOptionsBuilder.highlightFilter(highlighterBuilder.highlightFilter);
-        }
-        if (highlighterBuilder.fragmentSize != null) {
-            targetOptionsBuilder.fragmentCharSize(highlighterBuilder.fragmentSize);
-        }
-        if (highlighterBuilder.numOfFragments != null) {
-            targetOptionsBuilder.numberOfFragments(highlighterBuilder.numOfFragments);
-        }
-        if (highlighterBuilder.requireFieldMatch != null) {
-            targetOptionsBuilder.requireFieldMatch(highlighterBuilder.requireFieldMatch);
-        }
-        if (highlighterBuilder.boundaryScannerType != null) {
-            targetOptionsBuilder.boundaryScannerType(highlighterBuilder.boundaryScannerType);
-        }
-        if (highlighterBuilder.boundaryMaxScan != null) {
-            targetOptionsBuilder.boundaryMaxScan(highlighterBuilder.boundaryMaxScan);
-        }
-        if (highlighterBuilder.boundaryChars != null) {
-            targetOptionsBuilder.boundaryChars(convertCharArray(highlighterBuilder.boundaryChars));
-        }
-        if (highlighterBuilder.boundaryScannerLocale != null) {
-            targetOptionsBuilder.boundaryScannerLocale(highlighterBuilder.boundaryScannerLocale);
-        }
-        if (highlighterBuilder.highlighterType != null) {
-            targetOptionsBuilder.highlighterType(highlighterBuilder.highlighterType);
-        }
-        if (highlighterBuilder.fragmenter != null) {
-            targetOptionsBuilder.fragmenter(highlighterBuilder.fragmenter);
-        }
-        if (highlighterBuilder.noMatchSize != null) {
-            targetOptionsBuilder.noMatchSize(highlighterBuilder.noMatchSize);
-        }
-        if (highlighterBuilder.forceSource != null) {
-            targetOptionsBuilder.forceSource(highlighterBuilder.forceSource);
-        }
-        if (highlighterBuilder.phraseLimit != null) {
-            targetOptionsBuilder.phraseLimit(highlighterBuilder.phraseLimit);
-        }
-        if (highlighterBuilder.options != null) {
-            targetOptionsBuilder.options(highlighterBuilder.options);
-        }
-        if (highlighterBuilder.highlightQuery != null) {
-            targetOptionsBuilder.highlightQuery(highlighterBuilder.highlightQuery.toQuery(context));
-        }
-        if (highlighterBuilder.maxAnalyzerOffset != null) {
-            targetOptionsBuilder.maxAnalyzerOffset(highlighterBuilder.maxAnalyzerOffset);
-        }
-
     }
 
     static Character[] convertCharArray(char[] array) {

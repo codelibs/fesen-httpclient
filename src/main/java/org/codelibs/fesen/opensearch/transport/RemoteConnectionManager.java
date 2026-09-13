@@ -210,8 +210,8 @@ public class RemoteConnectionManager implements ConnectionManager {
             throws IOException, TransportException {
             connection.sendRequest(
                 requestId,
-                TransportActionProxy.getProxyAction(action),
-                TransportActionProxy.wrapRequest(targetNode, request),
+                action,
+                request,
                 options
             );
         }

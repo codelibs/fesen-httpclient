@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -43,7 +42,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -164,12 +162,6 @@ public class ConstantScoreQueryBuilder extends AbstractQueryBuilder<ConstantScor
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        Query innerFilter = filterBuilder.toQuery(context);
-        return new ConstantScoreQuery(innerFilter);
-    }
-
-    @Override
     public String getWriteableName() {
         return NAME;
     }
@@ -194,11 +186,6 @@ public class ConstantScoreQueryBuilder extends AbstractQueryBuilder<ConstantScor
             return new ConstantScoreQueryBuilder(rewrite);
         }
         return this;
-    }
-
-    @Override
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {
-        InnerHitContextBuilder.extractInnerHits(filterBuilder, innerHits);
     }
 
     @Override

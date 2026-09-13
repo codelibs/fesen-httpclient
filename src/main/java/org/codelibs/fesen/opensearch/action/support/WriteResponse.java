@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.action.bulk.BulkResponse;
 import org.codelibs.fesen.opensearch.action.index.IndexResponse;
 import org.codelibs.fesen.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.codelibs.fesen.opensearch.action.update.UpdateResponse;
-import org.codelibs.fesen.opensearch.index.IndexSettings;
 
 /**
  * Interface implemented by responses for actions that modify the documents in an index like {@link IndexResponse}, {@link UpdateResponse},
@@ -49,7 +48,7 @@ public interface WriteResponse {
     /**
      * Mark the response as having forced a refresh? Requests that set {@link WriteRequest#setRefreshPolicy(RefreshPolicy)} to
      * {@link RefreshPolicy#IMMEDIATE} should always mark this as true. Requests that set it to {@link RefreshPolicy#WAIT_UNTIL} will only
-     * set this to true if they run out of refresh listener slots (see {@link IndexSettings#MAX_REFRESH_LISTENERS_PER_SHARD}).
+     * set this to true if they run out of refresh listener slots (see {@code index.max_refresh_listeners}).
      */
     void setForcedRefresh(boolean forcedRefresh);
 }

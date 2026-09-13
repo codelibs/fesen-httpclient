@@ -49,20 +49,6 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
     private static final String SERIALIZATION_BEGIN_NODE = "_";
     private static final String SERIALIZATION_DONE = "end";
 
-    ImmutableCacheStatsHolder(
-        DefaultCacheStatsHolder.Node originalStatsRoot,
-        String[] levels,
-        List<String> originalDimensionNames,
-        String storeName
-    ) {
-        // Aggregate from the original CacheStatsHolder according to the levels passed in.
-        // The dimension names for this immutable snapshot should reflect the levels we aggregate in the snapshot
-        this.dimensionNames = filterLevels(levels, originalDimensionNames);
-        this.storeName = storeName;
-        this.statsRoot = aggregateByLevels(originalStatsRoot, originalDimensionNames);
-        makeNodeUnmodifiable(statsRoot);
-    }
-
     public ImmutableCacheStatsHolder(StreamInput in) throws IOException {
         this.dimensionNames = List.of(in.readStringArray());
         this.storeName = in.readString();
@@ -164,61 +150,6 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
             }
         }
         return current.stats;
-    }
-
-    /**
-     * Returns a new tree containing the stats aggregated by the levels passed in.
-     * The new tree only has dimensions matching the levels passed in.
-     * The levels passed in must be in the proper order, as they would be in the output of filterLevels().
-     */
-    Node aggregateByLevels(DefaultCacheStatsHolder.Node originalStatsRoot, List<String> originalDimensionNames) {
-        Node newRoot = new Node("", false, originalStatsRoot.getImmutableStats());
-        for (DefaultCacheStatsHolder.Node child : originalStatsRoot.children.values()) {
-            aggregateByLevelsHelper(newRoot, child, originalDimensionNames, 0);
-        }
-        return newRoot;
-    }
-
-    /**
-     * Because we may have to combine nodes that have the same dimension name, I don't think there's a clean way to aggregate
-     * fully recursively while also passing in a completed map of children nodes before constructing the parent node.
-     * For this reason, in this function we have to build the new tree top down rather than bottom up.
-     * We use private methods allowing us to add children to/increment the stats for an existing node.
-     * This should be ok because the resulting tree is unmodifiable after creation in the constructor.
-     *
-     * @param allDimensions the list of all dimensions present in the original CacheStatsHolder which produced
-     *                      the CacheStatsHolder.Node object we are traversing.
-     */
-    private void aggregateByLevelsHelper(
-        Node parentInNewTree,
-        DefaultCacheStatsHolder.Node currentInOriginalTree,
-        List<String> allDimensions,
-        int depth
-    ) {
-        if (dimensionNames.contains(allDimensions.get(depth))) {
-            // If this node is in a level we want to aggregate, create a new dimension node with the same value and stats, and connect it to
-            // the last parent node in the new tree. If it already exists, increment it instead.
-            String dimensionValue = currentInOriginalTree.getDimensionValue();
-            Node nodeInNewTree = parentInNewTree.children.get(dimensionValue);
-            if (nodeInNewTree == null) {
-                // Create new node with stats matching the node from the original tree
-                int indexOfLastLevel = allDimensions.indexOf(dimensionNames.get(dimensionNames.size() - 1));
-                boolean isLeafNode = depth == indexOfLastLevel; // If this is the last level we aggregate, the new node should be a leaf
-                // node
-                nodeInNewTree = new Node(dimensionValue, isLeafNode, currentInOriginalTree.getImmutableStats());
-                parentInNewTree.addChild(dimensionValue, nodeInNewTree);
-            } else {
-                // Otherwise increment existing stats
-                nodeInNewTree.incrementStats(currentInOriginalTree.getImmutableStats());
-            }
-            // Finally set the parent node to be this node for the next callers of this function
-            parentInNewTree = nodeInNewTree;
-        }
-
-        for (Map.Entry<String, DefaultCacheStatsHolder.Node> childEntry : currentInOriginalTree.children.entrySet()) {
-            DefaultCacheStatsHolder.Node child = childEntry.getValue();
-            aggregateByLevelsHelper(parentInNewTree, child, allDimensions, depth + 1);
-        }
     }
 
     /**

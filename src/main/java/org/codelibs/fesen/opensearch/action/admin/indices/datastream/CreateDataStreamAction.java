@@ -35,27 +35,13 @@ import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.action.ActionType;
 import org.codelibs.fesen.opensearch.action.IndicesRequest;
 import org.codelibs.fesen.opensearch.action.ValidateActions;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
-import org.codelibs.fesen.opensearch.action.support.TransportIndicesResolvingAction;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedRequest;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.codelibs.fesen.opensearch.action.support.clustermanager.TransportClusterManagerNodeAction;
-import org.codelibs.fesen.opensearch.cluster.ClusterState;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateDataStreamService;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataCreateDataStreamService.CreateDataStreamClusterStateUpdateRequest;
-import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -130,61 +116,6 @@ public class CreateDataStreamAction extends ActionType<AcknowledgedResponse> {
         @Override
         public IndicesOptions indicesOptions() {
             return IndicesOptions.strictSingleIndexNoExpandForbidClosed();
-        }
-    }
-
-    /**
-     * Transport Action for Creating Data Stream
-     *
-     * @opensearch.internal
-     */
-    public static class TransportAction extends TransportClusterManagerNodeAction<Request, AcknowledgedResponse>
-        implements
-            TransportIndicesResolvingAction<Request> {
-
-        private final MetadataCreateDataStreamService metadataCreateDataStreamService;
-
-        public TransportAction(
-            TransportService transportService,
-            ClusterService clusterService,
-            ThreadPool threadPool,
-            ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver,
-            MetadataCreateDataStreamService metadataCreateDataStreamService
-        ) {
-            super(NAME, transportService, clusterService, threadPool, actionFilters, Request::new, indexNameExpressionResolver);
-            this.metadataCreateDataStreamService = metadataCreateDataStreamService;
-        }
-
-        @Override
-        protected String executor() {
-            return ThreadPool.Names.SAME;
-        }
-
-        @Override
-        protected AcknowledgedResponse read(StreamInput in) throws IOException {
-            return new AcknowledgedResponse(in);
-        }
-
-        @Override
-        protected void clusterManagerOperation(Request request, ClusterState state, ActionListener<AcknowledgedResponse> listener)
-            throws Exception {
-            CreateDataStreamClusterStateUpdateRequest updateRequest = new CreateDataStreamClusterStateUpdateRequest(
-                request.name,
-                request.clusterManagerNodeTimeout(),
-                request.timeout()
-            );
-            metadataCreateDataStreamService.createDataStream(updateRequest, listener);
-        }
-
-        @Override
-        protected ClusterBlockException checkBlock(Request request, ClusterState state) {
-            return state.blocks().globalBlockedException(ClusterBlockLevel.METADATA_WRITE);
-        }
-
-        @Override
-        public ResolvedIndices resolveIndices(Request request) {
-            return ResolvedIndices.of(request.name);
         }
     }
 

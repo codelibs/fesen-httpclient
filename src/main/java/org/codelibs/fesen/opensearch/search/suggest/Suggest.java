@@ -49,7 +49,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils;
-import org.codelibs.fesen.opensearch.rest.action.search.RestSearchAction;
 import org.codelibs.fesen.opensearch.search.aggregations.Aggregation;
 import org.codelibs.fesen.opensearch.search.suggest.Suggest.Suggestion.Entry;
 import org.codelibs.fesen.opensearch.search.suggest.Suggest.Suggestion.Entry.Option;
@@ -370,7 +369,7 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-            if (params.paramAsBoolean(RestSearchAction.TYPED_KEYS_PARAM, false)) {
+            if (params.paramAsBoolean("typed_keys", false)) {
                 // Concatenates the type and the name of the suggestion (ex: completion#foo)
                 builder.startArray(String.join(Aggregation.TYPED_KEYS_DELIMITER, getWriteableName(), getName()));
             } else {

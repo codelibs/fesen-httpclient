@@ -5,120 +5,26 @@
  * this file be licensed under the Apache-2.0 license or a
  * compatible open source license.
  */
-
 package org.codelibs.fesen.opensearch.indices.pollingingest;
 
-import org.codelibs.fesen.opensearch.cluster.ClusterStateListener;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.opensearch.cluster.metadata.IngestionSource;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.index.IngestionShardConsumer;
-import org.codelibs.fesen.opensearch.index.IngestionShardPointer;
-
-import java.io.Closeable;
 
 /**
- * A poller for reading messages from an ingestion shard. This is used in the ingestion engine.
+ * Namespace for the pull-based ingestion settings a client reads back from index metadata.
+ *
+ * <p>Polling a stream is a node-side concern and is not carried over; only the reset-state names
+ * that appear in index settings survive here.</p>
+ *
+ * @opensearch.api
  */
-public interface StreamPoller extends Closeable, ClusterStateListener {
-
-    String BATCH_START = "batch_start";
-
-    /**
-     * Start the poller
-     */
-    void start();;
+@PublicApi(since = "2.99.0")
+public interface StreamPoller {
 
     /**
-     * Pause the poller
+     * The point a poller resets its stream pointer to.
+     *
+     * @opensearch.api
      */
-    void pause();
-
-    /**
-     * Resume the poller polling
-     */
-    void resume();
-
-    /**
-     * @return if the poller is paused
-     */
-    boolean isPaused();
-
-    /**
-     * Check if the poller is closed
-     */
-    boolean isClosed();
-
-    /**
-     * Get the pointer to the start of the current batch of messages.
-     */
-    IngestionShardPointer getBatchStartPointer();
-
-    PollingIngestStats getStats();
-
-    IngestionErrorStrategy getErrorStrategy();
-
-    State getState();
-
-    /**
-     * Update the error strategy for the poller.
-     */
-    void updateErrorStrategy(IngestionErrorStrategy errorStrategy);
-
-    /**
-     * Returns if write block is active for the poller.
-     */
-    boolean isWriteBlockEnabled();
-
-    /**
-     * Sets write block status for the poller.
-     */
-    void setWriteBlockEnabled(boolean isWriteBlockEnabled);
-
-    IngestionShardConsumer getConsumer();
-
-    /**
-     * Requests the poller to reinitialize the consumer with updated index metadata.
-     * This is called when ingestion source params are dynamically updated.
-     * @param updatedIndexMetadata the updated index metadata with new configuration parameters
-     */
-    void requestConsumerReinitialization(IndexMetadata updatedIndexMetadata);
-
-    /**
-     * Updates the warmup configuration dynamically.
-     * Called when index settings are changed at runtime.
-     */
-    void updateWarmupConfig(IngestionSource.WarmupConfig config);
-
-    /**
-     * @return true if the warmup phase is complete and the shard is ready to serve
-     */
-    boolean isWarmupComplete();
-
-    /**
-     * Block until warmup is complete or timeout occurs.
-     * @param timeoutMs maximum time to wait in milliseconds
-     * @return true if warmup completed, false if timeout
-     * @throws InterruptedException if the thread is interrupted while waiting
-     */
-    boolean awaitWarmupComplete(long timeoutMs) throws InterruptedException;
-
-    /**
-     * A state to indicate the current state of the poller
-     */
-    enum State {
-        NONE,
-        WARMING_UP,
-        CLOSED,
-        PAUSED,
-        POLLING,
-        PROCESSING,
-    }
-
-    /**
-     *  A reset state to indicate how to reset the pointer
-     */
-    @PublicApi(since = "3.6.0")
     enum ResetState {
         EARLIEST,
         LATEST,

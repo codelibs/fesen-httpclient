@@ -33,7 +33,6 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.queries.spans.SpanNearQuery;
-import org.apache.lucene.queries.spans.SpanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -45,7 +44,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentLocation;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -226,66 +224,6 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        SpanQueryBuilder queryBuilder = clauses.get(0);
-        boolean isGap = queryBuilder instanceof SpanGapQueryBuilder;
-        Query query = null;
-        if (!isGap) {
-            query = queryBuilder.toQuery(context);
-            assert query instanceof SpanQuery;
-        }
-        if (clauses.size() == 1) {
-            assert !isGap;
-            return query;
-        }
-        String spanNearFieldName = null;
-        if (isGap) {
-            String fieldName = ((SpanGapQueryBuilder) queryBuilder).fieldName();
-            spanNearFieldName = queryFieldName(context, fieldName);
-        } else {
-            spanNearFieldName = ((SpanQuery) query).getField();
-        }
-
-        SpanNearQuery.Builder builder = new SpanNearQuery.Builder(spanNearFieldName, inOrder);
-        builder.setSlop(slop);
-        /*
-         * Lucene SpanNearQuery throws exceptions for certain use cases like adding gap to a
-         * unordered SpanNearQuery. Should OpenSearch have the same checks or wrap those thrown exceptions?
-         */
-        if (isGap) {
-            int gap = ((SpanGapQueryBuilder) queryBuilder).width();
-            builder.addGap(gap);
-        } else {
-            builder.addClause((SpanQuery) query);
-        }
-
-        for (int i = 1; i < clauses.size(); i++) {
-            queryBuilder = clauses.get(i);
-            isGap = queryBuilder instanceof SpanGapQueryBuilder;
-            if (isGap) {
-                String fieldName = ((SpanGapQueryBuilder) queryBuilder).fieldName();
-                String spanGapFieldName = queryFieldName(context, fieldName);
-
-                if (!spanNearFieldName.equals(spanGapFieldName)) {
-                    throw new IllegalArgumentException("[span_near] clauses must have same field");
-                }
-                int gap = ((SpanGapQueryBuilder) queryBuilder).width();
-                builder.addGap(gap);
-            } else {
-                query = clauses.get(i).toQuery(context);
-                assert query instanceof SpanQuery;
-                builder.addClause((SpanQuery) query);
-            }
-        }
-        return builder.build();
-    }
-
-    private String queryFieldName(QueryShardContext context, String fieldName) {
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        return fieldType != null ? fieldType.name() : fieldName;
-    }
-
-    @Override
     protected int doHashCode() {
         return Objects.hash(clauses, slop, inOrder);
     }
@@ -373,11 +311,6 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
          */
         public int width() {
             return width;
-        }
-
-        @Override
-        public Query toQuery(QueryShardContext context) throws IOException {
-            throw new UnsupportedOperationException();
         }
 
         @Override

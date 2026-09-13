@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.cluster.routing.allocation.command;
 
 import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.network.NetworkModule;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
@@ -57,13 +56,6 @@ public interface AllocationCommand extends NamedWriteable, ToXContentObject {
      * @return name of the command
      */
     String name();
-
-    /**
-     * Executes the command on a {@link RoutingAllocation} setup
-     * @param allocation {@link RoutingAllocation} to modify
-     * @throws OpenSearchException if something happens during reconfiguration
-     */
-    RerouteExplanation execute(RoutingAllocation allocation, boolean explain);
 
     @Override
     default String getWriteableName() {

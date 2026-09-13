@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.routing.GroupShardsIterator;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardIterator;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.util.set.Sets;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -52,12 +51,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexFieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexNumericFieldData;
-import org.codelibs.fesen.opensearch.index.mapper.IdFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.internal.ShardSearchRequest;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -92,7 +85,7 @@ public class SliceBuilder implements Writeable, ToXContentObject {
     }
 
     /** Name of field to slice against (_uid by default) */
-    private String field = IdFieldMapper.NAME;
+    private String field = "_id";
     /** The id of the slice */
     private int id = -1;
     /** Max number of slices */
@@ -101,7 +94,7 @@ public class SliceBuilder implements Writeable, ToXContentObject {
     private SliceBuilder() {}
 
     public SliceBuilder(int id, int max) {
-        this(IdFieldMapper.NAME, id, max);
+        this("_id", id, max);
     }
 
     /**
@@ -219,112 +212,6 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         }
         // Shards are distributed over slices
         return shardOrdinal % max == id;
-    }
-
-    /**
-     * Converts this QueryBuilder to a lucene {@link Query}.
-     *
-     * @param context Additional information needed to build the query
-     */
-    public Query toFilter(ClusterService clusterService, ShardSearchRequest request, QueryShardContext context, Version minNodeVersion) {
-        final MappedFieldType type = context.fieldMapper(field);
-        if (type == null) {
-            throw new IllegalArgumentException("field " + field + " not found");
-        }
-
-        int shardOrdinal = request.shardId().id();
-        int numShards = context.getIndexSettings().getNumberOfShards();
-        if ((request.preference() != null || request.indexRoutings().length > 0)) {
-            GroupShardsIterator<ShardIterator> group = buildShardIterator(clusterService, request);
-            assert group.size() <= numShards : "index routing shards: "
-                + group.size()
-                + " cannot be greater than total number of shards: "
-                + numShards;
-            if (group.size() < numShards) {
-                /*
-                 * The routing of this request targets a subset of the shards of this index so we need to we retrieve
-                 * the original {@link GroupShardsIterator} and compute the request shard id and number of
-                 * shards from it.
-                 */
-                numShards = group.size();
-                int ord = 0;
-                shardOrdinal = -1;
-                // remap the original shard id with its index (position) in the sorted shard iterator.
-                for (ShardIterator it : group) {
-                    assert it.shardId().getIndex().equals(request.shardId().getIndex());
-                    if (request.shardId().equals(it.shardId())) {
-                        shardOrdinal = ord;
-                        break;
-                    }
-                    ++ord;
-                }
-                assert shardOrdinal != -1 : "shard id: " + request.shardId().getId() + " not found in index shard routing";
-            }
-        }
-
-        if (shardMatches(shardOrdinal, numShards) == false) {
-            // We should have already excluded this shard before routing to it.
-            // If we somehow land here, then we match nothing.
-            return new MatchNoDocsQuery("this shard is not part of the slice");
-        }
-
-        boolean useTermQuery = false;
-        if ("_uid".equals(field)) {
-            throw new IllegalArgumentException("Computing slices on the [_uid] field is illegal for 7.x indices, use [_id] instead");
-        } else if (IdFieldMapper.NAME.equals(field)) {
-            useTermQuery = true;
-        } else if (type.hasDocValues() == false) {
-            throw new IllegalArgumentException("cannot load numeric doc values on " + field);
-        } else {
-            IndexFieldData ifm = context.getForField(type);
-            if (ifm instanceof IndexNumericFieldData == false) {
-                throw new IllegalArgumentException("cannot load numeric doc values on " + field);
-            }
-        }
-
-        if (numShards == 1) {
-            return useTermQuery ? new TermsSliceQuery(field, id, max) : new DocValuesSliceQuery(field, id, max);
-        }
-        if (max >= numShards) {
-            // the number of slices is greater than the number of shards
-            // in such case we can reduce the number of requested shards by slice
-
-            int targetShard = id % numShards;
-            // compute the number of slices where this shard appears
-            int numSlicesInShard = max / numShards;
-            int rest = max % numShards;
-            if (rest > targetShard) {
-                numSlicesInShard++;
-            }
-
-            if (numSlicesInShard == 1) {
-                // this shard has only one slice so we must check all the documents
-                return new MatchAllDocsQuery();
-            }
-            // get the new slice id for this shard
-            int shardSlice = id / numShards;
-
-            return useTermQuery
-                ? new TermsSliceQuery(field, shardSlice, numSlicesInShard)
-                : new DocValuesSliceQuery(field, shardSlice, numSlicesInShard);
-        }
-        // the number of shards is greater than the number of slices. If we target this shard, we target all of it.
-
-        return new MatchAllDocsQuery();
-    }
-
-    /**
-     * Returns the {@link GroupShardsIterator} for the provided <code>request</code>.
-     */
-    private GroupShardsIterator<ShardIterator> buildShardIterator(ClusterService clusterService, ShardSearchRequest request) {
-        final ClusterState state = clusterService.state();
-        String[] indices = new String[] { request.shardId().getIndex().getName() };
-        Map<String, Set<String>> routingMap = request.indexRoutings().length > 0
-            ? Collections.singletonMap(indices[0], Sets.newHashSet(request.indexRoutings()))
-            : null;
-        // Note that we do *not* want to filter this set of shard IDs based on the slice, since we want the
-        // full set of shards matched by the routing parameters.
-        return clusterService.operationRouting().searchShards(state, indices, routingMap, request.preference());
     }
 
     @Override

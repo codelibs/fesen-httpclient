@@ -47,14 +47,6 @@ import java.io.IOException;
  */
 public class QueryShardException extends OpenSearchException {
 
-    public QueryShardException(QueryShardContext context, String msg, Object... args) {
-        this(context, msg, null, args);
-    }
-
-    public QueryShardException(QueryShardContext context, String msg, Throwable cause, Object... args) {
-        this(context.getFullyQualifiedIndex(), msg, cause, args);
-    }
-
     /**
      * This constructor is provided for use in unit tests where a
      * {@link QueryShardContext} may not be available

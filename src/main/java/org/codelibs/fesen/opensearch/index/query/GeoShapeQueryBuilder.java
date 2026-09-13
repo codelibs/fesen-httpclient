@@ -45,8 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.geometry.Geometry;
-import org.codelibs.fesen.opensearch.index.mapper.GeoShapeQueryable;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -200,18 +198,6 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
     @Override
     protected GeoShapeQueryBuilder newShapeQueryBuilder(String fieldName, Supplier<Geometry> shapeSupplier, String indexedShapeId) {
         return new GeoShapeQueryBuilder(fieldName, shapeSupplier, indexedShapeId);
-    }
-
-    @Override
-    public Query buildShapeQuery(QueryShardContext context, MappedFieldType fieldType) {
-        if ((fieldType instanceof GeoShapeQueryable) == false) {
-            throw new QueryShardException(
-                context,
-                "Field [" + fieldName + "] is of unsupported type [" + fieldType.typeName() + "] for [" + NAME + "] query"
-            );
-        }
-        final GeoShapeQueryable ft = (GeoShapeQueryable) fieldType;
-        return new ConstantScoreQuery(ft.geoShapeQuery(shape, fieldName, strategy, relation, context));
     }
 
     @Override

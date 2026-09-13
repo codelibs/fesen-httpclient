@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.search.aggregations;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -149,19 +148,6 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
         // We always use the type of the aggregation as the writeable name
         return getType();
     }
-
-    @Override
-    public final AggregatorFactory build(QueryShardContext queryShardContext, AggregatorFactory parent) throws IOException {
-        AggregatorFactory factory = doBuild(queryShardContext, parent, factoriesBuilder);
-        queryShardContext.getUsageService().incAggregationUsage(getType(), factory.getStatsSubtype());
-        return factory;
-    }
-
-    protected abstract AggregatorFactory doBuild(
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subfactoriesBuilder
-    ) throws IOException;
 
     @Override
     public final XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {

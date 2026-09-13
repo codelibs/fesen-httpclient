@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.Mapper;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 
 import java.io.IOException;
@@ -221,7 +220,7 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
             return fullName;
         }
 
-        /** Returns the mappings as a map. Note that the returned map has a single key which is always the field's {@link Mapper#name}. */
+        /** Returns the mappings as a map. Note that the returned map has a single key which is always the field's name. */
         public Map<String, Object> sourceAsMap() {
             return XContentHelper.convertToMap(source, true, MediaTypeRegistry.JSON).v2();
         }

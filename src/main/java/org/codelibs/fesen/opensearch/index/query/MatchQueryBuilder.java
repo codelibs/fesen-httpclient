@@ -33,18 +33,13 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.common.unit.Fuzziness;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.NumberFieldMapper;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
 import org.codelibs.fesen.opensearch.index.search.MatchQuery;
 import org.codelibs.fesen.opensearch.index.search.MatchQuery.ZeroTermsQuery;
 
@@ -58,7 +53,7 @@ import java.util.Objects;
  *
  * @opensearch.internal
  */
-public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> implements ComplementAwareQueryBuilder, WithFieldName {
+public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> implements WithFieldName {
 
     private static final String CUTOFF_FREQUENCY_DEPRECATION_MSG = "you can omit this option, "
         + "the [match] query can skip block of documents efficiently if the total number of hits is not tracked";
@@ -410,32 +405,6 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        // validate context specific fields
-        if (analyzer != null && context.getIndexAnalyzers().get(analyzer) == null) {
-            throw new QueryShardException(context, "[" + NAME + "] analyzer [" + analyzer + "] not found");
-        }
-
-        MatchQuery matchQuery = new MatchQuery(context);
-        matchQuery.setOccur(operator.toBooleanClauseOccur());
-        if (analyzer != null) {
-            matchQuery.setAnalyzer(analyzer);
-        }
-        matchQuery.setFuzziness(fuzziness);
-        matchQuery.setFuzzyPrefixLength(prefixLength);
-        matchQuery.setMaxExpansions(maxExpansions);
-        matchQuery.setTranspositions(fuzzyTranspositions);
-        matchQuery.setFuzzyRewriteMethod(QueryParsers.parseRewriteMethod(fuzzyRewrite, null, LoggingDeprecationHandler.INSTANCE));
-        matchQuery.setLenient(lenient);
-        matchQuery.setCommonTermsCutoff(cutoffFrequency);
-        matchQuery.setZeroTermsQuery(zeroTermsQuery);
-        matchQuery.setAutoGenerateSynonymsPhraseQuery(autoGenerateSynonymsPhraseQuery);
-
-        Query query = matchQuery.parse(MatchQuery.Type.BOOLEAN, fieldName, value);
-        return Queries.maybeApplyMinimumShouldMatch(query, minimumShouldMatch);
-    }
-
-    @Override
     protected boolean doEquals(MatchQueryBuilder other) {
         return Objects.equals(fieldName, other.fieldName)
             && Objects.equals(value, other.value)
@@ -591,12 +560,4 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
         return matchQuery;
     }
 
-    @Override
-    public List<QueryBuilder> getComplement(QueryShardContext context) {
-        // If this is a match query on a numeric field, we can provide the complement using RangeQueryBuilder.
-        NumberFieldMapper.NumberFieldType nft = ComplementHelperUtils.getNumberFieldType(context, fieldName);
-        if (nft == null) return null;
-        Number numberValue = nft.parse(value);
-        return ComplementHelperUtils.numberValueToComplement(fieldName, numberValue);
-    }
 }

@@ -36,7 +36,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -46,7 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 import org.codelibs.fesen.opensearch.lucene.queries.ExtendedCommonTermsQuery;
 
 import java.io.IOException;
@@ -380,37 +378,6 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        String field;
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType != null) {
-            field = fieldType.name();
-        } else {
-            field = fieldName;
-        }
-
-        Analyzer analyzerObj;
-        if (analyzer == null) {
-            if (fieldType != null) {
-                analyzerObj = context.getSearchAnalyzer(fieldType);
-            } else {
-                analyzerObj = context.getMapperService().searchAnalyzer();
-            }
-        } else {
-            analyzerObj = context.getMapperService().getIndexAnalyzers().get(analyzer);
-            if (analyzerObj == null) {
-                throw new QueryShardException(context, "[common] analyzer [" + analyzer + "] not found");
-            }
-        }
-
-        Occur highFreqOccur = highFreqOperator.toBooleanClauseOccur();
-        Occur lowFreqOccur = lowFreqOperator.toBooleanClauseOccur();
-
-        ExtendedCommonTermsQuery commonsQuery = new ExtendedCommonTermsQuery(highFreqOccur, lowFreqOccur, cutoffFrequency);
-        return parseQueryString(commonsQuery, text, field, analyzerObj, lowFreqMinimumShouldMatch, highFreqMinimumShouldMatch);
     }
 
     private static Query parseQueryString(

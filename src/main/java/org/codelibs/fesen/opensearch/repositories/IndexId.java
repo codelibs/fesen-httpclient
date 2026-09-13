@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.core.index.Index;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.remote.RemoteStoreEnums;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -56,7 +55,7 @@ public final class IndexId implements Writeable, ToXContentObject {
     static final String NAME = "name";
     static final String ID = "id";
     static final String SHARD_PATH_TYPE = "shard_path_type";
-    public static final int DEFAULT_SHARD_PATH_TYPE = RemoteStoreEnums.PathType.FIXED.getCode();
+    public static final int DEFAULT_SHARD_PATH_TYPE = 0;
 
     private final String name;
     private final String id;

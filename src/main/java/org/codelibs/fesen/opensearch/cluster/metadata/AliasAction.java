@@ -35,7 +35,7 @@ package org.codelibs.fesen.opensearch.cluster.metadata;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.core.common.Strings;
-import org.codelibs.fesen.opensearch.rest.action.admin.indices.AliasesNotFoundException;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.AliasesNotFoundException;
 
 /**
  * Individual operation to perform on the cluster state as part of an {@link IndicesAliasesRequest}.

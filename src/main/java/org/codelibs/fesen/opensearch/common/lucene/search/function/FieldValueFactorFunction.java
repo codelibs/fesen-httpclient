@@ -29,148 +29,29 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
-
 package org.codelibs.fesen.opensearch.common.lucene.search.function;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Explanation;
 import org.codelibs.fesen.opensearch.OpenSearchException;
-import org.codelibs.fesen.opensearch.common.Nullable;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
-import org.codelibs.fesen.opensearch.index.fielddata.FieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexNumericFieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.SortedNumericDoubleValues;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
- * A function_score function that multiplies the score with the value of a
- * field from the document, optionally multiplying the field by a factor first,
- * and applying a modification (log, ln, sqrt, square, etc) afterwards.
+ * Namespace for the field_value_factor request types shared by the builder and the wire format.
  *
- * @opensearch.internal
+ * <p>Applying the factor to a document's field value is a node-side concern and is not carried over;
+ * only the modifier a client sends survives here.</p>
+ *
+ * @opensearch.api
  */
-public class FieldValueFactorFunction extends ScoreFunction {
-    private final String field;
-    private final float boostFactor;
-    private final Modifier modifier;
-    private final String functionName;
+@PublicApi(since = "1.0.0")
+public final class FieldValueFactorFunction {
 
-    /**
-     * Value used if the document is missing the field.
-     */
-    private final Double missing;
-    private final IndexNumericFieldData indexFieldData;
-
-    public FieldValueFactorFunction(
-        String field,
-        float boostFactor,
-        Modifier modifierType,
-        Double missing,
-        IndexNumericFieldData indexFieldData
-    ) {
-        this(field, boostFactor, modifierType, missing, indexFieldData, null);
-    }
-
-    public FieldValueFactorFunction(
-        String field,
-        float boostFactor,
-        Modifier modifierType,
-        Double missing,
-        IndexNumericFieldData indexFieldData,
-        @Nullable String functionName
-    ) {
-        super(CombineFunction.MULTIPLY);
-        this.field = field;
-        this.boostFactor = boostFactor;
-        this.modifier = modifierType;
-        this.indexFieldData = indexFieldData;
-        this.missing = missing;
-        this.functionName = functionName;
-    }
-
-    @Override
-    public LeafScoreFunction getLeafScoreFunction(LeafReaderContext ctx) {
-        final SortedNumericDoubleValues values;
-        if (indexFieldData == null) {
-            values = FieldData.emptySortedNumericDoubles();
-        } else {
-            values = this.indexFieldData.load(ctx).getDoubleValues();
-        }
-
-        return new LeafScoreFunction() {
-
-            @Override
-            public double score(int docId, float subQueryScore) throws IOException {
-                double value;
-                if (values.advanceExact(docId)) {
-                    value = values.nextValue();
-                } else {
-                    if (missing != null) {
-                        value = missing;
-                    } else {
-                        throw new OpenSearchException("Missing value for field [" + field + "]");
-                    }
-                }
-                double val = value * boostFactor;
-                double result = modifier.apply(val);
-                if (result < 0f) {
-                    String message = "field value function must not produce negative scores, but got: "
-                        + "["
-                        + result
-                        + "] for field value: ["
-                        + value
-                        + "]";
-                    if (modifier == Modifier.LN) {
-                        message += "; consider using ln1p or ln2p instead of ln to avoid negative scores";
-                    } else if (modifier == Modifier.LOG) {
-                        message += "; consider using log1p or log2p instead of log to avoid negative scores";
-                    }
-                    throw new IllegalArgumentException(message);
-                }
-                return result;
-            }
-
-            @Override
-            public Explanation explainScore(int docId, Explanation subQueryScore) throws IOException {
-                String modifierStr = modifier != null ? modifier.toString() : "";
-                String defaultStr = missing != null ? "?:" + missing : "";
-                double score = score(docId, subQueryScore.getValue().floatValue());
-                return Explanation.match(
-                    (float) score,
-                    String.format(
-                        Locale.ROOT,
-                        "field value function" + Functions.nameOrEmptyFunc(functionName) + ": %s(doc['%s'].value%s * factor=%s)",
-                        modifierStr,
-                        field,
-                        defaultStr,
-                        boostFactor
-                    )
-                );
-            }
-        };
-    }
-
-    @Override
-    public boolean needsScores() {
-        return false;
-    }
-
-    @Override
-    protected boolean doEquals(ScoreFunction other) {
-        FieldValueFactorFunction fieldValueFactorFunction = (FieldValueFactorFunction) other;
-        return this.boostFactor == fieldValueFactorFunction.boostFactor
-            && Objects.equals(this.field, fieldValueFactorFunction.field)
-            && Objects.equals(this.modifier, fieldValueFactorFunction.modifier);
-    }
-
-    @Override
-    protected int doHashCode() {
-        return Objects.hash(boostFactor, field, modifier);
+    private FieldValueFactorFunction() {
     }
 
     /**

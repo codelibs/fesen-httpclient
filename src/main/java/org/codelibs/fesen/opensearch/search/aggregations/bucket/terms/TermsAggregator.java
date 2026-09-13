@@ -39,31 +39,24 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationExecutionException;
-import org.codelibs.fesen.opensearch.search.aggregations.Aggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.BucketOrder;
-import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder.Aggregation;
-import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder.CompoundOrder;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.DeferableBucketAggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.nested.NestedAggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.support.AggregationPath;
-import org.codelibs.fesen.opensearch.search.internal.SearchContext;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+
 
 /**
- * Base aggregator class to aggregate documents by terms
+ * Namespace for the terms-aggregation request types shared by builders and responses.
+ *
+ * <p>The aggregator itself is node-side and is not carried over; only the bucket-count
+ * thresholds a client sends and reads back survive here.</p>
  *
  * @opensearch.internal
  */
-public abstract class TermsAggregator extends DeferableBucketAggregator {
+public final class TermsAggregator {
+
+    private TermsAggregator() {
+    }
 
     /**
      * Bucket count thresholds
@@ -220,77 +213,5 @@ public abstract class TermsAggregator extends DeferableBucketAggregator {
         public int getShardSize() {
             throw new AggregationExecutionException("shard_size should not be accessed via CoordinatorBucketCountThresholds");
         }
-    }
-
-    protected final DocValueFormat format;
-    protected final BucketCountThresholds bucketCountThresholds;
-    protected final BucketOrder order;
-    protected final Comparator<InternalTerms.Bucket<?>> partiallyBuiltBucketComparator;
-    protected final Set<Aggregator> aggsUsedForSorting = new HashSet<>();
-    protected final SubAggCollectionMode collectMode;
-
-    public TermsAggregator(
-        String name,
-        AggregatorFactories factories,
-        SearchContext context,
-        Aggregator parent,
-        BucketCountThresholds bucketCountThresholds,
-        BucketOrder order,
-        DocValueFormat format,
-        SubAggCollectionMode collectMode,
-        Map<String, Object> metadata
-    ) throws IOException {
-        super(name, factories, context, parent, metadata);
-        this.bucketCountThresholds = bucketCountThresholds;
-        this.order = order;
-        partiallyBuiltBucketComparator = order == null ? null : order.partiallyBuiltBucketComparator(b -> b.bucketOrd, this);
-        this.format = format;
-        if (subAggsNeedScore() && descendsFromNestedAggregator(parent)) {
-            /*
-              Force the execution to depth_first because we need to access the score of
-              nested documents in a sub-aggregation and we are not able to generate this score
-              while replaying deferred documents.
-             */
-            this.collectMode = SubAggCollectionMode.DEPTH_FIRST;
-        } else {
-            this.collectMode = collectMode;
-        }
-        // Don't defer any child agg if we are dependent on it for pruning results
-        if (order instanceof Aggregation aggregation) {
-            AggregationPath path = aggregation.path();
-            aggsUsedForSorting.add(path.resolveTopmostAggregator(this));
-        } else if (order instanceof CompoundOrder compoundOrder) {
-            for (BucketOrder orderElement : compoundOrder.orderElements()) {
-                if (orderElement instanceof Aggregation aggregation) {
-                    AggregationPath path = aggregation.path();
-                    aggsUsedForSorting.add(path.resolveTopmostAggregator(this));
-                }
-            }
-        }
-    }
-
-    static boolean descendsFromNestedAggregator(Aggregator parent) {
-        while (parent != null) {
-            if (parent.getClass() == NestedAggregator.class) {
-                return true;
-            }
-            parent = parent.parent();
-        }
-        return false;
-    }
-
-    private boolean subAggsNeedScore() {
-        for (Aggregator subAgg : subAggregators) {
-            if (subAgg.scoreMode().needsScores()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected boolean shouldDefer(Aggregator aggregator) {
-        return context.getQueryShardContext().getStarTreeQueryContext() == null
-            && (collectMode == SubAggCollectionMode.BREADTH_FIRST && !aggsUsedForSorting.contains(aggregator));
     }
 }

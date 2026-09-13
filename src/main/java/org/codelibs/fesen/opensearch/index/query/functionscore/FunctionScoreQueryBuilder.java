@@ -33,12 +33,9 @@
 package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.lucene.search.function.CombineFunction;
 import org.codelibs.fesen.opensearch.common.lucene.search.function.FunctionScoreQuery;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScoreFunction;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -49,20 +46,17 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentLocation;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.InnerHitContextBuilder;
 import org.codelibs.fesen.opensearch.index.query.MatchAllQueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.MatchNoneQueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilderVisitor;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -338,38 +332,6 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
         );
     }
 
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        ScoreFunction[] filterFunctions = new ScoreFunction[filterFunctionBuilders.length];
-        int i = 0;
-        for (FilterFunctionBuilder filterFunctionBuilder : filterFunctionBuilders) {
-            ScoreFunction scoreFunction = filterFunctionBuilder.getScoreFunction().toFunction(context);
-            final QueryBuilder builder = filterFunctionBuilder.getFilter();
-            if (builder.getName().equals(MatchAllQueryBuilder.NAME)) {
-                filterFunctions[i++] = scoreFunction;
-            } else {
-                Query filter = builder.toQuery(context);
-                filterFunctions[i++] = new FunctionScoreQuery.FilterScoreFunction(filter, scoreFunction, builder.queryName());
-            }
-        }
-
-        final QueryBuilder builder = this.query;
-        Query query = builder.toQuery(context);
-        if (query == null) {
-            query = new MatchAllDocsQuery();
-        }
-
-        CombineFunction boostMode = this.boostMode == null ? DEFAULT_BOOST_MODE : this.boostMode;
-        // handle cases where only one score function and no filter was provided. In this case we create a FunctionScoreQuery.
-        if (filterFunctions.length == 0) {
-            return new FunctionScoreQuery(query, builder.queryName(), minScore, maxBoost);
-        } else if (filterFunctions.length == 1 && filterFunctions[0] instanceof FunctionScoreQuery.FilterScoreFunction == false) {
-            return new FunctionScoreQuery(query, builder.queryName(), filterFunctions[0], boostMode, minScore, maxBoost);
-        }
-        // in all other cases we create a FunctionScoreQuery with filters
-        return new FunctionScoreQuery(query, builder.queryName(), scoreMode, filterFunctions, boostMode, minScore, maxBoost);
-    }
-
     /**
      * Function to be associated with an optional filter, meaning it will be executed only for the documents
      * that match the given filter.
@@ -476,11 +438,6 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
             return newQueryBuilder;
         }
         return this;
-    }
-
-    @Override
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {
-        InnerHitContextBuilder.extractInnerHits(query(), innerHits);
     }
 
     public static FunctionScoreQueryBuilder fromXContent(XContentParser parser) throws IOException {

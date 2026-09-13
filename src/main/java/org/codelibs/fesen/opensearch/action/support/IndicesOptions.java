@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.rest.RestRequest;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -401,16 +400,6 @@ public class IndicesOptions implements ToXContentFragment {
             opts.add(Option.IGNORE_THROTTLED);
         }
         return new IndicesOptions(opts, wildcards);
-    }
-
-    public static IndicesOptions fromRequest(RestRequest request, IndicesOptions defaultSettings) {
-        return fromParameters(
-            request.param("expand_wildcards"),
-            request.param("ignore_unavailable"),
-            request.param("allow_no_indices"),
-            request.param("ignore_throttled"),
-            defaultSettings
-        );
     }
 
     public static IndicesOptions fromMap(Map<String, Object> map, IndicesOptions defaultSettings) {

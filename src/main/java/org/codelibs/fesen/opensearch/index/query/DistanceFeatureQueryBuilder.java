@@ -32,10 +32,8 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
 import org.codelibs.fesen.opensearch.common.geo.GeoUtils;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -44,7 +42,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -124,16 +121,6 @@ public class DistanceFeatureQueryBuilder extends AbstractQueryBuilder<DistanceFe
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType fieldType = context.fieldMapper(field);
-        if (fieldType == null) {
-            return Queries.newMatchNoDocsQuery("Can't run [" + NAME + "] query on unmapped fields!");
-        }
-        // As we already apply boost in AbstractQueryBuilder::toQuery, we always passing a boost of 1.0 to distanceFeatureQuery
-        return fieldType.distanceFeatureQuery(origin.origin(), pivot, 1.0f, context);
     }
 
     @Override

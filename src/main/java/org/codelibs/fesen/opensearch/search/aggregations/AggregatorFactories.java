@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
-import org.codelibs.fesen.opensearch.core.tasks.TaskCancelledException;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.NamedObjectNotFoundException;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
@@ -49,25 +48,16 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentLocation;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.global.GlobalAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.global.GlobalAggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator;
 import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 import org.codelibs.fesen.opensearch.search.aggregations.support.AggregationPath;
 import org.codelibs.fesen.opensearch.search.aggregations.support.AggregationPath.PathElement;
-import org.codelibs.fesen.opensearch.search.internal.SearchContext;
-import org.codelibs.fesen.opensearch.search.profile.Profilers;
-import org.codelibs.fesen.opensearch.search.profile.aggregation.ProfilingAggregator;
-import org.codelibs.fesen.opensearch.search.streaming.FlushMode;
-import org.codelibs.fesen.opensearch.search.streaming.FlushModeResolver;
-import org.codelibs.fesen.opensearch.search.streaming.StreamingCostMetrics;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,7 +69,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -247,133 +236,8 @@ public class AggregatorFactories {
         return factories.count() > 0 ? factories : null;
     }
 
-    public static final AggregatorFactories EMPTY = new AggregatorFactories(new AggregatorFactory[0]);
-
-    private static final Predicate<AggregatorFactory> GLOBAL_AGGREGATOR_FACTORY_PREDICATE = new Predicate<>() {
-        @Override
-        public boolean test(AggregatorFactory o) {
-            return o instanceof GlobalAggregatorFactory;
-        }
-    };
-
-    private final AggregatorFactory[] factories;
-
     public static Builder builder() {
         return new Builder();
-    }
-
-    private AggregatorFactories(AggregatorFactory[] factories) {
-        this.factories = factories;
-    }
-
-    public boolean allFactoriesSupportConcurrentSearch() {
-        for (AggregatorFactory factory : factories) {
-            if (factory.supportsConcurrentSegmentSearch() == false || factory.evaluateChildFactories() == false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean allFactoriesSupportIntraSegmentSearch() {
-        for (AggregatorFactory factory : factories) {
-            if (factory.supportsIntraSegmentSearch() == false || factory.evaluateChildFactoriesForIntraSegment() == false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Create all aggregators so that they can be consumed with multiple
-     * buckets.
-     * @param cardinality Upper bound of the number of {@code owningBucketOrd}s
-     *                    that {@link Aggregator}s created by this method will
-     *                    be asked to collect.
-     */
-    public Aggregator[] createSubAggregators(SearchContext searchContext, Aggregator parent, CardinalityUpperBound cardinality)
-        throws IOException {
-        Aggregator[] aggregators = new Aggregator[countAggregators()];
-        for (int i = 0; i < factories.length; ++i) {
-            Aggregator factory = factories[i].create(searchContext, parent, cardinality);
-            Profilers profilers = factory.context().getProfilers();
-            if (profilers != null) {
-                factory = new ProfilingAggregator(factory, profilers.getAggregationProfiler());
-            }
-            aggregators[i] = factory;
-        }
-        return aggregators;
-    }
-
-    public List<Aggregator> createTopLevelAggregators(SearchContext searchContext) throws IOException {
-        return createTopLevelAggregators(searchContext, (aggregatorFactory) -> true);
-    }
-
-    public List<Aggregator> createTopLevelGlobalAggregators(SearchContext searchContext) throws IOException {
-        return createTopLevelAggregators(searchContext, GLOBAL_AGGREGATOR_FACTORY_PREDICATE);
-    }
-
-    public List<Aggregator> createTopLevelNonGlobalAggregators(SearchContext searchContext) throws IOException {
-        return createTopLevelAggregators(searchContext, GLOBAL_AGGREGATOR_FACTORY_PREDICATE.negate());
-    }
-
-    private List<Aggregator> createTopLevelAggregators(SearchContext searchContext, Predicate<AggregatorFactory> factoryFilter)
-        throws IOException {
-        if (searchContext.isStreamSearch() && searchContext.getFlushMode() == null) {
-            FlushMode decision;
-            if (factories.length == 0) {
-                decision = FlushMode.PER_SHARD;
-            } else {
-                StreamingCostMetrics metrics = StreamingCostMetrics.estimateFromFactories(factories, searchContext);
-                long maxBucket = searchContext.getStreamingMaxEstimatedBucketCount();
-                decision = FlushModeResolver.decideFlushMode(metrics, FlushMode.PER_SHARD, maxBucket);
-                logger.debug(
-                    "Streaming aggregation decision: {} | streamable={}, topN={} | maxBucket={}",
-                    decision,
-                    metrics.streamable(),
-                    metrics.topNSize(),
-                    maxBucket
-                );
-            }
-            searchContext.setFlushModeIfAbsent(decision);
-        }
-
-        // These aggregators are going to be used with a single bucket ordinal, no need to wrap the PER_BUCKET ones
-        List<Aggregator> aggregators = new ArrayList<>();
-        for (int i = 0; i < factories.length; i++) {
-            if (searchContext.isCancelled()) {
-                throw new TaskCancelledException("cancelled while creating aggregators");
-            }
-            /*
-             * Top level aggs only collect from owningBucketOrd 0 which is
-             * *exactly* what CardinalityUpperBound.ONE *means*.
-             */
-            Aggregator factory;
-            if (factoryFilter.test(factories[i])) {
-                factory = factories[i].create(searchContext, null, CardinalityUpperBound.ONE);
-                Profilers profilers = factory.context().getProfilers();
-                if (profilers != null) {
-                    factory = new ProfilingAggregator(factory, profilers.getAggregationProfiler());
-                }
-                aggregators.add(factory);
-            }
-        }
-        return aggregators;
-    }
-
-    public boolean hasNonGlobalAggregator() {
-        return Arrays.stream(factories).anyMatch(GLOBAL_AGGREGATOR_FACTORY_PREDICATE.negate());
-    }
-
-    public boolean hasGlobalAggregator() {
-        return Arrays.stream(factories).anyMatch(GLOBAL_AGGREGATOR_FACTORY_PREDICATE);
-    }
-
-    /**
-     * @return the number of sub-aggregator factories
-     */
-    public int countAggregators() {
-        return factories.length;
     }
 
     /**
@@ -488,19 +352,6 @@ public class AggregatorFactories {
                 e = agg.factoriesBuilder.validateChildren(context.getValidationException());
             }
             return e;
-        }
-
-        public AggregatorFactories build(QueryShardContext queryShardContext, AggregatorFactory parent) throws IOException {
-            if (aggregationBuilders.isEmpty() && pipelineAggregatorBuilders.isEmpty()) {
-                return EMPTY;
-            }
-            AggregatorFactory[] aggFactories = new AggregatorFactory[aggregationBuilders.size()];
-            int i = 0;
-            for (AggregationBuilder agg : aggregationBuilders) {
-                aggFactories[i] = agg.build(queryShardContext, parent);
-                ++i;
-            }
-            return new AggregatorFactories(aggFactories);
         }
 
         private List<PipelineAggregationBuilder> resolvePipelineAggregatorOrder(
@@ -700,7 +551,4 @@ public class AggregatorFactories {
         }
     }
 
-    public AggregatorFactory[] getFactories() {
-        return factories;
-    }
 }

@@ -13,10 +13,10 @@ import org.codelibs.fesen.opensearch.cluster.metadata.RepositoriesMetadata;
 import org.codelibs.fesen.opensearch.cluster.metadata.RepositoryMetadata;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
+import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
-import org.codelibs.fesen.opensearch.gateway.remote.RemoteClusterStateService;
 import org.codelibs.fesen.opensearch.node.Node;
-import org.codelibs.fesen.opensearch.repositories.blobstore.BlobStoreRepository;
+import org.codelibs.fesen.opensearch.cluster.metadata.RepositoriesMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +36,17 @@ import java.util.stream.Collectors;
  * @opensearch.internal
  */
 public class RemoteStoreNodeAttribute {
+
+    /**
+     * Whether the cluster persists its cluster state to a remote store. Declared here because the
+     * remote cluster-state service itself is node-side and is not carried over.
+     */
+    public static final Setting<Boolean> REMOTE_CLUSTER_STATE_ENABLED_SETTING = Setting.boolSetting(
+        "cluster.remote_store.state.enabled",
+        false,
+        Setting.Property.NodeScope,
+        Setting.Property.Final
+    );
 
     public static final List<String> REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX = List.of("remote_store", "remote_publication");
 
@@ -167,7 +178,7 @@ public class RemoteStoreNodeAttribute {
         CryptoMetadata cryptoMetadata = buildCryptoMetadata(node, name, prefix);
 
         // Repository metadata built here will always be for a system repository.
-        settings.put(BlobStoreRepository.SYSTEM_REPOSITORY_SETTING.getKey(), true);
+        settings.put(RepositoriesMetadata.SYSTEM_REPOSITORY_SETTING.getKey(), true);
 
         return new RepositoryMetadata(name, type, settings.build(), cryptoMetadata);
     }
@@ -299,7 +310,7 @@ public class RemoteStoreNodeAttribute {
     }
 
     public static boolean isRemoteStoreClusterStateEnabled(Settings settings) {
-        return RemoteClusterStateService.REMOTE_CLUSTER_STATE_ENABLED_SETTING.get(settings) && isRemoteClusterStateConfigured(settings);
+        return REMOTE_CLUSTER_STATE_ENABLED_SETTING.get(settings) && isRemoteClusterStateConfigured(settings);
     }
 
     private static boolean isRemoteRoutingTableAttributePresent(Settings settings) {

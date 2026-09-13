@@ -35,15 +35,11 @@ package org.codelibs.fesen.opensearch.index.query.functionscore;
 import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.lucene.search.function.FieldValueFactorFunction;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScoreFunction;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.fielddata.IndexNumericFieldData;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -161,20 +157,6 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
     @Override
     protected int doHashCode() {
         return Objects.hash(this.field, this.factor, this.missing, this.modifier);
-    }
-
-    @Override
-    protected ScoreFunction doToFunction(QueryShardContext context) {
-        MappedFieldType fieldType = context.getMapperService().fieldType(field);
-        IndexNumericFieldData fieldData = null;
-        if (fieldType == null) {
-            if (missing == null) {
-                throw new OpenSearchException("Unable to find a field mapper for field [" + field + "]. No 'missing' value defined.");
-            }
-        } else {
-            fieldData = context.getForField(fieldType);
-        }
-        return new FieldValueFactorFunction(field, factor, modifier, missing, fieldData, getFunctionName());
     }
 
     public static FieldValueFactorFunctionBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {

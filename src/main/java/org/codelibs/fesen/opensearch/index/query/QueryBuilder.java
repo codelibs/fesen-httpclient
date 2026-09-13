@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
@@ -58,16 +57,6 @@ public interface QueryBuilder extends NamedWriteable, ToXContentObject, Rewritea
      * @return A QueryBuilder with the filter added to the existing filter.
      */
     QueryBuilder filter(QueryBuilder filter);
-
-    /**
-     * Converts this QueryBuilder to a lucene {@link Query}.
-     * Returns {@code null} if this query should be ignored in the context of
-     * parent queries.
-     *
-     * @param context additional information needed to construct the queries
-     * @return the {@link Query} or {@code null} if this query should be ignored upstream
-     */
-    Query toQuery(QueryShardContext context) throws IOException;
 
     /**
      * Sets the arbitrary name to be assigned to the query (see named queries).

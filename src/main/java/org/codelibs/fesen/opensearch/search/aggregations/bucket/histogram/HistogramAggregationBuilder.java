@@ -37,24 +37,19 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 import org.codelibs.fesen.opensearch.search.aggregations.BucketOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalOrder.CompoundOrder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * A builder for histograms on numeric fields.  This builder can operate on either base numeric fields, or numeric range fields.  IP range
@@ -64,11 +59,6 @@ import java.util.Objects;
  */
 public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<HistogramAggregationBuilder> {
     public static final String NAME = "histogram";
-    public static final ValuesSourceRegistry.RegistryKey<HistogramAggregatorSupplier> REGISTRY_KEY = new ValuesSourceRegistry.RegistryKey<>(
-        NAME,
-        HistogramAggregatorSupplier.class
-    );
-
     private static final ObjectParser<double[], Void> EXTENDED_BOUNDS_PARSER = new ObjectParser<>(
         Histogram.EXTENDED_BOUNDS_FIELD.getPreferredName(),
         () -> new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }
@@ -112,10 +102,6 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
             (p, c) -> InternalOrder.Parser.parseOrderParam(p),
             Histogram.ORDER_FIELD
         );
-    }
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        HistogramAggregatorFactory.registerAggregators(builder);
     }
 
     private double interval;
@@ -360,60 +346,6 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
     @Override
     public String getType() {
         return NAME;
-    }
-
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
-
-    @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-
-        if (hardBounds != null && extendedBounds != null) {
-            if (hardBounds.getMax() != null && extendedBounds.getMax() != null && hardBounds.getMax() < extendedBounds.getMax()) {
-                throw new IllegalArgumentException(
-                    "Extended bounds have to be inside hard bounds, hard bounds: ["
-                        + hardBounds
-                        + "], extended bounds: ["
-                        + extendedBounds.getMin()
-                        + "--"
-                        + extendedBounds.getMax()
-                        + "]"
-                );
-            }
-            if (hardBounds.getMin() != null && extendedBounds.getMin() != null && hardBounds.getMin() > extendedBounds.getMin()) {
-                throw new IllegalArgumentException(
-                    "Extended bounds have to be inside hard bounds, hard bounds: ["
-                        + hardBounds
-                        + "], extended bounds: ["
-                        + extendedBounds.getMin()
-                        + "--"
-                        + extendedBounds.getMax()
-                        + "]"
-                );
-            }
-        }
-        return new HistogramAggregatorFactory(
-            name,
-            config,
-            interval,
-            offset,
-            order,
-            keyed,
-            minDocCount,
-            extendedBounds,
-            hardBounds,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
     }
 
     @Override

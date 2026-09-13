@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.queries.spans.FieldMaskingSpanQuery;
-import org.apache.lucene.queries.spans.SpanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -43,7 +41,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -186,18 +183,6 @@ public class FieldMaskingSpanQueryBuilder extends AbstractQueryBuilder<FieldMask
         queryBuilder.boost(boost);
         queryBuilder.queryName(queryName);
         return queryBuilder;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        String fieldInQuery = fieldName;
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType != null) {
-            fieldInQuery = fieldType.name();
-        }
-        Query innerQuery = queryBuilder.toQuery(context);
-        assert innerQuery instanceof SpanQuery;
-        return new FieldMaskingSpanQuery((SpanQuery) innerQuery, fieldInQuery);
     }
 
     @Override

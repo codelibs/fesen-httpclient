@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RoutingNodes;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
 import org.codelibs.fesen.opensearch.cluster.routing.UnassignedInfo;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingAllocation;
 import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -134,81 +133,6 @@ public class CancelAllocationCommand implements AllocationCommand {
 
     public boolean allowPrimary() {
         return this.allowPrimary;
-    }
-
-    @Override
-    public RerouteExplanation execute(RoutingAllocation allocation, boolean explain) {
-        DiscoveryNode discoNode = allocation.nodes().resolveNode(node);
-        ShardRouting shardRouting = null;
-        RoutingNodes routingNodes = allocation.routingNodes();
-        RoutingNode routingNode = routingNodes.node(discoNode.getId());
-        IndexMetadata indexMetadata = null;
-        if (routingNode != null) {
-            indexMetadata = allocation.metadata().index(index());
-            if (indexMetadata == null) {
-                throw new IndexNotFoundException(index());
-            }
-            ShardId shardId = new ShardId(indexMetadata.getIndex(), shardId());
-            shardRouting = routingNode.getByShardId(shardId);
-        }
-        if (shardRouting == null) {
-            if (explain) {
-                return new RerouteExplanation(
-                    this,
-                    allocation.decision(
-                        Decision.NO,
-                        "cancel_allocation_command",
-                        "can't cancel " + shardId + ", failed to find it on node " + discoNode
-                    )
-                );
-            }
-            throw new IllegalArgumentException("[cancel_allocation] can't cancel " + shardId + ", failed to find it on node " + discoNode);
-        }
-        if (shardRouting.primary() && allowPrimary == false) {
-            if ((shardRouting.initializing() && shardRouting.relocatingNodeId() != null) == false) {
-                // only allow cancelling initializing shard of primary relocation without allowPrimary flag
-                if (explain) {
-                    return new RerouteExplanation(
-                        this,
-                        allocation.decision(
-                            Decision.NO,
-                            "cancel_allocation_command",
-                            "can't cancel "
-                                + shardId
-                                + " on node "
-                                + discoNode
-                                + ", shard is primary and "
-                                + shardRouting.state().name().toLowerCase(Locale.ROOT)
-                        )
-                    );
-                }
-                throw new IllegalArgumentException(
-                    "[cancel_allocation] can't cancel "
-                        + shardId
-                        + " on node "
-                        + discoNode
-                        + ", shard is primary and "
-                        + shardRouting.state().name().toLowerCase(Locale.ROOT)
-                );
-            }
-        }
-        routingNodes.failShard(
-            LogManager.getLogger(CancelAllocationCommand.class),
-            shardRouting,
-            new UnassignedInfo(UnassignedInfo.Reason.REROUTE_CANCELLED, null),
-            indexMetadata,
-            allocation.changes()
-        );
-        // TODO: We don't have to remove a cancelled shard from in-sync set once we have a strict resync implementation.
-        allocation.removeAllocationId(shardRouting);
-        return new RerouteExplanation(
-            this,
-            allocation.decision(
-                Decision.YES,
-                "cancel_allocation_command",
-                "shard " + shardId + " on node " + discoNode + " can be cancelled"
-            )
-        );
     }
 
     @Override

@@ -41,8 +41,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.search.rescore.QueryRescorer.QueryRescoreContext;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -185,18 +183,6 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
     public static QueryRescorerBuilder fromXContent(XContentParser parser) throws IOException {
         InnerBuilder innerBuilder = QUERY_RESCORE_PARSER.parse(parser, new InnerBuilder(), null);
         return innerBuilder.build();
-    }
-
-    @Override
-    public QueryRescoreContext innerBuildContext(int windowSize, QueryShardContext context) throws IOException {
-        QueryRescoreContext queryRescoreContext = new QueryRescoreContext(windowSize);
-
-        queryRescoreContext.setParsedQuery(context.toQuery(queryBuilder));
-
-        queryRescoreContext.setQueryWeight(this.queryWeight);
-        queryRescoreContext.setRescoreQueryWeight(this.rescoreQueryWeight);
-        queryRescoreContext.setScoreMode(this.scoreMode);
-        return queryRescoreContext;
     }
 
     @Override

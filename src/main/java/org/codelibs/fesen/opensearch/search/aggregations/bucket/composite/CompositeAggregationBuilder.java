@@ -38,16 +38,9 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
-import org.codelibs.fesen.opensearch.plugins.SearchPlugin;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.filter.FilterAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.nested.NestedAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.nested.ReverseNestedAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,46 +90,6 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
         String,
         Writeable.Reader<? extends CompositeValuesSourceBuilder<?>>> AGGREGATION_TYPE_TO_COMPOSITE_VALUE_SOURCE_READER = new HashMap<>();
     static final Map<Class<?>, String> BUILDER_CLASS_TO_AGGREGATION_TYPE = new HashMap<>();
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder, final List<SearchPlugin> plugins) {
-        DateHistogramValuesSourceBuilder.register(builder);
-        HistogramValuesSourceBuilder.register(builder);
-        TermsValuesSourceBuilder.register(builder);
-        // Register All other aggregations that wants to be part of Composite Aggregation which are provided in
-        // Plugins along with their parsers and serialisation codes
-        registerCompositeAggregatorsPlugins(plugins, SearchPlugin::getCompositeAggregations, (compositeAggregationSpec) -> {
-            compositeAggregationSpec.getAggregatorRegistrar().accept(builder);
-            BUILDER_TYPE_TO_PARSER.put(compositeAggregationSpec.getAggregationType(), compositeAggregationSpec.getParsingFunction());
-            // This is added for backward compatibility, so that we can move away from byte code in the serialisation
-            if (compositeAggregationSpec.getByteCode() != null) {
-                BYTE_CODE_TO_COMPOSITE_VALUE_SOURCE_READER.put(
-                    (int) compositeAggregationSpec.getByteCode(),
-                    compositeAggregationSpec.getReader()
-                );
-                BUILDER_CLASS_TO_BYTE_CODE.put(
-                    compositeAggregationSpec.getValueSourceBuilderClass(),
-                    compositeAggregationSpec.getByteCode()
-                );
-            }
-            AGGREGATION_TYPE_TO_COMPOSITE_VALUE_SOURCE_READER.put(
-                compositeAggregationSpec.getAggregationType(),
-                compositeAggregationSpec.getReader()
-            );
-            BUILDER_CLASS_TO_AGGREGATION_TYPE.put(
-                compositeAggregationSpec.getValueSourceBuilderClass(),
-                compositeAggregationSpec.getAggregationType()
-            );
-        });
-        builder.registerUsage(NAME);
-    }
-
-    private static void registerCompositeAggregatorsPlugins(
-        final List<SearchPlugin> plugins,
-        final Function<SearchPlugin, List<SearchPlugin.CompositeAggregationSpec>> producer,
-        final Consumer<SearchPlugin.CompositeAggregationSpec> consumer
-    ) {
-        plugins.forEach(searchPlugin -> producer.apply(searchPlugin).forEach(consumer));
-    }
 
     private List<CompositeValuesSourceBuilder<?>> sources;
     private Map<String, Object> after;
@@ -237,23 +190,6 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
         return BucketCardinality.NONE;
     }
 
-    /**
-     * Returns null if the provided factory and his parents are compatible with
-     * this aggregator or the instance of the parent's factory that is incompatible with
-     * the composite aggregation.
-     */
-    private static AggregatorFactory checkParentIsSafe(AggregatorFactory factory) {
-        if (factory == null) {
-            return null;
-        } else if (factory instanceof NestedAggregatorFactory
-            || factory instanceof FilterAggregatorFactory
-            || factory instanceof ReverseNestedAggregatorFactory) {
-                return checkParentIsSafe(factory.getParent());
-            } else {
-                return factory;
-            }
-    }
-
     private static void validateSources(List<CompositeValuesSourceBuilder<?>> sources) {
         if (sources == null || sources.isEmpty()) {
             throw new IllegalArgumentException("Composite [" + SOURCES_FIELD_NAME.getPreferredName() + "] cannot be null or empty");
@@ -274,61 +210,6 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
         if (duplicates.size() > 0) {
             throw new IllegalArgumentException("Composite source names must be unique, found duplicates: " + duplicates);
         }
-    }
-
-    @Override
-    protected AggregatorFactory doBuild(
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subfactoriesBuilder
-    ) throws IOException {
-        AggregatorFactory invalid = checkParentIsSafe(parent);
-        if (invalid != null) {
-            throw new IllegalArgumentException(
-                "[composite] aggregation cannot be used with a parent aggregation of"
-                    + " type: ["
-                    + invalid.getClass().getSimpleName()
-                    + "]"
-            );
-        }
-        CompositeValuesSourceConfig[] configs = new CompositeValuesSourceConfig[sources.size()];
-        for (int i = 0; i < configs.length; i++) {
-            configs[i] = sources.get(i).build(queryShardContext);
-            if (configs[i].valuesSource().needsScores()) {
-                throw new IllegalArgumentException("[sources] cannot access _score");
-            }
-        }
-        final CompositeKey afterKey;
-        if (after != null) {
-            if (after.size() != configs.length) {
-                throw new IllegalArgumentException("[after] has " + after.size() + " value(s) but [sources] has " + sources.size());
-            }
-            Comparable[] values = new Comparable[sources.size()];
-            for (int i = 0; i < sources.size(); i++) {
-                String sourceName = sources.get(i).name();
-                if (after.containsKey(sourceName) == false) {
-                    throw new IllegalArgumentException("Missing value for [after." + sources.get(i).name() + "]");
-                }
-                Object obj = after.get(sourceName);
-                if (configs[i].missingBucket() && obj == null) {
-                    values[i] = null;
-                } else if (obj instanceof Comparable) {
-                    values[i] = (Comparable) obj;
-                } else {
-                    throw new IllegalArgumentException(
-                        "Invalid value for [after."
-                            + sources.get(i).name()
-                            + "], expected comparable, got ["
-                            + (obj == null ? "null" : obj.getClass().getSimpleName())
-                            + "]"
-                    );
-                }
-            }
-            afterKey = new CompositeKey(values);
-        } else {
-            afterKey = null;
-        }
-        return new CompositeAggregationFactory(name, queryShardContext, parent, subfactoriesBuilder, metadata, size, configs, afterKey);
     }
 
     @Override

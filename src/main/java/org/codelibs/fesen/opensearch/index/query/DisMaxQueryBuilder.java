@@ -33,9 +33,6 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.DisjunctionMaxQuery;
-import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -45,9 +42,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -195,17 +190,6 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
     }
 
     @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        // return null if there are no queries at all
-        Collection<Query> luceneQueries = toQueries(queries, context);
-        if (luceneQueries.isEmpty()) {
-            return Queries.newMatchNoDocsQuery("no clauses for dismax query.");
-        }
-
-        return new DisjunctionMaxQuery(luceneQueries, tieBreaker);
-    }
-
-    @Override
     protected QueryBuilder doRewrite(QueryRewriteContext queryShardContext) throws IOException {
         DisMaxQueryBuilder newBuilder = new DisMaxQueryBuilder();
         boolean changed = false;
@@ -239,13 +223,6 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
     @Override
     public String getWriteableName() {
         return NAME;
-    }
-
-    @Override
-    protected void extractInnerHitBuilders(Map<String, InnerHitContextBuilder> innerHits) {
-        for (QueryBuilder query : queries) {
-            InnerHitContextBuilder.extractInnerHits(query, innerHits);
-        }
     }
 
     @Override

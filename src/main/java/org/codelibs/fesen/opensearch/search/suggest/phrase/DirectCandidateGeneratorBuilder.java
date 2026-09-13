@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.search.suggest.SortBy;
 import org.codelibs.fesen.opensearch.search.suggest.phrase.PhraseSuggestionBuilder.CandidateGenerator;
 
@@ -424,45 +423,6 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
         PARSER.declareInt(DirectCandidateGeneratorBuilder::maxEdits, MAX_EDITS_FIELD);
         PARSER.declareInt(DirectCandidateGeneratorBuilder::minWordLength, MIN_WORD_LENGTH_FIELD);
         PARSER.declareInt(DirectCandidateGeneratorBuilder::prefixLength, PREFIX_LENGTH_FIELD);
-    }
-
-    @Override
-    public PhraseSuggestionContext.DirectCandidateGenerator build(MapperService mapperService) throws IOException {
-        PhraseSuggestionContext.DirectCandidateGenerator generator = new PhraseSuggestionContext.DirectCandidateGenerator();
-        generator.setField(this.field);
-        transferIfNotNull(this.size, generator::size);
-        if (this.preFilter != null) {
-            generator.preFilter(mapperService.getNamedAnalyzer(this.preFilter));
-            if (generator.preFilter() == null) {
-                throw new IllegalArgumentException("Analyzer [" + this.preFilter + "] doesn't exists");
-            }
-        }
-        if (this.postFilter != null) {
-            generator.postFilter(mapperService.getNamedAnalyzer(this.postFilter));
-            if (generator.postFilter() == null) {
-                throw new IllegalArgumentException("Analyzer [" + this.postFilter + "] doesn't exists");
-            }
-        }
-        transferIfNotNull(this.accuracy, generator::accuracy);
-        if (this.suggestMode != null) {
-            generator.suggestMode(resolveSuggestMode(this.suggestMode));
-        }
-        if (this.sort != null) {
-            generator.sort(SortBy.resolve(this.sort));
-        }
-        if (this.stringDistance != null) {
-            generator.stringDistance(resolveDistance(this.stringDistance));
-        }
-        transferIfNotNull(this.maxEdits, generator::maxEdits);
-        if (generator.maxEdits() < 1 || generator.maxEdits() > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE) {
-            throw new IllegalArgumentException("Illegal max_edits value " + generator.maxEdits());
-        }
-        transferIfNotNull(this.maxInspections, generator::maxInspections);
-        transferIfNotNull(this.maxTermFreq, generator::maxTermFreq);
-        transferIfNotNull(this.prefixLength, generator::prefixLength);
-        transferIfNotNull(this.minWordLength, generator::minWordLength);
-        transferIfNotNull(this.minDocFreq, generator::minDocFreq);
-        return generator;
     }
 
     private static SuggestMode resolveSuggestMode(String suggestMode) {

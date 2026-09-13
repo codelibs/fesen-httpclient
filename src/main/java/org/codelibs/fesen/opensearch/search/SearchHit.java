@@ -60,11 +60,8 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.mapper.IgnoredFieldMapper;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
-import org.codelibs.fesen.opensearch.index.mapper.SourceFieldMapper;
 import org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers;
-import org.codelibs.fesen.opensearch.rest.action.search.RestSearchAction;
 import org.codelibs.fesen.opensearch.search.fetch.subphase.highlight.HighlightField;
 import org.codelibs.fesen.opensearch.search.lookup.SourceLookup;
 import org.codelibs.fesen.opensearch.transport.RemoteClusterAware;
@@ -702,14 +699,14 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             }
             // _ignored is the only multi-valued meta field
             // TODO: can we avoid having an exception here?
-            if (field.getName().equals(IgnoredFieldMapper.NAME)) {
+            if (field.getName().equals("_ignored")) {
                 builder.field(field.getName(), field.getValues());
             } else {
                 builder.field(field.getName(), field.<Object>getValue());
             }
         }
         if (source != null) {
-            XContentHelper.writeRawField(SourceFieldMapper.NAME, source, builder, params);
+            XContentHelper.writeRawField("_source", source, builder, params);
         }
         if (documentFields.isEmpty() == false &&
         // ignore fields all together if they are all empty
@@ -731,7 +728,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         }
         sortValues.toXContent(builder, params);
         if (!matchedQueries.isEmpty()) {
-            boolean includeMatchedQueriesScore = params.paramAsBoolean(RestSearchAction.INCLUDE_NAMED_QUERIES_SCORE_PARAM, false);
+            boolean includeMatchedQueriesScore = params.paramAsBoolean("include_named_queries_score", false);
             if (includeMatchedQueriesScore) {
                 builder.startObject(Fields.MATCHED_QUERIES);
                 for (Map.Entry<String, Float> entry : matchedQueries.entrySet()) {
@@ -769,7 +766,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             METADATA_FIELDS,
             v -> new HashMap<String, DocumentField>()
         );
-        if (fieldName.equals(IgnoredFieldMapper.NAME)) {
+        if (fieldName.equals("_ignored")) {
             fieldMap.put(fieldName, new DocumentField(fieldName, (List<Object>) fieldValue));
         } else {
             fieldMap.put(fieldName, new DocumentField(fieldName, Collections.singletonList(fieldValue)));
@@ -820,9 +817,9 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             ValueType.STRING
         );
         parser.declareObject(
-            (map, value) -> map.put(SourceFieldMapper.NAME, value),
+            (map, value) -> map.put("_source", value),
             (p, c) -> parseSourceBytes(p),
-            new ParseField(SourceFieldMapper.NAME)
+            new ParseField("_source")
         );
         parser.declareObject(
             (map, value) -> map.put(Fields.HIGHLIGHT, value),
@@ -911,7 +908,7 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         searchHit.setPrimaryTerm(get(Fields._PRIMARY_TERM, values, SequenceNumbers.UNASSIGNED_PRIMARY_TERM));
         searchHit.sortValues(get(Fields.SORT, values, SearchSortValues.EMPTY));
         searchHit.highlightFields(get(Fields.HIGHLIGHT, values, null));
-        searchHit.sourceRef(get(SourceFieldMapper.NAME, values, null));
+        searchHit.sourceRef(get("_source", values, null));
         searchHit.explanation(get(Fields._EXPLANATION, values, null));
         searchHit.setInnerHits(get(Fields.INNER_HITS, values, null));
         searchHit.matchedQueriesWithScores(get(Fields.MATCHED_QUERIES, values, null));

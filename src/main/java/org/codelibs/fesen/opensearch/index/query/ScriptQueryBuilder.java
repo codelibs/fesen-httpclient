@@ -44,21 +44,17 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScorerSupplier;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
-import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.Functions;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.script.FilterScript;
 import org.codelibs.fesen.opensearch.script.Script;
 
 import java.io.IOException;
 import java.util.Objects;
 
-import static org.codelibs.fesen.opensearch.search.SearchService.ALLOW_EXPENSIVE_QUERIES;
 
 /**
  * Query builder for script queries
@@ -151,101 +147,6 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
         }
 
         return new ScriptQueryBuilder(script).boost(boost).queryName(queryName);
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        if (context.allowExpensiveQueries() == false) {
-            throw new OpenSearchException(
-                "[script] queries cannot be executed when '" + ALLOW_EXPENSIVE_QUERIES.getKey() + "' is set to false."
-            );
-        }
-        FilterScript.Factory factory = context.compile(script, FilterScript.CONTEXT);
-        FilterScript.LeafFactory filterScript = factory.newFactory(script.getParams(), context.lookup());
-        return new ScriptQuery(script, filterScript, queryName);
-    }
-
-    /**
-     * Internal script query
-     *
-     * @opensearch.internal
-     */
-    static class ScriptQuery extends Query {
-
-        final Script script;
-        final FilterScript.LeafFactory filterScript;
-        final String queryName;
-
-        ScriptQuery(Script script, FilterScript.LeafFactory filterScript, @Nullable String queryName) {
-            this.script = script;
-            this.filterScript = filterScript;
-            this.queryName = queryName;
-        }
-
-        @Override
-        public String toString(String field) {
-            StringBuilder buffer = new StringBuilder();
-            buffer.append("ScriptQuery(");
-            buffer.append(script);
-            buffer.append(Functions.nameOrEmptyArg(queryName));
-            buffer.append(")");
-            return buffer.toString();
-        }
-
-        @Override
-        public void visit(QueryVisitor visitor) {
-            visitor.visitLeaf(this);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (sameClassAs(obj) == false) return false;
-            ScriptQuery other = (ScriptQuery) obj;
-            return Objects.equals(script, other.script);
-        }
-
-        @Override
-        public int hashCode() {
-            int h = classHash();
-            h = 31 * h + script.hashCode();
-            return h;
-        }
-
-        @Override
-        public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-            return new ConstantScoreWeight(this, boost) {
-
-                @Override
-                public ScorerSupplier scorerSupplier(LeafReaderContext context) throws IOException {
-                    DocIdSetIterator approximation = DocIdSetIterator.all(context.reader().maxDoc());
-                    final FilterScript leafScript = filterScript.newInstance(context);
-                    TwoPhaseIterator twoPhase = new TwoPhaseIterator(approximation) {
-
-                        @Override
-                        public boolean matches() throws IOException {
-                            leafScript.setDocument(approximation.docID());
-                            return leafScript.execute();
-                        }
-
-                        @Override
-                        public float matchCost() {
-                            // TODO: how can we compute this?
-                            return 1000f;
-                        }
-                    };
-                    final Scorer scorer = new ConstantScoreScorer(score(), scoreMode, twoPhase);
-                    return new DefaultScorerSupplier(scorer);
-                }
-
-                @Override
-                public boolean isCacheable(LeafReaderContext ctx) {
-                    // TODO: Change this to true when we can assume that scripts are pure functions
-                    // ie. the return value is always the same given the same conditions and may not
-                    // depend on the current timestamp, other documents, etc.
-                    return false;
-                }
-            };
-        }
     }
 
     @Override

@@ -172,12 +172,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
             return this;
         }
 
-        Builder withSystemGeneratedProcessorMetrics(final SystemGeneratedProcessorMetrics systemGeneratedProcessorMetrics) {
-            systemGeneratedFactoryStats = systemGeneratedProcessorMetrics.getFactoryStats();
-            systemGeneratedProcessorStats = systemGeneratedProcessorMetrics.getProcessorStats();
-            return this;
-        }
-
         SearchPipelineStats build() {
             Map<String, PipelineDetailStats> pipelineDetailStatsMap = new TreeMap<>();
             for (PerPipelineStats pipelineStat : perPipelineStats) {

@@ -12,7 +12,6 @@ import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
-import org.codelibs.fesen.opensearch.search.aggregations.MultiBucketConsumerService;
 
 import java.util.Map;
 
@@ -72,7 +71,7 @@ public class WorkloadGroupSearchSettings {
      */
     public static final Setting<Integer> WLM_MAX_BUCKETS = Setting.intSetting(
         "search.max_buckets",
-        MultiBucketConsumerService.DEFAULT_MAX_BUCKETS,
+        65535,
         0
     );
 

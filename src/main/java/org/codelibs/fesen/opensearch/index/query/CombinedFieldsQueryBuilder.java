@@ -25,8 +25,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.TextFieldMapper;
 import org.codelibs.fesen.opensearch.index.search.QueryParserHelper;
 
 import java.io.IOException;
@@ -245,81 +243,9 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
     // CORE QUERY BUILDING LOGIC
     // ========================
 
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-
-        Map<String, Float> mappedFields = QueryParserHelper.resolveMappingFields(context, fieldToWeight);
-
-        if (mappedFields.isEmpty()) {
-            return Queries.newUnmappedFieldsQuery(fieldToWeight.keySet());
-        }
-
-        List<MappedFieldType> fieldTypes = extractAndValidateMappedFieldTypes(context, mappedFields);
-        Analyzer sharedAnalyzer = validateAndGetSharedAnalyzer(fieldTypes);
-
-        return buildQuery(mappedFields, sharedAnalyzer);
-    }
-
     // ========================
     // HELPER METHODS
     // ========================
-
-    /**
-     * Builds the list of mapped fields.
-     */
-    private List<MappedFieldType> extractAndValidateMappedFieldTypes(QueryShardContext context, Map<String, Float> mappedFields) {
-        List<MappedFieldType> fields = new ArrayList<>();
-
-        for (Map.Entry<String, Float> entry : mappedFields.entrySet()) {
-            String name = entry.getKey();
-            MappedFieldType fieldType = context.getFieldType(name);
-            if (fieldType == null) {
-                continue;
-            }
-
-            validateFieldType(fieldType);
-            fields.add(fieldType);
-        }
-
-        return fields;
-    }
-
-    /**
-     * Validates that the field type is supported by combined fields queries.
-     */
-    private void validateFieldType(MappedFieldType fieldType) {
-        if (fieldType.familyTypeName().equals(TextFieldMapper.CONTENT_TYPE) == false) {
-            throw new IllegalArgumentException(
-                String.format(
-                    Locale.ROOT,
-                    "Field [%s] of type [%s] does not support [%s] queries",
-                    fieldType.name(),
-                    fieldType.typeName(),
-                    NAME
-                )
-            );
-        }
-    }
-
-    /**
-     * Validates that all fields use the same analyzer and returns the shared analyzer.
-     * This is a Lucene requirement for CombinedFieldQuery.
-     */
-    private Analyzer validateAndGetSharedAnalyzer(List<MappedFieldType> fieldTypes) {
-        Analyzer sharedAnalyzer = null;
-
-        for (MappedFieldType fieldType : fieldTypes) {
-            Analyzer analyzer = fieldType.getTextSearchInfo().getSearchAnalyzer();
-            if (sharedAnalyzer != null && analyzer.equals(sharedAnalyzer) == false) {
-                throw new IllegalArgumentException(
-                    String.format(Locale.ROOT, "All fields in [%s] query must have the same search analyzer", NAME)
-                );
-            }
-            sharedAnalyzer = analyzer;
-        }
-
-        return sharedAnalyzer;
-    }
 
     /**
      * Builds the final query using the prepared fields and analyzer.

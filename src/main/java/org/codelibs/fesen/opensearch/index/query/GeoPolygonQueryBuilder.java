@@ -32,10 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.document.LatLonDocValuesField;
-import org.apache.lucene.document.LatLonPoint;
-import org.apache.lucene.geo.Polygon;
-import org.apache.lucene.search.IndexOrDocValuesQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
@@ -48,8 +44,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.mapper.GeoPointFieldMapper.GeoPointFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -168,73 +162,6 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType == null) {
-            if (ignoreUnmapped) {
-                return new MatchNoDocsQuery();
-            } else {
-                throw new QueryShardException(context, "failed to find geo_point field [" + fieldName + "]");
-            }
-        }
-        if (!(fieldType.unwrap() instanceof GeoPointFieldType)) {
-            throw new QueryShardException(context, "field [" + fieldName + "] is not a geo_point field");
-        }
-
-        List<GeoPoint> shell = new ArrayList<>(this.shell.size());
-        for (GeoPoint geoPoint : this.shell) {
-            shell.add(new GeoPoint(geoPoint));
-        }
-        final int shellSize = shell.size();
-
-        // validation was not available prior to 2.x, so to support bwc
-        // percolation queries we only ignore_malformed on 2.x created indexes
-        if (!GeoValidationMethod.isIgnoreMalformed(validationMethod)) {
-            for (GeoPoint point : shell) {
-                if (!GeoUtils.isValidLatitude(point.lat())) {
-                    throw new QueryShardException(
-                        context,
-                        "illegal latitude value [{}] for [{}]",
-                        point.lat(),
-                        GeoPolygonQueryBuilder.NAME
-                    );
-                }
-                if (!GeoUtils.isValidLongitude(point.lon())) {
-                    throw new QueryShardException(
-                        context,
-                        "illegal longitude value [{}] for [{}]",
-                        point.lon(),
-                        GeoPolygonQueryBuilder.NAME
-                    );
-                }
-            }
-        }
-
-        if (GeoValidationMethod.isCoerce(validationMethod)) {
-            for (GeoPoint point : shell) {
-                GeoUtils.normalizePoint(point, true, true);
-            }
-        }
-
-        double[] lats = new double[shellSize];
-        double[] lons = new double[shellSize];
-        GeoPoint p;
-        for (int i = 0; i < shellSize; ++i) {
-            p = shell.get(i);
-            lats[i] = p.lat();
-            lons[i] = p.lon();
-        }
-
-        Polygon polygon = new Polygon(lats, lons);
-        Query query = LatLonPoint.newPolygonQuery(fieldType.name(), polygon);
-        if (fieldType.hasDocValues()) {
-            Query dvQuery = LatLonDocValuesField.newSlowPolygonQuery(fieldType.name(), polygon);
-            query = new IndexOrDocValuesQuery(query, dvQuery);
-        }
-        return query;
     }
 
     @Override

@@ -31,107 +31,18 @@
 
 package org.codelibs.fesen.opensearch.search.aggregations.bucket.nested;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.join.BitSetProducer;
-import org.apache.lucene.util.BitSet;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
-import org.codelibs.fesen.opensearch.index.mapper.ObjectMapper;
-import org.codelibs.fesen.opensearch.search.aggregations.Aggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.CardinalityUpperBound;
-import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregation;
-import org.codelibs.fesen.opensearch.search.aggregations.LeafBucketCollector;
-import org.codelibs.fesen.opensearch.search.aggregations.LeafBucketCollectorBase;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.BucketsAggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.SingleBucketAggregator;
-import org.codelibs.fesen.opensearch.search.internal.SearchContext;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Aggregates documents that match a nested path.
+ * Namespace for the reverse-nested aggregation field names. The aggregator itself is node-side and is not carried over.
  *
  * @opensearch.internal
  */
-public class ReverseNestedAggregator extends BucketsAggregator implements SingleBucketAggregator {
+public final class ReverseNestedAggregator {
 
+    /** The {@code path} to step back out to. */
     static final ParseField PATH_FIELD = new ParseField("path");
 
-    private final Query parentFilter;
-    private final BitSetProducer parentBitsetProducer;
-
-    public ReverseNestedAggregator(
-        String name,
-        AggregatorFactories factories,
-        ObjectMapper objectMapper,
-        SearchContext context,
-        Aggregator parent,
-        CardinalityUpperBound cardinality,
-        Map<String, Object> metadata
-    ) throws IOException {
-        super(name, factories, context, parent, cardinality, metadata);
-        if (objectMapper == null) {
-            parentFilter = Queries.newNonNestedFilter();
-        } else {
-            parentFilter = objectMapper.nestedTypeFilter();
-        }
-        parentBitsetProducer = context.bitsetFilterCache().getBitSetProducer(parentFilter);
-    }
-
-    @Override
-    protected LeafBucketCollector getLeafCollector(LeafReaderContext ctx, final LeafBucketCollector sub) throws IOException {
-        // In OpenSearch if parent is deleted, then also the children are deleted, so the child docs this agg receives
-        // must belong to parent docs that is alive. For this reason acceptedDocs can be null here.
-        final BitSet parentDocs = parentBitsetProducer.getBitSet(ctx);
-        if (parentDocs == null) {
-            return LeafBucketCollector.NO_OP_COLLECTOR;
-        }
-        final Map<Long, Integer> bucketOrdToLastCollectedParentDoc = new HashMap<>(32);
-        return new LeafBucketCollectorBase(sub, null) {
-            @Override
-            public void collect(int childDoc, long bucket) throws IOException {
-                // fast forward to retrieve the parentDoc this childDoc belongs to
-                final int parentDoc = parentDocs.nextSetBit(childDoc);
-                assert childDoc <= parentDoc && parentDoc != DocIdSetIterator.NO_MORE_DOCS;
-
-                Integer lastCollectedParentDoc = bucketOrdToLastCollectedParentDoc.get(bucket);
-                if (lastCollectedParentDoc != null) {
-                    if (parentDoc > lastCollectedParentDoc) {
-                        collectBucket(sub, parentDoc, bucket);
-                        bucketOrdToLastCollectedParentDoc.put(bucket, parentDoc);
-                    }
-                } else {
-                    collectBucket(sub, parentDoc, bucket);
-                    bucketOrdToLastCollectedParentDoc.put(bucket, parentDoc);
-                }
-            }
-        };
-    }
-
-    @Override
-    public InternalAggregation[] buildAggregations(long[] owningBucketOrds) throws IOException {
-        return buildAggregationsForSingleBucket(
-            owningBucketOrds,
-            (owningBucketOrd, subAggregationResults) -> new InternalReverseNested(
-                name,
-                bucketDocCount(owningBucketOrd),
-                subAggregationResults,
-                metadata()
-            )
-        );
-    }
-
-    @Override
-    public InternalAggregation buildEmptyAggregation() {
-        return new InternalReverseNested(name, 0, buildEmptySubAggregations(), metadata());
-    }
-
-    Query getParentFilter() {
-        return parentFilter;
+    private ReverseNestedAggregator() {
     }
 }

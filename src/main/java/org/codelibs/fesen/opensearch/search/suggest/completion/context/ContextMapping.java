@@ -40,9 +40,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.index.mapper.CompletionFieldMapper;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.mapper.ParseContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,16 +109,6 @@ public abstract class ContextMapping<T extends ToXContent> implements ToXContent
     }
 
     /**
-     * Parses a set of index-time contexts.
-     */
-    public abstract Set<String> parseContext(ParseContext parseContext, XContentParser parser) throws IOException, OpenSearchParseException;
-
-    /**
-     * Retrieves a set of context from a <code>document</code> at index-time.
-     */
-    protected abstract Set<String> parseContext(ParseContext.Document document);
-
-    /**
      * Prototype for the query context
      */
     protected abstract T fromXContent(XContentParser context) throws IOException;
@@ -153,14 +140,6 @@ public abstract class ContextMapping<T extends ToXContent> implements ToXContent
      * that need to be persisted
      */
     protected abstract XContentBuilder toInnerXContent(XContentBuilder builder, Params params) throws IOException;
-
-    /**
-     * Checks if the current context is consistent with the rest of the fields. For example, the GeoContext
-     * should check that the field that it points to has the correct type.
-     */
-    public void validateReferences(Version indexVersionCreated, Function<String, MappedFieldType> fieldResolver) {
-        // No validation is required by default
-    }
 
     @Override
     public final XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {

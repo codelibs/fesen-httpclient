@@ -44,12 +44,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentSubParser;
 import org.codelibs.fesen.opensearch.geometry.ShapeType;
-import org.codelibs.fesen.opensearch.index.fielddata.FieldData;
-import org.codelibs.fesen.opensearch.index.fielddata.GeoPointValues;
-import org.codelibs.fesen.opensearch.index.fielddata.MultiGeoPointValues;
-import org.codelibs.fesen.opensearch.index.fielddata.NumericDoubleValues;
-import org.codelibs.fesen.opensearch.index.fielddata.SortedNumericDoubleValues;
-import org.codelibs.fesen.opensearch.index.fielddata.SortingNumericDoubleValues;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -733,57 +727,6 @@ public class GeoUtils {
         double x = Math.toRadians(lon2 - lon1) * Math.cos(Math.toRadians((lat2 + lat1) / 2.0d));
         double y = Math.toRadians(lat2 - lat1);
         return Math.sqrt(x * x + y * y) * EARTH_MEAN_RADIUS;
-    }
-
-    /**
-     * Return a {@link SortedNumericDoubleValues} instance that returns the distances to a list of geo-points
-     * for each document.
-     */
-    public static SortedNumericDoubleValues distanceValues(
-        final GeoDistance distance,
-        final DistanceUnit unit,
-        final MultiGeoPointValues geoPointValues,
-        final GeoPoint... fromPoints
-    ) {
-        final GeoPointValues singleValues = FieldData.unwrapSingleton(geoPointValues);
-        if (singleValues != null && fromPoints.length == 1) {
-            return FieldData.singleton(new NumericDoubleValues() {
-
-                @Override
-                public boolean advanceExact(int doc) throws IOException {
-                    return singleValues.advanceExact(doc);
-                }
-
-                @Override
-                public double doubleValue() throws IOException {
-                    final GeoPoint from = fromPoints[0];
-                    final GeoPoint to = singleValues.geoPointValue();
-                    return distance.calculate(from.lat(), from.lon(), to.lat(), to.lon(), unit);
-                }
-
-            });
-        } else {
-            return new SortingNumericDoubleValues() {
-                @Override
-                public boolean advanceExact(int target) throws IOException {
-                    if (geoPointValues.advanceExact(target)) {
-                        resize(geoPointValues.docValueCount() * fromPoints.length);
-                        int v = 0;
-                        for (int i = 0; i < geoPointValues.docValueCount(); ++i) {
-                            final GeoPoint point = geoPointValues.nextValue();
-                            for (GeoPoint from : fromPoints) {
-                                values[v] = distance.calculate(from.lat(), from.lon(), point.lat(), point.lon(), unit);
-                                v++;
-                            }
-                        }
-                        sort();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-        }
     }
 
     private GeoUtils() {}

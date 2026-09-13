@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.cluster.AbstractDiffable;
 import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.cluster.Diff;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.opensearch.cluster.metadata.MetadataIndexStateService;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
@@ -70,6 +69,20 @@ import static org.codelibs.fesen.opensearch.index.IndexModule.INDEX_STORE_TYPE_S
  */
 @PublicApi(since = "1.0.0")
 public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements VerifiableWriteable {
+
+    /**
+     * The block a closed index carries. Declared here because the node-side index state service is
+     * not carried over.
+     */
+    public static final ClusterBlock INDEX_CLOSED_BLOCK = new ClusterBlock(
+        4,
+        "index closed",
+        false,
+        false,
+        false,
+        RestStatus.FORBIDDEN,
+        ClusterBlockLevel.READ_WRITE
+    );
     public static final ClusterBlocks EMPTY_CLUSTER_BLOCK = new ClusterBlocks(emptySet(), Map.of());
     public static final Set<Setting<Boolean>> INDEX_DATA_READ_ONLY_BLOCK_SETTINGS = Set.of(
         IndexMetadata.INDEX_READ_ONLY_SETTING,
@@ -412,7 +425,7 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         public Builder addBlocks(IndexMetadata indexMetadata) {
             String indexName = indexMetadata.getIndex().getName();
             if (indexMetadata.getState() == IndexMetadata.State.CLOSE) {
-                addIndexBlock(indexName, MetadataIndexStateService.INDEX_CLOSED_BLOCK);
+                addIndexBlock(indexName, INDEX_CLOSED_BLOCK);
             }
             if (IndexMetadata.INDEX_READ_ONLY_SETTING.get(indexMetadata.getSettings())) {
                 addIndexBlock(indexName, IndexMetadata.INDEX_READ_ONLY_BLOCK);

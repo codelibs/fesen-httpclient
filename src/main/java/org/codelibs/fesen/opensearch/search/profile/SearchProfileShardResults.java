@@ -38,13 +38,9 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.internal.ShardSearchRequest;
 import org.codelibs.fesen.opensearch.search.profile.aggregation.AggregationProfileShardResult;
-import org.codelibs.fesen.opensearch.search.profile.aggregation.AggregationProfiler;
 import org.codelibs.fesen.opensearch.search.profile.fetch.FetchProfileShardResult;
-import org.codelibs.fesen.opensearch.search.profile.fetch.FetchProfiler;
 import org.codelibs.fesen.opensearch.search.profile.query.QueryProfileShardResult;
-import org.codelibs.fesen.opensearch.search.profile.query.QueryProfiler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -196,62 +192,4 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
         );
     }
 
-    /**
-     * Helper method to convert Profiler into InternalProfileShardResults, which
-     * can be serialized to other nodes, emitted as JSON, etc.
-     *
-     * @param profilers
-     *            The {@link Profilers} to convert into results
-     * @return A {@link ProfileShardResult} representing the results for this
-     *         shard
-     */
-    public static ProfileShardResult buildShardResults(Profilers profilers, ShardSearchRequest request) {
-        List<QueryProfiler> queryProfilers = profilers.getQueryProfilers();
-        AggregationProfiler aggProfiler = profilers.getAggregationProfiler();
-        FetchProfiler fetchProfiler = profilers.getFetchProfiler();
-        List<QueryProfileShardResult> queryResults = new ArrayList<>(queryProfilers.size());
-        for (QueryProfiler queryProfiler : queryProfilers) {
-            QueryProfileShardResult result = new QueryProfileShardResult(
-                queryProfiler.getTree(),
-                queryProfiler.getRewriteTime(),
-                queryProfiler.getCollector()
-            );
-            queryResults.add(result);
-        }
-        AggregationProfileShardResult aggResults = new AggregationProfileShardResult(aggProfiler.getTree());
-        List<ProfileResult> fetchTree = fetchProfiler.getTree();
-        FetchProfileShardResult fetchResult = new FetchProfileShardResult(fetchTree);
-        NetworkTime networkTime = new NetworkTime(0, 0);
-        if (request != null) {
-            networkTime.setInboundNetworkTime(request.getInboundNetworkTime());
-            networkTime.setOutboundNetworkTime(request.getOutboundNetworkTime());
-        }
-        return new ProfileShardResult(queryResults, aggResults, fetchResult, networkTime);
-    }
-
-    /**
-     * Helper method to build ProfileShardResult containing only fetch profile data.
-     * Used in multi-shard fetch phase where query profiling data is not available.
-     *
-     * @param profilers The {@link Profilers} to extract fetch data from
-     * @param request The shard search request
-     * @return A {@link ProfileShardResult} containing only fetch profile data
-     */
-    public static ProfileShardResult buildFetchOnlyShardResults(Profilers profilers, ShardSearchRequest request) {
-        FetchProfiler fetchProfiler = profilers.getFetchProfiler();
-        List<ProfileResult> fetchTree = fetchProfiler.getTree();
-        FetchProfileShardResult fetchResult = new FetchProfileShardResult(fetchTree);
-        NetworkTime networkTime = new NetworkTime(0, 0);
-        if (request != null) {
-            networkTime.setInboundNetworkTime(request.getInboundNetworkTime());
-            networkTime.setOutboundNetworkTime(request.getOutboundNetworkTime());
-        }
-        // Return ProfileShardResult with empty query/agg results and only fetch data
-        return new ProfileShardResult(
-            Collections.emptyList(), // No query results in fetch-only phase
-            new AggregationProfileShardResult(Collections.emptyList()), // No aggregation results
-            fetchResult,
-            networkTime
-        );
-    }
 }

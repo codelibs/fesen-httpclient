@@ -74,18 +74,6 @@ public class TaskCancellation implements Comparable<TaskCancellation> {
     }
 
     /**
-     *  Cancels the task and its descendants and invokes all onCancelCallbacks.
-     */
-    public void cancelTaskAndDescendants(TaskManager taskManager) {
-        if (isEligibleForCancellation() == false) {
-            return;
-        }
-
-        taskManager.cancelTaskAndDescendants(task, getReasonString(), false, ActionListener.wrap(() -> {}));
-        runOnCancelCallbacks();
-    }
-
-    /**
      * invokes all onCancelCallbacks.
      */
     private void runOnCancelCallbacks() {

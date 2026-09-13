@@ -32,25 +32,10 @@
 
 package org.codelibs.fesen.opensearch.action.admin.indices.datastream;
 
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.PointValues;
 import org.codelibs.fesen.opensearch.action.ActionType;
-import org.codelibs.fesen.opensearch.action.support.ActionFilters;
 import org.codelibs.fesen.opensearch.action.support.broadcast.BroadcastRequest;
 import org.codelibs.fesen.opensearch.action.support.broadcast.BroadcastResponse;
-import org.codelibs.fesen.opensearch.action.support.broadcast.node.TransportBroadcastByNodeAction;
-import org.codelibs.fesen.opensearch.cluster.ClusterState;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockException;
-import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexAbstraction;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexAbstractionResolver;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexNameExpressionResolver;
-import org.codelibs.fesen.opensearch.cluster.metadata.ResolvedIndices;
 import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
-import org.codelibs.fesen.opensearch.cluster.routing.ShardsIterator;
-import org.codelibs.fesen.opensearch.cluster.service.ClusterService;
 import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
@@ -58,24 +43,14 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.IndexService;
-import org.codelibs.fesen.opensearch.index.engine.Engine;
-import org.codelibs.fesen.opensearch.index.shard.IndexShard;
-import org.codelibs.fesen.opensearch.index.shard.ShardNotFoundException;
 import org.codelibs.fesen.opensearch.index.store.StoreStats;
-import org.codelibs.fesen.opensearch.indices.IndicesService;
-import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
-import org.codelibs.fesen.opensearch.transport.TransportService;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.stream.Stream;
 
 /**
@@ -362,177 +337,4 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
         long maxTimestamp = 0L;
     }
 
-    /**
-     * Transport Action for Data Stream Stats
-     *
-     * @opensearch.internal
-     */
-    public static class TransportAction extends TransportBroadcastByNodeAction<Request, Response, DataStreamShardStats> {
-
-        private final ClusterService clusterService;
-        private final IndicesService indicesService;
-        private final IndexAbstractionResolver indexAbstractionResolver;
-
-        public TransportAction(
-            ClusterService clusterService,
-            TransportService transportService,
-            IndicesService indicesService,
-            ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver
-        ) {
-            super(
-                DataStreamsStatsAction.NAME,
-                clusterService,
-                transportService,
-                actionFilters,
-                indexNameExpressionResolver,
-                Request::new,
-                ThreadPool.Names.MANAGEMENT
-            );
-            this.clusterService = clusterService;
-            this.indicesService = indicesService;
-            this.indexAbstractionResolver = new IndexAbstractionResolver(indexNameExpressionResolver);
-        }
-
-        @Override
-        protected Request readRequestFrom(StreamInput in) throws IOException {
-            return new Request(in);
-        }
-
-        @Override
-        protected ClusterBlockException checkGlobalBlock(ClusterState state, Request request) {
-            return state.blocks().globalBlockedException(ClusterBlockLevel.METADATA_READ);
-        }
-
-        @Override
-        protected ClusterBlockException checkRequestBlock(ClusterState state, Request request, String[] concreteIndices) {
-            return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_READ, concreteIndices);
-        }
-
-        @Override
-        protected ShardsIterator shards(ClusterState clusterState, Request request, String[] concreteIndices) {
-            Set<String> abstractionNames = resolvedIndices(request, clusterState, true).local().names();
-            SortedMap<String, IndexAbstraction> indicesLookup = clusterState.getMetadata().getIndicesLookup();
-
-            String[] concreteDatastreamIndices = abstractionNames.stream().flatMap(abstractionName -> {
-                IndexAbstraction indexAbstraction = indicesLookup.get(abstractionName);
-                assert indexAbstraction != null;
-                if (indexAbstraction.getType() == IndexAbstraction.Type.DATA_STREAM) {
-                    IndexAbstraction.DataStream dataStream = (IndexAbstraction.DataStream) indexAbstraction;
-                    List<IndexMetadata> indices = dataStream.getIndices();
-                    return indices.stream().map(idx -> idx.getIndex().getName());
-                } else {
-                    return Stream.empty();
-                }
-            }).toArray(String[]::new);
-            return clusterState.getRoutingTable().allShards(concreteDatastreamIndices);
-        }
-
-        @Override
-        protected DataStreamShardStats shardOperation(Request request, ShardRouting shardRouting) throws IOException {
-            IndexService indexService = indicesService.indexServiceSafe(shardRouting.shardId().getIndex());
-            IndexShard indexShard = indexService.getShard(shardRouting.shardId().id());
-            // if we don't have the routing entry yet, we need it stats wise, we treat it as if the shard is not ready yet
-            if (indexShard.routingEntry() == null) {
-                throw new ShardNotFoundException(indexShard.shardId());
-            }
-            StoreStats storeStats = indexShard.storeStats();
-            IndexAbstraction indexAbstraction = clusterService.state().getMetadata().getIndicesLookup().get(shardRouting.getIndexName());
-            assert indexAbstraction != null;
-            IndexAbstraction.DataStream dataStream = indexAbstraction.getParentDataStream();
-            assert dataStream != null;
-            long maxTimestamp = 0L;
-            try (Engine.Searcher searcher = indexShard.acquireSearcher("data_stream_stats")) {
-                IndexReader indexReader = searcher.getIndexReader();
-                String fieldName = dataStream.getDataStream().getTimeStampField().getName();
-                byte[] maxPackedValue = PointValues.getMaxPackedValue(indexReader, fieldName);
-                if (maxPackedValue != null) {
-                    maxTimestamp = LongPoint.decodeDimension(maxPackedValue, 0);
-                }
-            }
-            return new DataStreamShardStats(indexShard.routingEntry(), storeStats, maxTimestamp);
-        }
-
-        @Override
-        protected DataStreamShardStats readShardResult(StreamInput in) throws IOException {
-            return new DataStreamShardStats(in);
-        }
-
-        @Override
-        protected Response newResponse(
-            Request request,
-            int totalShards,
-            int successfulShards,
-            int failedShards,
-            List<DataStreamShardStats> dataStreamShardStats,
-            List<DefaultShardOperationFailedException> shardFailures,
-            ClusterState clusterState
-        ) {
-            Map<String, AggregatedStats> aggregatedDataStreamsStats = new HashMap<>();
-            Set<String> allBackingIndices = new HashSet<>();
-            long totalStoreSizeBytes = 0L;
-
-            SortedMap<String, IndexAbstraction> indicesLookup = clusterState.getMetadata().getIndicesLookup();
-            for (DataStreamShardStats shardStat : dataStreamShardStats) {
-                String indexName = shardStat.getShardRouting().getIndexName();
-                IndexAbstraction indexAbstraction = indicesLookup.get(indexName);
-                IndexAbstraction.DataStream dataStream = indexAbstraction.getParentDataStream();
-                assert dataStream != null;
-
-                // Aggregate global stats
-                totalStoreSizeBytes += shardStat.getStoreStats().sizeInBytes();
-                allBackingIndices.add(indexName);
-
-                // Aggregate data stream stats
-                AggregatedStats stats = aggregatedDataStreamsStats.computeIfAbsent(dataStream.getName(), s -> new AggregatedStats());
-                stats.storageBytes += shardStat.getStoreStats().sizeInBytes();
-                stats.maxTimestamp = Math.max(stats.maxTimestamp, shardStat.getMaxTimestamp());
-                stats.backingIndices.add(indexName);
-            }
-
-            DataStreamStats[] dataStreamStats = aggregatedDataStreamsStats.entrySet()
-                .stream()
-                .map(
-                    entry -> new DataStreamStats(
-                        entry.getKey(),
-                        entry.getValue().backingIndices.size(),
-                        new ByteSizeValue(entry.getValue().storageBytes),
-                        entry.getValue().maxTimestamp
-                    )
-                )
-                .toArray(DataStreamStats[]::new);
-
-            return new Response(
-                totalShards,
-                successfulShards,
-                failedShards,
-                shardFailures,
-                aggregatedDataStreamsStats.size(),
-                allBackingIndices.size(),
-                new ByteSizeValue(totalStoreSizeBytes),
-                dataStreamStats
-            );
-        }
-
-        @Override
-        public ResolvedIndices resolveIndices(Request request) {
-            return resolvedIndices(request, clusterService.state(), false);
-        }
-
-        private ResolvedIndices resolvedIndices(Request request, ClusterState clusterState, boolean throwExceptions) {
-            String[] requestIndices = request.indices();
-            if (requestIndices == null || requestIndices.length == 0) {
-                requestIndices = new String[] { "*" };
-            }
-            return ResolvedIndices.of(
-                indexAbstractionResolver.resolveIndexAbstractions(
-                    requestIndices,
-                    request.indicesOptions(),
-                    clusterState.getMetadata(),
-                    true,
-                    throwExceptions
-                )
-            );
-        }
-    }
 }

@@ -33,19 +33,14 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.queries.intervals.IntervalQuery;
-import org.apache.lucene.search.MatchNoDocsQuery;
-import org.apache.lucene.search.Query;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Builder for {@link IntervalQuery}
@@ -143,25 +138,6 @@ public class IntervalQueryBuilder extends AbstractQueryBuilder<IntervalQueryBuil
         builder.boost(boost);
         return builder;
 
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        MappedFieldType fieldType = context.fieldMapper(field);
-        if (fieldType == null) {
-            // Be lenient with unmapped fields so that cross-index search will work nicely
-            return new MatchNoDocsQuery();
-        }
-        Set<String> maskedFields = new HashSet<>();
-        sourceProvider.extractFields(maskedFields);
-        for (String maskedField : maskedFields) {
-            MappedFieldType ft = context.fieldMapper(maskedField);
-            if (ft == null) {
-                // Be lenient with unmapped fields so that cross-index search will work nicely
-                return new MatchNoDocsQuery();
-            }
-        }
-        return new IntervalQuery(field, sourceProvider.getSource(context, fieldType));
     }
 
     @Override

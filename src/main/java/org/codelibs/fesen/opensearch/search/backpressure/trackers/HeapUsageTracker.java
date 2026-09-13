@@ -5,129 +5,29 @@
  * this file be licensed under the Apache-2.0 license or a
  * compatible open source license.
  */
-
 package org.codelibs.fesen.opensearch.search.backpressure.trackers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.opensearch.common.settings.ClusterSettings;
-import org.codelibs.fesen.opensearch.common.settings.Setting;
-import org.codelibs.fesen.opensearch.common.util.MovingAverage;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.monitor.jvm.JvmStats;
 import org.codelibs.fesen.opensearch.search.backpressure.trackers.TaskResourceUsageTrackers.TaskResourceUsageTracker;
-import org.codelibs.fesen.opensearch.tasks.CancellableTask;
-import org.codelibs.fesen.opensearch.tasks.Task;
-import org.codelibs.fesen.opensearch.tasks.TaskCancellation;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.DoubleSupplier;
-
-import static org.codelibs.fesen.opensearch.search.backpressure.trackers.TaskResourceUsageTrackerType.HEAP_USAGE_TRACKER;
 
 /**
- * HeapUsageTracker evaluates if the task has consumed too much heap than allowed.
- * It also compares the task's heap usage against a historical moving average of previously completed tasks.
+ * Namespace for the heap-usage tracker statistics a client reads back from node stats.
  *
- * @opensearch.internal
+ * <p>Tracking heap usage per task is a node-side concern and is not carried over.</p>
+ *
+ * @opensearch.api
  */
-public class HeapUsageTracker extends TaskResourceUsageTracker {
-    private static final Logger logger = LogManager.getLogger(HeapUsageTracker.class);
-    private static final long HEAP_SIZE_BYTES = JvmStats.jvmStats().getMem().getHeapMax().getBytes();
-    private final DoubleSupplier heapVarianceSupplier;
-    private final DoubleSupplier heapPercentThresholdSupplier;
-    private final AtomicReference<MovingAverage> movingAverageReference;
+@PublicApi(since = "2.4.0")
+public final class HeapUsageTracker {
 
-    public HeapUsageTracker(
-        DoubleSupplier heapVarianceSupplier,
-        DoubleSupplier heapPercentThresholdSupplier,
-        int heapMovingAverageWindowSize,
-        ClusterSettings clusterSettings,
-        Setting<Integer> windowSizeSetting
-    ) {
-        this.heapVarianceSupplier = heapVarianceSupplier;
-        this.heapPercentThresholdSupplier = heapPercentThresholdSupplier;
-        this.movingAverageReference = new AtomicReference<>(new MovingAverage(heapMovingAverageWindowSize));
-        clusterSettings.addSettingsUpdateConsumer(windowSizeSetting, this::updateWindowSize);
-        setDefaultResourceUsageBreachEvaluator();
-    }
-
-    /**
-     * Had to refactor this method out of the constructor as we can't pass a lambda which references a member variable in constructor
-     * error: cannot reference movingAverageReference before supertype constructor has been called
-     */
-    private void setDefaultResourceUsageBreachEvaluator() {
-        this.resourceUsageBreachEvaluator = (task) -> {
-            MovingAverage movingAverage = movingAverageReference.get();
-
-            // There haven't been enough measurements.
-            if (movingAverage.isReady() == false) {
-                return Optional.empty();
-            }
-
-            double currentUsage = task.getTotalResourceStats().getMemoryInBytes();
-            double averageUsage = movingAverage.getAverage();
-            double variance = heapVarianceSupplier.getAsDouble();
-            double allowedUsage = averageUsage * variance;
-            double threshold = heapPercentThresholdSupplier.getAsDouble() * HEAP_SIZE_BYTES;
-
-            if (isHeapTrackingSupported() == false || currentUsage < threshold || currentUsage < allowedUsage) {
-                return Optional.empty();
-            }
-
-            return Optional.of(
-                new TaskCancellation.Reason(
-                    "heap usage exceeded [" + new ByteSizeValue((long) currentUsage) + " >= " + new ByteSizeValue((long) threshold) + "]",
-                    (int) (currentUsage / averageUsage)  // TODO: fine-tune the cancellation score/weight
-                )
-            );
-        };
-    }
-
-    @Override
-    public String name() {
-        return HEAP_USAGE_TRACKER.getName();
-    }
-
-    @Override
-    public void update(Task task) {
-        movingAverageReference.get().record(task.getTotalResourceStats().getMemoryInBytes());
-    }
-
-    private void updateWindowSize(int heapMovingAverageWindowSize) {
-        this.movingAverageReference.set(new MovingAverage(heapMovingAverageWindowSize));
-    }
-
-    public static boolean isHeapTrackingSupported() {
-        return HEAP_SIZE_BYTES > 0;
-    }
-
-    /**
-     * Returns true if the increase in heap usage is due to search requests.
-     */
-    public static boolean isHeapUsageDominatedBySearch(List<CancellableTask> cancellableTasks, double heapPercentThreshold) {
-        long usage = cancellableTasks.stream().mapToLong(task -> task.getTotalResourceStats().getMemoryInBytes()).sum();
-        long threshold = (long) (heapPercentThreshold * HEAP_SIZE_BYTES);
-        if (isHeapTrackingSupported() && usage < threshold) {
-            logger.debug("heap usage not dominated by search requests [{}/{}]", usage, threshold);
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public TaskResourceUsageTracker.Stats stats(List<? extends Task> activeTasks) {
-        long currentMax = activeTasks.stream().mapToLong(t -> t.getTotalResourceStats().getMemoryInBytes()).max().orElse(0);
-        long currentAvg = (long) activeTasks.stream().mapToLong(t -> t.getTotalResourceStats().getMemoryInBytes()).average().orElse(0);
-        return new Stats(getCancellations(), currentMax, currentAvg, (long) movingAverageReference.get().getAverage());
+    private HeapUsageTracker() {
     }
 
     /**

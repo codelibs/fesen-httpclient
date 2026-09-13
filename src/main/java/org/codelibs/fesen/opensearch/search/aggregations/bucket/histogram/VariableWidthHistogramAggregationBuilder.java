@@ -32,28 +32,20 @@
 
 package org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram;
 
-import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.MultiBucketConsumerService;
-import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceAggregatorFactory;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceConfig;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceRegistry;
-import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
 
 /**
  * Aggregation Builder for variable_width_histogram agg
@@ -63,9 +55,6 @@ import java.util.Objects;
 public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggregationBuilder<VariableWidthHistogramAggregationBuilder> {
 
     public static final String NAME = "variable_width_histogram";
-    public static final ValuesSourceRegistry.RegistryKey<VariableWidthHistogramAggregatorSupplier> REGISTRY_KEY =
-        new ValuesSourceRegistry.RegistryKey<>(NAME, VariableWidthHistogramAggregatorSupplier.class);
-
     private static final ParseField NUM_BUCKETS_FIELD = new ParseField("buckets");
 
     private static final ParseField INITIAL_BUFFER_FIELD = new ParseField("initial_buffer");
@@ -86,10 +75,6 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
     private int numBuckets = 10;
     private int shardSize = -1;
     private int initialBuffer = -1;
-
-    public static void registerAggregators(ValuesSourceRegistry.Builder builder) {
-        VariableWidthHistogramAggregatorFactory.registerAggregators(builder);
-    }
 
     /** Create a new builder with the given name. */
     public VariableWidthHistogramAggregationBuilder(String name) {
@@ -175,64 +160,6 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
     }
 
     @Override
-    protected ValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        ValuesSourceConfig config,
-        AggregatorFactory parent,
-        AggregatorFactories.Builder subFactoriesBuilder
-    ) throws IOException {
-        Settings settings = queryShardContext.getIndexSettings().getNodeSettings();
-        int maxBuckets = MultiBucketConsumerService.MAX_BUCKET_SETTING.get(settings);
-        if (numBuckets > maxBuckets) {
-            throw new IllegalArgumentException(NUM_BUCKETS_FIELD.getPreferredName() + " must be less than " + maxBuckets);
-        }
-        int initialBuffer = getInitialBuffer();
-        int shardSize = getShardSize();
-        if (initialBuffer < numBuckets) {
-            // If numBuckets buckets are being returned, then at least that many must be stored in memory
-            throw new IllegalArgumentException(
-                String.format(
-                    Locale.ROOT,
-                    "%s must be at least %s but was [%s<%s] for [%s]",
-                    INITIAL_BUFFER_FIELD.getPreferredName(),
-                    NUM_BUCKETS_FIELD.getPreferredName(),
-                    initialBuffer,
-                    numBuckets,
-                    name
-                )
-            );
-        }
-        int mergePhaseInit = VariableWidthHistogramAggregator.mergePhaseInitialBucketCount(shardSize);
-        if (mergePhaseInit < numBuckets) {
-            // If the initial buckets from the merge phase is super low we will consistently return too few buckets
-            throw new IllegalArgumentException(
-                "3/4 of "
-                    + SHARD_SIZE_FIELD.getPreferredName()
-                    + " must be at least "
-                    + NUM_BUCKETS_FIELD.getPreferredName()
-                    + " but was ["
-                    + mergePhaseInit
-                    + "<"
-                    + numBuckets
-                    + "] for ["
-                    + name
-                    + "]"
-            );
-        }
-        return new VariableWidthHistogramAggregatorFactory(
-            name,
-            config,
-            numBuckets,
-            shardSize,
-            initialBuffer,
-            queryShardContext,
-            parent,
-            subFactoriesBuilder,
-            metadata
-        );
-    }
-
-    @Override
     protected XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         builder.field(NUM_BUCKETS_FIELD.getPreferredName(), numBuckets);
         return builder;
@@ -259,8 +186,4 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         return NAME;
     }
 
-    @Override
-    protected ValuesSourceRegistry.RegistryKey<?> getRegistryKey() {
-        return REGISTRY_KEY;
-    }
 }

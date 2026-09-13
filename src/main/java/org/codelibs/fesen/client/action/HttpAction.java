@@ -36,7 +36,8 @@ import org.codelibs.fesen.opensearch.core.rest.RestStatus;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
 import org.codelibs.fesen.opensearch.core.xcontent.XContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.rest.BytesRestResponse;
+
+import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
 
 /**
  * Base class for HTTP-based action implementations that invoke OpenSearch/Elasticsearch
@@ -44,6 +45,9 @@ import org.codelibs.fesen.opensearch.rest.BytesRestResponse;
  * parsing responses and converting errors to exceptions.
  */
 public class HttpAction {
+
+    /** Name of the "status" property carrying the HTTP status code of an error body. */
+    private static final String STATUS_FIELD_NAME = "status";
 
     /** Parse field for the "shard" response property. */
     protected static final ParseField SHARD_FIELD = new ParseField("shard");
@@ -193,6 +197,53 @@ public class HttpAction {
     }
 
     /**
+     * Parses an OpenSearch error body (an {@code {"error": {...}, "status": 404}} object) into the
+     * exception it describes.
+     *
+     * <p>This is the client-side copy of {@code org.opensearch.rest.BytesRestResponse#errorFromXContent}:
+     * decoding an error response is the only part of the REST layer a pure HTTP client needs.</p>
+     *
+     * @param parser a parser positioned before the error object
+     * @return the exception described by the body
+     * @throws IOException if parsing fails
+     */
+    protected static OpenSearchStatusException errorFromXContent(final XContentParser parser) throws IOException {
+        XContentParser.Token token = parser.nextToken();
+        ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
+
+        OpenSearchException exception = null;
+        RestStatus status = null;
+
+        String currentFieldName = null;
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                currentFieldName = parser.currentName();
+            }
+            if (STATUS_FIELD_NAME.equals(currentFieldName)) {
+                if (token != XContentParser.Token.FIELD_NAME) {
+                    ensureExpectedToken(XContentParser.Token.VALUE_NUMBER, token, parser);
+                    status = RestStatus.fromCode(parser.intValue());
+                }
+            } else {
+                exception = OpenSearchException.failureFromXContent(parser);
+            }
+        }
+
+        if (exception == null) {
+            throw new IllegalStateException("Failed to parse opensearch status exception: no exception was found");
+        }
+
+        final OpenSearchStatusException result = new OpenSearchStatusException(exception.getMessage(), status, exception.getCause());
+        for (final String header : exception.getHeaderKeys()) {
+            result.addHeader(header, exception.getHeader(header));
+        }
+        for (final String metadata : exception.getMetadataKeys()) {
+            result.addMetadata(metadata, exception.getMetadata(metadata));
+        }
+        return result;
+    }
+
+    /**
      * Converts an error HTTP response into an {@link OpenSearchStatusException}, parsing the
      * error body if possible and falling back to the raw content and HTTP status code.
      *
@@ -203,7 +254,7 @@ public class HttpAction {
     protected OpenSearchStatusException toOpenSearchException(final CurlResponse response, final Throwable t) {
         OpenSearchStatusException fesenException;
         try (final XContentParser parser = createParser(response)) {
-            fesenException = BytesRestResponse.errorFromXContent(parser);
+            fesenException = errorFromXContent(parser);
             fesenException.addSuppressed(t);
             fesenException.addSuppressed(new CurlResponseException(response.getContentAsString()));
         } catch (final Exception ex) {

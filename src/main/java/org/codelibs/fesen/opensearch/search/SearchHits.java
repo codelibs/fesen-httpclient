@@ -45,7 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.rest.action.search.RestSearchAction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -234,7 +233,7 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.HITS);
-        boolean totalHitAsInt = params.paramAsBoolean(RestSearchAction.TOTAL_HITS_AS_INT_PARAM, false);
+        boolean totalHitAsInt = params.paramAsBoolean("rest_total_hits_as_int", false);
         if (totalHitAsInt) {
             long total = totalHits == null ? -1 : totalHits.value();
             builder.field(Fields.TOTAL, total);

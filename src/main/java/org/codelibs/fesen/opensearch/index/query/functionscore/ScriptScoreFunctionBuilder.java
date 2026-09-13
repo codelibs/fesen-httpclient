@@ -33,16 +33,12 @@
 package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScoreFunction;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.ScriptScoreFunction;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.index.query.QueryShardException;
-import org.codelibs.fesen.opensearch.script.ScoreScript;
 import org.codelibs.fesen.opensearch.script.Script;
 
 import java.io.IOException;
@@ -108,24 +104,6 @@ public class ScriptScoreFunctionBuilder extends ScoreFunctionBuilder<ScriptScore
     @Override
     protected int doHashCode() {
         return Objects.hash(this.script);
-    }
-
-    @Override
-    protected ScoreFunction doToFunction(QueryShardContext context) {
-        try {
-            ScoreScript.Factory factory = context.compile(script, ScoreScript.CONTEXT);
-            ScoreScript.LeafFactory searchScript = factory.newFactory(script.getParams(), context.lookup(), context.searcher());
-            return new ScriptScoreFunction(
-                script,
-                searchScript,
-                context.index().getName(),
-                context.getShardId(),
-                context.indexVersionCreated(),
-                getFunctionName()
-            );
-        } catch (Exception e) {
-            throw new QueryShardException(context, "script_score: the script could not be loaded", e);
-        }
     }
 
     public static ScriptScoreFunctionBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {

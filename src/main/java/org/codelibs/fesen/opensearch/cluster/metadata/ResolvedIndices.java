@@ -13,7 +13,7 @@ import org.codelibs.fesen.opensearch.action.OriginalIndices;
 import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
 import org.codelibs.fesen.opensearch.core.index.Index;
-import org.codelibs.fesen.opensearch.transport.RemoteClusterService;
+import org.codelibs.fesen.opensearch.transport.RemoteClusterAware;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -694,7 +694,7 @@ public class ResolvedIndices extends OptionallyResolvedIndices {
 
             for (Map.Entry<String, OriginalIndices> entry : this.clusterToOriginalIndicesMap.entrySet()) {
                 for (String remoteIndex : entry.getValue().indices()) {
-                    result.add(RemoteClusterService.buildRemoteIndexName(entry.getKey(), remoteIndex));
+                    result.add(RemoteClusterAware.buildRemoteIndexName(entry.getKey(), remoteIndex));
                 }
             }
 

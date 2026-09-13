@@ -38,9 +38,7 @@ import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.plugins.SearchPlugin;
 import org.codelibs.fesen.opensearch.search.MultiValueMode;
-import org.codelibs.fesen.opensearch.search.SearchModule;
 
 import java.io.IOException;
 import java.util.function.BiFunction;
@@ -77,7 +75,7 @@ import java.util.function.BiFunction;
  * <p>
  * To write a new decay scoring function, create a new class that extends
  * {@link DecayFunctionBuilder}, setup a PARSER field with this class, and
- * register them in {@link SearchModule#registerScoreFunctions} or {@link SearchPlugin#getScoreFunctions}
+ * register them in the search module or a search plugin
  * See {@link GaussDecayFunctionBuilder#PARSER} for an example.
  *
  * @opensearch.internal

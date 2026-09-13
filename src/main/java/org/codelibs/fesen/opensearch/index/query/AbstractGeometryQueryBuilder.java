@@ -54,7 +54,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.geometry.Geometry;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.transport.client.Client;
 
@@ -349,9 +348,6 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
         return ignoreUnmapped;
     }
 
-    /** builds the appropriate lucene shape query */
-    protected abstract Query buildShapeQuery(QueryShardContext context, MappedFieldType fieldType);
-
     /** writes the xcontent specific to this shape query */
     protected abstract void doShapeQueryXContent(XContentBuilder builder, Params params) throws IOException;
 
@@ -364,22 +360,6 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
         Supplier<Geometry> shapeSupplier,
         String indexedShapeId
     );
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) {
-        if (shape == null || supplier != null) {
-            throw new UnsupportedOperationException("query must be rewritten first");
-        }
-        final MappedFieldType fieldType = context.fieldMapper(fieldName);
-        if (fieldType == null) {
-            if (ignoreUnmapped) {
-                return new MatchNoDocsQuery();
-            } else {
-                throw new QueryShardException(context, "failed to find type for field [" + fieldName + "]");
-            }
-        }
-        return buildShapeQuery(context, fieldType);
-    }
 
     /**
      * Fetches the Shape with the given ID in the given type and index.

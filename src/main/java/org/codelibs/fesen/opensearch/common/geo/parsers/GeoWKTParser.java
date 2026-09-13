@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.common.geo.builders.PolygonBuilder;
 import org.codelibs.fesen.opensearch.common.geo.builders.ShapeBuilder;
 import org.codelibs.fesen.opensearch.common.logging.Loggers;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.AbstractShapeGeometryFieldMapper;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
@@ -79,27 +78,16 @@ public class GeoWKTParser {
     // no instance
     private GeoWKTParser() {}
 
-    public static ShapeBuilder parse(XContentParser parser, final AbstractShapeGeometryFieldMapper shapeMapper) throws IOException,
-        OpenSearchParseException {
-        return parseExpectedType(parser, null, shapeMapper);
-    }
-
-    public static ShapeBuilder parseExpectedType(XContentParser parser, final GeoShapeType shapeType) throws IOException,
-        OpenSearchParseException {
-        return parseExpectedType(parser, shapeType, null);
+    public static ShapeBuilder parse(XContentParser parser) throws IOException, OpenSearchParseException {
+        return parseExpectedType(parser, null);
     }
 
     /** throws an exception if the parsed geometry type does not match the expected shape type */
-    public static ShapeBuilder parseExpectedType(
-        XContentParser parser,
-        final GeoShapeType shapeType,
-        final AbstractShapeGeometryFieldMapper shapeMapper
-    ) throws IOException, OpenSearchParseException {
+    public static ShapeBuilder parseExpectedType(XContentParser parser, final GeoShapeType shapeType) throws IOException,
+        OpenSearchParseException {
         try (StringReader reader = new StringReader(parser.text())) {
-            Explicit<Boolean> ignoreZValue = (shapeMapper == null)
-                ? AbstractShapeGeometryFieldMapper.Defaults.IGNORE_Z_VALUE
-                : shapeMapper.ignoreZValue();
-            Explicit<Boolean> coerce = (shapeMapper == null) ? AbstractShapeGeometryFieldMapper.Defaults.COERCE : shapeMapper.coerce();
+            Explicit<Boolean> ignoreZValue = new Explicit<>(true, false);
+            Explicit<Boolean> coerce = new Explicit<>(false, false);
             // setup the tokenizer; configured to read words w/o numbers
             StreamTokenizer tokenizer = new StreamTokenizer(reader);
             tokenizer.resetSyntax();
@@ -280,7 +268,7 @@ public class GeoWKTParser {
         }
         PolygonBuilder builder = new PolygonBuilder(
             parseLinearRing(stream, ignoreZValue, coerce),
-            AbstractShapeGeometryFieldMapper.Defaults.ORIENTATION.value()
+            ShapeBuilder.Orientation.RIGHT
         );
         while (nextCloserOrComma(stream).equals(COMMA)) {
             builder.hole(parseLinearRing(stream, ignoreZValue, coerce));

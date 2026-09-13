@@ -65,8 +65,8 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
     }
 
     public RemoteConnectionInfo(StreamInput input) throws IOException {
-        RemoteConnectionStrategy.ConnectionStrategy mode = input.readEnum(RemoteConnectionStrategy.ConnectionStrategy.class);
-        modeInfo = mode.getReader().read(input);
+        input.readEnum(RemoteConnectionStrategy.ConnectionStrategy.class);
+        modeInfo = null;
         initialConnectionTimeout = input.readTimeValue();
         clusterAlias = input.readString();
         skipUnavailable = input.readBoolean();

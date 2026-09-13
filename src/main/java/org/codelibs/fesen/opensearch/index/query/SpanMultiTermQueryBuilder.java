@@ -31,25 +31,14 @@
 
 package org.codelibs.fesen.opensearch.index.query;
 
-import org.apache.lucene.queries.spans.SpanMultiTermQueryWrapper;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.MatchNoDocsQuery;
-import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TopTermsRewrite;
-import org.codelibs.fesen.opensearch.common.lucene.search.SpanBooleanQueryRewriteWithMaxClause;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.mapper.MappedFieldType;
-import org.codelibs.fesen.opensearch.index.query.support.QueryParsers;
-import org.codelibs.fesen.opensearch.lucene.queries.SpanMatchNoDocsQuery;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -140,61 +129,6 @@ public class SpanMultiTermQueryBuilder extends AbstractQueryBuilder<SpanMultiTer
         }
 
         return new SpanMultiTermQueryBuilder(subQuery).queryName(queryName).boost(boost);
-    }
-
-    @Override
-    protected Query doToQuery(QueryShardContext context) throws IOException {
-        // We do the rewrite in toQuery to not have to deal with the case when a multi-term builder rewrites to a non-multi-term
-        // builder.
-        QueryBuilder multiTermQueryBuilder = Rewriteable.rewrite(this.multiTermQueryBuilder, context);
-        if (multiTermQueryBuilder instanceof MatchNoneQueryBuilder matchNoneQuery) {
-            return new SpanMatchNoDocsQuery(this.multiTermQueryBuilder.fieldName(), "Inner query rewrote to match_none");
-        } else if (multiTermQueryBuilder instanceof PrefixQueryBuilder prefixBuilder) {
-            MappedFieldType fieldType = context.fieldMapper(prefixBuilder.fieldName());
-            if (fieldType == null) {
-                throw new IllegalStateException("Rewrite first");
-            }
-            final SpanMultiTermQueryWrapper.SpanRewriteMethod spanRewriteMethod;
-            if (prefixBuilder.rewrite() != null) {
-                MultiTermQuery.RewriteMethod rewriteMethod = QueryParsers.parseRewriteMethod(
-                    prefixBuilder.rewrite(),
-                    null,
-                    LoggingDeprecationHandler.INSTANCE
-                );
-                if (rewriteMethod instanceof TopTermsRewrite<?> innerRewrite) {
-                    spanRewriteMethod = new SpanMultiTermQueryWrapper.TopTermsSpanBooleanQueryRewrite(innerRewrite.getSize());
-                } else {
-                    spanRewriteMethod = new SpanBooleanQueryRewriteWithMaxClause();
-                }
-            } else {
-                spanRewriteMethod = new SpanBooleanQueryRewriteWithMaxClause();
-            }
-            return fieldType.spanPrefixQuery(prefixBuilder.value(), spanRewriteMethod, context);
-        } else {
-            Query subQuery = multiTermQueryBuilder.toQuery(context);
-            while (true) {
-                if (subQuery instanceof ConstantScoreQuery constantScoreQuery) {
-                    subQuery = constantScoreQuery.getQuery();
-                } else if (subQuery instanceof BoostQuery boostQuery) {
-                    subQuery = boostQuery.getQuery();
-                } else {
-                    break;
-                }
-            }
-            if (subQuery instanceof MatchNoDocsQuery) {
-                return new SpanMatchNoDocsQuery(this.multiTermQueryBuilder.fieldName(), subQuery.toString());
-            } else if (subQuery instanceof MultiTermQuery == false) {
-                throw new UnsupportedOperationException(
-                    "unsupported inner query, should be " + MultiTermQuery.class.getName() + " but was " + subQuery.getClass().getName()
-                );
-            }
-            MultiTermQuery multiTermQuery = (MultiTermQuery) subQuery;
-            SpanMultiTermQueryWrapper<?> wrapper = new SpanMultiTermQueryWrapper<>(multiTermQuery);
-            if (multiTermQuery.getRewriteMethod() instanceof TopTermsRewrite == false) {
-                wrapper.setRewriteMethod(new SpanBooleanQueryRewriteWithMaxClause());
-            }
-            return wrapper;
-        }
     }
 
     @Override

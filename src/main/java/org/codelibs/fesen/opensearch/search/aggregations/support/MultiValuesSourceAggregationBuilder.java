@@ -35,18 +35,18 @@ import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardContext;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationInitializationException;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactories.Builder;
-import org.codelibs.fesen.opensearch.search.aggregations.AggregatorFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourceType;
+import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 
 /**
  * Similar to {@link ValuesSourceAggregationBuilder}, except it references multiple ValuesSources (e.g. so that an aggregation
@@ -187,32 +187,6 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
      */
     protected abstract ValuesSourceType defaultValueSourceType();
 
-    @Override
-    protected final MultiValuesSourceAggregatorFactory doBuild(
-        QueryShardContext queryShardContext,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException {
-        Map<String, ValuesSourceConfig> configs = new HashMap<>(fields.size());
-        Map<String, QueryBuilder> filters = new HashMap<>(fields.size());
-        fields.forEach((key, value) -> {
-            ValuesSourceConfig config = ValuesSourceConfig.resolveUnregistered(
-                queryShardContext,
-                userValueTypeHint,
-                value.getFieldName(),
-                value.getScript(),
-                value.getMissing(),
-                value.getTimeZone(),
-                format,
-                defaultValueSourceType()
-            );
-            configs.put(key, config);
-            filters.put(key, value.getFilter());
-        });
-        DocValueFormat docValueFormat = resolveFormat(format, userValueTypeHint, defaultValueSourceType());
-        return innerBuild(queryShardContext, configs, filters, docValueFormat, parent, subFactoriesBuilder);
-    }
-
     private static DocValueFormat resolveFormat(
         @Nullable String format,
         @Nullable ValueType valueType,
@@ -220,7 +194,7 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
     ) {
         if (valueType == null) {
             // If the user didn't send a hint, all we can do is fall back to the default
-            return defaultValuesSourceType.getFormatter(format, null);
+            return DocValueFormat.RAW;
         }
         DocValueFormat valueFormat = valueType.defaultFormat;
         if (valueFormat instanceof DocValueFormat.Decimal && format != null) {
@@ -228,15 +202,6 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
         }
         return valueFormat;
     }
-
-    protected abstract MultiValuesSourceAggregatorFactory innerBuild(
-        QueryShardContext queryShardContext,
-        Map<String, ValuesSourceConfig> configs,
-        Map<String, QueryBuilder> filters,
-        DocValueFormat format,
-        AggregatorFactory parent,
-        Builder subFactoriesBuilder
-    ) throws IOException;
 
     @Override
     public final XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {

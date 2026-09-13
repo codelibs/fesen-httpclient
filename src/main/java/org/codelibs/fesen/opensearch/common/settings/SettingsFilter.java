@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.common.settings;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent.Params;
-import org.codelibs.fesen.opensearch.rest.RestRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,13 +81,7 @@ public final class SettingsFilter {
      * @see AbstractScopedSettings#isValidKey(String)
      */
     public static boolean isValidPattern(String pattern) {
-        return AbstractScopedSettings.isValidKey(pattern) || Regex.isSimpleMatchPattern(pattern);
-    }
-
-    public void addFilterSettingParams(RestRequest request) {
-        if (patterns.isEmpty() == false) {
-            request.params().put(SETTINGS_FILTER_PARAM, patternString);
-        }
+        return pattern != null || Regex.isSimpleMatchPattern(pattern);
     }
 
     public static Settings filterSettings(Params params, Settings settings) {
