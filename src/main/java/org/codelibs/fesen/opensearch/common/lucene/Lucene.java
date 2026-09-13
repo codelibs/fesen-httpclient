@@ -73,7 +73,6 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
-import org.apache.lucene.search.grouping.CollapseTopFieldDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.IndexInput;
@@ -84,7 +83,6 @@ import org.apache.lucene.util.Version;
 import org.codelibs.fesen.opensearch.ExceptionsHelper;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.SuppressForbidden;
-import org.codelibs.fesen.opensearch.common.lucene.search.TopDocsAndMaxScore;
 import org.codelibs.fesen.opensearch.common.util.iterable.Iterables;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -211,51 +209,6 @@ public class Lucene {
         return new TotalHits(totalHits, totalHitsRelation);
     }
 
-    public static TopDocsAndMaxScore readTopDocs(StreamInput in) throws IOException {
-        byte type = in.readByte();
-        if (type == 0) {
-            TotalHits totalHits = readTotalHits(in);
-            float maxScore = in.readFloat();
-
-            final int scoreDocCount = in.readVInt();
-            final ScoreDoc[] scoreDocs;
-            if (scoreDocCount == 0) {
-                scoreDocs = EMPTY_SCORE_DOCS;
-            } else {
-                scoreDocs = new ScoreDoc[scoreDocCount];
-                for (int i = 0; i < scoreDocs.length; i++) {
-                    scoreDocs[i] = new ScoreDoc(in.readVInt(), in.readFloat());
-                }
-            }
-            return new TopDocsAndMaxScore(new TopDocs(totalHits, scoreDocs), maxScore);
-        } else if (type == 1) {
-            TotalHits totalHits = readTotalHits(in);
-            float maxScore = in.readFloat();
-            SortField[] fields = in.readArray(Lucene::readSortField, SortField[]::new);
-            FieldDoc[] fieldDocs = new FieldDoc[in.readVInt()];
-            for (int i = 0; i < fieldDocs.length; i++) {
-                fieldDocs[i] = readFieldDoc(in);
-            }
-            return new TopDocsAndMaxScore(new TopFieldDocs(totalHits, fieldDocs, fields), maxScore);
-        } else if (type == 2) {
-            TotalHits totalHits = readTotalHits(in);
-            float maxScore = in.readFloat();
-
-            String field = in.readString();
-            SortField[] fields = in.readArray(Lucene::readSortField, SortField[]::new);
-            int size = in.readVInt();
-            Object[] collapseValues = new Object[size];
-            FieldDoc[] fieldDocs = new FieldDoc[size];
-            for (int i = 0; i < fieldDocs.length; i++) {
-                fieldDocs[i] = readFieldDoc(in);
-                collapseValues[i] = readSortValue(in);
-            }
-            return new TopDocsAndMaxScore(new CollapseTopFieldDocs(field, totalHits, fieldDocs, fields, collapseValues), maxScore);
-        } else {
-            throw new IllegalStateException("Unknown type " + type);
-        }
-    }
-
     public static FieldDoc readFieldDoc(StreamInput in) throws IOException {
         Comparable[] cFields = new Comparable[in.readVInt()];
         for (int j = 0; j < cFields.length; j++) {
@@ -302,48 +255,6 @@ public class Lucene {
     public static void writeTotalHits(StreamOutput out, TotalHits totalHits) throws IOException {
         out.writeVLong(totalHits.value());
         out.writeEnum(totalHits.relation());
-    }
-
-    public static void writeTopDocs(StreamOutput out, TopDocsAndMaxScore topDocs) throws IOException {
-        if (topDocs.topDocs instanceof CollapseTopFieldDocs) {
-            out.writeByte((byte) 2);
-            CollapseTopFieldDocs collapseDocs = (CollapseTopFieldDocs) topDocs.topDocs;
-
-            writeTotalHits(out, topDocs.topDocs.totalHits);
-            out.writeFloat(topDocs.maxScore);
-
-            out.writeString(collapseDocs.field);
-            out.writeArray(Lucene::writeSortField, collapseDocs.fields);
-
-            out.writeVInt(topDocs.topDocs.scoreDocs.length);
-            for (int i = 0; i < topDocs.topDocs.scoreDocs.length; i++) {
-                ScoreDoc doc = collapseDocs.scoreDocs[i];
-                writeFieldDoc(out, (FieldDoc) doc);
-                writeSortValue(out, collapseDocs.collapseValues[i]);
-            }
-        } else if (topDocs.topDocs instanceof TopFieldDocs) {
-            out.writeByte((byte) 1);
-            TopFieldDocs topFieldDocs = (TopFieldDocs) topDocs.topDocs;
-
-            writeTotalHits(out, topDocs.topDocs.totalHits);
-            out.writeFloat(topDocs.maxScore);
-
-            out.writeArray(Lucene::writeSortField, topFieldDocs.fields);
-
-            out.writeVInt(topDocs.topDocs.scoreDocs.length);
-            for (ScoreDoc doc : topFieldDocs.scoreDocs) {
-                writeFieldDoc(out, (FieldDoc) doc);
-            }
-        } else {
-            out.writeByte((byte) 0);
-            writeTotalHits(out, topDocs.topDocs.totalHits);
-            out.writeFloat(topDocs.maxScore);
-
-            out.writeVInt(topDocs.topDocs.scoreDocs.length);
-            for (ScoreDoc doc : topDocs.topDocs.scoreDocs) {
-                writeScoreDoc(out, doc);
-            }
-        }
     }
 
     private static void writeMissingValue(StreamOutput out, Object missingValue) throws IOException {

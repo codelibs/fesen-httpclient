@@ -948,32 +948,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         return NAME;
     }
 
-    private MultiTermVectorsResponse fetchResponse(Client client, Item[] items) throws IOException {
-        MultiTermVectorsRequest request = new MultiTermVectorsRequest();
-        for (Item item : items) {
-            request.add(item.toTermVectorsRequest());
-        }
-
-        return client.multiTermVectors(request).actionGet();
-    }
-
-    private static Fields[] getFieldsFor(MultiTermVectorsResponse responses) throws IOException {
-        List<Fields> likeFields = new ArrayList<>();
-
-        for (MultiTermVectorsItemResponse response : responses) {
-            if (response.isFailed()) {
-                checkRoutingMissingException(response);
-                continue;
-            }
-            TermVectorsResponse getResponse = response.getResponse();
-            if (!getResponse.isExists()) {
-                continue;
-            }
-            likeFields.add(getResponse.getFields());
-        }
-        return likeFields.toArray(new Fields[0]);
-    }
-
     private static void checkRoutingMissingException(MultiTermVectorsItemResponse response) {
         Throwable cause = ExceptionsHelper.unwrap(response.getFailure().getCause(), RoutingMissingException.class);
         if (cause != null) {

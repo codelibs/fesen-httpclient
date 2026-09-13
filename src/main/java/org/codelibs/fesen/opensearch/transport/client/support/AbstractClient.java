@@ -36,10 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.opensearch.action.ActionRequest;
 import org.codelibs.fesen.opensearch.action.ActionType;
-import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
@@ -48,108 +44,10 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesH
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.put.PutRepositoryAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsAction;
-import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
@@ -159,10 +57,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesRe
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequestBuilder;
@@ -182,18 +76,10 @@ import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
@@ -205,84 +91,15 @@ import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoreRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.UpdateViewAction;
 import org.codelibs.fesen.opensearch.action.bulk.BulkAction;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequest;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequestBuilder;
@@ -311,20 +128,6 @@ import org.codelibs.fesen.opensearch.action.index.IndexAction;
 import org.codelibs.fesen.opensearch.action.index.IndexRequest;
 import org.codelibs.fesen.opensearch.action.index.IndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.index.IndexResponse;
-import org.codelibs.fesen.opensearch.action.ingest.DeletePipelineAction;
-import org.codelibs.fesen.opensearch.action.ingest.DeletePipelineRequest;
-import org.codelibs.fesen.opensearch.action.ingest.DeletePipelineRequestBuilder;
-import org.codelibs.fesen.opensearch.action.ingest.GetPipelineAction;
-import org.codelibs.fesen.opensearch.action.ingest.GetPipelineRequest;
-import org.codelibs.fesen.opensearch.action.ingest.GetPipelineRequestBuilder;
-import org.codelibs.fesen.opensearch.action.ingest.GetPipelineResponse;
-import org.codelibs.fesen.opensearch.action.ingest.PutPipelineAction;
-import org.codelibs.fesen.opensearch.action.ingest.PutPipelineRequest;
-import org.codelibs.fesen.opensearch.action.ingest.PutPipelineRequestBuilder;
-import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineAction;
-import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineRequest;
-import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineRequestBuilder;
-import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineResponse;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollAction;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollRequest;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollRequestBuilder;
@@ -337,7 +140,6 @@ import org.codelibs.fesen.opensearch.action.search.DeletePitRequest;
 import org.codelibs.fesen.opensearch.action.search.DeletePitResponse;
 import org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest;
 import org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse;
-import org.codelibs.fesen.opensearch.action.search.GetAllPitsAction;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchAction;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchRequest;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchRequestBuilder;
@@ -549,21 +351,6 @@ public abstract class AbstractClient implements Client {
     }
 
     @Override
-    public ActionFuture<MultiGetResponse> multiGet(final MultiGetRequest request) {
-        return execute(MultiGetAction.INSTANCE, request);
-    }
-
-    @Override
-    public void multiGet(final MultiGetRequest request, final ActionListener<MultiGetResponse> listener) {
-        execute(MultiGetAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public MultiGetRequestBuilder prepareMultiGet() {
-        return new MultiGetRequestBuilder(this, MultiGetAction.INSTANCE);
-    }
-
-    @Override
     public ActionFuture<SearchResponse> search(final SearchRequest request) {
         return execute(SearchAction.INSTANCE, request);
     }
@@ -584,21 +371,6 @@ public abstract class AbstractClient implements Client {
     }
 
     @Override
-    public ActionFuture<SearchResponse> searchScroll(final SearchScrollRequest request) {
-        return execute(SearchScrollAction.INSTANCE, request);
-    }
-
-    @Override
-    public void searchScroll(final SearchScrollRequest request, final ActionListener<SearchResponse> listener) {
-        execute(SearchScrollAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public SearchScrollRequestBuilder prepareSearchScroll(String scrollId) {
-        return new SearchScrollRequestBuilder(this, SearchScrollAction.INSTANCE, scrollId);
-    }
-
-    @Override
     public void createPit(final CreatePitRequest createPITRequest, final ActionListener<CreatePitResponse> listener) {
         execute(CreatePitAction.INSTANCE, createPITRequest, listener);
     }
@@ -606,126 +378,6 @@ public abstract class AbstractClient implements Client {
     @Override
     public void deletePits(final DeletePitRequest deletePITRequest, final ActionListener<DeletePitResponse> listener) {
         execute(DeletePitAction.INSTANCE, deletePITRequest, listener);
-    }
-
-    @Override
-    public void getAllPits(final GetAllPitNodesRequest getAllPitNodesRequest, final ActionListener<GetAllPitNodesResponse> listener) {
-        execute(GetAllPitsAction.INSTANCE, getAllPitNodesRequest, listener);
-    }
-
-    @Override
-    public ActionFuture<MultiSearchResponse> multiSearch(MultiSearchRequest request) {
-        return execute(MultiSearchAction.INSTANCE, request);
-    }
-
-    @Override
-    public void multiSearch(MultiSearchRequest request, ActionListener<MultiSearchResponse> listener) {
-        execute(MultiSearchAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public MultiSearchRequestBuilder prepareMultiSearch() {
-        return new MultiSearchRequestBuilder(this, MultiSearchAction.INSTANCE);
-    }
-
-    @Override
-    public ActionFuture<TermVectorsResponse> termVectors(final TermVectorsRequest request) {
-        return execute(TermVectorsAction.INSTANCE, request);
-    }
-
-    @Override
-    public void termVectors(final TermVectorsRequest request, final ActionListener<TermVectorsResponse> listener) {
-        execute(TermVectorsAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public TermVectorsRequestBuilder prepareTermVectors() {
-        return new TermVectorsRequestBuilder(this, TermVectorsAction.INSTANCE);
-    }
-
-    @Override
-    public TermVectorsRequestBuilder prepareTermVectors(String index, String id) {
-        return new TermVectorsRequestBuilder(this, TermVectorsAction.INSTANCE, index, id);
-    }
-
-    @Override
-    public ActionFuture<MultiTermVectorsResponse> multiTermVectors(final MultiTermVectorsRequest request) {
-        return execute(MultiTermVectorsAction.INSTANCE, request);
-    }
-
-    @Override
-    public void multiTermVectors(final MultiTermVectorsRequest request, final ActionListener<MultiTermVectorsResponse> listener) {
-        execute(MultiTermVectorsAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public MultiTermVectorsRequestBuilder prepareMultiTermVectors() {
-        return new MultiTermVectorsRequestBuilder(this, MultiTermVectorsAction.INSTANCE);
-    }
-
-    @Override
-    public ExplainRequestBuilder prepareExplain(String index, String id) {
-        return new ExplainRequestBuilder(this, ExplainAction.INSTANCE, index, id);
-    }
-
-    @Override
-    public ActionFuture<ExplainResponse> explain(ExplainRequest request) {
-        return execute(ExplainAction.INSTANCE, request);
-    }
-
-    @Override
-    public void explain(ExplainRequest request, ActionListener<ExplainResponse> listener) {
-        execute(ExplainAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public void clearScroll(ClearScrollRequest request, ActionListener<ClearScrollResponse> listener) {
-        execute(ClearScrollAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public ActionFuture<ClearScrollResponse> clearScroll(ClearScrollRequest request) {
-        return execute(ClearScrollAction.INSTANCE, request);
-    }
-
-    @Override
-    public ClearScrollRequestBuilder prepareClearScroll() {
-        return new ClearScrollRequestBuilder(this, ClearScrollAction.INSTANCE);
-    }
-
-    @Override
-    public void fieldCaps(FieldCapabilitiesRequest request, ActionListener<FieldCapabilitiesResponse> listener) {
-        execute(FieldCapabilitiesAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public ActionFuture<FieldCapabilitiesResponse> fieldCaps(FieldCapabilitiesRequest request) {
-        return execute(FieldCapabilitiesAction.INSTANCE, request);
-    }
-
-    @Override
-    public FieldCapabilitiesRequestBuilder prepareFieldCaps(String... indices) {
-        return new FieldCapabilitiesRequestBuilder(this, FieldCapabilitiesAction.INSTANCE, indices);
-    }
-
-    @Override
-    public void searchView(final SearchViewAction.Request request, final ActionListener<SearchResponse> listener) {
-        execute(SearchViewAction.INSTANCE, request);
-    }
-
-    @Override
-    public ActionFuture<SearchResponse> searchView(final SearchViewAction.Request request) {
-        return execute(SearchViewAction.INSTANCE, request);
-    }
-
-    @Override
-    public void listViewNames(final ListViewNamesAction.Request request, ActionListener<ListViewNamesAction.Response> listener) {
-        execute(ListViewNamesAction.INSTANCE, request, listener);
-    }
-
-    @Override
-    public ActionFuture<ListViewNamesAction.Response> listViewNames(final ListViewNamesAction.Request request) {
-        return execute(ListViewNamesAction.INSTANCE, request);
     }
 
     static class Admin implements AdminClient {
@@ -795,69 +447,6 @@ public abstract class AbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<ClusterStateResponse> state(final ClusterStateRequest request) {
-            return execute(ClusterStateAction.INSTANCE, request);
-        }
-
-        @Override
-        public void state(final ClusterStateRequest request, final ActionListener<ClusterStateResponse> listener) {
-            execute(ClusterStateAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterStateRequestBuilder prepareState() {
-            return new ClusterStateRequestBuilder(this, ClusterStateAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<ClusterRerouteResponse> reroute(final ClusterRerouteRequest request) {
-            return execute(ClusterRerouteAction.INSTANCE, request);
-        }
-
-        @Override
-        public void reroute(final ClusterRerouteRequest request, final ActionListener<ClusterRerouteResponse> listener) {
-            execute(ClusterRerouteAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterRerouteRequestBuilder prepareReroute() {
-            return new ClusterRerouteRequestBuilder(this, ClusterRerouteAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<ClusterUpdateSettingsResponse> updateSettings(final ClusterUpdateSettingsRequest request) {
-            return execute(ClusterUpdateSettingsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void updateSettings(
-            final ClusterUpdateSettingsRequest request,
-            final ActionListener<ClusterUpdateSettingsResponse> listener
-        ) {
-            execute(ClusterUpdateSettingsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterUpdateSettingsRequestBuilder prepareUpdateSettings() {
-            return new ClusterUpdateSettingsRequestBuilder(this, ClusterUpdateSettingsAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<NodesInfoResponse> nodesInfo(final NodesInfoRequest request) {
-            return execute(NodesInfoAction.INSTANCE, request);
-        }
-
-        @Override
-        public void nodesInfo(final NodesInfoRequest request, final ActionListener<NodesInfoResponse> listener) {
-            execute(NodesInfoAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public NodesInfoRequestBuilder prepareNodesInfo(String... nodesIds) {
-            return new NodesInfoRequestBuilder(this, NodesInfoAction.INSTANCE).setNodesIds(nodesIds);
-        }
-
-        @Override
         public ActionFuture<NodesStatsResponse> nodesStats(final NodesStatsRequest request) {
             return execute(NodesStatsAction.INSTANCE, request);
         }
@@ -873,76 +462,6 @@ public abstract class AbstractClient implements Client {
         }
 
         @Override
-        public void wlmStats(final WlmStatsRequest request, final ActionListener<WlmStatsResponse> listener) {
-            execute(WlmStatsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public void remoteStoreStats(final RemoteStoreStatsRequest request, final ActionListener<RemoteStoreStatsResponse> listener) {
-            execute(RemoteStoreStatsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public RemoteStoreStatsRequestBuilder prepareRemoteStoreStats(String index, String shardId) {
-            RemoteStoreStatsRequestBuilder remoteStoreStatsRequestBuilder = new RemoteStoreStatsRequestBuilder(
-                this,
-                RemoteStoreStatsAction.INSTANCE
-            ).setIndices(index);
-            if (shardId != null) {
-                remoteStoreStatsRequestBuilder.setShards(shardId);
-            }
-            return remoteStoreStatsRequestBuilder;
-        }
-
-        @Override
-        public void remoteStoreMetadata(
-            final RemoteStoreMetadataRequest request,
-            final ActionListener<RemoteStoreMetadataResponse> listener
-        ) {
-            execute(RemoteStoreMetadataAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public RemoteStoreMetadataRequestBuilder prepareRemoteStoreMetadata(String index, String shardId) {
-            RemoteStoreMetadataRequestBuilder builder = new RemoteStoreMetadataRequestBuilder(this, RemoteStoreMetadataAction.INSTANCE)
-                .setIndices(index);
-            if (shardId != null) {
-                builder.setShards(shardId);
-            }
-            return builder;
-        }
-
-        @Override
-        public ActionFuture<NodesUsageResponse> nodesUsage(final NodesUsageRequest request) {
-            return execute(NodesUsageAction.INSTANCE, request);
-        }
-
-        @Override
-        public void nodesUsage(final NodesUsageRequest request, final ActionListener<NodesUsageResponse> listener) {
-            execute(NodesUsageAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public NodesUsageRequestBuilder prepareNodesUsage(String... nodesIds) {
-            return new NodesUsageRequestBuilder(this, NodesUsageAction.INSTANCE).setNodesIds(nodesIds);
-        }
-
-        @Override
-        public ActionFuture<ClusterStatsResponse> clusterStats(ClusterStatsRequest request) {
-            return execute(ClusterStatsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void clusterStats(ClusterStatsRequest request, ActionListener<ClusterStatsResponse> listener) {
-            execute(ClusterStatsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterStatsRequestBuilder prepareClusterStats() {
-            return new ClusterStatsRequestBuilder(this, ClusterStatsAction.INSTANCE);
-        }
-
-        @Override
         public ActionFuture<NodesHotThreadsResponse> nodesHotThreads(NodesHotThreadsRequest request) {
             return execute(NodesHotThreadsAction.INSTANCE, request);
         }
@@ -955,367 +474,6 @@ public abstract class AbstractClient implements Client {
         @Override
         public NodesHotThreadsRequestBuilder prepareNodesHotThreads(String... nodesIds) {
             return new NodesHotThreadsRequestBuilder(this, NodesHotThreadsAction.INSTANCE).setNodesIds(nodesIds);
-        }
-
-        @Override
-        public ActionFuture<ListTasksResponse> listTasks(final ListTasksRequest request) {
-            return execute(ListTasksAction.INSTANCE, request);
-        }
-
-        @Override
-        public void listTasks(final ListTasksRequest request, final ActionListener<ListTasksResponse> listener) {
-            execute(ListTasksAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ListTasksRequestBuilder prepareListTasks(String... nodesIds) {
-            return new ListTasksRequestBuilder(this, ListTasksAction.INSTANCE).setNodesIds(nodesIds);
-        }
-
-        @Override
-        public ActionFuture<GetTaskResponse> getTask(final GetTaskRequest request) {
-            return execute(GetTaskAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getTask(final GetTaskRequest request, final ActionListener<GetTaskResponse> listener) {
-            execute(GetTaskAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public GetTaskRequestBuilder prepareGetTask(String taskId) {
-            return prepareGetTask(new TaskId(taskId));
-        }
-
-        @Override
-        public GetTaskRequestBuilder prepareGetTask(TaskId taskId) {
-            return new GetTaskRequestBuilder(this, GetTaskAction.INSTANCE).setTaskId(taskId);
-        }
-
-        @Override
-        public ActionFuture<CancelTasksResponse> cancelTasks(CancelTasksRequest request) {
-            return execute(CancelTasksAction.INSTANCE, request);
-        }
-
-        @Override
-        public void cancelTasks(CancelTasksRequest request, ActionListener<CancelTasksResponse> listener) {
-            execute(CancelTasksAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public CancelTasksRequestBuilder prepareCancelTasks(String... nodesIds) {
-            return new CancelTasksRequestBuilder(this, CancelTasksAction.INSTANCE).setNodesIds(nodesIds);
-        }
-
-        @Override
-        public ActionFuture<ClusterSearchShardsResponse> searchShards(final ClusterSearchShardsRequest request) {
-            return execute(ClusterSearchShardsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void searchShards(final ClusterSearchShardsRequest request, final ActionListener<ClusterSearchShardsResponse> listener) {
-            execute(ClusterSearchShardsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClusterSearchShardsRequestBuilder prepareSearchShards() {
-            return new ClusterSearchShardsRequestBuilder(this, ClusterSearchShardsAction.INSTANCE);
-        }
-
-        @Override
-        public ClusterSearchShardsRequestBuilder prepareSearchShards(String... indices) {
-            return new ClusterSearchShardsRequestBuilder(this, ClusterSearchShardsAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public PendingClusterTasksRequestBuilder preparePendingClusterTasks() {
-            return new PendingClusterTasksRequestBuilder(this, PendingClusterTasksAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<PendingClusterTasksResponse> pendingClusterTasks(PendingClusterTasksRequest request) {
-            return execute(PendingClusterTasksAction.INSTANCE, request);
-        }
-
-        @Override
-        public void pendingClusterTasks(PendingClusterTasksRequest request, ActionListener<PendingClusterTasksResponse> listener) {
-            execute(PendingClusterTasksAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> putRepository(PutRepositoryRequest request) {
-            return execute(PutRepositoryAction.INSTANCE, request);
-        }
-
-        @Override
-        public void putRepository(PutRepositoryRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(PutRepositoryAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public PutRepositoryRequestBuilder preparePutRepository(String name) {
-            return new PutRepositoryRequestBuilder(this, PutRepositoryAction.INSTANCE, name);
-        }
-
-        @Override
-        public ActionFuture<CreateSnapshotResponse> createSnapshot(CreateSnapshotRequest request) {
-            return execute(CreateSnapshotAction.INSTANCE, request);
-        }
-
-        @Override
-        public void createSnapshot(CreateSnapshotRequest request, ActionListener<CreateSnapshotResponse> listener) {
-            execute(CreateSnapshotAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public CreateSnapshotRequestBuilder prepareCreateSnapshot(String repository, String name) {
-            return new CreateSnapshotRequestBuilder(this, CreateSnapshotAction.INSTANCE, repository, name);
-        }
-
-        @Override
-        public ActionFuture<GetSnapshotsResponse> getSnapshots(GetSnapshotsRequest request) {
-            return execute(GetSnapshotsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getSnapshots(GetSnapshotsRequest request, ActionListener<GetSnapshotsResponse> listener) {
-            execute(GetSnapshotsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public GetSnapshotsRequestBuilder prepareGetSnapshots(String repository) {
-            return new GetSnapshotsRequestBuilder(this, GetSnapshotsAction.INSTANCE, repository);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteSnapshot(DeleteSnapshotRequest request) {
-            return execute(DeleteSnapshotAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteSnapshot(DeleteSnapshotRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteSnapshotAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public DeleteSnapshotRequestBuilder prepareDeleteSnapshot(String repository, String... names) {
-            return new DeleteSnapshotRequestBuilder(this, DeleteSnapshotAction.INSTANCE, repository, names);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteRepository(DeleteRepositoryRequest request) {
-            return execute(DeleteRepositoryAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteRepository(DeleteRepositoryRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteRepositoryAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public DeleteRepositoryRequestBuilder prepareDeleteRepository(String name) {
-            return new DeleteRepositoryRequestBuilder(this, DeleteRepositoryAction.INSTANCE, name);
-        }
-
-        @Override
-        public ActionFuture<VerifyRepositoryResponse> verifyRepository(VerifyRepositoryRequest request) {
-            return execute(VerifyRepositoryAction.INSTANCE, request);
-        }
-
-        @Override
-        public void verifyRepository(VerifyRepositoryRequest request, ActionListener<VerifyRepositoryResponse> listener) {
-            execute(VerifyRepositoryAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public VerifyRepositoryRequestBuilder prepareVerifyRepository(String name) {
-            return new VerifyRepositoryRequestBuilder(this, VerifyRepositoryAction.INSTANCE, name);
-        }
-
-        @Override
-        public ActionFuture<GetRepositoriesResponse> getRepositories(GetRepositoriesRequest request) {
-            return execute(GetRepositoriesAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getRepositories(GetRepositoriesRequest request, ActionListener<GetRepositoriesResponse> listener) {
-            execute(GetRepositoriesAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public GetRepositoriesRequestBuilder prepareGetRepositories(String... name) {
-            return new GetRepositoriesRequestBuilder(this, GetRepositoriesAction.INSTANCE, name);
-        }
-
-        @Override
-        public ActionFuture<RestoreSnapshotResponse> restoreSnapshot(RestoreSnapshotRequest request) {
-            return execute(RestoreSnapshotAction.INSTANCE, request);
-        }
-
-        @Override
-        public void restoreSnapshot(RestoreSnapshotRequest request, ActionListener<RestoreSnapshotResponse> listener) {
-            execute(RestoreSnapshotAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public RestoreSnapshotRequestBuilder prepareRestoreSnapshot(String repository, String snapshot) {
-            return new RestoreSnapshotRequestBuilder(this, RestoreSnapshotAction.INSTANCE, repository, snapshot);
-        }
-
-        @Override
-        public ActionFuture<SnapshotsStatusResponse> snapshotsStatus(SnapshotsStatusRequest request) {
-            return execute(SnapshotsStatusAction.INSTANCE, request);
-        }
-
-        @Override
-        public void snapshotsStatus(SnapshotsStatusRequest request, ActionListener<SnapshotsStatusResponse> listener) {
-            execute(SnapshotsStatusAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public SnapshotsStatusRequestBuilder prepareSnapshotStatus(String repository) {
-            return new SnapshotsStatusRequestBuilder(this, SnapshotsStatusAction.INSTANCE, repository);
-        }
-
-        @Override
-        public SnapshotsStatusRequestBuilder prepareSnapshotStatus() {
-            return new SnapshotsStatusRequestBuilder(this, SnapshotsStatusAction.INSTANCE);
-        }
-
-        @Override
-        public void putPipeline(PutPipelineRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(PutPipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> putPipeline(PutPipelineRequest request) {
-            return execute(PutPipelineAction.INSTANCE, request);
-        }
-
-        @Override
-        public PutPipelineRequestBuilder preparePutPipeline(String id, BytesReference source, MediaType mediaType) {
-            return new PutPipelineRequestBuilder(this, PutPipelineAction.INSTANCE, id, source, mediaType);
-        }
-
-        @Override
-        public void deletePipeline(DeletePipelineRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(DeletePipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deletePipeline(DeletePipelineRequest request) {
-            return execute(DeletePipelineAction.INSTANCE, request);
-        }
-
-        @Override
-        public DeletePipelineRequestBuilder prepareDeletePipeline() {
-            return new DeletePipelineRequestBuilder(this, DeletePipelineAction.INSTANCE);
-        }
-
-        @Override
-        public DeletePipelineRequestBuilder prepareDeletePipeline(String id) {
-            return new DeletePipelineRequestBuilder(this, DeletePipelineAction.INSTANCE, id);
-        }
-
-        @Override
-        public void getPipeline(GetPipelineRequest request, ActionListener<GetPipelineResponse> listener) {
-            execute(GetPipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<GetPipelineResponse> getPipeline(GetPipelineRequest request) {
-            return execute(GetPipelineAction.INSTANCE, request);
-        }
-
-        @Override
-        public GetPipelineRequestBuilder prepareGetPipeline(String... ids) {
-            return new GetPipelineRequestBuilder(this, GetPipelineAction.INSTANCE, ids);
-        }
-
-        @Override
-        public void simulatePipeline(SimulatePipelineRequest request, ActionListener<SimulatePipelineResponse> listener) {
-            execute(SimulatePipelineAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<SimulatePipelineResponse> simulatePipeline(SimulatePipelineRequest request) {
-            return execute(SimulatePipelineAction.INSTANCE, request);
-        }
-
-        @Override
-        public SimulatePipelineRequestBuilder prepareSimulatePipeline(BytesReference source, MediaType mediaType) {
-            return new SimulatePipelineRequestBuilder(this, SimulatePipelineAction.INSTANCE, source, mediaType);
-        }
-
-        @Override
-        public void allocationExplain(ClusterAllocationExplainRequest request, ActionListener<ClusterAllocationExplainResponse> listener) {
-            execute(ClusterAllocationExplainAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<ClusterAllocationExplainResponse> allocationExplain(ClusterAllocationExplainRequest request) {
-            return execute(ClusterAllocationExplainAction.INSTANCE, request);
-        }
-
-        @Override
-        public ClusterAllocationExplainRequestBuilder prepareAllocationExplain() {
-            return new ClusterAllocationExplainRequestBuilder(this, ClusterAllocationExplainAction.INSTANCE);
-        }
-
-        @Override
-        public ActionFuture<GetStoredScriptResponse> getStoredScript(final GetStoredScriptRequest request) {
-            return execute(GetStoredScriptAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getStoredScript(final GetStoredScriptRequest request, final ActionListener<GetStoredScriptResponse> listener) {
-            execute(GetStoredScriptAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public GetStoredScriptRequestBuilder prepareGetStoredScript() {
-            return new GetStoredScriptRequestBuilder(this, GetStoredScriptAction.INSTANCE);
-        }
-
-        @Override
-        public GetStoredScriptRequestBuilder prepareGetStoredScript(String id) {
-            return prepareGetStoredScript().setId(id);
-        }
-
-        @Override
-        public PutStoredScriptRequestBuilder preparePutStoredScript() {
-            return new PutStoredScriptRequestBuilder(this, PutStoredScriptAction.INSTANCE);
-        }
-
-        @Override
-        public void putStoredScript(final PutStoredScriptRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(PutStoredScriptAction.INSTANCE, request, listener);
-
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> putStoredScript(final PutStoredScriptRequest request) {
-            return execute(PutStoredScriptAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteStoredScript(DeleteStoredScriptRequest request, ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteStoredScriptAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteStoredScript(DeleteStoredScriptRequest request) {
-            return execute(DeleteStoredScriptAction.INSTANCE, request);
-        }
-
-        @Override
-        public DeleteStoredScriptRequestBuilder prepareDeleteStoredScript() {
-            return new DeleteStoredScriptRequestBuilder(client, DeleteStoredScriptAction.INSTANCE);
-        }
-
-        @Override
-        public DeleteStoredScriptRequestBuilder prepareDeleteStoredScript(String id) {
-            return prepareDeleteStoredScript().setId(id);
         }
 
     }
@@ -1396,11 +554,6 @@ public abstract class AbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<ClearIndicesCacheResponse> clearCache(final ClearIndicesCacheRequest request) {
-            return execute(ClearIndicesCacheAction.INSTANCE, request);
-        }
-
-        @Override
         public ActionFuture<GetIndexResponse> getIndex(GetIndexRequest request) {
             return execute(GetIndexAction.INSTANCE, request);
         }
@@ -1413,16 +566,6 @@ public abstract class AbstractClient implements Client {
         @Override
         public GetIndexRequestBuilder prepareGetIndex() {
             return new GetIndexRequestBuilder(this, GetIndexAction.INSTANCE);
-        }
-
-        @Override
-        public void clearCache(final ClearIndicesCacheRequest request, final ActionListener<ClearIndicesCacheResponse> listener) {
-            execute(ClearIndicesCacheAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ClearIndicesCacheRequestBuilder prepareClearCache(String... indices) {
-            return new ClearIndicesCacheRequestBuilder(this, ClearIndicesCacheAction.INSTANCE).setIndices(indices);
         }
 
         @Override
@@ -1506,11 +649,6 @@ public abstract class AbstractClient implements Client {
         }
 
         @Override
-        public void getFieldMappings(GetFieldMappingsRequest request, ActionListener<GetFieldMappingsResponse> listener) {
-            execute(GetFieldMappingsAction.INSTANCE, request, listener);
-        }
-
-        @Override
         public GetMappingsRequestBuilder prepareGetMappings(String... indices) {
             return new GetMappingsRequestBuilder(this, GetMappingsAction.INSTANCE, indices);
         }
@@ -1518,16 +656,6 @@ public abstract class AbstractClient implements Client {
         @Override
         public ActionFuture<GetMappingsResponse> getMappings(GetMappingsRequest request) {
             return execute(GetMappingsAction.INSTANCE, request);
-        }
-
-        @Override
-        public GetFieldMappingsRequestBuilder prepareGetFieldMappings(String... indices) {
-            return new GetFieldMappingsRequestBuilder(this, GetFieldMappingsAction.INSTANCE, indices);
-        }
-
-        @Override
-        public ActionFuture<GetFieldMappingsResponse> getFieldMappings(GetFieldMappingsRequest request) {
-            return execute(GetFieldMappingsAction.INSTANCE, request);
         }
 
         @Override
@@ -1546,51 +674,6 @@ public abstract class AbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<ForceMergeResponse> forceMerge(final ForceMergeRequest request) {
-            return execute(ForceMergeAction.INSTANCE, request);
-        }
-
-        @Override
-        public void forceMerge(final ForceMergeRequest request, final ActionListener<ForceMergeResponse> listener) {
-            execute(ForceMergeAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ForceMergeRequestBuilder prepareForceMerge(String... indices) {
-            return new ForceMergeRequestBuilder(this, ForceMergeAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<UpgradeResponse> upgrade(final UpgradeRequest request) {
-            return execute(UpgradeAction.INSTANCE, request);
-        }
-
-        @Override
-        public void upgrade(final UpgradeRequest request, final ActionListener<UpgradeResponse> listener) {
-            execute(UpgradeAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public UpgradeRequestBuilder prepareUpgrade(String... indices) {
-            return new UpgradeRequestBuilder(this, UpgradeAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<UpgradeStatusResponse> upgradeStatus(final UpgradeStatusRequest request) {
-            return execute(UpgradeStatusAction.INSTANCE, request);
-        }
-
-        @Override
-        public void upgradeStatus(final UpgradeStatusRequest request, final ActionListener<UpgradeStatusResponse> listener) {
-            execute(UpgradeStatusAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public UpgradeStatusRequestBuilder prepareUpgradeStatus(String... indices) {
-            return new UpgradeStatusRequestBuilder(this, UpgradeStatusAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
         public ActionFuture<RefreshResponse> refresh(final RefreshRequest request) {
             return execute(RefreshAction.INSTANCE, request);
         }
@@ -1603,99 +686,6 @@ public abstract class AbstractClient implements Client {
         @Override
         public RefreshRequestBuilder prepareRefresh(String... indices) {
             return new RefreshRequestBuilder(this, RefreshAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<IndicesStatsResponse> stats(final IndicesStatsRequest request) {
-            return execute(IndicesStatsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void stats(final IndicesStatsRequest request, final ActionListener<IndicesStatsResponse> listener) {
-            execute(IndicesStatsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public IndicesStatsRequestBuilder prepareStats(String... indices) {
-            return new IndicesStatsRequestBuilder(this, IndicesStatsAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<RecoveryResponse> recoveries(final RecoveryRequest request) {
-            return execute(RecoveryAction.INSTANCE, request);
-        }
-
-        @Override
-        public void recoveries(final RecoveryRequest request, final ActionListener<RecoveryResponse> listener) {
-            execute(RecoveryAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public RecoveryRequestBuilder prepareRecoveries(String... indices) {
-            return new RecoveryRequestBuilder(this, RecoveryAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(final SegmentReplicationStatsRequest request) {
-            return execute(SegmentReplicationStatsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void segmentReplicationStats(
-            final SegmentReplicationStatsRequest request,
-            final ActionListener<SegmentReplicationStatsResponse> listener
-        ) {
-            execute(SegmentReplicationStatsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(String... indices) {
-            return new SegmentReplicationStatsRequestBuilder(this, SegmentReplicationStatsAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<IndicesSegmentResponse> segments(final IndicesSegmentsRequest request) {
-            return execute(IndicesSegmentsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void segments(final IndicesSegmentsRequest request, final ActionListener<IndicesSegmentResponse> listener) {
-            execute(IndicesSegmentsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public IndicesSegmentsRequestBuilder prepareSegments(String... indices) {
-            return new IndicesSegmentsRequestBuilder(this, IndicesSegmentsAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
-        public ActionFuture<IndicesShardStoresResponse> shardStores(IndicesShardStoresRequest request) {
-            return execute(IndicesShardStoresAction.INSTANCE, request);
-        }
-
-        @Override
-        public void shardStores(IndicesShardStoresRequest request, ActionListener<IndicesShardStoresResponse> listener) {
-            execute(IndicesShardStoresAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public IndicesShardStoreRequestBuilder prepareShardStores(String... indices) {
-            return new IndicesShardStoreRequestBuilder(this, IndicesShardStoresAction.INSTANCE, indices);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> updateSettings(final UpdateSettingsRequest request) {
-            return execute(UpdateSettingsAction.INSTANCE, request);
-        }
-
-        @Override
-        public void updateSettings(final UpdateSettingsRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(UpdateSettingsAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public UpdateSettingsRequestBuilder prepareUpdateSettings(String... indices) {
-            return new UpdateSettingsRequestBuilder(this, UpdateSettingsAction.INSTANCE).setIndices(indices);
         }
 
         @Override
@@ -1724,99 +714,8 @@ public abstract class AbstractClient implements Client {
         }
 
         @Override
-        public ActionFuture<AcknowledgedResponse> putTemplate(final PutIndexTemplateRequest request) {
-            return execute(PutIndexTemplateAction.INSTANCE, request);
-        }
-
-        @Override
-        public void putTemplate(final PutIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(PutIndexTemplateAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public PutIndexTemplateRequestBuilder preparePutTemplate(String name) {
-            return new PutIndexTemplateRequestBuilder(this, PutIndexTemplateAction.INSTANCE, name);
-        }
-
-        @Override
-        public ActionFuture<GetIndexTemplatesResponse> getTemplates(final GetIndexTemplatesRequest request) {
-            return execute(GetIndexTemplatesAction.INSTANCE, request);
-        }
-
-        @Override
-        public void getTemplates(final GetIndexTemplatesRequest request, final ActionListener<GetIndexTemplatesResponse> listener) {
-            execute(GetIndexTemplatesAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public GetIndexTemplatesRequestBuilder prepareGetTemplates(String... names) {
-            return new GetIndexTemplatesRequestBuilder(this, GetIndexTemplatesAction.INSTANCE, names);
-        }
-
-        @Override
-        public ActionFuture<AcknowledgedResponse> deleteTemplate(final DeleteIndexTemplateRequest request) {
-            return execute(DeleteIndexTemplateAction.INSTANCE, request);
-        }
-
-        @Override
-        public void deleteTemplate(final DeleteIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteIndexTemplateAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public DeleteIndexTemplateRequestBuilder prepareDeleteTemplate(String name) {
-            return new DeleteIndexTemplateRequestBuilder(this, DeleteIndexTemplateAction.INSTANCE, name);
-        }
-
-        @Override
-        public ActionFuture<ValidateQueryResponse> validateQuery(final ValidateQueryRequest request) {
-            return execute(ValidateQueryAction.INSTANCE, request);
-        }
-
-        @Override
-        public void validateQuery(final ValidateQueryRequest request, final ActionListener<ValidateQueryResponse> listener) {
-            execute(ValidateQueryAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ValidateQueryRequestBuilder prepareValidateQuery(String... indices) {
-            return new ValidateQueryRequestBuilder(this, ValidateQueryAction.INSTANCE).setIndices(indices);
-        }
-
-        @Override
         public GetSettingsRequestBuilder prepareGetSettings(String... indices) {
             return new GetSettingsRequestBuilder(this, GetSettingsAction.INSTANCE, indices);
-        }
-
-        @Override
-        public ResizeRequestBuilder prepareResizeIndex(String sourceIndex, String targetIndex) {
-            return new ResizeRequestBuilder(this, ResizeAction.INSTANCE).setSourceIndex(sourceIndex)
-                .setTargetIndex(new CreateIndexRequest(targetIndex));
-        }
-
-        @Override
-        public ActionFuture<ResizeResponse> resizeIndex(ResizeRequest request) {
-            return execute(ResizeAction.INSTANCE, request);
-        }
-
-        @Override
-        public void resizeIndex(ResizeRequest request, ActionListener<ResizeResponse> listener) {
-            execute(ResizeAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public RolloverRequestBuilder prepareRolloverIndex(String alias) {
-            return new RolloverRequestBuilder(this, RolloverAction.INSTANCE).setRolloverTarget(alias);
-        }
-
-        @Override
-        public ActionFuture<RolloverResponse> rolloverIndex(RolloverRequest request) {
-            return execute(RolloverAction.INSTANCE, request);
-        }
-
-        @Override
-        public void rolloverIndex(RolloverRequest request, ActionListener<RolloverResponse> listener) {
-            execute(RolloverAction.INSTANCE, request, listener);
         }
 
         @Override
@@ -1829,95 +728,6 @@ public abstract class AbstractClient implements Client {
             execute(GetSettingsAction.INSTANCE, request, listener);
         }
 
-        @Override
-        public void resolveIndex(ResolveIndexAction.Request request, ActionListener<ResolveIndexAction.Response> listener) {
-            execute(ResolveIndexAction.INSTANCE, request, listener);
-        }
-
-        @Override
-        public ActionFuture<ResolveIndexAction.Response> resolveIndex(ResolveIndexAction.Request request) {
-            return execute(ResolveIndexAction.INSTANCE, request);
-        }
-
-        @Override
-        public void createView(CreateViewAction.Request request, ActionListener<GetViewAction.Response> listener) {
-            execute(CreateViewAction.INSTANCE, request);
-        }
-
-        @Override
-        public ActionFuture<GetViewAction.Response> createView(CreateViewAction.Request request) {
-            return execute(CreateViewAction.INSTANCE, request);
-        }
-
-        /** Gets a view */
-        public void getView(GetViewAction.Request request, ActionListener<GetViewAction.Response> listener) {
-            execute(GetViewAction.INSTANCE, request, listener);
-        }
-
-        /** Gets a view */
-        public ActionFuture<GetViewAction.Response> getView(GetViewAction.Request request) {
-            return execute(GetViewAction.INSTANCE, request);
-        }
-
-        /** Create a view */
-        public void deleteView(DeleteViewAction.Request request, ActionListener<AcknowledgedResponse> listener) {
-            execute(DeleteViewAction.INSTANCE, request, listener);
-        }
-
-        /** Create a view */
-        public ActionFuture<AcknowledgedResponse> deleteView(DeleteViewAction.Request request) {
-            return execute(DeleteViewAction.INSTANCE, request);
-        }
-
-        /** Create a view */
-        public void updateView(CreateViewAction.Request request, ActionListener<GetViewAction.Response> listener) {
-            execute(UpdateViewAction.INSTANCE, request, listener);
-        }
-
-        public ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly) {
-            return new ScaleIndexRequestBuilder(this, searchOnly, index);
-        }
-
-        /** Create a view */
-        public ActionFuture<GetViewAction.Response> updateView(CreateViewAction.Request request) {
-            return execute(UpdateViewAction.INSTANCE, request);
-        }
-
-        /** Pause ingestion */
-        @Override
-        public ActionFuture<PauseIngestionResponse> pauseIngestion(final PauseIngestionRequest request) {
-            return execute(PauseIngestionAction.INSTANCE, request);
-        }
-
-        /** Pause ingestion */
-        @Override
-        public void pauseIngestion(final PauseIngestionRequest request, final ActionListener<PauseIngestionResponse> listener) {
-            execute(PauseIngestionAction.INSTANCE, request, listener);
-        }
-
-        /** Resume ingestion */
-        @Override
-        public ActionFuture<ResumeIngestionResponse> resumeIngestion(final ResumeIngestionRequest request) {
-            return execute(ResumeIngestionAction.INSTANCE, request);
-        }
-
-        /** Resume ingestion */
-        @Override
-        public void resumeIngestion(final ResumeIngestionRequest request, final ActionListener<ResumeIngestionResponse> listener) {
-            execute(ResumeIngestionAction.INSTANCE, request, listener);
-        }
-
-        /** Get ingestion state */
-        @Override
-        public ActionFuture<GetIngestionStateResponse> getIngestionState(final GetIngestionStateRequest request) {
-            return execute(GetIngestionStateAction.INSTANCE, request);
-        }
-
-        /** Get ingestion state */
-        @Override
-        public void getIngestionState(final GetIngestionStateRequest request, final ActionListener<GetIngestionStateResponse> listener) {
-            execute(GetIngestionStateAction.INSTANCE, request, listener);
-        }
     }
 
     @Override

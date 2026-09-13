@@ -33,8 +33,6 @@
 package org.codelibs.fesen.opensearch.transport.client;
 
 import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequest;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequestBuilder;
 import org.codelibs.fesen.opensearch.action.bulk.BulkResponse;
@@ -278,21 +276,6 @@ public interface Client extends OpenSearchClient, Releasable {
     GetRequestBuilder prepareGet(String index, String id);
 
     /**
-     * Multi get documents.
-     */
-    ActionFuture<MultiGetResponse> multiGet(MultiGetRequest request);
-
-    /**
-     * Multi get documents.
-     */
-    void multiGet(MultiGetRequest request, ActionListener<MultiGetResponse> listener);
-
-    /**
-     * Multi get documents.
-     */
-    MultiGetRequestBuilder prepareMultiGet();
-
-    /**
      * Search across one or more indices with a query.
      *
      * @param request The search request
@@ -321,29 +304,6 @@ public interface Client extends OpenSearchClient, Releasable {
     SearchRequestBuilder prepareStreamSearch(String... indices);
 
     /**
-     * A search scroll request to continue searching a previous scrollable search request.
-     *
-     * @param request The search scroll request
-     * @return The result future
-     * @see Requests#searchScrollRequest(String)
-     */
-    ActionFuture<SearchResponse> searchScroll(SearchScrollRequest request);
-
-    /**
-     * A search scroll request to continue searching a previous scrollable search request.
-     *
-     * @param request  The search scroll request
-     * @param listener A listener to be notified of the result
-     * @see Requests#searchScrollRequest(String)
-     */
-    void searchScroll(SearchScrollRequest request, ActionListener<SearchResponse> listener);
-
-    /**
-     * A search scroll request to continue searching a previous scrollable search request.
-     */
-    SearchScrollRequestBuilder prepareSearchScroll(String scrollId);
-
-    /**
      * Create point in time for one or more indices
      */
     void createPit(CreatePitRequest createPITRequest, ActionListener<CreatePitResponse> listener);
@@ -352,134 +312,6 @@ public interface Client extends OpenSearchClient, Releasable {
      * Delete one or more point in time contexts
      */
     void deletePits(DeletePitRequest deletePITRequest, ActionListener<DeletePitResponse> listener);
-
-    /**
-     * Get all active point in time searches
-     */
-    void getAllPits(GetAllPitNodesRequest getAllPitNodesRequest, ActionListener<GetAllPitNodesResponse> listener);
-
-    /**
-     * Performs multiple search requests.
-     */
-    ActionFuture<MultiSearchResponse> multiSearch(MultiSearchRequest request);
-
-    /**
-     * Performs multiple search requests.
-     */
-    void multiSearch(MultiSearchRequest request, ActionListener<MultiSearchResponse> listener);
-
-    /**
-     * Performs multiple search requests.
-     */
-    MultiSearchRequestBuilder prepareMultiSearch();
-
-    /**
-     * An action that returns the term vectors for a specific document.
-     *
-     * @param request The term vector request
-     * @return The response future
-     */
-    ActionFuture<TermVectorsResponse> termVectors(TermVectorsRequest request);
-
-    /**
-     * An action that returns the term vectors for a specific document.
-     *
-     * @param request The term vector request
-     */
-    void termVectors(TermVectorsRequest request, ActionListener<TermVectorsResponse> listener);
-
-    /**
-     * Builder for the term vector request.
-     */
-    TermVectorsRequestBuilder prepareTermVectors();
-
-    /**
-     * Builder for the term vector request.
-     *
-     * @param index The index to load the document from
-     * @param id    The id of the document
-     */
-    TermVectorsRequestBuilder prepareTermVectors(String index, String id);
-
-    /**
-     * Multi get term vectors.
-     */
-    ActionFuture<MultiTermVectorsResponse> multiTermVectors(MultiTermVectorsRequest request);
-
-    /**
-     * Multi get term vectors.
-     */
-    void multiTermVectors(MultiTermVectorsRequest request, ActionListener<MultiTermVectorsResponse> listener);
-
-    /**
-     * Multi get term vectors.
-     */
-    MultiTermVectorsRequestBuilder prepareMultiTermVectors();
-
-    /**
-     * Computes a score explanation for the specified request.
-     *
-     * @param index The index this explain is targeted for
-     * @param id    The document identifier this explain is targeted for
-     */
-    ExplainRequestBuilder prepareExplain(String index, String id);
-
-    /**
-     * Computes a score explanation for the specified request.
-     *
-     * @param request The request encapsulating the query and document identifier to compute a score explanation for
-     */
-    ActionFuture<ExplainResponse> explain(ExplainRequest request);
-
-    /**
-     * Computes a score explanation for the specified request.
-     *
-     * @param request  The request encapsulating the query and document identifier to compute a score explanation for
-     * @param listener A listener to be notified of the result
-     */
-    void explain(ExplainRequest request, ActionListener<ExplainResponse> listener);
-
-    /**
-     * Clears the search contexts associated with specified scroll ids.
-     */
-    ClearScrollRequestBuilder prepareClearScroll();
-
-    /**
-     * Clears the search contexts associated with specified scroll ids.
-     */
-    ActionFuture<ClearScrollResponse> clearScroll(ClearScrollRequest request);
-
-    /**
-     * Clears the search contexts associated with specified scroll ids.
-     */
-    void clearScroll(ClearScrollRequest request, ActionListener<ClearScrollResponse> listener);
-
-    /**
-     * Builder for the field capabilities request.
-     */
-    FieldCapabilitiesRequestBuilder prepareFieldCaps(String... indices);
-
-    /**
-     * An action that returns the field capabilities from the provided request
-     */
-    ActionFuture<FieldCapabilitiesResponse> fieldCaps(FieldCapabilitiesRequest request);
-
-    /**
-     * An action that returns the field capabilities from the provided request
-     */
-    void fieldCaps(FieldCapabilitiesRequest request, ActionListener<FieldCapabilitiesResponse> listener);
-
-    /** Search a view */
-    void searchView(final SearchViewAction.Request request, final ActionListener<SearchResponse> listener);
-
-    /** Search a view */
-    ActionFuture<SearchResponse> searchView(final SearchViewAction.Request request);
-
-    /** List all view names */
-    void listViewNames(final ListViewNamesAction.Request request, ActionListener<ListViewNamesAction.Response> listener);
-
-    /** List all view names */
-    ActionFuture<ListViewNamesAction.Response> listViewNames(final ListViewNamesAction.Request request);
 
     /**
      * Returns this clients settings
@@ -548,15 +380,6 @@ public interface Client extends OpenSearchClient, Releasable {
     }
 
     /**
-     * Multi get - CompletionStage version
-     */
-    default CompletionStage<MultiGetResponse> multiGetAsync(MultiGetRequest request) {
-        CompletableFuture<MultiGetResponse> future = new CompletableFuture<>();
-        multiGet(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
      * Search - CompletionStage version
      */
     default CompletionStage<SearchResponse> searchAsync(SearchRequest request) {
@@ -565,84 +388,4 @@ public interface Client extends OpenSearchClient, Releasable {
         return future;
     }
 
-    /**
-     * Search scroll - CompletionStage version
-     */
-    default CompletionStage<SearchResponse> searchScrollAsync(SearchScrollRequest request) {
-        CompletableFuture<SearchResponse> future = new CompletableFuture<>();
-        searchScroll(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Multi search - CompletionStage version
-     */
-    default CompletionStage<MultiSearchResponse> multiSearchAsync(MultiSearchRequest request) {
-        CompletableFuture<MultiSearchResponse> future = new CompletableFuture<>();
-        multiSearch(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Term vectors - CompletionStage version
-     */
-    default CompletionStage<TermVectorsResponse> termVectorsAsync(TermVectorsRequest request) {
-        CompletableFuture<TermVectorsResponse> future = new CompletableFuture<>();
-        termVectors(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Multi term vectors - CompletionStage version
-     */
-    default CompletionStage<MultiTermVectorsResponse> multiTermVectorsAsync(MultiTermVectorsRequest request) {
-        CompletableFuture<MultiTermVectorsResponse> future = new CompletableFuture<>();
-        multiTermVectors(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Explain - CompletionStage version
-     */
-    default CompletionStage<ExplainResponse> explainAsync(ExplainRequest request) {
-        CompletableFuture<ExplainResponse> future = new CompletableFuture<>();
-        explain(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Clear scroll - CompletionStage version
-     */
-    default CompletionStage<ClearScrollResponse> clearScrollAsync(ClearScrollRequest request) {
-        CompletableFuture<ClearScrollResponse> future = new CompletableFuture<>();
-        clearScroll(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Field capabilities - CompletionStage version
-     */
-    default CompletionStage<FieldCapabilitiesResponse> fieldCapsAsync(FieldCapabilitiesRequest request) {
-        CompletableFuture<FieldCapabilitiesResponse> future = new CompletableFuture<>();
-        fieldCaps(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * Search view - CompletionStage version
-     */
-    default CompletionStage<SearchResponse> searchViewAsync(SearchViewAction.Request request) {
-        CompletableFuture<SearchResponse> future = new CompletableFuture<>();
-        searchView(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
-
-    /**
-     * List view names - CompletionStage version
-     */
-    default CompletionStage<ListViewNamesAction.Response> listViewNamesAsync(ListViewNamesAction.Request request) {
-        CompletableFuture<ListViewNamesAction.Response> future = new CompletableFuture<>();
-        listViewNames(request, ActionListener.wrap(future::complete, future::completeExceptionally));
-        return future;
-    }
 }

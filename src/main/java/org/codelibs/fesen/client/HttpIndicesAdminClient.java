@@ -26,9 +26,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesRe
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction.Request;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction.Response;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse;
@@ -44,15 +41,9 @@ import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.Indices
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
@@ -61,58 +52,13 @@ import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMapping
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoreRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
 import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.codelibs.fesen.opensearch.common.action.ActionFuture;
@@ -169,66 +115,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     @Override
     public IndicesExistsRequestBuilder prepareExists(final String... indices) {
         return indicesClient.prepareExists(indices);
-    }
-
-    @Override
-    public ActionFuture<IndicesStatsResponse> stats(final IndicesStatsRequest request) {
-        return indicesClient.stats(request);
-    }
-
-    @Override
-    public void stats(final IndicesStatsRequest request, final ActionListener<IndicesStatsResponse> listener) {
-        indicesClient.stats(request, listener);
-    }
-
-    @Override
-    public IndicesStatsRequestBuilder prepareStats(final String... indices) {
-        return indicesClient.prepareStats(indices);
-    }
-
-    @Override
-    public ActionFuture<RecoveryResponse> recoveries(final RecoveryRequest request) {
-        return indicesClient.recoveries(request);
-    }
-
-    @Override
-    public void recoveries(final RecoveryRequest request, final ActionListener<RecoveryResponse> listener) {
-        indicesClient.recoveries(request, listener);
-    }
-
-    @Override
-    public RecoveryRequestBuilder prepareRecoveries(final String... indices) {
-        return indicesClient.prepareRecoveries(indices);
-    }
-
-    @Override
-    public ActionFuture<IndicesSegmentResponse> segments(final IndicesSegmentsRequest request) {
-        return indicesClient.segments(request);
-    }
-
-    @Override
-    public void segments(final IndicesSegmentsRequest request, final ActionListener<IndicesSegmentResponse> listener) {
-        indicesClient.segments(request, listener);
-    }
-
-    @Override
-    public IndicesSegmentsRequestBuilder prepareSegments(final String... indices) {
-        return indicesClient.prepareSegments(indices);
-    }
-
-    @Override
-    public ActionFuture<IndicesShardStoresResponse> shardStores(final IndicesShardStoresRequest request) {
-        return indicesClient.shardStores(request);
-    }
-
-    @Override
-    public void shardStores(final IndicesShardStoresRequest request, final ActionListener<IndicesShardStoresResponse> listener) {
-        indicesClient.shardStores(request, listener);
-    }
-
-    @Override
-    public IndicesShardStoreRequestBuilder prepareShardStores(final String... indices) {
-        return indicesClient.prepareShardStores(indices);
     }
 
     @Override
@@ -322,51 +208,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public ActionFuture<ForceMergeResponse> forceMerge(final ForceMergeRequest request) {
-        return indicesClient.forceMerge(request);
-    }
-
-    @Override
-    public void forceMerge(final ForceMergeRequest request, final ActionListener<ForceMergeResponse> listener) {
-        indicesClient.forceMerge(request, listener);
-    }
-
-    @Override
-    public ForceMergeRequestBuilder prepareForceMerge(final String... indices) {
-        return indicesClient.prepareForceMerge(indices);
-    }
-
-    @Override
-    public ActionFuture<UpgradeResponse> upgrade(final UpgradeRequest request) {
-        return indicesClient.upgrade(request);
-    }
-
-    @Override
-    public void upgrade(final UpgradeRequest request, final ActionListener<UpgradeResponse> listener) {
-        indicesClient.upgrade(request, listener);
-    }
-
-    @Override
-    public UpgradeStatusRequestBuilder prepareUpgradeStatus(final String... indices) {
-        return indicesClient.prepareUpgradeStatus(indices);
-    }
-
-    @Override
-    public ActionFuture<UpgradeStatusResponse> upgradeStatus(final UpgradeStatusRequest request) {
-        return indicesClient.upgradeStatus(request);
-    }
-
-    @Override
-    public void upgradeStatus(final UpgradeStatusRequest request, final ActionListener<UpgradeStatusResponse> listener) {
-        indicesClient.upgradeStatus(request, listener);
-    }
-
-    @Override
-    public UpgradeRequestBuilder prepareUpgrade(final String... indices) {
-        return indicesClient.prepareUpgrade(indices);
-    }
-
-    @Override
     public void getMappings(final GetMappingsRequest request, final ActionListener<GetMappingsResponse> listener) {
         indicesClient.getMappings(request, listener);
     }
@@ -379,21 +220,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     @Override
     public GetMappingsRequestBuilder prepareGetMappings(final String... indices) {
         return indicesClient.prepareGetMappings(indices);
-    }
-
-    @Override
-    public void getFieldMappings(final GetFieldMappingsRequest request, final ActionListener<GetFieldMappingsResponse> listener) {
-        indicesClient.getFieldMappings(request, listener);
-    }
-
-    @Override
-    public GetFieldMappingsRequestBuilder prepareGetFieldMappings(final String... indices) {
-        return indicesClient.prepareGetFieldMappings(indices);
-    }
-
-    @Override
-    public ActionFuture<GetFieldMappingsResponse> getFieldMappings(final GetFieldMappingsRequest request) {
-        return indicesClient.getFieldMappings(request);
     }
 
     @Override
@@ -457,36 +283,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public ActionFuture<ClearIndicesCacheResponse> clearCache(final ClearIndicesCacheRequest request) {
-        return indicesClient.clearCache(request);
-    }
-
-    @Override
-    public void clearCache(final ClearIndicesCacheRequest request, final ActionListener<ClearIndicesCacheResponse> listener) {
-        indicesClient.clearCache(request, listener);
-    }
-
-    @Override
-    public ClearIndicesCacheRequestBuilder prepareClearCache(final String... indices) {
-        return indicesClient.prepareClearCache(indices);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> updateSettings(final UpdateSettingsRequest request) {
-        return indicesClient.updateSettings(request);
-    }
-
-    @Override
-    public void updateSettings(final UpdateSettingsRequest request, final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.updateSettings(request, listener);
-    }
-
-    @Override
-    public UpdateSettingsRequestBuilder prepareUpdateSettings(final String... indices) {
-        return indicesClient.prepareUpdateSettings(indices);
-    }
-
-    @Override
     public ActionFuture<Response> analyze(final Request request) {
         return indicesClient.analyze(request);
     }
@@ -512,66 +308,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public ActionFuture<AcknowledgedResponse> putTemplate(final PutIndexTemplateRequest request) {
-        return indicesClient.putTemplate(request);
-    }
-
-    @Override
-    public void putTemplate(final PutIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.putTemplate(request, listener);
-    }
-
-    @Override
-    public PutIndexTemplateRequestBuilder preparePutTemplate(final String name) {
-        return indicesClient.preparePutTemplate(name);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> deleteTemplate(final DeleteIndexTemplateRequest request) {
-        return indicesClient.deleteTemplate(request);
-    }
-
-    @Override
-    public void deleteTemplate(final DeleteIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.deleteTemplate(request, listener);
-    }
-
-    @Override
-    public DeleteIndexTemplateRequestBuilder prepareDeleteTemplate(final String name) {
-        return indicesClient.prepareDeleteTemplate(name);
-    }
-
-    @Override
-    public ActionFuture<GetIndexTemplatesResponse> getTemplates(final GetIndexTemplatesRequest request) {
-        return indicesClient.getTemplates(request);
-    }
-
-    @Override
-    public void getTemplates(final GetIndexTemplatesRequest request, final ActionListener<GetIndexTemplatesResponse> listener) {
-        indicesClient.getTemplates(request, listener);
-    }
-
-    @Override
-    public GetIndexTemplatesRequestBuilder prepareGetTemplates(final String... name) {
-        return indicesClient.prepareGetTemplates(name);
-    }
-
-    @Override
-    public ActionFuture<ValidateQueryResponse> validateQuery(final ValidateQueryRequest request) {
-        return indicesClient.validateQuery(request);
-    }
-
-    @Override
-    public void validateQuery(final ValidateQueryRequest request, final ActionListener<ValidateQueryResponse> listener) {
-        indicesClient.validateQuery(request, listener);
-    }
-
-    @Override
-    public ValidateQueryRequestBuilder prepareValidateQuery(final String... indices) {
-        return indicesClient.prepareValidateQuery(indices);
-    }
-
-    @Override
     public void getSettings(final GetSettingsRequest request, final ActionListener<GetSettingsResponse> listener) {
         indicesClient.getSettings(request, listener);
     }
@@ -586,144 +322,4 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
         return indicesClient.prepareGetSettings(indices);
     }
 
-    @Override
-    public ResizeRequestBuilder prepareResizeIndex(final String sourceIndex, final String targetIndex) {
-        return indicesClient.prepareResizeIndex(sourceIndex, targetIndex);
-    }
-
-    @Override
-    public ActionFuture<ResizeResponse> resizeIndex(final ResizeRequest request) {
-        return indicesClient.resizeIndex(request);
-    }
-
-    @Override
-    public void resizeIndex(final ResizeRequest request, final ActionListener<ResizeResponse> listener) {
-        indicesClient.resizeIndex(request, listener);
-    }
-
-    @Override
-    public RolloverRequestBuilder prepareRolloverIndex(final String sourceAlias) {
-        return indicesClient.prepareRolloverIndex(sourceAlias);
-    }
-
-    @Override
-    public ActionFuture<RolloverResponse> rolloverIndex(final RolloverRequest request) {
-        return indicesClient.rolloverIndex(request);
-    }
-
-    @Override
-    public void rolloverIndex(final RolloverRequest request, final ActionListener<RolloverResponse> listener) {
-        indicesClient.rolloverIndex(request, listener);
-    }
-
-    @Override
-    public void resolveIndex(final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request,
-            final ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response> listener) {
-        indicesClient.resolveIndex(request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response> resolveIndex(
-            final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request) {
-        return indicesClient.resolveIndex(request);
-    }
-
-    @Override
-    public ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(final SegmentReplicationStatsRequest request) {
-        return indicesClient.segmentReplicationStats(request);
-    }
-
-    @Override
-    public void segmentReplicationStats(final SegmentReplicationStatsRequest request,
-            final ActionListener<SegmentReplicationStatsResponse> listener) {
-        indicesClient.segmentReplicationStats(request, listener);
-    }
-
-    @Override
-    public SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(final String... indices) {
-        return indicesClient.prepareSegmentReplicationStats(indices);
-    }
-
-    @Override
-    public void createView(org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request,
-            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
-        indicesClient.createView(request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> createView(
-            org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
-        return indicesClient.createView(request);
-    }
-
-    @Override
-    public void getView(org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Request request,
-            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
-        indicesClient.getView(request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> getView(
-            org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Request request) {
-        return indicesClient.getView(request);
-    }
-
-    @Override
-    public void deleteView(org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request,
-            ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.deleteView(request, listener);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> deleteView(
-            org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
-        return indicesClient.deleteView(request);
-    }
-
-    @Override
-    public void updateView(org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request,
-            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
-        indicesClient.updateView(request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> updateView(
-            org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
-        return indicesClient.updateView(request);
-    }
-
-    @Override
-    public ActionFuture<PauseIngestionResponse> pauseIngestion(PauseIngestionRequest request) {
-        return indicesClient.pauseIngestion(request);
-    }
-
-    @Override
-    public void pauseIngestion(PauseIngestionRequest request, ActionListener<PauseIngestionResponse> listener) {
-        indicesClient.pauseIngestion(request, listener);
-    }
-
-    @Override
-    public ActionFuture<ResumeIngestionResponse> resumeIngestion(ResumeIngestionRequest request) {
-        return indicesClient.resumeIngestion(request);
-    }
-
-    @Override
-    public void resumeIngestion(ResumeIngestionRequest request, ActionListener<ResumeIngestionResponse> listener) {
-        indicesClient.resumeIngestion(request, listener);
-    }
-
-    @Override
-    public ActionFuture<GetIngestionStateResponse> getIngestionState(GetIngestionStateRequest request) {
-        return indicesClient.getIngestionState(request);
-    }
-
-    @Override
-    public void getIngestionState(GetIngestionStateRequest request, ActionListener<GetIngestionStateResponse> listener) {
-        indicesClient.getIngestionState(request, listener);
-    }
-
-    @Override
-    public ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly) {
-        return indicesClient.prepareScaleSearchOnly(index, searchOnly);
-    }
 }
