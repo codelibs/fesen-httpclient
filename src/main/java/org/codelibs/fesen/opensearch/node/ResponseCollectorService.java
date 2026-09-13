@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.node;
 
-import org.codelibs.fesen.opensearch.cluster.ClusterChangedEvent;
-import org.codelibs.fesen.opensearch.cluster.ClusterStateListener;
 import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
 import org.codelibs.fesen.opensearch.common.ExponentiallyWeightedMovingAverage;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
@@ -57,20 +55,17 @@ import java.util.concurrent.ConcurrentMap;
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
-public final class ResponseCollectorService implements ClusterStateListener {
+/*
+ * Was `implements ClusterStateListener`. The listener half -- clusterChanged and the node
+ * bookkeeping it drove -- is how a node maintained these statistics. Everything here uses
+ * only the ComputedNodeStats payload, which AdaptiveSelectionStats carries in _nodes/stats.
+ */
+public final class ResponseCollectorService {
 
     private static final double ALPHA = 0.3;
 
     private final ConcurrentMap<String, NodeStatistics> nodeIdToStats = ConcurrentCollections.newConcurrentMap();
 
-    @Override
-    public void clusterChanged(ClusterChangedEvent event) {
-        if (event.nodesRemoved()) {
-            for (DiscoveryNode removedNode : event.nodesDelta().removedNodes()) {
-                removeNode(removedNode.getId());
-            }
-        }
-    }
 
     void removeNode(String nodeId) {
         nodeIdToStats.remove(nodeId);
