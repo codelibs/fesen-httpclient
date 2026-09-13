@@ -52,7 +52,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils;
 import org.codelibs.fesen.opensearch.search.aggregations.Aggregation;
 import org.codelibs.fesen.opensearch.search.suggest.Suggest.Suggestion.Entry;
 import org.codelibs.fesen.opensearch.search.suggest.Suggest.Suggestion.Entry.Option;
-import org.codelibs.fesen.opensearch.search.suggest.completion.CompletionSuggestion;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,7 +85,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
     };
 
     private final List<Suggestion<? extends Entry<? extends Option>>> suggestions;
-    private final boolean hasScoreDocs;
 
     private Map<String, Suggestion<? extends Entry<? extends Option>>> suggestMap;
 
@@ -96,7 +94,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         // in the same order as we enrich the suggestions with fetch results in SearchPhaseController#merge
         suggestions.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
         this.suggestions = suggestions;
-        this.hasScoreDocs = filter(CompletionSuggestion.class).stream().anyMatch(CompletionSuggestion::hasScoreDocs);
     }
 
     public Suggest(StreamInput in) throws IOException {
@@ -105,7 +102,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         for (int i = 0; i < suggestionCount; i++) {
             suggestions.add(in.readNamedWriteable(Suggestion.class));
         }
-        hasScoreDocs = filter(CompletionSuggestion.class).stream().anyMatch(CompletionSuggestion::hasScoreDocs);
     }
 
     @Override
@@ -134,12 +130,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         return (T) suggestMap.get(name);
     }
 
-    /**
-     * Whether any suggestions had query hits
-     */
-    public boolean hasScoreDocs() {
-        return hasScoreDocs;
-    }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
