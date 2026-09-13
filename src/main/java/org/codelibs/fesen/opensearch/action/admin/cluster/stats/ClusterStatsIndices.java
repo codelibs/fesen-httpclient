@@ -179,10 +179,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
         return this.shards;
     }
 
-    public DocsStats getDocs() {
-        return docs;
-    }
-
     public StoreStats getStore() {
         return store;
     }

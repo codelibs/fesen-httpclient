@@ -60,13 +60,6 @@ public class RawTaskStatus implements Task.Status {
         this.status = requireNonNull(status, "status may not be null");
     }
 
-    /**
-     * Read from a stream.
-     */
-    public RawTaskStatus(StreamInput in) throws IOException {
-        status = in.readOptionalBytesReference();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeOptionalBytesReference(status);

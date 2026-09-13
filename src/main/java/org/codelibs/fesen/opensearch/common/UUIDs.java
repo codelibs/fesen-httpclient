@@ -50,12 +50,6 @@ public class UUIDs {
         return TIME_UUID_GENERATOR.getBase64UUID();
     }
 
-    /** Returns a Base64 encoded version of a Version 4.0 compatible UUID as defined here: http://www.ietf.org/rfc/rfc4122.txt, using the
-     *  provided {@code Random} instance */
-    public static String randomBase64UUID(Random random) {
-        return RANDOM_UUID_GENERATOR.getBase64UUID(random);
-    }
-
     /** Returns a Base64 encoded version of a Version 4.0 compatible UUID as defined here: http://www.ietf.org/rfc/rfc4122.txt, using a
      *  private {@code SecureRandom} instance */
     public static String randomBase64UUID() {

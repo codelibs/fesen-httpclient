@@ -53,13 +53,6 @@ public class CreateSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
     CreateSnapshotRequestBuilder> {
 
     /**
-     * Constructs a new create snapshot request builder
-     */
-    public CreateSnapshotRequestBuilder(OpenSearchClient client, CreateSnapshotAction action) {
-        super(client, action, new CreateSnapshotRequest());
-    }
-
-    /**
      * Constructs a new create snapshot request builder with specified repository and snapshot names
      */
     public CreateSnapshotRequestBuilder(OpenSearchClient client, CreateSnapshotAction action, String repository, String snapshot) {

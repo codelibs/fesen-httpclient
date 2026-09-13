@@ -52,13 +52,4 @@ public class ClusterStateRequestBuilder extends ClusterManagerNodeReadOperationR
     public ClusterStateRequestBuilder(OpenSearchClient client, ClusterStateAction action) {
         super(client, action, new ClusterStateRequest());
     }
-
-    /**
-     * When {@link #setMetadata(boolean)} is set, which indices to return the {@link org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata}
-     * for. Defaults to all indices.
-     */
-    public ClusterStateRequestBuilder setIndices(String... indices) {
-        request.indices(indices);
-        return this;
-    }
 }

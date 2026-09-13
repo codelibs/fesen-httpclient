@@ -146,27 +146,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         out.writeList(fields);
     }
 
-    /**
-     * Adds a field to be highlighted with default fragment size of 100 characters, and
-     * default number of fragments of 5 using the default encoder
-     *
-     * @param name The field to highlight
-     */
-    public HighlightBuilder field(String name) {
-        return field(new Field(name));
-    }
-
-    /**
-     * Adds a field to be highlighted with a provided fragment size (in characters), and
-     * default number of fragments of 5.
-     *
-     * @param name         The field to highlight
-     * @param fragmentSize The size of a fragment in characters
-     */
-    public HighlightBuilder field(String name, int fragmentSize) {
-        return field(new Field(name).fragmentSize(fragmentSize));
-    }
-
     public HighlightBuilder field(Field field) {
         fields.add(field);
         return this;
@@ -227,13 +206,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
     public HighlightBuilder useExplicitFieldOrder(boolean useExplicitFieldOrder) {
         this.useExplicitFieldOrder = useExplicitFieldOrder;
         return this;
-    }
-
-    /**
-     * Gets value set with {@link #useExplicitFieldOrder(boolean)}
-     */
-    public Boolean useExplicitFieldOrder() {
-        return this.useExplicitFieldOrder;
     }
 
     @Override

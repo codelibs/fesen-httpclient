@@ -293,11 +293,6 @@ public class FeatureFlags {
                 featureFlagsImpl.set(flag, value);
             }
 
-            public void unlock() {
-                featureFlagsImpl.set(flag, prev);
-                writeLocks.remove(flag);
-            }
-
             @Override
             public void close() {
                 featureFlagsImpl.set(flag, prev);

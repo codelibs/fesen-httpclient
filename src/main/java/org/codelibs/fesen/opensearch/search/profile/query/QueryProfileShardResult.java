@@ -98,10 +98,6 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
         out.writeLong(rewriteTime);
     }
 
-    public List<ProfileResult> getQueryResults() {
-        return Collections.unmodifiableList(queryProfileResults);
-    }
-
     public long getRewriteTime() {
         return rewriteTime;
     }

@@ -87,10 +87,6 @@ public final class SimulateDocumentVerboseResult implements SimulateDocumentResu
         }
     }
 
-    public List<SimulateProcessorResult> getProcessorResults() {
-        return processorResults;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
@@ -101,9 +97,5 @@ public final class SimulateDocumentVerboseResult implements SimulateDocumentResu
         builder.endArray();
         builder.endObject();
         return builder;
-    }
-
-    public static SimulateDocumentVerboseResult fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
     }
 }

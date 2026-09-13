@@ -60,16 +60,6 @@ public class Circle implements Geometry {
     }
 
     /**
-     * Create a circle with no altitude.
-     * @param x Longitude of the center of the circle in degrees
-     * @param y Latitude of the center of the circle in degrees
-     * @param radiusMeters Radius of the circle in meters
-     */
-    public Circle(final double x, final double y, final double radiusMeters) {
-        this(x, y, Double.NaN, radiusMeters);
-    }
-
-    /**
      * Create a circle with altitude.
      * @param x Longitude of the center of the circle in degrees
      * @param y Latitude of the center of the circle in degrees

@@ -80,14 +80,6 @@ public class IndexUpgradeStatus implements Iterable<IndexShardUpgradeStatus> {
         return this.index;
     }
 
-    /**
-     * A shard id to index shard upgrade status map (note, index shard upgrade status is the replication shard group that maps
-     * to the shard id).
-     */
-    public Map<Integer, IndexShardUpgradeStatus> getShards() {
-        return this.indexShards;
-    }
-
     @Override
     public Iterator<IndexShardUpgradeStatus> iterator() {
         return indexShards.values().iterator();

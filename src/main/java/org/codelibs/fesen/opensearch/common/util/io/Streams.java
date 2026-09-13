@@ -90,13 +90,6 @@ public abstract class Streams {
     /**
      * @see #copy(InputStream, OutputStream, byte[], boolean)
      */
-    public static long copy(final InputStream in, final OutputStream out, byte[] buffer) throws IOException {
-        return copy(in, out, buffer, true);
-    }
-
-    /**
-     * @see #copy(InputStream, OutputStream, byte[], boolean)
-     */
     public static long copy(final InputStream in, final OutputStream out) throws IOException {
         return copy(in, out, buffer.get(), true);
     }

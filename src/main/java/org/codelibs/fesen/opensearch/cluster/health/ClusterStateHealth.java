@@ -70,19 +70,6 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
     private final Map<String, ClusterIndexHealth> indices;
 
     /**
-     * Creates a new <code>ClusterStateHealth</code> instance considering the current cluster state and all indices in the cluster.
-     *
-     * @param clusterState The current cluster state. Must not be null.
-     */
-    public ClusterStateHealth(final ClusterState clusterState) {
-        this(clusterState, clusterState.metadata().getConcreteAllIndices());
-    }
-
-    public ClusterStateHealth(final ClusterState clusterState, final ClusterHealthRequest.Level clusterHealthLevel) {
-        this(clusterState, clusterState.metadata().getConcreteAllIndices(), clusterHealthLevel);
-    }
-
-    /**
      * Creates a new <code>ClusterStateHealth</code> instance considering the current cluster state and the provided index names.
      *
      * @param clusterState    The current cluster state. Must not be null.

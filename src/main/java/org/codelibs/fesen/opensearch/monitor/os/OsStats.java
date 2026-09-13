@@ -115,14 +115,6 @@ public class OsStats implements Writeable, ToXContentFragment {
         return mem;
     }
 
-    public Swap getSwap() {
-        return swap;
-    }
-
-    public Cgroup getCgroup() {
-        return cgroup;
-    }
-
     static final class Fields {
         static final String OS = "os";
         static final String TIMESTAMP = "timestamp";
@@ -469,17 +461,6 @@ public class OsStats implements Writeable, ToXContentFragment {
         }
 
         /**
-         * The period of time for how frequently the control group from
-         * {@link Cgroup#cpuControlGroup} has its access to CPU
-         * resources reallocated.
-         *
-         * @return the period of time in microseconds
-         */
-        public long getCpuCfsPeriodMicros() {
-            return cpuCfsPeriodMicros;
-        }
-
-        /**
          * The total amount of time for which all tasks in the control
          * group from {@link Cgroup#cpuControlGroup} can run in one
          * period as represented by {@link Cgroup#cpuCfsPeriodMicros}.
@@ -625,16 +606,6 @@ public class OsStats implements Writeable, ToXContentFragment {
             private final long numberOfElapsedPeriods;
             private final long numberOfTimesThrottled;
             private final long timeThrottledNanos;
-
-            /**
-             * The number of elapsed periods.
-             *
-             * @return the number of elapsed periods as measured by
-             * {@code cpu.cfs_period_us}
-             */
-            public long getNumberOfElapsedPeriods() {
-                return numberOfElapsedPeriods;
-            }
 
             /**
              * The number of times tasks in the control group have been

@@ -133,10 +133,6 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
         return parentTaskId;
     }
 
-    public TimeValue getTimeout() {
-        return this.timeout;
-    }
-
     public boolean match(Task task) {
         if (CollectionUtils.isEmpty(getActions()) == false && Regex.simpleMatch(getActions(), task.getAction()) == false) {
             return false;

@@ -160,21 +160,6 @@ public final class Booleans {
     }
 
     /**
-     * Parses a string representation of a boolean value to <code>boolean</code>.
-     * Analogous to {@link #parseBoolean(char[], int, int, boolean)}.
-     *
-     * @return <code>true</code> iff the sequence of chars is "true", <code>false</code> iff the sequence of
-     * chars is "false", or the provided default value iff either text is <code>null</code> or length == 0.
-     * @throws IllegalArgumentException if the string cannot be parsed to boolean.
-     */
-    public static boolean parseBooleanStrict(String value, boolean defaultValue) {
-        if (value == null || value.length() == 0) {
-            return defaultValue;
-        }
-        return parseBoolean(value);
-    }
-
-    /**
      * @return {@code true} iff the value is "false", otherwise {@code false}.
      */
     public static boolean isFalse(String value) {

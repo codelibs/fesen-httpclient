@@ -183,11 +183,6 @@ public class SnapshotIndexStatus implements Iterable<SnapshotIndexShardStatus>, 
         PARSER = ((p, c, name) -> innerParser.apply(p, name));
     }
 
-    public static SnapshotIndexStatus fromXContent(XContentParser parser) throws IOException {
-        XContentParserUtils.ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
-        return PARSER.parse(parser, null, parser.currentName());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

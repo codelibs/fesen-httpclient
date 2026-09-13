@@ -82,14 +82,6 @@ public class PluginsAndModules implements ReportingService.Info {
         return modules;
     }
 
-    public void addPlugin(PluginInfo info) {
-        plugins.add(info);
-    }
-
-    public void addModule(PluginInfo info) {
-        modules.add(info);
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startArray("plugins");

@@ -70,18 +70,6 @@ public final class IOUtils {
     }
 
     /**
-     * Closes all given {@link Closeable}s. Some of the {@linkplain Closeable}s may be null; they are
-     * ignored. After everything is closed, the method either throws the first exception it hit
-     * while closing with other exceptions added as suppressed, or completes normally if there were
-     * no exceptions.
-     *
-     * @param objects objects to close
-     */
-    public static void close(final Closeable... objects) throws IOException {
-        close(null, Arrays.asList(objects));
-    }
-
-    /**
      * @see #close(Closeable...)
      */
     public static void close(@Nullable Closeable closeable) throws IOException {

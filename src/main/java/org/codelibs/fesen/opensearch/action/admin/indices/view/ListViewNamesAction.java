@@ -38,8 +38,6 @@ public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response
     public static class Request extends ActionRequest {
         public Request() {}
 
-        public Request(final StreamInput in) {}
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -71,10 +69,6 @@ public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response
 
         public Response(final StreamInput in) throws IOException {
             views = in.readStringList();
-        }
-
-        public List<String> getViewNames() {
-            return views;
         }
 
         @Override

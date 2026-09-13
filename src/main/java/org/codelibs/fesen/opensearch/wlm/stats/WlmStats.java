@@ -25,11 +25,6 @@ import java.util.Objects;
 public class WlmStats extends BaseNodeResponse implements ToXContentObject, Writeable {
     private final WorkloadGroupStats workloadGroupStats;
 
-    public WlmStats(DiscoveryNode node, WorkloadGroupStats workloadGroupStats) {
-        super(node);
-        this.workloadGroupStats = workloadGroupStats;
-    }
-
     public WlmStats(StreamInput in) throws IOException {
         super(in);
         workloadGroupStats = new WorkloadGroupStats(in);

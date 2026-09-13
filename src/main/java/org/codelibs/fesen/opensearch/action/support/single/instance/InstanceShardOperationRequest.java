@@ -126,14 +126,6 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
         return timeout;
     }
 
-    public String concreteIndex() {
-        return concreteIndex;
-    }
-
-    void concreteIndex(String concreteIndex) {
-        this.concreteIndex = concreteIndex;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

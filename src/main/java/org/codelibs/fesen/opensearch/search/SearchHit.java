@@ -136,11 +136,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     private Map<String, SearchHits> innerHits;
 
-    // used only in tests
-    public SearchHit(int docId) {
-        this(docId, null, null, null);
-    }
-
     public SearchHit(int docId, String id, Map<String, DocumentField> documentFields, Map<String, DocumentField> metaFields) {
         this(docId, id, null, documentFields, metaFields);
     }
@@ -383,14 +378,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     }
 
     /**
-     * Is the source available or not. A source with no fields will return true. This will return false if {@code fields} doesn't contain
-     * {@code _source} or if source is disabled in the mapping.
-     */
-    public boolean hasSource() {
-        return source != null;
-    }
-
-    /**
      * The source of the document as string (can be {@code null}).
      */
     public String getSourceAsString() {
@@ -436,10 +423,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         } else {
             return metaFields.get(fieldName);
         }
-    }
-
-    public DocumentField removeDocumentField(String fieldName) {
-        return documentFields.remove(fieldName);
     }
 
     /**
@@ -531,20 +514,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
      */
     public String[] getMatchedQueries() {
         return matchedQueries == null ? new String[0] : matchedQueries.keySet().toArray(new String[0]);
-    }
-
-    /**
-     * Returns the score of the provided named query if it matches.
-     * <p>
-     * If the 'include_named_queries_score' is not set, this method will return {@link Float#NaN}
-     * for each named query instead of a numerical score.
-     * </p>
-     *
-     * @param name The name of the query to retrieve the score for.
-     * @return The score of the named query, or {@link Float#NaN} if 'include_named_queries_score' is not set.
-     */
-    public Float getMatchedQueryScore(String name) {
-        return getMatchedQueriesAndScores().get(name);
     }
 
     /**

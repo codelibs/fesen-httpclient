@@ -321,29 +321,10 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     }
 
     /**
-     * Sets the system ingest pipeline to be executed before indexing the document
-     */
-    public IndexRequest setSystemIngestPipeline(final String systemIngestPipeline) {
-        this.systemIngestPipeline = systemIngestPipeline;
-        return this;
-    }
-
-    /**
      * Returns the system ingest pipeline to be executed before indexing the document
      */
     public String getSystemIngestPipeline() {
         return this.systemIngestPipeline;
-    }
-
-    /**
-     * Sets the final ingest pipeline to be executed before indexing the document.
-     *
-     * @param finalPipeline the name of the final pipeline
-     * @return this index request
-     */
-    public IndexRequest setFinalPipeline(final String finalPipeline) {
-        this.finalPipeline = finalPipeline;
-        return this;
     }
 
     /**
@@ -353,17 +334,6 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      */
     public String getFinalPipeline() {
         return this.finalPipeline;
-    }
-
-    /**
-     * Sets if the pipeline for this request has been resolved by the coordinating node.
-     *
-     * @param isPipelineResolved true if the pipeline has been resolved
-     * @return the request
-     */
-    public IndexRequest isPipelineResolved(final boolean isPipelineResolved) {
-        this.isPipelineResolved = isPipelineResolved;
-        return this;
     }
 
     /**
@@ -380,10 +350,6 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      */
     public BytesReference source() {
         return source;
-    }
-
-    public Map<String, Object> sourceAsMap() {
-        return XContentHelper.convertToMap(source, false, contentType).v2();
     }
 
     /**
@@ -606,12 +572,6 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     @Override
     public VersionType versionType() {
         return this.versionType;
-    }
-
-    @Deprecated(forRemoval = true)
-    public void checkAutoIdWithOpTypeCreateSupportedByVersion(Version version) {
-        // Do nothing.
-        // TODO: Remove in OpenSearch 4.0
     }
 
     @Override

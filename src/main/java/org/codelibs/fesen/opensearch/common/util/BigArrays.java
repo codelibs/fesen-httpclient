@@ -58,12 +58,6 @@ public class BigArrays {
 
     public static final BigArrays NON_RECYCLING_INSTANCE = new BigArrays(null, null, CircuitBreaker.REQUEST);
 
-    /** Returns the next size to grow when working with parallel arrays that
-     *  may have different page sizes or number of bytes per element. */
-    public static long overSize(long minTargetSize) {
-        return overSize(minTargetSize, PageCacheRecycler.PAGE_SIZE_IN_BYTES / 8, 1);
-    }
-
     /** Return the next size to grow to that is &gt;= <code>minTargetSize</code>.
      *  Inspired from {@link ArrayUtil#oversize(int, int)} and adapted to play nicely with paging. */
     public static long overSize(long minTargetSize, int pageSize, int bytesPerElement) {
@@ -491,10 +485,6 @@ public class BigArrays {
         return this.circuitBreakingInstance;
     }
 
-    public CircuitBreakerService breakerService() {
-        return this.circuitBreakingInstance.breakerService;
-    }
-
     private <T extends AbstractBigArray> T resizeInPlace(T array, long newSize) {
         final long oldMemSize = array.ramBytesUsed();
         final long oldSize = array.size();
@@ -539,14 +529,6 @@ public class BigArrays {
         } else {
             return validate(new ByteArrayWrapper(this, new byte[(int) size], size, null, clearOnResize));
         }
-    }
-
-    /**
-     * Allocate a new {@link ByteArray} initialized with zeros.
-     * @param size          the initial length of the array
-     */
-    public ByteArray newByteArray(long size) {
-        return newByteArray(size, true);
     }
 
     /** Resize the array to the exact provided size. */

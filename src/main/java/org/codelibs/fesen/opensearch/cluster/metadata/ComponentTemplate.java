@@ -112,11 +112,6 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
     }
 
     @Nullable
-    public Long version() {
-        return version;
-    }
-
-    @Nullable
     public Map<String, Object> metadata() {
         return metadata;
     }

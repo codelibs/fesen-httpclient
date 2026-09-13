@@ -48,13 +48,6 @@ public class VerifyRepositoryRequestBuilder extends ClusterManagerNodeOperationR
     VerifyRepositoryRequestBuilder> {
 
     /**
-     * Constructs unregister repository request builder
-     */
-    public VerifyRepositoryRequestBuilder(OpenSearchClient client, VerifyRepositoryAction action) {
-        super(client, action, new VerifyRepositoryRequest());
-    }
-
-    /**
      * Constructs unregister repository request builder with specified repository name
      */
     public VerifyRepositoryRequestBuilder(OpenSearchClient client, VerifyRepositoryAction action, String name) {

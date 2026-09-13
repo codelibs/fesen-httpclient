@@ -67,10 +67,6 @@ public final class ResponseCollectorService {
     private final ConcurrentMap<String, NodeStatistics> nodeIdToStats = ConcurrentCollections.newConcurrentMap();
 
 
-    void removeNode(String nodeId) {
-        nodeIdToStats.remove(nodeId);
-    }
-
     /**
      * Struct-like class encapsulating a point-in-time snapshot of a particular
      * node's statistics. This includes the EWMA of queue size, response time,

@@ -51,11 +51,6 @@ public class DeleteIndexTemplateRequest extends ClusterManagerNodeRequest<Delete
 
     private String name;
 
-    public DeleteIndexTemplateRequest(StreamInput in) throws IOException {
-        super(in);
-        name = in.readString();
-    }
-
     public DeleteIndexTemplateRequest() {}
 
     /**

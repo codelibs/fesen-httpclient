@@ -20,8 +20,4 @@ public class StreamConstraintsException extends IOException {
         super(message, cause);
     }
 
-    public StreamConstraintsException(Throwable cause) {
-        super(cause);
-    }
-
 }

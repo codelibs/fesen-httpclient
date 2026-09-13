@@ -222,10 +222,6 @@ public class CollectionUtils {
         return list;
     }
 
-    public static <E> ArrayList<E> newSingletonArrayList(E element) {
-        return new ArrayList<>(Collections.singletonList(element));
-    }
-
     /**
      * Checks if a collection is empty or not. Empty collection mean either it is null or it has no elements in it.
      * If collection contains a null element it means it is not empty.

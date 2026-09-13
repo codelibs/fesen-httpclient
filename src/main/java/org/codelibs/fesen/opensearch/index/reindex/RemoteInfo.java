@@ -159,35 +159,12 @@ public class RemoteInfo implements Writeable, ToXContentObject {
         return scheme;
     }
 
-    public String getHost() {
-        return host;
-    }
-
     public int getPort() {
         return port;
     }
 
-    @Nullable
-    public String getPathPrefix() {
-        return pathPrefix;
-    }
-
     public BytesReference getQuery() {
         return query;
-    }
-
-    @Nullable
-    public String getUsername() {
-        return username;
-    }
-
-    @Nullable
-    public String getPassword() {
-        return password;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
     }
 
     /**

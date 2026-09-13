@@ -50,10 +50,6 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
         PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> p.map(), PARAMS);
     }
 
-    public Context(String name) {
-        this(name, LATEST_VERSION, Map.of());
-    }
-
     public Context(String name, String version, Map<String, Object> params) {
         this.name = name;
         if (version != null) {
@@ -72,24 +68,8 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
         return name;
     }
 
-    public void name(String name) {
-        this.name = name;
-    }
-
     public String version() {
         return version;
-    }
-
-    public void version(String version) {
-        this.version = version;
-    }
-
-    public Map<String, Object> params() {
-        return params;
-    }
-
-    public void params(Map<String, Object> params) {
-        this.params = params;
     }
 
     @Override

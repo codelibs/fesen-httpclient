@@ -350,30 +350,10 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     }
 
     /**
-     * Returns the alias of the cluster that this search request is being executed on. A non-null value indicates that this search request
-     * is being executed as part of a locally reduced cross-cluster search request. The cluster alias is used to prefix index names
-     * returned as part of search hits with the alias of the cluster they came from.
-     */
-    @Nullable
-    String getLocalClusterAlias() {
-        return localClusterAlias;
-    }
-
-    /**
      * Returns whether the reduction phase that will be performed needs to be final or not.
      */
     boolean isFinalReduce() {
         return finalReduce;
-    }
-
-    /**
-     * Returns the current time in milliseconds from the time epoch, to be used for the execution of this search request. Used to
-     * ensure that the same value, determined by the coordinating node, is used on all nodes involved in the execution of the search
-     * request. When created through {@link #subSearchRequest(SearchRequest, String[], String, long, boolean)}, this method returns
-     * the provided current time, otherwise it will return {@link System#currentTimeMillis()}.
-     */
-    public long getOrCreateAbsoluteStartMillis() {
-        return absoluteStartMillis == DEFAULT_ABSOLUTE_START_MILLIS ? System.currentTimeMillis() : absoluteStartMillis;
     }
 
     /**
@@ -556,15 +536,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     }
 
     /**
-     * Returns the raw value of maxConcurrentShardRequests without applying the default.
-     * A value of {@code 0} means the user has not explicitly set this parameter.
-     */
-    @ExperimentalApi
-    public int getMaxConcurrentShardRequestsRaw() {
-        return maxConcurrentShardRequests;
-    }
-
-    /**
      * Returns value of user-provided phase_took query parameter for this search request.
      */
     public Boolean isPhaseTook() {
@@ -592,10 +563,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     public TimeValue getCancelAfterTimeInterval() {
         return cancelAfterTimeInterval;
-    }
-
-    public String pipeline() {
-        return pipeline;
     }
 
     public final String buildDescription() {

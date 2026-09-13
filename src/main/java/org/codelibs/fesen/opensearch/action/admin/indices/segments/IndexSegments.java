@@ -77,14 +77,6 @@ public class IndexSegments implements Iterable<IndexShardSegments> {
         return this.index;
     }
 
-    /**
-     * A shard id to index shard segments map (note, index shard segments is the replication shard group that maps
-     * to the shard id).
-     */
-    public Map<Integer, IndexShardSegments> getShards() {
-        return this.indexShards;
-    }
-
     @Override
     public Iterator<IndexShardSegments> iterator() {
         return indexShards.values().iterator();

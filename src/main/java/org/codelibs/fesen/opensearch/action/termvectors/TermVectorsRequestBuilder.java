@@ -65,101 +65,11 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
     }
 
     /**
-     * Sets the index where the document is located.
-     */
-    public TermVectorsRequestBuilder setIndex(String index) {
-        request.index(index);
-        return this;
-    }
-
-    /**
-     * Sets the id of the document.
-     */
-    public TermVectorsRequestBuilder setId(String id) {
-        request.id(id);
-        return this;
-    }
-
-    /**
-     * Sets the routing. Required if routing isn't id based.
-     */
-    public TermVectorsRequestBuilder setRouting(String routing) {
-        request.routing(routing);
-        return this;
-    }
-
-    /**
-     * Sets whether to return the start and stop offsets for each term if they were stored or
-     * skip offsets.
-     */
-    public TermVectorsRequestBuilder setOffsets(boolean offsets) {
-        request.offsets(offsets);
-        return this;
-    }
-
-    /**
-     * Sets whether to return the positions for each term if stored or skip.
-     */
-    public TermVectorsRequestBuilder setPositions(boolean positions) {
-        request.positions(positions);
-        return this;
-    }
-
-    /**
-     * Sets whether to return the payloads for each term or skip.
-     */
-    public TermVectorsRequestBuilder setPayloads(boolean payloads) {
-        request.payloads(payloads);
-        return this;
-    }
-
-    /**
-     * Sets whether to return the term statistics for each term in the shard or skip.
-     */
-    public TermVectorsRequestBuilder setTermStatistics(boolean termStatistics) {
-        request.termStatistics(termStatistics);
-        return this;
-    }
-
-    /**
-     * Sets whether to return the field statistics for each term in the shard or skip.
-     */
-    public TermVectorsRequestBuilder setFieldStatistics(boolean fieldStatistics) {
-        request.fieldStatistics(fieldStatistics);
-        return this;
-    }
-
-    /**
      * Sets whether to return only term vectors for special selected fields. Returns the term
      * vectors for all fields if selectedFields == null
      */
     public TermVectorsRequestBuilder setSelectedFields(String... fields) {
         request.selectedFields(fields);
-        return this;
-    }
-
-    /**
-     * Sets whether term vectors are generated real-time.
-     */
-    public TermVectorsRequestBuilder setRealtime(boolean realtime) {
-        request.realtime(realtime);
-        return this;
-    }
-
-    /*
-     * Sets the version, which will cause the get operation to only be performed if a matching
-     * version exists and no changes happened on the doc since then.
-     */
-    public TermVectorsRequestBuilder setVersion(long version) {
-        request.version(version);
-        return this;
-    }
-
-    /*
-     * Sets the versioning type. Defaults to {@link org.codelibs.fesen.opensearch.index.VersionType#INTERNAL}.
-     */
-    public TermVectorsRequestBuilder setVersionType(VersionType versionType) {
-        request.versionType(versionType);
         return this;
     }
 }

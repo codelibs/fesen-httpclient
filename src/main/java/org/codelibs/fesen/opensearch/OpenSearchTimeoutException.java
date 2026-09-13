@@ -43,20 +43,9 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class OpenSearchTimeoutException extends OpenSearchException {
-    public OpenSearchTimeoutException(StreamInput in) throws IOException {
-        super(in);
-    }
 
     public OpenSearchTimeoutException(Throwable cause) {
         super(cause);
-    }
-
-    public OpenSearchTimeoutException(String message, Object... args) {
-        super(message, args);
-    }
-
-    public OpenSearchTimeoutException(String message, Throwable cause, Object... args) {
-        super(message, cause, args);
     }
 
     @Override

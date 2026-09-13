@@ -48,27 +48,6 @@ public class ClusterStateStats implements Writeable, ToXContentObject {
         return updateFailed.get();
     }
 
-    public List<PersistedStateStats> getPersistenceStats() {
-        return persistenceStats;
-    }
-
-    public void stateUpdated() {
-        updateSuccess.incrementAndGet();
-    }
-
-    public void stateUpdateFailed() {
-        updateFailed.incrementAndGet();
-    }
-
-    public void stateUpdateTook(long stateUpdateTime) {
-        updateTotalTimeInMillis.addAndGet(stateUpdateTime);
-    }
-
-    public ClusterStateStats setPersistenceStats(List<PersistedStateStats> persistenceStats) {
-        this.persistenceStats = persistenceStats;
-        return this;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVLong(updateSuccess.get());

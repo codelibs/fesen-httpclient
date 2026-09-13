@@ -49,10 +49,6 @@ public class GetMappingsRequest extends ClusterInfoRequest<GetMappingsRequest> {
 
     public GetMappingsRequest() {}
 
-    public GetMappingsRequest(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

@@ -401,10 +401,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return remoteStoreIndexShallowCopy;
         }
 
-        public boolean remoteStoreIndexShallowCopyV2() {
-            return remoteStoreIndexShallowCopyV2;
-        }
-
         public Map<String, Object> userMetadata() {
             return userMetadata;
         }
@@ -435,19 +431,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
          */
         public Version version() {
             return version;
-        }
-
-        @Nullable
-        public SnapshotId source() {
-            return source;
-        }
-
-        public boolean isClone() {
-            return source != null;
-        }
-
-        public Map<RepositoryShardId, ShardSnapshotStatus> clones() {
-            return clones;
         }
 
         @Override
@@ -632,10 +615,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         @Nullable
         private final String reason;
 
-        public ShardSnapshotStatus(String nodeId, String generation) {
-            this(nodeId, ShardState.INIT, generation);
-        }
-
         public ShardSnapshotStatus(@Nullable String nodeId, ShardState state, @Nullable String generation) {
             this(nodeId, state, null, generation);
         }
@@ -770,10 +749,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         this.entries = entries;
     }
 
-    public List<Entry> entries() {
-        return this.entries;
-    }
-
     @Override
     public String getWriteableName() {
         return TYPE;
@@ -782,14 +757,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
     @Override
     public Version getMinimalSupportedVersion() {
         return Version.CURRENT.minimumCompatibilityVersion();
-    }
-
-    public static NamedDiff<Custom> readDiffFrom(StreamInput in) throws IOException {
-        return readDiffFrom(Custom.class, TYPE, in);
-    }
-
-    public SnapshotsInProgress(StreamInput in) throws IOException {
-        this.entries = in.readList(SnapshotsInProgress.Entry::new);
     }
 
     @Override

@@ -147,10 +147,6 @@ public final class RangeAggregator {
             return this.key;
         }
 
-        boolean matches(double value) {
-            return value >= from && value < to;
-        }
-
         @Override
         public String toString() {
             return "[" + from + " to " + to + ")";

@@ -89,10 +89,6 @@ public class SliceBuilder implements Writeable, ToXContentObject {
 
     private SliceBuilder() {}
 
-    public SliceBuilder(int id, int max) {
-        this("_id", id, max);
-    }
-
     /**
      *
      * @param field The name of the field
@@ -142,13 +138,6 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         }
         this.id = id;
         return this;
-    }
-
-    /**
-     * The id of the slice.
-     */
-    public int getId() {
-        return id;
     }
 
     private SliceBuilder setMax(int max) {

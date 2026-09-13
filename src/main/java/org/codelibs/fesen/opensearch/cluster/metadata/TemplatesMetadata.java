@@ -101,11 +101,6 @@ public class TemplatesMetadata extends AbstractDiffable<TemplatesMetadata> imple
             this.templates = new HashMap<String, IndexTemplateMetadata>();
         }
 
-        public Builder removeTemplate(String templateName) {
-            templates.remove(templateName);
-            return this;
-        }
-
         public TemplatesMetadata build() {
             return new TemplatesMetadata(templates);
         }

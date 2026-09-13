@@ -85,18 +85,6 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
     }
 
     /**
-     * Creates a bucket ordering strategy which sorts buckets based on a metric from a multi-valued sub-aggregation.
-     *
-     * @param path       path to the sub-aggregation to sort on.
-     * @param metricName name of the value of the multi-value metric to sort on.
-     * @param asc        direction to sort by: {@code true} for ascending, {@code false} for descending.
-     * @see AggregationPath
-     */
-    public static BucketOrder aggregation(String path, String metricName, boolean asc) {
-        return new InternalOrder.Aggregation(path + "." + metricName, asc);
-    }
-
-    /**
      * Creates a bucket ordering strategy which sorts buckets based on multiple criteria. A tie-breaker may be added to
      * avoid non-deterministic ordering.
      *

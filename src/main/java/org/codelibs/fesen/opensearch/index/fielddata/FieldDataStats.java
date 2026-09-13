@@ -118,11 +118,6 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
         return this.evictions;
     }
 
-    @Nullable
-    public FieldMemoryStats getFields() {
-        return fields;
-    }
-
     /**
      * Builder for the {@link FieldDataStats} class.
      * Provides a fluent API for constructing a FieldDataStats object.

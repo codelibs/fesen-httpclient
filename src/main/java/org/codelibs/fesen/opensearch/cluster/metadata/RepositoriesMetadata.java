@@ -151,10 +151,6 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
         this.repositories = in.readList(RepositoryMetadata::new);
     }
 
-    public static NamedDiff<Custom> readDiffFrom(StreamInput in) throws IOException {
-        return readDiffFrom(Custom.class, TYPE, in);
-    }
-
     /**
      * {@inheritDoc}
      */

@@ -106,20 +106,12 @@ public class DerivedField implements Writeable, ToXContentFragment {
         return script;
     }
 
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
     public String getPrefilterField() {
         return prefilterField;
     }
 
     public String getFormat() {
         return format;
-    }
-
-    public boolean getIgnoreMalformed() {
-        return Boolean.TRUE.equals(ignoreMalformed);
     }
 
     @Override

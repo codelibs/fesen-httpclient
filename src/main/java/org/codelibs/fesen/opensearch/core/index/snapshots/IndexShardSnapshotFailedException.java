@@ -47,10 +47,6 @@ public class IndexShardSnapshotFailedException extends IndexShardSnapshotExcepti
         super(shardId, msg);
     }
 
-    public IndexShardSnapshotFailedException(ShardId shardId, String msg, Throwable cause) {
-        super(shardId, msg, cause);
-    }
-
     public IndexShardSnapshotFailedException(StreamInput in) throws IOException {
         super(in);
     }

@@ -112,13 +112,6 @@ public final class MappingStats implements ToXContentFragment, Writeable {
         out.writeCollection(fieldTypeStats);
     }
 
-    /**
-     * Return stats about field types.
-     */
-    public Set<IndexFeatureStats> getFieldTypeStats() {
-        return fieldTypeStats;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject("mappings");

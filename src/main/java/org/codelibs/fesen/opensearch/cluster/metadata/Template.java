@@ -126,14 +126,6 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
         return settings;
     }
 
-    public CompressedXContent mappings() {
-        return mappings;
-    }
-
-    public Map<String, AliasMetadata> aliases() {
-        return aliases;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         if (this.settings == null) {
@@ -217,9 +209,5 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
         } else {
             return mapping;
         }
-    }
-
-    public void setMappings(CompressedXContent mappings) {
-        this.mappings = mappings;
     }
 }

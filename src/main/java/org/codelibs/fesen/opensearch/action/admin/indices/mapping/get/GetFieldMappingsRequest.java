@@ -68,15 +68,6 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
 
     public GetFieldMappingsRequest() {}
 
-    /**
-     * Indicate whether the receiving node should operate based on local index information or forward requests,
-     * where needed, to other nodes. If running locally, request will not raise errors if running locally &amp; missing indices.
-     */
-    public GetFieldMappingsRequest local(boolean local) {
-        this.local = local;
-        return this;
-    }
-
     public boolean local() {
         return local;
     }

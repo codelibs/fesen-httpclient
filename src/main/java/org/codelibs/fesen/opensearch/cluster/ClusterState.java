@@ -107,15 +107,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     public interface FeatureAware {
 
         /**
-         * An optional feature that is required for the client to have.
-         *
-         * @return an empty optional if no feature is required otherwise a string representing the required feature
-         */
-        default Optional<String> getRequiredFeature() {
-            return Optional.empty();
-        }
-
-        /**
          * Tests whether the custom should be serialized. The criterion is that
          * the output stream must be at least the minimum supported version of the custom.
          * <p>
@@ -262,28 +253,8 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         return this.customs;
     }
 
-    public Map<String, Custom> getCustoms() {
-        return this.customs;
-    }
-
-    public <T extends Custom> T custom(String type) {
-        return (T) customs.get(type);
-    }
-
     public ClusterName getClusterName() {
         return this.clusterName;
-    }
-
-    public VotingConfiguration getLastAcceptedConfiguration() {
-        return coordinationMetadata().getLastAcceptedConfiguration();
-    }
-
-    public VotingConfiguration getLastCommittedConfiguration() {
-        return coordinationMetadata().getLastCommittedConfiguration();
-    }
-
-    public Set<VotingConfigExclusion> getVotingConfigExclusions() {
-        return coordinationMetadata().getVotingConfigExclusions();
     }
 
     /**
@@ -569,10 +540,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             this.clusterName = clusterName;
         }
 
-        public Builder nodes(DiscoveryNodes.Builder nodesBuilder) {
-            return nodes(nodesBuilder.build());
-        }
-
         public Builder nodes(DiscoveryNodes nodes) {
             this.nodes = nodes;
             return this;
@@ -587,17 +554,9 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             return this;
         }
 
-        public Builder metadata(Metadata.Builder metadataBuilder) {
-            return metadata(metadataBuilder.build());
-        }
-
         public Builder metadata(Metadata metadata) {
             this.metadata = metadata;
             return this;
-        }
-
-        public Builder blocks(ClusterBlocks.Builder blocksBuilder) {
-            return blocks(blocksBuilder.build());
         }
 
         public Builder blocks(ClusterBlocks blocks) {
@@ -607,12 +566,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
 
         public Builder version(long version) {
             this.version = version;
-            return this;
-        }
-
-        public Builder incrementVersion() {
-            this.version = version + 1;
-            this.uuid = UNKNOWN_UUID;
             return this;
         }
 
@@ -628,11 +581,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
 
         public Builder putCustom(String type, Custom custom) {
             customs.put(type, Objects.requireNonNull(custom, type));
-            return this;
-        }
-
-        public Builder removeCustom(String type) {
-            customs.remove(type);
             return this;
         }
 
@@ -670,10 +618,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     @Override
     public Diff<ClusterState> diff(ClusterState previousState) {
         return new ClusterStateDiff(previousState, this);
-    }
-
-    public static Diff<ClusterState> readDiffFrom(StreamInput in, DiscoveryNode localNode) throws IOException {
-        return new ClusterStateDiff(in, localNode);
     }
 
     public static ClusterState readFrom(StreamInput in, DiscoveryNode localNode) throws IOException {

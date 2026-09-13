@@ -54,20 +54,12 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public long getCreatedAt() {
         return createdAt;
     }
 
     public long getModifiedAt() {
         return modifiedAt;
-    }
-
-    public SortedSet<Target> getTargets() {
-        return new TreeSet<>(targets);
     }
 
     public static Diff<View> readDiffFrom(final StreamInput in) throws IOException {

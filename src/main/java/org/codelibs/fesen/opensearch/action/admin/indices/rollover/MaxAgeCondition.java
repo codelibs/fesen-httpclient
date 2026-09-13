@@ -54,11 +54,6 @@ public class MaxAgeCondition extends Condition<TimeValue> {
         this.value = value;
     }
 
-    public MaxAgeCondition(StreamInput in) throws IOException {
-        super(NAME);
-        this.value = TimeValue.timeValueMillis(in.readLong());
-    }
-
     @Override
     public Result evaluate(final Stats stats) {
         long indexAge = System.currentTimeMillis() - stats.indexCreated;

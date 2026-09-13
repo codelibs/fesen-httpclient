@@ -81,11 +81,6 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
         return ArrayUtil.copyOfSubArray(bytesRef.bytes, bytesRef.offset, bytesRef.offset + bytesRef.length);
     }
 
-    static byte[] toBytesWithoutCompact(BytesReference reference) {
-        final BytesRef bytesRef = reference.toBytesRef();
-        return bytesRef.bytes;
-    }
-
     /**
      * Returns BytesReference either wrapping the provided {@link ByteArray} or in case the has a backing raw byte array one that wraps
      * that backing array directly.

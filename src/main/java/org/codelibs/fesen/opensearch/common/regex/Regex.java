@@ -63,10 +63,6 @@ public class Regex {
         return str.indexOf('*') != -1;
     }
 
-    public static boolean isMatchAllPattern(String str) {
-        return str.equals("*");
-    }
-
     /**
      * Match a String against the given pattern, supporting the following simple
      * pattern styles: "xxx*", "*xxx", "*xxx*" and "xxx*yyy" matches (with an

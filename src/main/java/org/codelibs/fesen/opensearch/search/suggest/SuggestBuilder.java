@@ -106,14 +106,6 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
     }
 
     /**
-     * Gets the global suggest text
-     */
-    @Nullable
-    public String getGlobalText() {
-        return globalText;
-    }
-
-    /**
      * Adds an {@link org.codelibs.fesen.opensearch.search.suggest.SuggestionBuilder} instance under a user defined name.
      * The order in which the <code>Suggestions</code> are added, is the same as in the response.
      * @throws IllegalArgumentException if two suggestions added have the same name
@@ -126,14 +118,6 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
             throw new IllegalArgumentException("already added another suggestion with name [" + name + "]");
         }
         return this;
-    }
-
-    /**
-     * Get all the <code>Suggestions</code> that were added to the global {@link SuggestBuilder},
-     * together with their names
-     */
-    public Map<String, SuggestionBuilder<?>> getSuggestions() {
-        return suggestions;
     }
 
     @Override

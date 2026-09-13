@@ -80,24 +80,6 @@ public class CryptoMetadata implements Writeable {
         return this.settings;
     }
 
-    /**
-     * Returns the encryption key ARN if configured.
-     *
-     * @return Optional containing the key ARN, or empty if not configured
-     */
-    public Optional<String> getKeyArn() {
-        return Optional.ofNullable(settings.get(KMS_KEY_ARN_SETTING));
-    }
-
-    /**
-     * Returns the encryption context if configured.
-     *
-     * @return Optional containing the encryption context, or empty if not configured
-     */
-    public Optional<String> getEncryptionContext() {
-        return Optional.ofNullable(settings.get(KMS_ENCRYPTION_CONTEXT_SETTING));
-    }
-
     public CryptoMetadata(StreamInput in) throws IOException {
         keyProviderName = in.readString();
         keyProviderType = in.readString();

@@ -54,12 +54,4 @@ public class ForceMergeRequestBuilder extends BroadcastOperationRequestBuilder<
     public ForceMergeRequestBuilder(OpenSearchClient client, ForceMergeAction action) {
         super(client, action, new ForceMergeRequest());
     }
-
-    /**
-     * Should force merge only performed on primary shards. Defaults to {@code false}.
-     */
-    public ForceMergeRequestBuilder setPrimaryOnly(boolean primaryOnly) {
-        request.primaryOnly(primaryOnly);
-        return this;
-    }
 }

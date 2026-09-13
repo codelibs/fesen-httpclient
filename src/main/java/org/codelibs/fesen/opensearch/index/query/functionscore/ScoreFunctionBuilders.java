@@ -45,30 +45,6 @@ import static java.util.Collections.emptyMap;
  */
 public class ScoreFunctionBuilders {
 
-    public static ExponentialDecayFunctionBuilder exponentialDecayFunction(String fieldName, Object origin, Object scale) {
-        return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, null);
-    }
-
-    public static ExponentialDecayFunctionBuilder exponentialDecayFunction(String fieldName, Object origin, Object scale, Object offset) {
-        return new ExponentialDecayFunctionBuilder(fieldName, origin, scale, offset);
-    }
-
-    public static GaussDecayFunctionBuilder gaussDecayFunction(String fieldName, Object origin, Object scale) {
-        return new GaussDecayFunctionBuilder(fieldName, origin, scale, null);
-    }
-
-    public static GaussDecayFunctionBuilder gaussDecayFunction(String fieldName, Object origin, Object scale, Object offset) {
-        return new GaussDecayFunctionBuilder(fieldName, origin, scale, offset);
-    }
-
-    public static LinearDecayFunctionBuilder linearDecayFunction(String fieldName, Object origin, Object scale) {
-        return new LinearDecayFunctionBuilder(fieldName, origin, scale, null);
-    }
-
-    public static LinearDecayFunctionBuilder linearDecayFunction(String fieldName, Object origin, Object scale, Object offset) {
-        return new LinearDecayFunctionBuilder(fieldName, origin, scale, offset);
-    }
-
     public static RandomScoreFunctionBuilder randomFunction() {
         return randomFunction(null);
     }

@@ -68,23 +68,11 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
         super(client, action, new SearchRequest());
     }
 
-    public SearchRequestBuilder(OpenSearchClient client, StreamSearchAction action) {
-        super(client, action, new SearchRequest());
-    }
-
     /**
      * Sets the indices the search will be executed on.
      */
     public SearchRequestBuilder setIndices(String... indices) {
         request.indices(indices);
-        return this;
-    }
-
-    /**
-     * The search type to execute, defaults to {@link SearchType#DEFAULT}.
-     */
-    public SearchRequestBuilder setSearchType(SearchType searchType) {
-        request.searchType(searchType);
         return this;
     }
 
@@ -95,14 +83,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder setSearchType(String searchType) {
         request.searchType(searchType);
-        return this;
-    }
-
-    /**
-     * If set, will enable scrolling of the search request.
-     */
-    public SearchRequestBuilder setScroll(Scroll scroll) {
-        request.scroll(scroll);
         return this;
     }
 
@@ -147,16 +127,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder setPreference(String preference) {
         request.preference(preference);
-        return this;
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions.
-     * <p>
-     * For example indices that don't exist.
-     */
-    public SearchRequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request().indicesOptions(indicesOptions);
         return this;
     }
 
@@ -242,14 +212,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Adds a stored field to load and return (note, it must be stored) as part of the search request.
-     */
-    public SearchRequestBuilder addStoredField(String field) {
-        sourceBuilder().storedField(field);
-        return this;
-    }
-
-    /**
      * Adds a sort against the given field name and the sort ordering.
      *
      * @param field The name of the field
@@ -298,15 +260,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Adds stored fields to load and return (note, it must be stored) as part of the search request.
-     * To disable the stored fields entirely (source and metadata fields) use {@code storedField("_none_")}.
-     */
-    public SearchRequestBuilder storedFields(String... fields) {
-        sourceBuilder().storedFields(Arrays.asList(fields));
-        return this;
-    }
-
-    /**
      * Adds an aggregation to the search operation.
      */
     public SearchRequestBuilder addAggregation(AggregationBuilder aggregation) {
@@ -340,24 +293,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder addRescorer(RescorerBuilder<?> rescorer) {
         sourceBuilder().addRescorer(rescorer);
-        return this;
-    }
-
-    /**
-     * Clears all rescorers from the builder.
-     *
-     * @return this for chaining
-     */
-    public SearchRequestBuilder clearRescorers() {
-        sourceBuilder().clearRescorers();
-        return this;
-    }
-
-    /**
-     * Sets the source of the request as a SearchSourceBuilder.
-     */
-    public SearchRequestBuilder setSource(SearchSourceBuilder source) {
-        request.source(source);
         return this;
     }
 

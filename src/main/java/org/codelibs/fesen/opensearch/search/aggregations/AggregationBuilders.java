@@ -124,13 +124,6 @@ public class AggregationBuilders {
     }
 
     /**
-     * Create a new {@link Avg} aggregation with the given name.
-     */
-    public static WeightedAvgAggregationBuilder weightedAvg(String name) {
-        return new WeightedAvgAggregationBuilder(name);
-    }
-
-    /**
      * Create a new {@link Max} aggregation with the given name.
      */
     public static MaxAggregationBuilder max(String name) {
@@ -173,38 +166,10 @@ public class AggregationBuilders {
     }
 
     /**
-     * Create a new {@link Filters} aggregation with the given name.
-     */
-    public static FiltersAggregationBuilder filters(String name, KeyedFilter... filters) {
-        return new FiltersAggregationBuilder(name, filters);
-    }
-
-    /**
-     * Create a new {@link Filters} aggregation with the given name.
-     */
-    public static FiltersAggregationBuilder filters(String name, QueryBuilder... filters) {
-        return new FiltersAggregationBuilder(name, filters);
-    }
-
-    /**
-     * Create a new {@link AdjacencyMatrix} aggregation with the given name.
-     */
-    public static AdjacencyMatrixAggregationBuilder adjacencyMatrix(String name, Map<String, QueryBuilder> filters) {
-        return new AdjacencyMatrixAggregationBuilder(name, filters);
-    }
-
-    /**
      * Create a new {@link Sampler} aggregation with the given name.
      */
     public static SamplerAggregationBuilder sampler(String name) {
         return new SamplerAggregationBuilder(name);
-    }
-
-    /**
-     * Create a new {@link Sampler} aggregation with the given name.
-     */
-    public static DiversifiedAggregationBuilder diversifiedSampler(String name) {
-        return new DiversifiedAggregationBuilder(name);
     }
 
     /**
@@ -222,27 +187,6 @@ public class AggregationBuilders {
     }
 
     /**
-     * Create a new {@link Nested} aggregation with the given name.
-     */
-    public static NestedAggregationBuilder nested(String name, String path) {
-        return new NestedAggregationBuilder(name, path);
-    }
-
-    /**
-     * Create a new {@link ReverseNested} aggregation with the given name.
-     */
-    public static ReverseNestedAggregationBuilder reverseNested(String name) {
-        return new ReverseNestedAggregationBuilder(name);
-    }
-
-    /**
-     * Create a new {@link GeoDistance} aggregation with the given name.
-     */
-    public static GeoDistanceAggregationBuilder geoDistance(String name, GeoPoint origin) {
-        return new GeoDistanceAggregationBuilder(name, origin);
-    }
-
-    /**
      * Create a new {@link Histogram} aggregation with the given name.
      */
     public static HistogramAggregationBuilder histogram(String name) {
@@ -254,13 +198,6 @@ public class AggregationBuilders {
      */
     public static SignificantTermsAggregationBuilder significantTerms(String name) {
         return new SignificantTermsAggregationBuilder(name);
-    }
-
-    /**
-     * Create a new {@link SignificantTextAggregationBuilder} aggregation with the given name and text field name
-     */
-    public static SignificantTextAggregationBuilder significantText(String name, String fieldName) {
-        return new SignificantTextAggregationBuilder(name, fieldName);
     }
 
     /**
@@ -316,13 +253,6 @@ public class AggregationBuilders {
     }
 
     /**
-     * Create a new {@link MedianAbsoluteDeviation} aggregation with the given name
-     */
-    public static MedianAbsoluteDeviationAggregationBuilder medianAbsoluteDeviation(String name) {
-        return new MedianAbsoluteDeviationAggregationBuilder(name);
-    }
-
-    /**
      * Create a new {@link Cardinality} aggregation with the given name.
      */
     public static CardinalityAggregationBuilder cardinality(String name) {
@@ -337,30 +267,9 @@ public class AggregationBuilders {
     }
 
     /**
-     * Create a new {@link GeoCentroid} aggregation with the given name.
-     */
-    public static GeoCentroidAggregationBuilder geoCentroid(String name) {
-        return new GeoCentroidAggregationBuilder(name);
-    }
-
-    /**
      * Create a new {@link ScriptedMetric} aggregation with the given name.
      */
     public static ScriptedMetricAggregationBuilder scriptedMetric(String name) {
         return new ScriptedMetricAggregationBuilder(name);
-    }
-
-    /**
-     * Create a new {@link CompositeAggregationBuilder} aggregation with the given name.
-     */
-    public static CompositeAggregationBuilder composite(String name, List<CompositeValuesSourceBuilder<?>> sources) {
-        return new CompositeAggregationBuilder(name, sources);
-    }
-
-    /**
-     * Create a new {@link MultiTermsAggregationBuilder} aggregation with the given name.
-     */
-    public static MultiTermsAggregationBuilder multiTerms(String name) {
-        return new MultiTermsAggregationBuilder(name);
     }
 }

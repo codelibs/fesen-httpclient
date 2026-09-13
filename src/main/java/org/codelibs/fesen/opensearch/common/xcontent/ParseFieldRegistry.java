@@ -60,13 +60,6 @@ public class ParseFieldRegistry<T> {
     }
 
     /**
-     * All the names under which values are registered. Expect this to be used mostly for testing.
-     */
-    public Set<String> getNames() {
-        return registry.keySet();
-    }
-
-    /**
      * Lookup a value from the registry by name while checking that the name matches the ParseField.
      *
      * @param name The name of the thing to look up.

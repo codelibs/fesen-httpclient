@@ -139,10 +139,6 @@ public class RemoteTranslogStats implements ToXContentFragment, Writeable {
         return uploadBytesFailed;
     }
 
-    public long getUploadBytesSucceeded() {
-        return uploadBytesSucceeded;
-    }
-
     public void add(RemoteTranslogStats other) {
         if (other == null) {
             return;

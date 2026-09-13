@@ -146,10 +146,6 @@ final class WriteableIngestDocument implements Writeable, ToXContentFragment {
         return builder;
     }
 
-    public static WriteableIngestDocument fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

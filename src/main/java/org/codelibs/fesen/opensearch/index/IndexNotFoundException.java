@@ -57,8 +57,4 @@ public final class IndexNotFoundException extends ResourceNotFoundException {
         super("no such index [" + index.getName() + "]", cause);
         setIndex(index);
     }
-
-    public IndexNotFoundException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

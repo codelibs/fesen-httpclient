@@ -75,14 +75,6 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
         this.tag = tag;
     }
 
-    public ProcessorExecutionDetail(String processorName) {
-        this(processorName, 0, null, null, ProcessorStatus.SUCCESS, null, null);
-    }
-
-    public ProcessorExecutionDetail(String processorName, String tag) {
-        this(processorName, 0, null, null, ProcessorStatus.SUCCESS, null, tag);
-    }
-
     public ProcessorExecutionDetail(StreamInput in) throws IOException {
         this.processorName = in.readString();
         this.durationMillis = in.readLong();
@@ -121,11 +113,6 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
         return outputData;
     }
 
-    public void markProcessorAsFailed(ProcessorStatus status, String errorMessage) {
-        this.status = status;
-        this.errorMessage = errorMessage;
-    }
-
     public ProcessorStatus getStatus() {
         return status;
     }
@@ -136,33 +123,6 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
 
     public String getTag() {
         return tag;
-    }
-
-    /**
-     * Adds or updates the input data for this processor execution detail.
-     *
-     * @param inputData the new input data
-     */
-    public void addInput(Object inputData) {
-        this.inputData = inputData;
-    }
-
-    /**
-     * Adds or updates the output data for this processor execution detail.
-     *
-     * @param outputData the new output data
-     */
-    public void addOutput(Object outputData) {
-        this.outputData = outputData;
-    }
-
-    /**
-     * Adds or updates the duration of the processor execution.
-     *
-     * @param durationMillis the new duration in milliseconds
-     */
-    public void addTook(long durationMillis) {
-        this.durationMillis = durationMillis;
     }
 
     /**

@@ -63,19 +63,4 @@ public class RolloverRequestBuilder extends ClusterManagerNodeOperationRequestBu
         this.request.setNewIndexName(newIndexName);
         return this;
     }
-
-    public RolloverRequestBuilder settings(Settings settings) {
-        this.request.getCreateIndexRequest().settings(settings);
-        return this;
-    }
-
-    public RolloverRequestBuilder alias(Alias alias) {
-        this.request.getCreateIndexRequest().alias(alias);
-        return this;
-    }
-
-    public RolloverRequestBuilder simpleMapping(String... source) {
-        this.request.getCreateIndexRequest().simpleMapping(source);
-        return this;
-    }
 }

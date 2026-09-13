@@ -152,10 +152,6 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
         return builder;
     }
 
-    public static QueryExplanation fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

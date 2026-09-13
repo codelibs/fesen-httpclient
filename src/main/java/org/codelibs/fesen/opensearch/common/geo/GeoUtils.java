@@ -114,36 +114,6 @@ public class GeoUtils {
     }
 
     /**
-     * Calculate the width (in meters) of quadtree cells at a specific level
-     * @param level quadtree level must be greater or equal to zero
-     * @return the width of cells at level in meters
-     */
-    public static double quadTreeCellWidth(int level) {
-        assert level >= 0;
-        return EARTH_EQUATOR / (1L << level);
-    }
-
-    /**
-     * Calculate the height (in meters) of quadtree cells at a specific level
-     * @param level quadtree level must be greater or equal to zero
-     * @return the height of cells at level in meters
-     */
-    public static double quadTreeCellHeight(int level) {
-        assert level >= 0;
-        return EARTH_POLAR_DISTANCE / (1L << level);
-    }
-
-    /**
-     * Calculate the size (in meters) of quadtree cells at a specific level
-     * @param level quadtree level must be greater or equal to zero
-     * @return the size of cells at level in meters
-     */
-    public static double quadTreeCellSize(int level) {
-        assert level >= 0;
-        return Math.sqrt(EARTH_POLAR_DISTANCE * EARTH_POLAR_DISTANCE + EARTH_EQUATOR * EARTH_EQUATOR) / (1L << level);
-    }
-
-    /**
      * Normalize longitude to lie within the -180 (exclusive) to 180 (inclusive) range.
      *
      * @param lon Longitude to normalize
@@ -155,19 +125,6 @@ public class GeoUtils {
         }
         // avoid -0.0
         return lon + 0d;
-    }
-
-    /**
-     * Normalize the geo {@code Point} for its coordinates to lie within their
-     * respective normalized ranges.
-     * <p>
-     * Note: A shift of 180&deg; is applied in the longitude if necessary,
-     * in order to normalize properly the latitude.
-     *
-     * @param point The point to normalize in-place.
-     */
-    public static void normalizePoint(GeoPoint point) {
-        normalizePoint(point, true, true);
     }
 
     /**
@@ -191,10 +148,6 @@ public class GeoUtils {
         double[] pt = { point.lon(), point.lat() };
         normalizePoint(pt, normLon, normLat);
         point.reset(pt[1], pt[0]);
-    }
-
-    public static void normalizePoint(double[] lonLat) {
-        normalizePoint(lonLat, true, true);
     }
 
     public static void normalizePoint(double[] lonLat, boolean normLon, boolean normLat) {
@@ -477,22 +430,6 @@ public class GeoUtils {
             }
             return point.reset(y, x);
         }
-    }
-
-    /**
-     * Parse a {@link GeoPoint} from a string. The string must have one of the following forms:
-     *
-     * <ul>
-     *     <li>Latitude, Longitude form: <pre>&quot;<i>&lt;latitude&gt;</i>,<i>&lt;longitude&gt;</i>&quot;</pre></li>
-     *     <li>Geohash form:: <pre>&quot;<i>&lt;geohash&gt;</i>&quot;</pre></li>
-     * </ul>
-     *
-     * @param val a String to parse the value from
-     * @return new parsed {@link GeoPoint}
-     */
-    public static GeoPoint parseFromString(String val) {
-        GeoPoint point = new GeoPoint();
-        return point.resetFromString(val, false, EffectivePoint.BOTTOM_LEFT);
     }
 
     private GeoUtils() {}

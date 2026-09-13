@@ -114,14 +114,6 @@ public class Alias implements Writeable, ToXContentFragment {
     /**
      * Associates a filter to the alias
      */
-    public Alias filter(String filter) {
-        this.filter = filter;
-        return this;
-    }
-
-    /**
-     * Associates a filter to the alias
-     */
     public Alias filter(Map<String, Object> filter) {
         if (filter == null || filter.isEmpty()) {
             this.filter = null;
@@ -162,13 +154,6 @@ public class Alias implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Returns the search routing value associated with the alias
-     */
-    public String searchRouting() {
-        return searchRouting;
-    }
-
-    /**
      * Associates a search routing value to the alias
      */
     public Alias searchRouting(String searchRouting) {
@@ -189,13 +174,6 @@ public class Alias implements Writeable, ToXContentFragment {
     public Alias writeIndex(@Nullable Boolean writeIndex) {
         this.writeIndex = writeIndex;
         return this;
-    }
-
-    /**
-     * @return whether this alias is hidden or not
-     */
-    public Boolean isHidden() {
-        return isHidden;
     }
 
     /**

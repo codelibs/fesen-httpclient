@@ -47,24 +47,6 @@ public interface BlobStore extends Closeable {
     /**
      * Returns statistics on the count of operations that have been performed on this blob store
      */
-    /**
-     * Returns statistics on the count of operations that have been performed on this blob store
-     */
-    default Map<String, Long> stats() {
-        return Collections.emptyMap();
-    }
-
-    /**
-     * Returns details statistics of operations that have been performed on this blob store
-     */
-    default Map<Metric, Map<String, Long>> extendedStats() {
-        return Collections.emptyMap();
-    }
-
-    /**
-     * Reload the blob store inplace
-     */
-    default void reload(RepositoryMetadata repositoryMetadata) {}
 
     /**
      * Returns a boolean indicating if blobStore has object metadata support enabled

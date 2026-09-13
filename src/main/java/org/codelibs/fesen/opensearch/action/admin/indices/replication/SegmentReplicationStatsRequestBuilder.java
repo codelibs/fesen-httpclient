@@ -27,14 +27,4 @@ public class SegmentReplicationStatsRequestBuilder extends BroadcastOperationReq
         super(client, action, new SegmentReplicationStatsRequest());
     }
 
-    public SegmentReplicationStatsRequestBuilder setDetailed(boolean detailed) {
-        request.detailed(detailed);
-        return this;
-    }
-
-    public SegmentReplicationStatsRequestBuilder setActiveOnly(boolean activeOnly) {
-        request.activeOnly(activeOnly);
-        return this;
-    }
-
 }

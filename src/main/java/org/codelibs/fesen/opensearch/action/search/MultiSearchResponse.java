@@ -121,14 +121,6 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
         }
 
         /**
-         * The actual failure message, null if its not a failure.
-         */
-        @Nullable
-        public String getFailureMessage() {
-            return exception == null ? null : exception.getMessage();
-        }
-
-        /**
          * The actual search response, null if its a failure.
          */
         @Nullable
@@ -168,13 +160,6 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
      */
     public Item[] getResponses() {
         return this.items;
-    }
-
-    /**
-     * How long the msearch took.
-     */
-    public TimeValue getTook() {
-        return new TimeValue(tookInMillis);
     }
 
     @Override

@@ -92,10 +92,6 @@ public class DataStreamMetadata implements Metadata.Custom {
         return new DataStreamMetadata.DataStreamMetadataDiff((DataStreamMetadata) before, this);
     }
 
-    public static NamedDiff<Metadata.Custom> readDiffFrom(StreamInput in) throws IOException {
-        return new DataStreamMetadata.DataStreamMetadataDiff(in);
-    }
-
     @Override
     public EnumSet<Metadata.XContentContext> context() {
         return Metadata.ALL_CONTEXTS;
@@ -109,10 +105,6 @@ public class DataStreamMetadata implements Metadata.Custom {
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeMap(this.dataStreams, StreamOutput::writeString, (stream, val) -> val.writeTo(stream));
-    }
-
-    public static DataStreamMetadata fromXContent(XContentParser parser) throws IOException {
-        return PARSER.parse(parser, null);
     }
 
     @Override

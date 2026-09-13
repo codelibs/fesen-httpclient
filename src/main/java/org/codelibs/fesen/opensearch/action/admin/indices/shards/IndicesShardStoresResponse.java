@@ -285,22 +285,6 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
         failures = Collections.unmodifiableList(in.readList(Failure::readFailure));
     }
 
-    /**
-     * Returns {@link StoreStatus}s
-     * grouped by their index names and shard ids.
-     */
-    public Map<String, Map<Integer, List<StoreStatus>>> getStoreStatuses() {
-        return storeStatuses;
-    }
-
-    /**
-     * Returns node {@link Failure}s encountered
-     * while executing the request
-     */
-    public List<Failure> getFailures() {
-        return failures;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeMap(

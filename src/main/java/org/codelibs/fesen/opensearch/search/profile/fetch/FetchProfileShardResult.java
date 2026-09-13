@@ -46,10 +46,6 @@ public class FetchProfileShardResult implements Writeable, ToXContentFragment {
         this.fetchProfileResults = Collections.unmodifiableList(tmp);
     }
 
-    public List<ProfileResult> getFetchProfileResults() {
-        return fetchProfileResults;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVInt(fetchProfileResults.size());

@@ -96,26 +96,6 @@ public class RetentionLeases implements ToXContentFragment, Writeable {
     }
 
     /**
-     * Checks if this retention lease collection contains a retention lease with the specified {@link RetentionLease#id()}.
-     *
-     * @param id the retention lease ID
-     * @return true if this retention lease collection contains a retention lease with the specified ID, otherwise false
-     */
-    public boolean contains(final String id) {
-        return leases.containsKey(id);
-    }
-
-    /**
-     * Returns the retention lease with the specified ID, or null if no such retention lease exists.
-     *
-     * @param id the retention lease ID
-     * @return the retention lease, or null if no retention lease with the specified ID exists
-     */
-    public RetentionLease get(final String id) {
-        return leases.get(id);
-    }
-
-    /**
      * Represents an empty an un-versioned retention lease collection. This is used when no retention lease collection is found in the
      * commit point
      */
@@ -196,17 +176,6 @@ public class RetentionLeases implements ToXContentFragment, Writeable {
         }
         builder.endArray();
         return builder;
-    }
-
-    /**
-     * Parses a retention leases collection from {@link XContent}. This method assumes that the retention
-     * leases were converted to {@link XContent} via {@link #toXContent(XContentBuilder, Params)}.
-     *
-     * @param parser the parser
-     * @return a retention leases collection
-     */
-    public static RetentionLeases fromXContent(final XContentParser parser) {
-        return PARSER.apply(parser, null);
     }
 
     @Override

@@ -147,11 +147,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
     }
 
     @Nullable
-    public Integer getVersion() {
-        return version();
-    }
-
-    @Nullable
     public Integer version() {
         return version;
     }
@@ -181,14 +176,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
 
     public Map<String, AliasMetadata> aliases() {
         return this.aliases;
-    }
-
-    public Map<String, AliasMetadata> getAliases() {
-        return this.aliases;
-    }
-
-    public static Builder builder(String name) {
-        return new Builder(name);
     }
 
     @Override
@@ -335,11 +322,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
             return this;
         }
 
-        public Builder settings(Settings.Builder settings) {
-            this.settings = settings.build();
-            return this;
-        }
-
         public Builder settings(Settings settings) {
             this.settings = settings;
             return this;
@@ -394,11 +376,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
             builder.startObject(indexTemplateMetadata.name());
             toInnerXContent(indexTemplateMetadata, builder, params, false);
             builder.endObject();
-        }
-
-        static void toInnerXContentWithTypes(IndexTemplateMetadata indexTemplateMetadata, XContentBuilder builder, ToXContent.Params params)
-            throws IOException {
-            toInnerXContent(indexTemplateMetadata, builder, params, true);
         }
 
         private static void toInnerXContent(

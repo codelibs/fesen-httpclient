@@ -86,16 +86,8 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         return ((double) singles()) / SizeUnit.C1;
     }
 
-    public double getKiloFrac() {
-        return kiloFrac();
-    }
-
     public double megaFrac() {
         return ((double) singles()) / SizeUnit.C2;
-    }
-
-    public double getMegaFrac() {
-        return megaFrac();
     }
 
     public double gigaFrac() {

@@ -622,10 +622,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         public void writeTo(StreamOutput out) throws IOException {
             out.writeVInt(ordinal());
         }
-
-        public static APIBlock readFrom(StreamInput input) throws IOException {
-            return APIBlock.values()[input.readVInt()];
-        }
     }
 
     public static final String SETTING_READ_ONLY = APIBlock.READ_ONLY.settingName();
@@ -1318,10 +1314,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return indexCreatedVersion;
     }
 
-    public boolean isAllActiveIngestionEnabled() {
-        return INGESTION_SOURCE_ALL_ACTIVE_INGESTION_SETTING.get(settings);
-    }
-
     public IngestionStatus getIngestionStatus() {
         return ingestionStatus;
     }
@@ -1334,10 +1326,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return indexUpgradedVersion;
     }
 
-    public long getCreationDate() {
-        return settings.getAsLong(SETTING_CREATION_DATE, -1L);
-    }
-
     public State getState() {
         return this.state;
     }
@@ -1346,26 +1334,12 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return numberOfShards;
     }
 
-    /**
-     * Returns the number of virtual shards for this index.
-     * Returns -1 if virtual shards are disabled.
-     *
-     * @return the number of virtual shards or -1
-     */
-    public int getNumberOfVirtualShards() {
-        return settings.getAsInt(SETTING_NUMBER_OF_VIRTUAL_SHARDS, -1);
-    }
-
     public int getNumberOfReplicas() {
         return numberOfReplicas;
     }
 
     public int getRoutingPartitionSize() {
         return routingPartitionSize;
-    }
-
-    public boolean isRoutingPartitionedIndex() {
-        return routingPartitionSize != 1;
     }
 
     public int getTotalNumberOfShards() {
@@ -1404,18 +1378,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     public static final Setting<String> INDEX_RESIZE_SOURCE_UUID = Setting.simpleString(INDEX_RESIZE_SOURCE_UUID_KEY);
     public static final Setting<String> INDEX_RESIZE_SOURCE_NAME = Setting.simpleString(INDEX_RESIZE_SOURCE_NAME_KEY);
 
-    Map<String, DiffableStringMap> getCustomData() {
-        return this.customData;
-    }
-
-    public Map<String, String> getCustomData(final String key) {
-        return this.customData.get(key);
-    }
-
-    public Map<Integer, Set<String>> getInSyncAllocationIds() {
-        return inSyncAllocationIds;
-    }
-
     public Map<String, RolloverInfo> getRolloverInfos() {
         return rolloverInfos;
     }
@@ -1451,26 +1413,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
 
     public boolean bulkAdaptiveShardSelectionEnabled() {
         return this.bulkAdaptiveShardSelectionEnabled;
-    }
-
-    @Nullable
-    public DiscoveryNodeFilters requireFilters() {
-        return requireFilters;
-    }
-
-    @Nullable
-    public DiscoveryNodeFilters getInitialRecoveryFilters() {
-        return initialRecoveryFilters;
-    }
-
-    @Nullable
-    public DiscoveryNodeFilters includeFilters() {
-        return includeFilters;
-    }
-
-    @Nullable
-    public DiscoveryNodeFilters excludeFilters() {
-        return excludeFilters;
     }
 
     @Override
@@ -2028,16 +1970,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             this.splitShardsMetadata = indexMetadata.splitShardsMetadata;
         }
 
-        public Builder index(String index) {
-            this.index = index;
-            return this;
-        }
-
-        public Builder numberOfShards(int numberOfShards) {
-            settings = Settings.builder().put(settings).put(SETTING_NUMBER_OF_SHARDS, numberOfShards).build();
-            return this;
-        }
-
         /**
          * Sets the number of shards that should be used for routing. This should only be used if the number of shards in
          * an index has changed ie if the index is shrunk.
@@ -2067,23 +1999,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return settings.getAsInt(SETTING_NUMBER_OF_SHARDS, -1);
         }
 
-        public Builder routingPartitionSize(int routingPartitionSize) {
-            settings = Settings.builder().put(settings).put(SETTING_ROUTING_PARTITION_SIZE, routingPartitionSize).build();
-            return this;
-        }
-
-        public Builder creationDate(long creationDate) {
-            settings = Settings.builder().put(settings).put(SETTING_CREATION_DATE, creationDate).build();
-            return this;
-        }
-
         public Builder settings(Settings settings) {
             this.settings = settings;
             return this;
-        }
-
-        public MappingMetadata mapping() {
-            return mappings.get(MapperService.SINGLE_MAPPING_NAME);
         }
 
         public Builder putMapping(MappingMetadata mappingMd) {
@@ -2104,27 +2022,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
-        public Builder removeAlias(String alias) {
-            aliases.remove(alias);
-            return this;
-        }
-
-        public Builder removeAllAliases() {
-            aliases.clear();
-            return this;
-        }
-
         public Builder putCustom(String type, Map<String, String> customIndexMetadata) {
             this.customMetadata.put(type, new DiffableStringMap(customIndexMetadata));
             return this;
-        }
-
-        public Map<String, String> removeCustom(String type) {
-            return this.customMetadata.remove(type);
-        }
-
-        public Set<String> getInSyncAllocationIds(int shardId) {
-            return inSyncAllocationIds.get(shardId);
         }
 
         public Builder putInSyncAllocationIds(int shardId, Set<String> allocationIds) {

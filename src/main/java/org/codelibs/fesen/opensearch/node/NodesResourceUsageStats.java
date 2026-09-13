@@ -35,13 +35,6 @@ public class NodesResourceUsageStats implements Writeable, ToXContentFragment {
         out.writeMap(this.nodeIdToResourceUsageStatsMap, StreamOutput::writeString, (stream, stats) -> stats.writeTo(stream));
     }
 
-    /**
-     * Returns map of node id to resource usage stats of the corresponding node.
-     */
-    public Map<String, NodeResourceUsageStats> getNodeIdToResourceUsageStatsMap() {
-        return nodeIdToResourceUsageStatsMap;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject("resource_usage_stats");

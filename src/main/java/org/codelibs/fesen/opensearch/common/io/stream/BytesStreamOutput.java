@@ -143,24 +143,9 @@ public class BytesStreamOutput extends BytesStream {
         count = (int) position;
     }
 
-    public void skip(int length) {
-        seek(((long) count) + length);
-    }
-
     @Override
     public void close() {
         // empty for now.
-    }
-
-    /**
-     * Returns the current size of the buffer.
-     *
-     * @return the value of the <code>count</code> field, which is the number of valid
-     *         bytes in this output stream.
-     * @see java.io.ByteArrayOutputStream#count
-     */
-    public int size() {
-        return count;
     }
 
     @Override
@@ -190,14 +175,6 @@ public class BytesStreamOutput extends BytesStream {
             throw new AssertionError(e);
         }
         return new BytesArray(keyBytes);
-    }
-
-    /**
-     * Returns the number of bytes used by the underlying {@link ByteArray}
-     * @see ByteArray#ramBytesUsed()
-     */
-    public long ramBytesUsed() {
-        return bytes.ramBytesUsed();
     }
 
     void ensureCapacity(long offset) {

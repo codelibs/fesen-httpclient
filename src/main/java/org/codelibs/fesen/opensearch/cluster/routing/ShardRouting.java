@@ -293,21 +293,6 @@ public class ShardRouting implements Writeable, ToXContentObject {
     }
 
     /**
-     * Returns <code>true</code> if this shard is a child shard created by an in-place split.
-     */
-    public boolean isSplitTarget() {
-        return parentShardId != null;
-    }
-
-    /**
-     * Returns a copy of the recovering child shards of this splitting shard, or null if not splitting.
-     */
-    @Nullable
-    public ShardRouting[] getRecoveringChildShards() {
-        return recoveringChildShards == null ? null : recoveringChildShards.clone();
-    }
-
-    /**
      * Returns the parent shard id if this is a child shard created by split, or null otherwise.
      */
     public ShardId getParentShardId() {

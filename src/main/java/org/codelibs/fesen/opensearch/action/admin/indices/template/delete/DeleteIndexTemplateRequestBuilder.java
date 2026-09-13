@@ -47,10 +47,6 @@ public class DeleteIndexTemplateRequestBuilder extends ClusterManagerNodeOperati
     AcknowledgedResponse,
     DeleteIndexTemplateRequestBuilder> {
 
-    public DeleteIndexTemplateRequestBuilder(OpenSearchClient client, DeleteIndexTemplateAction action) {
-        super(client, action, new DeleteIndexTemplateRequest());
-    }
-
     public DeleteIndexTemplateRequestBuilder(OpenSearchClient client, DeleteIndexTemplateAction action, String name) {
         super(client, action, new DeleteIndexTemplateRequest(name));
     }

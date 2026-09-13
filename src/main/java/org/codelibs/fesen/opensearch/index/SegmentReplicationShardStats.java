@@ -50,10 +50,6 @@ public class SegmentReplicationShardStats implements Writeable, ToXContentFragme
         this.currentReplicationLagMillis = in.readVLong();
     }
 
-    public String getAllocationId() {
-        return allocationId;
-    }
-
     public long getCheckpointsBehindCount() {
         return checkpointsBehindCount;
     }
@@ -81,15 +77,6 @@ public class SegmentReplicationShardStats implements Writeable, ToXContentFragme
      */
     public long getLastCompletedReplicationTimeMillis() {
         return lastCompletedReplicationTimeMillis;
-    }
-
-    public void setCurrentReplicationState(SegmentReplicationState currentReplicationState) {
-        this.currentReplicationState = currentReplicationState;
-    }
-
-    @Nullable
-    public SegmentReplicationState getCurrentReplicationState() {
-        return currentReplicationState;
     }
 
     @Override

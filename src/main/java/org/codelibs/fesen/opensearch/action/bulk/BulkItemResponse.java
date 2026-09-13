@@ -294,14 +294,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
             return term;
         }
 
-        /**
-         * Whether this failure is the result of an <em>abort</em>.
-         * If {@code true}, the request to which this failure relates should never be retried, regardless of the {@link #getCause() cause}.
-         */
-        public boolean isAborted() {
-            return aborted;
-        }
-
         public FailureSource getSource() {
             return source;
         }
@@ -317,10 +309,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
             builder.endObject();
             builder.field(STATUS_FIELD, status.getStatus());
             return builder;
-        }
-
-        public static Failure fromXContent(XContentParser parser) {
-            return PARSER.apply(parser, null);
         }
 
         @Override
@@ -403,24 +391,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
             return failure.getId();
         }
         return response.getId();
-    }
-
-    /**
-     * The version of the action.
-     */
-    public long getVersion() {
-        if (failure != null) {
-            return -1;
-        }
-        return response.getVersion();
-    }
-
-    /**
-     * The actual response ({@link IndexResponse} or {@link DeleteResponse}). {@code null} in
-     * case of failure.
-     */
-    public <T extends DocWriteResponse> T getResponse() {
-        return (T) response;
     }
 
     /**

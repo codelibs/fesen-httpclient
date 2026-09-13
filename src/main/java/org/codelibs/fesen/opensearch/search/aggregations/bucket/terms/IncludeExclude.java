@@ -524,18 +524,6 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         this.excludeValues = excludeValues;
     }
 
-    public IncludeExclude(String[] includeValues, String[] excludeValues) {
-        this(convertToBytesRefSet(includeValues), convertToBytesRefSet(excludeValues));
-    }
-
-    public IncludeExclude(double[] includeValues, double[] excludeValues) {
-        this(convertToBytesRefSet(includeValues), convertToBytesRefSet(excludeValues));
-    }
-
-    public IncludeExclude(long[] includeValues, long[] excludeValues) {
-        this(convertToBytesRefSet(includeValues), convertToBytesRefSet(excludeValues));
-    }
-
     public IncludeExclude(int partition, int numPartitions) {
         if (partition < 0 || partition >= numPartitions) {
             throw new IllegalArgumentException("Partition must be >=0 and < numPartition which is " + numPartitions);

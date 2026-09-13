@@ -128,11 +128,6 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    @Nullable
-    public TimeValue getKeepAlive() {
-        return keepAlive;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -90,10 +90,6 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
         return index;
     }
 
-    public long getReplicationId() {
-        return replicationId;
-    }
-
     @Override
     public ReplicationTimer getTimer() {
         return overallTimer;
@@ -106,14 +102,6 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
     public String getSourceDescription() {
 
         return sourceDescription;
-    }
-
-    public DiscoveryNode getTargetNode() {
-        return targetNode;
-    }
-
-    public Map<String, Long> getTimingData() {
-        return timingData;
     }
 
     public TimeValue getReplicatingStageTime() {

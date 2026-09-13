@@ -59,10 +59,6 @@ public class IndexShardUpgradeStatus implements Iterable<ShardUpgradeStatus> {
         return this.shardId;
     }
 
-    public ShardUpgradeStatus getAt(int i) {
-        return shards[i];
-    }
-
     public ShardUpgradeStatus[] getShards() {
         return this.shards;
     }

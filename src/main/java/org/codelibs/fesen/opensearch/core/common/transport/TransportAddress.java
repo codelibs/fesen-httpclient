@@ -125,15 +125,6 @@ public final class TransportAddress implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Returns the addresses port
-     * @return the port number, or 0 if the socket is not bound yet.
-     * @see InetSocketAddress#getPort()
-     */
-    public int getPort() {
-        return address.getPort();
-    }
-
-    /**
      * Returns the enclosed {@link InetSocketAddress}
      */
     public InetSocketAddress address() {

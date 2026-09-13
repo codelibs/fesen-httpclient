@@ -390,10 +390,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
             return queryFailedCount;
         }
 
-        public long getConcurrentQueryCount() {
-            return concurrentQueryCount;
-        }
-
         public TimeValue getConcurrentQueryTime() {
             return new TimeValue(concurrentQueryTimeInMillis);
         }
@@ -438,10 +434,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
             return new TimeValue(scrollTimeInMillis);
         }
 
-        public long getScrollTimeInMillis() {
-            return scrollTimeInMillis;
-        }
-
         public long getScrollCurrent() {
             return scrollCurrent;
         }
@@ -480,10 +472,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
 
         public long getSearchIdleReactivateCount() {
             return searchIdleReactivateCount;
-        }
-
-        public long getStarTreeQueryCount() {
-            return starTreeQueryCount;
         }
 
         public TimeValue getStarTreeQueryTime() {

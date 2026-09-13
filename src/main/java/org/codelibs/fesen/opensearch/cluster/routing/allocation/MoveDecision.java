@@ -119,20 +119,6 @@ public final class MoveDecision extends AbstractAllocationDecision {
     }
 
     /**
-     * Creates a new move decision from this decision, plus adding a remain decision.
-     */
-    public MoveDecision withRemainDecision(Decision canRemainDecision) {
-        return new MoveDecision(
-            canRemainDecision,
-            clusterRebalanceDecision,
-            allocationDecision,
-            targetNode,
-            nodeDecisions,
-            currentNodeRanking
-        );
-    }
-
-    /**
      * Returns {@code true} if the shard cannot remain on its current node and can be moved,
      * returns {@code false} otherwise.  If {@link #isDecisionTaken()} returns {@code false},
      * then invoking this method will throw an {@code IllegalStateException}.
@@ -149,49 +135,6 @@ public final class MoveDecision extends AbstractAllocationDecision {
     public boolean canRemain() {
         checkDecisionState();
         return canRemainDecision.type() == Type.YES;
-    }
-
-    /**
-     * Returns the decision for the shard being allowed to remain on its current node.  If {@link #isDecisionTaken()}
-     * returns {@code false}, then invoking this method will throw an {@code IllegalStateException}.
-     */
-    public Decision getCanRemainDecision() {
-        checkDecisionState();
-        return canRemainDecision;
-    }
-
-    /**
-     * Returns {@code true} if the shard is allowed to be rebalanced to another node in the cluster,
-     * returns {@code false} otherwise.  If {@link #getClusterRebalanceDecision()} returns {@code null}, then
-     * the result of this method is meaningless, as no rebalance decision was taken.  If {@link #isDecisionTaken()}
-     * returns {@code false}, then invoking this method will throw an {@code IllegalStateException}.
-     */
-    public boolean canRebalanceCluster() {
-        checkDecisionState();
-        return clusterRebalanceDecision != null && clusterRebalanceDecision.type() == Type.YES;
-    }
-
-    /**
-     * Returns the decision for being allowed to rebalance the shard.  Invoking this method will return
-     * {@code null} if {@link #canRemain()} ()} returns {@code false}, which means the node is not allowed to
-     * remain on its current node, so the cluster is forced to attempt to move the shard to a different node,
-     * as opposed to attempting to rebalance the shard if a better cluster balance is possible by moving it.
-     * If {@link #isDecisionTaken()} returns {@code false}, then invoking this method will throw an
-     * {@code IllegalStateException}.
-     */
-    @Nullable
-    public Decision getClusterRebalanceDecision() {
-        checkDecisionState();
-        return clusterRebalanceDecision;
-    }
-
-    /**
-     * Returns the {@link AllocationDecision} for moving this shard to another node.  If {@link #isDecisionTaken()} returns
-     * {@code false}, then invoking this method will throw an {@code IllegalStateException}.
-     */
-    @Nullable
-    public AllocationDecision getAllocationDecision() {
-        return allocationDecision;
     }
 
     /**

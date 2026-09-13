@@ -42,22 +42,6 @@ import java.util.Arrays;
 public class MovingFunctions {
 
     /**
-     * Find the maximum value in a window of values.
-     * If all values are missing/null/NaN, the return value will be NaN
-     */
-    public static double max(double[] values) {
-        return Arrays.stream(values).max().orElse(Double.NaN);
-    }
-
-    /**
-     * Find the minimum value in a window of values
-     * If all values are missing/null/NaN, the return value will be NaN
-     */
-    public static double min(double[] values) {
-        return Arrays.stream(values).min().orElse(Double.NaN);
-    }
-
-    /**
      * Calculate a simple unweighted (arithmetic) moving average.
      * <p>
      * Only finite values are averaged.  NaN or null are ignored.

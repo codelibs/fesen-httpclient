@@ -52,11 +52,6 @@ public class VerifyRepositoryRequest extends AcknowledgedRequest<VerifyRepositor
 
     private String name;
 
-    public VerifyRepositoryRequest(StreamInput in) throws IOException {
-        super(in);
-        name = in.readString();
-    }
-
     public VerifyRepositoryRequest() {}
 
     /**

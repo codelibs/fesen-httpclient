@@ -86,10 +86,6 @@ public class RecoveryResponse extends BroadcastResponse {
         return shardRecoveryStates.size() > 0;
     }
 
-    public Map<String, List<RecoveryState>> shardRecoveryStates() {
-        return shardRecoveryStates;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

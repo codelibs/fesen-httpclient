@@ -93,10 +93,6 @@ public class ClusterAwarenessAttributesHealth implements Iterable<ClusterAwarene
         return awarenessAttributeName;
     }
 
-    public Map<String, ClusterAwarenessAttributeValueHealth> getAwarenessAttributeHealthMap() {
-        return awarenessAttributeValueHealthMap;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(awarenessAttributeName);

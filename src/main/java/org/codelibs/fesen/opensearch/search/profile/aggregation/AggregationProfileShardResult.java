@@ -83,10 +83,6 @@ public final class AggregationProfileShardResult implements Writeable, ToXConten
         }
     }
 
-    public List<ProfileResult> getProfileResults() {
-        return Collections.unmodifiableList(aggProfileResults);
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startArray(AGGREGATIONS);

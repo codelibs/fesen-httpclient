@@ -56,10 +56,6 @@ public class PutIndexTemplateRequestBuilder extends ClusterManagerNodeOperationR
     AcknowledgedResponse,
     PutIndexTemplateRequestBuilder> {
 
-    public PutIndexTemplateRequestBuilder(OpenSearchClient client, PutIndexTemplateAction action) {
-        super(client, action, new PutIndexTemplateRequest());
-    }
-
     public PutIndexTemplateRequestBuilder(OpenSearchClient client, PutIndexTemplateAction action, String name) {
         super(client, action, new PutIndexTemplateRequest(name));
     }

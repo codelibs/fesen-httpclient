@@ -19,8 +19,4 @@ public class JsonGenerationException extends IOException {
     public JsonGenerationException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public JsonGenerationException(Throwable cause) {
-        super(cause);
-    }
 }

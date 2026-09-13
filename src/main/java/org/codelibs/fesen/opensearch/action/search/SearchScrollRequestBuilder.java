@@ -46,20 +46,8 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class SearchScrollRequestBuilder extends ActionRequestBuilder<SearchScrollRequest, SearchResponse> {
 
-    public SearchScrollRequestBuilder(OpenSearchClient client, SearchScrollAction action) {
-        super(client, action, new SearchScrollRequest());
-    }
-
     public SearchScrollRequestBuilder(OpenSearchClient client, SearchScrollAction action, String scrollId) {
         super(client, action, new SearchScrollRequest(scrollId));
-    }
-
-    /**
-     * If set, will enable scrolling of the search request.
-     */
-    public SearchScrollRequestBuilder setScroll(Scroll scroll) {
-        request.scroll(scroll);
-        return this;
     }
 
     /**

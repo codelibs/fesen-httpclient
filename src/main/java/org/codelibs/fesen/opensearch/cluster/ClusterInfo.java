@@ -243,43 +243,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     }
 
     /**
-     * Returns a node id to disk usage mapping for the path that has the least available space on the node.
-     * Note that this does not take account of reserved space: there may be another path with less available _and unreserved_ space.
-     */
-    public Map<String, DiskUsage> getNodeLeastAvailableDiskUsages() {
-        return Collections.unmodifiableMap(this.leastAvailableSpaceUsage);
-    }
-
-    /**
-     * Returns a node id to disk usage mapping for the path that has the most available space on the node.
-     * Note that this does not take account of reserved space: there may be another path with more available _and unreserved_ space.
-     */
-    public Map<String, DiskUsage> getNodeMostAvailableDiskUsages() {
-        return Collections.unmodifiableMap(this.mostAvailableSpaceUsage);
-    }
-
-    /**
-     * Returns a node id to file cache stats mapping for the nodes that have search roles assigned to it.
-     */
-    public Map<String, AggregateFileCacheStats> getNodeFileCacheStats() {
-        return Collections.unmodifiableMap(this.nodeFileCacheStats);
-    }
-
-    /**
-     * Returns a node id to resource usage stats mapping.
-     */
-    public Map<String, NodeResourceUsageStats> getNodeResourceUsageStats() {
-        return Collections.unmodifiableMap(this.nodeResourceUsageStats);
-    }
-
-    /**
-     * Returns the nodes absolute data-path the given shard is allocated on or <code>null</code> if the information is not available.
-     */
-    public String getDataPath(ShardRouting shardRouting) {
-        return routingToDataPath.get(shardRouting);
-    }
-
-    /**
      * Represents a data path on a node
      *
      * @opensearch.internal
@@ -352,10 +315,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
 
         public long getTotal() {
             return total;
-        }
-
-        public boolean containsShardId(ShardId shardId) {
-            return shardIds.contains(shardId);
         }
 
         @Override

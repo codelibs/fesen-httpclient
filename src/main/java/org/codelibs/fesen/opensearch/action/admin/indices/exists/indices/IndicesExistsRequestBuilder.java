@@ -50,9 +50,4 @@ public class IndicesExistsRequestBuilder extends ClusterManagerNodeReadOperation
     public IndicesExistsRequestBuilder(OpenSearchClient client, IndicesExistsAction action, String... indices) {
         super(client, action, new IndicesExistsRequest(indices));
     }
-
-    public IndicesExistsRequestBuilder setIndices(String... indices) {
-        request.indices(indices);
-        return this;
-    }
 }

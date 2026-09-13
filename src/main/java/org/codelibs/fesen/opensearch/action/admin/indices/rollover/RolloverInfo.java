@@ -96,10 +96,6 @@ public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writ
         return alias;
     }
 
-    public List<Condition<?>> getMetConditions() {
-        return metConditions;
-    }
-
     public long getTime() {
         return time;
     }

@@ -48,10 +48,6 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetRequest, GetResponse, GetRequestBuilder> {
 
-    public GetRequestBuilder(OpenSearchClient client, GetAction action) {
-        super(client, action, new GetRequest());
-    }
-
     public GetRequestBuilder(OpenSearchClient client, GetAction action, @Nullable String index) {
         super(client, action, new GetRequest(index));
     }
@@ -61,40 +57,6 @@ public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetReq
      */
     public GetRequestBuilder setId(String id) {
         request.id(id);
-        return this;
-    }
-
-    /**
-     * Controls the shard routing of the request. Using this value to hash the shard
-     * and not the id.
-     */
-    public GetRequestBuilder setRouting(String routing) {
-        request.routing(routing);
-        return this;
-    }
-
-    /**
-     * Sets the preference to execute the search. Defaults to randomize across shards. Can be set to
-     * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
-     * or a custom value, which guarantees that the same order
-     * will be used across different requests.
-     */
-    public GetRequestBuilder setPreference(String preference) {
-        request.preference(preference);
-        return this;
-    }
-
-    /**
-     * Explicitly specify the fields that will be returned. By default, the {@code _source}
-     * field will be returned.
-     */
-    public GetRequestBuilder setStoredFields(String... fields) {
-        request.storedFields(fields);
-        return this;
-    }
-
-    public GetRequestBuilder setRealtime(boolean realtime) {
-        request.realtime(realtime);
         return this;
     }
 }

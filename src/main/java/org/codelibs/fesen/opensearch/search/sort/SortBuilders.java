@@ -60,48 +60,6 @@ public class SortBuilders {
     }
 
     /**
-     * Constructs a new script based sort.
-     *
-     * @param script The script to use.
-     * @param type   The type, can either be "string" or "number".
-     */
-    public static ScriptSortBuilder scriptSort(Script script, ScriptSortType type) {
-        return new ScriptSortBuilder(script, type);
-    }
-
-    /**
-     * A geo distance based sort.
-     *
-     * @param fieldName The geo point like field name.
-     * @param lat Latitude of the point to create the range distance facets from.
-     * @param lon Longitude of the point to create the range distance facets from.
-     *
-     */
-    public static GeoDistanceSortBuilder geoDistanceSort(String fieldName, double lat, double lon) {
-        return new GeoDistanceSortBuilder(fieldName, lat, lon);
-    }
-
-    /**
-     * Constructs a new distance based sort on a geo point like field.
-     *
-     * @param fieldName The geo point like field name.
-     * @param points The points to create the range distance facets from.
-     */
-    public static GeoDistanceSortBuilder geoDistanceSort(String fieldName, GeoPoint... points) {
-        return new GeoDistanceSortBuilder(fieldName, points);
-    }
-
-    /**
-     * Constructs a new distance based sort on a geo point like field.
-     *
-     * @param fieldName The geo point like field name.
-     * @param geohashes The points to create the range distance facets from.
-     */
-    public static GeoDistanceSortBuilder geoDistanceSort(String fieldName, String... geohashes) {
-        return new GeoDistanceSortBuilder(fieldName, geohashes);
-    }
-
-    /**
      * Constructs a new shard‐doc tiebreaker sort.
      */
     public static ShardDocSortBuilder shardDocSort() {

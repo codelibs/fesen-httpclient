@@ -73,11 +73,6 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
         this(search, true);
     }
 
-    public UpdateByQueryRequest(StreamInput in) throws IOException {
-        super(in);
-        pipeline = in.readOptionalString();
-    }
-
     private UpdateByQueryRequest(SearchRequest search, boolean setDefaults) {
         super(search, setDefaults);
     }
@@ -108,29 +103,6 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
             getSearchRequest().routing(routing);
         }
         return this;
-    }
-
-    /**
-     * The scroll size to control number of documents processed per batch
-     */
-    public UpdateByQueryRequest setBatchSize(int size) {
-        getSearchRequest().source().size(size);
-        return this;
-    }
-
-    /**
-     * Set the IndicesOptions for controlling unavailable indices
-     */
-    public UpdateByQueryRequest setIndicesOptions(IndicesOptions indicesOptions) {
-        getSearchRequest().indicesOptions(indicesOptions);
-        return this;
-    }
-
-    /**
-     * Gets the batch size for this request
-     */
-    public int getBatchSize() {
-        return getSearchRequest().source().size();
     }
 
     /**

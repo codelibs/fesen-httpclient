@@ -26,10 +26,6 @@ public class IoUsageStats implements Writeable, ToXContentFragment {
 
     private double ioUtilisationPercent;
 
-    public IoUsageStats(double ioUtilisationPercent) {
-        this.ioUtilisationPercent = ioUtilisationPercent;
-    }
-
     /**
      *
      * @param in the stream to read from
@@ -51,10 +47,6 @@ public class IoUsageStats implements Writeable, ToXContentFragment {
 
     public double getIoUtilisationPercent() {
         return ioUtilisationPercent;
-    }
-
-    public void setIoUtilisationPercent(double ioUtilisationPercent) {
-        this.ioUtilisationPercent = ioUtilisationPercent;
     }
 
     @Override

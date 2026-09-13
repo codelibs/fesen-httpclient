@@ -62,11 +62,6 @@ public final class IndexId implements Writeable, ToXContentObject {
     private final int shardPathType;
     private final int hashCode;
 
-    // Used for testing only
-    public IndexId(final String name, final String id) {
-        this(name, id, DEFAULT_SHARD_PATH_TYPE);
-    }
-
     public IndexId(String name, String id, int shardPathType) {
         this.name = name;
         this.id = id;

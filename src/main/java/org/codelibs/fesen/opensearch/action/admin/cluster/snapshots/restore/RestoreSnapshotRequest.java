@@ -360,36 +360,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sometimes a client has identified precisely which snapshot is to be restored via a separate mechanism and wishes to guarantee that
-     * this is the snapshot that this request restores. If the client can only identify a snapshot by its name then there is a risk that the
-     * desired snapshot may be deleted and replaced by a new snapshot with the same name which is inconsistent with the original one. This
-     * method lets us fail the restore if the precise snapshot we want is not available.
-     * <p>
-     * This is for internal use only and is not exposed in the REST layer.
-     */
-    public RestoreSnapshotRequest snapshotUuid(String snapshotUuid) {
-        this.snapshotUuid = snapshotUuid;
-        return this;
-    }
-
-    /**
-     * @return the UUID that identifies the specific snapshot in the repository to be restored, or {@code null} if the snapshot name is
-     * a sufficient identifier.
-     */
-    @Nullable
-    public String snapshotUuid() {
-        return snapshotUuid;
-    }
-
-    /**
-     * Gets the storage type for this request. {@link StorageType#LOCAL} is the
-     * implicit default if not overridden.
-     */
-    public StorageType storageType() {
-        return storageType;
-    }
-
-    /**
      * Returns Source Remote Store Repository for all the restored indices
      *
      * @return source Remote Store Repository

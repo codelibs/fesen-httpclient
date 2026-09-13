@@ -46,22 +46,7 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class OpenIndexRequestBuilder extends AcknowledgedRequestBuilder<OpenIndexRequest, OpenIndexResponse, OpenIndexRequestBuilder> {
 
-    public OpenIndexRequestBuilder(OpenSearchClient client, OpenIndexAction action) {
-        super(client, action, new OpenIndexRequest());
-    }
-
     public OpenIndexRequestBuilder(OpenSearchClient client, OpenIndexAction action, String... indices) {
         super(client, action, new OpenIndexRequest(indices));
-    }
-
-    /**
-     * Sets the indices to be opened
-     *
-     * @param indices the indices to be opened
-     * @return the request itself
-     */
-    public OpenIndexRequestBuilder setIndices(String... indices) {
-        request.indices(indices);
-        return this;
     }
 }

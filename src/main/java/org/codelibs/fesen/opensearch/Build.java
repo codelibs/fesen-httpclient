@@ -235,15 +235,6 @@ public class Build {
         return isSnapshot;
     }
 
-    /**
-     * Provides information about the intent of the build
-     *
-     * @return true if the build is intended for production use
-     */
-    public boolean isProductionRelease() {
-        return version.matches("[0-9]+\\.[0-9]+\\.[0-9]+");
-    }
-
     @Override
     public String toString() {
         return "[" + type.displayName + "][" + hash + "][" + date + "][" + version + "]";

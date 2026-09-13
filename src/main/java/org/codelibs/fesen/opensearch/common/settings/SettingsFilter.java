@@ -69,13 +69,6 @@ public final class SettingsFilter {
     }
 
     /**
-     * Returns a set of patterns
-     */
-    public Set<String> getPatterns() {
-        return patterns;
-    }
-
-    /**
      * Returns <code>true</code> iff the given string is either a valid settings key pattern or a simple regular expression
      * @see Regex
      * @see AbstractScopedSettings#isValidKey(String)
@@ -93,10 +86,6 @@ public final class SettingsFilter {
             filteredSettings = settings;
         }
         return filteredSettings;
-    }
-
-    public Settings filter(Settings settings) {
-        return filterSettings(patterns, settings);
     }
 
     private static Settings filterSettings(Iterable<String> patterns, Settings settings) {

@@ -132,11 +132,6 @@ public class ClusterSearchShardsRequest extends ClusterManagerNodeReadRequest<Cl
         return this.preference;
     }
 
-    public ClusterSearchShardsRequest slice(SliceBuilder sliceBuilder) {
-        this.sliceBuilder = sliceBuilder;
-        return this;
-    }
-
     public SliceBuilder slice() {
         return this.sliceBuilder;
     }

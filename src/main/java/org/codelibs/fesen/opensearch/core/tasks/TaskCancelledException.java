@@ -43,10 +43,6 @@ import java.io.IOException;
  */
 public class TaskCancelledException extends OpenSearchException {
 
-    public TaskCancelledException(String msg) {
-        super(msg);
-    }
-
     public TaskCancelledException(StreamInput in) throws IOException {
         super(in);
     }

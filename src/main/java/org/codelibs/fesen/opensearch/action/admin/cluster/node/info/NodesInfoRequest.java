@@ -116,10 +116,6 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
             return this.metricName;
         }
 
-        boolean containedIn(Set<String> metricNames) {
-            return metricNames.contains(this.metricName());
-        }
-
         /**
          * Return all available metrics.
          * See {@link Metric}

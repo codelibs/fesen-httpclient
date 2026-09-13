@@ -38,26 +38,6 @@ public final class BitMixer {
         return key * PHI_C32;
     }
 
-    public static int mix(byte key, int seed) {
-        return (key ^ seed) * PHI_C32;
-    }
-
-    public static int mix(double key) {
-        return (int) mix64(Double.doubleToLongBits(key));
-    }
-
-    public static int mix(double key, int seed) {
-        return (int) mix64(Double.doubleToLongBits(key) ^ seed);
-    }
-
-    public static int mix(long key) {
-        return (int) mix64(key);
-    }
-
-    public static int mix(long key, int seed) {
-        return (int) mix64(key ^ seed);
-    }
-
     /**
      * Computes David Stafford variant 9 of 64bit mix function (MH3 finalization step,
      * with different shifts and constants).
@@ -79,29 +59,4 @@ public final class BitMixer {
 
     private static final int PHI_C32 = 0x9e3779b9;
     private static final long PHI_C64 = 0x9e3779b97f4a7c15L;
-
-    public static int mixPhi(byte k) {
-        final int h = k * PHI_C32;
-        return h ^ (h >>> 16);
-    }
-
-    public static int mixPhi(float k) {
-        final int h = Float.floatToIntBits(k) * PHI_C32;
-        return h ^ (h >>> 16);
-    }
-
-    public static int mixPhi(double k) {
-        final long h = Double.doubleToLongBits(k) * PHI_C64;
-        return (int) (h ^ (h >>> 32));
-    }
-
-    public static int mixPhi(long k) {
-        final long h = k * PHI_C64;
-        return (int) (h ^ (h >>> 32));
-    }
-
-    public static int mixPhi(Object k) {
-        final int h = (k == null ? 0 : k.hashCode() * PHI_C32);
-        return h ^ (h >>> 16);
-    }
 }

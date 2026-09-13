@@ -55,14 +55,6 @@ public class SettingsException extends OpenSearchException {
         super(message, cause);
     }
 
-    public SettingsException(StreamInput in) throws IOException {
-        super(in);
-    }
-
-    public SettingsException(String msg, Object... args) {
-        super(msg, args);
-    }
-
     @Override
     public RestStatus status() {
         return RestStatus.BAD_REQUEST;

@@ -2236,10 +2236,6 @@ public class DateFormatters {
         return from(accessor, Locale.ROOT, ZoneOffset.UTC);
     }
 
-    public static ZonedDateTime from(TemporalAccessor accessor, Locale locale) {
-        return from(accessor, locale, ZoneOffset.UTC);
-    }
-
     public static ZonedDateTime from(TemporalAccessor accessor, Locale locale, ZoneId defaultZone) {
         if (accessor instanceof ZonedDateTime) {
             return (ZonedDateTime) accessor;

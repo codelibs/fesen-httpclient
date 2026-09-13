@@ -121,10 +121,6 @@ public abstract class Decision implements ToXContent, Writeable {
             out.writeVInt(id);
         }
 
-        public boolean canPreemptivelyReturn() {
-            return this == THROTTLE || this == NO;
-        }
-
     }
 
     /**
@@ -277,16 +273,6 @@ public abstract class Decision implements ToXContent, Writeable {
     public static class Multi extends Decision implements ToXContentFragment {
 
         private final List<Decision> decisions = new ArrayList<>();
-
-        /**
-         * Add a decision to this {@link Multi}decision instance
-         * @param decision {@link Decision} to add
-         * @return {@link Multi}decision instance with the given decision added
-         */
-        public Multi add(Decision decision) {
-            decisions.add(decision);
-            return this;
-        }
 
         @Override
         public Type type() {

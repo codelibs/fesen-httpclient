@@ -106,20 +106,6 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
     }
 
     /**
-     * Get the field capabilities map.
-     */
-    public Map<String, Map<String, FieldCapabilities>> get() {
-        return responseMap;
-    }
-
-    /**
-     * Returns the actual per-index field caps responses
-     */
-    List<FieldCapabilitiesIndexResponse> getIndexResponses() {
-        return indexResponses;
-    }
-
-    /**
      *
      * Get the field capabilities per type for the provided {@code field}.
      */

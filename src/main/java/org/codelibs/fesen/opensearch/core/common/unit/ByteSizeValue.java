@@ -87,37 +87,12 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
     }
 
     // For testing
-    long getSize() {
-        return size;
-    }
-
-    // For testing
     ByteSizeUnit getUnit() {
         return unit;
     }
 
     public long getBytes() {
         return unit.toBytes(size);
-    }
-
-    public long getKb() {
-        return unit.toKB(size);
-    }
-
-    public long getMb() {
-        return unit.toMB(size);
-    }
-
-    public long getGb() {
-        return unit.toGB(size);
-    }
-
-    public long getTb() {
-        return unit.toTB(size);
-    }
-
-    public long getPb() {
-        return unit.toPB(size);
     }
 
     public double getKbFrac() {

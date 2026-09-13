@@ -155,88 +155,8 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
     }
 
     @Nullable
-    public StoreStats getStore() {
-        return stats.getStore();
-    }
-
-    @Nullable
-    public DocsStats getDocs() {
-        return stats.getDocs();
-    }
-
-    @Nullable
-    public IndexingStats getIndexing() {
-        return stats.getIndexing();
-    }
-
-    @Nullable
-    public GetStats getGet() {
-        return stats.getGet();
-    }
-
-    @Nullable
-    public SearchStats getSearch() {
-        return stats.getSearch();
-    }
-
-    @Nullable
-    public MergeStats getMerge() {
-        return stats.getMerge();
-    }
-
-    @Nullable
-    public RefreshStats getRefresh() {
-        return stats.getRefresh();
-    }
-
-    @Nullable
-    public FlushStats getFlush() {
-        return stats.getFlush();
-    }
-
-    @Nullable
-    public WarmerStats getWarmer() {
-        return stats.getWarmer();
-    }
-
-    @Nullable
-    public FieldDataStats getFieldData() {
-        return stats.getFieldData();
-    }
-
-    @Nullable
-    public QueryCacheStats getQueryCache() {
-        return stats.getQueryCache();
-    }
-
-    @Nullable
-    public RequestCacheStats getRequestCache() {
-        return stats.getRequestCache();
-    }
-
-    @Nullable
-    public CompletionStats getCompletion() {
-        return stats.getCompletion();
-    }
-
-    @Nullable
     public SegmentsStats getSegments() {
         return stats.getSegments();
-    }
-
-    @Nullable
-    public TranslogStats getTranslog() {
-        return stats.getTranslog();
-    }
-
-    @Nullable
-    public RecoveryStats getRecoveryStats() {
-        return stats.getRecoveryStats();
-    }
-
-    @Nullable
-    public StatusCounterStats getStatusCounterStats() {
-        return statusCounterStats;
     }
 
     @Override

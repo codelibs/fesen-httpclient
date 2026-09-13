@@ -83,14 +83,6 @@ public class IndicesStatsResponse extends BroadcastResponse {
         return this.shards;
     }
 
-    public ShardStats getAt(int position) {
-        return shards[position];
-    }
-
-    public IndexStats getIndex(String index) {
-        return getIndices().get(index);
-    }
-
     private Map<String, IndexStats> indicesStats;
 
     public Map<String, IndexStats> getIndices() {

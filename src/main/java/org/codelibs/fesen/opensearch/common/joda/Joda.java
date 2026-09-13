@@ -317,23 +317,6 @@ public class Joda {
         return new JodaDateFormatter(input, formatter, formatter);
     }
 
-    /**
-     * Read a {@linkplain DateTimeZone} from a {@linkplain StreamInput}.
-     */
-    public static DateTimeZone readTimeZone(final StreamInput in) throws IOException {
-        return DateTimeZone.forID(in.readString());
-    }
-
-    /**
-     * Read an optional {@linkplain DateTimeZone}.
-     */
-    public static DateTimeZone readOptionalTimeZone(final StreamInput in) throws IOException {
-        if (in.readBoolean()) {
-            return DateTimeZone.forID(in.readString());
-        }
-        return null;
-    }
-
     private static void maybeLogJodaDeprecation(String format) {
         if (JodaDeprecationPatterns.isDeprecatedPattern(format)) {
             String suggestion = JodaDeprecationPatterns.formatSuggestion(format);

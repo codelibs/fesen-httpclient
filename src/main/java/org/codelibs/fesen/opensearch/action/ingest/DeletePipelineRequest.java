@@ -58,11 +58,6 @@ public class DeletePipelineRequest extends AcknowledgedRequest<DeletePipelineReq
         this.id = id;
     }
 
-    public DeletePipelineRequest(StreamInput in) throws IOException {
-        super(in);
-        id = in.readString();
-    }
-
     DeletePipelineRequest() {}
 
     public String getId() {

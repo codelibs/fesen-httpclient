@@ -49,10 +49,6 @@ public class PendingClusterTasksRequest extends ClusterManagerNodeReadRequest<Pe
 
     public PendingClusterTasksRequest() {}
 
-    public PendingClusterTasksRequest(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

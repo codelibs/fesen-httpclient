@@ -147,13 +147,6 @@ public final class RolloverResponse extends ShardsAcknowledgedResponse implement
     }
 
     /**
-     * Returns the statuses of all the request conditions
-     */
-    public Map<String, Boolean> getConditionStatus() {
-        return conditionStatus;
-    }
-
-    /**
      * Returns if the rollover execution was skipped even when conditions were met
      */
     public boolean isDryRun() {

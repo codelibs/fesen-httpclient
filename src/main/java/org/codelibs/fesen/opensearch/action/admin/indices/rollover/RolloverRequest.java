@@ -176,13 +176,6 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
         this.newIndexName = newIndexName;
     }
 
-    /**
-     * Sets the wait for active shards configuration for the rolled index that gets created.
-     */
-    public void setWaitForActiveShards(ActiveShardCount waitForActiveShards) {
-        createIndexRequest.waitForActiveShards(waitForActiveShards);
-    }
-
     public boolean isDryRun() {
         return dryRun;
     }
@@ -204,10 +197,5 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
      */
     public CreateIndexRequest getCreateIndexRequest() {
         return createIndexRequest;
-    }
-
-    // param isTypeIncluded decides how mappings should be parsed from XContent
-    public void fromXContent(XContentParser parser) throws IOException {
-        PARSER.parse(parser, this, null);
     }
 }

@@ -69,10 +69,6 @@ public class ShardSegments implements Writeable, Iterable<Segment> {
         return this.shardRouting;
     }
 
-    public List<Segment> getSegments() {
-        return this.segments;
-    }
-
     public int getNumberOfCommitted() {
         int count = 0;
         for (Segment segment : segments) {

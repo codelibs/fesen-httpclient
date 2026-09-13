@@ -148,14 +148,6 @@ public class SearchResponseSections implements ToXContentFragment {
         return builder;
     }
 
-    public List<SearchExtBuilder> getSearchExtBuilders() {
-        return Collections.unmodifiableList(this.searchExtBuilders);
-    }
-
-    public List<ProcessorExecutionDetail> getProcessorResult() {
-        return processorResult;
-    }
-
     protected void writeTo(StreamOutput out) throws IOException {
         throw new UnsupportedOperationException();
     }

@@ -64,25 +64,6 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
         super(nodesIds);
     }
 
-    public boolean useAggregatedNodeLevelResponses() {
-        return useAggregatedNodeLevelResponses;
-    }
-
-    public boolean computeAllMetrics() {
-        return computeAllMetrics;
-    }
-
-    /**
-     * Get the names of requested metrics
-     */
-    public Set<Metric> requestedMetrics() {
-        return new HashSet<>(requestedMetrics);
-    }
-
-    public Set<IndexMetric> indicesMetrics() {
-        return new HashSet<>(indexMetricsRequested);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

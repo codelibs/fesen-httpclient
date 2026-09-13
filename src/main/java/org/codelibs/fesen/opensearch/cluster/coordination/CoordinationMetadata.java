@@ -228,31 +228,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
 
         }
 
-        public Builder term(long term) {
-            this.term = term;
-            return this;
-        }
-
-        public Builder lastCommittedConfiguration(VotingConfiguration config) {
-            this.lastCommittedConfiguration = config;
-            return this;
-        }
-
-        public Builder lastAcceptedConfiguration(VotingConfiguration config) {
-            this.lastAcceptedConfiguration = config;
-            return this;
-        }
-
-        public Builder addVotingConfigExclusion(VotingConfigExclusion exclusion) {
-            votingConfigExclusions.add(exclusion);
-            return this;
-        }
-
-        public Builder clearVotingConfigExclusions() {
-            votingConfigExclusions.clear();
-            return this;
-        }
-
         public CoordinationMetadata build() {
             return new CoordinationMetadata(term, lastCommittedConfiguration, lastAcceptedConfiguration, votingConfigExclusions);
         }
@@ -268,10 +243,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         public static final String MISSING_VALUE_MARKER = "_absent_";
         private final String nodeId;
         private final String nodeName;
-
-        public VotingConfigExclusion(DiscoveryNode node) {
-            this(node.getId(), node.getName());
-        }
 
         public VotingConfigExclusion(StreamInput in) throws IOException {
             this.nodeId = in.readString();
@@ -316,10 +287,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         static {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), NODE_ID_PARSE_FIELD);
             PARSER.declareString(ConstructingObjectParser.constructorArg(), NODE_NAME_PARSE_FIELD);
-        }
-
-        public static VotingConfigExclusion fromXContent(XContentParser parser) throws IOException {
-            return PARSER.parse(parser, null);
         }
 
         @Override
@@ -387,10 +354,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
             out.writeStringArray(nodeIds.toArray(new String[0]));
         }
 
-        public Set<String> getNodeIds() {
-            return nodeIds;
-        }
-
         @Override
         public String toString() {
             return "VotingConfiguration{" + String.join(",", nodeIds) + "}";
@@ -409,10 +372,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
             return Objects.hash(nodeIds);
         }
 
-        public boolean isEmpty() {
-            return nodeIds.isEmpty();
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startArray();
@@ -420,10 +379,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
                 builder.value(nodeId);
             }
             return builder.endArray();
-        }
-
-        public static VotingConfiguration of(DiscoveryNode... nodes) {
-            return new VotingConfiguration(Arrays.stream(nodes).map(DiscoveryNode::getId).collect(Collectors.toSet()));
         }
     }
 }

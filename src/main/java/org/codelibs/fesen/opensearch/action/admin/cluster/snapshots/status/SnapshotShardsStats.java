@@ -196,10 +196,6 @@ public class SnapshotShardsStats implements ToXContentObject {
         PARSER.declareInt(constructorArg(), new ParseField(Fields.TOTAL));
     }
 
-    public static SnapshotShardsStats fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

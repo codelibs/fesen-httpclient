@@ -205,24 +205,8 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
         return settings;
     }
 
-    /**
-     * If the originating {@link GetIndexRequest} object was configured to include
-     * defaults, this will contain a mapping of index name to {@link Settings} objects.
-     * The returned {@link Settings} objects will contain only those settings taking
-     * effect as defaults.  Any settings explicitly set on the index will be available
-     * via {@link #settings()}.
-     * See also {@link GetIndexRequest#includeDefaults(boolean)}
-     */
-    public Map<String, Settings> defaultSettings() {
-        return defaultSettings;
-    }
-
     public Map<String, Settings> getSettings() {
         return settings();
-    }
-
-    public Map<String, Context> contexts() {
-        return contexts;
     }
 
     @Override

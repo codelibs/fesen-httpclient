@@ -73,10 +73,6 @@ public final class CommitStats implements Writeable, ToXContentFragment {
         return in.readOptionalWriteable(CommitStats::new);
     }
 
-    public Map<String, String> getUserData() {
-        return userData;
-    }
-
     public long getGeneration() {
         return generation;
     }

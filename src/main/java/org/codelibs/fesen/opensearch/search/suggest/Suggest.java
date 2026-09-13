@@ -107,13 +107,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         return suggestions.iterator();
     }
 
-    /**
-     * The number of suggestions in this {@link Suggest} result
-     */
-    public int size() {
-        return suggestions.size();
-    }
-
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
@@ -201,27 +194,9 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             }
         }
 
-        /**
-         * Returns a integer representing the type of the suggestion. This is used for
-         * internal serialization over the network.
-         * <p>
-         * This class is now serialized as a NamedWriteable and this method only remains for backwards compatibility
-         */
-        @Deprecated
-        public int getWriteableType() {
-            return TYPE;
-        }
-
         @Override
         public Iterator<T> iterator() {
             return entries.iterator();
-        }
-
-        /**
-         * @return The entries for this suggestion.
-         */
-        public List<T> getEntries() {
-            return entries;
         }
 
         /**
@@ -229,13 +204,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
          */
         public String getName() {
             return name;
-        }
-
-        /**
-         * @return The number of requested suggestion option size
-         */
-        public int getSize() {
-            return size;
         }
 
         protected abstract T newEntry(StreamInput in) throws IOException;
@@ -320,39 +288,9 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
             protected Entry() {}
 
-            /**
-             * @return the text (analyzed by suggest analyzer) originating from the suggest text. Usually this is a
-             *         single term.
-             */
-            public Text getText() {
-                return text;
-            }
-
-            /**
-             * @return the start offset (not analyzed) for this entry in the suggest text.
-             */
-            public int getOffset() {
-                return offset;
-            }
-
-            /**
-             * @return the length (not analyzed) for this entry in the suggest text.
-             */
-            public int getLength() {
-                return length;
-            }
-
             @Override
             public Iterator<O> iterator() {
                 return options.iterator();
-            }
-
-            /**
-             * @return The suggested options for this particular suggest entry. If there are no suggested terms then
-             *         an empty list is returned.
-             */
-            public List<O> getOptions() {
-                return options;
             }
 
             @Override
@@ -464,18 +402,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                  */
                 public float getScore() {
                     return score;
-                }
-
-                /**
-                 * @return true if collation has found a match for the entry.
-                 * if collate was not set, the value defaults to <code>true</code>
-                 */
-                public boolean collateMatch() {
-                    return (collateMatch != null) ? collateMatch : true;
-                }
-
-                protected void setScore(float score) {
-                    this.score = score;
                 }
 
                 @Override

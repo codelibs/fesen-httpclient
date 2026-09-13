@@ -51,14 +51,6 @@ public class CounterMetric implements Metric {
         counter.add(n);
     }
 
-    public void dec() {
-        counter.decrement();
-    }
-
-    public void dec(long n) {
-        counter.add(-n);
-    }
-
     public long count() {
         return counter.sum();
     }

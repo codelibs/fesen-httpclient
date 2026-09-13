@@ -28,10 +28,6 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
     private final ConsumerStats consumerStats;
     private final PipelineStats pipelineStats;
 
-    public PollingIngestStats(MessageProcessorStats messageProcessorStats, ConsumerStats consumerStats) {
-        this(messageProcessorStats, consumerStats, new PipelineStats(0, 0, 0, 0));
-    }
-
     public PollingIngestStats(MessageProcessorStats messageProcessorStats, ConsumerStats consumerStats, PipelineStats pipelineStats) {
         this.messageProcessorStats = messageProcessorStats;
         this.consumerStats = consumerStats;

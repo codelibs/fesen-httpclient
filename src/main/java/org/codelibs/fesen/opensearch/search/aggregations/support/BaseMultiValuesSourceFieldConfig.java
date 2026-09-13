@@ -165,17 +165,9 @@ public abstract class BaseMultiValuesSourceFieldConfig implements Writeable, ToX
         Script script = null;
         ZoneId timeZone = null;
 
-        public String getFieldName() {
-            return fieldName;
-        }
-
         public B setFieldName(String fieldName) {
             this.fieldName = fieldName;
             return (B) this;
-        }
-
-        public Object getMissing() {
-            return missing;
         }
 
         public B setMissing(Object missing) {
@@ -183,17 +175,9 @@ public abstract class BaseMultiValuesSourceFieldConfig implements Writeable, ToX
             return (B) this;
         }
 
-        public Script getScript() {
-            return script;
-        }
-
         public B setScript(Script script) {
             this.script = script;
             return (B) this;
-        }
-
-        public ZoneId getTimeZone() {
-            return timeZone;
         }
 
         public B setTimeZone(ZoneId timeZone) {

@@ -76,10 +76,6 @@ public class CreateSnapshotResponse extends ActionResponse implements ToXContent
 
     CreateSnapshotResponse() {}
 
-    public CreateSnapshotResponse(@Nullable SnapshotInfo snapshotInfo) {
-        this.snapshotInfo = snapshotInfo;
-    }
-
     public CreateSnapshotResponse(StreamInput in) throws IOException {
         super(in);
         snapshotInfo = in.readOptionalWriteable(SnapshotInfo::new);

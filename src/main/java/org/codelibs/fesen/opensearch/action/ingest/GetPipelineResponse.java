@@ -78,15 +78,6 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
         this.pipelines = pipelines;
     }
 
-    /**
-     * Get the list of pipelines that were a part of this response.
-     * The pipeline id can be obtained using getId on the PipelineConfiguration object.
-     * @return A list of {@link PipelineConfiguration} objects.
-     */
-    public List<PipelineConfiguration> pipelines() {
-        return Collections.unmodifiableList(pipelines);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVInt(pipelines.size());

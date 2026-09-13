@@ -47,8 +47,4 @@ public class UncategorizedExecutionException extends OpenSearchException {
     public UncategorizedExecutionException(String msg, Throwable cause) {
         super(msg, cause);
     }
-
-    public UncategorizedExecutionException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

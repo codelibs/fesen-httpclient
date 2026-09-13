@@ -64,10 +64,6 @@ class BulkByScrollResponseBuilder extends StatusBuilder {
         this.took = took;
     }
 
-    public void setStatus(BulkByScrollTask.Status status) {
-        this.status = status;
-    }
-
     public void setFailures(List<Object> failures) {
         if (failures != null) {
             for (Object object : failures) {

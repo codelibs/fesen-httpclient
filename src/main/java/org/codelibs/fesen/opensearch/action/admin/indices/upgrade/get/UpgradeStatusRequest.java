@@ -51,10 +51,6 @@ public class UpgradeStatusRequest extends BroadcastRequest<UpgradeStatusRequest>
         this(Strings.EMPTY_ARRAY);
     }
 
-    public UpgradeStatusRequest(StreamInput in) throws IOException {
-        super(in);
-    }
-
     public UpgradeStatusRequest(String... indices) {
         super(indices);
     }

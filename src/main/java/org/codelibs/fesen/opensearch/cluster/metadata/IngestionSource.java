@@ -95,24 +95,12 @@ public class IngestionSource {
         return errorStrategy;
     }
 
-    public Map<String, Object> params() {
-        return params;
-    }
-
     public long getMaxPollSize() {
         return maxPollSize;
     }
 
-    public int getPollTimeout() {
-        return pollTimeout;
-    }
-
     public int getNumProcessorThreads() {
         return numProcessorThreads;
-    }
-
-    public int getBlockingQueueSize() {
-        return blockingQueueSize;
     }
 
     public boolean isAllActiveIngestionEnabled() {
@@ -125,10 +113,6 @@ public class IngestionSource {
 
     public IngestionMessageMapper.MapperType getMapperType() {
         return mapperType;
-    }
-
-    public Map<String, Object> getMapperSettings() {
-        return mapperSettings;
     }
 
     public WarmupConfig getWarmupConfig() {
@@ -299,12 +283,6 @@ public class IngestionSource {
      */
     @PublicApi(since = "3.6.0")
     public record WarmupConfig(TimeValue timeout, long lagThreshold) {
-        /**
-         * Returns true if warmup is enabled (timeout >= 0).
-         */
-        public boolean isEnabled() {
-            return timeout.millis() >= 0;
-        }
     }
 
     /**

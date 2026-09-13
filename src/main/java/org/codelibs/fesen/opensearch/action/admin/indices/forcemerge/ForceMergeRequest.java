@@ -146,13 +146,6 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
         return this;
     }
 
-    /**
-     * Should this task store its result after it has finished?
-     */
-    public void setShouldStoreResult(boolean shouldStoreResult) {
-        this.shouldStoreResult = shouldStoreResult;
-    }
-
     @Override
     public boolean getShouldStoreResult() {
         return shouldStoreResult;

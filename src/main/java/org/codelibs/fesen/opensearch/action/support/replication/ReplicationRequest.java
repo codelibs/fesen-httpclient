@@ -142,15 +142,6 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
         return this.waitForActiveShards;
     }
 
-    /**
-     * @return the shardId of the shard where this operation should be executed on.
-     * can be null if the shardID has not yet been resolved
-     */
-    @Nullable
-    public ShardId shardId() {
-        return shardId;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;

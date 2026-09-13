@@ -179,15 +179,6 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
     }
 
     /**
-     * Returns the node holding the replica shard to be explained.  Returns {@code null} if any replica shard
-     * can be explained.
-     */
-    @Nullable
-    public String getCurrentNode() {
-        return currentNode;
-    }
-
-    /**
      * Returns {@code true} if yes decisions should be included.  Otherwise only "no" and "throttle"
      * decisions are returned.
      */
@@ -217,9 +208,5 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
         }
         sb.append(",includeYesDecisions?=").append(includeYesDecisions);
         return sb.toString();
-    }
-
-    public static ClusterAllocationExplainRequest parse(XContentParser parser) throws IOException {
-        return PARSER.parse(parser, new ClusterAllocationExplainRequest(), null);
     }
 }

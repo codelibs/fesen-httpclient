@@ -154,13 +154,6 @@ public class Geohash {
     }
 
     /**
-     * Encode a string geohash to the geohash based long format (lon/lat interleaved, 4 least significant bits = level)
-     */
-    public static final long longEncode(String hash) {
-        return longEncode(hash, hash.length());
-    }
-
-    /**
      * Encode to a geohash string from the geohash based long format
      */
     public static final String stringEncode(long geoHashLong) {
@@ -215,26 +208,6 @@ public class Geohash {
             }
         }
         return BitUtil.flipFlop(l);
-    }
-
-    /** approximate width of geohash tile for a specific precision in degrees */
-    public static double lonWidthInDegrees(int precision) {
-        return precisionToLonWidth[precision];
-    }
-
-    /** approximate height of geohash tile for a specific precision in degrees */
-    public static double latHeightInDegrees(int precision) {
-        return precisionToLatHeight[precision];
-    }
-
-    /** returns the latitude value from the string based geohash */
-    public static final double decodeLatitude(final String geohash) {
-        return decodeLatitude(Geohash.mortonEncode(geohash));
-    }
-
-    /** returns the latitude value from the string based geohash */
-    public static final double decodeLongitude(final String geohash) {
-        return decodeLongitude(Geohash.mortonEncode(geohash));
     }
 
     /** decode longitude value from morton encoded geo point */

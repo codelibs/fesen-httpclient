@@ -77,33 +77,6 @@ public enum DistanceUnit implements Writeable {
     }
 
     /**
-     * Measures the circumference of earth in this unit
-     *
-     * @return length of earth circumference in this unit
-     */
-    public double getEarthCircumference() {
-        return GeoUtils.EARTH_EQUATOR / meters;
-    }
-
-    /**
-     * Measures the radius of earth in this unit
-     *
-     * @return length of earth radius in this unit
-     */
-    public double getEarthRadius() {
-        return GeoUtils.EARTH_SEMI_MAJOR_AXIS / meters;
-    }
-
-    /**
-     * Measures a longitude in this unit
-     *
-     * @return length of a longitude degree in this unit
-     */
-    public double getDistancePerDegree() {
-        return GeoUtils.EARTH_EQUATOR / (360.0 * meters);
-    }
-
-    /**
      * Convert a value into meters
      *
      * @param distance distance in this unit
@@ -111,27 +84,6 @@ public enum DistanceUnit implements Writeable {
      */
     public double toMeters(double distance) {
         return convert(distance, this, DistanceUnit.METERS);
-    }
-
-    /**
-     * Convert a value given in meters to a value of this unit
-     *
-     * @param distance distance in meters
-     * @return value in this unit
-     */
-    public double fromMeters(double distance) {
-        return convert(distance, DistanceUnit.METERS, this);
-    }
-
-    /**
-     * Convert a given value into another unit
-     *
-     * @param distance value in this unit
-     * @param unit source unit
-     * @return value in this unit
-     */
-    public double convert(double distance, DistanceUnit unit) {
-        return convert(distance, unit, this);
     }
 
     /**

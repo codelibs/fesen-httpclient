@@ -72,15 +72,4 @@ public class SnapshotsStatusRequestBuilder extends ClusterManagerNodeOperationRe
         request.snapshots(snapshots);
         return this;
     }
-
-    /**
-     * Adds additional snapshots to the list of snapshots to return
-     *
-     * @param snapshots additional snapshots
-     * @return this builder
-     */
-    public SnapshotsStatusRequestBuilder addSnapshots(String... snapshots) {
-        request.snapshots(ArrayUtils.concat(request.snapshots(), snapshots));
-        return this;
-    }
 }

@@ -88,30 +88,4 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
         request.addAliasAction(IndicesAliasesRequest.AliasActions.remove().index(index).alias(alias));
         return this;
     }
-
-    /**
-     * Removes aliases from the index.
-     *
-     * @param index   The index
-     * @param aliases The aliases
-     */
-    public IndicesAliasesRequestBuilder removeAlias(String index, String[] aliases) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.remove().index(index).aliases(aliases));
-        return this;
-    }
-
-    public IndicesAliasesRequestBuilder removeIndex(String index) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.removeIndex().index(index));
-        return this;
-    }
-
-    /**
-     * Adds an alias action to the request.
-     *
-     * @param action The alias action
-     */
-    public IndicesAliasesRequestBuilder addAliasAction(IndicesAliasesRequest.AliasActions action) {
-        request.addAliasAction(action);
-        return this;
-    }
 }

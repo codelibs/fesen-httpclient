@@ -46,8 +46,4 @@ public interface Geometry {
     default boolean hasZ() {
         return false;
     }
-
-    default boolean hasAlt() {
-        return hasZ();
-    }
 }

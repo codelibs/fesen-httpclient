@@ -68,47 +68,6 @@ public class DirectoryFileTransferTracker {
 
     private final int DIRECTORY_FILES_TRANSFER_DEFAULT_WINDOW_SIZE = 20;
 
-    // Getters and Setters, all are visible for testing
-    public long getTransferredBytesStarted() {
-        return transferredBytesStarted.get();
-    }
-
-    public void addTransferredBytesStarted(long size) {
-        transferredBytesStarted.getAndAdd(size);
-    }
-
-    public long getTransferredBytesFailed() {
-        return transferredBytesFailed.get();
-    }
-
-    public long getTransferredBytesSucceeded() {
-        return transferredBytesSucceeded.get();
-    }
-
-    public boolean isTransferredBytesPerSecAverageReady() {
-        return transferredBytesPerSecMovingAverageReference.get().isReady();
-    }
-
-    public double getTransferredBytesPerSecAverage() {
-        return transferredBytesPerSecMovingAverageReference.get().getAverage();
-    }
-
-    public boolean isTransferredBytesAverageReady() {
-        return transferredBytesMovingAverageReference.get().isReady();
-    }
-
-    public double getTransferredBytesAverage() {
-        return transferredBytesMovingAverageReference.get().getAverage();
-    }
-
-    public long getLastTransferTimestampMs() {
-        return lastTransferTimestampMs.get();
-    }
-
-    public long getTotalTransferTimeInMs() {
-        return totalTransferTimeInMs.get();
-    }
-
     public DirectoryFileTransferTracker() {
         transferredBytesMovingAverageReference = new AtomicReference<>(new MovingAverage(DIRECTORY_FILES_TRANSFER_DEFAULT_WINDOW_SIZE));
         transferredBytesPerSecMovingAverageReference = new AtomicReference<>(

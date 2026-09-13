@@ -54,10 +54,6 @@ public final class OriginalIndices implements IndicesRequest {
     private final String[] indices;
     private final IndicesOptions indicesOptions;
 
-    public OriginalIndices(IndicesRequest indicesRequest) {
-        this(indicesRequest.indices(), indicesRequest.indicesOptions());
-    }
-
     public OriginalIndices(String[] indices, IndicesOptions indicesOptions) {
         this.indices = indices;
         this.indicesOptions = indicesOptions;
@@ -76,10 +72,6 @@ public final class OriginalIndices implements IndicesRequest {
     @Override
     public boolean includeDataStreams() {
         return true;
-    }
-
-    public static OriginalIndices readOriginalIndices(StreamInput in) throws IOException {
-        return new OriginalIndices(in.readStringArray(), IndicesOptions.readIndicesOptions(in));
     }
 
     @Override

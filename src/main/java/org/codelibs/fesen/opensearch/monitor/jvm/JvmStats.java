@@ -508,14 +508,6 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeVLong(max);
         }
 
-        public ByteSizeValue getUsed() {
-            return new ByteSizeValue(used);
-        }
-
-        public ByteSizeValue getMax() {
-            return new ByteSizeValue(max);
-        }
-
         public short getUsagePercent() {
             if (max == 0) {
                 return -1;
@@ -568,22 +560,6 @@ public class JvmStats implements Writeable, ToXContentFragment {
 
         public String getName() {
             return this.name;
-        }
-
-        public ByteSizeValue getUsed() {
-            return new ByteSizeValue(used);
-        }
-
-        public ByteSizeValue getMax() {
-            return new ByteSizeValue(max);
-        }
-
-        public ByteSizeValue getPeakUsed() {
-            return new ByteSizeValue(peakUsed);
-        }
-
-        public ByteSizeValue getPeakMax() {
-            return new ByteSizeValue(peakMax);
         }
 
         /**

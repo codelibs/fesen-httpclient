@@ -454,10 +454,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
-    public XContentBuilder array(String name, float[] values) throws IOException {
-        return field(name).values(values);
-    }
-
     private XContentBuilder values(float[] values) throws IOException {
         if (values == null) {
             return nullValue();
@@ -491,10 +487,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         ensureNameNotNull(name);
         generatorInstance().writeNumberField(name, value);
         return this;
-    }
-
-    public XContentBuilder array(String name, int[] values) throws IOException {
-        return field(name).values(values);
     }
 
     private XContentBuilder values(int[] values) throws IOException {
@@ -532,10 +524,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
-    public XContentBuilder array(String name, long[] values) throws IOException {
-        return field(name).values(values);
-    }
-
     private XContentBuilder values(long[] values) throws IOException {
         if (values == null) {
             return nullValue();
@@ -563,10 +551,6 @@ public final class XContentBuilder implements Closeable, Flushable {
 
     public XContentBuilder field(String name, short value) throws IOException {
         return field(name).value(value);
-    }
-
-    public XContentBuilder array(String name, short[] values) throws IOException {
-        return field(name).values(values);
     }
 
     private XContentBuilder values(short[] values) throws IOException {
@@ -706,16 +690,6 @@ public final class XContentBuilder implements Closeable, Flushable {
     // ------------------------------------------------------------------------
     // Date
     // ------------------------------
-
-    /**
-     * Write a time-based field and value, if the passed timeValue is null a
-     * null value is written, otherwise a date transformers lookup is performed.
-
-     * @throws IllegalArgumentException if there is no transformers for the type of object
-     */
-    public XContentBuilder timeField(String name, Object timeValue) throws IOException {
-        return field(name).timeValue(timeValue);
-    }
 
     /**
      * If the {@code humanReadable} flag is set, writes both a formatted and

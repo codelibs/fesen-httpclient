@@ -32,10 +32,6 @@ public class SystemTemplateMetadata {
         this.name = name;
     }
 
-    public String type() {
-        return type;
-    }
-
     public String name() {
         return name;
     }
@@ -59,14 +55,6 @@ public class SystemTemplateMetadata {
             COMPONENT_TEMPLATE_TYPE,
             fullyQualifiedName.substring(fullyQualifiedName.indexOf(DELIMITER, 2) + 1, fullyQualifiedName.lastIndexOf(DELIMITER))
         );
-    }
-
-    public static SystemTemplateMetadata fromComponentTemplateInfo(String name, long version) {
-        return new SystemTemplateMetadata(version, COMPONENT_TEMPLATE_TYPE, name);
-    }
-
-    public final String fullyQualifiedName() {
-        return type + DELIMITER + name + DELIMITER + version;
     }
 
     @Override

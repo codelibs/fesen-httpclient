@@ -540,10 +540,6 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         return build < 25;
     }
 
-    public boolean isRC() {
-        return build > 50 && build < 99;
-    }
-
     public boolean isRelease() {
         return build == 99;
     }

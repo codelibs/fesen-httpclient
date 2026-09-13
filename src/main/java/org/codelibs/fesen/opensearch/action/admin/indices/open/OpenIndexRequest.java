@@ -137,22 +137,6 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
         return this;
     }
 
-    /**
-     * A shortcut for {@link #waitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public OpenIndexRequest waitForActiveShards(final int waitForActiveShards) {
-        return waitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
-
-    /**
-     * Should this task store its result after it has finished?
-     */
-    public void setShouldStoreResult(boolean shouldStoreResult) {
-        this.shouldStoreResult = shouldStoreResult;
-    }
-
     @Override
     public boolean getShouldStoreResult() {
         return shouldStoreResult;

@@ -78,10 +78,6 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
         failure = in.readOptionalString();
     }
 
-    SnapshotIndexShardStatus(ShardId shardId, IndexShardSnapshotStatus.Copy indexShardStatus) {
-        this(shardId, indexShardStatus, null);
-    }
-
     SnapshotIndexShardStatus(ShardId shardId, IndexShardSnapshotStatus.Copy indexShardStatus, String nodeId) {
         super(shardId);
         switch (indexShardStatus.getStage()) {

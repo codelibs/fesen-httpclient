@@ -242,10 +242,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             return maxGaps;
         }
 
-        IntervalMode getMode() {
-            return mode;
-        }
-
         String getAnalyzer() {
             return analyzer;
         }
@@ -340,10 +336,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
 
         public static Disjunction fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
-        }
-
-        List<IntervalsSourceProvider> getSubSources() {
-            return subSources;
         }
 
         IntervalFilter getFilter() {
@@ -461,20 +453,12 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             return PARSER.apply(parser, null);
         }
 
-        List<IntervalsSourceProvider> getSubSources() {
-            return subSources;
-        }
-
         IntervalMode getMode() {
             return mode;
         }
 
         int getMaxGaps() {
             return maxGaps;
-        }
-
-        IntervalFilter getFilter() {
-            return filter;
         }
     }
 
@@ -701,10 +685,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
 
         String getUseField() {
             return useField;
-        }
-
-        Integer getMaxExpansions() {
-            return maxExpansions;
         }
 
         boolean isCaseInsensitive() {

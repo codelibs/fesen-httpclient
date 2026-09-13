@@ -218,14 +218,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
         return this.nodeId;
     }
 
-    public int size() {
-        return shards.size();
-    }
-
-    public Collection<ShardRouting> getInitializingShards() {
-        return initializingShards;
-    }
-
     /**
      * Add a new shard to this node
      * @param shard Shard to create on this Node
@@ -276,13 +268,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
             }
         }
         return count;
-    }
-
-    /**
-     * The number of shards on this node that will not be eventually relocated.
-     */
-    public int numberOfOwningShards() {
-        return shards.size() - relocatingShardsBucket.size();
     }
 
     public String prettyPrint() {

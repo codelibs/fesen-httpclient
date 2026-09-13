@@ -27,10 +27,6 @@ class OpenSearchDateTimeFormatter implements OpenSearchDateTimePrinter {
         this.formatter = DateTimeFormatter.ofPattern(pattern, Locale.ROOT);
     }
 
-    public OpenSearchDateTimeFormatter(String pattern, Locale locale) {
-        this.formatter = DateTimeFormatter.ofPattern(pattern, locale);
-    }
-
     public OpenSearchDateTimeFormatter(DateTimeFormatter formatter) {
         this.formatter = formatter;
     }
@@ -47,14 +43,6 @@ class OpenSearchDateTimeFormatter implements OpenSearchDateTimePrinter {
         return this.getFormatter().format(temporal);
     }
 
-    public TemporalAccessor parse(CharSequence text, ParsePosition position) {
-        return this.getFormatter().parse(text, position);
-    }
-
-    public TemporalAccessor parse(CharSequence text) {
-        return this.getFormatter().parse(text);
-    }
-
     public ZoneId getZone() {
         return this.getFormatter().getZone();
     }
@@ -69,10 +57,6 @@ class OpenSearchDateTimeFormatter implements OpenSearchDateTimePrinter {
 
     public DateTimeFormatter getFormatter() {
         return formatter;
-    }
-
-    public Format toFormat() {
-        return getFormatter().toFormat();
     }
 
     public Object parseObject(String text, ParsePosition pos) {

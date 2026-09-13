@@ -52,9 +52,4 @@ public class MultiGetRequestBuilder extends ActionRequestBuilder<MultiGetRequest
         request.add(item);
         return this;
     }
-
-    public MultiGetRequestBuilder setRealtime(boolean realtime) {
-        request.realtime(realtime);
-        return this;
-    }
 }

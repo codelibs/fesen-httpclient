@@ -158,10 +158,6 @@ public class ProcessStats implements Writeable, ToXContentFragment {
         public void writeTo(StreamOutput out) throws IOException {
             out.writeLong(totalVirtual);
         }
-
-        public ByteSizeValue getTotalVirtual() {
-            return new ByteSizeValue(totalVirtual);
-        }
     }
 
     /**
@@ -197,15 +193,6 @@ public class ProcessStats implements Writeable, ToXContentFragment {
          */
         public short getPercent() {
             return percent;
-        }
-
-        /**
-         * Get the Process cpu time (sum of User and Sys).
-         * <p>
-         * Supported Platforms: All.
-         */
-        public TimeValue getTotal() {
-            return new TimeValue(total);
         }
     }
 }

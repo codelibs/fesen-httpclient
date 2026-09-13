@@ -251,13 +251,6 @@ public class CollectorResult implements ToXContentObject, Writeable {
         return this.collectorName;
     }
 
-    /**
-     * @return a list of children collectors/collector managers
-     */
-    public List<CollectorResult> getProfiledChildren() {
-        return children;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder = builder.startObject();

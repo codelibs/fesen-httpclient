@@ -16,15 +16,7 @@ import java.io.IOException;
 public class UnexpectedEndOfInputException extends JsonParseException {
     private static final long serialVersionUID = 1L;
 
-    public UnexpectedEndOfInputException(String message) {
-        super(message);
-    }
-
     public UnexpectedEndOfInputException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public UnexpectedEndOfInputException(Throwable cause) {
-        super(cause);
     }
 }

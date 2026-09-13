@@ -114,30 +114,6 @@ public abstract class RemoteTransferTracker {
         return shardId;
     }
 
-    public long getTotalUploadTimeInMillis() {
-        return totalUploadTimeInMillis.get();
-    }
-
-    public void addUploadTimeInMillis(long duration) {
-        totalUploadTimeInMillis.addAndGet(duration);
-    }
-
-    public long getTotalUploadsStarted() {
-        return totalUploadsStarted.get();
-    }
-
-    public long getTotalUploadsFailed() {
-        return totalUploadsFailed.get();
-    }
-
-    public long getTotalUploadsSucceeded() {
-        return totalUploadsSucceeded.get();
-    }
-
-    public void incrementTotalUploadsStarted() {
-        totalUploadsStarted.addAndGet(1);
-    }
-
     public void incrementTotalUploadsFailed() {
         checkTotal(totalUploadsStarted.get(), totalUploadsFailed.get(), totalUploadsSucceeded.get(), 1);
         totalUploadsFailed.addAndGet(1);
@@ -146,46 +122,6 @@ public abstract class RemoteTransferTracker {
     public void incrementTotalUploadsSucceeded() {
         checkTotal(totalUploadsStarted.get(), totalUploadsFailed.get(), totalUploadsSucceeded.get(), 1);
         totalUploadsSucceeded.addAndGet(1);
-    }
-
-    public long getUploadBytesStarted() {
-        return uploadBytesStarted.get();
-    }
-
-    public long getUploadBytesFailed() {
-        return uploadBytesFailed.get();
-    }
-
-    public long getUploadBytesSucceeded() {
-        return uploadBytesSucceeded.get();
-    }
-
-    public void addUploadBytesStarted(long count) {
-        uploadBytesStarted.addAndGet(count);
-    }
-
-    boolean isUploadBytesMovingAverageReady() {
-        return uploadBytesMovingAverageReference.get().isReady();
-    }
-
-    double getUploadBytesMovingAverage() {
-        return uploadBytesMovingAverageReference.get().getAverage();
-    }
-
-    boolean isUploadBytesPerSecMovingAverageReady() {
-        return uploadBytesPerSecMovingAverageReference.get().isReady();
-    }
-
-    double getUploadBytesPerSecMovingAverage() {
-        return uploadBytesPerSecMovingAverageReference.get().getAverage();
-    }
-
-    boolean isUploadTimeMovingAverageReady() {
-        return uploadTimeMsMovingAverageReference.get().isReady();
-    }
-
-    double getUploadTimeMovingAverage() {
-        return uploadTimeMsMovingAverageReference.get().getAverage();
     }
 
     /**

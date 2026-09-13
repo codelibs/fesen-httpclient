@@ -405,10 +405,6 @@ public class JvmInfo implements ReportingService.Info {
         return this.classPath;
     }
 
-    public Map<String, String> getSystemProperties() {
-        return this.systemProperties;
-    }
-
     public long getConfiguredInitialHeapSize() {
         return configuredInitialHeapSize;
     }
@@ -555,24 +551,8 @@ public class JvmInfo implements ReportingService.Info {
             out.writeVLong(directMemoryMax);
         }
 
-        public ByteSizeValue getHeapInit() {
-            return new ByteSizeValue(heapInit);
-        }
-
         public ByteSizeValue getHeapMax() {
             return new ByteSizeValue(heapMax);
-        }
-
-        public ByteSizeValue getNonHeapInit() {
-            return new ByteSizeValue(nonHeapInit);
-        }
-
-        public ByteSizeValue getNonHeapMax() {
-            return new ByteSizeValue(nonHeapMax);
-        }
-
-        public ByteSizeValue getDirectMemoryMax() {
-            return new ByteSizeValue(directMemoryMax);
         }
     }
 }

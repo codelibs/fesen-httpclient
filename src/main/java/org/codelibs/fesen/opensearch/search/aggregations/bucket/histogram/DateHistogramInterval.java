@@ -60,26 +60,6 @@ public class DateHistogramInterval implements Writeable, ToXContentFragment {
     public static final DateHistogramInterval QUARTER = new DateHistogramInterval("1q");
     public static final DateHistogramInterval YEAR = new DateHistogramInterval("1y");
 
-    public static DateHistogramInterval seconds(int sec) {
-        return new DateHistogramInterval(sec + "s");
-    }
-
-    public static DateHistogramInterval minutes(int min) {
-        return new DateHistogramInterval(min + "m");
-    }
-
-    public static DateHistogramInterval hours(int hours) {
-        return new DateHistogramInterval(hours + "h");
-    }
-
-    public static DateHistogramInterval days(int days) {
-        return new DateHistogramInterval(days + "d");
-    }
-
-    public static DateHistogramInterval weeks(int weeks) {
-        return new DateHistogramInterval(weeks + "w");
-    }
-
     private final String expression;
 
     public DateHistogramInterval(String expression) {

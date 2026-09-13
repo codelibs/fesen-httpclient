@@ -69,24 +69,10 @@ public class XContentFactory {
     }
 
     /**
-     * Constructs a new json builder that will output the result into the provided output stream.
-     */
-    public static XContentBuilder smileBuilder(OutputStream os) throws IOException {
-        return new XContentBuilder(SmileXContent.smileXContent, os);
-    }
-
-    /**
      * Returns a content builder using YAML format ({@link org.codelibs.fesen.opensearch.common.xcontent.XContentType#YAML}.
      */
     public static XContentBuilder yamlBuilder() throws IOException {
         return MediaTypeRegistry.contentBuilder(XContentType.YAML);
-    }
-
-    /**
-     * Constructs a new yaml builder that will output the result into the provided output stream.
-     */
-    public static XContentBuilder yamlBuilder(OutputStream os) throws IOException {
-        return new XContentBuilder(YamlXContent.yamlXContent, os);
     }
 
     /**

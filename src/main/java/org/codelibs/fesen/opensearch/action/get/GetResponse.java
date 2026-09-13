@@ -84,28 +84,6 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
     }
 
     /**
-     * The sequence number assigned to the last operation that has changed this document, if found.
-     */
-    public long getSeqNo() {
-        return getResult.getSeqNo();
-    }
-
-    /**
-     * The primary term of the last primary that has changed this document, if found.
-     */
-    public long getPrimaryTerm() {
-        return getResult.getPrimaryTerm();
-    }
-
-    /**
-     * Returns the internal source bytes, as they are returned without munging (for example,
-     * might still be compressed).
-     */
-    public BytesReference getSourceInternal() {
-        return getResult.internalSourceRef();
-    }
-
-    /**
      * Returns bytes reference, also un compress the source if needed.
      */
     public BytesReference getSourceAsBytesRef() {
@@ -128,10 +106,6 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
 
     public Map<String, Object> getSource() {
         return getResult.getSource();
-    }
-
-    public Map<String, DocumentField> getFields() {
-        return getResult.getFields();
     }
 
     public DocumentField getField(String name) {

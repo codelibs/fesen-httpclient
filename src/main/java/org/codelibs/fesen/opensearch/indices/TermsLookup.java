@@ -65,10 +65,6 @@ public class TermsLookup implements Writeable, ToXContentFragment {
     private String routing;
     private QueryBuilder query;
 
-    public TermsLookup(String index, String id, String path) {
-        this(index, id, path, null);
-    }
-
     public TermsLookup(String index, String id, String path, QueryBuilder query) {
         if (index == null) {
             throw new IllegalArgumentException("[" + TermsQueryBuilder.NAME + "] index cannot be null or empty for TermsLookup");
@@ -162,11 +158,6 @@ public class TermsLookup implements Writeable, ToXContentFragment {
 
     public QueryBuilder query() {
         return query;
-    }
-
-    public TermsLookup query(QueryBuilder query) {
-        this.query = query;
-        return this;
     }
 
     private static final ConstructingObjectParser<TermsLookup, Void> PARSER = new ConstructingObjectParser<>("terms_lookup", args -> {

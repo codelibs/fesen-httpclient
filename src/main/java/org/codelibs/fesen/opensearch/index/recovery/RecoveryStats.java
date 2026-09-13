@@ -99,26 +99,6 @@ public class RecoveryStats implements ToXContentFragment, Writeable {
         return TimeValue.timeValueNanos(throttleTimeInNanos.get());
     }
 
-    public void incCurrentAsTarget() {
-        currentAsTarget.incrementAndGet();
-    }
-
-    public void decCurrentAsTarget() {
-        currentAsTarget.decrementAndGet();
-    }
-
-    public void incCurrentAsSource() {
-        currentAsSource.incrementAndGet();
-    }
-
-    public void decCurrentAsSource() {
-        currentAsSource.decrementAndGet();
-    }
-
-    public void addThrottleTime(long nanos) {
-        throttleTimeInNanos.addAndGet(nanos);
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.RECOVERY);

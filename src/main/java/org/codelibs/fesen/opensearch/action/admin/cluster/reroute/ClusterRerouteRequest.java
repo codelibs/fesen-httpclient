@@ -80,14 +80,6 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
     }
 
     /**
-     * Set the allocation commands to execute.
-     */
-    public ClusterRerouteRequest commands(AllocationCommands commands) {
-        this.commands = commands;
-        return this;
-    }
-
-    /**
      * Returns the allocation commands to execute
      */
     public AllocationCommands getCommands() {

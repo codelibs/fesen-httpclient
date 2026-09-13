@@ -171,20 +171,8 @@ public class IndexingPressurePerShardStats implements Writeable, ToXContentFragm
         return totalCoordinatingBytes;
     }
 
-    public long getTotalPrimaryBytes() {
-        return totalPrimaryBytes;
-    }
-
-    public long getTotalReplicaBytes() {
-        return totalReplicaBytes;
-    }
-
     public long getCurrentCombinedCoordinatingAndPrimaryBytes() {
         return currentCombinedCoordinatingAndPrimaryBytes;
-    }
-
-    public long getCurrentCoordinatingBytes() {
-        return currentCoordinatingBytes;
     }
 
     public long getCurrentPrimaryBytes() {
@@ -233,10 +221,6 @@ public class IndexingPressurePerShardStats implements Writeable, ToXContentFragm
 
     public long getReplicaNodeLimitsBreachedRejections() {
         return replicaNodeLimitsBreachedRejections;
-    }
-
-    public long getReplicaLastSuccessfulRequestLimitsBreachedRejections() {
-        return replicaLastSuccessfulRequestLimitsBreachedRejections;
     }
 
     public long getReplicaThroughputDegradationLimitsBreachedRejections() {

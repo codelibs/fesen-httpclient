@@ -82,13 +82,6 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
         return keepAlive;
     }
 
-    /**
-     * Sets if this request should allow partial results.
-     */
-    public void allowPartialPitCreation(Boolean allowPartialPitCreation) {
-        this.allowPartialPitCreation = allowPartialPitCreation;
-    }
-
     public boolean shouldAllowPartialPitCreation() {
         return allowPartialPitCreation;
     }
@@ -99,14 +92,6 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
 
     public void setPreference(String preference) {
         this.preference = preference;
-    }
-
-    public void setIndices(String[] indices) {
-        this.indices = indices;
-    }
-
-    public void setIndicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = Objects.requireNonNull(indicesOptions, "indicesOptions must not be null");
     }
 
     @Override
@@ -126,15 +111,6 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
     @Override
     public IndicesOptions indicesOptions() {
         return indicesOptions;
-    }
-
-    public CreatePitRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = Objects.requireNonNull(indicesOptions, "indicesOptions must not be null");
-        return this;
-    }
-
-    public void setKeepAlive(TimeValue keepAlive) {
-        this.keepAlive = keepAlive;
     }
 
     public final String buildDescription() {

@@ -678,13 +678,6 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         }
 
         /**
-         * Sum of read time across all devices
-         */
-        public long getTotalReadTime() {
-            return totalReadTime;
-        }
-
-        /**
          * Sum of write time across all devices
          */
         public long getTotalWriteTime() {

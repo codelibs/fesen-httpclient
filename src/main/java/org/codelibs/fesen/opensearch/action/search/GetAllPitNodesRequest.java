@@ -28,10 +28,6 @@ public class GetAllPitNodesRequest extends BaseNodesRequest<GetAllPitNodesReques
         super(concreteNodes);
     }
 
-    public GetAllPitNodesRequest(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

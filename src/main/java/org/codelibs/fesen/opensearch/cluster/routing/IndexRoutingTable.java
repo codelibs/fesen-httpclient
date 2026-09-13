@@ -128,10 +128,6 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
         return shards;
     }
 
-    public Map<Integer, IndexShardRoutingTable> getShards() {
-        return shards();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -185,10 +181,6 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
     public void writeVerifiableTo(BufferedChecksumStreamOutput out) throws IOException {
         index.writeTo(out);
         out.writeMapValues(shards, (stream, value) -> IndexShardRoutingTable.Builder.writeVerifiableTo(value, stream));
-    }
-
-    public static Builder builder(Index index) {
-        return new Builder(index);
     }
 
     /**

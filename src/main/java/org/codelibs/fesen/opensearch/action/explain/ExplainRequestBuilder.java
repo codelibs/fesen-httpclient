@@ -48,20 +48,8 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class ExplainRequestBuilder extends SingleShardOperationRequestBuilder<ExplainRequest, ExplainResponse, ExplainRequestBuilder> {
 
-    ExplainRequestBuilder(OpenSearchClient client, ExplainAction action) {
-        super(client, action, new ExplainRequest());
-    }
-
     public ExplainRequestBuilder(OpenSearchClient client, ExplainAction action, String index, String id) {
         super(client, action, new ExplainRequest().index(index).id(id));
-    }
-
-    /**
-     * Sets the id to get a score explanation for.
-     */
-    public ExplainRequestBuilder setId(String id) {
-        request().id(id);
-        return this;
     }
 
     /**

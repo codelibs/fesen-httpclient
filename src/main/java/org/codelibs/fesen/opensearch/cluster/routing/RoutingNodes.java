@@ -255,14 +255,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
         return nodesToShards.values().stream();
     }
 
-    public boolean hasInactivePrimaries() {
-        return inactivePrimaryCount > 0;
-    }
-
-    public boolean hasInactiveShards() {
-        return inactiveShardCount > 0;
-    }
-
     /**
      * Returns all shards that are not in the state UNASSIGNED with the same shard
      * ID as the given shard.
@@ -302,13 +294,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
     }
 
     /**
-     * Returns the number of routing nodes
-     */
-    public int size() {
-        return nodesToShards.size();
-    }
-
-    /**
      * Unassigned shard list.
      *
      * @opensearch.api
@@ -334,13 +319,6 @@ public class RoutingNodes implements Iterable<RoutingNode> {
                 primaries++;
             }
             unassigned.add(shardRouting);
-        }
-
-        /**
-         * Returns the size of the non-ignored unassigned shards
-         */
-        public int size() {
-            return unassigned.size();
         }
 
         @Override

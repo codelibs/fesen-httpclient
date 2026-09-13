@@ -74,14 +74,6 @@ public final class TaskResult implements Writeable, ToXContentObject {
     @Nullable
     private final BytesReference response;
 
-    /**
-     * Construct a {@linkplain TaskResult} for a task for which we don't have a result or error. That usually means that the task
-     * is incomplete, but it could also mean that we waited for the task to complete but it didn't save any error information.
-     */
-    public TaskResult(boolean completed, TaskInfo task) {
-        this(completed, task, null, null);
-    }
-
     public TaskResult(boolean completed, TaskInfo task, @Nullable BytesReference error, @Nullable BytesReference result) {
         this.completed = completed;
         this.task = requireNonNull(task, "task is required");

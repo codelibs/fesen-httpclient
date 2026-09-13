@@ -57,10 +57,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     implements
         WriteRequestBuilder<UpdateRequestBuilder> {
 
-    public UpdateRequestBuilder(OpenSearchClient client, UpdateAction action) {
-        super(client, action, new UpdateRequest());
-    }
-
     public UpdateRequestBuilder(OpenSearchClient client, UpdateAction action, String index, String id) {
         super(client, action, new UpdateRequest(index, id));
     }
@@ -70,15 +66,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
      */
     public UpdateRequestBuilder setId(String id) {
         request.id(id);
-        return this;
-    }
-
-    /**
-     * Controls the shard routing of the request. Using this value to hash the shard
-     * and not the id.
-     */
-    public UpdateRequestBuilder setRouting(String routing) {
-        request.routing(routing);
         return this;
     }
 
@@ -101,47 +88,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
      */
     public UpdateRequestBuilder setRetryOnConflict(int retryOnConflict) {
         request.retryOnConflict(retryOnConflict);
-        return this;
-    }
-
-    /**
-     * Sets the version, which will cause the index operation to only be performed if a matching
-     * version exists and no changes happened on the doc since then.
-     */
-    public UpdateRequestBuilder setVersion(long version) {
-        request.version(version);
-        return this;
-    }
-
-    /**
-     * Sets the versioning type. Defaults to {@link org.codelibs.fesen.opensearch.index.VersionType#INTERNAL}.
-     */
-    public UpdateRequestBuilder setVersionType(VersionType versionType) {
-        request.versionType(versionType);
-        return this;
-    }
-
-    /**
-     * only perform this update request if the document was last modification was assigned the given
-     * sequence number. Must be used in combination with {@link #setIfPrimaryTerm(long)}
-     *
-     * If the document last modification was assigned a different sequence number a
-     * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
-     */
-    public UpdateRequestBuilder setIfSeqNo(long seqNo) {
-        request.setIfSeqNo(seqNo);
-        return this;
-    }
-
-    /**
-     * only perform this update request if the document was last modification was assigned the given
-     * primary term. Must be used in combination with {@link #setIfSeqNo(long)}
-     *
-     * If the document last modification was assigned a different term a
-     * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
-     */
-    public UpdateRequestBuilder setIfPrimaryTerm(long term) {
-        request.setIfPrimaryTerm(term);
         return this;
     }
 
@@ -175,23 +121,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
      */
     public UpdateRequestBuilder setDocAsUpsert(boolean shouldUpsertDoc) {
         request.docAsUpsert(shouldUpsertDoc);
-        return this;
-    }
-
-    /**
-     * Sets whether to perform extra effort to detect noop updates via docAsUpsert.
-     * Defaults to true.
-     */
-    public UpdateRequestBuilder setDetectNoop(boolean detectNoop) {
-        request.detectNoop(detectNoop);
-        return this;
-    }
-
-    /**
-     * Sets whether the script should be run in the case of an insert
-     */
-    public UpdateRequestBuilder setScriptedUpsert(boolean scriptedUpsert) {
-        request.scriptedUpsert(scriptedUpsert);
         return this;
     }
 

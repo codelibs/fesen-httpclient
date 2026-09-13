@@ -121,14 +121,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
             + '}';
     }
 
-    public int getNumberOfRootShards() {
-        return rootShardsToAllChildren.length;
-    }
-
-    public int getNumberOfShards() {
-        return activeShardIds.size();
-    }
-
     public ShardRange[] getChildShardsOfParent(int shardId) {
         if (parentToChildShards.containsKey(shardId) == false) {
             return null;
@@ -140,10 +132,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
             childShards[childShardIdx++] = childShard;
         }
         return childShards;
-    }
-
-    public Iterator<Integer> getActiveShardIterator() {
-        return new HashSet<>(activeShardIds).iterator();
     }
 
     /**
@@ -178,14 +166,6 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
                 this.maxShardId
             );
         }
-    }
-
-    public Set<Integer> getInProgressSplitShardIds() {
-        return inProgressSplitShardIds;
-    }
-
-    public boolean isSplitOfShardInProgress(int shardId) {
-        return inProgressSplitShardIds.contains(shardId);
     }
 
     @Override

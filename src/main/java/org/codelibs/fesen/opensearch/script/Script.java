@@ -593,14 +593,6 @@ public final class Script implements ToXContentObject, Writeable {
         return idOrCode;
     }
 
-    /**
-     * @return The map of compiler options for this {@link Script} if the {@link ScriptType}
-     *         is {@link ScriptType#INLINE}, {@code null} otherwise.
-     */
-    public Map<String, String> getOptions() {
-        return options;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

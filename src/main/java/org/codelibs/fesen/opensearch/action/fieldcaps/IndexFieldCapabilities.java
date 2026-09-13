@@ -82,14 +82,6 @@ public class IndexFieldCapabilities implements Writeable {
         return isAggregatable;
     }
 
-    public boolean isSearchable() {
-        return isSearchable;
-    }
-
-    public Map<String, String> meta() {
-        return meta;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

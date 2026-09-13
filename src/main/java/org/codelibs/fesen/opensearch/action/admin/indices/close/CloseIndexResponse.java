@@ -149,10 +149,6 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             return exception;
         }
 
-        public ShardResult[] getShards() {
-            return shards;
-        }
-
         public boolean hasFailures() {
             if (exception != null) {
                 return true;
@@ -271,10 +267,6 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             private Failure(StreamInput in) throws IOException {
                 super(in);
                 nodeId = in.readOptionalString();
-            }
-
-            public Failure(final String index, final int shardId, final Throwable reason) {
-                this(index, shardId, reason, null);
             }
 
             public Failure(final String index, final int shardId, final Throwable reason, final String nodeId) {

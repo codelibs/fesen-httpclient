@@ -49,10 +49,6 @@ public class DeleteRequestBuilder extends ReplicationRequestBuilder<DeleteReques
     implements
         WriteRequestBuilder<DeleteRequestBuilder> {
 
-    public DeleteRequestBuilder(OpenSearchClient client, DeleteAction action) {
-        super(client, action, new DeleteRequest());
-    }
-
     public DeleteRequestBuilder(OpenSearchClient client, DeleteAction action, @Nullable String index) {
         super(client, action, new DeleteRequest(index));
     }
@@ -62,32 +58,6 @@ public class DeleteRequestBuilder extends ReplicationRequestBuilder<DeleteReques
      */
     public DeleteRequestBuilder setId(String id) {
         request.id(id);
-        return this;
-    }
-
-    /**
-     * Controls the shard routing of the delete request. Using this value to hash the shard
-     * and not the id.
-     */
-    public DeleteRequestBuilder setRouting(String routing) {
-        request.routing(routing);
-        return this;
-    }
-
-    /**
-     * Sets the version, which will cause the delete operation to only be performed if a matching
-     * version exists and no changes happened on the doc since then.
-     */
-    public DeleteRequestBuilder setVersion(long version) {
-        request.version(version);
-        return this;
-    }
-
-    /**
-     * Sets the type of versioning to use. Defaults to {@link VersionType#INTERNAL}.
-     */
-    public DeleteRequestBuilder setVersionType(VersionType versionType) {
-        request.versionType(versionType);
         return this;
     }
 

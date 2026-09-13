@@ -58,30 +58,8 @@ public class FieldCapabilitiesIndexResponse extends ActionResponse implements Wr
         this.canMatch = in.readBoolean();
     }
 
-    /**
-     * Get the index name
-     */
-    public String getIndexName() {
-        return indexName;
-    }
-
     public boolean canMatch() {
         return canMatch;
-    }
-
-    /**
-     * Get the field capabilities map
-     */
-    public Map<String, IndexFieldCapabilities> get() {
-        return responseMap;
-    }
-
-    /**
-     *
-     * Get the field capabilities for the provided {@code field}
-     */
-    public IndexFieldCapabilities getField(String field) {
-        return responseMap.get(field);
     }
 
     @Override

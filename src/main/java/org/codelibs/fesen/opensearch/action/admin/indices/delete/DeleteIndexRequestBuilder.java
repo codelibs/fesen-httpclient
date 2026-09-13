@@ -52,14 +52,4 @@ public class DeleteIndexRequestBuilder extends AcknowledgedRequestBuilder<
     public DeleteIndexRequestBuilder(OpenSearchClient client, DeleteIndexAction action, String... indices) {
         super(client, action, new DeleteIndexRequest(indices));
     }
-
-    /**
-     * Specifies what type of requested indices to ignore and wildcard indices expressions.
-     * <p>
-     * For example indices that don't exist.
-     */
-    public DeleteIndexRequestBuilder setIndicesOptions(IndicesOptions options) {
-        request.indicesOptions(options);
-        return this;
-    }
 }

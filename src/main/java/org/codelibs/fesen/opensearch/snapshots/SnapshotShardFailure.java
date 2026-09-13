@@ -85,16 +85,6 @@ public class SnapshotShardFailure extends ShardOperationFailedException {
         this.shardId = shardId;
     }
 
-    /**
-     * Returns node id where failure occurred
-     *
-     * @return node id
-     */
-    @Nullable
-    public String nodeId() {
-        return nodeId;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeOptionalString(nodeId);

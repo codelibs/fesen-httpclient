@@ -29,11 +29,6 @@ public class RemoteStoreMetadataRequest extends BroadcastRequest<RemoteStoreMeta
         shards = new String[0];
     }
 
-    public RemoteStoreMetadataRequest(StreamInput in) throws IOException {
-        super(in);
-        shards = in.readStringArray();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

@@ -84,20 +84,8 @@ public class GetIngestionStateRequest extends BroadcastRequest<GetIngestionState
         return shards;
     }
 
-    public void setShards(int[] shards) {
-        this.shards = shards;
-    }
-
     public PageParams getPageParams() {
         return pageParams;
-    }
-
-    public void setPageParams(PageParams pageParams) {
-        this.pageParams = pageParams;
-    }
-
-    public void addIndexShardPair(String indexName, int shard) {
-        indexShardPairsList.add(new IndexShardPair(indexName, shard));
     }
 
     private class IndexShardPair implements Writeable {

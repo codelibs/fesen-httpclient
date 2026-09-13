@@ -195,31 +195,6 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         return this.completionDataFields;
     }
 
-    public CommonStatsFlags includeAllShardIndexingPressureTrackers(boolean includeAllShardPressureTrackers) {
-        this.includeAllShardIndexingPressureTrackers = includeAllShardPressureTrackers;
-        return this;
-    }
-
-    public CommonStatsFlags includeOnlyTopIndexingPressureMetrics(boolean includeOnlyTopIndexingPressureMetrics) {
-        this.includeOnlyTopIndexingPressureMetrics = includeOnlyTopIndexingPressureMetrics;
-        return this;
-    }
-
-    public CommonStatsFlags includeCacheType(CacheType cacheType) {
-        includeCaches.add(cacheType);
-        return this;
-    }
-
-    public CommonStatsFlags includeAllCacheTypes() {
-        includeCaches = EnumSet.allOf(CacheType.class);
-        return this;
-    }
-
-    public CommonStatsFlags setLevels(String[] inputLevels) {
-        levels = inputLevels;
-        return this;
-    }
-
     public boolean includeUnloadedSegments() {
         return this.includeUnloadedSegments;
     }
@@ -234,10 +209,6 @@ public class CommonStatsFlags implements Writeable, Cloneable {
 
     public boolean includeSegmentFileSizes() {
         return this.includeSegmentFileSizes;
-    }
-
-    public void setIncludeIndicesStatsByLevel(boolean includeIndicesStatsByLevel) {
-        this.includeIndicesStatsByLevel = includeIndicesStatsByLevel;
     }
 
     public boolean getIncludeIndicesStatsByLevel() {

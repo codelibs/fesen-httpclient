@@ -56,17 +56,6 @@ public class GetStoredScriptRequest extends ClusterManagerNodeReadRequest<GetSto
         super();
     }
 
-    public GetStoredScriptRequest(String id) {
-        super();
-
-        this.id = id;
-    }
-
-    public GetStoredScriptRequest(StreamInput in) throws IOException {
-        super(in);
-        id = in.readString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

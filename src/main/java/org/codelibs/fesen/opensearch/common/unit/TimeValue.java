@@ -96,14 +96,6 @@ public class TimeValue implements Comparable<TimeValue> {
         return new TimeValue(hours, TimeUnit.HOURS);
     }
 
-    public static TimeValue timeValueDays(long days) {
-        // 106751.9 days is Long.MAX_VALUE nanoseconds, so we cannot store 106752 days
-        if (days > 106751) {
-            throw new IllegalArgumentException("time value cannot store values greater than 106751 days");
-        }
-        return new TimeValue(days, TimeUnit.DAYS);
-    }
-
     /**
      * @return the unit used for the this time value, see {@link #duration()}
      */
@@ -138,16 +130,8 @@ public class TimeValue implements Comparable<TimeValue> {
         return ((double) nanos()) / C1;
     }
 
-    public double getMicrosFrac() {
-        return microsFrac();
-    }
-
     public double millisFrac() {
         return ((double) nanos()) / C2;
-    }
-
-    public double getMillisFrac() {
-        return millisFrac();
     }
 
     public double secondsFrac() {
@@ -176,10 +160,6 @@ public class TimeValue implements Comparable<TimeValue> {
 
     public double daysFrac() {
         return ((double) nanos()) / C6;
-    }
-
-    public double getDaysFrac() {
-        return daysFrac();
     }
 
     /**

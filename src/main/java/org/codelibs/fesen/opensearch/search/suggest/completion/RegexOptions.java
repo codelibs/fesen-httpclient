@@ -118,13 +118,6 @@ public class RegexOptions implements ToXContentFragment, Writeable {
         return flagsValue;
     }
 
-    /**
-     * Returns the maximum automaton states allowed for fuzzy expansion
-     */
-    public int getMaxDeterminizedStates() {
-        return maxDeterminizedStates;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

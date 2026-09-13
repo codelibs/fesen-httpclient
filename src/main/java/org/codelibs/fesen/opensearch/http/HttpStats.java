@@ -83,10 +83,6 @@ public class HttpStats implements Writeable, ToXContentFragment {
         out.writeVLong(totalOpen);
     }
 
-    public long getServerOpen() {
-        return this.serverOpen;
-    }
-
     public long getTotalOpen() {
         return this.totalOpen;
     }

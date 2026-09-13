@@ -166,20 +166,6 @@ public final class ProfileResult implements Writeable, ToXContentObject {
     }
 
     /**
-     * The timing breakdown for this node.
-     */
-    public Map<String, Long> getTimeBreakdown() {
-        return Collections.unmodifiableMap(breakdown);
-    }
-
-    /**
-     * The debug information about the profiled execution.
-     */
-    public Map<String, Object> getDebugInfo() {
-        return Collections.unmodifiableMap(debug);
-    }
-
-    /**
      * Returns the total time (inclusive of children) for this query node.
      *
      * @return  elapsed time in nanoseconds
@@ -198,13 +184,6 @@ public final class ProfileResult implements Writeable, ToXContentObject {
 
     public Long getAvgSliceTime() {
         return avgSliceNodeTime;
-    }
-
-    /**
-     * Returns a list of all profiled children queries
-     */
-    public List<ProfileResult> getProfiledChildren() {
-        return Collections.unmodifiableList(children);
     }
 
     @Override

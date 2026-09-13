@@ -160,10 +160,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
 
     public UpdateRequest() {}
 
-    public UpdateRequest(StreamInput in) throws IOException {
-        this(null, in);
-    }
-
     public UpdateRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         waitForActiveShards = ActiveShardCount.readFrom(in);
@@ -303,14 +299,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     public UpdateRequest fetchSource(FetchSourceContext context) {
         this.fetchSourceContext = context;
         return this;
-    }
-
-    /**
-     * Gets the {@link FetchSourceContext} which defines how the _source should
-     * be fetched.
-     */
-    public FetchSourceContext fetchSource() {
-        return fetchSourceContext;
     }
 
     /**

@@ -208,10 +208,6 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
             PARSER.declareString(ConstructingObjectParser.optionalConstructorArg(), View.DESCRIPTION_FIELD);
             PARSER.declareObjectArray(ConstructingObjectParser.constructorArg(), (p, c) -> Target.fromXContent(p), View.TARGETS_FIELD);
         }
-
-        public static Request fromXContent(final XContentParser parser) throws IOException {
-            return PARSER.parse(parser, null);
-        }
     }
 
 }

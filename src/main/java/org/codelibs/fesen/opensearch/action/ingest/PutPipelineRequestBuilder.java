@@ -47,10 +47,6 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class PutPipelineRequestBuilder extends ActionRequestBuilder<PutPipelineRequest, AcknowledgedResponse> {
 
-    public PutPipelineRequestBuilder(OpenSearchClient client, PutPipelineAction action) {
-        super(client, action, new PutPipelineRequest());
-    }
-
     public PutPipelineRequestBuilder(
         OpenSearchClient client,
         PutPipelineAction action,

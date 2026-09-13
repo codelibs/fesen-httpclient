@@ -97,22 +97,11 @@ public class WarmerStats implements Writeable, ToXContentFragment {
         this.totalTimeInMillis += warmerStats.totalTimeInMillis;
     }
 
-    public long current() {
-        return this.current;
-    }
-
     /**
      * The total number of warmer executed.
      */
     public long total() {
         return this.total;
-    }
-
-    /**
-     * The total time warmer have been executed (in milliseconds).
-     */
-    public long totalTimeInMillis() {
-        return this.totalTimeInMillis;
     }
 
     /**

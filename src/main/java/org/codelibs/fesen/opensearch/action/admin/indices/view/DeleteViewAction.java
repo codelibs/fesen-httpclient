@@ -45,11 +45,6 @@ public class DeleteViewAction extends ActionType<AcknowledgedResponse> {
             this.name = name;
         }
 
-        public Request(final StreamInput in) throws IOException {
-            super(in);
-            this.name = in.readString();
-        }
-
         public String getName() {
             return name;
         }
@@ -91,10 +86,6 @@ public class DeleteViewAction extends ActionType<AcknowledgedResponse> {
 
         static {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), View.NAME_FIELD);
-        }
-
-        public static Request fromXContent(final XContentParser parser) throws IOException {
-            return PARSER.parse(parser, null);
         }
     }
 

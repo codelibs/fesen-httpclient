@@ -86,15 +86,6 @@ public class RestoreInfo implements ToXContentObject, Writeable {
     }
 
     /**
-     * List of restored indices
-     *
-     * @return list of restored indices
-     */
-    public List<String> indices() {
-        return indices;
-    }
-
-    /**
      * Number of shards being restored
      *
      * @return number of being restored

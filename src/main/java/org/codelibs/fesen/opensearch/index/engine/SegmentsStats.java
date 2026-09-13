@@ -331,18 +331,4 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
             out.writeOptionalWriteable(replicationStats);
         }
     }
-
-    public void clearFileSizes() {
-        fileSizes.clear();
-    }
-
-    /**
-     * Used only for deprecating memory tracking in REST interface
-     * todo remove in OpenSearch 3.0
-     * @deprecated
-     */
-    @Deprecated
-    public ByteSizeValue getZeroMemory() {
-        return ZERO_BYTE_SIZE_VALUE;
-    }
 }

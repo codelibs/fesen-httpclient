@@ -82,10 +82,6 @@ public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQu
         this(search, true);
     }
 
-    public DeleteByQueryRequest(StreamInput in) throws IOException {
-        super(in);
-    }
-
     private DeleteByQueryRequest(SearchRequest search, boolean setDefaults) {
         super(search, setDefaults);
         // Delete-By-Query does not require the source
@@ -112,29 +108,6 @@ public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQu
             getSearchRequest().routing(routing);
         }
         return this;
-    }
-
-    /**
-     * The scroll size to control number of documents processed per batch
-     */
-    public DeleteByQueryRequest setBatchSize(int size) {
-        getSearchRequest().source().size(size);
-        return this;
-    }
-
-    /**
-     * Set the IndicesOptions for controlling unavailable indices
-     */
-    public DeleteByQueryRequest setIndicesOptions(IndicesOptions indicesOptions) {
-        getSearchRequest().indicesOptions(indicesOptions);
-        return this;
-    }
-
-    /**
-     * Gets the batch size for this request
-     */
-    public int getBatchSize() {
-        return getSearchRequest().source().size();
     }
 
     /**

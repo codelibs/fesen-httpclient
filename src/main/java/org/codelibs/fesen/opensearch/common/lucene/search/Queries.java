@@ -76,11 +76,6 @@ public class Queries {
         return new FieldExistsQuery("_primary_term");
     }
 
-    /** Return a query that matches all documents but those that match the given query. */
-    public static Query not(Query q) {
-        return new BooleanQuery.Builder().add(new MatchAllDocsQuery(), Occur.MUST).add(q, Occur.MUST_NOT).build();
-    }
-
     public static Query applyMinimumShouldMatch(BooleanQuery query, @Nullable String minimumShouldMatch) {
         if (minimumShouldMatch == null) {
             return query;
@@ -155,10 +150,6 @@ public class Queries {
         }
 
         return result < 0 ? 0 : result;
-    }
-
-    public static Query newMatchNoDocsQueryWithoutRewrite(String reason) {
-        return new MatchNoDocsWithoutRewriteQuery(reason);
     }
 
     /**

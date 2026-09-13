@@ -128,10 +128,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return levelHolders;
     }
 
-    public boolean hasGlobalBlock(ClusterBlock block) {
-        return global.contains(block);
-    }
-
     /**
      * Is there a global block with the provided status?
      */

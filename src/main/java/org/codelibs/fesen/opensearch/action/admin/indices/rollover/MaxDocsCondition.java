@@ -53,11 +53,6 @@ public class MaxDocsCondition extends Condition<Long> {
         this.value = value;
     }
 
-    public MaxDocsCondition(StreamInput in) throws IOException {
-        super(NAME);
-        this.value = in.readLong();
-    }
-
     @Override
     public Result evaluate(final Stats stats) {
         return new Result(this, this.value <= stats.numDocs);

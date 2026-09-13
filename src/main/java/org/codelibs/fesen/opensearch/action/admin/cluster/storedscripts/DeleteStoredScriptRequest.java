@@ -52,19 +52,8 @@ public class DeleteStoredScriptRequest extends AcknowledgedRequest<DeleteStoredS
 
     private String id;
 
-    public DeleteStoredScriptRequest(StreamInput in) throws IOException {
-        super(in);
-        id = in.readString();
-    }
-
     DeleteStoredScriptRequest() {
         super();
-    }
-
-    public DeleteStoredScriptRequest(String id) {
-        super();
-
-        this.id = id;
     }
 
     @Override

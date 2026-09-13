@@ -56,13 +56,6 @@ public interface XContent {
     byte streamSeparator();
 
     /**
-     * Creates a new generator using the provided output stream.
-     */
-    default XContentGenerator createGenerator(OutputStream os, boolean prettyPrint) throws IOException {
-        return createGenerator(os, Collections.emptySet(), Collections.emptySet(), prettyPrint);
-    }
-
-    /**
      * Creates a new generator using the provided output stream and some inclusive and/or exclusive filters. When both exclusive and
      * inclusive filters are provided, the underlying generator will first use exclusion filters to remove fields and then will check the
      * remaining fields against the inclusive filters.

@@ -331,31 +331,6 @@ public final class Settings implements ToXContentFragment {
     }
 
     /**
-     * Returns the setting value (as time) associated with the setting key. If it does not exists,
-     * returns the default value provided.
-     */
-    public TimeValue getAsTime(String setting, TimeValue defaultValue) {
-        return parseTimeValue(get(setting), defaultValue, setting);
-    }
-
-    /**
-     * Returns the setting value (as size) associated with the setting key. If it does not exists,
-     * returns the default value provided.
-     */
-    public ByteSizeValue getAsBytesSize(String setting, ByteSizeValue defaultValue) throws SettingsException {
-        return parseBytesSizeValue(get(setting), defaultValue, setting);
-    }
-
-    /**
-     * Returns the setting value (as size) associated with the setting key. Provided values can either be
-     * absolute values (interpreted as a number of bytes), byte sizes (eg. 1mb) or percentage of the heap size
-     * (eg. 12%). If it does not exists, parses the default value provided.
-     */
-    public ByteSizeValue getAsMemory(String setting, String defaultValue) throws SettingsException {
-        return MemorySizeValue.parseBytesSizeValueOrHeapRatio(get(setting, defaultValue), setting);
-    }
-
-    /**
      * The values associated with a setting key as an immutable list.
      * <p>
      * It will also automatically load a comma separated list under the settingPrefix and merge with
@@ -769,11 +744,6 @@ public final class Settings implements ToXContentFragment {
             return Settings.toString(map.get(key));
         }
 
-        /** Return the current secure settings, or {@code null} if none have been set. */
-        public SecureSettings getSecureSettings() {
-            return secureSettings.get();
-        }
-
         public Builder setSecureSettings(SecureSettings secureSettings) {
             if (secureSettings.isLoaded() == false) {
                 throw new IllegalStateException("Secure settings must already be loaded");
@@ -788,39 +758,6 @@ public final class Settings implements ToXContentFragment {
             }
             this.secureSettings.set(secureSettings);
             return this;
-        }
-
-        /**
-         * Sets a path setting with the provided setting key and path.
-         *
-         * @param key  The setting key
-         * @param path The setting path
-         * @return The builder
-         */
-        public Builder put(String key, Path path) {
-            return put(key, path.toString());
-        }
-
-        /**
-         * Sets a byteSizeValue setting with the provided setting key and byteSizeValue.
-         *
-         * @param key  The setting key
-         * @param byteSizeValue The setting value
-         * @return The builder
-         */
-        public Builder put(final String key, final ByteSizeValue byteSizeValue) {
-            return put(key, byteSizeValue.getStringRep());
-        }
-
-        /**
-         * Sets an level setting with the provided setting key and level instance.
-         *
-         * @param key  The setting key
-         * @param level The setting value
-         * @return The builder
-         */
-        public Builder put(String key, Level level) {
-            return put(key, level.toString());
         }
 
         /**
@@ -890,30 +827,6 @@ public final class Settings implements ToXContentFragment {
          * @return The builder
          */
         public Builder put(String setting, long value) {
-            put(setting, String.valueOf(value));
-            return this;
-        }
-
-        /**
-         * Sets the setting with the provided setting key and the float value.
-         *
-         * @param setting The setting key
-         * @param value   The float value
-         * @return The builder
-         */
-        public Builder put(String setting, float value) {
-            put(setting, String.valueOf(value));
-            return this;
-        }
-
-        /**
-         * Sets the setting with the provided setting key and the double value.
-         *
-         * @param setting The setting key
-         * @param value   The double value
-         * @return The builder
-         */
-        public Builder put(String setting, double value) {
             put(setting, String.valueOf(value));
             return this;
         }

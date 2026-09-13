@@ -192,10 +192,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
         return taskId;
     }
 
-    public long getId() {
-        return taskId.getId();
-    }
-
     public String getType() {
         return type;
     }
@@ -241,13 +237,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
     }
 
     /**
-     * Returns the task headers
-     */
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    /**
      * Returns the task resource information
      */
     public TaskResourceStats getResourceStats() {
@@ -290,10 +279,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
             builder.humanReadableField("cancellation_time_millis", "cancellation_time", new TimeValue(cancellationStartTime));
         }
         return builder;
-    }
-
-    public static TaskInfo fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
     }
 
     public static final ConstructingObjectParser<TaskInfo, Void> PARSER = new ConstructingObjectParser<>("task_info", true, a -> {

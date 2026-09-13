@@ -171,13 +171,6 @@ public abstract class InternalOrder extends BucketOrder {
             return ID;
         }
 
-        /**
-         * @return unmodifiable list of {@link BucketOrder}s to sort on.
-         */
-        public List<BucketOrder> orderElements() {
-            return Collections.unmodifiableList(orderElements);
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startArray();
@@ -344,16 +337,6 @@ public abstract class InternalOrder extends BucketOrder {
      */
     public static boolean isKeyAsc(BucketOrder order) {
         return isOrder(order, KEY_ASC);
-    }
-
-    /**
-     * Determine if the ordering strategy is sorting on bucket key descending.
-     *
-     * @param order bucket ordering strategy to check.
-     * @return {@code true} if the ordering strategy is sorting on bucket key descending, {@code false} otherwise.
-     */
-    public static boolean isKeyDesc(BucketOrder order) {
-        return isOrder(order, KEY_DESC);
     }
 
     /**

@@ -58,13 +58,6 @@ public class ReplicationTask extends Task {
     }
 
     /**
-     * Set the current phase of the task.
-     */
-    public void setPhase(String phase) {
-        this.phase = phase;
-    }
-
-    /**
      * Get the current phase of the task.
      */
     public String getPhase() {

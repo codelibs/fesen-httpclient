@@ -87,36 +87,4 @@ public enum Releasables {
     public static void closeWhileHandlingException(Releasable... releasables) {
         closeWhileHandlingException(Arrays.asList(releasables));
     }
-
-    /** Wrap several releasables into a single one. This is typically useful for use with try-with-resources: for example let's assume
-     *  that you store in a list several resources that you would like to see released after execution of the try block:
-     *
-     *  <pre>
-     *  List&lt;Releasable&gt; resources = ...;
-     *  try (Releasable releasable = Releasables.wrap(resources)) {
-     *      // do something
-     *  }
-     *  // the resources will be released when reaching here
-     *  </pre>
-     */
-    public static Releasable wrap(final Iterable<Releasable> releasables) {
-        return () -> close(releasables);
-    }
-
-    /** @see #wrap(Iterable) */
-    public static Releasable wrap(final Releasable... releasables) {
-        return () -> close(releasables);
-    }
-
-    /**
-     * Wraps a {@link Releasable} such that its {@link Releasable#close()} method can be called multiple times without double releasing.
-     */
-    public static Releasable releaseOnce(final Releasable releasable) {
-        final AtomicBoolean released = new AtomicBoolean(false);
-        return () -> {
-            if (released.compareAndSet(false, true)) {
-                releasable.close();
-            }
-        };
-    }
 }

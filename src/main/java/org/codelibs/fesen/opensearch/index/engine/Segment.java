@@ -163,14 +163,6 @@ public class Segment implements Writeable {
         return segmentSort;
     }
 
-    /**
-     * Return segment attributes.
-     * @see org.apache.lucene.index.SegmentInfo#getAttributes()
-     */
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

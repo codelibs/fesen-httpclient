@@ -309,13 +309,6 @@ public enum VersionType implements Writeable {
         throw new IllegalArgumentException("No version type match [" + versionType + "]");
     }
 
-    public static VersionType fromString(String versionType, VersionType defaultVersionType) {
-        if (versionType == null) {
-            return defaultVersionType;
-        }
-        return fromString(versionType);
-    }
-
     public static String toString(VersionType versionType) {
         return versionType.name().toLowerCase(Locale.ROOT);
     }

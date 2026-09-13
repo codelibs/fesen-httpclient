@@ -55,9 +55,4 @@ public class FieldCapabilitiesRequestBuilder extends ActionRequestBuilder<FieldC
         request().fields(fields);
         return this;
     }
-
-    public FieldCapabilitiesRequestBuilder setIncludeUnmapped(boolean includeUnmapped) {
-        request().includeUnmapped(includeUnmapped);
-        return this;
-    }
 }

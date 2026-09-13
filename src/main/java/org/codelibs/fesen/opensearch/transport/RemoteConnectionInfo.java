@@ -64,10 +64,6 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
         skipUnavailable = input.readBoolean();
     }
 
-    public boolean isConnected() {
-        return modeInfo.isConnected();
-    }
-
     public String getClusterAlias() {
         return clusterAlias;
     }

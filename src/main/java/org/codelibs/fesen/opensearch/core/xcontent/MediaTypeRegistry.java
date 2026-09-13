@@ -367,10 +367,6 @@ public final class MediaTypeRegistry {
         public MediaType getMediaType() {
             return mediaType;
         }
-
-        public Map<String, String> getParameters() {
-            return parameters;
-        }
     }
 
     private static void setDefaultMediaType(final MediaType mediaType) {

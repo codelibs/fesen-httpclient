@@ -69,13 +69,4 @@ public class ClusterAllocationExplainRequestBuilder extends ClusterManagerNodeOp
         return this;
     }
 
-    /**
-     * Requests the explain API to explain an already assigned replica shard currently allocated to
-     * the given node.
-     */
-    public ClusterAllocationExplainRequestBuilder setCurrentNode(String currentNode) {
-        request.setCurrentNode(currentNode);
-        return this;
-    }
-
 }

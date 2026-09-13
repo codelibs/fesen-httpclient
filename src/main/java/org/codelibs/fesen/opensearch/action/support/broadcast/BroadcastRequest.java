@@ -117,12 +117,4 @@ public class BroadcastRequest<Request extends BroadcastRequest<Request>> extends
         out.writeStringArrayNullable(indices);
         indicesOptions.writeIndicesOptions(out);
     }
-
-    public void setShouldCancelOnTimeout(boolean shouldCancelOnTimeout) {
-        this.shouldCancelOnTimeout = shouldCancelOnTimeout;
-    }
-
-    public boolean getShouldCancelOnTimeout() {
-        return this.shouldCancelOnTimeout;
-    }
 }

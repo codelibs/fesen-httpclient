@@ -115,10 +115,6 @@ public class DiskUsage implements ToXContentFragment, Writeable {
         return nodeName;
     }
 
-    public String getPath() {
-        return path;
-    }
-
     public double getFreeDiskAsPercentage() {
         // We return 100.0% in order to fail "open", in that if we have invalid
         // numbers for the total bytes, it's as if we don't know disk usage.

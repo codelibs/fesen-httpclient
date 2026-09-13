@@ -335,15 +335,6 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
         return PARSER.apply(parser, null).build(ignoreEmpty);
     }
 
-    /**
-     * Required for {@link ScriptMetadata.ScriptMetadataDiff}.  Uses
-     * the {@link StoredScriptSource#StoredScriptSource(StreamInput)}
-     * constructor.
-     */
-    public static Diff<StoredScriptSource> readDiffFrom(StreamInput in) throws IOException {
-        return readDiffFrom(StoredScriptSource::new, in);
-    }
-
     private final String lang;
     private final String source;
     private final Map<String, String> options;
@@ -431,13 +422,6 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
      */
     public String getSource() {
         return source;
-    }
-
-    /**
-     * @return The compiler options used for this script.
-     */
-    public Map<String, String> getOptions() {
-        return options;
     }
 
     @Override

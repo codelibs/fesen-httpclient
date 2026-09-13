@@ -258,39 +258,12 @@ public class PluginInfo implements Writeable, ToXContentObject {
     }
 
     /**
-     * Other plugins this plugin extends through SPI.
-     *
-     * @return the names of the plugins extended
-     */
-    public boolean isExtendedPluginOptional(String extendedPlugin) {
-        return optionalExtendedPlugins.contains(extendedPlugin);
-    }
-
-    /**
-     * Other plugins this plugin extends through SPI
-     *
-     * @return the names of the plugins extended
-     */
-    public List<String> getExtendedPlugins() {
-        return extendedPlugins.stream().map(s -> s.split(";")[0]).collect(Collectors.toUnmodifiableList());
-    }
-
-    /**
      * The version of the plugin
      *
      * @return the version
      */
     public String getVersion() {
         return version;
-    }
-
-    /**
-     * The list of OpenSearch version ranges the plugin is compatible with.
-     *
-     * @return a list of OpenSearch version ranges
-     */
-    public List<SemverRange> getOpenSearchVersionRanges() {
-        return opensearchVersionRanges;
     }
 
     /**
@@ -323,15 +296,6 @@ public class PluginInfo implements Writeable, ToXContentObject {
      */
     public boolean hasNativeController() {
         return hasNativeController;
-    }
-
-    /**
-     * The target folder name for the plugin.
-     *
-     * @return the custom folder name for the plugin if the folder name is specified, else return the id with kebab-case.
-     */
-    public String getTargetFolderName() {
-        return (this.customFolderName == null || this.customFolderName.isEmpty()) ? this.name : this.customFolderName;
     }
 
     @Override

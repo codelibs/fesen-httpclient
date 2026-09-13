@@ -181,10 +181,6 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
             return this.metricName;
         }
 
-        boolean containedIn(Set<String> metricNames) {
-            return metricNames.contains(this.metricName());
-        }
-
         static Set<String> allMetrics() {
             return Arrays.stream(values()).map(Metric::metricName).collect(Collectors.toSet());
         }

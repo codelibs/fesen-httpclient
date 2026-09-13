@@ -140,14 +140,6 @@ public class NodeInfo extends BaseNodeResponse {
     }
 
     /**
-     * System's hostname. <code>null</code> in case of UnknownHostException
-     */
-    @Nullable
-    public String getHostname() {
-        return getNode().getHostName();
-    }
-
-    /**
      * The current OpenSearch version
      */
     public Version getVersion() {
@@ -259,66 +251,6 @@ public class NodeInfo extends BaseNodeResponse {
         private AggregationInfo aggsInfo;
         private ByteSizeValue totalIndexingBuffer;
         private SearchPipelineInfo searchPipelineInfo;
-
-        public Builder setSettings(Settings settings) {
-            this.settings = settings;
-            return this;
-        }
-
-        public Builder setOs(OsInfo os) {
-            this.os = os;
-            return this;
-        }
-
-        public Builder setProcess(ProcessInfo process) {
-            this.process = process;
-            return this;
-        }
-
-        public Builder setJvm(JvmInfo jvm) {
-            this.jvm = jvm;
-            return this;
-        }
-
-        public Builder setThreadPool(ThreadPoolInfo threadPool) {
-            this.threadPool = threadPool;
-            return this;
-        }
-
-        public Builder setTransport(TransportInfo transport) {
-            this.transport = transport;
-            return this;
-        }
-
-        public Builder setHttp(HttpInfo http) {
-            this.http = http;
-            return this;
-        }
-
-        public Builder setPlugins(PluginsAndModules plugins) {
-            this.plugins = plugins;
-            return this;
-        }
-
-        public Builder setIngest(IngestInfo ingest) {
-            this.ingest = ingest;
-            return this;
-        }
-
-        public Builder setAggsInfo(AggregationInfo aggsInfo) {
-            this.aggsInfo = aggsInfo;
-            return this;
-        }
-
-        public Builder setTotalIndexingBuffer(ByteSizeValue totalIndexingBuffer) {
-            this.totalIndexingBuffer = totalIndexingBuffer;
-            return this;
-        }
-
-        public Builder setSearchPipelineInfo(SearchPipelineInfo searchPipelineInfo) {
-            this.searchPipelineInfo = searchPipelineInfo;
-            return this;
-        }
 
         public NodeInfo build() {
             return new NodeInfo(

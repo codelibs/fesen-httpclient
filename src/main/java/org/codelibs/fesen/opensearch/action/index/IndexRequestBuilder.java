@@ -73,23 +73,6 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
     }
 
     /**
-     * Controls the shard routing of the request. Using this value to hash the shard
-     * and not the id.
-     */
-    public IndexRequestBuilder setRouting(String routing) {
-        request.routing(routing);
-        return this;
-    }
-
-    /**
-     * Sets the source.
-     */
-    public IndexRequestBuilder setSource(BytesReference source, MediaType mediaType) {
-        request.source(source, mediaType);
-        return this;
-    }
-
-    /**
      * Index the Map as a JSON.
      *
      * @param source The map to index
@@ -142,19 +125,6 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
     }
 
     /**
-     * Constructs a simple document with a field name and value pairs.
-     * <p>
-     * <b>Note: the number of objects passed as varargs to this method must be an even
-     * number. Also the first argument in each pair (the field name) must have a
-     * valid String representation.</b>
-     * </p>
-     */
-    public IndexRequestBuilder setSource(MediaType mediaType, Object... source) {
-        request.source(mediaType, source);
-        return this;
-    }
-
-    /**
      * Sets the type of operation to perform.
      */
     public IndexRequestBuilder setOpType(DocWriteRequest.OpType opType) {
@@ -167,23 +137,6 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      */
     public IndexRequestBuilder setCreate(boolean create) {
         request.create(create);
-        return this;
-    }
-
-    /**
-     * Sets the version, which will cause the index operation to only be performed if a matching
-     * version exists and no changes happened on the doc since then.
-     */
-    public IndexRequestBuilder setVersion(long version) {
-        request.version(version);
-        return this;
-    }
-
-    /**
-     * Sets the versioning type. Defaults to {@link VersionType#INTERNAL}.
-     */
-    public IndexRequestBuilder setVersionType(VersionType versionType) {
-        request.versionType(versionType);
         return this;
     }
 
@@ -216,14 +169,6 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      */
     public IndexRequestBuilder setPipeline(String pipeline) {
         request.setPipeline(pipeline);
-        return this;
-    }
-
-    /**
-     * Sets the require_alias flag
-     */
-    public IndexRequestBuilder setRequireAlias(boolean requireAlias) {
-        request.setRequireAlias(requireAlias);
         return this;
     }
 }

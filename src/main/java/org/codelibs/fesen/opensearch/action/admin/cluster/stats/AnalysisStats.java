@@ -238,62 +238,6 @@ public final class AnalysisStats implements ToXContentFragment, Writeable {
         out.writeCollection(usedBuiltInAnalyzers);
     }
 
-    /**
-     * Return the set of used char filters in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedCharFilterTypes() {
-        return usedCharFilters;
-    }
-
-    /**
-     * Return the set of used tokenizers in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedTokenizerTypes() {
-        return usedTokenizers;
-    }
-
-    /**
-     * Return the set of used token filters in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedTokenFilterTypes() {
-        return usedTokenFilters;
-    }
-
-    /**
-     * Return the set of used analyzers in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedAnalyzerTypes() {
-        return usedAnalyzers;
-    }
-
-    /**
-     * Return the set of used built-in char filters in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedBuiltInCharFilters() {
-        return usedBuiltInCharFilters;
-    }
-
-    /**
-     * Return the set of used built-in tokenizers in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedBuiltInTokenizers() {
-        return usedBuiltInTokenizers;
-    }
-
-    /**
-     * Return the set of used built-in token filters in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedBuiltInTokenFilters() {
-        return usedBuiltInTokenFilters;
-    }
-
-    /**
-     * Return the set of used built-in analyzers in the cluster.
-     */
-    public Set<IndexFeatureStats> getUsedBuiltInAnalyzers() {
-        return usedBuiltInAnalyzers;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

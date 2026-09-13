@@ -120,10 +120,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         return filter();
     }
 
-    public boolean filteringRequired() {
-        return filter != null;
-    }
-
     public String getSearchRouting() {
         return searchRouting();
     }
@@ -136,10 +132,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         return indexRouting;
     }
 
-    public Set<String> searchRoutingValues() {
-        return searchRoutingValues;
-    }
-
     public Boolean writeIndex() {
         return writeIndex;
     }
@@ -147,14 +139,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
     @Nullable
     public Boolean isHidden() {
         return isHidden;
-    }
-
-    public static Builder builder(String alias) {
-        return new Builder(alias);
-    }
-
-    public static Builder newAliasMetadataBuilder(String alias) {
-        return new Builder(alias);
     }
 
     @Override

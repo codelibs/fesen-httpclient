@@ -415,32 +415,6 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
     }
 
     /**
-     * Returns snapshot failure reason; {@code null} if the snapshot succeeded.
-     *
-     * @return snapshot failure reason
-     */
-    @Nullable
-    public String reason() {
-        return reason;
-    }
-
-    /**
-     * Returns indices that were included in this snapshot.
-     *
-     * @return list of indices
-     */
-    public List<String> indices() {
-        return indices;
-    }
-
-    /**
-     * @return list of data streams that were included in this snapshot.
-     */
-    public List<String> dataStreams() {
-        return dataStreams;
-    }
-
-    /**
      * Returns time when snapshot started; a value of {@code 0L} will be returned if
      * {@link #state()} returns {@code null}.
      *
@@ -494,43 +468,8 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
         return includeGlobalState;
     }
 
-    @Nullable
-    public Boolean isRemoteStoreIndexShallowCopyEnabled() {
-        return remoteStoreIndexShallowCopy;
-    }
-
     public long getPinnedTimestamp() {
         return pinnedTimestamp;
-    }
-
-    /**
-     * Returns shard failures; an empty list will be returned if there were no shard
-     * failures, or if {@link #state()} returns {@code null}.
-     *
-     * @return shard failures
-     */
-    public List<SnapshotShardFailure> shardFailures() {
-        return shardFailures;
-    }
-
-    /**
-     * Returns the version of opensearch that the snapshot was created with.  Will only
-     * return {@code null} if {@link #state()} returns {@code null} or {@link SnapshotState#INCOMPATIBLE}.
-     *
-     * @return version of opensearch that the snapshot was created with
-     */
-    @Nullable
-    public Version version() {
-        return version;
-    }
-
-    /**
-     * Returns the custom metadata that was attached to this snapshot at creation time.
-     * @return custom metadata
-     */
-    @Nullable
-    public Map<String, Object> userMetadata() {
-        return userMetadata;
     }
 
     /**

@@ -46,22 +46,7 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class CloseIndexRequestBuilder extends AcknowledgedRequestBuilder<CloseIndexRequest, CloseIndexResponse, CloseIndexRequestBuilder> {
 
-    public CloseIndexRequestBuilder(OpenSearchClient client, CloseIndexAction action) {
-        super(client, action, new CloseIndexRequest());
-    }
-
     public CloseIndexRequestBuilder(OpenSearchClient client, CloseIndexAction action, String... indices) {
         super(client, action, new CloseIndexRequest(indices));
-    }
-
-    /**
-     * Sets the indices to be closed
-     *
-     * @param indices the indices to be closed
-     * @return the request itself
-     */
-    public CloseIndexRequestBuilder setIndices(String... indices) {
-        request.indices(indices);
-        return this;
     }
 }

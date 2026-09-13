@@ -287,10 +287,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
         return includeGlobalState;
     }
 
-    public Map<String, Object> userMetadata() {
-        return userMetadata;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

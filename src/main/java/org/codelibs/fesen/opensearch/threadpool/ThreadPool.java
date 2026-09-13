@@ -226,10 +226,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
     private final ScheduledThreadPoolExecutor scheduler;
 
-    public Collection<ExecutorBuilder> builders() {
-        return Collections.unmodifiableCollection(builders.values());
-    }
-
     public static Setting<TimeValue> ESTIMATED_TIME_INTERVAL_SETTING = Setting.timeSetting(
         "thread_pool.estimated_time_interval",
         TimeValue.timeValueMillis(200),
@@ -408,32 +404,9 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         return System.nanoTime();
     }
 
-    /**
-     * Returns the value of milliseconds since UNIX epoch.
-     * <p>
-     * This method should only be used for exact date/time formatting. For calculating
-     * time deltas that should not suffer from negative deltas, which are possible with
-     * this method, see {@link #relativeTimeInMillis()}.
-     */
-    public long absoluteTimeInMillis() {
-        return cachedTimeThread.absoluteTimeInMillis();
-    }
-
     @Override
     public ThreadPoolInfo info() {
         return threadPoolInfo;
-    }
-
-    /**
-     * Get the generic {@link ExecutorService}. This executor service
-     * {@link Executor#execute(Runnable)} method will run the {@link Runnable} it is given in the
-     * {@link ThreadContext} of the thread that queues it.
-     * <p>
-     * Warning: this {@linkplain ExecutorService} will not throw {@link RejectedExecutionException}
-     * if you submit a task while it shutdown. It will instead silently queue it and not run it.
-     */
-    public ExecutorService generic() {
-        return executor(Names.GENERIC);
     }
 
     /**

@@ -181,10 +181,6 @@ public class AggregationPath {
         return Strings.arrayToDelimitedString(pathElements.toArray(), AGG_DELIM);
     }
 
-    public PathElement lastPathElement() {
-        return pathElements.get(pathElements.size() - 1);
-    }
-
     public List<PathElement> getPathElements() {
         return this.pathElements;
     }

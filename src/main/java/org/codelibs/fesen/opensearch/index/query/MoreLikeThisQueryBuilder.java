@@ -231,11 +231,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
             return index;
         }
 
-        public Item index(String index) {
-            this.index = index;
-            return this;
-        }
-
         public String id() {
             return id;
         }
@@ -253,10 +248,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
             return this;
         }
 
-        public Map<String, String> perFieldAnalyzer() {
-            return perFieldAnalyzer;
-        }
-
         /**
          * Sets the analyzer(s) to use at any given field.
          */
@@ -269,27 +260,8 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
             return routing;
         }
 
-        public Item routing(String routing) {
-            this.routing = routing;
-            return this;
-        }
-
         public long version() {
             return version;
-        }
-
-        public Item version(long version) {
-            this.version = version;
-            return this;
-        }
-
-        public VersionType versionType() {
-            return versionType;
-        }
-
-        public Item versionType(VersionType versionType) {
-            this.versionType = versionType;
-            return this;
         }
 
         MediaType mediaType() {

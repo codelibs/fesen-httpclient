@@ -46,12 +46,4 @@ public class AggregationInitializationException extends OpenSearchException {
     public AggregationInitializationException(String msg) {
         super(msg);
     }
-
-    public AggregationInitializationException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
-
-    public AggregationInitializationException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

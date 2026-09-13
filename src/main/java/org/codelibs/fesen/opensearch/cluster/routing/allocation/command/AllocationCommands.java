@@ -82,14 +82,6 @@ public class AllocationCommands implements ToXContentFragment {
     }
 
     /**
-     * Get the commands wrapped by this instance
-     * @return {@link List} of commands
-     */
-    public List<AllocationCommand> commands() {
-        return this.commands;
-    }
-
-    /**
      * Reads a {@link AllocationCommands} from a {@link StreamInput}
      * @param in {@link StreamInput} to read from
      * @return {@link AllocationCommands} read

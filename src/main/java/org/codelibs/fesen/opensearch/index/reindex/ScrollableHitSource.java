@@ -96,10 +96,6 @@ public abstract class ScrollableHitSource {
         this.fail = fail;
     }
 
-    public final void start() {
-        doStart(createRetryListener(this::doStart));
-    }
-
     private RetryListener createRetryListener(Consumer<RejectAwareActionListener<Response>> retryHandler) {
         Consumer<RejectAwareActionListener<Response>> countingRetryHandler = listener -> {
             countSearchRetry.run();
@@ -419,13 +415,6 @@ public abstract class ScrollableHitSource {
         }
 
         /**
-         * Build a search failure that doesn't have shard information available.
-         */
-        public SearchFailure(Throwable reason) {
-            this(reason, null, null, null);
-        }
-
-        /**
          * Read from a stream.
          */
         public SearchFailure(StreamInput in) throws IOException {
@@ -458,11 +447,6 @@ public abstract class ScrollableHitSource {
 
         public Throwable getReason() {
             return reason;
-        }
-
-        @Nullable
-        public String getNodeId() {
-            return nodeId;
         }
 
         @Override

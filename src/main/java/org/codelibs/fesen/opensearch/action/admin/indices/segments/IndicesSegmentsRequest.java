@@ -66,14 +66,6 @@ public class IndicesSegmentsRequest extends BroadcastRequest<IndicesSegmentsRequ
         return verbose;
     }
 
-    /**
-     * Sets the <code>verbose</code> option.
-     * @see #verbose()
-     */
-    public void verbose(boolean v) {
-        verbose = v;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

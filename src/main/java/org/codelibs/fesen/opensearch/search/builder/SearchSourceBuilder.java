@@ -592,13 +592,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Indicates whether scores will be returned as part of every search matched query.s
-     */
-    public boolean includeNamedQueriesScore() {
-        return includeNamedQueriesScore != null && includeNamedQueriesScore;
-    }
-
-    /**
      * Indicates whether scores will be tracked for this request.
      */
     public boolean trackScores() {
@@ -785,14 +778,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Indicate how the _source should be fetched.
-     */
-    public SearchSourceBuilder fetchSource(@Nullable FetchSourceContext fetchSourceContext) {
-        this.fetchSourceContext = fetchSourceContext;
-        return this;
-    }
-
-    /**
      * Gets the {@link FetchSourceContext} which defines how the _source should
      * be fetched.
      */
@@ -823,66 +808,10 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Indicates how the stored fields should be fetched.
-     */
-    public SearchSourceBuilder storedFields(StoredFieldsContext context) {
-        storedFieldsContext = context;
-        return this;
-    }
-
-    /**
      * Gets the stored fields context.
      */
     public StoredFieldsContext storedFields() {
         return storedFieldsContext;
-    }
-
-    /**
-     * Gets the docvalue fields.
-     */
-    public List<FieldAndFormat> docValueFields() {
-        return docValueFields;
-    }
-
-    /**
-     * Gets the fields to load and return as part of the search request.
-     */
-    public List<FieldAndFormat> fetchFields() {
-        return fetchFields;
-    }
-
-    /**
-     * Gets the script fields.
-     */
-    public List<ScriptField> scriptFields() {
-        return scriptFields;
-    }
-
-    public Map<String, Object> getDerivedFieldsObject() {
-        return derivedFieldsObject;
-    }
-
-    public List<DerivedField> getDerivedFields() {
-        return derivedFields;
-    }
-
-    /**
-     * Gets the boost a specific indices or aliases will receive when the query is
-     * executed against them.
-     */
-    public List<IndexBoost> indexBoosts() {
-        return indexBoosts;
-    }
-
-    /**
-     * The stats groups this request will be aggregated under.
-     */
-    public List<String> stats() {
-        return stats;
-    }
-
-    public List<SearchExtBuilder> ext() {
-        return extBuilders;
     }
 
     /**
@@ -913,34 +842,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     public SearchSourceBuilder searchPipelineSource(Map<String, Object> searchPipelineSource) {
         this.searchPipelineSource = searchPipelineSource;
         return this;
-    }
-
-    /**
-     * Define a search pipeline name to process this search request and/or its response. See {@link org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService}.
-     */
-    public SearchSourceBuilder pipeline(String searchPipeline) {
-        this.searchPipeline = searchPipeline;
-        return this;
-    }
-
-    /**
-     * Enables or disables verbose mode for the search pipeline.
-     *
-     * When verbose mode is enabled, detailed information about each processor
-     * in the search pipeline is included in the search response. This includes
-     * the processor name, execution status, input, output, and time taken for processing.
-     *
-     * This parameter is primarily intended for debugging purposes, allowing users
-     * to track how data flows and transforms through the search pipeline.
-     *
-     */
-    public SearchSourceBuilder verbosePipeline(Boolean verbosePipeline) {
-        this.verbosePipeline = verbosePipeline;
-        return this;
-    }
-
-    public Boolean verbosePipeline() {
-        return verbosePipeline;
     }
 
     /**
@@ -984,13 +885,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
             return shallowCopy(queryBuilder, postQueryBuilder, aggregations, this.sliceBuilder, sorts, rescoreBuilders, highlightBuilder);
         }
         return this;
-    }
-
-    /**
-     * Create a shallow copy of this builder with a new slice configuration.
-     */
-    public SearchSourceBuilder shallowCopy() {
-        return shallowCopy(queryBuilder, postQueryBuilder, aggregations, sliceBuilder, sorts, rescoreBuilders, highlightBuilder);
     }
 
     /**
@@ -1043,10 +937,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         rewrittenBuilder.searchPipeline = searchPipeline;
         rewrittenBuilder.verbosePipeline = verbosePipeline;
         return rewrittenBuilder;
-    }
-
-    public void parseXContent(XContentParser parser) throws IOException {
-        parseXContent(parser, true);
     }
 
     /**
@@ -1520,10 +1410,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
                     parser.getTokenLocation()
                 );
             }
-        }
-
-        public String getIndex() {
-            return index;
         }
 
         public float getBoost() {

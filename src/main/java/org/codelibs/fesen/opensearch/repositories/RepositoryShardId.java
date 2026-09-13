@@ -66,10 +66,6 @@ public final class RepositoryShardId implements Writeable {
         return index;
     }
 
-    public String indexName() {
-        return index.getName();
-    }
-
     public int shardId() {
         return shard;
     }

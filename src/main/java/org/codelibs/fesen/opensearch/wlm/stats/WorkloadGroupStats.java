@@ -78,10 +78,6 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
         return Objects.hash(stats);
     }
 
-    public Map<String, WorkloadGroupStatsHolder> getStats() {
-        return stats;
-    }
-
     /**
      * This is a stats holder object which will hold the data for a workload group at a point in time
      * the instance will only be created on demand through stats api
@@ -118,10 +114,6 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
 
         public long getCancellations() {
             return cancellations;
-        }
-
-        public Map<ResourceType, ResourceStats> getResourceStats() {
-            return resourceStats;
         }
 
         /**

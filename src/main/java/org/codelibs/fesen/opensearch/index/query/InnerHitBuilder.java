@@ -268,13 +268,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    /**
-     * Whether to include inner hits in the search response hits if required mappings is missing
-     */
-    public boolean isIgnoreUnmapped() {
-        return ignoreUnmapped;
-    }
-
     public int getFrom() {
         return from;
     }
@@ -285,10 +278,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         }
         this.from = from;
         return this;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public InnerHitBuilder setSize(int size) {
@@ -356,13 +345,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     }
 
     /**
-     * Gets the docvalue fields.
-     */
-    public List<FieldAndFormat> getDocValueFields() {
-        return docValueFields;
-    }
-
-    /**
      * Sets the stored fields to load from the docvalue and return.
      */
     public InnerHitBuilder setDocValueFields(List<FieldAndFormat> docValueFields) {
@@ -371,22 +353,11 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     }
 
     /**
-     * Gets the fields to load and return as part of the search request.
-     */
-    public List<FieldAndFormat> getFetchFields() {
-        return fetchFields;
-    }
-
-    /**
      * Sets the stored fields to load and return as part of the search request.
      */
     public InnerHitBuilder setFetchFields(List<FieldAndFormat> fetchFields) {
         this.fetchFields = fetchFields;
         return this;
-    }
-
-    public Set<ScriptField> getScriptFields() {
-        return scriptFields;
     }
 
     public InnerHitBuilder setScriptFields(Set<ScriptField> scriptFields) {
@@ -401,10 +372,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     public InnerHitBuilder setFetchSourceContext(FetchSourceContext fetchSourceContext) {
         this.fetchSourceContext = fetchSourceContext;
         return this;
-    }
-
-    public List<SortBuilder<?>> getSorts() {
-        return sorts;
     }
 
     public InnerHitBuilder setSorts(List<SortBuilder<?>> sorts) {

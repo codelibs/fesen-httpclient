@@ -111,13 +111,6 @@ public class RefreshStats implements Writeable, ToXContentFragment {
         this.listeners += refreshStats.listeners;
     }
 
-    /**
-     * The total number of refresh executed.
-     */
-    public long getTotal() {
-        return this.total;
-    }
-
     /*
      * The total number of external refresh executed.
      */

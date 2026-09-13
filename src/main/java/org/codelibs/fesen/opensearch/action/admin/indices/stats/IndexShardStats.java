@@ -72,10 +72,6 @@ public class IndexShardStats implements Iterable<ShardStats>, Writeable {
         return shards;
     }
 
-    public ShardStats getAt(int position) {
-        return shards[position];
-    }
-
     @Override
     public Iterator<ShardStats> iterator() {
         return Arrays.stream(shards).iterator();

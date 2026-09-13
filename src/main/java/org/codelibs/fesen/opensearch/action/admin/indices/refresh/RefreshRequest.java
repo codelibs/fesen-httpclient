@@ -56,8 +56,4 @@ public class RefreshRequest extends BroadcastRequest<RefreshRequest> {
     public RefreshRequest(String... indices) {
         super(indices);
     }
-
-    public RefreshRequest(StreamInput in) throws IOException {
-        super(in);
-    }
 }

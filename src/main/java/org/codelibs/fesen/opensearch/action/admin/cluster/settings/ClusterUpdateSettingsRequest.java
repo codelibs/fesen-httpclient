@@ -124,8 +124,4 @@ public class ClusterUpdateSettingsRequest extends AcknowledgedRequest<ClusterUpd
         builder.endObject();
         return builder;
     }
-
-    public static ClusterUpdateSettingsRequest fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
-    }
 }

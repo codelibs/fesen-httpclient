@@ -80,12 +80,4 @@ public class UpgradeResponse extends BroadcastResponse {
         }
         builder.endObject();
     }
-
-    /**
-     * Returns the highest upgrade version of the node that performed metadata upgrade and the
-     * the version of the oldest lucene segment for each index that was upgraded.
-     */
-    public Map<String, Tuple<Version, String>> versions() {
-        return versions;
-    }
 }

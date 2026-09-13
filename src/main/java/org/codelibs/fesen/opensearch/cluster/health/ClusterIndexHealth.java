@@ -393,10 +393,6 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
         return status;
     }
 
-    public Map<Integer, ClusterShardHealth> getShards() {
-        return this.shards;
-    }
-
     @Override
     public Iterator<ClusterShardHealth> iterator() {
         return shards.values().iterator();

@@ -54,11 +54,6 @@ public class DeleteRepositoryRequest extends AcknowledgedRequest<DeleteRepositor
 
     private String name;
 
-    public DeleteRepositoryRequest(StreamInput in) throws IOException {
-        super(in);
-        name = in.readString();
-    }
-
     public DeleteRepositoryRequest() {}
 
     /**

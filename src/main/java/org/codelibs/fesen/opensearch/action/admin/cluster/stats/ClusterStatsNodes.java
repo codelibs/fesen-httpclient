@@ -149,10 +149,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
         return this.counts;
     }
 
-    public Set<Version> getVersions() {
-        return versions;
-    }
-
     public OsStats getOs() {
         return os;
     }
@@ -167,10 +163,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
 
     public FsInfo.Path getFs() {
         return fs;
-    }
-
-    public Set<PluginInfo> getPlugins() {
-        return plugins;
     }
 
     /**
@@ -297,10 +289,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
 
         public int getTotal() {
             return total;
-        }
-
-        public Map<String, Integer> getRoles() {
-            return roles;
         }
 
         /**
@@ -587,22 +575,11 @@ public class ClusterStatsNodes implements ToXContentFragment {
             this.heapMax = heapMax;
         }
 
-        public Map<JvmVersion, Integer> getVersions() {
-            return versions;
-        }
-
         /**
          * The total number of threads in the cluster
          */
         public long getThreads() {
             return threads;
-        }
-
-        /**
-         * The maximum uptime of a node in the cluster
-         */
-        public TimeValue getMaxUpTime() {
-            return new TimeValue(maxUptime);
         }
 
         /**

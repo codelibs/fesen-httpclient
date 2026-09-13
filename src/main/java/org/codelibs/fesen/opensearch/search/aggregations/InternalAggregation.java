@@ -127,10 +127,6 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
             return pipelineTreeRoot != null;
         }
 
-        public void setSliceLevel(boolean sliceLevel) {
-            this.isSliceLevel = sliceLevel;
-        }
-
         public boolean isSliceLevel() {
             return this.isSliceLevel;
         }
@@ -160,15 +156,6 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
          */
         public PipelineTree pipelineTreeRoot() {
             return pipelineTreeRoot;
-        }
-
-        /**
-         * Supplies the pipelines when the result of the reduce is serialized
-         * to node versions that need pipeline aggregators to be serialized
-         * to them.
-         */
-        public Supplier<PipelineTree> pipelineTreeForBwcSerialization() {
-            return pipelineTreeForBwcSerialization;
         }
 
         /**

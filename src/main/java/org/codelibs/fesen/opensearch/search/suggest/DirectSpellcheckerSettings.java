@@ -79,46 +79,6 @@ public class DirectSpellcheckerSettings {
         return suggestMode;
     }
 
-    public void suggestMode(SuggestMode suggestMode) {
-        this.suggestMode = suggestMode;
-    }
-
-    public void accuracy(float accuracy) {
-        this.accuracy = accuracy;
-    }
-
-    public void sort(SortBy sort) {
-        this.sort = sort;
-    }
-
-    public void stringDistance(StringDistance distance) {
-        this.stringDistance = distance;
-    }
-
-    public void maxEdits(int maxEdits) {
-        this.maxEdits = maxEdits;
-    }
-
-    public void maxInspections(int maxInspections) {
-        this.maxInspections = maxInspections;
-    }
-
-    public void maxTermFreq(float maxTermFreq) {
-        this.maxTermFreq = maxTermFreq;
-    }
-
-    public void prefixLength(int prefixLength) {
-        this.prefixLength = prefixLength;
-    }
-
-    public void minWordLength(int minWordLength) {
-        this.minWordLength = minWordLength;
-    }
-
-    public void minDocFreq(float minDocFreq) {
-        this.minDocFreq = minDocFreq;
-    }
-
     @Override
     public String toString() {
         return "["

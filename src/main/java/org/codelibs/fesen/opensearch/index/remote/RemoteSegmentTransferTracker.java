@@ -139,44 +139,12 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
         return localRefreshTimeMs;
     }
 
-    public long getLocalRefreshClockTimeMs() {
-        return localRefreshClockTimeMs;
-    }
-
     long getRemoteRefreshTimeMs() {
         return remoteRefreshTimeMs;
     }
 
     long getRemoteRefreshClockTimeMs() {
         return remoteRefreshClockTimeMs;
-    }
-
-    public void updateRemoteRefreshClockTimeMs(long remoteRefreshClockTimeMs) {
-        this.remoteRefreshClockTimeMs = remoteRefreshClockTimeMs;
-    }
-
-    public long getInflightUploadBytes() {
-        return uploadBytesStarted.get() - uploadBytesFailed.get() - uploadBytesSucceeded.get();
-    }
-
-    public long getInflightUploads() {
-        return totalUploadsStarted.get() - totalUploadsFailed.get() - totalUploadsSucceeded.get();
-    }
-
-    public long getRejectionCount() {
-        return rejectionCount.get();
-    }
-
-    long getRejectionCount(String rejectionReason) {
-        return rejectionCountMap.get(rejectionReason).get();
-    }
-
-    public Map<String, Long> getLatestLocalFileNameLengthMap() {
-        return Collections.unmodifiableMap(latestLocalFileNameLengthMap);
-    }
-
-    int getConsecutiveFailureCount() {
-        return failures.length();
     }
 
     public DirectoryFileTransferTracker getDirectoryFileTransferTracker() {

@@ -111,21 +111,12 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
         return this.id;
     }
 
-    @Nullable
-    public String uuid() {
-        return uuid;
-    }
-
     public String description() {
         return this.description;
     }
 
     public RestStatus status() {
         return this.status;
-    }
-
-    public EnumSet<ClusterBlockLevel> levels() {
-        return this.levels;
     }
 
     public boolean contains(ClusterBlockLevel level) {

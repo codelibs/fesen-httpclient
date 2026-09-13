@@ -86,10 +86,6 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
     private long ifSeqNo = UNASSIGNED_SEQ_NO;
     private long ifPrimaryTerm = UNASSIGNED_PRIMARY_TERM;
 
-    public DeleteRequest(StreamInput in) throws IOException {
-        this(null, in);
-    }
-
     public DeleteRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         if (in.getVersion().before(Version.V_2_0_0)) {

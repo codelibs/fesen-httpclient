@@ -253,10 +253,6 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
         public String getDimensionValue() {
             return dimensionValue;
         }
-
-        private void addChild(String dimensionValue, Node child) {
-            this.children.putIfAbsent(dimensionValue, child);
-        }
     }
 
     // pkg-private for testing

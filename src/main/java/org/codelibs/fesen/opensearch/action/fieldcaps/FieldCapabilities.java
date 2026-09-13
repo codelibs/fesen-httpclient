@@ -258,13 +258,6 @@ public class FieldCapabilities implements Writeable, ToXContentObject {
         return nonAggregatableIndices;
     }
 
-    /**
-     * Return merged metadata across indices.
-     */
-    public Map<String, Set<String>> meta() {
-        return meta;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

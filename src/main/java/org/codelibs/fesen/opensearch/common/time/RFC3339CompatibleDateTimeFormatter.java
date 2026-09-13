@@ -74,10 +74,6 @@ final class RFC3339CompatibleDateTimeFormatter extends OpenSearchDateTimeFormatt
 
     private ZoneId zone;
 
-    public RFC3339CompatibleDateTimeFormatter(String pattern) {
-        super(pattern);
-    }
-
     public RFC3339CompatibleDateTimeFormatter(java.time.format.DateTimeFormatter formatter) {
         super(formatter);
     }

@@ -63,15 +63,6 @@ public final class RetentionLeaseStats implements ToXContentFragment, Writeable 
     }
 
     /**
-     * Constructs a new retention lease stats object from the specified retention lease collection.
-     *
-     * @param retentionLeases the retention lease collection
-     */
-    public RetentionLeaseStats(final RetentionLeases retentionLeases) {
-        this.retentionLeases = Objects.requireNonNull(retentionLeases);
-    }
-
-    /**
      * Constructs a new retention lease stats object from a stream. The retention lease stats should have been written via
      * {@link #writeTo(StreamOutput)}.
      *

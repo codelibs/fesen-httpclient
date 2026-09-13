@@ -50,9 +50,4 @@ public class IndicesSegmentsRequestBuilder extends BroadcastOperationRequestBuil
     public IndicesSegmentsRequestBuilder(OpenSearchClient client, IndicesSegmentsAction action) {
         super(client, action, new IndicesSegmentsRequest());
     }
-
-    public IndicesSegmentsRequestBuilder setVerbose(boolean verbose) {
-        request.verbose = verbose;
-        return this;
-    }
 }

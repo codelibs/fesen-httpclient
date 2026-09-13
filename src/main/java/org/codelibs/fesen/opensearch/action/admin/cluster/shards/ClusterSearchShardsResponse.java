@@ -89,10 +89,6 @@ public class ClusterSearchShardsResponse extends ActionResponse implements ToXCo
         return nodes;
     }
 
-    public Map<String, AliasFilter> getIndicesAndFilters() {
-        return indicesAndFilters;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

@@ -137,10 +137,6 @@ public class FileCacheStats implements Writeable, ToXContentFragment {
         return pinned;
     }
 
-    public short getUsedPercent() {
-        return calculatePercentage(getUsed(), total);
-    }
-
     public long getCacheHits() {
         return hits;
     }

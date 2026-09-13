@@ -55,11 +55,6 @@ public class GetFieldMappingsRequestBuilder extends ActionRequestBuilder<GetFiel
         return this;
     }
 
-    public GetFieldMappingsRequestBuilder addIndices(String... indices) {
-        request.indices(ArrayUtils.concat(request.indices(), indices));
-        return this;
-    }
-
     /** Sets the fields to retrieve. */
     public GetFieldMappingsRequestBuilder setFields(String... fields) {
         request.fields(fields);

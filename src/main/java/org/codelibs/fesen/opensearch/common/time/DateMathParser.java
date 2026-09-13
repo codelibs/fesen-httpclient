@@ -47,13 +47,6 @@ import java.util.function.LongSupplier;
 @PublicApi(since = "1.0.0")
 public interface DateMathParser {
 
-    /**
-     * Parse a date math expression without timezone info and rounding down.
-     */
-    default Instant parse(String text, LongSupplier now) {
-        return parse(text, now, false, (ZoneId) null);
-    }
-
     // Note: we take a callable here for the timestamp in order to be able to figure out
     // if it has been used. For instance, the request cache does not cache requests that make
     // use of `now`.

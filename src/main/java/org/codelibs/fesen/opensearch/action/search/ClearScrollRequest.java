@@ -60,11 +60,6 @@ public class ClearScrollRequest extends ActionRequest implements ToXContentObjec
 
     public ClearScrollRequest() {}
 
-    public ClearScrollRequest(StreamInput in) throws IOException {
-        super(in);
-        scrollIds = Arrays.asList(in.readStringArray());
-    }
-
     public List<String> getScrollIds() {
         return scrollIds;
     }
@@ -74,14 +69,6 @@ public class ClearScrollRequest extends ActionRequest implements ToXContentObjec
             scrollIds = new ArrayList<>();
         }
         scrollIds.add(scrollId);
-    }
-
-    public List<String> scrollIds() {
-        return scrollIds;
-    }
-
-    public void scrollIds(List<String> scrollIds) {
-        this.scrollIds = scrollIds;
     }
 
     @Override

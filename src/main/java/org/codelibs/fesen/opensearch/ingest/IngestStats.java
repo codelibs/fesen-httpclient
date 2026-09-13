@@ -152,10 +152,6 @@ public class IngestStats implements Writeable, ToXContentFragment {
         return totalStats;
     }
 
-    public List<PipelineStat> getPipelineStats() {
-        return pipelineStats;
-    }
-
     public Map<String, List<ProcessorStat>> getProcessorStats() {
         return processorStats;
     }

@@ -97,10 +97,6 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         out.writeList(contextStats);
     }
 
-    public List<ScriptContextStats> getContextStats() {
-        return contextStats;
-    }
-
     public long getCompilations() {
         return compilations;
     }

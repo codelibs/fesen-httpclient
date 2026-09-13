@@ -151,20 +151,6 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         return this.field;
     }
 
-    /**
-     * The inner hit options to expand the collapsed results
-     */
-    public List<InnerHitBuilder> getInnerHits() {
-        return this.innerHits;
-    }
-
-    /**
-     * Returns the amount of group requests that are allowed to be ran concurrently in the inner_hits phase.
-     */
-    public int getMaxConcurrentGroupRequests() {
-        return maxConcurrentGroupRequests;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject();

@@ -44,12 +44,6 @@ public class Range implements Expression {
         this.includeUpper = includeUpper;
     }
 
-    public void updateRange(Range other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Range cannot be null");
-        }
-    }
-
     @Override
     public boolean evaluate(final Version rangeVersion, final Version versionToEvaluate) {
 

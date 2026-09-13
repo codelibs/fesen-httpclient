@@ -64,11 +64,6 @@ public class MapBuilder<K, V> {
         return this;
     }
 
-    public MapBuilder<K, V> clear() {
-        this.map.clear();
-        return this;
-    }
-
     public boolean isEmpty() {
         return map.isEmpty();
     }

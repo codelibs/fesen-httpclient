@@ -85,15 +85,6 @@ public class TaskCancellationStats implements ToXContentFragment, Writeable {
         return this.searchTaskCancellationStats;
     }
 
-    /**
-     * Returns the native task cancellation stats, or {@code null} if unavailable.
-     * Package private for testing.
-     */
-    @Nullable
-    protected AnalyticsBackendTaskCancellationStats getNativeStats() {
-        return this.nativeStats;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject("task_cancellation");

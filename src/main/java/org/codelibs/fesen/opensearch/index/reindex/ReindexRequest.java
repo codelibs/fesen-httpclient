@@ -88,10 +88,6 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
         this(new SearchRequest(), new IndexRequest(), true);
     }
 
-    ReindexRequest(SearchRequest search, IndexRequest destination) {
-        this(search, destination, true);
-    }
-
     private ReindexRequest(SearchRequest search, IndexRequest destination, boolean setDefaults) {
         super(search, setDefaults);
         this.destination = destination;
@@ -163,24 +159,6 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
     }
 
     /**
-     * Sets the scroll size for setting how many documents are to be processed in one batch during reindex
-     */
-    public ReindexRequest setSourceBatchSize(int size) {
-        this.getSearchRequest().source().size(size);
-        return this;
-    }
-
-    /**
-     * Set the query for selecting documents from the source indices
-     */
-    public ReindexRequest setSourceQuery(QueryBuilder queryBuilder) {
-        if (queryBuilder != null) {
-            this.getSearchRequest().source().query(queryBuilder);
-        }
-        return this;
-    }
-
-    /**
      * Set the target index for the ReindexRequest
      */
     public ReindexRequest setDestIndex(String destIndex) {
@@ -191,51 +169,10 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
     }
 
     /**
-     * Set the routing to decide which shard the documents need to be routed to
-     */
-    public ReindexRequest setDestRouting(String routing) {
-        this.getDestination().routing(routing);
-        return this;
-    }
-
-    /**
-     * Set the version type for the target index. A {@link VersionType#EXTERNAL} helps preserve the version
-     * if the document already existed in the target index.
-     */
-    public ReindexRequest setDestVersionType(VersionType versionType) {
-        this.getDestination().versionType(versionType);
-        return this;
-    }
-
-    /**
-     * Allows to set the ingest pipeline for the target index.
-     */
-    public void setDestPipeline(String pipelineName) {
-        this.getDestination().setPipeline(pipelineName);
-    }
-
-    /**
-     * Sets the optype on the destination index
-     * @param opType must be one of {create, index}
-     */
-    public ReindexRequest setDestOpType(String opType) {
-        this.getDestination().opType(opType);
-        return this;
-    }
-
-    /**
      * Set the {@link RemoteInfo} if the source indices are in a remote cluster.
      */
     public ReindexRequest setRemoteInfo(RemoteInfo remoteInfo) {
         this.remoteInfo = remoteInfo;
-        return this;
-    }
-
-    /**
-     * Sets the require_alias request flag on the destination index
-     */
-    public ReindexRequest setRequireAlias(boolean requireAlias) {
-        this.getDestination().setRequireAlias(requireAlias);
         return this;
     }
 

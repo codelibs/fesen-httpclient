@@ -19,12 +19,4 @@ public class InputCoercionException extends JsonParseException {
     public InputCoercionException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public InputCoercionException(String message) {
-        super(message);
-    }
-
-    public InputCoercionException(Throwable cause) {
-        super(cause);
-    }
 }

@@ -343,19 +343,8 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return this.persistentSettings;
     }
 
-    public Map<String, String> hashesOfConsistentSettings() {
-        return this.hashesOfConsistentSettings;
-    }
-
     public CoordinationMetadata coordinationMetadata() {
         return this.coordinationMetadata;
-    }
-
-    private static String mergePaths(String path, String field) {
-        if (path.length() == 0) {
-            return field;
-        }
-        return path + "." + field;
     }
 
     /**
@@ -387,13 +376,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     }
 
     /**
-     * Returns all of the concrete indices that are closed.
-     */
-    public String[] getConcreteAllClosedIndices() {
-        return allClosedIndices;
-    }
-
-    /**
      * Returns all of the concrete indices that are closed and not hidden.
      */
     public String[] getConcreteVisibleClosedIndices() {
@@ -417,40 +399,12 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return null;
     }
 
-    /** Returns true iff existing index has the same {@link IndexMetadata} instance */
-    public boolean hasIndexMetadata(final IndexMetadata indexMetadata) {
-        return indices.get(indexMetadata.getIndex().getName()) == indexMetadata;
-    }
-
     public TemplatesMetadata templatesMetadata() {
         return this.templates;
     }
 
-    public Map<String, SortedMap<Long, String>> systemTemplatesLookup() {
-        return systemTemplatesLookup;
-    }
-
-    public Map<String, View> views() {
-        return Optional.ofNullable((ViewMetadata) this.custom(ViewMetadata.TYPE)).map(ViewMetadata::views).orElse(Collections.emptyMap());
-    }
-
-    public DecommissionAttributeMetadata decommissionAttributeMetadata() {
-        return custom(DecommissionAttributeMetadata.TYPE);
-    }
-
     public Map<String, Custom> customs() {
         return this.customs;
-    }
-
-    public Map<String, Custom> getCustoms() {
-        return this.customs();
-    }
-
-    /**
-     * The collection of index deletions in the cluster.
-     */
-    public IndexGraveyard indexGraveyard() {
-        return custom(IndexGraveyard.TYPE);
     }
 
     /**
@@ -483,26 +437,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return this.totalOpenLocalOnlyIndexShards;
     }
 
-    /**
-     * Gets the total number of open remote capable shards from all indices. Includes
-     * replicas, but does not include shards that are part of closed indices.
-     * @return The total number of open shards from all indices.
-     */
-    public int getTotalOpenRemoteCapableIndexShards() {
-        return this.totalOpenRemoteCapableIndexShards;
-    }
-
     @Override
     public Iterator<IndexMetadata> iterator() {
         return indices.values().iterator();
-    }
-
-    public static boolean isTransientSettingsMetadataEqual(Metadata metadata1, Metadata metadata2) {
-        return metadata1.transientSettings.equals(metadata2.transientSettings);
-    }
-
-    public static boolean isHashesOfConsistentSettingsEqual(Metadata metadata1, Metadata metadata2) {
-        return metadata1.hashesOfConsistentSettings.equals(metadata2.hashesOfConsistentSettings);
     }
 
     @Override
@@ -715,16 +652,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
-        public Builder remove(String index) {
-            indices.remove(index);
-            return this;
-        }
-
-        public Builder removeAllIndices() {
-            indices.clear();
-            return this;
-        }
-
         public Builder indices(final Map<String, IndexMetadata> indices) {
             this.indices.putAll(indices);
             return this;
@@ -739,27 +666,13 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
-        public Builder removeTemplate(String templateName) {
-            templates.remove(templateName);
-            return this;
-        }
-
         public Builder templates(Map<String, IndexTemplateMetadata> templates) {
             this.templates.putAll(templates);
             return this;
         }
 
-        public DataStream dataStream(String dataStreamName) {
-            return ((DataStreamMetadata) customs.get(DataStreamMetadata.TYPE)).dataStreams().get(dataStreamName);
-        }
-
         public Builder putCustom(String type, Custom custom) {
             customs.put(type, Objects.requireNonNull(custom, type));
-            return this;
-        }
-
-        public Builder removeCustom(String type) {
-            customs.remove(type);
             return this;
         }
 
@@ -772,11 +685,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
         public Builder indexGraveyard(final IndexGraveyard indexGraveyard) {
             putCustom(IndexGraveyard.TYPE, indexGraveyard);
-            return this;
-        }
-
-        public Builder decommissionAttributeMetadata(final DecommissionAttributeMetadata decommissionAttributeMetadata) {
-            putCustom(DecommissionAttributeMetadata.TYPE, decommissionAttributeMetadata);
             return this;
         }
 
@@ -824,13 +732,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
         public Builder clusterUUIDCommitted(boolean clusterUUIDCommitted) {
             this.clusterUUIDCommitted = clusterUUIDCommitted;
-            return this;
-        }
-
-        public Builder generateClusterUuidIfNeeded() {
-            if (clusterUUID.equals(UNKNOWN_CLUSTER_UUID)) {
-                clusterUUID = UUIDs.randomBase64UUID();
-            }
             return this;
         }
 

@@ -107,21 +107,6 @@ public class ShardStats implements Writeable, ToXContentFragment {
         return this.commonStats;
     }
 
-    @Nullable
-    public CommitStats getCommitStats() {
-        return this.commitStats;
-    }
-
-    @Nullable
-    public SeqNoStats getSeqNoStats() {
-        return this.seqNoStats;
-    }
-
-    @Nullable
-    public PollingIngestStats getPollingIngestStats() {
-        return this.pollingIngestStats;
-    }
-
     public String getDataPath() {
         return dataPath;
     }

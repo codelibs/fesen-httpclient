@@ -386,20 +386,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
-        public String searchRouting() {
-            return searchRouting == null ? routing : searchRouting;
-        }
-
         public AliasActions searchRouting(String searchRouting) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[search_routing] is unsupported for [" + type + "]");
             }
             this.searchRouting = searchRouting;
             return this;
-        }
-
-        public String indexRouting() {
-            return indexRouting == null ? routing : indexRouting;
         }
 
         public AliasActions indexRouting(String indexRouting) {
@@ -542,10 +534,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return builder;
         }
 
-        public static AliasActions fromXContent(XContentParser parser) throws IOException {
-            return PARSER.apply(parser, null);
-        }
-
         @Override
         public String toString() {
             return "AliasActions["
@@ -599,11 +587,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         return origin;
     }
 
-    public IndicesAliasesRequest origin(final String origin) {
-        this.origin = Objects.requireNonNull(origin);
-        return this;
-    }
-
     /**
      * Add the action to this request and validate it.
      */
@@ -653,9 +636,5 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
                 request.addAliasAction(action);
             }
         }, AliasActions.PARSER, new ParseField("actions"));
-    }
-
-    public static IndicesAliasesRequest fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
     }
 }

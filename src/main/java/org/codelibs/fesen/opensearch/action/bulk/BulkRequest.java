@@ -328,8 +328,4 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
     public long ramBytesUsed() {
         return SHALLOW_SIZE + requests.stream().mapToLong(Accountable::ramBytesUsed).sum();
     }
-
-    public Set<String> getIndices() {
-        return Collections.unmodifiableSet(indices);
-    }
 }

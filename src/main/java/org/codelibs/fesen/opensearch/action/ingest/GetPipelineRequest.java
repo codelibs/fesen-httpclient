@@ -62,11 +62,6 @@ public class GetPipelineRequest extends ClusterManagerNodeReadRequest<GetPipelin
         this.ids = Strings.EMPTY_ARRAY;
     }
 
-    public GetPipelineRequest(StreamInput in) throws IOException {
-        super(in);
-        ids = in.readStringArray();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

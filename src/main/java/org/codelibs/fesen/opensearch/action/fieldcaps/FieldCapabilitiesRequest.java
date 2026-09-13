@@ -80,16 +80,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
         return mergeResults;
     }
 
-    /**
-     * If set to <code>true</code> the response will contain only a merged view of the per index field capabilities.
-     * Otherwise only unmerged per index field capabilities are returned.
-     * <p>
-     * Note that when using the high-level REST client, results are always merged (this flag is always considered 'true').
-     */
-    void setMergeResults(boolean mergeResults) {
-        this.mergeResults = mergeResults;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -136,11 +126,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
         return this;
     }
 
-    public FieldCapabilitiesRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = Objects.requireNonNull(indicesOptions, "indices options must not be null");
-        return this;
-    }
-
     public FieldCapabilitiesRequest includeUnmapped(boolean includeUnmapped) {
         this.includeUnmapped = includeUnmapped;
         return this;
@@ -171,10 +156,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
 
     Long nowInMillis() {
         return nowInMillis;
-    }
-
-    void nowInMillis(long nowInMillis) {
-        this.nowInMillis = nowInMillis;
     }
 
     @Override

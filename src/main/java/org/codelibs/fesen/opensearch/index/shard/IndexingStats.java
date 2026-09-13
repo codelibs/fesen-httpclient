@@ -104,10 +104,6 @@ public class IndexingStats implements Writeable, ToXContentFragment {
                 }
             }
 
-            public AtomicLong[] getDocStatusCounter() {
-                return docStatusCounter;
-            }
-
             @Override
             public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
                 builder.startObject(Fields.DOC_STATUS);

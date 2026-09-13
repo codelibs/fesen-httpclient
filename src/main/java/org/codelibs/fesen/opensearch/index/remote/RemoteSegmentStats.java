@@ -107,96 +107,48 @@ public class RemoteSegmentStats implements Writeable, ToXContentFragment {
         return uploadBytesStarted;
     }
 
-    public void addUploadBytesStarted(long uploadsStarted) {
-        this.uploadBytesStarted += uploadsStarted;
-    }
-
     public long getUploadBytesFailed() {
         return uploadBytesFailed;
-    }
-
-    public void addUploadBytesFailed(long uploadsFailed) {
-        this.uploadBytesFailed += uploadsFailed;
     }
 
     public long getUploadBytesSucceeded() {
         return uploadBytesSucceeded;
     }
 
-    public void addUploadBytesSucceeded(long uploadsSucceeded) {
-        this.uploadBytesSucceeded += uploadsSucceeded;
-    }
-
     public long getDownloadBytesStarted() {
         return downloadBytesStarted;
-    }
-
-    public void addDownloadBytesStarted(long downloadsStarted) {
-        this.downloadBytesStarted += downloadsStarted;
     }
 
     public long getDownloadBytesFailed() {
         return downloadBytesFailed;
     }
 
-    public void addDownloadBytesFailed(long downloadsFailed) {
-        this.downloadBytesFailed += downloadsFailed;
-    }
-
     public long getDownloadBytesSucceeded() {
         return downloadBytesSucceeded;
-    }
-
-    public void addDownloadBytesSucceeded(long downloadsSucceeded) {
-        this.downloadBytesSucceeded += downloadsSucceeded;
     }
 
     public long getMaxRefreshTimeLag() {
         return maxRefreshTimeLag;
     }
 
-    public void setMaxRefreshTimeLag(long maxRefreshTimeLag) {
-        this.maxRefreshTimeLag = Math.max(this.maxRefreshTimeLag, maxRefreshTimeLag);
-    }
-
     public long getMaxRefreshBytesLag() {
         return maxRefreshBytesLag;
-    }
-
-    public void addMaxRefreshBytesLag(long maxRefreshBytesLag) {
-        this.maxRefreshBytesLag = Math.max(this.maxRefreshBytesLag, maxRefreshBytesLag);
     }
 
     public long getTotalRefreshBytesLag() {
         return totalRefreshBytesLag;
     }
 
-    public void addTotalRefreshBytesLag(long totalRefreshBytesLag) {
-        this.totalRefreshBytesLag += totalRefreshBytesLag;
-    }
-
     public long getTotalUploadTime() {
         return totalUploadTime;
-    }
-
-    public void addTotalUploadTime(long totalUploadTime) {
-        this.totalUploadTime += totalUploadTime;
     }
 
     public long getTotalDownloadTime() {
         return totalDownloadTime;
     }
 
-    public void addTotalDownloadTime(long totalDownloadTime) {
-        this.totalDownloadTime += totalDownloadTime;
-    }
-
     public long getTotalRejections() {
         return totalRejections;
-    }
-
-    public void addTotalRejections(long totalRejections) {
-        this.totalRejections += totalRejections;
     }
 
     /**

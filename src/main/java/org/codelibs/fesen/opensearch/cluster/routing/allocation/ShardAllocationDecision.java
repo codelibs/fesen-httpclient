@@ -92,15 +92,6 @@ public final class ShardAllocationDecision implements ToXContentFragment, Writea
     }
 
     /**
-     * Gets the unassigned allocation decision for the shard.  If the shard was not in the unassigned state,
-     * the instance of {@link AllocateUnassignedDecision} that is returned will have {@link AllocateUnassignedDecision#isDecisionTaken()}
-     * return {@code false}.
-     */
-    public AllocateUnassignedDecision getAllocateDecision() {
-        return allocateDecision;
-    }
-
-    /**
      * Gets the move decision for the shard.  If the shard was not in the started state,
      * the instance of {@link MoveDecision} that is returned will have {@link MoveDecision#isDecisionTaken()}
      * return {@code false}.

@@ -37,10 +37,6 @@ public class SegmentReplicationPerGroupStats implements Writeable, ToXContentFra
         this.rejectedRequestCount = in.readVLong();
     }
 
-    public Set<SegmentReplicationShardStats> getReplicaStats() {
-        return replicaStats;
-    }
-
     public long getRejectedRequestCount() {
         return rejectedRequestCount;
     }

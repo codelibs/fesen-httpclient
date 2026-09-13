@@ -59,23 +59,6 @@ public class NodesUsageRequest extends BaseNodesRequest<NodesUsageRequest> {
     }
 
     /**
-     * Sets all the request flags.
-     */
-    public NodesUsageRequest all() {
-        this.restActions = true;
-        this.aggregations = true;
-        return this;
-    }
-
-    /**
-     * Clears all the request flags.
-     */
-    public NodesUsageRequest clear() {
-        this.restActions = false;
-        return this;
-    }
-
-    /**
      * Should the node rest actions usage statistics be returned.
      */
     public boolean restActions() {
@@ -85,24 +68,8 @@ public class NodesUsageRequest extends BaseNodesRequest<NodesUsageRequest> {
     /**
      * Should the node rest actions usage statistics be returned.
      */
-    public NodesUsageRequest restActions(boolean restActions) {
-        this.restActions = restActions;
-        return this;
-    }
-
-    /**
-     * Should the node rest actions usage statistics be returned.
-     */
     public boolean aggregations() {
         return this.aggregations;
-    }
-
-    /**
-     * Should the node rest actions usage statistics be returned.
-     */
-    public NodesUsageRequest aggregations(boolean aggregations) {
-        this.aggregations = aggregations;
-        return this;
     }
 
     @Override

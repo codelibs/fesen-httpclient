@@ -81,29 +81,6 @@ public class CryptoSettings implements Writeable, ToXContentObject {
     }
 
     /**
-     * Sets the encryption settings
-     *
-     * @param settings for encryption
-     * @return this request
-     */
-    public CryptoSettings settings(Settings.Builder settings) {
-        this.settings = settings.build();
-        return this;
-    }
-
-    /**
-     * Sets the encryption settings.
-     *
-     * @param source encryption settings in json or yaml format
-     * @param xContentType the content type of the source
-     * @return this request
-     */
-    public CryptoSettings settings(String source, XContentType xContentType) {
-        this.settings = Settings.builder().loadFromSource(source, xContentType).build();
-        return this;
-    }
-
-    /**
      * Sets the encryption settings.
      *
      * @param source encryption settings

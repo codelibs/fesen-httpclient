@@ -47,10 +47,6 @@ public final class RemoteInfoRequest extends ActionRequest {
 
     public RemoteInfoRequest() {}
 
-    RemoteInfoRequest(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

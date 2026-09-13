@@ -284,14 +284,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
             }
         }
 
-        public List<ProcessorStats> requestProcessorStats() {
-            return requestProcessorStats;
-        }
-
-        public List<ProcessorStats> responseProcessorStats() {
-            return responseProcessorStats;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -506,14 +498,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
 
     OperationStats getTotalResponseStats() {
         return totalResponseStats;
-    }
-
-    List<PerPipelineStats> getPipelineStats() {
-        return perPipelineStats;
-    }
-
-    Map<String, PipelineDetailStats> getPerPipelineProcessorStats() {
-        return perPipelineProcessorStats;
     }
 
     @Override

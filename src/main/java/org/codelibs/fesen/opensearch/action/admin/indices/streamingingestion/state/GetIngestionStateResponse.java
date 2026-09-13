@@ -94,10 +94,6 @@ public class GetIngestionStateResponse extends BroadcastResponse {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, false);
     }
 
-    public void setNextPageToken(String nextPageToken) {
-        this.nextPageToken = nextPageToken;
-    }
-
     public String getNextPageToken() {
         return nextPageToken;
     }

@@ -404,13 +404,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
-     * Return the overridden analyzers at each field.
-     */
-    public Map<String, String> perFieldAnalyzer() {
-        return perFieldAnalyzer;
-    }
-
-    /**
      * Override the analyzer used at each field when generating term vectors.
      */
     public TermVectorsRequest perFieldAnalyzer(Map<String, String> perFieldAnalyzer) {

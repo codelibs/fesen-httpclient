@@ -85,57 +85,6 @@ public abstract class Streams {
     // Copy methods for java.io.Reader / java.io.Writer
     // ---------------------------------------------------------------------
 
-    @Deprecated
-    public static int readFully(InputStream reader, byte[] dest) throws IOException {
-        return reader.readNBytes(dest, 0, dest.length);
-    }
-
-    /**
-     * Fully consumes the input stream, throwing the bytes away. Returns the number of bytes consumed.
-     */
-    public static long consumeFully(InputStream inputStream) throws IOException {
-        return org.codelibs.fesen.opensearch.common.util.io.Streams.copy(inputStream, NULL_OUTPUT_STREAM);
-    }
-
-    /**
-     * Wraps an {@link InputStream} such that it's {@code close} method becomes a noop
-     *
-     * @param stream {@code InputStream} to wrap
-     * @return wrapped {@code InputStream}
-     */
-    public static InputStream noCloseStream(InputStream stream) {
-        return new FilterInputStream(stream) {
-            @Override
-            public void close() {
-                // noop
-            }
-        };
-    }
-
-    /**
-     * Wraps the given {@link BytesStream} in a {@link StreamOutput} that simply flushes when
-     * close is called.
-     */
-    public static BytesStream flushOnCloseStream(BytesStream os) {
-        return new FlushOnCloseOutputStream(os);
-    }
-
-    /**
-     * Reads all bytes from the given {@link InputStream} and closes it afterwards.
-     */
-    public static BytesReference readFully(InputStream in) throws IOException {
-        BytesStreamOutput out = new BytesStreamOutput();
-        org.codelibs.fesen.opensearch.common.util.io.Streams.copy(in, out);
-        return out.bytes();
-    }
-
-    /**
-     * Limits the given input stream to the provided number of bytes
-     */
-    public static InputStream limitStream(InputStream in, long limit) {
-        return new LimitedInputStream(in, limit);
-    }
-
     /**
      * A wrapper around a {@link BytesStream} that makes the close operation a flush. This is
      * needed as sometimes a stream will be closed but the bytes that the stream holds still need

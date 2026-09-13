@@ -175,12 +175,4 @@ public class ShardIngestionState implements Writeable, ToXContentFragment {
     public String getNodeName() {
         return nodeName;
     }
-
-    public void setPrimary(boolean primary) {
-        this.isPrimary = primary;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
 }

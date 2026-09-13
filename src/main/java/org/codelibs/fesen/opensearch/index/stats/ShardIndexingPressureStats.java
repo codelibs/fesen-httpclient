@@ -100,10 +100,6 @@ public class ShardIndexingPressureStats implements Writeable, ToXContentFragment
         out.writeBoolean(shardIndexingPressureEnforced);
     }
 
-    public IndexingPressurePerShardStats getIndexingPressureShardStats(ShardId shardId) {
-        return shardIndexingPressureStore.get(shardId);
-    }
-
     /**
      * Builder for the {@link ShardIndexingPressureStats} class.
      * Provides a fluent API for constructing a ShardIndexingPressureStats object.

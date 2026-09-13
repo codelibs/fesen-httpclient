@@ -136,10 +136,6 @@ public class GetStats implements Writeable, ToXContentFragment {
         return new TimeValue(existsTimeInMillis);
     }
 
-    public long getMissingCount() {
-        return this.missingCount;
-    }
-
     public long getMissingTimeInMillis() {
         return this.missingTimeInMillis;
     }

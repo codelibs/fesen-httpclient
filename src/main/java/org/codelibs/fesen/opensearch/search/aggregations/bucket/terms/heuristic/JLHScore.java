@@ -50,13 +50,6 @@ public class JLHScore extends SignificanceHeuristic {
 
     public JLHScore() {}
 
-    /**
-     * Read from a stream.
-     */
-    public JLHScore(StreamInput in) {
-        // Nothing to read.
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {}
 

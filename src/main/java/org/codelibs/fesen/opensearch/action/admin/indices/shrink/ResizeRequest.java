@@ -242,13 +242,6 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         return maxShardSize;
     }
 
-    /**
-     * Should this task store its result after it has finished?
-     */
-    public void setShouldStoreResult(boolean shouldStoreResult) {
-        this.shouldStoreResult = shouldStoreResult;
-    }
-
     @Override
     public boolean getShouldStoreResult() {
         return shouldStoreResult;
@@ -276,10 +269,6 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         }
         builder.endObject();
         return builder;
-    }
-
-    public void fromXContent(XContentParser parser) throws IOException {
-        PARSER.parse(parser, this, null);
     }
 
     @Override

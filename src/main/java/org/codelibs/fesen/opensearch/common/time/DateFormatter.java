@@ -188,10 +188,6 @@ public interface DateFormatter {
         return forPattern(input, printPattern, false);
     }
 
-    static DateFormatter forPattern(String input, Boolean canCacheFormatter) {
-        return forPattern(input, null, canCacheFormatter);
-    }
-
     static String strip8Prefix(String input) {
         if (input.startsWith("8")) {
             return input.substring(1);

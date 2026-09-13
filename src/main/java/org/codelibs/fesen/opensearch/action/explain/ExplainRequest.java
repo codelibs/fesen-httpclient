@@ -126,14 +126,6 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
         return filteringAlias;
     }
 
-    public ExplainRequest filteringAlias(AliasFilter filteringAlias) {
-        if (filteringAlias != null) {
-            this.filteringAlias = filteringAlias;
-        }
-
-        return this;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = super.validateNonNullIndex();

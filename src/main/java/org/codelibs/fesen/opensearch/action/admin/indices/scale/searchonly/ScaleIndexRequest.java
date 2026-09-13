@@ -128,26 +128,4 @@ class ScaleIndexRequest extends AcknowledgedRequest<ScaleIndexRequest> {
     public IndicesOptions indicesOptions() {
         return indicesOptions;
     }
-
-    /**
-     * Sets the indices options for this request.
-     *
-     * @param indicesOptions the indices options to use
-     * @return this request (for method chaining)
-     */
-    public ScaleIndexRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
-    /**
-     * Sets whether this is a scale down operation.
-     *
-     * @param scaleDown true if scaling down, false if scaling up
-     * @return this request (for method chaining)
-     */
-    public ScaleIndexRequest scaleDown(boolean scaleDown) {
-        this.scaleDown = scaleDown;
-        return this;
-    }
 }

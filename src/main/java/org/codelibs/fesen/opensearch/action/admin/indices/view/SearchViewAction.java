@@ -48,11 +48,6 @@ public class SearchViewAction extends ActionType<SearchResponse> {
             this.view = view;
         }
 
-        public Request(final StreamInput in) throws IOException {
-            super(in);
-            view = in.readString();
-        }
-
         public String getView() {
             return view;
         }

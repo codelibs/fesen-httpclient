@@ -126,22 +126,6 @@ public class ReplicationResponse extends ActionResponse {
         }
 
         /**
-         * @return the total number of shards the write should go to (replicas and primaries). This includes relocating shards, so this
-         *         number can be higher than the number of shards.
-         */
-        public int getTotal() {
-            return total;
-        }
-
-        /**
-         * @return the total number of shards the write succeeded on (replicas and primaries). This includes relocating shards, so this
-         *         number can be higher than the number of shards.
-         */
-        public int getSuccessful() {
-            return successful;
-        }
-
-        /**
          * @return The total number of replication failures.
          */
         public int getFailed() {
@@ -273,14 +257,6 @@ public class ReplicationResponse extends ActionResponse {
 
             public ShardId fullShardId() {
                 return shardId;
-            }
-
-            /**
-             * @return On what node the failure occurred.
-             */
-            @Nullable
-            public String nodeId() {
-                return nodeId;
             }
 
             /**

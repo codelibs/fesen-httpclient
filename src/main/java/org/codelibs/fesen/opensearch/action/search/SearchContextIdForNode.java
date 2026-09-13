@@ -71,10 +71,6 @@ public final class SearchContextIdForNode implements Writeable {
         searchContextId.writeTo(out);
     }
 
-    public String getNode() {
-        return node;
-    }
-
     @Nullable
     public String getClusterAlias() {
         return clusterAlias;

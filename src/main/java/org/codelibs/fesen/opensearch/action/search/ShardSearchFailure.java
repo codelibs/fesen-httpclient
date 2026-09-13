@@ -82,10 +82,6 @@ public class ShardSearchFailure extends ShardOperationFailedException {
         cause = in.readException();
     }
 
-    public ShardSearchFailure(Exception e) {
-        this(e, null);
-    }
-
     public ShardSearchFailure(Exception e, @Nullable SearchShardTarget shardTarget) {
         this(e, ExceptionsHelper.unwrapCause(e), shardTarget);
     }

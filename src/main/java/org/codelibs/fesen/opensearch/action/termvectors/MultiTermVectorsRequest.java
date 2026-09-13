@@ -101,10 +101,6 @@ public class MultiTermVectorsRequest extends ActionRequest
         return Collections.unmodifiableCollection(requests).iterator();
     }
 
-    public boolean isEmpty() {
-        return requests.isEmpty() && ids.isEmpty();
-    }
-
     public List<TermVectorsRequest> getRequests() {
         return requests;
     }
@@ -114,10 +110,6 @@ public class MultiTermVectorsRequest extends ActionRequest
         super.writeTo(out);
         out.writeOptionalString(preference);
         out.writeCollection(requests);
-    }
-
-    public int size() {
-        return requests.size();
     }
 
     @Override

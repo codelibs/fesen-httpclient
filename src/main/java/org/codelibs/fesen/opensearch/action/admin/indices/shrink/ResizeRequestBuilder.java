@@ -60,22 +60,4 @@ public class ResizeRequestBuilder extends AcknowledgedRequestBuilder<ResizeReque
         this.request.setSourceIndex(index);
         return this;
     }
-
-    public ResizeRequestBuilder setSettings(Settings settings) {
-        this.request.getTargetIndexRequest().settings(settings);
-        return this;
-    }
-
-    public ResizeRequestBuilder setResizeType(ResizeType type) {
-        this.request.setResizeType(type);
-        return this;
-    }
-
-    /**
-     * Sets the maximum size of a primary shard in the new shrunken index.
-     */
-    public ResizeRequestBuilder setMaxShardSize(ByteSizeValue maxShardSize) {
-        this.request.setMaxShardSize(maxShardSize);
-        return this;
-    }
 }

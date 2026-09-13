@@ -148,10 +148,6 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
         );
     }
 
-    public static Diff<PipelineConfiguration> readDiffFrom(StreamInput in) throws IOException {
-        return readDiffFrom(PipelineConfiguration::readFrom, in);
-    }
-
     @Override
     public String toString() {
         return Strings.toString(MediaTypeRegistry.JSON, this);

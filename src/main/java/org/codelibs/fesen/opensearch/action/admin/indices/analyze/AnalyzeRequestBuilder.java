@@ -66,37 +66,4 @@ public class AnalyzeRequestBuilder extends SingleShardOperationRequestBuilder<
         return this;
     }
 
-    /**
-     * Sets the field that its analyzer will be used to analyze the text. Note, requires an index
-     * to be set.
-     */
-    public AnalyzeRequestBuilder setField(String field) {
-        request.field(field);
-        return this;
-    }
-
-    /**
-     * Sets explain
-     */
-    public AnalyzeRequestBuilder setExplain(boolean explain) {
-        request.explain(explain);
-        return this;
-    }
-
-    /**
-     * Sets texts to analyze
-     */
-    public AnalyzeRequestBuilder setText(String... texts) {
-        request.text(texts);
-        return this;
-    }
-
-    /**
-     * Instead of setting the analyzer and tokenizer, sets the normalizer as name
-     */
-    public AnalyzeRequestBuilder setNormalizer(String normalizer) {
-        request.normalizer(normalizer);
-        return this;
-    }
-
 }

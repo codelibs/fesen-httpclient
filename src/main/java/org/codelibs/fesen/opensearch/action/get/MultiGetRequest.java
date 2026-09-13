@@ -143,11 +143,6 @@ public class MultiGetRequest extends ActionRequest
             return GetRequest.INDICES_OPTIONS;
         }
 
-        public Item index(String index) {
-            this.index = index;
-            return this;
-        }
-
         public String id() {
             return this.id;
         }
@@ -252,10 +247,6 @@ public class MultiGetRequest extends ActionRequest
     List<Item> items = new ArrayList<>();
 
     public MultiGetRequest() {}
-
-    public List<Item> getItems() {
-        return this.items;
-    }
 
     public MultiGetRequest add(Item item) {
         items.add(item);

@@ -51,10 +51,6 @@ public class ClusterAwarenessHealth implements Writeable, ToXContentFragment, It
         }
     }
 
-    public Map<String, ClusterAwarenessAttributesHealth> getClusterAwarenessAttributesHealthMap() {
-        return clusterAwarenessAttributesHealthMap;
-    }
-
     @Override
     public void writeTo(final StreamOutput out) throws IOException {
         int size = clusterAwarenessAttributesHealthMap.size();

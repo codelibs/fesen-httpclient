@@ -73,10 +73,6 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         public String toString() {
             return this.name().toLowerCase(Locale.ROOT);
         }
-
-        public static Status fromString(String string) {
-            return Status.valueOf(string.toUpperCase(Locale.ROOT));
-        }
     }
 
     private final String type;
@@ -190,13 +186,6 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         }
     }
 
-    public IngestDocument getIngestDocument() {
-        if (ingestDocument == null) {
-            return null;
-        }
-        return ingestDocument.getIngestDocument();
-    }
-
     public String getProcessorTag() {
         return processorTag;
     }
@@ -207,10 +196,6 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
 
     public String getDescription() {
         return description;
-    }
-
-    public Tuple<String, Boolean> getConditionalWithResult() {
-        return conditionalWithResult;
     }
 
     public String getType() {

@@ -105,24 +105,8 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
         return null;
     }
 
-    public GetIndexRequest humanReadable(boolean humanReadable) {
-        this.humanReadable = humanReadable;
-        return this;
-    }
-
     public boolean humanReadable() {
         return humanReadable;
-    }
-
-    /**
-     * Sets the value of "include_defaults".
-     *
-     * @param includeDefaults value of "include_defaults" to be set.
-     * @return this request
-     */
-    public GetIndexRequest includeDefaults(boolean includeDefaults) {
-        this.includeDefaults = includeDefaults;
-        return this;
     }
 
     /**

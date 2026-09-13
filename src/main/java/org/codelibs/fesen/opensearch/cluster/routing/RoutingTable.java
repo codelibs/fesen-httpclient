@@ -98,24 +98,12 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         return indicesRouting.values().iterator();
     }
 
-    public boolean hasIndex(String index) {
-        return indicesRouting.containsKey(index);
-    }
-
     public IndexRoutingTable index(String index) {
         return indicesRouting.get(index);
     }
 
-    public IndexRoutingTable index(Index index) {
-        return indicesRouting.get(index.getName());
-    }
-
     public Map<String, IndexRoutingTable> indicesRouting() {
         return indicesRouting;
-    }
-
-    public Map<String, IndexRoutingTable> getIndicesRouting() {
-        return indicesRouting();
     }
 
     /**
@@ -258,11 +246,6 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
                 throw new IllegalStateException("once build is called the builder cannot be reused");
             }
             indicesRouting.put(indexRoutingTable.getIndex().getName(), indexRoutingTable);
-            return this;
-        }
-
-        public Builder version(long version) {
-            this.version = version;
             return this;
         }
 

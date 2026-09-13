@@ -159,38 +159,6 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
         return this.hits;
     }
 
-    /**
-     * Return the hit as the provided position.
-     */
-    public SearchHit getAt(int position) {
-        return hits[position];
-    }
-
-    /**
-     * In case documents were sorted by field(s), returns information about such field(s), null otherwise
-     * @see SortField
-     */
-    @Nullable
-    public SortField[] getSortFields() {
-        return sortFields;
-    }
-
-    /**
-     * In case field collapsing was performed, returns the field used for field collapsing, null otherwise
-     */
-    @Nullable
-    public String getCollapseField() {
-        return collapseField;
-    }
-
-    /**
-     * In case field collapsing was performed, returns the values of the field that field collapsing was performed on, null otherwise
-     */
-    @Nullable
-    public Object[] getCollapseValues() {
-        return collapseValues;
-    }
-
     @Override
     public Iterator<SearchHit> iterator() {
         return Arrays.stream(getHits()).iterator();

@@ -76,10 +76,6 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
         public Request() {
             super((String[]) null);
         }
-
-        public Request(StreamInput in) throws IOException {
-            super(in);
-        }
     }
 
     /**
@@ -238,10 +234,6 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
 
         public int getBackingIndices() {
             return backingIndices;
-        }
-
-        public ByteSizeValue getStoreSize() {
-            return storeSize;
         }
 
         public long getMaximumTimestamp() {

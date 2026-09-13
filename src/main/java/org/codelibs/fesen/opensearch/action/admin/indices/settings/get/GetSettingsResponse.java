@@ -83,18 +83,6 @@ public class GetSettingsResponse extends ActionResponse implements ToXContentObj
     }
 
     /**
-     * If the originating {@link GetSettingsRequest} object was configured to include
-     * defaults, this will contain a mapping of index name to {@link Settings} objects.
-     * The returned {@link Settings} objects will contain only those settings taking
-     * effect as defaults.  Any settings explicitly set on the index will be available
-     * via {@link #getIndexToSettings()}.
-     * See also {@link GetSettingsRequest#includeDefaults(boolean)}
-     */
-    public Map<String, Settings> getIndexToDefaultSettings() {
-        return indexToDefaultSettings;
-    }
-
-    /**
      * Returns the string value for the specified index and setting.  If the includeDefaults
      * flag was not set or set to false on the GetSettingsRequest, this method will only
      * return a value where the setting was explicitly set on the index.  If the includeDefaults

@@ -82,8 +82,4 @@ public class NodeCacheStats implements ToXContentFragment, Writeable {
     }
 
     // Get the immutable cache stats for a given cache, used to avoid having to process XContent in tests.
-    // Safe to expose publicly as the ImmutableCacheStatsHolder can't be modified after its creation.
-    public ImmutableCacheStatsHolder getStatsByCache(CacheType cacheType) {
-        return statsByCache.get(cacheType);
-    }
 }

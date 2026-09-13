@@ -108,34 +108,6 @@ public class Line implements Geometry {
         return z == null ? null : z.clone();
     }
 
-    public double getLat(int i) {
-        return y[i];
-    }
-
-    public double getLon(int i) {
-        return x[i];
-    }
-
-    public double getAlt(int i) {
-        if (z != null) {
-            return z[i];
-        } else {
-            return Double.NaN;
-        }
-    }
-
-    public double[] getLats() {
-        return y.clone();
-    }
-
-    public double[] getLons() {
-        return x.clone();
-    }
-
-    public double[] getAlts() {
-        return z == null ? null : z.clone();
-    }
-
     @Override
     public ShapeType type() {
         return ShapeType.LINESTRING;

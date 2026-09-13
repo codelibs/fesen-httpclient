@@ -109,10 +109,6 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
         this.includeExclude = in.readOptionalWriteable(IncludeExclude::new);
     }
 
-    public ValueType getUserValueTypeHint() {
-        return userValueTypeHint;
-    }
-
     public String getFormat() {
         return format;
     }

@@ -57,9 +57,4 @@ public class GetSettingsRequestBuilder extends ClusterManagerNodeReadOperationRe
         request.indices(indices);
         return this;
     }
-
-    public GetSettingsRequestBuilder addIndices(String... indices) {
-        request.indices(ArrayUtils.concat(request.indices(), indices));
-        return this;
-    }
 }

@@ -57,10 +57,6 @@ public class SegmentReplicationStatsResponse extends BroadcastResponse {
         this.replicationStats = replicationStats;
     }
 
-    public Map<String, List<SegmentReplicationPerGroupStats>> getReplicationStats() {
-        return replicationStats;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

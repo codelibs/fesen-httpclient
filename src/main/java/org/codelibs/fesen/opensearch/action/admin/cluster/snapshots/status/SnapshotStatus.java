@@ -139,13 +139,6 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
         return includeGlobalState;
     }
 
-    /**
-     * Returns list of snapshot shards
-     */
-    public List<SnapshotIndexShardStatus> getShards() {
-        return shards;
-    }
-
     public SnapshotShardsStats getShardsStats() {
         return shardsStats;
     }
@@ -192,13 +185,6 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
     @Override
     public String toString() {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, false);
-    }
-
-    /**
-     * Returns number of files in the snapshot
-     */
-    public SnapshotStats getStats() {
-        return stats;
     }
 
     private static final String SNAPSHOT = "snapshot";
@@ -276,10 +262,6 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
         );
         PARSER.declareObject(constructorArg(), SnapshotShardsStats.PARSER, new ParseField(SnapshotShardsStats.Fields.SHARDS_STATS));
         PARSER.declareNamedObjects(constructorArg(), SnapshotIndexStatus.PARSER, new ParseField(INDICES));
-    }
-
-    public static SnapshotStatus fromXContent(XContentParser parser) throws IOException {
-        return PARSER.parse(parser, null);
     }
 
     private void updateShardStats(long startTime, long time) {

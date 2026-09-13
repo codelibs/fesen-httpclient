@@ -120,13 +120,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
     private final String maxAsStr;
 
     /**
-     * Construct with unparsed bounds.
-     */
-    public LongBounds(String minAsStr, String maxAsStr) {
-        this(null, null, minAsStr, maxAsStr);
-    }
-
-    /**
      * Construct with all possible information.
      */
     private LongBounds(Long min, Long max, String minAsStr, String maxAsStr) {

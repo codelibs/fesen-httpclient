@@ -103,9 +103,5 @@ public enum MissingOrder implements Writeable {
         return valueOf(order.toUpperCase(Locale.ROOT));
     }
 
-    public static boolean unknownOrder(int v) {
-        return v == MISSING_ORDER_UNKNOWN;
-    }
-
     public abstract int compare(Provider<Boolean> leftIsMissing, Provider<Boolean> rightIsMissing, int reverseMul);
 }

@@ -222,36 +222,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         return this.shards;
     }
 
-    /**
-     * Returns a {@link List} of shards
-     *
-     * @return a {@link List} of shards
-     */
-    public List<ShardRouting> getShards() {
-        return shards();
-    }
-
-    /**
-     * Returns a {@link List} of all initializing shards, including target shards of relocations
-     *
-     * @return a {@link List} of shards
-     */
-    public List<ShardRouting> getAllInitializingShards() {
-        return this.allInitializingShards;
-    }
-
-    public Map<WeightedRoutingKey, WeightedShardRoutings> getActiveShardsByWeight() {
-        return activeShardsByWeight;
-    }
-
-    public ShardIterator shardsIt() {
-        return new PlainShardIterator(shardId, shards);
-    }
-
-    public ShardIterator shardsIt(int seed) {
-        return new PlainShardIterator(shardId, shuffler.shuffle(shards, seed));
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         this.shardId().getIndex().writeTo(out);
@@ -315,10 +285,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
      */
     public boolean allShardsStarted() {
         return allShardsStarted;
-    }
-
-    public Set<String> getAllAllocationIds() {
-        return allAllocationIds;
     }
 
     static class AttributesKey {
@@ -465,11 +431,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
             }
 
             return builder.build();
-        }
-
-        public static void writeTo(IndexShardRoutingTable indexShard, StreamOutput out) throws IOException {
-            indexShard.shardId().getIndex().writeTo(out);
-            writeToThin(indexShard, out);
         }
 
         public static void writeToThin(IndexShardRoutingTable indexShard, StreamOutput out) throws IOException {

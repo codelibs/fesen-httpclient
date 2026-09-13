@@ -156,8 +156,4 @@ public class TransportInfo implements ReportingService.Info {
     public BoundTransportAddress address() {
         return address;
     }
-
-    public BoundTransportAddress getAddress() {
-        return address();
-    }
 }

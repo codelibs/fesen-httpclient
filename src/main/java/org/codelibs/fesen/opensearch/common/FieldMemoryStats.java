@@ -125,18 +125,4 @@ public final class FieldMemoryStats implements Writeable, Iterable<Map.Entry<Str
     public Iterator<Map.Entry<String, Long>> iterator() {
         return stats.entrySet().iterator();
     }
-
-    /**
-     * Returns the fields value in bytes or <code>0</code> if it's not present in the stats
-     */
-    public long get(String field) {
-        return stats.getOrDefault(field, 0L);
-    }
-
-    /**
-     * Returns <code>true</code> iff the given field is in the stats
-     */
-    public boolean containsField(String field) {
-        return stats.containsKey(field);
-    }
 }

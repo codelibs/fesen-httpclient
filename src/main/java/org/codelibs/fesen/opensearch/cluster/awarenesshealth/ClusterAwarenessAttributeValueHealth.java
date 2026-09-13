@@ -77,10 +77,6 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
         return activeShards;
     }
 
-    public void setActiveShards(int activeShards) {
-        this.activeShards = activeShards;
-    }
-
     public int getUnassignedShards() {
         return unassignedShards;
     }
@@ -91,10 +87,6 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
 
     public int getNodes() {
         return nodes;
-    }
-
-    public void setNodes(int nodes) {
-        this.nodes = nodes;
     }
 
     public double getWeight() {
@@ -113,24 +105,8 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
         return initializingShards;
     }
 
-    public void setInitializingShards(int initializingShards) {
-        this.initializingShards = initializingShards;
-    }
-
     public int getRelocatingShards() {
         return relocatingShards;
-    }
-
-    public void setRelocatingShards(int relocatingShards) {
-        this.relocatingShards = relocatingShards;
-    }
-
-    public List<String> getNodeList() {
-        return nodeList;
-    }
-
-    public void setNodeList(List<String> nodeList) {
-        this.nodeList = nodeList;
     }
 
     @Override

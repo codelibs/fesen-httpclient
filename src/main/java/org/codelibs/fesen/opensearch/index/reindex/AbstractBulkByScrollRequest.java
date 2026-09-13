@@ -199,16 +199,6 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * Maximum number of processed documents. Defaults to -1 meaning process all
      * documents.
-     * @deprecated please use getMaxDocs() instead.
-     */
-    @Deprecated
-    public int getSize() {
-        return getMaxDocs();
-    }
-
-    /**
-     * Maximum number of processed documents. Defaults to -1 meaning process all
-     * documents.
      */
     public int getMaxDocs() {
         return maxDocs;
@@ -323,25 +313,11 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     }
 
     /**
-     * Initial delay after a rejection before retrying request.
-     */
-    public TimeValue getRetryBackoffInitialTime() {
-        return retryBackoffInitialTime;
-    }
-
-    /**
      * Set the initial delay after a rejection before retrying request.
      */
     public Self setRetryBackoffInitialTime(TimeValue retryBackoffInitialTime) {
         this.retryBackoffInitialTime = retryBackoffInitialTime;
         return self();
-    }
-
-    /**
-     * Total number of retries attempted for rejections.
-     */
-    public int getMaxRetries() {
-        return maxRetries;
     }
 
     /**
@@ -387,13 +363,6 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     @Override
     public boolean getShouldStoreResult() {
         return shouldStoreResult;
-    }
-
-    /**
-     * Get scroll timeout
-     */
-    public TimeValue getScrollTime() {
-        return searchRequest.scroll().keepAlive();
     }
 
     /**

@@ -61,11 +61,6 @@ public class ClusterHealthRequestBuilder extends ClusterManagerNodeReadOperation
         return this;
     }
 
-    public ClusterHealthRequestBuilder setWaitForStatus(ClusterHealthStatus waitForStatus) {
-        request.waitForStatus(waitForStatus);
-        return this;
-    }
-
     public ClusterHealthRequestBuilder setWaitForYellowStatus() {
         request.waitForYellowStatus();
         return this;

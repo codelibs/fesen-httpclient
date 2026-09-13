@@ -91,37 +91,6 @@ public final class QueryBuilders {
     }
 
     /**
-     * Creates a match query with type "BOOLEAN" for the provided field name and text.
-     *
-     * @param fieldNames The field names.
-     * @param text       The query text (to be analyzed).
-     */
-    public static MultiMatchQueryBuilder multiMatchQuery(Object text, String... fieldNames) {
-        return new MultiMatchQueryBuilder(text, fieldNames); // BOOLEAN is the default
-    }
-
-    /**
-     * Creates a text query with type "BOOL_PREFIX" for the provided field name and text.
-     *
-     * @param name The field name.
-     * @param text The query text (to be analyzed).
-     */
-    public static MatchBoolPrefixQueryBuilder matchBoolPrefixQuery(String name, Object text) {
-        return new MatchBoolPrefixQueryBuilder(name, text);
-    }
-
-    /**
-     * Creates a combined_fields query for the provided value across the given field names.
-     *
-     * @param value   The query value (to be analyzed).
-     * @param fields  The target field names.
-     * @return a {@link CombinedFieldsQueryBuilder} instance.
-     */
-    public static CombinedFieldsQueryBuilder combinedFieldsQuery(Object value, String... fields) {
-        return new CombinedFieldsQueryBuilder(value, fields);
-    }
-
-    /**
      * Creates a text query with type "PHRASE" for the provided field name and text.
      *
      * @param name The field name.
@@ -148,16 +117,6 @@ public final class QueryBuilders {
      */
     public static DisMaxQueryBuilder disMaxQuery() {
         return new DisMaxQueryBuilder();
-    }
-
-    /**
-     * A query to boost scores based on their proximity to the given origin for date, date_nanos and geo_point field types.
-     * @param name The field name
-     * @param origin The origin of the distance calculation. Can be a long, string or {@link GeoPoint}, depending on field type.
-     * @param pivot The distance from the origin at which relevance scores receive half of the boost value.
-     */
-    public static DistanceFeatureQueryBuilder distanceFeatureQuery(String name, Origin origin, String pivot) {
-        return new DistanceFeatureQueryBuilder(name, origin, pivot);
     }
 
     /**
@@ -193,36 +152,6 @@ public final class QueryBuilders {
      * @param name  The name of the field
      * @param value The value of the term
      */
-    public static TermQueryBuilder termQuery(String name, long value) {
-        return new TermQueryBuilder(name, value);
-    }
-
-    /**
-     * A Query that matches documents containing a term.
-     *
-     * @param name  The name of the field
-     * @param value The value of the term
-     */
-    public static TermQueryBuilder termQuery(String name, float value) {
-        return new TermQueryBuilder(name, value);
-    }
-
-    /**
-     * A Query that matches documents containing a term.
-     *
-     * @param name  The name of the field
-     * @param value The value of the term
-     */
-    public static TermQueryBuilder termQuery(String name, double value) {
-        return new TermQueryBuilder(name, value);
-    }
-
-    /**
-     * A Query that matches documents containing a term.
-     *
-     * @param name  The name of the field
-     * @param value The value of the term
-     */
     public static TermQueryBuilder termQuery(String name, boolean value) {
         return new TermQueryBuilder(name, value);
     }
@@ -247,19 +176,6 @@ public final class QueryBuilders {
      * @see #rangeQuery(String)
      */
     public static FuzzyQueryBuilder fuzzyQuery(String name, String value) {
-        return new FuzzyQueryBuilder(name, value);
-    }
-
-    /**
-     * A Query that matches documents using fuzzy query.
-     *
-     * @param name  The name of the field
-     * @param value The value of the term
-     *
-     * @see #matchQuery(String, Object)
-     * @see #rangeQuery(String)
-     */
-    public static FuzzyQueryBuilder fuzzyQuery(String name, Object value) {
         return new FuzzyQueryBuilder(name, value);
     }
 
@@ -321,25 +237,6 @@ public final class QueryBuilders {
     }
 
     /**
-     * A query that acts similar to a query_string query, but won't throw
-     * exceptions for any weird string syntax. See
-     * {@link org.apache.lucene.queryparser.simple.SimpleQueryParser} for the full
-     * supported syntax.
-     */
-    public static SimpleQueryStringBuilder simpleQueryStringQuery(String queryString) {
-        return new SimpleQueryStringBuilder(queryString);
-    }
-
-    /**
-     * The BoostingQuery class can be used to effectively demote results that match a given query.
-     * Unlike the "NOT" clause, this still selects documents that contain undesirable terms,
-     * but reduces their overall score:
-     */
-    public static BoostingQueryBuilder boostingQuery(QueryBuilder positiveQuery, QueryBuilder negativeQuery) {
-        return new BoostingQueryBuilder(positiveQuery, negativeQuery);
-    }
-
-    /**
      * A Query that matches documents matching boolean combinations of other queries.
      */
     public static BoolQueryBuilder boolQuery() {
@@ -350,55 +247,6 @@ public final class QueryBuilders {
         return new SpanTermQueryBuilder(name, value);
     }
 
-    public static SpanTermQueryBuilder spanTermQuery(String name, int value) {
-        return new SpanTermQueryBuilder(name, value);
-    }
-
-    public static SpanTermQueryBuilder spanTermQuery(String name, long value) {
-        return new SpanTermQueryBuilder(name, value);
-    }
-
-    public static SpanTermQueryBuilder spanTermQuery(String name, float value) {
-        return new SpanTermQueryBuilder(name, value);
-    }
-
-    public static SpanTermQueryBuilder spanTermQuery(String name, double value) {
-        return new SpanTermQueryBuilder(name, value);
-    }
-
-    public static SpanFirstQueryBuilder spanFirstQuery(SpanQueryBuilder match, int end) {
-        return new SpanFirstQueryBuilder(match, end);
-    }
-
-    public static SpanNearQueryBuilder spanNearQuery(SpanQueryBuilder initialClause, int slop) {
-        return new SpanNearQueryBuilder(initialClause, slop);
-    }
-
-    public static SpanNotQueryBuilder spanNotQuery(SpanQueryBuilder include, SpanQueryBuilder exclude) {
-        return new SpanNotQueryBuilder(include, exclude);
-    }
-
-    public static SpanOrQueryBuilder spanOrQuery(SpanQueryBuilder initialClause) {
-        return new SpanOrQueryBuilder(initialClause);
-    }
-
-    /** Creates a new {@code span_within} builder.
-    * @param big the big clause, it must enclose {@code little} for a match.
-    * @param little the little clause, it must be contained within {@code big} for a match.
-    */
-    public static SpanWithinQueryBuilder spanWithinQuery(SpanQueryBuilder big, SpanQueryBuilder little) {
-        return new SpanWithinQueryBuilder(big, little);
-    }
-
-    /**
-     * Creates a new {@code span_containing} builder.
-     * @param big the big clause, it must enclose {@code little} for a match.
-     * @param little the little clause, it must be contained within {@code big} for a match.
-     */
-    public static SpanContainingQueryBuilder spanContainingQuery(SpanQueryBuilder big, SpanQueryBuilder little) {
-        return new SpanContainingQueryBuilder(big, little);
-    }
-
     /**
      * Creates a {@link SpanQueryBuilder} which allows having a sub query
      * which implements {@link MultiTermQueryBuilder}. This is useful for
@@ -407,24 +255,6 @@ public final class QueryBuilders {
      * @param multiTermQueryBuilder The {@link MultiTermQueryBuilder} that
      *                              backs the created builder.
      */
-
-    public static SpanMultiTermQueryBuilder spanMultiTermQueryBuilder(MultiTermQueryBuilder multiTermQueryBuilder) {
-        return new SpanMultiTermQueryBuilder(multiTermQueryBuilder);
-    }
-
-    public static FieldMaskingSpanQueryBuilder fieldMaskingSpanQuery(SpanQueryBuilder query, String field) {
-        return new FieldMaskingSpanQueryBuilder(query, field);
-    }
-
-    /**
-     * A query that wraps another query and simply returns a constant score equal to the
-     * query boost for every document in the query.
-     *
-     * @param queryBuilder The query to wrap in a constant score query
-     */
-    public static ConstantScoreQueryBuilder constantScoreQuery(QueryBuilder queryBuilder) {
-        return new ConstantScoreQueryBuilder(queryBuilder);
-    }
 
     /**
      * A function_score query with no functions.
@@ -448,16 +278,6 @@ public final class QueryBuilders {
         FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctionBuilders
     ) {
         return new FunctionScoreQueryBuilder(queryBuilder, filterFunctionBuilders);
-    }
-
-    /**
-     * A query that allows to define a custom scoring function
-     *
-     * @param filterFunctionBuilders the filters and functions to execute
-     * @return the function score query
-     */
-    public static FunctionScoreQueryBuilder functionScoreQuery(FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctionBuilders) {
-        return new FunctionScoreQueryBuilder(filterFunctionBuilders);
     }
 
     /**
@@ -511,34 +331,6 @@ public final class QueryBuilders {
         return new MoreLikeThisQueryBuilder(fields, likeTexts, likeItems);
     }
 
-    /**
-     * A more like this query that finds documents that are "like" the provided texts or documents
-     * which is checked against the "_all" field.
-     * @param likeTexts the text to use when generating the 'More Like This' query.
-     * @param likeItems the documents to use when generating the 'More Like This' query.
-     */
-    public static MoreLikeThisQueryBuilder moreLikeThisQuery(String[] likeTexts, Item[] likeItems) {
-        return moreLikeThisQuery(null, likeTexts, likeItems);
-    }
-
-    /**
-     * A more like this query that finds documents that are "like" the provided texts
-     * which is checked against the "_all" field.
-     * @param likeTexts the text to use when generating the 'More Like This' query.
-     */
-    public static MoreLikeThisQueryBuilder moreLikeThisQuery(String[] likeTexts) {
-        return moreLikeThisQuery(null, likeTexts, null);
-    }
-
-    /**
-     * A more like this query that finds documents that are "like" the provided documents
-     * which is checked against the "_all" field.
-     * @param likeItems the documents to use when generating the 'More Like This' query.
-     */
-    public static MoreLikeThisQueryBuilder moreLikeThisQuery(Item[] likeItems) {
-        return moreLikeThisQuery(null, null, likeItems);
-    }
-
     public static NestedQueryBuilder nestedQuery(String path, QueryBuilder query, ScoreMode scoreMode) {
         return new NestedQueryBuilder(path, query, scoreMode);
     }
@@ -559,95 +351,8 @@ public final class QueryBuilders {
      * @param name   The field name
      * @param values The terms
      */
-    public static TermsQueryBuilder termsQuery(String name, int... values) {
-        return new TermsQueryBuilder(name, values);
-    }
-
-    /**
-     * A filter for a field based on several terms matching on any of them.
-     *
-     * @param name   The field name
-     * @param values The terms
-     */
-    public static TermsQueryBuilder termsQuery(String name, long... values) {
-        return new TermsQueryBuilder(name, values);
-    }
-
-    /**
-     * A filter for a field based on several terms matching on any of them.
-     *
-     * @param name   The field name
-     * @param values The terms
-     */
-    public static TermsQueryBuilder termsQuery(String name, float... values) {
-        return new TermsQueryBuilder(name, values);
-    }
-
-    /**
-     * A filter for a field based on several terms matching on any of them.
-     *
-     * @param name   The field name
-     * @param values The terms
-     */
-    public static TermsQueryBuilder termsQuery(String name, double... values) {
-        return new TermsQueryBuilder(name, values);
-    }
-
-    /**
-     * A filter for a field based on several terms matching on any of them.
-     *
-     * @param name   The field name
-     * @param values The terms
-     */
-    public static TermsQueryBuilder termsQuery(String name, Object... values) {
-        return new TermsQueryBuilder(name, values);
-    }
-
-    /**
-     * A filter for a field based on several terms matching on any of them.
-     *
-     * @param name   The field name
-     * @param values The terms
-     */
     public static TermsQueryBuilder termsQuery(String name, Collection<?> values) {
         return new TermsQueryBuilder(name, values);
-    }
-
-    /**
-     * A Query builder which allows building a query thanks to a JSON string or binary data.
-     */
-    public static WrapperQueryBuilder wrapperQuery(String source) {
-        return new WrapperQueryBuilder(source);
-    }
-
-    /**
-     * A Query builder which allows building a query thanks to a JSON string or binary data.
-     */
-    public static WrapperQueryBuilder wrapperQuery(BytesReference source) {
-        return new WrapperQueryBuilder(source);
-    }
-
-    /**
-     * A Query builder which allows building a query thanks to a JSON string or binary data.
-     */
-    public static WrapperQueryBuilder wrapperQuery(byte[] source) {
-        return new WrapperQueryBuilder(source);
-    }
-
-    /**
-     * A terms query that can extract the terms from another doc in an index.
-     */
-    public static TermsQueryBuilder termsLookupQuery(String name, TermsLookup termsLookup) {
-        return new TermsQueryBuilder(name, termsLookup);
-    }
-
-    /**
-     * A builder for filter based on a script.
-     *
-     * @param script The script to filter by.
-     */
-    public static ScriptQueryBuilder scriptQuery(Script script) {
-        return new ScriptQueryBuilder(script);
     }
 
     /**
@@ -660,38 +365,11 @@ public final class QueryBuilders {
     }
 
     /**
-     * A filter to filter based on a bounding box defined by top left and bottom right locations / points
-     *
-     * @param name The location field name.
-     */
-    public static GeoBoundingBoxQueryBuilder geoBoundingBoxQuery(String name) {
-        return new GeoBoundingBoxQueryBuilder(name);
-    }
-
-    /**
-     * A filter to filter based on a polygon defined by a set of locations  / points.
-     *
-     * @param name The location field name.
-     */
-    public static GeoPolygonQueryBuilder geoPolygonQuery(String name, List<GeoPoint> points) {
-        return new GeoPolygonQueryBuilder(name, points);
-    }
-
-    /**
      * A filter to filter only documents where a field exists in them.
      *
      * @param name The name of the field
      */
     public static ExistsQueryBuilder existsQuery(String name) {
         return new ExistsQueryBuilder(name);
-    }
-
-    /**
-     *  A query that contains a template with holder that should be resolved by search processors
-     *
-     * @param content The content of the template
-     */
-    public static TemplateQueryBuilder templateQuery(Map<String, Object> content) {
-        return new TemplateQueryBuilder(content);
     }
 }

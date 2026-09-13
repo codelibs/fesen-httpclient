@@ -120,32 +120,10 @@ public class BulkByScrollTask extends CancellableTask {
     }
 
     /**
-     * Returns the object that tracks the state of sliced subtasks. Throws IllegalStateException if this task is not set to be
-     * a leader task.
-     */
-    public LeaderBulkByScrollTaskState getLeaderState() {
-        if (!isLeader()) {
-            throw new IllegalStateException("This task is not set to be a leader for other slice subtasks");
-        }
-        return leaderState;
-    }
-
-    /**
      * Returns true if this task is a worker task that performs search requests. False otherwise
      */
     public boolean isWorker() {
         return workerState != null;
-    }
-
-    /**
-     * Returns the object that manages sending search requests. Throws IllegalStateException if this task is not set to be a
-     * worker task.
-     */
-    public WorkerBulkByScrollTaskState getWorkerState() {
-        if (!isWorker()) {
-            throw new IllegalStateException("This task is not set to be a worker");
-        }
-        return workerState;
     }
 
     @Override
@@ -775,13 +753,6 @@ public class BulkByScrollTask extends CancellableTask {
          */
         public TimeValue getThrottledUntil() {
             return throttledUntil;
-        }
-
-        /**
-         * Statuses of the sub requests into which this sub-request was sliced. Empty if this request wasn't sliced into sub-requests.
-         */
-        public List<StatusOrException> getSliceStatuses() {
-            return sliceStatuses;
         }
 
         @Override

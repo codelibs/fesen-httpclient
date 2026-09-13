@@ -79,18 +79,6 @@ public class PauseIngestionRequest extends AcknowledgedRequest<PauseIngestionReq
         return indicesOptions;
     }
 
-    /**
-     * Specifies what type of requested indices to ignore and how to deal wild wildcard expressions.
-     * For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices to ignore and wildcard indices expressions
-     * @return the request itself
-     */
-    public PauseIngestionRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

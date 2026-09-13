@@ -146,9 +146,5 @@ public abstract class PipelineAggregator {
         return bucketsPaths;
     }
 
-    public Map<String, Object> metadata() {
-        return metadata;
-    }
-
     public abstract InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext);
 }

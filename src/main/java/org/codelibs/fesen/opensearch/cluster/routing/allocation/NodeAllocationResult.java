@@ -103,16 +103,6 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
     }
 
     /**
-     * The decision details for allocating to this node.  Returns {@code null} if
-     * no allocation decision was taken on the node; in this case, {@link #getNodeDecision()}
-     * will return {@link AllocationDecision#NO}.
-     */
-    @Nullable
-    public Decision getCanAllocateDecision() {
-        return canAllocateDecision;
-    }
-
-    /**
      * Is the weight assigned for the node?
      */
     public boolean isWeightRanked() {

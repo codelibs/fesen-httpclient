@@ -54,13 +54,6 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
     RestoreSnapshotRequestBuilder> {
 
     /**
-     * Constructs new restore snapshot request builder
-     */
-    public RestoreSnapshotRequestBuilder(OpenSearchClient client, RestoreSnapshotAction action) {
-        super(client, action, new RestoreSnapshotRequest());
-    }
-
-    /**
      * Constructs new restore snapshot request builder with specified repository and snapshot names
      */
     public RestoreSnapshotRequestBuilder(OpenSearchClient client, RestoreSnapshotAction action, String repository, String name) {

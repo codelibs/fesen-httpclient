@@ -149,13 +149,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
     }
 
     /**
-     * Returns a concrete index for this mapping or <code>null</code> if no concrete index is defined
-     */
-    public Index getConcreteIndex() {
-        return concreteIndex;
-    }
-
-    /**
      * The indices the mappings will be put.
      */
     @Override
@@ -182,12 +175,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     public String origin() {
         return origin;
-    }
-
-    public PutMappingRequest origin(String origin) {
-        // reserve "null" for bwc.
-        this.origin = Objects.requireNonNull(origin);
-        return this;
     }
 
     /**

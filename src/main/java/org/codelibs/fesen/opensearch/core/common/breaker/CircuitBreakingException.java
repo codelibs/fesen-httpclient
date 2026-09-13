@@ -60,10 +60,6 @@ public class CircuitBreakingException extends OpenSearchException {
         durability = in.readEnum(CircuitBreaker.Durability.class);
     }
 
-    public CircuitBreakingException(String message, CircuitBreaker.Durability durability) {
-        this(message, 0, 0, durability);
-    }
-
     public CircuitBreakingException(String message, long bytesWanted, long byteLimit, CircuitBreaker.Durability durability) {
         super(message);
         this.bytesWanted = bytesWanted;

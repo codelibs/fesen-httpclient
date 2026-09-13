@@ -71,14 +71,6 @@ public class CancelTasksRequest extends BaseTasksRequest<CancelTasksRequest> {
     }
 
     /**
-     * Set the reason for canceling the task.
-     */
-    public CancelTasksRequest setReason(String reason) {
-        this.reason = reason;
-        return this;
-    }
-
-    /**
      * The reason for canceling the task.
      */
     public String getReason() {

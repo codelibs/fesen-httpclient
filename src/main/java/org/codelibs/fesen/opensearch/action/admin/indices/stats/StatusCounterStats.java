@@ -38,11 +38,6 @@ public class StatusCounterStats implements Writeable, ToXContentFragment {
         searchResponseStatusStats = new SearchResponseStatusStats();
     }
 
-    public StatusCounterStats(DocStatusStats docStatusStats, SearchResponseStatusStats searchResponseStatusStats) {
-        this.docStatusStats = docStatusStats;
-        this.searchResponseStatusStats = searchResponseStatusStats;
-    }
-
     public StatusCounterStats(StreamInput in) throws IOException {
         if (in.getVersion().onOrAfter(Version.V_3_4_0)) {
             docStatusStats = in.readOptionalWriteable(DocStatusStats::new);

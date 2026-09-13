@@ -285,26 +285,12 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
-     * @return the value set by {@link #fragmentSize(Integer)}
-     */
-    public Integer fragmentSize() {
-        return this.fragmentSize;
-    }
-
-    /**
      * Set the number of fragments, defaults to {@link HighlightBuilder#DEFAULT_NUMBER_OF_FRAGMENTS}
      */
     @SuppressWarnings("unchecked")
     public HB numOfFragments(Integer numOfFragments) {
         this.numOfFragments = numOfFragments;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #numOfFragments(Integer)}
-     */
-    public Integer numOfFragments() {
-        return this.numOfFragments;
     }
 
     /**
@@ -320,13 +306,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
-     * @return the value set by {@link #highlighterType(String)}
-     */
-    public String highlighterType() {
-        return this.highlighterType;
-    }
-
-    /**
      * Sets what fragmenter to use to break up text that is eligible for highlighting.
      * This option is only applicable when using the plain highlighterType {@code highlighter}.
      * Permitted values are "simple" or "span" relating to {@link SimpleFragmenter} and
@@ -336,13 +315,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB fragmenter(String fragmenter) {
         this.fragmenter = fragmenter;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #fragmenter(String)}
-     */
-    public String fragmenter() {
-        return this.fragmenter;
     }
 
     /**
@@ -381,13 +353,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
-     * @return the value set by {@link #order(Order)}
-     */
-    public Order order() {
-        return this.order;
-    }
-
-    /**
      * Set this to true when using the highlighterType {@code fvh}
      * and you want to provide highlighting on filter clauses in your
      * query. Default is {@code false}.
@@ -396,13 +361,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB highlightFilter(Boolean highlightFilter) {
         this.highlightFilter = highlightFilter;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #highlightFilter(Boolean)}
-     */
-    public Boolean highlightFilter() {
-        return this.highlightFilter;
     }
 
     /**
@@ -426,13 +384,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
-     * @return the value set by {@link #boundaryScannerType(String)}
-     */
-    public BoundaryScannerType boundaryScannerType() {
-        return this.boundaryScannerType;
-    }
-
-    /**
      * When using the highlighterType {@code fvh} this setting
      * controls how far to look for boundary characters, and defaults to 20.
      */
@@ -440,13 +391,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB boundaryMaxScan(Integer boundaryMaxScan) {
         this.boundaryMaxScan = boundaryMaxScan;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #boundaryMaxScan(Integer)}
-     */
-    public Integer boundaryMaxScan() {
-        return this.boundaryMaxScan;
     }
 
     /**
@@ -458,13 +402,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB boundaryChars(char[] boundaryChars) {
         this.boundaryChars = boundaryChars;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #boundaryChars(char[])}
-     */
-    public char[] boundaryChars() {
-        return this.boundaryChars;
     }
 
     /**
@@ -480,26 +417,12 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
-     * @return the value set by {@link #boundaryScannerLocale(String)}
-     */
-    public Locale boundaryScannerLocale() {
-        return this.boundaryScannerLocale;
-    }
-
-    /**
      * Allows to set custom options for custom highlighters.
      */
     @SuppressWarnings("unchecked")
     public HB options(Map<String, Object> options) {
         this.options = options;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #options(Map)}
-     */
-    public Map<String, Object> options() {
-        return this.options;
     }
 
     /**
@@ -511,13 +434,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB requireFieldMatch(Boolean requireFieldMatch) {
         this.requireFieldMatch = requireFieldMatch;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #requireFieldMatch(Boolean)}
-     */
-    public Boolean requireFieldMatch() {
-        return this.requireFieldMatch;
     }
 
     /**
@@ -533,13 +449,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
-     * @return the value set by {@link #noMatchSize(Integer)}
-     */
-    public Integer noMatchSize() {
-        return this.noMatchSize;
-    }
-
-    /**
      * Sets the maximum number of phrases the fvh will consider if the field doesn't also define phraseLimit.
      * @param phraseLimit maximum number of phrases the fvh will consider
      * @return this for chaining
@@ -548,13 +457,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB phraseLimit(Integer phraseLimit) {
         this.phraseLimit = phraseLimit;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #phraseLimit(Integer)}
-     */
-    public Integer phraseLimit() {
-        return this.phraseLimit;
     }
 
     /**
@@ -568,10 +470,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
         return (HB) this;
     }
 
-    public Integer maxAnalyzerOffset() {
-        return this.maxAnalyzerOffset;
-    }
-
     /**
      * Forces the highlighting to highlight fields based on the source even if fields are stored separately.
      */
@@ -579,13 +477,6 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     public HB forceSource(Boolean forceSource) {
         this.forceSource = forceSource;
         return (HB) this;
-    }
-
-    /**
-     * @return the value set by {@link #forceSource(Boolean)}
-     */
-    public Boolean forceSource() {
-        return this.forceSource;
     }
 
     @Override

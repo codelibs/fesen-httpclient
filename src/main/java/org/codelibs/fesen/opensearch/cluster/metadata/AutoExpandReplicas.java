@@ -124,20 +124,8 @@ public final class AutoExpandReplicas {
         return minReplicas;
     }
 
-    int getMaxReplicas(int numDataNodes) {
-        return Math.min(maxReplicas, numDataNodes - 1);
-    }
-
-    public int getMaxReplicas() {
-        return maxReplicas;
-    }
-
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public boolean autoExpandToAll() {
-        return enabled && maxReplicas == Integer.MAX_VALUE;
     }
 
     @Override

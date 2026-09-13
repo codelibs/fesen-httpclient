@@ -345,81 +345,10 @@ public class Setting<T> implements ToXContentObject {
     }
 
     /**
-     * Returns the original representation of a setting key.
-     */
-    public final Key getRawKey() {
-        return key;
-    }
-
-    /**
-     * Returns <code>true</code> if this setting is dynamically updateable, otherwise <code>false</code>
-     */
-    public final boolean isDynamic() {
-        return properties.contains(Property.Dynamic);
-    }
-
-    /**
-     * Returns <code>true</code> if this setting is final, otherwise <code>false</code>
-     */
-    public final boolean isFinal() {
-        return properties.contains(Property.Final);
-    }
-
-    public final boolean isUnmodifiableOnRestore() {
-        return properties.contains(Property.UnmodifiableOnRestore);
-    }
-
-    /**
-     * Returns <code>true</code> if this setting is sensitive, meaning it requires security admin
-     * privileges to be updated dynamically. Otherwise <code>false</code>.
-     */
-    public final boolean isSensitive() {
-        return properties.contains(Property.Sensitive);
-    }
-
-    public final boolean isInternalIndex() {
-        return properties.contains(Property.InternalIndex);
-    }
-
-    public final boolean isPrivateIndex() {
-        return properties.contains(Property.PrivateIndex);
-    }
-
-    /**
-     * Returns the setting properties
-     * @see Property
-     */
-    public EnumSet<Property> getProperties() {
-        return properties;
-    }
-
-    /**
      * Returns <code>true</code> if this setting must be filtered, otherwise <code>false</code>
      */
     public boolean isFiltered() {
         return properties.contains(Property.Filtered);
-    }
-
-    /**
-     * Returns <code>true</code> if this setting has a node scope, otherwise <code>false</code>
-     */
-    public boolean hasNodeScope() {
-        return properties.contains(Property.NodeScope);
-    }
-
-    /**
-     * Returns <code>true</code> if this setting's value can be checked for equality across all nodes. Only {@link SecureSetting} instances
-     * may have this qualifier.
-     */
-    public boolean isConsistent() {
-        return properties.contains(Property.Consistent);
-    }
-
-    /**
-     * Returns <code>true</code> if this setting has an index scope, otherwise <code>false</code>
-     */
-    public boolean hasIndexScope() {
-        return properties.contains(Property.IndexScope);
     }
 
     /**
@@ -438,20 +367,8 @@ public class Setting<T> implements ToXContentObject {
         return false;
     }
 
-    final boolean isListSetting() {
-        return this instanceof ListSetting;
-    }
-
     boolean hasComplexMatcher() {
         return isGroupSetting();
-    }
-
-    /**
-     * Validate the current setting value only without dependencies with {@link Setting.Validator#validate(Object)}.
-     * @param settings a settings object for settings that has a default value depending on another setting if available
-     */
-    void validateWithoutDependencies(Settings settings) {
-        validator.validate(get(settings, false));
     }
 
     /**
@@ -478,10 +395,6 @@ public class Setting<T> implements ToXContentObject {
      */
     public boolean exists(final Settings settings) {
         return exists(settings.keySet());
-    }
-
-    public boolean exists(final Settings.Builder builder) {
-        return exists(builder.keys());
     }
 
     private boolean exists(final Set<String> keys) {
@@ -712,15 +625,6 @@ public class Setting<T> implements ToXContentObject {
 
         private Stream<String> matchStream(Settings settings) {
             return settings.keySet().stream().filter(this::match).map(key::getConcreteString);
-        }
-
-        /**
-         * Get the raw list of dependencies. This method is exposed for testing purposes and {@link #getSettingsDependencies(String)}
-         * should be preferred for most all cases.
-         * @return the raw list of dependencies for this setting
-         */
-        public Set<AffixSettingDependency> getDependencies() {
-            return Collections.unmodifiableSet(dependencies);
         }
 
         @Override
@@ -1243,10 +1147,6 @@ public class Setting<T> implements ToXContentObject {
 
     // Setting<Long> with defaultValue
 
-    public static Setting<Long> longSetting(String key, long defaultValue, Property... properties) {
-        return longSetting(key, defaultValue, Long.MIN_VALUE, Long.MAX_VALUE, properties);
-    }
-
     public static Setting<Long> longSetting(String key, long defaultValue, long minValue, Property... properties) {
         return longSetting(key, defaultValue, minValue, Long.MAX_VALUE, properties);
     }
@@ -1351,10 +1251,6 @@ public class Setting<T> implements ToXContentObject {
     }
 
     // Setting<Double> with defaultValue
-
-    public static Setting<Double> doubleSetting(String key, double defaultValue, Property... properties) {
-        return doubleSetting(key, defaultValue, Double.MIN_VALUE, Double.MAX_VALUE, properties);
-    }
 
     public static Setting<Double> doubleSetting(String key, double defaultValue, double minValue, Property... properties) {
         return doubleSetting(key, defaultValue, minValue, Double.MAX_VALUE, properties);

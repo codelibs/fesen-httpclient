@@ -71,10 +71,6 @@ public class IngestInfo implements ReportingService.Info {
         }
     }
 
-    public Iterable<ProcessorInfo> getProcessors() {
-        return processors;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject("ingest");

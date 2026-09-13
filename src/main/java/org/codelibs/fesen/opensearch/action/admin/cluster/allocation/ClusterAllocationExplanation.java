@@ -102,59 +102,6 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
     }
 
     /**
-     * Returns the shard that the explanation is about.
-     */
-    public ShardId getShard() {
-        return shardRouting.shardId();
-    }
-
-    /**
-     * Returns {@code true} if the explained shard is primary, {@code false} otherwise.
-     */
-    public boolean isPrimary() {
-        return shardRouting.primary();
-    }
-
-    /**
-     * Returns the current {@link ShardRoutingState} of the shard.
-     */
-    public ShardRoutingState getShardState() {
-        return shardRouting.state();
-    }
-
-    /**
-     * Returns the currently assigned node, or {@code null} if the shard is unassigned.
-     */
-    @Nullable
-    public DiscoveryNode getCurrentNode() {
-        return currentNode;
-    }
-
-    /**
-     * Returns the relocating target node, or {@code null} if the shard is not in the {@link ShardRoutingState#RELOCATING} state.
-     */
-    @Nullable
-    public DiscoveryNode getRelocationTargetNode() {
-        return relocationTargetNode;
-    }
-
-    /**
-     * Returns the unassigned info for the shard, or {@code null} if the shard is active.
-     */
-    @Nullable
-    public UnassignedInfo getUnassignedInfo() {
-        return shardRouting.unassignedInfo();
-    }
-
-    /**
-     * Returns the cluster disk info for the cluster, or {@code null} if none available.
-     */
-    @Nullable
-    public ClusterInfo getClusterInfo() {
-        return this.clusterInfo;
-    }
-
-    /**
      * Returns the shard allocation decision for attempting to assign or move the shard.
      */
     public ShardAllocationDecision getShardAllocationDecision() {

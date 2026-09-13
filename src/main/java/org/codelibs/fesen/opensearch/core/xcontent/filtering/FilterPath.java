@@ -79,10 +79,6 @@ public class FilterPath {
         return doubleWildcard;
     }
 
-    boolean isSimpleWildcard() {
-        return simpleWildcard;
-    }
-
     String getSegment() {
         return segment;
     }

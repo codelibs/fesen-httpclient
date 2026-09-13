@@ -67,10 +67,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         out.writeLong(targetThrottleTimeInNanos);
     }
 
-    public synchronized List<FileMetadata> fileDetails() {
-        return Collections.unmodifiableList(new ArrayList<>(filesDetails.values()));
-    }
-
     public synchronized void reset() {
         super.reset();
         filesDetails.clear();
@@ -277,10 +273,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
         public int size() {
             return fileMetadataMap.size();
-        }
-
-        public boolean isEmpty() {
-            return fileMetadataMap.isEmpty();
         }
 
         public void clear() {

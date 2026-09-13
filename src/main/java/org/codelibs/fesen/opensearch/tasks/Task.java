@@ -217,13 +217,6 @@ public class Task {
     }
 
     /**
-     * Returns thread level resource consumption of the task
-     */
-    public Map<Long, List<ThreadResourceInfo>> getResourceStats() {
-        return Collections.unmodifiableMap(resourceStats);
-    }
-
-    /**
      * Returns current total resource usage of the task.
      * Currently, this method is only called on demand, during get and listing of tasks.
      * In the future, these values can be cached as an optimization.
@@ -349,11 +342,4 @@ public class Task {
      */
     @PublicApi(since = "1.0.0")
     public interface Status extends ToXContentObject, NamedWriteable {}
-
-    /**
-     * Returns stored task header associated with the task
-     */
-    public String getHeader(String header) {
-        return headers.get(header);
-    }
 }

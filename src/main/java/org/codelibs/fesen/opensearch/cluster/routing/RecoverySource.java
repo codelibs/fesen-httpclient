@@ -391,10 +391,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
             return isSearchableSnapshot;
         }
 
-        public String sourceRemoteStoreRepository() {
-            return sourceRemoteStoreRepository;
-        }
-
         public String sourceRemoteTranslogRepository() {
             return sourceRemoteTranslogRepository;
         }

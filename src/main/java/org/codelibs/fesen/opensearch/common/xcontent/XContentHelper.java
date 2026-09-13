@@ -243,19 +243,6 @@ public class XContentHelper {
     }
 
     /**
-     * Accepts a JSON string, parses it and prints it without pretty-printing it. This is useful
-     * where a piece of JSON is formatted for legibility, but needs to be stripped of unnecessary
-     * whitespace e.g. for comparison in a test.
-     *
-     * @param json the JSON to format
-     * @return reformatted JSON
-     * @throws IOException if the reformatting fails, e.g. because the JSON is not well-formed
-     */
-    public static String stripWhitespace(String json) throws IOException {
-        return convertToJson(new BytesArray(json), true, MediaTypeRegistry.JSON);
-    }
-
-    /**
      * Converts the given {@link MediaType} to a json string
      */
     public static String convertToJson(BytesReference bytes, boolean reformatJson, boolean prettyPrint, MediaType mediaType)

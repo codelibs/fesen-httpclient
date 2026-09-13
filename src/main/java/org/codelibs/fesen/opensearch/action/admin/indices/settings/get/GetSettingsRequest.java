@@ -66,15 +66,6 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
         return this;
     }
 
-    /**
-     * When include_defaults is set, return default values which are normally suppressed.
-     * This flag is specific to the rest client.
-     */
-    public GetSettingsRequest includeDefaults(boolean includeDefaults) {
-        this.includeDefaults = includeDefaults;
-        return this;
-    }
-
     public GetSettingsRequest() {}
 
     @Override
@@ -108,11 +99,6 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
 
     public boolean humanReadable() {
         return humanReadable;
-    }
-
-    public GetSettingsRequest humanReadable(boolean humanReadable) {
-        this.humanReadable = humanReadable;
-        return this;
     }
 
     public boolean includeDefaults() {

@@ -70,15 +70,6 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
      * Adds an {@link IndexRequest} to the list of actions to execute. Follows the same behavior of {@link IndexRequest}
      * (for example, if no id is provided, one will be generated, or usage of the create flag).
      */
-    public BulkRequestBuilder add(IndexRequest request) {
-        super.request.add(request);
-        return this;
-    }
-
-    /**
-     * Adds an {@link IndexRequest} to the list of actions to execute. Follows the same behavior of {@link IndexRequest}
-     * (for example, if no id is provided, one will be generated, or usage of the create flag).
-     */
     public BulkRequestBuilder add(IndexRequestBuilder request) {
         super.request.add(request.request());
         return this;
@@ -121,15 +112,5 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
      */
     public int numberOfActions() {
         return request.numberOfActions();
-    }
-
-    public BulkRequestBuilder pipeline(String globalPipeline) {
-        request.pipeline(globalPipeline);
-        return this;
-    }
-
-    public BulkRequestBuilder routing(String globalRouting) {
-        request.routing(globalRouting);
-        return this;
     }
 }

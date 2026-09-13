@@ -69,23 +69,9 @@ public class GeoPoint implements ToXContentFragment {
 
     public GeoPoint() {}
 
-    /**
-     * Create a new Geopoint from a string. This String must either be a geohash
-     * or a lat-lon tuple.
-     *
-     * @param value String to create the point from
-     */
-    public GeoPoint(String value) {
-        this.resetFromString(value);
-    }
-
     public GeoPoint(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
-    }
-
-    public GeoPoint(GeoPoint template) {
-        this(template.getLat(), template.getLon());
     }
 
     public GeoPoint(final StreamInput in) throws IOException {

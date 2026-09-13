@@ -56,10 +56,6 @@ public class ReplicationStats implements ToXContentFragment, Writeable {
         return this.maxBytesBehind;
     }
 
-    public long getTotalBytesBehind() {
-        return this.totalBytesBehind;
-    }
-
     public long getMaxReplicationLag() {
         return this.maxReplicationLag;
     }

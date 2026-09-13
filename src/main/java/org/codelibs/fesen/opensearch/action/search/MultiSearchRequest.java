@@ -65,7 +65,6 @@ import java.util.stream.Collectors;
 
 import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidationError;
 import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapValues.nodeBooleanValue;
-import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapValues.nodeStringValue;
 
 /**
  * A multi search API request.

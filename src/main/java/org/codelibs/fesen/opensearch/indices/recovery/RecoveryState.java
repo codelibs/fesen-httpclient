@@ -202,18 +202,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
         return recoverySource;
     }
 
-    /**
-     * Returns recovery source node (only non-null if peer recovery)
-     */
-    @Nullable
-    public DiscoveryNode getSourceNode() {
-        return sourceNode;
-    }
-
-    public DiscoveryNode getTargetNode() {
-        return targetNode;
-    }
-
     public boolean getPrimary() {
         return primary;
     }
@@ -332,10 +320,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             return checkIndexTime;
         }
 
-        public void checkIndexTime(long checkIndexTime) {
-            this.checkIndexTime = checkIndexTime;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.humanReadableField(Fields.CHECK_INDEX_TIME_IN_MILLIS, Fields.CHECK_INDEX_TIME, new TimeValue(checkIndexTime));
@@ -400,16 +384,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
          */
         public synchronized int totalOperations() {
             return total;
-        }
-
-        /**
-         * returns the total number of translog operations to recovered, on the start of the recovery. Unlike {@link #totalOperations}
-         * this does change during recovery.
-         * <p>
-         * A value of -1 ({@link RecoveryState.Translog#UNKNOWN} is return if this is unknown (typically a gateway recovery)
-         */
-        public synchronized int totalOperationsOnStart() {
-            return this.totalOnStart;
         }
 
         public synchronized int totalLocal() {

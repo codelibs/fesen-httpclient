@@ -97,13 +97,6 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
             exception = in.readException();
         }
 
-        /**
-         * The failure message.
-         */
-        public String getMessage() {
-            return exception != null ? exception.getMessage() : null;
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeString(index);
@@ -122,10 +115,6 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
             OpenSearchException.generateFailureXContent(builder, params, exception, true);
             builder.endObject();
             return builder;
-        }
-
-        public Exception getFailure() {
-            return exception;
         }
     }
 

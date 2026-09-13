@@ -103,13 +103,6 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
         out.writeOptionalWriteable(ingestDocument);
     }
 
-    public IngestDocument getIngestDocument() {
-        if (ingestDocument == null) {
-            return null;
-        }
-        return ingestDocument.getIngestDocument();
-    }
-
     public Exception getFailure() {
         return failure;
     }
@@ -129,9 +122,5 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
         }
         builder.endObject();
         return builder;
-    }
-
-    public static SimulateDocumentBaseResult fromXContent(XContentParser parser) {
-        return PARSER.apply(parser, null);
     }
 }

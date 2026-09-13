@@ -58,11 +58,6 @@ public class GetIndexTemplatesRequest extends ClusterManagerNodeReadRequest<GetI
         this.names = names;
     }
 
-    public GetIndexTemplatesRequest(StreamInput in) throws IOException {
-        super(in);
-        names = in.readStringArray();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -82,14 +77,6 @@ public class GetIndexTemplatesRequest extends ClusterManagerNodeReadRequest<GetI
             }
         }
         return validationException;
-    }
-
-    /**
-     * Sets the names of the index templates.
-     */
-    public GetIndexTemplatesRequest names(String... names) {
-        this.names = names;
-        return this;
     }
 
     /**

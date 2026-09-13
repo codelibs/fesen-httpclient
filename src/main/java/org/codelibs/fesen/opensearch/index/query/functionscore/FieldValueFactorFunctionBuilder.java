@@ -113,10 +113,6 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
         return this;
     }
 
-    public FieldValueFactorFunction.Modifier modifier() {
-        return this.modifier;
-    }
-
     @Override
     public void doXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(getName());

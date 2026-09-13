@@ -101,17 +101,6 @@ public class NodeResourceUsageStats implements Writeable, ToXContentFragment {
         return sb.toString();
     }
 
-    NodeResourceUsageStats(NodeResourceUsageStats nodeResourceUsageStats) {
-        this(
-            nodeResourceUsageStats.nodeId,
-            nodeResourceUsageStats.timestamp,
-            nodeResourceUsageStats.memoryUtilizationPercent,
-            nodeResourceUsageStats.cpuUtilizationPercent,
-            nodeResourceUsageStats.ioUsageStats,
-            nodeResourceUsageStats.nativeMemoryUtilizationPercent
-        );
-    }
-
     public double getMemoryUtilizationPercent() {
         return memoryUtilizationPercent;
     }
@@ -126,10 +115,6 @@ public class NodeResourceUsageStats implements Writeable, ToXContentFragment {
 
     public double getNativeMemoryUtilizationPercent() {
         return nativeMemoryUtilizationPercent;
-    }
-
-    public void setIoUsageStats(IoUsageStats ioUsageStats) {
-        this.ioUsageStats = ioUsageStats;
     }
 
     public long getTimestamp() {

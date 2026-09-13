@@ -55,21 +55,6 @@ public class OpenSearchStatusException extends OpenSearchException {
         this.status = status;
     }
 
-    /**
-     * Build the exception without a cause.
-     */
-    public OpenSearchStatusException(String msg, RestStatus status, Object... args) {
-        this(msg, status, null, args);
-    }
-
-    /**
-     * Read from a stream.
-     */
-    public OpenSearchStatusException(StreamInput in) throws IOException {
-        super(in);
-        status = RestStatus.readFrom(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

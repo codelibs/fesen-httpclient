@@ -128,68 +128,6 @@ public interface ActionListener<Response> {
         return wrap(r -> runnable.run(), e -> runnable.run());
     }
 
-    /**
-     * Converts a listener to a {@link BiConsumer} for compatibility with the {@link java.util.concurrent.CompletableFuture}
-     * api.
-     *
-     * @param listener that will be wrapped
-     * @param <Response> the type of the response
-     * @return a bi consumer that will complete the wrapped listener
-     */
-    static <Response> BiConsumer<Response, Exception> toBiConsumer(ActionListener<Response> listener) {
-        return (response, throwable) -> {
-            if (throwable == null) {
-                listener.onResponse(response);
-            } else {
-                listener.onFailure(throwable);
-            }
-        };
-    }
-
-    /**
-     * Wraps a given listener and returns a new listener which executes the provided {@code runAfter}
-     * callback when the listener is notified via either {@code #onResponse} or {@code #onFailure}.
-     */
-    static <Response> ActionListener<Response> runAfter(ActionListener<Response> delegate, Runnable runAfter) {
-        return new ActionListener<Response>() {
-            @Override
-            public void onResponse(Response response) {
-                try {
-                    delegate.onResponse(response);
-                } finally {
-                    runAfter.run();
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                try {
-                    delegate.onFailure(e);
-                } finally {
-                    runAfter.run();
-                }
-            }
-        };
-    }
-
-    /**
-     * Wraps a given listener and returns a new listener which makes sure {@link #onResponse(Object)}
-     * and {@link #onFailure(Exception)} of the provided listener will be called at most once.
-     */
-    static <Response> ActionListener<Response> notifyOnce(ActionListener<Response> delegate) {
-        return new NotifyOnceListener<Response>() {
-            @Override
-            protected void innerOnResponse(Response response) {
-                delegate.onResponse(response);
-            }
-
-            @Override
-            protected void innerOnFailure(Exception e) {
-                delegate.onFailure(e);
-            }
-        };
-    }
-
     static <T> ActionListener<T> noOp() {
         return ActionListener.wrap(response -> {}, exception -> {});
     }

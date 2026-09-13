@@ -59,13 +59,6 @@ public class WeightBuilder extends ScoreFunctionBuilder<WeightBuilder> {
         setFunctionName(functionName);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public WeightBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {}
 

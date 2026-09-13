@@ -59,10 +59,6 @@ public class IndexShardSegments implements Iterable<ShardSegments> {
         return this.shardId;
     }
 
-    public ShardSegments getAt(int i) {
-        return shards[i];
-    }
-
     public ShardSegments[] getShards() {
         return this.shards;
     }

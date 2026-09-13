@@ -278,16 +278,6 @@ public class XContentMapValues {
         return node instanceof Map;
     }
 
-    /**
-     * Returns the {@link Object#toString} value of its input, or {@code null} if the input is null
-     */
-    public static String nodeStringValue(Object node) {
-        if (node == null) {
-            return null;
-        }
-        return node.toString();
-    }
-
     public static boolean nodeBooleanValue(Object node) {
         return Booleans.parseBoolean(node.toString());
     }

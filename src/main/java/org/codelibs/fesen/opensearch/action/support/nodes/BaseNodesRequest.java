@@ -109,14 +109,6 @@ public abstract class BaseNodesRequest<Request extends BaseNodesRequest<Request>
         return (Request) this;
     }
 
-    public DiscoveryNode[] concreteNodes() {
-        return concreteNodes;
-    }
-
-    public void setConcreteNodes(DiscoveryNode[] concreteNodes) {
-        this.concreteNodes = concreteNodes;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

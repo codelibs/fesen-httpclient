@@ -117,17 +117,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     }
 
     /**
-     * Returns {@code true} if the local node is the elected cluster-manager node.
-     */
-    public boolean isLocalNodeElectedClusterManager() {
-        if (localNodeId == null) {
-            // we don't know yet the local node id, return false
-            return false;
-        }
-        return localNodeId.equals(clusterManagerNodeId);
-    }
-
-    /**
      * Get the number of known nodes
      *
      * @return number of nodes
@@ -152,31 +141,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
      */
     public Map<String, DiscoveryNode> getDataNodes() {
         return this.dataNodes;
-    }
-
-    /**
-     * Get a {@link Map} of the discovered warm nodes arranged by their ids
-     *
-     * @return {@link Map} of the discovered warm nodes arranged by their ids
-     */
-    public Map<String, DiscoveryNode> getWarmNodes() {
-        return this.warmNodes;
-    }
-
-    /**
-     * Get a {@link Map} of the discovered cluster-manager nodes arranged by their ids
-     *
-     * @return {@link Map} of the discovered cluster-manager nodes arranged by their ids
-     */
-    public Map<String, DiscoveryNode> getClusterManagerNodes() {
-        return this.clusterManagerNodes;
-    }
-
-    /**
-     * @return All the ingest nodes arranged by their ids
-     */
-    public Map<String, DiscoveryNode> getIngestNodes() {
-        return ingestNodes;
     }
 
     /**
@@ -496,24 +460,8 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
             nodes = new HashMap<>();
         }
 
-        /**
-         * Get a node by its id
-         *
-         * @param nodeId id of the wanted node
-         * @return wanted node if it exists. Otherwise <code>null</code>
-         */
-        @Nullable
-        public DiscoveryNode get(String nodeId) {
-            return nodes.get(nodeId);
-        }
-
         private void putUnsafe(DiscoveryNode node) {
             nodes.put(node.getId(), node);
-        }
-
-        public Builder remove(String nodeId) {
-            nodes.remove(nodeId);
-            return this;
         }
 
         public Builder clusterManagerNodeId(String clusterManagerNodeId) {
@@ -599,10 +547,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
                 maxNodeVersion == null ? Version.CURRENT : maxNodeVersion,
                 minNodeVersion == null ? Version.CURRENT : minNodeVersion
             );
-        }
-
-        public boolean isLocalNodeElectedClusterManager() {
-            return clusterManagerNodeId != null && clusterManagerNodeId.equals(localNodeId);
         }
     }
 }

@@ -76,18 +76,6 @@ public class Strings {
     }
 
     /**
-     * Check that the given BytesReference is neither <code>null</code> nor of length 0
-     * Note: Will return <code>true</code> for a BytesReference that purely consists of whitespace.
-     *
-     * @param bytesReference the BytesReference to check (may be <code>null</code>)
-     * @return <code>true</code> if the BytesReference is not null and has length
-     * @see Strings#hasLength(CharSequence)
-     */
-    public static boolean hasLength(final BytesReference bytesReference) {
-        return (bytesReference != null && bytesReference.length() > 0);
-    }
-
-    /**
      * Check that the given String is neither <code>null</code> nor of length 0.
      * Note: Will return <code>true</code> for a String that purely consists of whitespace.
      *
@@ -205,17 +193,6 @@ public class Strings {
     // ---------------------------------------------------------------------
 
     /**
-     * Quote the given String with single quotes.
-     *
-     * @param str the input String (e.g. "myString")
-     * @return the quoted String (e.g. "'myString'"),
-     *         or <code>null</code> if the input was <code>null</code>
-     */
-    public static String quote(String str) {
-        return (str != null ? "'" + str + "'" : null);
-    }
-
-    /**
      * Copy the given Collection into a String array.
      * The Collection must contain String elements only.
      *
@@ -228,17 +205,6 @@ public class Strings {
             return null;
         }
         return collection.toArray(new String[0]);
-    }
-
-    /**
-     * Tokenize the specified string by commas to a set, trimming whitespace and ignoring empty tokens.
-     *
-     * @param s the string to tokenize
-     * @return the set of tokens
-     */
-    public static Set<String> tokenizeByCommaToSet(final String s) {
-        if (s == null) return Collections.emptySet();
-        return tokenizeToCollection(s, ",", HashSet::new);
     }
 
     /**
@@ -529,16 +495,6 @@ public class Strings {
 
     /**
      * Return a {@link String} that is the json representation of the provided {@link ToXContent}.
-     * Wraps the output into an anonymous object if needed.
-     * Allows to configure the params.
-     * The content is not pretty-printed nor human readable.
-     */
-    public static String toString(MediaType mediaType, ToXContent toXContent, ToXContent.Params params) {
-        return toString(mediaType, toXContent, params, false, false);
-    }
-
-    /**
-     * Return a {@link String} that is the json representation of the provided {@link ToXContent}.
      * Wraps the output into an anonymous object if needed. Allows to control whether the outputted
      * json needs to be pretty printed and human readable.
      *
@@ -605,18 +561,6 @@ public class Strings {
             }
         }
         return out.toString();
-    }
-
-    /**
-     * Check whether every single character in the string is a digit.
-     *
-     * <p>An empty string returns {@code false}.</p>
-     *
-     * @param s the string, must not be null.
-     * @return {@code true} if the string only contains digits, {@code false} otherwise.
-     */
-    public static boolean isDigits(final String s) {
-        return !s.isEmpty() && s.chars().allMatch(Character::isDigit);
     }
 
 }

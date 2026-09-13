@@ -374,10 +374,6 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         this.tookInMillis = tookInMillis;
     }
 
-    public TimeValue getTook() {
-        return new TimeValue(tookInMillis);
-    }
-
     private void buildScore(XContentBuilder builder, BoostAttribute boostAtt) throws IOException {
         if (hasScores) {
             builder.field(FieldStrings.SCORE, boostAtt.getBoost());
@@ -392,23 +388,6 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         this.exists = exists;
     }
 
-    public void setTermVectorsField(BytesStreamOutput output) {
-        termVectors = output.bytes();
-    }
-
-    public void setHeader(BytesReference header) {
-        headerRef = header;
-    }
-
-    public void setDocVersion(long version) {
-        this.docVersion = version;
-
-    }
-
-    public Long getVersion() {
-        return docVersion;
-    }
-
     public String getIndex() {
         return index;
     }
@@ -419,9 +398,5 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
 
     public boolean isArtificial() {
         return artificial;
-    }
-
-    public void setArtificial(boolean artificial) {
-        this.artificial = artificial;
     }
 }

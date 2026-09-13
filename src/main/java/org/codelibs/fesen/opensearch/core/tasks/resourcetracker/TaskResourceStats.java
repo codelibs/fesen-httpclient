@@ -65,10 +65,6 @@ public class TaskResourceStats implements Writeable, ToXContentFragment {
         }
     }
 
-    public Map<String, TaskResourceUsage> getResourceUsageInfo() {
-        return resourceUsage;
-    }
-
     public TaskThreadUsage getThreadUsage() {
         return threadUsage;
     }

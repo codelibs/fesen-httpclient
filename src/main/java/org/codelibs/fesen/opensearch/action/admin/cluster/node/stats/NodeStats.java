@@ -378,11 +378,6 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
         return this.timestamp;
     }
 
-    @Nullable
-    public String getHostname() {
-        return getNode().getHostName();
-    }
-
     /**
      * Indices level stats.
      */

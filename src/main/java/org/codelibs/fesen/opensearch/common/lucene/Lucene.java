@@ -117,13 +117,6 @@ public class Lucene {
     private Lucene() {}
 
     /**
-     * Reads the segments infos, failing if it fails to load
-     */
-    public static SegmentInfos readSegmentInfos(Directory directory) throws IOException {
-        return SegmentInfos.readLatestCommit(directory);
-    }
-
-    /**
      * Returns the number of documents in the index referenced by this {@link SegmentInfos}
      */
     public static int getNumDocs(SegmentInfos info) {
@@ -132,30 +125,6 @@ public class Lucene {
             numDocs += si.info.maxDoc() - si.getDelCount() - si.getSoftDelCount();
         }
         return numDocs;
-    }
-
-    /**
-     * Reads the segments infos from the given commit, failing if it fails to load
-     */
-    public static SegmentInfos readSegmentInfos(IndexCommit commit) throws IOException {
-        // Using commit.getSegmentsFileName() does NOT work here, have to
-        // manually create the segment filename
-        String filename = IndexFileNames.fileNameFromGeneration(IndexFileNames.SEGMENTS, "", commit.getGeneration());
-        return SegmentInfos.readCommit(commit.getDirectory(), filename);
-    }
-
-    /**
-     * Reads the segments infos from the given segments file name, failing if it fails to load
-     */
-    private static SegmentInfos readSegmentInfos(String segmentsFileName, Directory directory) throws IOException {
-        return SegmentInfos.readCommit(directory, segmentsFileName);
-    }
-
-    /**
-     * Returns an index commit for the given {@link SegmentInfos} in the given directory.
-     */
-    public static IndexCommit getIndexCommit(SegmentInfos si, Directory directory) throws IOException {
-        return new CommitPoint(si, directory);
     }
 
     public static TotalHits readTotalHits(StreamInput in) throws IOException {
@@ -191,10 +160,6 @@ public class Lucene {
             case 10 -> new BigInteger(in.readString());
             default -> throw new IOException("Can't match type [" + type + "]");
         };
-    }
-
-    public static ScoreDoc readScoreDoc(StreamInput in) throws IOException {
-        return new ScoreDoc(in.readVInt(), in.readFloat());
     }
 
     private static final Class<?> GEO_DISTANCE_SORT_TYPE_CLASS = LatLonDocValuesField.newDistanceSort("some_geo_field", 0, 0).getClass();
@@ -386,10 +351,6 @@ public class Lucene {
         if (explanation.isMatch()) {
             writeExplanationValue(out, explanation.getValue());
         }
-    }
-
-    public static boolean indexExists(final Directory directory) throws IOException {
-        return DirectoryReader.indexExists(directory);
     }
 
     /**

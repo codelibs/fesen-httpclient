@@ -138,10 +138,6 @@ public final class IndexGraveyard implements Metadata.Custom {
         return builder.endArray();
     }
 
-    public static IndexGraveyard fromXContent(final XContentParser parser) throws IOException {
-        return new IndexGraveyard(GRAVEYARD_PARSER.parse(parser, null));
-    }
-
     @Override
     public String toString() {
         return "IndexGraveyard[" + tombstones + "]";
@@ -155,10 +151,6 @@ public final class IndexGraveyard implements Metadata.Custom {
     @Override
     public Diff<Metadata.Custom> diff(final Metadata.Custom previous) {
         return new IndexGraveyardDiff((IndexGraveyard) previous, this);
-    }
-
-    public static NamedDiff<Metadata.Custom> readDiffFrom(final StreamInput in) throws IOException {
-        return new IndexGraveyardDiff(in);
     }
 
     public static IndexGraveyard.Builder builder() {
@@ -193,15 +185,6 @@ public final class IndexGraveyard implements Metadata.Custom {
         Builder addBuiltTombstones(final List<Tombstone> tombstones) {
             this.tombstones.addAll(tombstones);
             return this;
-        }
-
-        /**
-         * Get the number of tombstones that were purged.  This should *only* be called
-         * after build() has been called.
-         */
-        public int getNumPurged() {
-            assert numPurged != -1;
-            return numPurged;
         }
 
         /**

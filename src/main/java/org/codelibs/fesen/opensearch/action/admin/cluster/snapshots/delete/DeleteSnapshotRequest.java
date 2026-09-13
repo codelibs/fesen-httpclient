@@ -73,15 +73,6 @@ public class DeleteSnapshotRequest extends ClusterManagerNodeRequest<DeleteSnaps
         this.snapshots = snapshots;
     }
 
-    /**
-     * Constructs a new delete snapshots request with repository name
-     *
-     * @param repository repository name
-     */
-    public DeleteSnapshotRequest(String repository) {
-        this.repository = repository;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

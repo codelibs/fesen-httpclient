@@ -80,23 +80,6 @@ public class PersistedStateStats implements Writeable, ToXContentObject {
         return builder;
     }
 
-    public void stateFailed() {
-        failedCount.incrementAndGet();
-    }
-
-    public void stateSucceeded() {
-        successCount.incrementAndGet();
-    }
-
-    /**
-     * Expects user to send time taken in milliseconds.
-     *
-     * @param timeTakenInUpload time taken in uploading the cluster state to remote
-     */
-    public void stateTook(long timeTakenInUpload) {
-        totalTimeInMillis.addAndGet(timeTakenInUpload);
-    }
-
     public long getTotalTimeInMillis() {
         return totalTimeInMillis.get();
     }
@@ -107,14 +90,6 @@ public class PersistedStateStats implements Writeable, ToXContentObject {
 
     public long getSuccessCount() {
         return successCount.get();
-    }
-
-    protected void addToExtendedFields(String extendedField, AtomicLong extendedFieldValue) {
-        this.extendedFields.put(extendedField, extendedFieldValue);
-    }
-
-    public Map<String, AtomicLong> getExtendedFields() {
-        return extendedFields;
     }
 
     public String getStatsName() {

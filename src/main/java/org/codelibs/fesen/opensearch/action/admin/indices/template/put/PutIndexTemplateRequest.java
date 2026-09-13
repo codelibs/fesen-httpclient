@@ -130,14 +130,6 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
     }
 
     /**
-     * Sets the name of the index template.
-     */
-    public PutIndexTemplateRequest name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
      * The name of the index template.
      */
     public String name() {
@@ -147,10 +139,6 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
     public PutIndexTemplateRequest patterns(List<String> indexPatterns) {
         this.indexPatterns = indexPatterns;
         return this;
-    }
-
-    public List<String> patterns() {
-        return this.indexPatterns;
     }
 
     public int order() {
@@ -183,10 +171,6 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
 
     public String mappings() {
         return this.mappings;
-    }
-
-    public Set<Alias> aliases() {
-        return this.aliases;
     }
 
     @Override

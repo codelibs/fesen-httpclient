@@ -74,13 +74,6 @@ public final class IngestDocument {
     private final Set<String> executedPipelines = new LinkedHashSet<>();
 
     /**
-     * Copy constructor that creates a new {@link IngestDocument} which has exactly the same properties as the one provided as argument
-     */
-    public IngestDocument(IngestDocument other) {
-        this(deepCopyMap(other.sourceAndMetadata), deepCopyMap(other.ingestMetadata));
-    }
-
-    /**
      * Constructor needed for testing that allows to create a new {@link IngestDocument} given the provided opensearch metadata,
      * source and ingest metadata. This is needed because the ingest metadata will be initialized with the current timestamp at
      * init time, which makes equality comparisons impossible in tests.

@@ -48,11 +48,6 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
             this.name = name;
         }
 
-        public Request(final StreamInput in) throws IOException {
-            super(in);
-            this.name = in.readString();
-        }
-
         public String getName() {
             return name;
         }
@@ -94,10 +89,6 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
 
         static {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), View.NAME_FIELD);
-        }
-
-        public static Request fromXContent(final XContentParser parser) throws IOException {
-            return PARSER.parse(parser, null);
         }
     }
 

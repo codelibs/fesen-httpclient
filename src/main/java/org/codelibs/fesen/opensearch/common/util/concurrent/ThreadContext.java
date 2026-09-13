@@ -147,14 +147,6 @@ public final class ThreadContext implements Writeable {
         this.propagators = new CopyOnWriteArrayList<>(List.of(new TaskThreadContextStatePropagator()));
     }
 
-    public void registerThreadContextStatePropagator(final ThreadContextStatePropagator propagator) {
-        propagators.add(Objects.requireNonNull(propagator));
-    }
-
-    public void unregisterThreadContextStatePropagator(final ThreadContextStatePropagator propagator) {
-        propagators.remove(Objects.requireNonNull(propagator));
-    }
-
     /**
      * Removes the current context and resets a default context. The removed context can be
      * restored by closing the returned {@link StoredContext}.
@@ -195,17 +187,6 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Captures the current thread context as writeable, allowing it to be serialized out later
-     */
-    public Writeable captureAsWriteable() {
-        final ThreadContextStruct context = threadLocal.get();
-        return out -> {
-            final Map<String, String> propagatedHeaders = propagateHeaders(context.transientHeaders, context.isSystemContext);
-            context.writeTo(out, defaultHeader, propagatedHeaders);
-        };
-    }
-
-    /**
      * Removes the current context and resets a new context that contains a merge of the current headers and the given headers.
      * The removed context can be restored when closing the returned {@link StoredContext}. The merge strategy is that headers
      * that are already existing are preserved unless they are defaults.
@@ -232,10 +213,6 @@ public final class ThreadContext implements Writeable {
      */
     public StoredContext newStoredContext(boolean preserveResponseHeaders) {
         return newStoredContext(preserveResponseHeaders, Collections.emptyList());
-    }
-
-    public StoredContext newStoredContext(boolean preserveResponseHeaders, boolean preserveTransients) {
-        return newStoredContext(preserveResponseHeaders, preserveTransients, Collections.emptyList());
     }
 
     public StoredContext newStoredContext(boolean preserveResponseHeaders, Collection<String> transientHeadersToClear) {
@@ -328,34 +305,11 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Returns the persistent header for the given key or <code>null</code> if not present - persistent headers cannot be stashed
-     */
-    public Object getPersistent(String key) {
-        return threadLocal.get().persistentHeaders.get(key);
-    }
-
-    /**
-     * Returns the request headers, without the default headers
-     */
-    public Map<String, String> getRequestHeadersOnly() {
-        return Collections.unmodifiableMap(new HashMap<>(threadLocal.get().requestHeaders));
-    }
-
-    /**
      * Returns a transient header object or <code>null</code> if there is no header for the given key
      */
     @SuppressWarnings("unchecked") // (T)object
     public <T> T getTransient(String key) {
         return (T) threadLocal.get().transientHeaders.get(key);
-    }
-
-    /**
-     * Remove the {@code value} for the specified {@code key}.
-     *
-     * @param key         the header name
-     */
-    public void removeResponseHeader(final String key) {
-        threadLocal.get().responseHeaders.remove(key);
     }
 
     /**
@@ -390,13 +344,6 @@ public final class ThreadContext implements Writeable {
      */
     boolean isDefaultContext() {
         return threadLocal.get() == DEFAULT_CONTEXT;
-    }
-
-    /**
-     * Returns <code>true</code> iff this context is a system context
-     */
-    public boolean isSystemContext() {
-        return threadLocal.get().isSystemContext;
     }
 
     /**

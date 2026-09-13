@@ -88,15 +88,6 @@ public abstract class BaseNodesResponse<TNodeResponse extends BaseNodeResponse> 
     }
 
     /**
-     * Determine if there are any node failures in {@link #failures}.
-     *
-     * @return {@code true} if {@link #failures} contains at least 1 {@link FailedNodeException}.
-     */
-    public boolean hasFailures() {
-        return failures.isEmpty() == false;
-    }
-
-    /**
      * Get the <em>successful</em> node responses.
      *
      * @return Never {@code null}. Can be empty.

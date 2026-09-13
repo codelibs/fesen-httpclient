@@ -101,14 +101,6 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
         downloadTimeMsMovingAverageReference = new AtomicReference<>(new MovingAverage(movingAverageWindowSize));
     }
 
-    public long getLastSuccessfulUploadTimestamp() {
-        return lastSuccessfulUploadTimestamp.get();
-    }
-
-    public void setLastSuccessfulUploadTimestamp(long lastSuccessfulUploadTimestamp) {
-        this.lastSuccessfulUploadTimestamp.set(lastSuccessfulUploadTimestamp);
-    }
-
     /**
      * Updates the window size for data collection. This also resets any data collected so far.
      *
@@ -119,46 +111,6 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
         updateMovingAverageWindowSize(updatedSize, downloadBytesMutex, downloadBytesMovingAverageReference);
         updateMovingAverageWindowSize(updatedSize, downloadBytesPerSecMutex, downloadBytesPerSecMovingAverageReference);
         updateMovingAverageWindowSize(updatedSize, downloadTimeMsMutex, downloadTimeMsMovingAverageReference);
-    }
-
-    public long getTotalDownloadsSucceeded() {
-        return totalDownloadsSucceeded.get();
-    }
-
-    public void addDownloadBytesSucceeded(long count) {
-        downloadBytesSucceeded.addAndGet(count);
-    }
-
-    public void addDownloadTimeInMillis(long duration) {
-        totalDownloadTimeInMillis.addAndGet(duration);
-    }
-
-    public long getLastSuccessfulDownloadTimestamp() {
-        return lastSuccessfulDownloadTimestamp.get();
-    }
-
-    boolean isDownloadBytesMovingAverageReady() {
-        return downloadBytesMovingAverageReference.get().isReady();
-    }
-
-    double getDownloadBytesMovingAverage() {
-        return downloadBytesMovingAverageReference.get().getAverage();
-    }
-
-    boolean isDownloadBytesPerSecMovingAverageReady() {
-        return downloadBytesPerSecMovingAverageReference.get().isReady();
-    }
-
-    double getDownloadBytesPerSecMovingAverage() {
-        return downloadBytesPerSecMovingAverageReference.get().getAverage();
-    }
-
-    boolean isDownloadTimeMovingAverageReady() {
-        return downloadTimeMsMovingAverageReference.get().isReady();
-    }
-
-    double getDownloadTimeMovingAverage() {
-        return downloadTimeMsMovingAverageReference.get().getAverage();
     }
 
     @Override
