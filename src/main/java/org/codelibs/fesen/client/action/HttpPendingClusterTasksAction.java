@@ -1,0 +1,135 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
+import org.codelibs.fesen.opensearch.cluster.service.PendingClusterTask;
+import org.codelibs.fesen.opensearch.common.Priority;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.text.Text;
+import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the pending cluster tasks API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpPendingClusterTasksAction extends HttpAction {
+
+    /** The pending cluster tasks action definition. */
+    protected final PendingClusterTasksAction action;
+
+    /**
+     * Creates a new HttpPendingClusterTasksAction.
+     *
+     * @param client the HTTP client
+     * @param action the pending cluster tasks action
+     */
+    public HttpPendingClusterTasksAction(final HttpClient client, final PendingClusterTasksAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the pending cluster tasks request asynchronously and notifies the listener with the response or failure.
+     *
+     * @param request the pending cluster tasks request
+     * @param listener the listener notified with the response or failure
+     */
+    public void execute(final PendingClusterTasksRequest request, final ActionListener<PendingClusterTasksResponse> listener) {
+        getCurlRequest(request).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final PendingClusterTasksResponse pendingClusterTasksResponse = getPendingClusterTasksResponse(parser);
+                listener.onResponse(pendingClusterTasksResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the CURL request for the pending cluster tasks request.
+     *
+     * @param request the pending cluster tasks request
+     * @return the CURL request
+     */
+    protected CurlRequest getCurlRequest(final PendingClusterTasksRequest request) {
+        // RestPendingClusterTasksAction
+        final CurlRequest curlRequest = client.getCurlRequest(GET, "/_cluster/pending_tasks");
+        curlRequest.param("local", Boolean.toString(request.local()));
+        if (request.masterNodeTimeout() != null) {
+            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+        }
+        return curlRequest;
+    }
+
+    /**
+     * Parses a pending cluster tasks response from the response content.
+     *
+     * @param parser the content parser
+     * @return the pending cluster tasks response
+     */
+    protected PendingClusterTasksResponse getPendingClusterTasksResponse(final XContentParser parser) {
+        @SuppressWarnings("unchecked")
+        final ConstructingObjectParser<PendingClusterTasksResponse, Void> objectParser =
+                new ConstructingObjectParser<>("pending_cluster_tasks", true, a -> {
+                    try (final ByteArrayStreamOutput out = new ByteArrayStreamOutput()) {
+                        final List<PendingClusterTask> pendingClusterTasks = (a[0] != null ? (List<PendingClusterTask>) a[0] : null);
+
+                        out.writeVInt(pendingClusterTasks.size());
+                        for (final PendingClusterTask task : pendingClusterTasks) {
+                            task.writeTo(out);
+                        }
+
+                        return action.getResponseReader().read(out.toStreamInput());
+                    } catch (final IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                });
+
+        objectParser.declareObjectArray(ConstructingObjectParser.optionalConstructorArg(), getPendingClusterTaskParser(), TASKS_FIELD);
+
+        return objectParser.apply(parser, null);
+    }
+
+    /**
+     * Creates an object parser for a single pending cluster task.
+     *
+     * @return the pending cluster task parser
+     */
+    protected ConstructingObjectParser<PendingClusterTask, Void> getPendingClusterTaskParser() {
+        final ConstructingObjectParser<PendingClusterTask, Void> objectParser =
+                new ConstructingObjectParser<>("tasks", true, a -> new PendingClusterTask((long) a[0], Priority.valueOf((String) a[1]),
+                        new Text((String) a[2]), (long) a[3], (a[4] != null ? (Boolean) a[4] : false), (a[5] != null ? (Long) a[5] : 0L)));
+
+        objectParser.declareLong(ConstructingObjectParser.constructorArg(), INSERT_ORDER_FIELD);
+        objectParser.declareString(ConstructingObjectParser.constructorArg(), PRIORITY_FIELD);
+        objectParser.declareString(ConstructingObjectParser.constructorArg(), SOURCE_FIELD);
+        objectParser.declareLong(ConstructingObjectParser.constructorArg(), TIME_IN_QUEUE_MILLIS_FIELD);
+        objectParser.declareBoolean(ConstructingObjectParser.optionalConstructorArg(), EXECUTING_FIELD);
+        objectParser.declareLong(ConstructingObjectParser.optionalConstructorArg(), TIME_IN_EXECUTION_MILLIS_FIELD);
+
+        return objectParser;
+    }
+}

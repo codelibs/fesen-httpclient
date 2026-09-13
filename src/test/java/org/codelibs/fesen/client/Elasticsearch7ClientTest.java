@@ -45,18 +45,28 @@ import org.codelibs.fesen.opensearch.action.DocWriteResponse.Result;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.Alias;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequestBuilder;
 import org.codelibs.fesen.opensearch.action.bulk.BulkResponse;
 import org.codelibs.fesen.opensearch.action.delete.DeleteResponse;
@@ -68,6 +78,10 @@ import org.codelibs.fesen.opensearch.action.get.MultiGetRequest;
 import org.codelibs.fesen.opensearch.action.get.MultiGetRequestBuilder;
 import org.codelibs.fesen.opensearch.action.get.MultiGetResponse;
 import org.codelibs.fesen.opensearch.action.index.IndexResponse;
+import org.codelibs.fesen.opensearch.action.ingest.GetPipelineResponse;
+import org.codelibs.fesen.opensearch.action.main.MainAction;
+import org.codelibs.fesen.opensearch.action.main.MainRequest;
+import org.codelibs.fesen.opensearch.action.main.MainResponse;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollResponse;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchResponse;
 import org.codelibs.fesen.opensearch.action.search.SearchRequestBuilder;
@@ -89,6 +103,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilders;
+import org.codelibs.fesen.opensearch.indices.recovery.RecoverySettings;
 import org.codelibs.fesen.opensearch.search.SearchHit;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -608,6 +623,68 @@ class Elasticsearch7ClientTest {
     }
 
     @Test
+    void test_scroll() throws Exception {
+        final long NUM = 2;
+        final String index = "test_scroll";
+        final BulkRequestBuilder bulkRequestBuilder1 = client.prepareBulk();
+        for (int i = 1; i <= NUM; i++) {
+            bulkRequestBuilder1.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{ \"test\" :" + "\"test" + String.valueOf(i) + "\" }", XContentType.JSON));
+        }
+        bulkRequestBuilder1.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+        SearchResponse scrollResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).setScroll(new TimeValue(60000))
+                .setSize(1).execute().actionGet();
+        final String id = scrollResponse.getScrollId();
+        SearchHit[] hits = scrollResponse.getHits().getHits();
+        while (hits.length != 0) {
+            assertEquals(1, hits.length);
+            scrollResponse = client.prepareSearchScroll(id).setScroll(new TimeValue(60000)).execute().actionGet();
+            hits = scrollResponse.getHits().getHits();
+        }
+
+        // Test Clear Scroll API
+        final ClearScrollResponse clearScrollResponse = client.prepareClearScroll().addScrollId(id).execute().actionGet();
+        assertTrue(clearScrollResponse.isSucceeded());
+    }
+
+    @Test
+    void test_multi_search() throws Exception {
+        final SearchRequestBuilder srb1 = client.prepareSearch().setQuery(QueryBuilders.queryStringQuery("word")).setSize(1);
+        final SearchRequestBuilder srb2 = client.prepareSearch().setQuery(QueryBuilders.matchQuery("name", "test")).setSize(1);
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        client.prepareMultiSearch().add(srb1).add(srb2).execute(wrap(res -> {
+            long nbHits = 0;
+            for (final MultiSearchResponse.Item item : res.getResponses()) {
+                final SearchResponse searchResponse = item.getResponse();
+                nbHits += searchResponse.getHits().getTotalHits().value();
+            }
+            assertEquals(0, nbHits);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            latch.countDown();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final MultiSearchResponse res = client.prepareMultiSearch().add(srb1).add(srb2).execute().actionGet();
+            long nbHits = 0;
+            for (final MultiSearchResponse.Item item : res.getResponses()) {
+                final SearchResponse searchResponse = item.getResponse();
+                nbHits += searchResponse.getHits().getTotalHits().value();
+            }
+            assertEquals(0, nbHits);
+        }
+    }
+
+    @Test
     void test_crud_index0() throws Exception {
         final String index = "test_crud_index";
         final String id = "1";
@@ -653,6 +730,163 @@ class Elasticsearch7ClientTest {
     }
 
     @Test
+    void test_crud_index1() throws Exception {
+        final long NUM = 10;
+        final String index = "test_bulk_multi";
+
+        // Create documents with Bulk API
+        final BulkRequestBuilder bulkRequestBuilder1 = client.prepareBulk();
+        for (int i = 1; i <= NUM; i++) {
+            bulkRequestBuilder1.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{ \"test\" :" + "\"test" + i + "\" }", XContentType.JSON));
+        }
+        final BulkResponse bulkResponse1 = bulkRequestBuilder1.execute().actionGet();
+        assertFalse(bulkResponse1.hasFailures());
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        // Search the documents
+        final SearchResponse searchResponse1 = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(NUM, searchResponse1.getHits().getTotalHits().value());
+
+        // Get the documents with MultiGet API
+        final MultiGetRequestBuilder mgetRequestBuilder = client.prepareMultiGet();
+        for (int i = 1; i <= NUM; i++) {
+            mgetRequestBuilder.add(new MultiGetRequest.Item(index, String.valueOf(i)));
+        }
+        final MultiGetResponse mgetResponse = mgetRequestBuilder.execute().actionGet();
+        assertEquals(NUM, mgetResponse.getResponses().length);
+
+        // Delete a document
+        final DeleteResponse deleteResponse = client.prepareDelete().setIndex(index).setId("1").execute().actionGet();
+        assertEquals(RestStatus.OK, deleteResponse.status());
+
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final SearchResponse searchResponse2 = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(NUM - 1, searchResponse2.getHits().getTotalHits().value());
+
+        // Delete all the documents with Bulk API
+        final BulkRequestBuilder bulkRequestBuilder2 = client.prepareBulk();
+        for (int i = 2; i <= NUM; i++) {
+            bulkRequestBuilder2.add(client.prepareDelete().setIndex(index).setId(String.valueOf(i)));
+        }
+        final BulkResponse bulkResponse2 = bulkRequestBuilder2.setRefreshPolicy(RefreshPolicy.IMMEDIATE).execute().actionGet();
+        assertFalse(bulkResponse2.hasFailures());
+
+        // Search the documents
+        final SearchResponse searchResponse3 = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(0, searchResponse3.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_explain() throws Exception {
+        final String index = "test_explain";
+        final String id = "1";
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.prepareIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        client.prepareExplain(index, id).setQuery(QueryBuilders.termQuery("text", "test")).execute(wrap(res -> {
+            assertTrue(res.hasExplanation());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ExplainResponse explainResponse =
+                    client.prepareExplain(index, id).setQuery(QueryBuilders.termQuery("text", "test")).execute().actionGet();
+            assertTrue(explainResponse.hasExplanation());
+        }
+    }
+
+    @Test
+    void test_field_caps() throws Exception {
+        final String index0 = "test_field_caps0";
+        final String index1 = "test_field_caps1";
+        final String id = "1";
+        final String field0 = "user";
+        final String field1 = "content";
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.prepareIndex().setIndex(index0).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"" + field1 + "\":1" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        client.prepareIndex().setIndex(index1).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"" + field1 + "\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+
+        client.admin().indices().prepareRefresh(index0).execute().actionGet();
+        client.admin().indices().prepareRefresh(index1).execute().actionGet();
+
+        client.prepareFieldCaps().setFields(field0).execute(wrap(res -> {
+            assertTrue(res.getField(field0) != null);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final FieldCapabilitiesResponse fieldCapabilitiesResponse =
+                    client.prepareFieldCaps().setFields(field0, field1).execute().actionGet();
+            final FieldCapabilities capabilities0 = fieldCapabilitiesResponse.getField(field0).get("text");
+            assertEquals(field0, capabilities0.getName());
+            final FieldCapabilities capabilities1 = fieldCapabilitiesResponse.getField(field1).get("long");
+            assertEquals(1, capabilities1.indices().length);
+            final FieldCapabilities capabilities2 = fieldCapabilitiesResponse.getField(field1).get("text");
+            assertEquals(1, capabilities2.indices().length);
+        }
+    }
+
+    @Test
+    void test_update_settings() throws Exception {
+        final String index = "test_update_settings";
+        final String id = "1";
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        client.admin().indices().prepareUpdateSettings(index).setSettings(Settings.builder().put("index.number_of_replicas", 0))
+                .execute(wrap(res -> {
+                    assertTrue(res.isAcknowledged());
+                    latch.countDown();
+                }, e -> {
+                    e.printStackTrace();
+                    try {
+                        fail();
+                    } finally {
+                        latch.countDown();
+                    }
+                }));
+        latch.await();
+
+        {
+            final AcknowledgedResponse updateSettingsResponse = client.admin().indices().prepareUpdateSettings(index)
+                    .setSettings(Settings.builder().put("index.number_of_replicas", 0)).execute().actionGet();
+            assertTrue(updateSettingsResponse.isAcknowledged());
+        }
+    }
+
+    @Test
     void test_get_settings() throws Exception {
         final String index = "test_get_settings";
         final String id = "1";
@@ -683,6 +917,63 @@ class Elasticsearch7ClientTest {
     }
 
     @Test
+    void test_force_merge() throws Exception {
+        final String index = "test_force_merge";
+        final String id = "1";
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        client.admin().indices().prepareForceMerge(index).execute(wrap(res -> {
+            assertEquals(RestStatus.OK, res.getStatus());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ForceMergeResponse forceMergeResponse = client.admin().indices().prepareForceMerge(index).execute().actionGet();
+            assertEquals(RestStatus.OK, forceMergeResponse.getStatus());
+        }
+    }
+
+    @Test
+    void test_cluster_update_settings() throws Exception {
+        final String transientSettingKey = RecoverySettings.INDICES_RECOVERY_MAX_BYTES_PER_SEC_SETTING.getKey();
+        final int transientSettingValue = 40000000;
+        final Settings transientSettings = Settings.builder().put(transientSettingKey, transientSettingValue, ByteSizeUnit.BYTES).build();
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        client.admin().cluster().prepareUpdateSettings().setTransientSettings(transientSettings).execute(wrap(res -> {
+            assertTrue(res.isAcknowledged());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ClusterUpdateSettingsResponse clusterUpdateSettingsResponse =
+                    client.admin().cluster().prepareUpdateSettings().setTransientSettings(transientSettings).execute().actionGet();
+            assertTrue(clusterUpdateSettingsResponse.isAcknowledged());
+        }
+    }
+
+    @Test
     void test_cluster_health() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -705,6 +996,62 @@ class Elasticsearch7ClientTest {
         {
             final ClusterHealthResponse custerHealthResponse = client.admin().cluster().prepareHealth().execute().actionGet();
             assertEquals(custerHealthResponse.getClusterName(), clusterName);
+        }
+    }
+
+    @Test
+    void test_validate_query() throws Exception {
+        final String index = "test_validate_query";
+        final String id = "0";
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        client.prepareIndex().setIndex(index).setId(id).setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{" + "\"user\":\"user_" + id + "\"," + "\"postDate\":\"2018-07-30\"," + "\"text\":\"test\"" + "}",
+                        XContentType.JSON)
+                .execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        client.admin().indices().prepareValidateQuery(index).setExplain(true).setQuery(QueryBuilders.matchAllQuery()).execute(wrap(res -> {
+            assertTrue(res.isValid());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ValidateQueryResponse validateQueryResponse = client.admin().indices().prepareValidateQuery(index).setExplain(true)
+                    .setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+            assertTrue(validateQueryResponse.isValid());
+        }
+    }
+
+    @Test
+    void test_pending_cluster_tasks() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        client.admin().cluster().preparePendingClusterTasks().execute(wrap(res -> {
+            assertTrue(res.getPendingTasks() != null);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final PendingClusterTasksResponse pendingClusterTasksResponse =
+                    client.admin().cluster().preparePendingClusterTasks().execute().actionGet();
+            assertTrue(pendingClusterTasksResponse.getPendingTasks() != null);
         }
     }
 
@@ -736,6 +1083,145 @@ class Elasticsearch7ClientTest {
             final GetAliasesResponse getAliasesResponse =
                     client.admin().indices().prepareGetAliases().setIndices(index).setAliases(alias1).execute().actionGet();
             assertTrue(getAliasesResponse.getAliases().size() == 1);
+        }
+    }
+
+    @Test
+    void test_get_field_mappings() throws Exception {
+        final String index = "test_get_field_mappings";
+        final String field = "content";
+        final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties").startObject(field)
+                .field("type", "text").endObject().endObject().endObject();
+        final String source = BytesReference.bytes(mappingBuilder).utf8ToString();
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.admin().indices().preparePutMapping(index).setSource(source, XContentType.JSON).execute().actionGet();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute(wrap(res -> {
+            assertTrue(res.mappings().size() > 0);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final GetFieldMappingsResponse getFieldMappingsResponse =
+                    client.admin().indices().prepareGetFieldMappings().setIndices(index).setFields(field).execute().actionGet();
+            assertTrue(getFieldMappingsResponse.mappings().size() > 0);
+            assertTrue(getFieldMappingsResponse.mappings().containsKey(index));
+        }
+    }
+
+    @Test
+    void test_rollover() throws Exception {
+        final String index = "test_rollover";
+        final String alias = "test_rollover_alias1";
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.admin().indices().prepareAliases().addAlias(index, alias).execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        client.admin().indices().prepareRolloverIndex(alias).setNewIndexName(index + "new1").execute(wrap(res -> {
+            assertTrue(res.isShardsAcknowledged());
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final RolloverResponse rolloverResponse =
+                    client.admin().indices().prepareRolloverIndex(alias).setNewIndexName(index + "new2").execute().actionGet();
+            assertTrue(rolloverResponse.isShardsAcknowledged());
+        }
+    }
+
+    @Test
+    void test_clear_cache_indices() throws Exception {
+        final String index = "test_clear_cache_indices";
+        final CountDownLatch latch = new CountDownLatch(1);
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+
+        client.admin().indices().prepareClearCache(index).execute(wrap(res -> {
+            assertTrue(res.getFailedShards() == 0);
+            latch.countDown();
+        }, e -> {
+            e.printStackTrace();
+            try {
+                fail();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        {
+            final ClearIndicesCacheResponse clearIndicesCacheResponse =
+                    client.admin().indices().prepareClearCache(index).execute().actionGet();
+            assertTrue(clearIndicesCacheResponse.getFailedShards() == 0);
+        }
+    }
+
+    @Test
+    void test_crud_pipeline() throws Exception {
+        final String source =
+                "{\"description\":\"my set of processors\"," + "\"processors\":[{\"set\":{\"field\":\"foo\",\"value\":\"bar\"}}]}";
+        final String id = "test_crud_pipeline";
+
+        final AcknowledgedResponse putPipelineResponse = client.admin().cluster()
+                .preparePutPipeline(id, new BytesArray(source.getBytes(StandardCharsets.UTF_8)), XContentType.JSON).execute().actionGet();
+        assertTrue(putPipelineResponse.isAcknowledged());
+
+        final GetPipelineResponse getPipelineResponse = client.admin().cluster().prepareGetPipeline(id).execute().actionGet();
+        assertTrue(getPipelineResponse.isFound());
+
+        final AcknowledgedResponse deletePipelineResponse = client.admin().cluster().prepareDeletePipeline(id).execute().actionGet();
+        assertTrue(deletePipelineResponse.isAcknowledged());
+    }
+
+    @Test
+    void test_crud_storedscript() throws Exception {
+        final String source = """
+                {
+                 "script": {
+                "lang":"painless",
+                "source": "Math.log(_score * 2) + params.my_modifier"
+                 }
+                }
+                """;
+        final String id = "test_crud_storedscript";
+
+        final AcknowledgedResponse putStoredScriptResponse = client.admin().cluster().preparePutStoredScript().setId(id)
+                .setContent(new BytesArray(source.getBytes(StandardCharsets.UTF_8)), XContentType.JSON).execute().actionGet();
+        assertTrue(putStoredScriptResponse.isAcknowledged());
+
+        final GetStoredScriptResponse getStoredScriptResponse =
+                client.admin().cluster().prepareGetStoredScript().setId(id).execute().actionGet();
+        assertTrue(getStoredScriptResponse.getSource() != null);
+
+        final AcknowledgedResponse deleteStoredScriptResponse =
+                client.admin().cluster().prepareDeleteStoredScript().setId(id).execute().actionGet();
+        assertTrue(deleteStoredScriptResponse.isAcknowledged());
+    }
+
+    @Test
+    void test_cluster_reroute() throws Exception {
+        final ClusterRerouteRequest clusterRerouteRequest = new ClusterRerouteRequest();
+        {
+            final AcknowledgedResponse clusterRerouteResponse =
+                    client.admin().cluster().execute(ClusterRerouteAction.INSTANCE, clusterRerouteRequest).actionGet();
+            assertTrue(clusterRerouteResponse.isAcknowledged());
         }
     }
 
@@ -806,6 +1292,158 @@ class Elasticsearch7ClientTest {
     // TODO DeleteSnapshotAction
     // TODO RestoreSnapshotAction
 
+    // needs x-pack
+    // TODO @Test
+    void test_info() throws Exception {
+        {
+            final MainResponse mainResponse = client.execute(MainAction.INSTANCE, new MainRequest()).actionGet();
+            assertEquals("fesen", mainResponse.getClusterName().value());
+        }
+    }
+
+    @Test
+    void test_reindex() throws Exception {
+        final String srcIndex = "test_reindex_src";
+        final String destIndex = "test_reindex_dest";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 3; i++) {
+            bulkRequestBuilder.add(client.prepareIndex().setIndex(srcIndex).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}",
+                    XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
+
+        final org.codelibs.fesen.opensearch.index.reindex.ReindexRequest reindexRequest =
+                new org.codelibs.fesen.opensearch.index.reindex.ReindexRequest();
+        reindexRequest.setSourceIndices(srcIndex);
+        reindexRequest.setDestIndex(destIndex);
+        reindexRequest.setRefresh(true);
+        final org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.codelibs.fesen.opensearch.index.reindex.ReindexAction.INSTANCE, reindexRequest).actionGet();
+        assertEquals(3L, response.getTotal());
+        assertEquals(3L, response.getCreated());
+        assertEquals(0, response.getBulkFailures().size());
+
+        client.admin().indices().prepareRefresh(destIndex).execute().actionGet();
+        final SearchResponse searchResponse = client.prepareSearch(destIndex).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_resize() throws Exception {
+        final String srcIndex = "test_resize_src";
+        final String targetIndex = "test_resize_clone";
+        try {
+            final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+            for (int i = 1; i <= 3; i++) {
+                bulkRequestBuilder.add(client.prepareIndex().setIndex(srcIndex).setId(String.valueOf(i)).setSource("{\"value\":" + i + "}",
+                        XContentType.JSON));
+            }
+            bulkRequestBuilder.execute().actionGet();
+            client.admin().indices().prepareRefresh(srcIndex).execute().actionGet();
+
+            // _clone requires the source index to be write-blocked.
+            final AcknowledgedResponse blockResponse = client.admin().indices().prepareUpdateSettings(srcIndex)
+                    .setSettings(Settings.builder().put("index.blocks.write", true)).execute().actionGet();
+            assertTrue(blockResponse.isAcknowledged());
+
+            final org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest request =
+                    new org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest(targetIndex, srcIndex);
+            request.setResizeType(org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeType.CLONE);
+            final org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse response =
+                    client.execute(org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeAction.INSTANCE, request).actionGet();
+            assertTrue(response.isAcknowledged());
+            assertEquals(targetIndex, response.index());
+
+            client.admin().indices().prepareRefresh(targetIndex).execute().actionGet();
+            final SearchResponse searchResponse =
+                    client.prepareSearch(targetIndex).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+            assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+        } finally {
+            // Regression isolation: delete each index independently so a missing one
+            // (e.g. a clone that failed before the target was created) cannot skip the other.
+            try {
+                client.admin().indices().prepareDelete(srcIndex).execute().actionGet();
+            } catch (final Exception e) {
+                logger.fine("Cleanup ignored: " + e.getLocalizedMessage());
+            }
+            try {
+                client.admin().indices().prepareDelete(targetIndex).execute().actionGet();
+            } catch (final Exception e) {
+                logger.fine("Cleanup ignored: " + e.getLocalizedMessage());
+            }
+        }
+    }
+
+    @Test
+    void test_update_by_query() throws Exception {
+        final String index = "test_update_by_query";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 3; i++) {
+            bulkRequestBuilder.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{\"value\":" + i + ",\"status\":\"new\"}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest(index);
+        request.setQuery(QueryBuilders.matchAllQuery());
+        request.setScript(new org.codelibs.fesen.opensearch.script.Script("ctx._source.status = 'updated'"));
+        request.setConflicts("proceed");
+        request.setRefresh(true);
+        final org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryAction.INSTANCE, request).actionGet();
+        assertEquals(3L, response.getTotal());
+        assertEquals(3L, response.getUpdated());
+        assertEquals(0, response.getBulkFailures().size());
+
+        final SearchResponse searchResponse =
+                client.prepareSearch(index).setQuery(QueryBuilders.matchQuery("status", "updated")).execute().actionGet();
+        assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_delete_by_query() throws Exception {
+        final String index = "test_delete_by_query";
+        final BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+        for (int i = 1; i <= 5; i++) {
+            final String group = i <= 2 ? "a" : "b";
+            bulkRequestBuilder.add(client.prepareIndex().setIndex(index).setId(String.valueOf(i))
+                    .setSource("{\"value\":" + i + ",\"group\":\"" + group + "\"}", XContentType.JSON));
+        }
+        bulkRequestBuilder.execute().actionGet();
+        client.admin().indices().prepareRefresh(index).execute().actionGet();
+
+        final org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest request =
+                new org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest(index);
+        request.setQuery(QueryBuilders.matchQuery("group", "a"));
+        request.setConflicts("proceed");
+        request.setRefresh(true);
+        final org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse response =
+                client.execute(org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryAction.INSTANCE, request).actionGet();
+        assertEquals(2L, response.getDeleted());
+        assertEquals(0, response.getBulkFailures().size());
+
+        final SearchResponse searchResponse = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        assertEquals(3L, searchResponse.getHits().getTotalHits().value());
+    }
+
+    @Test
+    void test_resolve_index() throws Exception {
+        final String index = "test_resolve_index";
+        final String alias = "test_resolve_index_alias";
+        client.admin().indices().prepareCreate(index).addAlias(new Alias(alias)).execute().actionGet();
+
+        final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request =
+                new org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request(
+                        new String[] { "test_resolve_index*" });
+        final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response response =
+                client.execute(org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.INSTANCE, request).actionGet();
+        assertTrue(response.getIndices().stream().anyMatch(i -> index.equals(i.getName())));
+        assertTrue(response.getAliases().stream().anyMatch(a -> alias.equals(a.getName())));
+    }
+
     @Test
     void test_pit_create_delete() throws Exception {
         final String index = "test_pit_create_delete";
@@ -830,6 +1468,13 @@ class Elasticsearch7ClientTest {
                         new org.codelibs.fesen.opensearch.action.search.DeletePitRequest(pitId)).actionGet();
         assertTrue(deletePitResponse.getDeletePitResults().stream()
                 .allMatch(org.codelibs.fesen.opensearch.action.search.DeletePitInfo::isSuccessful));
+    }
+
+    @Test
+    void test_pit_get_all_unsupported() throws Exception {
+        assertThrows(UnsupportedOperationException.class,
+                () -> client.execute(org.codelibs.fesen.opensearch.action.search.GetAllPitsAction.INSTANCE,
+                        new org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest()).actionGet());
     }
 
     @Test

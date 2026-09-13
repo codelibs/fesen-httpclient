@@ -1,0 +1,92 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import java.io.IOException;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.get.MultiGetAction;
+import org.codelibs.fesen.opensearch.action.get.MultiGetRequest;
+import org.codelibs.fesen.opensearch.action.get.MultiGetResponse;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the Multi Get API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpMultiGetAction extends HttpAction {
+
+    /** The multi get action definition. */
+    protected final MultiGetAction action;
+
+    /**
+     * Creates a new HTTP multi get action.
+     *
+     * @param client the HTTP client
+     * @param action the multi get action definition
+     */
+    public HttpMultiGetAction(final HttpClient client, final MultiGetAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the multi get request and notifies the listener with the response.
+     *
+     * @param request the multi get request
+     * @param listener the listener to notify with the response or failure
+     */
+    public void execute(final MultiGetRequest request, final ActionListener<MultiGetResponse> listener) {
+        String source = null;
+        try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
+            builder.flush();
+            source = BytesReference.bytes(builder).utf8ToString();
+        } catch (final IOException e) {
+            throw new OpenSearchException("Failed to parse a request.", e);
+        }
+        getCurlRequest(request).body(source).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final MultiGetResponse multiGetResponse = MultiGetResponse.fromXContent(parser);
+                listener.onResponse(multiGetResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the curl request for the multi get API.
+     *
+     * @param request the multi get request
+     * @return the curl request
+     */
+    protected CurlRequest getCurlRequest(final MultiGetRequest request) {
+        // RestMultiGetAction
+        final CurlRequest curlRequest = client.getCurlRequest(GET, "/_mget");
+        curlRequest.param("refresh", Boolean.toString(request.refresh()));
+        curlRequest.param("realtime", Boolean.toString(request.realtime()));
+        if (request.preference() != null) {
+            curlRequest.param("preference", request.preference());
+        }
+        return curlRequest;
+    }
+}

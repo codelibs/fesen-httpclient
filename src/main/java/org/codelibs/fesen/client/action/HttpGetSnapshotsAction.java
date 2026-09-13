@@ -1,0 +1,91 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.client.util.UrlUtils;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the get snapshots API over HTTP for OpenSearch/Elasticsearch,
+ * retrieving information about snapshots in a repository.
+ */
+public class HttpGetSnapshotsAction extends HttpAction {
+
+    /** The get snapshots action. */
+    protected final GetSnapshotsAction action;
+
+    /**
+     * Creates a new HttpGetSnapshotsAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the get snapshots action
+     */
+    public HttpGetSnapshotsAction(final HttpClient client, final GetSnapshotsAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the get snapshots request and notifies the listener with the response.
+     *
+     * @param request the get snapshots request
+     * @param listener the listener to notify with the response or a failure
+     */
+    public void execute(final GetSnapshotsRequest request, final ActionListener<GetSnapshotsResponse> listener) {
+        getCurlRequest(request).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final GetSnapshotsResponse cancelTasksResponse = GetSnapshotsResponse.fromXContent(parser);
+                listener.onResponse(cancelTasksResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the curl request for the get snapshots API.
+     *
+     * @param request the get snapshots request
+     * @return the curl request
+     */
+    protected CurlRequest getCurlRequest(final GetSnapshotsRequest request) {
+        // RestGetSnapshotsAction
+        final StringBuilder pathBuf = new StringBuilder(100).append("/_snapshot");
+        if (request.repository() != null) {
+            pathBuf.append('/').append(UrlUtils.encode(request.repository()));
+        } else {
+            pathBuf.append("/_all");
+        }
+        if (request.snapshots() != null && request.snapshots().length > 0) {
+            pathBuf.append('/').append(UrlUtils.joinAndEncode(",", request.snapshots()));
+        } else {
+            pathBuf.append("/_all");
+        }
+        final CurlRequest curlRequest = client.getCurlRequest(GET, pathBuf.toString());
+        curlRequest.param("ignore_unavailable", String.valueOf(request.ignoreUnavailable()));
+        curlRequest.param("verbose", String.valueOf(request.verbose()));
+        if (request.masterNodeTimeout() != null) {
+            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+        }
+        return curlRequest;
+    }
+}

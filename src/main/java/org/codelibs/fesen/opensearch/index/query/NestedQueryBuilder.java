@@ -50,6 +50,7 @@ import org.apache.lucene.search.join.ParentChildrenBlockJoinQuery;
 import org.apache.lucene.search.join.ScoreMode;
 import org.codelibs.fesen.opensearch.common.lucene.Lucene;
 import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
+import org.codelibs.fesen.opensearch.common.lucene.search.TopDocsAndMaxScore;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;

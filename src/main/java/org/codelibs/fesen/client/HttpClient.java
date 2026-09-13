@@ -49,29 +49,103 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.client.action.HttpAnalyzeAction;
 import org.codelibs.fesen.client.action.HttpBulkAction;
+import org.codelibs.fesen.client.action.HttpCancelTasksAction;
+import org.codelibs.fesen.client.action.HttpClearIndicesCacheAction;
+import org.codelibs.fesen.client.action.HttpClearScrollAction;
 import org.codelibs.fesen.client.action.HttpCloseIndexAction;
 import org.codelibs.fesen.client.action.HttpClusterHealthAction;
+import org.codelibs.fesen.client.action.HttpClusterRerouteAction;
+import org.codelibs.fesen.client.action.HttpClusterUpdateSettingsAction;
 import org.codelibs.fesen.client.action.HttpCreateIndexAction;
 import org.codelibs.fesen.client.action.HttpCreatePitAction;
+import org.codelibs.fesen.client.action.HttpCreateSnapshotAction;
 import org.codelibs.fesen.client.action.HttpDeleteAction;
+import org.codelibs.fesen.client.action.HttpDeleteByQueryAction;
 import org.codelibs.fesen.client.action.HttpDeleteIndexAction;
+import org.codelibs.fesen.client.action.HttpDeleteIndexTemplateAction;
+import org.codelibs.fesen.client.action.HttpDeletePipelineAction;
 import org.codelibs.fesen.client.action.HttpDeletePitAction;
+import org.codelibs.fesen.client.action.HttpDeleteRepositoryAction;
+import org.codelibs.fesen.client.action.HttpDeleteSnapshotAction;
+import org.codelibs.fesen.client.action.HttpDeleteStoredScriptAction;
+import org.codelibs.fesen.client.action.HttpExplainAction;
+import org.codelibs.fesen.client.action.HttpFieldCapabilitiesAction;
 import org.codelibs.fesen.client.action.HttpFlushAction;
+import org.codelibs.fesen.client.action.HttpForceMergeAction;
 import org.codelibs.fesen.client.action.HttpGetAction;
 import org.codelibs.fesen.client.action.HttpGetAliasesAction;
+import org.codelibs.fesen.client.action.HttpGetAllPitsAction;
+import org.codelibs.fesen.client.action.HttpGetFieldMappingsAction;
 import org.codelibs.fesen.client.action.HttpGetIndexAction;
+import org.codelibs.fesen.client.action.HttpGetIndexTemplatesAction;
 import org.codelibs.fesen.client.action.HttpGetMappingsAction;
+import org.codelibs.fesen.client.action.HttpGetPipelineAction;
+import org.codelibs.fesen.client.action.HttpGetRepositoriesAction;
 import org.codelibs.fesen.client.action.HttpGetSettingsAction;
+import org.codelibs.fesen.client.action.HttpGetSnapshotsAction;
+import org.codelibs.fesen.client.action.HttpGetStoredScriptAction;
 import org.codelibs.fesen.client.action.HttpIndexAction;
 import org.codelibs.fesen.client.action.HttpIndicesAliasesAction;
 import org.codelibs.fesen.client.action.HttpIndicesExistsAction;
+import org.codelibs.fesen.client.action.HttpListTasksAction;
+import org.codelibs.fesen.client.action.HttpMainAction;
+import org.codelibs.fesen.client.action.HttpMultiGetAction;
+import org.codelibs.fesen.client.action.HttpMultiSearchAction;
+import org.codelibs.fesen.client.action.HttpClusterStatsAction;
+import org.codelibs.fesen.client.action.HttpDataStreamsStatsAction;
+import org.codelibs.fesen.client.action.HttpIndicesStatsAction;
 import org.codelibs.fesen.client.action.HttpNodesHotThreadsAction;
 import org.codelibs.fesen.client.action.HttpNodesStatsAction;
 import org.codelibs.fesen.client.action.HttpOpenIndexAction;
+import org.codelibs.fesen.client.action.HttpRemoteStoreStatsAction;
+import org.codelibs.fesen.client.action.HttpSegmentReplicationStatsAction;
+import org.codelibs.fesen.client.action.HttpWlmStatsAction;
+import org.codelibs.fesen.client.action.HttpClusterAllocationExplainAction;
+import org.codelibs.fesen.client.action.HttpClusterSearchShardsAction;
+import org.codelibs.fesen.client.action.HttpClusterStateAction;
+import org.codelibs.fesen.client.action.HttpGetTaskAction;
+import org.codelibs.fesen.client.action.HttpIndicesSegmentsAction;
+import org.codelibs.fesen.client.action.HttpIndicesShardStoresAction;
+import org.codelibs.fesen.client.action.HttpMultiTermVectorsAction;
+import org.codelibs.fesen.client.action.HttpNodesInfoAction;
+import org.codelibs.fesen.client.action.HttpNodesUsageAction;
+import org.codelibs.fesen.client.action.HttpCreateViewAction;
+import org.codelibs.fesen.client.action.HttpGetViewAction;
+import org.codelibs.fesen.client.action.HttpDeleteViewAction;
+import org.codelibs.fesen.client.action.HttpUpdateViewAction;
+import org.codelibs.fesen.client.action.HttpSearchViewAction;
+import org.codelibs.fesen.client.action.HttpListViewNamesAction;
+import org.codelibs.fesen.client.action.HttpPauseIngestionAction;
+import org.codelibs.fesen.client.action.HttpResumeIngestionAction;
+import org.codelibs.fesen.client.action.HttpGetIngestionStateAction;
+import org.codelibs.fesen.client.action.HttpScaleIndexAction;
+import org.codelibs.fesen.client.action.HttpRemoteStoreMetadataAction;
+import org.codelibs.fesen.client.action.HttpRecoveryAction;
+import org.codelibs.fesen.client.action.HttpRemoteInfoAction;
+import org.codelibs.fesen.client.action.HttpTermVectorsAction;
+import org.codelibs.fesen.client.action.HttpUpgradeAction;
+import org.codelibs.fesen.client.action.HttpUpgradeStatusAction;
+import org.codelibs.fesen.client.action.HttpPendingClusterTasksAction;
+import org.codelibs.fesen.client.action.HttpPutIndexTemplateAction;
 import org.codelibs.fesen.client.action.HttpPutMappingAction;
+import org.codelibs.fesen.client.action.HttpPutPipelineAction;
+import org.codelibs.fesen.client.action.HttpPutRepositoryAction;
+import org.codelibs.fesen.client.action.HttpPutStoredScriptAction;
 import org.codelibs.fesen.client.action.HttpRefreshAction;
+import org.codelibs.fesen.client.action.HttpReindexAction;
+import org.codelibs.fesen.client.action.HttpResizeAction;
+import org.codelibs.fesen.client.action.HttpResolveIndexAction;
+import org.codelibs.fesen.client.action.HttpRestoreSnapshotAction;
+import org.codelibs.fesen.client.action.HttpRolloverAction;
 import org.codelibs.fesen.client.action.HttpSearchAction;
+import org.codelibs.fesen.client.action.HttpSearchScrollAction;
+import org.codelibs.fesen.client.action.HttpSimulatePipelineAction;
+import org.codelibs.fesen.client.action.HttpSnapshotsStatusAction;
 import org.codelibs.fesen.client.action.HttpUpdateAction;
+import org.codelibs.fesen.client.action.HttpUpdateByQueryAction;
+import org.codelibs.fesen.client.action.HttpUpdateSettingsAction;
+import org.codelibs.fesen.client.action.HttpValidateQueryAction;
+import org.codelibs.fesen.client.action.HttpVerifyRepositoryAction;
 import org.codelibs.fesen.client.curl.FesenRequest;
 import org.codelibs.fesen.client.node.NodeManager;
 import org.codelibs.fesen.client.util.UrlUtils;
@@ -84,15 +158,112 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthRe
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.list.ListTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remote.RemoteInfoAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remote.RemoteInfoRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remote.RemoteInfoResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.put.PutRepositoryAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.DeleteStoredScriptRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.storedscripts.PutStoredScriptRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.UpdateViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.scale.searchonly.ScaleIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse;
@@ -107,9 +278,15 @@ import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.Indices
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
@@ -121,10 +298,50 @@ import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.datastream.DataStreamsStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.codelibs.fesen.opensearch.action.bulk.BulkAction;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequest;
 import org.codelibs.fesen.opensearch.action.bulk.BulkResponse;
@@ -146,6 +363,19 @@ import org.codelibs.fesen.opensearch.action.get.MultiGetResponse;
 import org.codelibs.fesen.opensearch.action.index.IndexAction;
 import org.codelibs.fesen.opensearch.action.index.IndexRequest;
 import org.codelibs.fesen.opensearch.action.index.IndexResponse;
+import org.codelibs.fesen.opensearch.action.ingest.DeletePipelineAction;
+import org.codelibs.fesen.opensearch.action.ingest.DeletePipelineRequest;
+import org.codelibs.fesen.opensearch.action.ingest.GetPipelineAction;
+import org.codelibs.fesen.opensearch.action.ingest.GetPipelineRequest;
+import org.codelibs.fesen.opensearch.action.ingest.GetPipelineResponse;
+import org.codelibs.fesen.opensearch.action.ingest.PutPipelineAction;
+import org.codelibs.fesen.opensearch.action.ingest.PutPipelineRequest;
+import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineAction;
+import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineRequest;
+import org.codelibs.fesen.opensearch.action.ingest.SimulatePipelineResponse;
+import org.codelibs.fesen.opensearch.action.main.MainAction;
+import org.codelibs.fesen.opensearch.action.main.MainRequest;
+import org.codelibs.fesen.opensearch.action.main.MainResponse;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollAction;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollRequest;
 import org.codelibs.fesen.opensearch.action.search.ClearScrollResponse;
@@ -157,6 +387,7 @@ import org.codelibs.fesen.opensearch.action.search.DeletePitRequest;
 import org.codelibs.fesen.opensearch.action.search.DeletePitResponse;
 import org.codelibs.fesen.opensearch.action.search.GetAllPitNodesRequest;
 import org.codelibs.fesen.opensearch.action.search.GetAllPitNodesResponse;
+import org.codelibs.fesen.opensearch.action.search.GetAllPitsAction;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchAction;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchRequest;
 import org.codelibs.fesen.opensearch.action.search.MultiSearchResponse;
@@ -186,6 +417,11 @@ import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.xcontent.ContextParser;
 import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryAction;
+import org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest;
+import org.codelibs.fesen.opensearch.index.reindex.ReindexAction;
+import org.codelibs.fesen.opensearch.index.reindex.ReindexRequest;
+import org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryAction;
 import org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryRequest;
 import org.codelibs.fesen.opensearch.plugins.spi.NamedXContentProvider;
 import org.codelibs.fesen.opensearch.search.aggregations.Aggregation;
@@ -467,11 +703,36 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<GetMappingsResponse> actionListener = (ActionListener<GetMappingsResponse>) listener;
             new HttpGetMappingsAction(this, GetMappingsAction.INSTANCE).execute((GetMappingsRequest) request, actionListener);
         });
+        actions.put(GetFieldMappingsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.mapping.get.GetFieldMappingsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetFieldMappingsResponse> actionListener = (ActionListener<GetFieldMappingsResponse>) listener;
+            new HttpGetFieldMappingsAction(this, GetFieldMappingsAction.INSTANCE).execute((GetFieldMappingsRequest) request,
+                    actionListener);
+        });
         actions.put(FlushAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.flush.FlushAction
             @SuppressWarnings("unchecked")
             final ActionListener<FlushResponse> actionListener = (ActionListener<FlushResponse>) listener;
             new HttpFlushAction(this, FlushAction.INSTANCE).execute((FlushRequest) request, actionListener);
+        });
+        actions.put(ClearScrollAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.search.ClearScrollAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClearScrollResponse> actionListener = (ActionListener<ClearScrollResponse>) listener;
+            new HttpClearScrollAction(this, ClearScrollAction.INSTANCE).execute((ClearScrollRequest) request, actionListener);
+        });
+        actions.put(MultiSearchAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.search.MultiSearchAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<MultiSearchResponse> actionListener = (ActionListener<MultiSearchResponse>) listener;
+            new HttpMultiSearchAction(this, MultiSearchAction.INSTANCE).execute((MultiSearchRequest) request, actionListener);
+        });
+        actions.put(SearchScrollAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.search.MultiSearchAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<SearchResponse> actionListener = (ActionListener<SearchResponse>) listener;
+            new HttpSearchScrollAction(this, SearchScrollAction.INSTANCE).execute((SearchScrollRequest) request, actionListener);
         });
         actions.put(IndexAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.index.IndexAction
@@ -479,11 +740,24 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<IndexResponse> actionListener = (ActionListener<IndexResponse>) listener;
             new HttpIndexAction(this, IndexAction.INSTANCE).execute((IndexRequest) request, actionListener);
         });
+        actions.put(FieldCapabilitiesAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.fieldcaps.FieldCapabilitiesAction)
+            @SuppressWarnings("unchecked")
+            final ActionListener<FieldCapabilitiesResponse> actionListener = (ActionListener<FieldCapabilitiesResponse>) listener;
+            new HttpFieldCapabilitiesAction(this, FieldCapabilitiesAction.INSTANCE).execute((FieldCapabilitiesRequest) request,
+                    actionListener);
+        });
         actions.put(GetAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.get.GetAction
             @SuppressWarnings("unchecked")
             final ActionListener<GetResponse> actionListener = (ActionListener<GetResponse>) listener;
             new HttpGetAction(this, GetAction.INSTANCE).execute((GetRequest) request, actionListener);
+        });
+        actions.put(MultiGetAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.get.MultiGetAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<MultiGetResponse> actionListener = (ActionListener<MultiGetResponse>) listener;
+            new HttpMultiGetAction(this, MultiGetAction.INSTANCE).execute((MultiGetRequest) request, actionListener);
         });
         actions.put(UpdateAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.update.UpdateAction
@@ -503,11 +777,42 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<DeleteResponse> actionListener = (ActionListener<DeleteResponse>) listener;
             new HttpDeleteAction(this, DeleteAction.INSTANCE).execute((DeleteRequest) request, actionListener);
         });
+        actions.put(ExplainAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.explain.ExplainAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ExplainResponse> actionListener = (ActionListener<ExplainResponse>) listener;
+            new HttpExplainAction(this, ExplainAction.INSTANCE).execute((ExplainRequest) request, actionListener);
+        });
+        actions.put(UpdateSettingsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.settings.put.UpdateSettingsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpUpdateSettingsAction(this, UpdateSettingsAction.INSTANCE).execute((UpdateSettingsRequest) request, actionListener);
+        });
         actions.put(GetSettingsAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.settings.get.GetSettingsAction
             @SuppressWarnings("unchecked")
             final ActionListener<GetSettingsResponse> actionListener = (ActionListener<GetSettingsResponse>) listener;
             new HttpGetSettingsAction(this, GetSettingsAction.INSTANCE).execute((GetSettingsRequest) request, actionListener);
+        });
+        actions.put(ForceMergeAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.forcemerge.ForceMergeAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ForceMergeResponse> actionListener = (ActionListener<ForceMergeResponse>) listener;
+            new HttpForceMergeAction(this, ForceMergeAction.INSTANCE).execute((ForceMergeRequest) request, actionListener);
+        });
+        actions.put(MainAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.main.MainAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<MainResponse> actionListener = (ActionListener<MainResponse>) listener;
+            new HttpMainAction(this, MainAction.INSTANCE).execute((MainRequest) request, actionListener);
+        });
+        actions.put(ClusterUpdateSettingsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.settings.ClusterUpdateSettingsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterUpdateSettingsResponse> actionListener = (ActionListener<ClusterUpdateSettingsResponse>) listener;
+            new HttpClusterUpdateSettingsAction(this, ClusterUpdateSettingsAction.INSTANCE).execute((ClusterUpdateSettingsRequest) request,
+                    actionListener);
         });
         actions.put(ClusterHealthAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.cluster.health.ClusterHealthAction
@@ -515,17 +820,188 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<ClusterHealthResponse> actionListener = (ActionListener<ClusterHealthResponse>) listener;
             new HttpClusterHealthAction(this, ClusterHealthAction.INSTANCE).execute((ClusterHealthRequest) request, actionListener);
         });
+        actions.put(ValidateQueryAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.validate.query.ValidateQueryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ValidateQueryResponse> actionListener = (ActionListener<ValidateQueryResponse>) listener;
+            new HttpValidateQueryAction(this, ValidateQueryAction.INSTANCE).execute((ValidateQueryRequest) request, actionListener);
+        });
+        actions.put(PendingClusterTasksAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.tasks.PendingClusterTasksAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<PendingClusterTasksResponse> actionListener = (ActionListener<PendingClusterTasksResponse>) listener;
+            new HttpPendingClusterTasksAction(this, PendingClusterTasksAction.INSTANCE).execute((PendingClusterTasksRequest) request,
+                    actionListener);
+        });
         actions.put(GetAliasesAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.alias.get.GetAliasesAction
             @SuppressWarnings("unchecked")
             final ActionListener<GetAliasesResponse> actionListener = (ActionListener<GetAliasesResponse>) listener;
             new HttpGetAliasesAction(this, GetAliasesAction.INSTANCE).execute((GetAliasesRequest) request, actionListener);
         });
+        actions.put(RolloverAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.rollover.RolloverAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<RolloverResponse> actionListener = (ActionListener<RolloverResponse>) listener;
+            new HttpRolloverAction(this, RolloverAction.INSTANCE).execute((RolloverRequest) request, actionListener);
+        });
+        actions.put(ResizeAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.shrink.ResizeAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ResizeResponse> actionListener = (ActionListener<ResizeResponse>) listener;
+            new HttpResizeAction(this, ResizeAction.INSTANCE).execute((ResizeRequest) request, actionListener);
+        });
+        actions.put(ClearIndicesCacheAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.cache.clear.ClearIndicesCacheAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClearIndicesCacheResponse> actionListener = (ActionListener<ClearIndicesCacheResponse>) listener;
+            new HttpClearIndicesCacheAction(this, ClearIndicesCacheAction.INSTANCE).execute((ClearIndicesCacheRequest) request,
+                    actionListener);
+        });
+        actions.put(PutPipelineAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.ingest.PutPipelineAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpPutPipelineAction(this, PutPipelineAction.INSTANCE).execute((PutPipelineRequest) request, actionListener);
+        });
+        actions.put(GetPipelineAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.ingest.GetPipelineAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetPipelineResponse> actionListener = (ActionListener<GetPipelineResponse>) listener;
+            new HttpGetPipelineAction(this, GetPipelineAction.INSTANCE).execute((GetPipelineRequest) request, actionListener);
+        });
+        actions.put(DeletePipelineAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.ingest.DeletePipelineAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpDeletePipelineAction(this, DeletePipelineAction.INSTANCE).execute((DeletePipelineRequest) request, actionListener);
+        });
+        actions.put(PutStoredScriptAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.storedscripts.PutStoredScriptAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpPutStoredScriptAction(this, PutStoredScriptAction.INSTANCE).execute((PutStoredScriptRequest) request, actionListener);
+        });
+        actions.put(GetStoredScriptAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.storedscripts.GetStoredScriptAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetStoredScriptResponse> actionListener = (ActionListener<GetStoredScriptResponse>) listener;
+            new HttpGetStoredScriptAction(this, GetStoredScriptAction.INSTANCE).execute((GetStoredScriptRequest) request, actionListener);
+        });
+        actions.put(DeleteStoredScriptAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.storedscripts.DeleteStoredScriptAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpDeleteStoredScriptAction(this, DeleteStoredScriptAction.INSTANCE).execute((DeleteStoredScriptRequest) request,
+                    actionListener);
+        });
+        actions.put(PutIndexTemplateAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.template.put.PutIndexTemplateAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpPutIndexTemplateAction(this, PutIndexTemplateAction.INSTANCE).execute((PutIndexTemplateRequest) request,
+                    actionListener);
+        });
+        actions.put(GetIndexTemplatesAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.template.get.GetIndexTemplatesAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetIndexTemplatesResponse> actionListener = (ActionListener<GetIndexTemplatesResponse>) listener;
+            new HttpGetIndexTemplatesAction(this, GetIndexTemplatesAction.INSTANCE).execute((GetIndexTemplatesRequest) request,
+                    actionListener);
+        });
+        actions.put(DeleteIndexTemplateAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.indices.template.delete.DeleteIndexTemplateAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpDeleteIndexTemplateAction(this, DeleteIndexTemplateAction.INSTANCE).execute((DeleteIndexTemplateRequest) request,
+                    actionListener);
+        });
+        actions.put(CancelTasksAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.node.tasks.cancel.CancelTasksAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<CancelTasksResponse> actionListener = (ActionListener<CancelTasksResponse>) listener;
+            new HttpCancelTasksAction(this, CancelTasksAction.INSTANCE).execute((CancelTasksRequest) request, actionListener);
+        });
+        actions.put(ListTasksAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.node.tasks.list.ListTasksAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ListTasksResponse> actionListener = (ActionListener<ListTasksResponse>) listener;
+            new HttpListTasksAction(this, ListTasksAction.INSTANCE).execute((ListTasksRequest) request, actionListener);
+        });
+        actions.put(VerifyRepositoryAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.repositories.verify.VerifyRepositoryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<VerifyRepositoryResponse> actionListener = (ActionListener<VerifyRepositoryResponse>) listener;
+            new HttpVerifyRepositoryAction(this, VerifyRepositoryAction.INSTANCE).execute((VerifyRepositoryRequest) request,
+                    actionListener);
+        });
+        actions.put(PutRepositoryAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.repositories.put.PutRepositoryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpPutRepositoryAction(this, PutRepositoryAction.INSTANCE).execute((PutRepositoryRequest) request, actionListener);
+        });
+        actions.put(GetRepositoriesAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.repositories.get.GetRepositoriesAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetRepositoriesResponse> actionListener = (ActionListener<GetRepositoriesResponse>) listener;
+            new HttpGetRepositoriesAction(this, GetRepositoriesAction.INSTANCE).execute((GetRepositoriesRequest) request, actionListener);
+        });
+        actions.put(DeleteRepositoryAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.repositories.delete.DeleteRepositoryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpDeleteRepositoryAction(this, DeleteRepositoryAction.INSTANCE).execute((DeleteRepositoryRequest) request,
+                    actionListener);
+        });
         actions.put(AnalyzeAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.indices.analyze.AnalyzeAction
             @SuppressWarnings("unchecked")
             final ActionListener<AnalyzeAction.Response> actionListener = (ActionListener<AnalyzeAction.Response>) listener;
             new HttpAnalyzeAction(this, AnalyzeAction.INSTANCE).execute((AnalyzeAction.Request) request, actionListener);
+        });
+        actions.put(SimulatePipelineAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.ingest.SimulatePipelineAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<SimulatePipelineResponse> actionListener = (ActionListener<SimulatePipelineResponse>) listener;
+            new HttpSimulatePipelineAction(this, SimulatePipelineAction.INSTANCE).execute((SimulatePipelineRequest) request,
+                    actionListener);
+        });
+        actions.put(SnapshotsStatusAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.snapshots.status.SnapshotsStatusAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<SnapshotsStatusResponse> actionListener = (ActionListener<SnapshotsStatusResponse>) listener;
+            new HttpSnapshotsStatusAction(this, SnapshotsStatusAction.INSTANCE).execute((SnapshotsStatusRequest) request, actionListener);
+        });
+        actions.put(CreateSnapshotAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.snapshots.create.CreateSnapshotAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<CreateSnapshotResponse> actionListener = (ActionListener<CreateSnapshotResponse>) listener;
+            new HttpCreateSnapshotAction(this, CreateSnapshotAction.INSTANCE).execute((CreateSnapshotRequest) request, actionListener);
+        });
+        actions.put(GetSnapshotsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.snapshots.get.GetSnapshotsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetSnapshotsResponse> actionListener = (ActionListener<GetSnapshotsResponse>) listener;
+            new HttpGetSnapshotsAction(this, GetSnapshotsAction.INSTANCE).execute((GetSnapshotsRequest) request, actionListener);
+        });
+        actions.put(DeleteSnapshotAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.snapshots.delete.DeleteSnapshotAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpDeleteSnapshotAction(this, DeleteSnapshotAction.INSTANCE).execute((DeleteSnapshotRequest) request, actionListener);
+        });
+        actions.put(ClusterRerouteAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.reroute.ClusterRerouteAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpClusterRerouteAction(this, ClusterRerouteAction.INSTANCE).execute((ClusterRerouteRequest) request, actionListener);
+        });
+        actions.put(RestoreSnapshotAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.action.admin.cluster.snapshots.restore.RestoreSnapshotAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<RestoreSnapshotResponse> actionListener = (ActionListener<RestoreSnapshotResponse>) listener;
+            new HttpRestoreSnapshotAction(this, RestoreSnapshotAction.INSTANCE).execute((RestoreSnapshotRequest) request, actionListener);
         });
         actions.put(NodesStatsAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.cluster.node.stats.NodesStatsAction
@@ -539,16 +1015,194 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<NodesHotThreadsResponse> actionListener = (ActionListener<NodesHotThreadsResponse>) listener;
             new HttpNodesHotThreadsAction(this, NodesHotThreadsAction.INSTANCE).execute((NodesHotThreadsRequest) request, actionListener);
         });
+        actions.put(ClusterStatsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterStatsResponse> actionListener = (ActionListener<ClusterStatsResponse>) listener;
+            new HttpClusterStatsAction(this, ClusterStatsAction.INSTANCE).execute((ClusterStatsRequest) request, actionListener);
+        });
+        actions.put(IndicesStatsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<IndicesStatsResponse> actionListener = (ActionListener<IndicesStatsResponse>) listener;
+            new HttpIndicesStatsAction(this, IndicesStatsAction.INSTANCE).execute((IndicesStatsRequest) request, actionListener);
+        });
+        actions.put(DataStreamsStatsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.indices.datastream.DataStreamsStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<DataStreamsStatsAction.Response> actionListener =
+                    (ActionListener<DataStreamsStatsAction.Response>) listener;
+            new HttpDataStreamsStatsAction(this, DataStreamsStatsAction.INSTANCE).execute((DataStreamsStatsAction.Request) request,
+                    actionListener);
+        });
+        actions.put(RemoteStoreStatsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<RemoteStoreStatsResponse> actionListener = (ActionListener<RemoteStoreStatsResponse>) listener;
+            new HttpRemoteStoreStatsAction(this, RemoteStoreStatsAction.INSTANCE).execute((RemoteStoreStatsRequest) request,
+                    actionListener);
+        });
+        actions.put(SegmentReplicationStatsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<SegmentReplicationStatsResponse> actionListener =
+                    (ActionListener<SegmentReplicationStatsResponse>) listener;
+            new HttpSegmentReplicationStatsAction(this, SegmentReplicationStatsAction.INSTANCE)
+                    .execute((SegmentReplicationStatsRequest) request, actionListener);
+        });
+        actions.put(WlmStatsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.cluster.wlm.WlmStatsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<WlmStatsResponse> actionListener = (ActionListener<WlmStatsResponse>) listener;
+            new HttpWlmStatsAction(this, WlmStatsAction.INSTANCE).execute((WlmStatsRequest) request, actionListener);
+        });
+
+        actions.put(GetTaskAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetTaskResponse> actionListener = (ActionListener<GetTaskResponse>) listener;
+            new HttpGetTaskAction(this, GetTaskAction.INSTANCE).execute((GetTaskRequest) request, actionListener);
+        });
+        actions.put(NodesUsageAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<NodesUsageResponse> actionListener = (ActionListener<NodesUsageResponse>) listener;
+            new HttpNodesUsageAction(this, NodesUsageAction.INSTANCE).execute((NodesUsageRequest) request, actionListener);
+        });
+        actions.put(NodesInfoAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<NodesInfoResponse> actionListener = (ActionListener<NodesInfoResponse>) listener;
+            new HttpNodesInfoAction(this, NodesInfoAction.INSTANCE).execute((NodesInfoRequest) request, actionListener);
+        });
+        actions.put(RemoteInfoAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<RemoteInfoResponse> actionListener = (ActionListener<RemoteInfoResponse>) listener;
+            new HttpRemoteInfoAction(this, RemoteInfoAction.INSTANCE).execute((RemoteInfoRequest) request, actionListener);
+        });
+        actions.put(ClusterAllocationExplainAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterAllocationExplainResponse> actionListener =
+                    (ActionListener<ClusterAllocationExplainResponse>) listener;
+            new HttpClusterAllocationExplainAction(this, ClusterAllocationExplainAction.INSTANCE)
+                    .execute((ClusterAllocationExplainRequest) request, actionListener);
+        });
+        actions.put(ClusterSearchShardsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterSearchShardsResponse> actionListener = (ActionListener<ClusterSearchShardsResponse>) listener;
+            new HttpClusterSearchShardsAction(this, ClusterSearchShardsAction.INSTANCE).execute((ClusterSearchShardsRequest) request,
+                    actionListener);
+        });
+        actions.put(ClusterStateAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterStateResponse> actionListener = (ActionListener<ClusterStateResponse>) listener;
+            new HttpClusterStateAction(this, ClusterStateAction.INSTANCE).execute((ClusterStateRequest) request, actionListener);
+        });
+        actions.put(RecoveryAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<RecoveryResponse> actionListener = (ActionListener<RecoveryResponse>) listener;
+            new HttpRecoveryAction(this, RecoveryAction.INSTANCE).execute((RecoveryRequest) request, actionListener);
+        });
+        actions.put(IndicesSegmentsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<IndicesSegmentResponse> actionListener = (ActionListener<IndicesSegmentResponse>) listener;
+            new HttpIndicesSegmentsAction(this, IndicesSegmentsAction.INSTANCE).execute((IndicesSegmentsRequest) request, actionListener);
+        });
+        actions.put(IndicesShardStoresAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<IndicesShardStoresResponse> actionListener = (ActionListener<IndicesShardStoresResponse>) listener;
+            new HttpIndicesShardStoresAction(this, IndicesShardStoresAction.INSTANCE).execute((IndicesShardStoresRequest) request,
+                    actionListener);
+        });
+        actions.put(UpgradeStatusAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<UpgradeStatusResponse> actionListener = (ActionListener<UpgradeStatusResponse>) listener;
+            new HttpUpgradeStatusAction(this, UpgradeStatusAction.INSTANCE).execute((UpgradeStatusRequest) request, actionListener);
+        });
+        actions.put(UpgradeAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<UpgradeResponse> actionListener = (ActionListener<UpgradeResponse>) listener;
+            new HttpUpgradeAction(this, UpgradeAction.INSTANCE).execute((UpgradeRequest) request, actionListener);
+        });
+        actions.put(TermVectorsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<TermVectorsResponse> actionListener = (ActionListener<TermVectorsResponse>) listener;
+            new HttpTermVectorsAction(this, TermVectorsAction.INSTANCE).execute((TermVectorsRequest) request, actionListener);
+        });
+        actions.put(MultiTermVectorsAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<MultiTermVectorsResponse> actionListener = (ActionListener<MultiTermVectorsResponse>) listener;
+            new HttpMultiTermVectorsAction(this, MultiTermVectorsAction.INSTANCE).execute((MultiTermVectorsRequest) request,
+                    actionListener);
+        });
 
         // View API
+        actions.put(CreateViewAction.INSTANCE, (request, listener) -> {
+            new HttpCreateViewAction(this, CreateViewAction.INSTANCE).execute((CreateViewAction.Request) request,
+                    (ActionListener<GetViewAction.Response>) listener);
+        });
+        actions.put(GetViewAction.INSTANCE, (request, listener) -> {
+            new HttpGetViewAction(this, GetViewAction.INSTANCE).execute((GetViewAction.Request) request,
+                    (ActionListener<GetViewAction.Response>) listener);
+        });
+        actions.put(DeleteViewAction.INSTANCE, (request, listener) -> {
+            new HttpDeleteViewAction(this, DeleteViewAction.INSTANCE).execute((DeleteViewAction.Request) request,
+                    (ActionListener<AcknowledgedResponse>) listener);
+        });
+        actions.put(UpdateViewAction.INSTANCE, (request, listener) -> {
+            new HttpUpdateViewAction(this, UpdateViewAction.INSTANCE).execute((CreateViewAction.Request) request,
+                    (ActionListener<GetViewAction.Response>) listener);
+        });
+        actions.put(SearchViewAction.INSTANCE, (request, listener) -> {
+            new HttpSearchViewAction(this, SearchViewAction.INSTANCE).execute((SearchViewAction.Request) request,
+                    (ActionListener<SearchResponse>) listener);
+        });
+        actions.put(ListViewNamesAction.INSTANCE, (request, listener) -> {
+            new HttpListViewNamesAction(this, ListViewNamesAction.INSTANCE).execute((ListViewNamesAction.Request) request,
+                    (ActionListener<ListViewNamesAction.Response>) listener);
+        });
 
         // Streaming Ingestion API
+        actions.put(PauseIngestionAction.INSTANCE, (request, listener) -> {
+            new HttpPauseIngestionAction(this, PauseIngestionAction.INSTANCE).execute((PauseIngestionRequest) request,
+                    (ActionListener<PauseIngestionResponse>) listener);
+        });
+        actions.put(ResumeIngestionAction.INSTANCE, (request, listener) -> {
+            new HttpResumeIngestionAction(this, ResumeIngestionAction.INSTANCE).execute((ResumeIngestionRequest) request,
+                    (ActionListener<ResumeIngestionResponse>) listener);
+        });
+        actions.put(GetIngestionStateAction.INSTANCE, (request, listener) -> {
+            new HttpGetIngestionStateAction(this, GetIngestionStateAction.INSTANCE).execute((GetIngestionStateRequest) request,
+                    (ActionListener<GetIngestionStateResponse>) listener);
+        });
 
         // Scale (Search-Only) API
+        actions.put(ScaleIndexAction.INSTANCE, (request, listener) -> {
+            new HttpScaleIndexAction(this, ScaleIndexAction.INSTANCE).execute(request, (ActionListener<AcknowledgedResponse>) listener);
+        });
 
         // Remote Store Metadata API
+        actions.put(RemoteStoreMetadataAction.INSTANCE, (request, listener) -> {
+            new HttpRemoteStoreMetadataAction(this, RemoteStoreMetadataAction.INSTANCE).execute((RemoteStoreMetadataRequest) request,
+                    (ActionListener<RemoteStoreMetadataResponse>) listener);
+        });
 
         // Reindex / Update-By-Query / Delete-By-Query APIs
+        actions.put(ReindexAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.index.reindex.ReindexAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<BulkByScrollResponse> actionListener = (ActionListener<BulkByScrollResponse>) listener;
+            new HttpReindexAction(this, ReindexAction.INSTANCE).execute((ReindexRequest) request, actionListener);
+        });
+        actions.put(UpdateByQueryAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.index.reindex.UpdateByQueryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<BulkByScrollResponse> actionListener = (ActionListener<BulkByScrollResponse>) listener;
+            new HttpUpdateByQueryAction(this, UpdateByQueryAction.INSTANCE).execute((UpdateByQueryRequest) request, actionListener);
+        });
+        actions.put(DeleteByQueryAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<BulkByScrollResponse> actionListener = (ActionListener<BulkByScrollResponse>) listener;
+            new HttpDeleteByQueryAction(this, DeleteByQueryAction.INSTANCE).execute((DeleteByQueryRequest) request, actionListener);
+        });
 
         // Point-in-Time (PIT) APIs
         actions.put(CreatePitAction.INSTANCE, (request, listener) -> {
@@ -563,8 +1217,20 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<DeletePitResponse> actionListener = (ActionListener<DeletePitResponse>) listener;
             new HttpDeletePitAction(this, DeletePitAction.INSTANCE).execute((DeletePitRequest) request, actionListener);
         });
+        actions.put(GetAllPitsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.search.GetAllPitsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<GetAllPitNodesResponse> actionListener = (ActionListener<GetAllPitNodesResponse>) listener;
+            new HttpGetAllPitsAction(this, GetAllPitsAction.INSTANCE).execute((GetAllPitNodesRequest) request, actionListener);
+        });
 
         // Resolve Index API
+        actions.put(ResolveIndexAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ResolveIndexAction.Response> actionListener = (ActionListener<ResolveIndexAction.Response>) listener;
+            new HttpResolveIndexAction(this, ResolveIndexAction.INSTANCE).execute((ResolveIndexAction.Request) request, actionListener);
+        });
     }
 
     @Override
@@ -946,6 +1612,30 @@ public class HttpClient extends HttpAbstractClient {
             super(pool);
             setName("eshttp");
         }
+    }
+
+    @Override
+    public void searchView(org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request,
+            ActionListener<SearchResponse> listener) {
+        execute(SearchViewAction.INSTANCE, request, listener);
+    }
+
+    @Override
+    public ActionFuture<SearchResponse> searchView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction.Request request) {
+        return execute(SearchViewAction.INSTANCE, request);
+    }
+
+    @Override
+    public void listViewNames(org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Request request,
+            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listener) {
+        execute(ListViewNamesAction.INSTANCE, request, listener);
+    }
+
+    @Override
+    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Response> listViewNames(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction.Request request) {
+        return execute(ListViewNamesAction.INSTANCE, request);
     }
 
     @Override

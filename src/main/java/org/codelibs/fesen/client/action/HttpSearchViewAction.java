@@ -1,0 +1,137 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import java.io.IOException;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.client.util.UrlUtils;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
+import org.codelibs.fesen.opensearch.action.search.SearchResponse;
+import org.codelibs.fesen.opensearch.action.search.SearchType;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentHelper;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder;
+
+/**
+ * Handles the search view API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpSearchViewAction extends HttpAction {
+
+    /** The search view action. */
+    protected final SearchViewAction action;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the search view action
+     */
+    public HttpSearchViewAction(final HttpClient client, final SearchViewAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the search view request and notifies the listener with the response.
+     *
+     * @param request the search view request
+     * @param listener the listener to be notified with the search response or a failure
+     */
+    public void execute(final SearchViewAction.Request request, final ActionListener<SearchResponse> listener) {
+        getCurlRequest(request).body(getQuerySource(request)).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final SearchResponse searchResponse = SearchResponse.fromXContent(parser);
+                if (searchResponse.getHits() == null) {
+                    listener.onFailure(toOpenSearchException(response, new OpenSearchException("hits is null.")));
+                } else {
+                    listener.onResponse(searchResponse);
+                }
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Converts the search source of the request to a JSON string.
+     *
+     * @param request the search view request
+     * @return the JSON representation of the search source, or null if the request has no source
+     */
+    protected String getQuerySource(final SearchViewAction.Request request) {
+        final SearchSourceBuilder source = request.source();
+        if (source != null) {
+            try {
+                return XContentHelper.toXContent(source, XContentType.JSON, ToXContent.EMPTY_PARAMS, false).utf8ToString();
+            } catch (final IOException e) {
+                throw new OpenSearchException(e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Builds a curl request for the search view request.
+     *
+     * @param request the search view request
+     * @return the curl request
+     */
+    protected CurlRequest getCurlRequest(final SearchViewAction.Request request) {
+        // RestViewAction
+        final CurlRequest curlRequest = client.getCurlRequest(POST, "/views/" + UrlUtils.encode(request.getView()) + "/_search");
+        curlRequest.param("typed_keys", "true");
+        curlRequest.param("batched_reduce_size", Integer.toString(request.getBatchedReduceSize()));
+        if (request.getPreFilterShardSize() != null) {
+            curlRequest.param("pre_filter_shard_size", request.getPreFilterShardSize().toString());
+        }
+        if (request.getMaxConcurrentShardRequests() > 0) {
+            curlRequest.param("max_concurrent_shard_requests", Integer.toString(request.getMaxConcurrentShardRequests()));
+        }
+        if (request.allowPartialSearchResults() != null) {
+            curlRequest.param("allow_partial_search_results", request.allowPartialSearchResults().toString());
+        }
+        if (!SearchType.DEFAULT.equals(request.searchType())) {
+            curlRequest.param("search_type", request.searchType().name().toLowerCase());
+        }
+        if (request.requestCache() != null) {
+            curlRequest.param("request_cache", request.requestCache().toString());
+        }
+        if (request.scroll() != null) {
+            curlRequest.param("scroll", request.scroll().keepAlive().toString());
+        }
+        // RestSearchAction#preparePointInTime rejects [routing], [preference] and
+        // [ccs_minimize_roundtrips] with a 400 whenever the search carries a point in time, and
+        // over HTTP such a 400 on a request with a body manifests as an indefinite hang. A PIT
+        // binds routing and preference itself -- they are given to CreatePitRequest instead.
+        final boolean hasPointInTime = request.source() != null && request.source().pointInTimeBuilder() != null;
+        if (!hasPointInTime) {
+            if (request.routing() != null) {
+                curlRequest.param("routing", request.routing());
+            }
+            if (request.preference() != null) {
+                curlRequest.param("preference", request.preference());
+            }
+            curlRequest.param("ccs_minimize_roundtrips", Boolean.toString(request.isCcsMinimizeRoundtrips()));
+        }
+        return curlRequest;
+    }
+}

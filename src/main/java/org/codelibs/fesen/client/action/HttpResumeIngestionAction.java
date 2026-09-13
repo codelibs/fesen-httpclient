@@ -1,0 +1,163 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import java.io.IOException;
+import java.util.Locale;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.IngestionStateShardFailure;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the resume ingestion API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpResumeIngestionAction extends HttpAction {
+
+    /** The resume ingestion action. */
+    protected final ResumeIngestionAction action;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param client the HTTP client
+     * @param action the resume ingestion action
+     */
+    public HttpResumeIngestionAction(final HttpClient client, final ResumeIngestionAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the resume ingestion request and notifies the listener with the response.
+     *
+     * @param request the resume ingestion request
+     * @param listener the listener to be notified with the resume ingestion response or a failure
+     */
+    public void execute(final ResumeIngestionRequest request, final ActionListener<ResumeIngestionResponse> listener) {
+        String body = null;
+        if (request.getResetSettings().length > 0) {
+            try (final XContentBuilder builder = JsonXContent.contentBuilder()) {
+                builder.startObject();
+                builder.startArray("reset_settings");
+                for (final ResumeIngestionRequest.ResetSettings rs : request.getResetSettings()) {
+                    builder.startObject();
+                    builder.field("shard", rs.getShard());
+                    builder.field("mode", rs.getMode().name().toLowerCase(Locale.ROOT));
+                    builder.field("value", rs.getValue());
+                    builder.endObject();
+                }
+                builder.endArray();
+                builder.endObject();
+                builder.flush();
+                body = BytesReference.bytes(builder).utf8ToString();
+            } catch (final IOException e) {
+                throw new OpenSearchException("Failed to parse a request.", e);
+            }
+        }
+        final CurlRequest curlRequest = getCurlRequest(request);
+        if (body != null) {
+            curlRequest.body(body);
+        }
+        curlRequest.execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final ResumeIngestionResponse resumeIngestionResponse = fromXContent(parser);
+                listener.onResponse(resumeIngestionResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Parses a resume ingestion response from the given parser.
+     *
+     * @param parser the content parser
+     * @return the parsed resume ingestion response
+     * @throws IOException if parsing fails
+     */
+    protected ResumeIngestionResponse fromXContent(final XContentParser parser) throws IOException {
+        boolean acknowledged = false;
+        boolean shardsAcknowledged = false;
+
+        XContentParser.Token token = parser.nextToken();
+        if (token != XContentParser.Token.START_OBJECT) {
+            throw new IOException("Expected START_OBJECT but got " + token);
+        }
+
+        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                final String field = parser.currentName();
+                parser.nextToken();
+                if ("acknowledged".equals(field)) {
+                    acknowledged = parser.booleanValue();
+                } else if ("shards_acknowledged".equals(field)) {
+                    shardsAcknowledged = parser.booleanValue();
+                } else if (token == XContentParser.Token.START_OBJECT || token == XContentParser.Token.START_ARRAY) {
+                    consumeObject(parser);
+                }
+            }
+        }
+
+        return new ResumeIngestionResponse(acknowledged, shardsAcknowledged, new IngestionStateShardFailure[0], "");
+    }
+
+    /**
+     * Consumes the current object or array from the parser, including all nested structures.
+     *
+     * @param parser the content parser
+     * @throws IOException if parsing fails
+     */
+    protected void consumeObject(final XContentParser parser) throws IOException {
+        XContentParser.Token token;
+        int depth = 1;
+        while (depth > 0) {
+            token = parser.nextToken();
+            if (token == XContentParser.Token.START_OBJECT || token == XContentParser.Token.START_ARRAY) {
+                depth++;
+            } else if (token == XContentParser.Token.END_OBJECT || token == XContentParser.Token.END_ARRAY) {
+                depth--;
+            }
+        }
+    }
+
+    /**
+     * Builds a curl request for the resume ingestion request.
+     *
+     * @param request the resume ingestion request
+     * @return the curl request
+     */
+    protected CurlRequest getCurlRequest(final ResumeIngestionRequest request) {
+        // RestResumeIngestionAction
+        final CurlRequest curlRequest = client.getCurlRequest(POST, "/ingestion/_resume", request.indices());
+        if (request.timeout() != null) {
+            curlRequest.param("timeout", request.timeout().toString());
+        }
+        if (request.clusterManagerNodeTimeout() != null) {
+            curlRequest.param("cluster_manager_timeout", request.clusterManagerNodeTimeout().toString());
+        }
+        return curlRequest;
+    }
+}

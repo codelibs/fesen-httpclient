@@ -1,0 +1,77 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.client.util.UrlUtils;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
+import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the delete index template API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpDeleteIndexTemplateAction extends HttpAction {
+
+    /** The delete index template action definition. */
+    protected final DeleteIndexTemplateAction action;
+
+    /**
+     * Creates a new HttpDeleteIndexTemplateAction.
+     *
+     * @param client the HTTP client to send requests with
+     * @param action the delete index template action definition
+     */
+    public HttpDeleteIndexTemplateAction(final HttpClient client, final DeleteIndexTemplateAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the delete index template request asynchronously and notifies the listener with the result.
+     *
+     * @param request the delete index template request
+     * @param listener the listener to notify with the acknowledged response or a failure
+     */
+    public void execute(final DeleteIndexTemplateRequest request, final ActionListener<AcknowledgedResponse> listener) {
+        getCurlRequest(request).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final AcknowledgedResponse deleteIndexTemplateResponse = AcknowledgedResponse.fromXContent(parser);
+                listener.onResponse(deleteIndexTemplateResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the HTTP request for the delete index template request.
+     *
+     * @param request the delete index template request
+     * @return the configured curl request
+     */
+    protected CurlRequest getCurlRequest(final DeleteIndexTemplateRequest request) {
+        // RestDeleteIndexTemplatesAction
+        final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_template/" + UrlUtils.encode(request.name()));
+        if (request.masterNodeTimeout() != null) {
+            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+        }
+        return curlRequest;
+    }
+}

@@ -1,0 +1,82 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the Cancel Tasks API over HTTP for OpenSearch/Elasticsearch, cancelling
+ * tasks running on cluster nodes.
+ */
+public class HttpCancelTasksAction extends HttpAction {
+
+    /** The cancel tasks action definition. */
+    protected final CancelTasksAction action;
+
+    /**
+     * Creates a new HTTP cancel tasks action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the cancel tasks action definition
+     */
+    public HttpCancelTasksAction(final HttpClient client, final CancelTasksAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the cancel tasks request and notifies the listener with the response.
+     *
+     * @param request the cancel tasks request
+     * @param listener the listener notified with the response or a failure
+     */
+    public void execute(final CancelTasksRequest request, final ActionListener<CancelTasksResponse> listener) {
+        getCurlRequest(request).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final CancelTasksResponse cancelTasksResponse = CancelTasksResponse.fromXContent(parser);
+                listener.onResponse(cancelTasksResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the HTTP request for the cancel tasks API endpoint.
+     *
+     * @param request the cancel tasks request
+     * @return the HTTP request to execute
+     */
+    protected CurlRequest getCurlRequest(final CancelTasksRequest request) {
+        // RestCancelTasksAction
+        final CurlRequest curlRequest = client.getCurlRequest(POST, "/_tasks/_cancel");
+        curlRequest.param("task_id", String.valueOf(request.getTaskId()));
+        curlRequest.param("parent_task_id", String.valueOf(request.getParentTaskId()));
+        if (request.getNodes() != null) {
+            curlRequest.param("nodes", String.join(",", request.getNodes()));
+        }
+        if (request.getActions() != null) {
+            curlRequest.param("actions", String.join(",", request.getActions()));
+        }
+        return curlRequest;
+    }
+}

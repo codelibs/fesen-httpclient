@@ -1,0 +1,80 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.client.util.UrlUtils;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the verify repository API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpVerifyRepositoryAction extends HttpAction {
+
+    /** The verify repository action definition. */
+    protected final VerifyRepositoryAction action;
+
+    /**
+     * Creates a new HTTP verify repository action.
+     *
+     * @param client the HTTP client used to send requests
+     * @param action the verify repository action definition
+     */
+    public HttpVerifyRepositoryAction(final HttpClient client, final VerifyRepositoryAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the verify repository request and notifies the listener with the response.
+     *
+     * @param request the verify repository request
+     * @param listener the listener notified with the response or a failure
+     */
+    public void execute(final VerifyRepositoryRequest request, final ActionListener<VerifyRepositoryResponse> listener) {
+        getCurlRequest(request).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final VerifyRepositoryResponse verifyRepositoryResponse = VerifyRepositoryResponse.fromXContent(parser);
+                listener.onResponse(verifyRepositoryResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the curl request for the verify repository API.
+     *
+     * @param request the verify repository request
+     * @return the curl request for the repository verify endpoint
+     */
+    protected CurlRequest getCurlRequest(final VerifyRepositoryRequest request) {
+        // RestVerifyRepositoryAction
+        final CurlRequest curlRequest = client.getCurlRequest(POST, "/_snapshot/" + UrlUtils.encode(request.name()) + "/_verify");
+        if (request.masterNodeTimeout() != null) {
+            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+        }
+        if (request.timeout() != null) {
+            curlRequest.param("timeout", request.timeout().toString());
+        }
+        return curlRequest;
+    }
+}

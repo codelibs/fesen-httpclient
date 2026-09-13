@@ -1,0 +1,99 @@
+/*
+ * Copyright 2012-2025 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package org.codelibs.fesen.client.action;
+
+import java.io.IOException;
+
+import org.codelibs.curl.CurlRequest;
+import org.codelibs.fesen.client.HttpClient;
+import org.codelibs.fesen.client.util.UrlUtils;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+/**
+ * Handles the create snapshot API over HTTP for OpenSearch/Elasticsearch.
+ */
+public class HttpCreateSnapshotAction extends HttpAction {
+
+    /** The create snapshot action. */
+    protected final CreateSnapshotAction action;
+
+    /**
+     * Creates a new HTTP create snapshot action.
+     *
+     * @param client the HTTP client
+     * @param action the create snapshot action
+     */
+    public HttpCreateSnapshotAction(final HttpClient client, final CreateSnapshotAction action) {
+        super(client);
+        this.action = action;
+    }
+
+    /**
+     * Executes the create snapshot request asynchronously.
+     *
+     * @param request the create snapshot request
+     * @param listener the listener notified with the response or a failure
+     */
+    public void execute(final CreateSnapshotRequest request, final ActionListener<CreateSnapshotResponse> listener) {
+        String source = null;
+        try (final XContentBuilder builder = request.toXContent(JsonXContent.contentBuilder(), ToXContent.EMPTY_PARAMS)) {
+            builder.flush();
+            source = BytesReference.bytes(builder).utf8ToString();
+        } catch (final IOException e) {
+            throw new OpenSearchException("Failed to parse a request.", e);
+        }
+        getCurlRequest(request).body(source).execute(response -> {
+            try (final XContentParser parser = createParser(response)) {
+                final CreateSnapshotResponse cancelTasksResponse = CreateSnapshotResponse.fromXContent(parser);
+                listener.onResponse(cancelTasksResponse);
+            } catch (final Exception e) {
+                listener.onFailure(toOpenSearchException(response, e));
+            }
+        }, e -> unwrapOpenSearchException(listener, e));
+    }
+
+    /**
+     * Builds the curl request for the create snapshot API.
+     *
+     * @param request the create snapshot request
+     * @return the curl request
+     */
+    protected CurlRequest getCurlRequest(final CreateSnapshotRequest request) {
+        // RestCreateSnapshotAction
+        final StringBuilder pathBuf = new StringBuilder(100).append("/_snapshot");
+        if (request.repository() != null) {
+            pathBuf.append('/').append(UrlUtils.encode(request.repository()));
+        }
+        if (request.snapshot() != null) {
+            pathBuf.append('/').append(UrlUtils.encode(request.snapshot()));
+        }
+        final CurlRequest curlRequest = client.getCurlRequest(POST, pathBuf.toString());
+        if (request.masterNodeTimeout() != null) {
+            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+        }
+        curlRequest.param("wait_for_completion", String.valueOf(request.waitForCompletion()));
+        return curlRequest;
+    }
+}
