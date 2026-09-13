@@ -64,47 +64,6 @@ public final class Sets {
         return set;
     }
 
-    /**
-     * A sorted set collector
-     *
-     * @opensearch.internal
-     */
-    private static class SortedSetCollector<T> implements Collector<T, SortedSet<T>, SortedSet<T>> {
-
-        @Override
-        public Supplier<SortedSet<T>> supplier() {
-            return TreeSet::new;
-        }
-
-        @Override
-        public BiConsumer<SortedSet<T>, T> accumulator() {
-            return (s, e) -> s.add(e);
-        }
-
-        @Override
-        public BinaryOperator<SortedSet<T>> combiner() {
-            return (s, t) -> {
-                s.addAll(t);
-                return s;
-            };
-        }
-
-        @Override
-        public Function<SortedSet<T>, SortedSet<T>> finisher() {
-            return Function.identity();
-        }
-
-        static final Set<Characteristics> CHARACTERISTICS = Collections.unmodifiableSet(
-            EnumSet.of(Collector.Characteristics.IDENTITY_FINISH)
-        );
-
-        @Override
-        public Set<Characteristics> characteristics() {
-            return CHARACTERISTICS;
-        }
-
-    }
-
     public static <T> Set<T> union(Set<T> left, Set<T> right) {
         Objects.requireNonNull(left);
         Objects.requireNonNull(right);

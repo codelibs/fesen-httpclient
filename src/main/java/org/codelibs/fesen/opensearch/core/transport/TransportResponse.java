@@ -58,21 +58,4 @@ public abstract class TransportResponse implements Writeable {
      * so that reading can mirror writing where we often call <code>super.writeTo(out)</code>.
      */
     public TransportResponse(StreamInput in) throws IOException {}
-
-    /**
-     * Empty transport response
-     *
-     * @opensearch.internal
-     */
-    public static class Empty extends TransportResponse {
-        public static final Empty INSTANCE = new Empty();
-
-        @Override
-        public String toString() {
-            return "Empty{}";
-        }
-
-        @Override
-        public void writeTo(StreamOutput out) throws IOException {}
-    }
 }

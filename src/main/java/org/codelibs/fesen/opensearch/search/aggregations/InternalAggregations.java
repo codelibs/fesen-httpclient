@@ -164,38 +164,4 @@ public final class InternalAggregations extends Aggregations implements Writeabl
 
         return new InternalAggregations(reducedAggregations);
     }
-
-    /**
-     * A counting stream output
-     *
-     * @opensearch.internal
-     */
-    private static class CountingStreamOutput extends StreamOutput {
-        long size = 0;
-
-        @Override
-        public void writeByte(byte b) throws IOException {
-            ++size;
-        }
-
-        @Override
-        public void writeBytes(byte[] b, int offset, int length) throws IOException {
-            size += length;
-        }
-
-        @Override
-        public void flush() throws IOException {}
-
-        @Override
-        public void close() throws IOException {}
-
-        @Override
-        public void reset() throws IOException {
-            size = 0;
-        }
-
-        public long length() {
-            return size;
-        }
-    }
 }

@@ -48,16 +48,6 @@ import java.io.IOException;
  */
 @PublicApi(since = "1.0.0")
 public abstract class TransportRequest implements Writeable, TaskAwareRequest {
-    /**
-     * Empty transport request
-     *
-     * @opensearch.internal
-     */
-    public static class Empty extends TransportRequest {
-        public static final Empty INSTANCE = new Empty();
-
-        public Empty() {}
-    }
 
     /**
      * Parent of this request. Defaults to {@link TaskId#EMPTY_TASK_ID}, meaning "no parent".

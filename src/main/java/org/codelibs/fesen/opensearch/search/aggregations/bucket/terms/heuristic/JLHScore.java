@@ -121,18 +121,4 @@ public class JLHScore extends SignificanceHeuristic {
     public int hashCode() {
         return getClass().hashCode();
     }
-
-    /**
-     * Builder for a JLH Score heuristic
-     *
-     * @opensearch.internal
-     */
-    public static class JLHScoreBuilder implements SignificanceHeuristicBuilder {
-
-        @Override
-        public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-            builder.startObject(NAME).endObject();
-            return builder;
-        }
-    }
 }

@@ -68,41 +68,6 @@ public interface CircuitBreaker {
     String REQUEST = "request";
 
     /**
-     * The type of breaker
-     * can be {@link #MEMORY}, {@link #PARENT}, or {@link #NOOP}
-     *
-     * @opensearch.api
-     */
-    @PublicApi(since = "1.0.0")
-    enum Type {
-        /** A regular or ChildMemoryCircuitBreaker */
-        MEMORY,
-        /** A special parent-type for the hierarchy breaker service */
-        PARENT,
-        /** A breaker where every action is a noop, it never breaks */
-        NOOP;
-
-        /**
-         * Converts string (case-insensitive) to breaker {@link Type}
-         * @param value "noop", "parent", or "memory" (case-insensitive)
-         * @return the breaker {@link Type}
-         * @throws IllegalArgumentException if value is not "noop", "parent", or "memory"
-         */
-        public static Type parseValue(String value) {
-            switch (value.toLowerCase(Locale.ROOT)) {
-                case "noop":
-                    return Type.NOOP;
-                case "parent":
-                    return Type.PARENT;
-                case "memory":
-                    return Type.MEMORY;
-                default:
-                    throw new IllegalArgumentException("No CircuitBreaker with type: " + value);
-            }
-        }
-    }
-
-    /**
      * The breaker durability
      * can be {@link #TRANSIENT} or {@link #PERMANENT}
      * @opensearch.internal

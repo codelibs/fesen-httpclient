@@ -212,40 +212,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         Builder.writeToThin(this, out);
     }
 
-    private static class NodeRankComparator implements Comparator<ShardRouting> {
-        private final Map<String, Double> nodeRanks;
-
-        NodeRankComparator(Map<String, Double> nodeRanks) {
-            this.nodeRanks = nodeRanks;
-        }
-
-        @Override
-        public int compare(ShardRouting s1, ShardRouting s2) {
-            if (s1.currentNodeId().equals(s2.currentNodeId())) {
-                // these shards on the same node
-                return 0;
-            }
-            Double shard1rank = nodeRanks.get(s1.currentNodeId());
-            Double shard2rank = nodeRanks.get(s2.currentNodeId());
-            if (shard1rank != null) {
-                if (shard2rank != null) {
-                    return shard1rank.compareTo(shard2rank);
-                } else {
-                    // place non-nulls after null values
-                    return 1;
-                }
-            } else {
-                if (shard2rank != null) {
-                    // place nulls before non-null values
-                    return -1;
-                } else {
-                    // Both nodes do not have stats, they are equal
-                    return 0;
-                }
-            }
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

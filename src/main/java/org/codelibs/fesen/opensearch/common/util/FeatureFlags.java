@@ -294,13 +294,5 @@ public class FeatureFlags {
                 writeLocks.remove(flag);
             }
         }
-
-        /**
-         * For critical sections run as lambdas which may throw exceptions.
-         */
-        @FunctionalInterface
-        public interface ThrowingRunnable {
-            void run() throws Exception;
-        }
     }
 }

@@ -197,33 +197,4 @@ public final class IngestDocument {
             return fieldName;
         }
     }
-
-    private class FieldPath {
-
-        private final String[] pathElements;
-        private final Object initialContext;
-
-        private FieldPath(String path) {
-            if (Strings.isEmpty(path)) {
-                throw new IllegalArgumentException("path cannot be null nor empty");
-            }
-            String newPath;
-            if (path.startsWith(INGEST_KEY_PREFIX)) {
-                initialContext = ingestMetadata;
-                newPath = path.substring(INGEST_KEY_PREFIX.length(), path.length());
-            } else {
-                initialContext = sourceAndMetadata;
-                if (path.startsWith(SOURCE_PREFIX)) {
-                    newPath = path.substring(SOURCE_PREFIX.length(), path.length());
-                } else {
-                    newPath = path;
-                }
-            }
-            this.pathElements = newPath.split("\\.");
-            if (pathElements.length == 1 && pathElements[0].isEmpty()) {
-                throw new IllegalArgumentException("path [" + path + "] is not valid");
-            }
-        }
-
-    }
 }

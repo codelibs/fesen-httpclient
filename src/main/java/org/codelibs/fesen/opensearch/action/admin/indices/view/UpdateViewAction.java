@@ -28,28 +28,4 @@ public class UpdateViewAction extends ActionType<GetViewAction.Response> {
         super(NAME, GetViewAction.Response::new);
     }
 
-    /** Request for update view */
-    @ExperimentalApi
-    public static class Request {
-        @SuppressWarnings("unchecked")
-        private static final ConstructingObjectParser<CreateViewAction.Request, String> PARSER = new ConstructingObjectParser<>(
-            "create_view_request",
-            false,
-            (args, viewName) -> new CreateViewAction.Request(viewName, (String) args[0], (List<CreateViewAction.Request.Target>) args[1])
-        );
-
-        static {
-            PARSER.declareString(ConstructingObjectParser.optionalConstructorArg(), View.DESCRIPTION_FIELD);
-            PARSER.declareObjectArray(
-                ConstructingObjectParser.constructorArg(),
-                (p, c) -> CreateViewAction.Request.Target.fromXContent(p),
-                View.TARGETS_FIELD
-            );
-        }
-
-        public static CreateViewAction.Request fromXContent(final XContentParser parser, final String viewName) throws IOException {
-            return PARSER.parse(parser, viewName);
-        }
-    }
-
 }

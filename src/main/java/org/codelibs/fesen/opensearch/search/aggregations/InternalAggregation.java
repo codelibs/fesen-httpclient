@@ -65,23 +65,6 @@ import static java.util.Objects.requireNonNull;
  */
 @PublicApi(since = "1.0.0")
 public abstract class InternalAggregation implements Aggregation, NamedWriteable {
-    /**
-     * Builds {@link ReduceContext}.
-     *
-     * @opensearch.api
-     */
-    @PublicApi(since = "1.0.0")
-    public interface ReduceContextBuilder {
-        /**
-         * Build a {@linkplain ReduceContext} to perform a partial reduction.
-         */
-        ReduceContext forPartialReduction();
-
-        /**
-         * Build a {@linkplain ReduceContext} to perform the final reduction.
-         */
-        ReduceContext forFinalReduction();
-    }
 
     /**
      * The reduce context

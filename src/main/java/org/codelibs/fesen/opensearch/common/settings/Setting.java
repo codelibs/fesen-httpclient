@@ -849,50 +849,6 @@ public class Setting<T> implements ToXContentObject {
         return properties != null && Arrays.asList(properties).contains(Property.Filtered);
     }
 
-    /**
-     * A writeable validator able to check the value of string type custom setting by using regular expression
-     */
-    public static class RegexValidator implements Writeable, Validator<String> {
-        private Pattern pattern;
-
-        private boolean isMatching;
-
-        /**
-         * @param regex A regular expression containing the only valid input for this setting.
-         */
-        public RegexValidator(String regex) {
-            this(regex, true);
-        }
-
-        /**
-         * @param regex constructs a validator based on a regular expression.
-         * @param isMatching If true, the setting must match the given regex. If false, the setting must not match the given regex.
-         */
-        public RegexValidator(String regex, boolean isMatching) {
-            this.pattern = Pattern.compile(regex);
-            this.isMatching = isMatching;
-        }
-
-        Pattern getPattern() {
-            return pattern;
-        }
-
-        @Override
-        public void validate(String value) {
-            if (isMatching && !pattern.matcher(value).find()) {
-                throw new IllegalArgumentException("Setting [" + value + "] does not match regex [" + pattern.pattern() + "]");
-            } else if (!isMatching && pattern.matcher(value).find()) {
-                throw new IllegalArgumentException("Setting [" + value + "] must match regex [" + pattern.pattern() + "]");
-            }
-        }
-
-        @Override
-        public void writeTo(StreamOutput out) throws IOException {
-            out.writeString(pattern.pattern());
-            out.writeBoolean(isMatching);
-        }
-    }
-
     // Float
 
     private static float parseFloat(String s, float minValue, float maxValue, String key, boolean isFiltered) {
@@ -909,67 +865,6 @@ public class Setting<T> implements ToXContentObject {
     }
 
     // Setting<Float> with defaultValue
-
-    /**
-     * A writeable parser for float
-     *
-     */
-    public static class FloatParser implements Function<String, Float>, Writeable {
-        private float minValue;
-        private float maxValue;
-        private String key;
-        private boolean isFiltered;
-
-        public FloatParser(float minValue, float maxValue, String key, boolean isFiltered) {
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-            this.key = key;
-            this.isFiltered = isFiltered;
-        }
-
-        @Override
-        public void writeTo(StreamOutput out) throws IOException {
-            out.writeFloat(minValue);
-            out.writeFloat(maxValue);
-            out.writeString(key);
-            out.writeBoolean(isFiltered);
-        }
-
-        public float getMin() {
-            return minValue;
-        }
-
-        public float getMax() {
-            return maxValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public boolean getFilterStatus() {
-            return isFiltered;
-        }
-
-        @Override
-        public Float apply(String s) {
-            return parseFloat(s, minValue, maxValue, key, isFiltered);
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            FloatParser that = (FloatParser) obj;
-            return Objects.equals(key, that.key)
-                && Objects.equals(minValue, that.minValue)
-                && Objects.equals(maxValue, that.maxValue)
-                && Objects.equals(isFiltered, that.isFiltered);
-        }
-
-        public int hashCode() {
-            return Objects.hash(minValue, maxValue, key, isFiltered);
-        }
-    }
 
     // Setting<Float> with fallback
 
@@ -1643,67 +1538,6 @@ public class Setting<T> implements ToXContentObject {
             new MinTimeValueParser(key, minValue, isFiltered(properties)),
             properties
         );
-    }
-
-    /**
-     * A writeable parser for time value have min and max value
-     *
-     */
-    public static class MinMaxTimeValueParser implements Function<String, TimeValue>, Writeable {
-        private String key;
-        private TimeValue minValue;
-        private TimeValue maxValue;
-        private boolean isFiltered;
-
-        public MinMaxTimeValueParser(String key, TimeValue minValue, TimeValue maxValue, boolean isFiltered) {
-            this.key = key;
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-            this.isFiltered = isFiltered;
-        }
-
-        @Override
-        public void writeTo(StreamOutput out) throws IOException {
-            out.writeString(key);
-            out.writeTimeValue(minValue);
-            out.writeTimeValue(maxValue);
-            out.writeBoolean(isFiltered);
-        }
-
-        public TimeValue getMin() {
-            return minValue;
-        }
-
-        public TimeValue getMax() {
-            return maxValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public boolean getFilterStatus() {
-            return isFiltered;
-        }
-
-        @Override
-        public TimeValue apply(String s) {
-            return minMaxTimeValueParser(key, minValue, maxValue, isFiltered).apply(s);
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            MinMaxTimeValueParser that = (MinMaxTimeValueParser) obj;
-            return Objects.equals(key, that.key)
-                && Objects.equals(minValue, that.minValue)
-                && Objects.equals(maxValue, that.maxValue)
-                && Objects.equals(isFiltered, that.isFiltered);
-        }
-
-        public int hashCode() {
-            return Objects.hash(key, minValue, maxValue, isFiltered);
-        }
     }
 
     private static Function<String, TimeValue> minTimeValueParser(final String key, final TimeValue minValue, boolean isFiltered) {

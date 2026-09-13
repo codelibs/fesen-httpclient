@@ -43,27 +43,11 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 @PublicApi(since = "1.0.0")
 public abstract class ValuesSource {
 
-    /** A source of range values. */
-    public abstract static class Range extends ValuesSource {
-    }
-
-    /** A source of byte (keyword-like) values. */
-    public abstract static class Bytes extends ValuesSource {
-
-        /** A source of byte values backed by global ordinals. */
-        public abstract static class WithOrdinals extends Bytes {
-        }
-    }
-
     /** A source of numeric values. */
     public abstract static class Numeric extends ValuesSource {
     }
 
     /** A source of geo-point values. */
     public abstract static class GeoPoint extends ValuesSource {
-    }
-
-    /** A source of geo-shape values. */
-    public abstract static class GeoShape extends ValuesSource {
     }
 }

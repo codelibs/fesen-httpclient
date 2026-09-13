@@ -190,24 +190,4 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
             return ctor.apply(includeNegatives, backgroundIsSuperset);
         };
     }
-
-    /**
-     * Builder for a NXY Significance heuristic
-     *
-     * @opensearch.internal
-     */
-    protected abstract static class NXYBuilder implements SignificanceHeuristicBuilder {
-        protected boolean includeNegatives = true;
-        protected boolean backgroundIsSuperset = true;
-
-        public NXYBuilder(boolean includeNegatives, boolean backgroundIsSuperset) {
-            this.includeNegatives = includeNegatives;
-            this.backgroundIsSuperset = backgroundIsSuperset;
-        }
-
-        protected void build(XContentBuilder builder) throws IOException {
-            builder.field(INCLUDE_NEGATIVES_FIELD.getPreferredName(), includeNegatives)
-                .field(BACKGROUND_IS_SUPERSET.getPreferredName(), backgroundIsSuperset);
-        }
-    }
 }

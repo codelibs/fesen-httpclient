@@ -831,28 +831,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
     }
 
     /**
-     * Script filter source
-     *
-     * @opensearch.internal
-     */
-    static class ScriptFilterSource extends FilteredIntervalsSource {
-
-        final IntervalFilterScript script;
-        IntervalFilterScript.Interval interval = new IntervalFilterScript.Interval();
-
-        ScriptFilterSource(IntervalsSource in, String name, IntervalFilterScript script) {
-            super("FILTER(" + name + ")", in);
-            this.script = script;
-        }
-
-        @Override
-        protected boolean accept(IntervalIterator it) {
-            interval.setIterator(it);
-            return script.execute(interval);
-        }
-    }
-
-    /**
      * An interval filter
      *
      * @opensearch.internal
