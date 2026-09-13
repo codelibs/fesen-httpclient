@@ -41,7 +41,6 @@ import org.codelibs.fesen.opensearch.cluster.routing.RecoverySource.RemoteStoreR
 import org.codelibs.fesen.opensearch.cluster.routing.RecoverySource.SnapshotRecoverySource;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.util.iterable.Iterables;
 import org.codelibs.fesen.opensearch.core.common.io.stream.BufferedChecksumStreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;

@@ -83,7 +83,6 @@ import org.apache.lucene.util.Version;
 import org.codelibs.fesen.opensearch.ExceptionsHelper;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.SuppressForbidden;
-import org.codelibs.fesen.opensearch.common.util.iterable.Iterables;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;

@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.cluster.applicationtemplates.SystemTemplate
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlock;
 import org.codelibs.fesen.opensearch.cluster.block.ClusterBlockLevel;
 import org.codelibs.fesen.opensearch.cluster.coordination.CoordinationMetadata;
-import org.codelibs.fesen.opensearch.cluster.decommission.DecommissionAttributeMetadata;
 import org.codelibs.fesen.opensearch.cluster.routing.RoutingPool;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.UUIDs;
