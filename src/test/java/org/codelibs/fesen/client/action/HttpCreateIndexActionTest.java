@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
+import org.opensearch.action.admin.indices.alias.Alias;
 import org.opensearch.action.admin.indices.create.CreateIndexAction;
 import org.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.opensearch.common.xcontent.json.JsonXContent;
@@ -109,5 +110,34 @@ class HttpCreateIndexActionTest {
         assertTrue(result.contains("field1"));
         // The _doc wrapper should be unwrapped
         assertFalse(result.contains("_doc"));
+    }
+
+    /**
+     * An alias the caller did not mark must not be sent as is_write_index=false: that makes the
+     * alias read-only, and indexing through it then fails with "no write index is defined for
+     * alias", even though the alias points at a single index. Alias.toXContent writes the field
+     * unconditionally, so it goes out as null, which the create-index API treats as unset.
+     */
+    @Test
+    void test_innerToXContent_aliasWriteIndexNotForcedToFalse() throws IOException {
+        final String rendered = renderAliases(new Alias("test-alias"));
+        assertFalse(rendered.contains("\"is_write_index\":false"));
+        assertTrue(rendered.contains("\"is_write_index\":null"));
+    }
+
+    @Test
+    void test_innerToXContent_aliasWriteIndexKeptWhenCallerSetIt() throws IOException {
+        assertTrue(renderAliases(new Alias("test-alias").writeIndex(true)).contains("\"is_write_index\":true"));
+        assertTrue(renderAliases(new Alias("test-alias").writeIndex(false)).contains("\"is_write_index\":false"));
+    }
+
+    private String renderAliases(final Alias alias) throws IOException {
+        final HttpCreateIndexAction action = new HttpCreateIndexAction(null, CreateIndexAction.INSTANCE);
+        final CreateIndexRequest request = new CreateIndexRequest("test-index").alias(alias);
+        final XContentBuilder builder = JsonXContent.contentBuilder();
+        builder.startObject();
+        action.innerToXContent(request, builder, ToXContent.EMPTY_PARAMS);
+        builder.endObject();
+        return BytesReference.bytes(builder).utf8ToString();
     }
 }
