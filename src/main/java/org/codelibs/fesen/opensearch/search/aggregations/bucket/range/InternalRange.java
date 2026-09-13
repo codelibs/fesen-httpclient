@@ -278,32 +278,6 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
         this.keyed = keyed;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalRange(StreamInput in) throws IOException {
-        super(in);
-        format = in.readNamedWriteable(DocValueFormat.class);
-        keyed = in.readBoolean();
-        int size = in.readVInt();
-        List<B> ranges = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            String key = in.readString();
-            ranges.add(
-                getFactory().createBucket(
-                    key,
-                    in.readDouble(),
-                    in.readDouble(),
-                    in.readVLong(),
-                    InternalAggregations.readFrom(in),
-                    keyed,
-                    format
-                )
-            );
-        }
-        this.ranges = ranges;
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeNamedWriteable(format);

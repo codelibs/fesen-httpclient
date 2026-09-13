@@ -84,15 +84,6 @@ public class Alias implements Writeable, ToXContentFragment {
     @Nullable
     private Boolean isHidden;
 
-    public Alias(StreamInput in) throws IOException {
-        name = in.readString();
-        filter = in.readOptionalString();
-        indexRouting = in.readOptionalString();
-        searchRouting = in.readOptionalString();
-        writeIndex = in.readOptionalBoolean();
-        isHidden = in.readOptionalBoolean();
-    }
-
     public Alias(String name) {
         this.name = name;
     }

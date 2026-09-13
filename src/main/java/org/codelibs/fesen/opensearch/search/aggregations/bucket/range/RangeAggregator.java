@@ -107,17 +107,6 @@ public final class RangeAggregator {
             this(key, null, from, null, to);
         }
 
-        /**
-         * Read from a stream.
-         */
-        public Range(StreamInput in) throws IOException {
-            key = in.readOptionalString();
-            fromAsStr = in.readOptionalString();
-            toAsStr = in.readOptionalString();
-            from = in.readDouble();
-            to = in.readDouble();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeOptionalString(key);

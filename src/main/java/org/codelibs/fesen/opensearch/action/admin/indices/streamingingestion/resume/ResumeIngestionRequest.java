@@ -127,12 +127,6 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
             this.value = value;
         }
 
-        public ResetSettings(StreamInput in) throws IOException {
-            this.shard = in.readVInt();
-            this.mode = in.readEnum(ResetMode.class);
-            this.value = in.readString();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeVInt(shard);

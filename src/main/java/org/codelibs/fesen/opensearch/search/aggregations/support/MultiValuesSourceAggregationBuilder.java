@@ -80,13 +80,6 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
             }
         }
 
-        /**
-         * Read from a stream that does not serialize its targetValueType. This should be used by most subclasses.
-         */
-        protected LeafOnly(StreamInput in) throws IOException {
-            super(in);
-        }
-
         @Override
         public AB subAggregations(Builder subFactories) {
             throw new AggregationInitializationException(

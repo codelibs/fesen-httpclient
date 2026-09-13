@@ -86,14 +86,6 @@ public final class FiltersAggregator {
             this.filter = filter;
         }
 
-        /**
-         * Read from a stream.
-         */
-        public KeyedFilter(StreamInput in) throws IOException {
-            key = in.readString();
-            filter = in.readNamedWriteable(QueryBuilder.class);
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeString(key);

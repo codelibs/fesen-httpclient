@@ -107,18 +107,6 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         this.maxDeterminizedStates = maxDeterminizedStates;
     }
 
-    /**
-     * Read from a stream.
-     */
-    FuzzyOptions(StreamInput in) throws IOException {
-        transpositions = in.readBoolean();
-        unicodeAware = in.readBoolean();
-        editDistance = in.readVInt();
-        fuzzyMinLength = in.readVInt();
-        fuzzyPrefixLength = in.readVInt();
-        maxDeterminizedStates = in.readVInt();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeBoolean(transpositions);

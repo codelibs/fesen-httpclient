@@ -56,12 +56,6 @@ public class BroadcastRequest<Request extends BroadcastRequest<Request>> extends
 
     protected boolean shouldCancelOnTimeout = false;
 
-    public BroadcastRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
     protected BroadcastRequest(String... indices) {
         this.indices = indices;
     }

@@ -96,19 +96,6 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
         shardSize = in.shardSize;
     }
 
-    /**
-     * Read from a stream.
-     */
-    protected SuggestionBuilder(StreamInput in) throws IOException {
-        field = in.readString();
-        text = in.readOptionalString();
-        prefix = in.readOptionalString();
-        regex = in.readOptionalString();
-        analyzer = in.readOptionalString();
-        size = in.readOptionalVInt();
-        shardSize = in.readOptionalVInt();
-    }
-
     @Override
     public final void writeTo(StreamOutput out) throws IOException {
         out.writeString(field);

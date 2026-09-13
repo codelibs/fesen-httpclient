@@ -138,16 +138,6 @@ public abstract class DecayFunctionBuilder<DFB extends DecayFunctionBuilder<DFB>
         this.functionBytes = functionBytes;
     }
 
-    /**
-     * Read from a stream.
-     */
-    protected DecayFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-        fieldName = in.readString();
-        functionBytes = in.readBytesReference();
-        multiValueMode = MultiValueMode.readMultiValueModeFrom(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeString(fieldName);

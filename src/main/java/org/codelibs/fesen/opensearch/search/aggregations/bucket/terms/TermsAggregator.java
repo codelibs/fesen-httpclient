@@ -77,16 +77,6 @@ public final class TermsAggregator {
             this.shardSize = shardSize;
         }
 
-        /**
-         * Read from a stream.
-         */
-        public BucketCountThresholds(StreamInput in) throws IOException {
-            requiredSize = in.readInt();
-            shardSize = in.readInt();
-            minDocCount = in.readLong();
-            shardMinDocCount = in.readLong();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeInt(requiredSize);

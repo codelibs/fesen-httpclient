@@ -55,11 +55,6 @@ public final class DecommissionAttribute implements Writeable {
         return this.attributeValue;
     }
 
-    public DecommissionAttribute(StreamInput in) throws IOException {
-        attributeName = in.readString();
-        attributeValue = in.readString();
-    }
-
     /**
      * Writes decommission attribute name value to stream output
      *

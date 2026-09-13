@@ -101,26 +101,6 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
         this.field = field;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public DirectCandidateGeneratorBuilder(StreamInput in) throws IOException {
-        field = in.readString();
-        suggestMode = in.readOptionalString();
-        accuracy = in.readOptionalFloat();
-        size = in.readOptionalVInt();
-        sort = in.readOptionalString();
-        stringDistance = in.readOptionalString();
-        maxEdits = in.readOptionalVInt();
-        maxInspections = in.readOptionalVInt();
-        maxTermFreq = in.readOptionalFloat();
-        prefixLength = in.readOptionalVInt();
-        minWordLength = in.readOptionalVInt();
-        minDocFreq = in.readOptionalFloat();
-        preFilter = in.readOptionalString();
-        postFilter = in.readOptionalString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(field);

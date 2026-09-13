@@ -124,13 +124,6 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
             super(key(key, from, to), from == null ? 0 : from, to);
         }
 
-        /**
-         * Read from a stream.
-         */
-        public Range(StreamInput in) throws IOException {
-            super(in.readOptionalString(), in.readDouble(), in.readDouble());
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeOptionalString(key);

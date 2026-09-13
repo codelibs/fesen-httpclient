@@ -72,15 +72,6 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
         this.aggregations = aggregations;
     }
 
-    /**
-     * Read from a stream.
-     */
-    protected InternalSingleBucketAggregation(StreamInput in) throws IOException {
-        super(in);
-        docCount = in.readVLong();
-        aggregations = InternalAggregations.readFrom(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeVLong(docCount);

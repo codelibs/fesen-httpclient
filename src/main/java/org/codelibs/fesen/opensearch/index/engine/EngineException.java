@@ -55,8 +55,4 @@ public class EngineException extends OpenSearchException {
         super(msg, cause, params);
         setShard(shardId);
     }
-
-    public EngineException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

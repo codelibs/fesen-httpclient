@@ -29,12 +29,6 @@ public class PageParams implements Writeable {
     private final String sort;
     private final int size;
 
-    public PageParams(StreamInput in) throws IOException {
-        this.requestedTokenStr = in.readOptionalString();
-        this.sort = in.readOptionalString();
-        this.size = in.readInt();
-    }
-
     public PageParams(String requestedToken, String sort, int size) {
         this.requestedTokenStr = requestedToken;
         this.sort = sort;

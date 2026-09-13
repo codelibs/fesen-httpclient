@@ -129,16 +129,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
         this.maxAsStr = maxAsStr;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public LongBounds(StreamInput in) throws IOException {
-        min = in.readOptionalLong();
-        max = in.readOptionalLong();
-        minAsStr = in.readOptionalString();
-        maxAsStr = in.readOptionalString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeOptionalLong(min);

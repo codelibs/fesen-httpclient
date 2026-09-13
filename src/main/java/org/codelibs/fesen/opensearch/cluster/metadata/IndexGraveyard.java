@@ -339,12 +339,6 @@ public final class IndexGraveyard implements Metadata.Custom {
             this.deleteDateInMillis = deleteDateInMillis;
         }
 
-        // create from stream
-        private Tombstone(StreamInput in) throws IOException {
-            index = new Index(in);
-            deleteDateInMillis = in.readLong();
-        }
-
         @Override
         public void writeTo(final StreamOutput out) throws IOException {
             index.writeTo(out);

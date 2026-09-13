@@ -127,20 +127,6 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
      */
     private int slices = DEFAULT_SLICES;
 
-    public AbstractBulkByScrollRequest(StreamInput in) throws IOException {
-        super(in);
-        searchRequest = new SearchRequest(in);
-        abortOnVersionConflict = in.readBoolean();
-        maxDocs = in.readVInt();
-        refresh = in.readBoolean();
-        timeout = in.readTimeValue();
-        activeShardCount = ActiveShardCount.readFrom(in);
-        retryBackoffInitialTime = in.readTimeValue();
-        maxRetries = in.readVInt();
-        requestsPerSecond = in.readFloat();
-        slices = in.readVInt();
-    }
-
     /**
      * Constructor for actual use.
      *

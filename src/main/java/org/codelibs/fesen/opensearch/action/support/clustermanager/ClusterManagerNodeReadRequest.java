@@ -51,11 +51,6 @@ public abstract class ClusterManagerNodeReadRequest<Request extends ClusterManag
 
     protected ClusterManagerNodeReadRequest() {}
 
-    protected ClusterManagerNodeReadRequest(StreamInput in) throws IOException {
-        super(in);
-        local = in.readBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

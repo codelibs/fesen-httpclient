@@ -58,10 +58,6 @@ public final class RepositoryShardId implements Writeable {
         this.shard = shard;
     }
 
-    public RepositoryShardId(StreamInput in) throws IOException {
-        this(new IndexId(in), in.readVInt());
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(index, shard);

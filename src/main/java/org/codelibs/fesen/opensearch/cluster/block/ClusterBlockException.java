@@ -66,11 +66,6 @@ public class ClusterBlockException extends OpenSearchException {
         this.blocks = indexLevelBlocks.values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
     }
 
-    public ClusterBlockException(StreamInput in) throws IOException {
-        super(in);
-        this.blocks = unmodifiableSet(in.readSet(ClusterBlock::new));
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

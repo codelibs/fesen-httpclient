@@ -63,13 +63,6 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
             super(name, metadata);
         }
 
-        /**
-         * Read from a stream.
-         */
-        protected SingleValue(StreamInput in) throws IOException {
-            super(in);
-        }
-
         @Override
         public String getValueAsString() {
             return format.format(value()).toString();
@@ -109,13 +102,6 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
     public abstract static class MultiValue extends InternalNumericMetricsAggregation implements NumericMetricsAggregation.MultiValue {
         protected MultiValue(String name, Map<String, Object> metadata) {
             super(name, metadata);
-        }
-
-        /**
-         * Read from a stream.
-         */
-        protected MultiValue(StreamInput in) throws IOException {
-            super(in);
         }
 
         public abstract double value(String name);

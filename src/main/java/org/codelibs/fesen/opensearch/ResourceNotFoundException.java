@@ -51,10 +51,6 @@ public class ResourceNotFoundException extends OpenSearchException {
         super(msg, cause, args);
     }
 
-    public ResourceNotFoundException(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public final RestStatus status() {
         return RestStatus.NOT_FOUND;

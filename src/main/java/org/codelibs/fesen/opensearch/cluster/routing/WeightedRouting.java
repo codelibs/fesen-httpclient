@@ -44,10 +44,6 @@ public class WeightedRouting implements Writeable {
         this(weightedRouting.attributeName(), weightedRouting.weights);
     }
 
-    public WeightedRouting(StreamInput in) throws IOException {
-        this(in.readString(), (Map<String, Double>) in.readGenericValue());
-    }
-
     public boolean isSet() {
         return this.attributeName != null && !this.attributeName.isEmpty() && this.weights != null && !this.weights.isEmpty();
     }

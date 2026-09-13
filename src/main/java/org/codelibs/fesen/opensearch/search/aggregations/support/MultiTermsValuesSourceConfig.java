@@ -102,13 +102,6 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
         this.includeExclude = includeExclude;
     }
 
-    public MultiTermsValuesSourceConfig(StreamInput in) throws IOException {
-        super(in);
-        this.userValueTypeHint = in.readOptionalWriteable(ValueType::readFromStream);
-        this.format = in.readOptionalString();
-        this.includeExclude = in.readOptionalWriteable(IncludeExclude::new);
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalWriteable(userValueTypeHint);

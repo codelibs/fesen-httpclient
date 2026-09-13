@@ -173,12 +173,6 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
             }
         }
 
-        private Range(StreamInput in) throws IOException {
-            this.key = in.readOptionalString();
-            this.from = in.readOptionalString();
-            this.to = in.readOptionalString();
-        }
-
         void writeTo(StreamOutput out) throws IOException {
             out.writeOptionalString(key);
             out.writeOptionalString(from);

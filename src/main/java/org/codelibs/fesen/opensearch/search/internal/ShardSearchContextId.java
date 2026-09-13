@@ -55,11 +55,6 @@ public final class ShardSearchContextId implements Writeable {
         this.id = id;
     }
 
-    public ShardSearchContextId(StreamInput in) throws IOException {
-        this.id = in.readLong();
-        this.sessionId = in.readString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeLong(id);

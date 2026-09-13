@@ -127,21 +127,6 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
         this.fieldName = fieldName;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public FieldSortBuilder(StreamInput in) throws IOException {
-        fieldName = in.readString();
-        nestedFilter = in.readOptionalNamedWriteable(QueryBuilder.class);
-        nestedPath = in.readOptionalString();
-        missing = in.readGenericValue();
-        order = in.readOptionalWriteable(SortOrder::readFromStream);
-        sortMode = in.readOptionalWriteable(SortMode::readFromStream);
-        unmappedType = in.readOptionalString();
-        nestedSort = in.readOptionalWriteable(NestedSortBuilder::new);
-        numericType = in.readOptionalString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(fieldName);
