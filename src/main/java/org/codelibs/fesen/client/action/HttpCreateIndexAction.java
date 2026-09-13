@@ -20,22 +20,22 @@ import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.admin.indices.alias.Alias;
-import org.opensearch.action.admin.indices.create.CreateIndexAction;
-import org.opensearch.action.admin.indices.create.CreateIndexRequest;
-import org.opensearch.action.admin.indices.create.CreateIndexResponse;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.ParseField;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.ToXContent;
-import org.opensearch.core.xcontent.ToXContent.Params;
-import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.Alias;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexResponse;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.ParseField;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent.Params;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the create index API over HTTP for OpenSearch/Elasticsearch.
@@ -139,9 +139,12 @@ public class HttpCreateIndexAction extends HttpAction {
 
         builder.startObject(ALIASES.getPreferredName());
         for (final Alias alias : request.aliases()) {
-            if (alias.writeIndex() == null) {
-                alias.writeIndex(false);
-            }
+            // Alias.toXContent omits is_write_index when the caller did not set it. Forcing
+            // false made every alias created through this action read-only, so indexing through
+            // an alias failed with "no write index is defined for alias [...]" even when the
+            // alias pointed at a single index - which the transport client accepts as writable;
+            // rendering it as null is rejected outright by Elasticsearch 8 with
+            // "Unknown token [VALUE_NULL] in alias [...]".
             alias.toXContent(builder, params);
         }
         builder.endObject();

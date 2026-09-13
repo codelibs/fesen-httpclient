@@ -22,9 +22,9 @@ import java.util.Map;
 
 import org.codelibs.fesen.client.EngineInfo.EngineType;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
-import org.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
 
 class HttpForceMergeActionTest {
 

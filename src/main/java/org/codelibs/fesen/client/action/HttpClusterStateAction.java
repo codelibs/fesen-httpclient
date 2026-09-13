@@ -22,13 +22,13 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.cluster.state.ClusterStateAction;
-import org.opensearch.action.admin.cluster.state.ClusterStateRequest;
-import org.opensearch.action.admin.cluster.state.ClusterStateResponse;
-import org.opensearch.cluster.ClusterName;
-import org.opensearch.cluster.ClusterState;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.state.ClusterStateResponse;
+import org.codelibs.fesen.opensearch.cluster.ClusterName;
+import org.codelibs.fesen.opensearch.cluster.ClusterState;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the cluster state API over HTTP for OpenSearch/Elasticsearch.

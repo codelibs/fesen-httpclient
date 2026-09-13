@@ -21,13 +21,13 @@ import java.util.Collections;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsAction;
-import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsGroup;
-import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequest;
-import org.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse;
-import org.opensearch.cluster.node.DiscoveryNode;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsGroup;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse;
+import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the cluster search shards API over HTTP for OpenSearch/Elasticsearch.

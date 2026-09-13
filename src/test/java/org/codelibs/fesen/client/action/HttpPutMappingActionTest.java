@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.mapping.put.PutMappingAction;
-import org.opensearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMappingAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMappingRequest;
 
 class HttpPutMappingActionTest {
 

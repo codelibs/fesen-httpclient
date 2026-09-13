@@ -23,16 +23,16 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusAction;
-import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
-import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
-import org.opensearch.cluster.routing.RecoverySource;
-import org.opensearch.cluster.routing.ShardRouting;
-import org.opensearch.cluster.routing.UnassignedInfo;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.index.Index;
-import org.opensearch.core.index.shard.ShardId;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
+import org.codelibs.fesen.opensearch.cluster.routing.RecoverySource;
+import org.codelibs.fesen.opensearch.cluster.routing.ShardRouting;
+import org.codelibs.fesen.opensearch.cluster.routing.UnassignedInfo;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.index.Index;
+import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the upgrade status API over HTTP for OpenSearch/Elasticsearch.
@@ -166,7 +166,7 @@ public class HttpUpgradeStatusAction extends HttpAction {
     /**
      * Reconstructs an {@link UpgradeStatusResponse} from the collected per-index aggregates by
      * synthesizing one shard per index over the wire format that
-     * {@link UpgradeStatusResponse#UpgradeStatusResponse(org.opensearch.core.common.io.stream.StreamInput)}
+     * {@link UpgradeStatusResponse#UpgradeStatusResponse(org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput)}
      * reads. The synthetic routing is artificial (a single unassigned primary); only the byte totals
      * are meaningful because the {@code _upgrade} API exposes no per-shard routing.
      *

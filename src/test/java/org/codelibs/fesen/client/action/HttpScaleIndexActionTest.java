@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.scale.searchonly.ScaleIndexAction;
-import org.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.scale.searchonly.ScaleIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
 
 class HttpScaleIndexActionTest {
 

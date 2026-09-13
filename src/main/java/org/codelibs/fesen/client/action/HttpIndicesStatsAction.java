@@ -23,15 +23,15 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.stats.CommonStatsFlags;
-import org.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
-import org.opensearch.action.admin.indices.stats.IndicesStatsAction;
-import org.opensearch.action.admin.indices.stats.IndicesStatsRequest;
-import org.opensearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.opensearch.action.admin.indices.stats.ShardStats;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.action.support.DefaultShardOperationFailedException;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.CommonStatsFlags;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.CommonStatsFlags.Flag;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.ShardStats;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Indices Stats API over HTTP for OpenSearch/Elasticsearch.

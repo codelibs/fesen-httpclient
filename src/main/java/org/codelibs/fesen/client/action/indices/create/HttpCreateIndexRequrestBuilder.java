@@ -17,14 +17,14 @@ package org.codelibs.fesen.client.action.indices.create;
 
 import java.util.Map;
 
-import org.opensearch.action.admin.indices.create.CreateIndexAction;
-import org.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.core.xcontent.MediaType;
-import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.transport.client.OpenSearchClient;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 
 /**
  * A {@link CreateIndexRequestBuilder} for HTTP-based clients that delegates source handling

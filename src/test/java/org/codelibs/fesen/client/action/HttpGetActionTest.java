@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.get.GetAction;
-import org.opensearch.action.get.GetRequest;
-import org.opensearch.search.fetch.subphase.FetchSourceContext;
+import org.codelibs.fesen.opensearch.action.get.GetAction;
+import org.codelibs.fesen.opensearch.action.get.GetRequest;
+import org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext;
 
 class HttpGetActionTest {
 

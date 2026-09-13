@@ -18,11 +18,11 @@ package org.codelibs.fesen.client.action;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusAction;
-import org.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusRequest;
-import org.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.status.SnapshotsStatusResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the snapshots status API over HTTP for OpenSearch/Elasticsearch.

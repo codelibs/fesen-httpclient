@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.OpenSearchException;
-import org.opensearch.action.support.ActiveShardCount;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.core.xcontent.MediaType;
+import org.codelibs.fesen.opensearch.OpenSearchException;
+import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
 
 class HttpActionTest {
 
@@ -129,7 +129,7 @@ class HttpActionTest {
         final OpenSearchException cause = new OpenSearchException("inner error");
         final Exception wrapper = new RuntimeException("outer", cause);
         final boolean[] called = { false };
-        action.unwrapOpenSearchException(new org.opensearch.core.action.ActionListener<>() {
+        action.unwrapOpenSearchException(new org.codelibs.fesen.opensearch.core.action.ActionListener<>() {
             @Override
             public void onResponse(final Object o) {
             }
@@ -147,7 +147,7 @@ class HttpActionTest {
     void test_unwrapOpenSearchException_withoutOpenSearchCause() {
         final RuntimeException original = new RuntimeException("direct error");
         final boolean[] called = { false };
-        action.unwrapOpenSearchException(new org.opensearch.core.action.ActionListener<>() {
+        action.unwrapOpenSearchException(new org.codelibs.fesen.opensearch.core.action.ActionListener<>() {
             @Override
             public void onResponse(final Object o) {
             }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.codelibs.fesen.client.util.UrlUtils;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.view.DeleteViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction;
 
 class HttpDeleteViewActionTest {
 

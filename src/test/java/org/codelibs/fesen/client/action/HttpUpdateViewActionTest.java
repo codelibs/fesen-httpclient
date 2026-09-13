@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.view.CreateViewAction;
-import org.opensearch.action.admin.indices.view.UpdateViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.UpdateViewAction;
 
 class HttpUpdateViewActionTest {
 

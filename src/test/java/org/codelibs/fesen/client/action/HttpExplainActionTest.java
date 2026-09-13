@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.explain.ExplainAction;
-import org.opensearch.action.explain.ExplainRequest;
-import org.opensearch.search.fetch.subphase.FetchSourceContext;
+import org.codelibs.fesen.opensearch.action.explain.ExplainAction;
+import org.codelibs.fesen.opensearch.action.explain.ExplainRequest;
+import org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext;
 
 class HttpExplainActionTest {
 

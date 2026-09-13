@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.search.SearchAction;
-import org.opensearch.action.search.SearchRequest;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.PointInTimeBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.opensearch.action.search.SearchAction;
+import org.codelibs.fesen.opensearch.action.search.SearchRequest;
+import org.codelibs.fesen.opensearch.index.query.QueryBuilders;
+import org.codelibs.fesen.opensearch.search.builder.PointInTimeBuilder;
+import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder;
 
 class HttpSearchActionTest {
 
@@ -183,7 +183,7 @@ class HttpSearchActionTest {
     void test_getQuerySource_withAggregation() {
         final SearchRequest request = new SearchRequest("test-index");
         request.source(new SearchSourceBuilder().size(0)
-                .aggregation(org.opensearch.search.aggregations.AggregationBuilders.terms("by_status").field("status")));
+                .aggregation(org.codelibs.fesen.opensearch.search.aggregations.AggregationBuilders.terms("by_status").field("status")));
         final String result = action.getQuerySource(request);
         assertNotNull(result);
         assertTrue(result.contains("aggs") || result.contains("aggregations"));

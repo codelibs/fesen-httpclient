@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 
 class ByteArrayStreamOutputTest {
 

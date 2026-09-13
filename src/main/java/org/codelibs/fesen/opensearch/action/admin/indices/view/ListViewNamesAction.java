@@ -1,0 +1,101 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+package org.codelibs.fesen.opensearch.action.admin.indices.view;
+
+import org.codelibs.fesen.opensearch.action.ActionRequest;
+import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
+import org.codelibs.fesen.opensearch.action.ActionType;
+import org.codelibs.fesen.opensearch.common.annotation.ExperimentalApi;
+import org.codelibs.fesen.opensearch.core.action.ActionResponse;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+
+/** Action to list a view names */
+@ExperimentalApi
+public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response> {
+
+    public static final ListViewNamesAction INSTANCE = new ListViewNamesAction();
+    public static final String NAME = "views:data/read/list";
+
+    public ListViewNamesAction() {
+        super(NAME, ListViewNamesAction.Response::new);
+    }
+
+    /** Request for list view names */
+    @ExperimentalApi
+    public static class Request extends ActionRequest {
+        public Request() {}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Request that = (Request) o;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public ActionRequestValidationException validate() {
+            return null;
+        }
+    }
+
+    /** Response for list view names */
+    @ExperimentalApi
+    public static class Response extends ActionResponse implements ToXContentObject {
+
+        private final List<String> views;
+
+        public Response(final List<String> views) {
+            this.views = views;
+        }
+
+        public Response(final StreamInput in) throws IOException {
+            views = in.readStringList();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Response that = (Response) o;
+            return views.equals(that.views);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(views);
+        }
+
+        @Override
+        public void writeTo(final StreamOutput out) throws IOException {
+            out.writeStringCollection(views);
+        }
+
+        @Override
+        public XContentBuilder toXContent(final XContentBuilder builder, final Params params) throws IOException {
+            builder.startObject();
+            builder.field("views", views);
+            builder.endObject();
+            return builder;
+        }
+    }
+
+}

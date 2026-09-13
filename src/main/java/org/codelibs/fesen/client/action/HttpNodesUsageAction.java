@@ -24,16 +24,16 @@ import java.util.Map;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.Version;
-import org.opensearch.action.admin.cluster.node.usage.NodeUsage;
-import org.opensearch.action.admin.cluster.node.usage.NodesUsageAction;
-import org.opensearch.action.admin.cluster.node.usage.NodesUsageRequest;
-import org.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
-import org.opensearch.cluster.ClusterName;
-import org.opensearch.cluster.node.DiscoveryNode;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.common.transport.TransportAddress;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.Version;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodeUsage;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.usage.NodesUsageResponse;
+import org.codelibs.fesen.opensearch.cluster.ClusterName;
+import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.common.transport.TransportAddress;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the nodes usage API over HTTP for OpenSearch/Elasticsearch.

@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
-import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 
 class HttpUpdateSettingsActionTest {
 

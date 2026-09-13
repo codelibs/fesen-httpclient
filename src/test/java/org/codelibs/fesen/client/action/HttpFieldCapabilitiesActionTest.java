@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.fieldcaps.FieldCapabilitiesAction;
-import org.opensearch.action.fieldcaps.FieldCapabilitiesRequest;
+import org.codelibs.fesen.opensearch.action.fieldcaps.FieldCapabilitiesAction;
+import org.codelibs.fesen.opensearch.action.fieldcaps.FieldCapabilitiesRequest;
 
 class HttpFieldCapabilitiesActionTest {
 

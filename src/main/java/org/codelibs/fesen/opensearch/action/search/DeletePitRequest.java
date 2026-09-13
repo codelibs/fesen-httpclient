@@ -1,0 +1,83 @@
+
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+package org.codelibs.fesen.opensearch.action.search;
+
+import org.codelibs.fesen.opensearch.action.ActionRequest;
+import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidationError;
+
+/**
+ * Request to delete one or more PIT search contexts based on IDs.
+ *
+ * @opensearch.api
+ */
+@PublicApi(since = "2.3.0")
+public class DeletePitRequest extends ActionRequest implements ToXContentObject {
+
+    /**
+     * List of PIT IDs to be deleted , and use "_all" to delete all PIT reader contexts
+     */
+    private final List<String> pitIds = new ArrayList<>();
+
+    public DeletePitRequest(String... pitIds) {
+        this.pitIds.addAll(Arrays.asList(pitIds));
+    }
+
+    public DeletePitRequest() {}
+
+    public List<String> getPitIds() {
+        return pitIds;
+    }
+
+    @Override
+    public ActionRequestValidationException validate() {
+        ActionRequestValidationException validationException = null;
+        if (pitIds == null || pitIds.isEmpty()) {
+            validationException = addValidationError("no pit ids specified", validationException);
+        }
+        return validationException;
+    }
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        super.writeTo(out);
+        if (pitIds == null) {
+            out.writeVInt(0);
+        } else {
+            out.writeStringArray(pitIds.toArray(new String[0]));
+        }
+    }
+
+    @Override
+    public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
+        builder.startObject();
+        builder.startArray("pit_id");
+        for (String pitId : pitIds) {
+            builder.value(pitId);
+        }
+        builder.endArray();
+        builder.endObject();
+        return builder;
+    }
+
+}

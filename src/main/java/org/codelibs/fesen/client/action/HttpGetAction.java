@@ -20,14 +20,14 @@ import java.util.Locale;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.get.GetAction;
-import org.opensearch.action.get.GetRequest;
-import org.opensearch.action.get.GetResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.IndexNotFoundException;
-import org.opensearch.index.VersionType;
-import org.opensearch.search.fetch.subphase.FetchSourceContext;
+import org.codelibs.fesen.opensearch.action.get.GetAction;
+import org.codelibs.fesen.opensearch.action.get.GetRequest;
+import org.codelibs.fesen.opensearch.action.get.GetResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
+import org.codelibs.fesen.opensearch.index.VersionType;
+import org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext;
 
 /**
  * Handles the Get Document API over HTTP for OpenSearch/Elasticsearch.

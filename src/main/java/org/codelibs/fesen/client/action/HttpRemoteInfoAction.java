@@ -20,11 +20,11 @@ import java.util.Collections;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.cluster.remote.RemoteInfoAction;
-import org.opensearch.action.admin.cluster.remote.RemoteInfoRequest;
-import org.opensearch.action.admin.cluster.remote.RemoteInfoResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remote.RemoteInfoAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remote.RemoteInfoRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remote.RemoteInfoResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the remote cluster info API over HTTP for OpenSearch/Elasticsearch.

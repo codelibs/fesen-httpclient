@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.reindex.BulkByScrollResponse;
-import org.opensearch.index.reindex.ReindexAction;
-import org.opensearch.index.reindex.ReindexRequest;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.opensearch.index.reindex.ReindexAction;
+import org.codelibs.fesen.opensearch.index.reindex.ReindexRequest;
 
 /**
  * Handles the reindex API over HTTP for OpenSearch/Elasticsearch, copying documents

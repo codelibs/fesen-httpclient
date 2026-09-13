@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.flush.FlushAction;
-import org.opensearch.action.admin.indices.flush.FlushRequest;
-import org.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequest;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
 
 class HttpFlushActionTest {
 

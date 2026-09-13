@@ -24,14 +24,14 @@ import java.util.List;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.Version;
-import org.opensearch.action.admin.cluster.node.hotthreads.NodeHotThreads;
-import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
-import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
-import org.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
-import org.opensearch.cluster.ClusterName;
-import org.opensearch.cluster.node.DiscoveryNode;
-import org.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.Version;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodeHotThreads;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
+import org.codelibs.fesen.opensearch.cluster.ClusterName;
+import org.codelibs.fesen.opensearch.cluster.node.DiscoveryNode;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
 
 /**
  * Handles the Nodes Hot Threads API over HTTP for OpenSearch/Elasticsearch.

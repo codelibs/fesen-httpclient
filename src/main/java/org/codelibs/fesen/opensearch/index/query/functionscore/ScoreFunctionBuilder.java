@@ -1,0 +1,167 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+/*
+ * Licensed to Elasticsearch under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+package org.codelibs.fesen.opensearch.index.query.functionscore;
+
+import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Objects;
+
+/**
+ * Foundation builder for a score function
+ *
+ * @opensearch.internal
+ */
+public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> implements ToXContentFragment, NamedWriteable {
+
+    private Float weight;
+    private String functionName;
+
+    /**
+     * Standard empty constructor.
+     */
+    public ScoreFunctionBuilder() {}
+
+    @Override
+    public final void writeTo(StreamOutput out) throws IOException {
+        out.writeOptionalFloat(weight);
+        out.writeOptionalString(functionName);
+        doWriteTo(out);
+    }
+
+    /**
+     * Write the subclass's components into the stream.
+     */
+    protected abstract void doWriteTo(StreamOutput out) throws IOException;
+
+    /**
+     * The name of this score function.
+     */
+    public abstract String getName();
+
+    /**
+     * Set the weight applied to the function before combining.
+     */
+    @SuppressWarnings("unchecked")
+    public final FB setWeight(float weight) {
+        this.weight = checkWeight(weight);
+        return (FB) this;
+    }
+
+    private Float checkWeight(Float weight) {
+        if (weight != null && Float.compare(weight, 0) < 0) {
+            throw new IllegalArgumentException("[weight] cannot be negative for a filtering function");
+        }
+        return weight;
+    }
+
+    /**
+     * The weight applied to the function before combining.
+     */
+    public final Float getWeight() {
+        return weight;
+    }
+
+    /**
+     * The name of this function
+     */
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    /**
+     * Set the name of this function
+     */
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
+    }
+
+    @Override
+    public final XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        if (weight != null) {
+            builder.field(FunctionScoreQueryBuilder.WEIGHT_FIELD.getPreferredName(), weight);
+        }
+
+        if (functionName != null) {
+            builder.field(FunctionScoreQueryBuilder.NAME_FIELD.getPreferredName(), functionName);
+        }
+
+        doXContent(builder, params);
+        return builder;
+    }
+
+    /**
+     * Convert this subclass's data into XContent.
+     */
+    protected abstract void doXContent(XContentBuilder builder, Params params) throws IOException;
+
+    @Override
+    public String getWriteableName() {
+        return getName();
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        @SuppressWarnings("unchecked")
+        FB other = (FB) obj;
+        return Objects.equals(weight, other.getWeight()) && Objects.equals(functionName, other.getFunctionName()) && doEquals(other);
+    }
+
+    /**
+     * Check that two instances of the same subclass of ScoreFunctionBuilder are equal. Implementers don't need to check any fields in
+     * ScoreFunctionBuilder, just fields that they define.
+     */
+    protected abstract boolean doEquals(FB functionBuilder);
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(getClass(), weight, functionName, doHashCode());
+    }
+
+    /**
+     * Hashcode for fields defined in this subclass of ScoreFunctionBuilder. Implementers should ignore fields defined in
+     * ScoreFunctionBuilder because they will already be in the hashCode.
+     */
+    protected abstract int doHashCode();
+
+}

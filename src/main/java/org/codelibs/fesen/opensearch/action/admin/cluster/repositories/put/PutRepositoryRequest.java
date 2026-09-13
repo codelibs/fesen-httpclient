@@ -1,0 +1,174 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+/*
+ * Licensed to Elasticsearch under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+package org.codelibs.fesen.opensearch.action.admin.cluster.repositories.put;
+
+import org.codelibs.fesen.opensearch.Version;
+import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
+import org.codelibs.fesen.opensearch.action.admin.cluster.crypto.CryptoSettings;
+import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedRequest;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+
+import java.io.IOException;
+import java.util.Map;
+
+import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidationError;
+import static org.codelibs.fesen.opensearch.common.settings.Settings.Builder.EMPTY_SETTINGS;
+import static org.codelibs.fesen.opensearch.common.settings.Settings.readSettingsFromStream;
+import static org.codelibs.fesen.opensearch.common.settings.Settings.writeSettingsToStream;
+
+/**
+ * Register repository request.
+ * <p>
+ * Registers a repository with given name, type and settings. If the repository with the same name already
+ * exists in the cluster, the new repository will replace the existing repository.
+ *
+ * @opensearch.api
+ */
+@PublicApi(since = "1.0.0")
+public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryRequest> implements ToXContentObject {
+
+    private String name;
+
+    private String type;
+
+    private boolean verify = true;
+
+    private Settings settings = EMPTY_SETTINGS;
+
+    private CryptoSettings cryptoSettings;
+
+    public PutRepositoryRequest() {}
+
+    /**
+     * Constructs a new put repository request with the provided name.
+     */
+    public PutRepositoryRequest(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public ActionRequestValidationException validate() {
+        ActionRequestValidationException validationException = null;
+        if (name == null) {
+            validationException = addValidationError("name is missing", validationException);
+        }
+        if (type == null) {
+            validationException = addValidationError("type is missing", validationException);
+        }
+        if (cryptoSettings != null) {
+            validationException = cryptoSettings.validate();
+        }
+        return validationException;
+    }
+
+    /**
+     * The name of the repository.
+     *
+     * @return repository name
+     */
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * The type of the repository
+     * <ul>
+     * <li>"fs" - shared filesystem repository</li>
+     * </ul>
+     *
+     * @param type repository type
+     * @return this request
+     */
+    public PutRepositoryRequest type(String type) {
+        this.type = type;
+        return this;
+    }
+
+    /**
+     * Sets the repository settings
+     *
+     * @param settings repository settings
+     * @return this request
+     */
+    public PutRepositoryRequest settings(Settings settings) {
+        this.settings = settings;
+        return this;
+    }
+
+    /**
+     * Returns true if repository should be verified after creation
+     */
+    public boolean verify() {
+        return this.verify;
+    }
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        super.writeTo(out);
+        out.writeString(name);
+        out.writeString(type);
+        writeSettingsToStream(settings, out);
+        out.writeBoolean(verify);
+        if (out.getVersion().onOrAfter(Version.V_2_10_0)) {
+            out.writeOptionalWriteable(cryptoSettings);
+        }
+    }
+
+    @Override
+    public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        builder.startObject();
+        builder.field("name", name);
+        builder.field("type", type);
+
+        builder.startObject("settings");
+        settings.toXContent(builder, params);
+        builder.endObject();
+
+        builder.field("verify", verify);
+
+        if (cryptoSettings != null) {
+            builder.startObject("crypto_settings");
+            cryptoSettings.toXContent(builder, params);
+            builder.endObject();
+        }
+
+        builder.endObject();
+        return builder;
+    }
+}

@@ -17,12 +17,12 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.index.reindex.AbstractBulkByScrollRequest;
-import org.opensearch.index.reindex.BulkByScrollResponse;
-import org.opensearch.index.reindex.DeleteByQueryAction;
-import org.opensearch.index.reindex.DeleteByQueryRequest;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.reindex.AbstractBulkByScrollRequest;
+import org.codelibs.fesen.opensearch.index.reindex.BulkByScrollResponse;
+import org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryAction;
+import org.codelibs.fesen.opensearch.index.reindex.DeleteByQueryRequest;
 
 /**
  * Handles the delete-by-query API over HTTP for OpenSearch/Elasticsearch, deleting every

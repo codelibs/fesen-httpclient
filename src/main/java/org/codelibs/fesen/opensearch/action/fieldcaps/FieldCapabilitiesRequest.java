@@ -1,0 +1,178 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+/*
+ * Licensed to Elasticsearch under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+package org.codelibs.fesen.opensearch.action.fieldcaps;
+
+import org.codelibs.fesen.opensearch.action.ActionRequest;
+import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
+import org.codelibs.fesen.opensearch.action.IndicesRequest;
+import org.codelibs.fesen.opensearch.action.ValidateActions;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
+import org.codelibs.fesen.opensearch.core.common.Strings;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * Transport request for retrieving field capabilities for an explicit list of fields
+ *
+ * @opensearch.api
+ */
+@PublicApi(since = "1.0.0")
+public final class FieldCapabilitiesRequest extends ActionRequest implements IndicesRequest.Replaceable, ToXContentObject {
+    public static final String NAME = "field_caps_request";
+
+    private String[] indices = Strings.EMPTY_ARRAY;
+    private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
+    private String[] fields = Strings.EMPTY_ARRAY;
+    private boolean includeUnmapped = false;
+    // pkg private API mainly for cross cluster search to signal that we do multiple reductions ie. the results should not be merged
+    private boolean mergeResults = true;
+    private QueryBuilder indexFilter;
+    private Long nowInMillis;
+
+    public FieldCapabilitiesRequest() {}
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        super.writeTo(out);
+        out.writeStringArray(fields);
+        out.writeStringArray(indices);
+        indicesOptions.writeIndicesOptions(out);
+        out.writeBoolean(mergeResults);
+        out.writeBoolean(includeUnmapped);
+        out.writeOptionalNamedWriteable(indexFilter);
+        out.writeOptionalLong(nowInMillis);
+    }
+
+    @Override
+    public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        builder.startObject();
+        if (indexFilter != null) {
+            builder.field("index_filter", indexFilter);
+        }
+        builder.endObject();
+        return builder;
+    }
+
+    /**
+     * The list of field names to retrieve
+     */
+    public FieldCapabilitiesRequest fields(String... fields) {
+        if (fields == null || fields.length == 0) {
+            throw new IllegalArgumentException("specified fields can't be null or empty");
+        }
+        Set<String> fieldSet = new HashSet<>(Arrays.asList(fields));
+        this.fields = fieldSet.toArray(new String[0]);
+        return this;
+    }
+
+    public String[] fields() {
+        return fields;
+    }
+
+    /**
+     * The list of indices to lookup
+     */
+    public FieldCapabilitiesRequest indices(String... indices) {
+        this.indices = Objects.requireNonNull(indices, "indices must not be null");
+        return this;
+    }
+
+    public FieldCapabilitiesRequest includeUnmapped(boolean includeUnmapped) {
+        this.includeUnmapped = includeUnmapped;
+        return this;
+    }
+
+    @Override
+    public String[] indices() {
+        return indices;
+    }
+
+    @Override
+    public IndicesOptions indicesOptions() {
+        return indicesOptions;
+    }
+
+    @Override
+    public boolean includeDataStreams() {
+        return true;
+    }
+
+    public boolean includeUnmapped() {
+        return includeUnmapped;
+    }
+
+    public QueryBuilder indexFilter() {
+        return indexFilter;
+    }
+
+    @Override
+    public ActionRequestValidationException validate() {
+        ActionRequestValidationException validationException = null;
+        if (fields == null || fields.length == 0) {
+            validationException = ValidateActions.addValidationError("no fields specified", validationException);
+        }
+        return validationException;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FieldCapabilitiesRequest that = (FieldCapabilitiesRequest) o;
+        return includeUnmapped == that.includeUnmapped
+            && mergeResults == that.mergeResults
+            && Arrays.equals(indices, that.indices)
+            && indicesOptions.equals(that.indicesOptions)
+            && Arrays.equals(fields, that.fields)
+            && Objects.equals(indexFilter, that.indexFilter)
+            && Objects.equals(nowInMillis, that.nowInMillis);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(indicesOptions, includeUnmapped, mergeResults, indexFilter, nowInMillis);
+        result = 31 * result + Arrays.hashCode(indices);
+        result = 31 * result + Arrays.hashCode(fields);
+        return result;
+    }
+}

@@ -22,12 +22,12 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
-import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
-import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
-import org.opensearch.cluster.metadata.IndexTemplateMetadata;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
+import org.codelibs.fesen.opensearch.cluster.metadata.IndexTemplateMetadata;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Get Index Templates API over HTTP for OpenSearch/Elasticsearch.

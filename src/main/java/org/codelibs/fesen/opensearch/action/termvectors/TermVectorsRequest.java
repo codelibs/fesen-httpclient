@@ -1,0 +1,482 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+/*
+ * Licensed to Elasticsearch under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+package org.codelibs.fesen.opensearch.action.termvectors;
+
+import org.codelibs.fesen.opensearch.OpenSearchParseException;
+import org.codelibs.fesen.opensearch.Version;
+import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
+import org.codelibs.fesen.opensearch.action.RealtimeRequest;
+import org.codelibs.fesen.opensearch.action.ValidateActions;
+import org.codelibs.fesen.opensearch.action.get.MultiGetRequest;
+import org.codelibs.fesen.opensearch.action.support.single.shard.SingleShardRequest;
+import org.codelibs.fesen.opensearch.common.Nullable;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
+import org.codelibs.fesen.opensearch.common.lucene.uid.Versions;
+import org.codelibs.fesen.opensearch.common.util.set.Sets;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+import org.codelibs.fesen.opensearch.core.ParseField;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesArray;
+import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
+import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.VersionType;
+import org.codelibs.fesen.opensearch.index.mapper.MapperService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.codelibs.fesen.opensearch.common.xcontent.XContentFactory.jsonBuilder;
+
+/**
+ * Request returning the term vector (doc frequency, positions, offsets) for a
+ * document.
+ * <p>
+ * Note, the {@link #index()}, and {@link #id(String)} are
+ * required.
+ *
+ * @opensearch.api
+ */
+@PublicApi(since = "1.0.0")
+public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> implements RealtimeRequest {
+    private static final ParseField INDEX = new ParseField("_index");
+    private static final ParseField ID = new ParseField("_id");
+    private static final ParseField ROUTING = new ParseField("routing");
+    private static final ParseField VERSION = new ParseField("version");
+    private static final ParseField VERSION_TYPE = new ParseField("version_type");
+    private static final ParseField FIELDS = new ParseField("fields");
+    private static final ParseField OFFSETS = new ParseField("offsets");
+    private static final ParseField POSITIONS = new ParseField("positions");
+    private static final ParseField PAYLOADS = new ParseField("payloads");
+    private static final ParseField DFS = new ParseField("dfs");
+    private static final ParseField FILTER = new ParseField("filter");
+    private static final ParseField DOC = new ParseField("doc");
+
+    private String id;
+
+    private BytesReference doc;
+
+    private MediaType mediaType;
+
+    private String routing;
+
+    private VersionType versionType = VersionType.INTERNAL;
+
+    private long version = Versions.MATCH_ANY;
+
+    protected String preference;
+
+    private static final AtomicInteger randomInt = new AtomicInteger(0);
+
+    // TODO: change to String[]
+    private Set<String> selectedFields;
+
+    private boolean realtime = true;
+
+    private Map<String, String> perFieldAnalyzer;
+
+    private FilterSettings filterSettings;
+
+    /**
+     * Internal filter settings
+     *
+     * @opensearch.api
+     */
+    @PublicApi(since = "1.0.0")
+    public static final class FilterSettings {
+        public Integer maxNumTerms;
+        public Integer minTermFreq;
+        public Integer maxTermFreq;
+        public Integer minDocFreq;
+        public Integer maxDocFreq;
+        public Integer minWordLength;
+        public Integer maxWordLength;
+
+        public FilterSettings() {
+
+        }
+
+        public FilterSettings(
+            @Nullable Integer maxNumTerms,
+            @Nullable Integer minTermFreq,
+            @Nullable Integer maxTermFreq,
+            @Nullable Integer minDocFreq,
+            @Nullable Integer maxDocFreq,
+            @Nullable Integer minWordLength,
+            @Nullable Integer maxWordLength
+        ) {
+            this.maxNumTerms = maxNumTerms;
+            this.minTermFreq = minTermFreq;
+            this.maxTermFreq = maxTermFreq;
+            this.minDocFreq = minDocFreq;
+            this.maxDocFreq = maxDocFreq;
+            this.minWordLength = minWordLength;
+            this.maxWordLength = maxWordLength;
+        }
+
+        public void readFrom(StreamInput in) throws IOException {
+            maxNumTerms = in.readOptionalVInt();
+            minTermFreq = in.readOptionalVInt();
+            maxTermFreq = in.readOptionalVInt();
+            minDocFreq = in.readOptionalVInt();
+            maxDocFreq = in.readOptionalVInt();
+            minWordLength = in.readOptionalVInt();
+            maxWordLength = in.readOptionalVInt();
+        }
+
+        public void writeTo(StreamOutput out) throws IOException {
+            out.writeOptionalVInt(maxNumTerms);
+            out.writeOptionalVInt(minTermFreq);
+            out.writeOptionalVInt(maxTermFreq);
+            out.writeOptionalVInt(minDocFreq);
+            out.writeOptionalVInt(maxDocFreq);
+            out.writeOptionalVInt(minWordLength);
+            out.writeOptionalVInt(maxWordLength);
+        }
+    }
+
+    private EnumSet<Flag> flagsEnum = EnumSet.of(Flag.Positions, Flag.Offsets, Flag.Payloads, Flag.FieldStatistics);
+
+    public TermVectorsRequest() {}
+
+    /**
+     * Constructs a new term vector request for a document that will be fetch
+     * from the provided index. Use {@link #id(String)} to specify the document to load.
+     */
+    public TermVectorsRequest(String index, String id) {
+        super(index);
+        this.id = id;
+    }
+
+    public EnumSet<Flag> getFlags() {
+        return flagsEnum;
+    }
+
+    /**
+     * Returns the id of document the term vector is requested for.
+     */
+    public String id() {
+        return id;
+    }
+
+    /**
+     * Sets the id of document the term vector is requested for.
+     */
+    public TermVectorsRequest id(String id) {
+        this.id = id;
+        return this;
+    }
+
+    /**
+     * Returns the artificial document from which term vectors are requested for.
+     */
+    public BytesReference doc() {
+        return doc;
+    }
+
+    /**
+     * Sets an artificial document from which term vectors are requested for.
+     */
+    public TermVectorsRequest doc(BytesReference doc, boolean generateRandomId, MediaType mediaType) {
+        // assign a random id to this artificial document, for routing
+        if (generateRandomId) {
+            this.id(String.valueOf(randomInt.getAndAdd(1)));
+        }
+        this.doc = doc;
+        this.mediaType = mediaType;
+        return this;
+    }
+
+    /**
+     * @return The routing for this request.
+     */
+    public String routing() {
+        return routing;
+    }
+
+    public TermVectorsRequest routing(String routing) {
+        this.routing = routing;
+        return this;
+    }
+
+    public String preference() {
+        return this.preference;
+    }
+
+    /**
+     * Return the start and stop offsets for each term if they were stored or
+     * skip offsets.
+     */
+    public TermVectorsRequest offsets(boolean offsets) {
+        setFlag(Flag.Offsets, offsets);
+        return this;
+    }
+
+    /**
+     * @return <code>true</code> if term offsets should be returned. Otherwise
+     * <code>false</code>
+     */
+    public boolean offsets() {
+        return flagsEnum.contains(Flag.Offsets);
+    }
+
+    /**
+     * Return the positions for each term if stored or skip.
+     */
+    public TermVectorsRequest positions(boolean positions) {
+        setFlag(Flag.Positions, positions);
+        return this;
+    }
+
+    /**
+     * @return Returns if the positions for each term should be returned if
+     *         stored or skip.
+     */
+    public boolean positions() {
+        return flagsEnum.contains(Flag.Positions);
+    }
+
+    /**
+     * @return <code>true</code> if term payloads should be returned. Otherwise
+     * <code>false</code>
+     */
+    public boolean payloads() {
+        return flagsEnum.contains(Flag.Payloads);
+    }
+
+    /**
+     * Return the payloads for each term or skip.
+     */
+    public TermVectorsRequest payloads(boolean payloads) {
+        setFlag(Flag.Payloads, payloads);
+        return this;
+    }
+
+    /**
+     * @return <code>true</code> if term statistics should be returned.
+     * Otherwise <code>false</code>
+     */
+    public boolean termStatistics() {
+        return flagsEnum.contains(Flag.TermStatistics);
+    }
+
+    /**
+     * Return the term statistics for each term in the shard or skip.
+     */
+    public TermVectorsRequest termStatistics(boolean termStatistics) {
+        setFlag(Flag.TermStatistics, termStatistics);
+        return this;
+    }
+
+    /**
+     * @return <code>true</code> if field statistics should be returned.
+     * Otherwise <code>false</code>
+     */
+    public boolean fieldStatistics() {
+        return flagsEnum.contains(Flag.FieldStatistics);
+    }
+
+    /**
+     * Return the field statistics for each term in the shard or skip.
+     */
+    public TermVectorsRequest fieldStatistics(boolean fieldStatistics) {
+        setFlag(Flag.FieldStatistics, fieldStatistics);
+        return this;
+    }
+
+    /**
+     * Return only term vectors for special selected fields. Returns for term
+     * vectors for all fields if selectedFields == null
+     */
+    public Set<String> selectedFields() {
+        return selectedFields;
+    }
+
+    /**
+     * Return only term vectors for special selected fields. Returns the term
+     * vectors for all fields if selectedFields == null
+     */
+    public TermVectorsRequest selectedFields(String... fields) {
+        selectedFields = fields != null && fields.length != 0 ? Sets.newHashSet(fields) : null;
+        return this;
+    }
+
+    /**
+     * Return whether term vectors should be generated real-time (default to true).
+     */
+    public boolean realtime() {
+        return this.realtime;
+    }
+
+    @Override
+    public TermVectorsRequest realtime(boolean realtime) {
+        this.realtime = realtime;
+        return this;
+    }
+
+    /**
+     * Override the analyzer used at each field when generating term vectors.
+     */
+    public TermVectorsRequest perFieldAnalyzer(Map<String, String> perFieldAnalyzer) {
+        this.perFieldAnalyzer = perFieldAnalyzer != null && perFieldAnalyzer.size() != 0 ? new HashMap<>(perFieldAnalyzer) : null;
+        return this;
+    }
+
+    /**
+     * Return the settings for filtering out terms.
+     */
+    public FilterSettings filterSettings() {
+        return this.filterSettings;
+    }
+
+    public long version() {
+        return version;
+    }
+
+    public TermVectorsRequest version(long version) {
+        this.version = version;
+        return this;
+    }
+
+    public VersionType versionType() {
+        return versionType;
+    }
+
+    public TermVectorsRequest versionType(VersionType versionType) {
+        this.versionType = versionType;
+        return this;
+    }
+
+    private void setFlag(Flag flag, boolean set) {
+        if (set && !flagsEnum.contains(flag)) {
+            flagsEnum.add(flag);
+        } else if (!set) {
+            flagsEnum.remove(flag);
+            assert (!flagsEnum.contains(flag));
+        }
+    }
+
+    @Override
+    public ActionRequestValidationException validate() {
+        ActionRequestValidationException validationException = super.validateNonNullIndex();
+        if (id == null && doc == null) {
+            validationException = ValidateActions.addValidationError("id or doc is missing", validationException);
+        }
+        return validationException;
+    }
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        super.writeTo(out);
+        if (out.getVersion().before(Version.V_2_0_0)) {
+            // types no longer supported; send "_doc" for bwc
+            out.writeString(MapperService.SINGLE_MAPPING_NAME);
+        }
+        out.writeString(id);
+
+        out.writeBoolean(doc != null);
+        if (doc != null) {
+            out.writeBytesReference(doc);
+            if (out.getVersion().onOrAfter(Version.V_2_10_0)) {
+                mediaType.writeTo(out);
+            } else {
+                out.writeEnum((XContentType) mediaType);
+            }
+        }
+        out.writeOptionalString(routing);
+        out.writeOptionalString(preference);
+        long longFlags = 0;
+        for (Flag flag : flagsEnum) {
+            longFlags |= (1 << flag.ordinal());
+        }
+        out.writeVLong(longFlags);
+        if (selectedFields != null) {
+            out.writeStringCollection(selectedFields);
+        } else {
+            out.writeVInt(0);
+        }
+        out.writeBoolean(perFieldAnalyzer != null);
+        if (perFieldAnalyzer != null) {
+            out.writeGenericValue(perFieldAnalyzer);
+        }
+        out.writeBoolean(filterSettings != null);
+        if (filterSettings != null) {
+            filterSettings.writeTo(out);
+        }
+        out.writeBoolean(realtime);
+        out.writeByte(versionType.getValue());
+        out.writeLong(version);
+    }
+
+    /**
+     * The flags.
+     *
+     * @opensearch.api
+     */
+    @PublicApi(since = "1.0.0")
+    public enum Flag {
+        // Do not change the order of these flags we use
+        // the ordinal for encoding! Only append to the end!
+        Positions,
+        Offsets,
+        Payloads,
+        FieldStatistics,
+        TermStatistics
+    }
+
+    public static Map<String, String> readPerFieldAnalyzer(Map<String, Object> map) {
+        Map<String, String> mapStrStr = new HashMap<>();
+        for (Map.Entry<String, Object> e : map.entrySet()) {
+            if (e.getValue() instanceof String) {
+                mapStrStr.put(e.getKey(), (String) e.getValue());
+            } else {
+                throw new OpenSearchParseException(
+                    "expecting the analyzer at [{}] to be a String, but found [{}] instead",
+                    e.getKey(),
+                    e.getValue().getClass()
+                );
+            }
+        }
+        return mapStrStr;
+    }
+}

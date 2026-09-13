@@ -22,16 +22,16 @@ import java.util.Set;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.cluster.stats.ClusterStatsAction;
-import org.opensearch.action.admin.cluster.stats.ClusterStatsRequest;
-import org.opensearch.action.admin.cluster.stats.ClusterStatsRequest.IndexMetric;
-import org.opensearch.action.admin.cluster.stats.ClusterStatsRequest.Metric;
-import org.opensearch.action.admin.cluster.stats.ClusterStatsResponse;
-import org.opensearch.cluster.ClusterName;
-import org.opensearch.cluster.ClusterState;
-import org.opensearch.cluster.health.ClusterHealthStatus;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsRequest.IndexMetric;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsRequest.Metric;
+import org.codelibs.fesen.opensearch.action.admin.cluster.stats.ClusterStatsResponse;
+import org.codelibs.fesen.opensearch.cluster.ClusterName;
+import org.codelibs.fesen.opensearch.cluster.ClusterState;
+import org.codelibs.fesen.opensearch.cluster.health.ClusterHealthStatus;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the cluster stats API over HTTP for OpenSearch/Elasticsearch.

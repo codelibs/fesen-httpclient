@@ -24,15 +24,15 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.resolve.ResolveIndexAction;
-import org.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedAlias;
-import org.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedDataStream;
-import org.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedIndex;
-import org.opensearch.action.support.IndicesOptions;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedAlias;
+import org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedDataStream;
+import org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.ResolvedIndex;
+import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 class HttpResolveIndexActionTest {
 

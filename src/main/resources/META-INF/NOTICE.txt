@@ -1,0 +1,29 @@
+fesen-httpclient
+Copyright CodeLibs Project
+
+This product includes software derived from OpenSearch
+(https://opensearch.org/), Copyright OpenSearch Contributors, licensed
+under the Apache License, Version 2.0.  The OpenSearch sources bundled
+here have been modified by CodeLibs Inc.: they were relocated from the
+`org.opensearch` package to `org.codelibs.fesen.opensearch`, and the
+classes that are only needed to run an OpenSearch node were removed.
+
+The original OpenSearch NOTICE follows.
+
+----------------------------------------------------------------------
+
+OpenSearch (https://opensearch.org/)
+Copyright OpenSearch Contributors
+
+This product includes software developed by
+Elasticsearch (http://www.elastic.co).
+Copyright 2009-2018 Elasticsearch
+
+This product includes software developed by The Apache Software
+Foundation (http://www.apache.org/).
+
+This product includes software developed by
+Joda.org (http://www.joda.org/).
+
+This product includes software developed by
+Morten Haraldsen (ethlo) (https://github.com/ethlo) under the Apache License, version 2.0.

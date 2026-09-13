@@ -15,9 +15,9 @@
  */
 package org.codelibs.fesen.client;
 
-import org.opensearch.transport.client.AdminClient;
-import org.opensearch.transport.client.ClusterAdminClient;
-import org.opensearch.transport.client.IndicesAdminClient;
+import org.codelibs.fesen.opensearch.transport.client.AdminClient;
+import org.codelibs.fesen.opensearch.transport.client.ClusterAdminClient;
+import org.codelibs.fesen.opensearch.transport.client.IndicesAdminClient;
 
 /**
  * An {@link AdminClient} wrapper that delegates to another admin client and wraps the indices

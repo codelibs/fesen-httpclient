@@ -26,7 +26,7 @@ import org.codelibs.fesen.client.node.Node;
 import org.codelibs.fesen.client.node.NodeIterator;
 import org.codelibs.fesen.client.node.NodeManager;
 import org.codelibs.fesen.client.node.NodeUnavailableException;
-import org.opensearch.index.IndexNotFoundException;
+import org.codelibs.fesen.opensearch.index.IndexNotFoundException;
 
 /**
  * A {@link CurlRequest} that targets a cluster of nodes managed by a {@link NodeManager}.

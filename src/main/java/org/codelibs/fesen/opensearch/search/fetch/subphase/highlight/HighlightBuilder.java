@@ -1,0 +1,450 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+/*
+ * Licensed to Elasticsearch under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+package org.codelibs.fesen.opensearch.search.fetch.subphase.highlight;
+
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.vectorhighlight.SimpleBoundaryScanner;
+import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
+import org.codelibs.fesen.opensearch.core.ParseField;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
+import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
+import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.NamedObjectParser;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
+import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
+import org.codelibs.fesen.opensearch.index.query.Rewriteable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.BiFunction;
+
+import static org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.fromList;
+
+/**
+ * A builder for search highlighting. Settings can control how large fields
+ * are summarized to show only selected snippets ("fragments") containing search terms.
+ *
+ * @see org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder#highlight()
+ *
+ * @opensearch.api
+ */
+@PublicApi(since = "1.0.0")
+public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilder> {
+    /** the default number of fragments for highlighting */
+    public static final int DEFAULT_NUMBER_OF_FRAGMENTS = 5;
+    /** the default number of fragments size in characters */
+    public static final int DEFAULT_FRAGMENT_CHAR_SIZE = 100;
+    /** the default opening tag  */
+    public static final String[] DEFAULT_PRE_TAGS = new String[] { "<em>" };
+    /** the default closing tag  */
+    public static final String[] DEFAULT_POST_TAGS = new String[] { "</em>" };
+
+    /** the default opening tags when {@code tag_schema = "styled"}  */
+    public static final String[] DEFAULT_STYLED_PRE_TAG = {
+        "<em class=\"hlt1\">",
+        "<em class=\"hlt2\">",
+        "<em class=\"hlt3\">",
+        "<em class=\"hlt4\">",
+        "<em class=\"hlt5\">",
+        "<em class=\"hlt6\">",
+        "<em class=\"hlt7\">",
+        "<em class=\"hlt8\">",
+        "<em class=\"hlt9\">",
+        "<em class=\"hlt10\">" };
+    /** the default closing tags when {@code tag_schema = "styled"}  */
+    public static final String[] DEFAULT_STYLED_POST_TAGS = { "</em>" };
+
+    static final Character[] DEFAULT_BOUNDARY_CHARS = HighlightBuilder.convertCharArray(SimpleBoundaryScanner.DEFAULT_BOUNDARY_CHARS);
+
+    private final List<Field> fields;
+
+    private String encoder;
+
+    private boolean useExplicitFieldOrder = false;
+
+    public HighlightBuilder() {
+        fields = new ArrayList<>();
+    }
+
+    public HighlightBuilder(HighlightBuilder template, QueryBuilder highlightQuery, List<Field> fields) {
+        super(template, highlightQuery);
+        this.encoder = template.encoder;
+        this.useExplicitFieldOrder = template.useExplicitFieldOrder;
+        this.fields = fields;
+    }
+
+    /**
+     * Read from a stream.
+     */
+    public HighlightBuilder(StreamInput in) throws IOException {
+        super(in);
+        encoder(in.readOptionalString());
+        useExplicitFieldOrder(in.readBoolean());
+        this.fields = in.readList(Field::new);
+        assert this.equals(new HighlightBuilder(this, highlightQuery, fields)) : "copy constructor is broken";
+    }
+
+    @Override
+    protected void doWriteTo(StreamOutput out) throws IOException {
+        out.writeOptionalString(encoder);
+        out.writeBoolean(useExplicitFieldOrder);
+        out.writeList(fields);
+    }
+
+    public HighlightBuilder field(Field field) {
+        fields.add(field);
+        return this;
+    }
+
+    void fields(List<Field> fields) {
+        this.fields.addAll(fields);
+    }
+
+    public List<Field> fields() {
+        return this.fields;
+    }
+
+    /**
+     * Set a tag scheme that encapsulates a built in pre and post tags. The allowed schemes
+     * are {@code styled} and {@code default}.
+     *
+     * @param schemaName The tag scheme name
+     */
+    public HighlightBuilder tagsSchema(String schemaName) {
+        switch (schemaName) {
+            case "default":
+                preTags(DEFAULT_PRE_TAGS);
+                postTags(DEFAULT_POST_TAGS);
+                break;
+            case "styled":
+                preTags(DEFAULT_STYLED_PRE_TAG);
+                postTags(DEFAULT_STYLED_POST_TAGS);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown tag schema [" + schemaName + "]");
+        }
+        return this;
+    }
+
+    /**
+     * Set encoder for the highlighting
+     * are {@code html} and {@code default}.
+     *
+     * @param encoder name
+     */
+    public HighlightBuilder encoder(String encoder) {
+        this.encoder = encoder;
+        return this;
+    }
+
+    /**
+     * Send the fields to be highlighted using a syntax that is specific about the order in which they should be highlighted.
+     * @return this for chaining
+     */
+    public HighlightBuilder useExplicitFieldOrder(boolean useExplicitFieldOrder) {
+        this.useExplicitFieldOrder = useExplicitFieldOrder;
+        return this;
+    }
+
+    @Override
+    public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+        builder.startObject();
+        innerXContent(builder);
+        builder.endObject();
+        return builder;
+    }
+
+    private static final BiFunction<XContentParser, HighlightBuilder, HighlightBuilder> PARSER;
+    static {
+        ObjectParser<HighlightBuilder, Void> parser = new ObjectParser<>("highlight");
+        parser.declareString(HighlightBuilder::tagsSchema, new ParseField("tags_schema"));
+        parser.declareString(HighlightBuilder::encoder, ENCODER_FIELD);
+        parser.declareNamedObjects(
+            HighlightBuilder::fields,
+            Field.PARSER,
+            (HighlightBuilder hb) -> hb.useExplicitFieldOrder(true),
+            FIELDS_FIELD
+        );
+        PARSER = setupParser(parser);
+    }
+
+    public static HighlightBuilder fromXContent(XContentParser p) {
+        return PARSER.apply(p, new HighlightBuilder());
+    }
+
+    static Character[] convertCharArray(char[] array) {
+        if (array == null) {
+            return null;
+        }
+        Character[] charArray = new Character[array.length];
+        for (int i = 0; i < array.length; i++) {
+            charArray[i] = array[i];
+        }
+        return charArray;
+    }
+
+    @Override
+    public void innerXContent(XContentBuilder builder) throws IOException {
+        // first write common options
+        commonOptionsToXContent(builder);
+        // special options for top-level highlighter
+        if (encoder != null) {
+            builder.field(ENCODER_FIELD.getPreferredName(), encoder);
+        }
+        if (fields.size() > 0) {
+            if (useExplicitFieldOrder) {
+                builder.startArray(FIELDS_FIELD.getPreferredName());
+            } else {
+                builder.startObject(FIELDS_FIELD.getPreferredName());
+            }
+            for (Field field : fields) {
+                if (useExplicitFieldOrder) {
+                    builder.startObject();
+                }
+                field.innerXContent(builder);
+                if (useExplicitFieldOrder) {
+                    builder.endObject();
+                }
+            }
+            if (useExplicitFieldOrder) {
+                builder.endArray();
+            } else {
+                builder.endObject();
+            }
+        }
+    }
+
+    @Override
+    protected int doHashCode() {
+        return Objects.hash(encoder, useExplicitFieldOrder, fields);
+    }
+
+    @Override
+    protected boolean doEquals(HighlightBuilder other) {
+        return Objects.equals(encoder, other.encoder)
+            && Objects.equals(useExplicitFieldOrder, other.useExplicitFieldOrder)
+            && Objects.equals(fields, other.fields);
+    }
+
+    @Override
+    public HighlightBuilder rewrite(QueryRewriteContext ctx) throws IOException {
+        QueryBuilder highlightQuery = this.highlightQuery;
+        if (highlightQuery != null) {
+            highlightQuery = this.highlightQuery.rewrite(ctx);
+        }
+        List<Field> fields = Rewriteable.rewrite(this.fields, ctx);
+        if (highlightQuery == this.highlightQuery && fields == this.fields) {
+            return this;
+        }
+        return new HighlightBuilder(this, highlightQuery, fields);
+
+    }
+
+    /**
+     * Field for highlight builder
+     *
+     * @opensearch.api
+     */
+    @PublicApi(since = "1.0.0")
+    public static class Field extends AbstractHighlighterBuilder<Field> {
+        static final NamedObjectParser<Field, Void> PARSER;
+        static {
+            ObjectParser<Field, Void> parser = new ObjectParser<>("highlight_field");
+            parser.declareInt(Field::fragmentOffset, FRAGMENT_OFFSET_FIELD);
+            parser.declareStringArray(fromList(String.class, Field::matchedFields), MATCHED_FIELDS_FIELD);
+            BiFunction<XContentParser, Field, Field> decoratedParser = setupParser(parser);
+            PARSER = (XContentParser p, Void c, String name) -> decoratedParser.apply(p, new Field(name));
+        }
+
+        private final String name;
+
+        int fragmentOffset = -1;
+
+        String[] matchedFields;
+
+        public Field(String name) {
+            this.name = name;
+        }
+
+        private Field(Field template, QueryBuilder builder) {
+            super(template, builder);
+            name = template.name;
+            fragmentOffset = template.fragmentOffset;
+            matchedFields = template.matchedFields;
+        }
+
+        /**
+         * Read from a stream.
+         */
+        public Field(StreamInput in) throws IOException {
+            super(in);
+            name = in.readString();
+            fragmentOffset(in.readVInt());
+            matchedFields(in.readOptionalStringArray());
+            assert this.equals(new Field(this, highlightQuery)) : "copy constructor is broken";
+        }
+
+        @Override
+        protected void doWriteTo(StreamOutput out) throws IOException {
+            out.writeString(name);
+            out.writeVInt(fragmentOffset);
+            out.writeOptionalStringArray(matchedFields);
+        }
+
+        public Field fragmentOffset(int fragmentOffset) {
+            this.fragmentOffset = fragmentOffset;
+            return this;
+        }
+
+        /**
+         * Set the matched fields to highlight against this field data.  Default to null, meaning just
+         * the named field.  If you provide a list of fields here then don't forget to include name as
+         * it is not automatically included.
+         */
+        public Field matchedFields(String... matchedFields) {
+            this.matchedFields = matchedFields;
+            return this;
+        }
+
+        @Override
+        public void innerXContent(XContentBuilder builder) throws IOException {
+            builder.startObject(name);
+            // write common options
+            commonOptionsToXContent(builder);
+            // write special field-highlighter options
+            if (fragmentOffset != -1) {
+                builder.field(FRAGMENT_OFFSET_FIELD.getPreferredName(), fragmentOffset);
+            }
+            if (matchedFields != null) {
+                builder.array(MATCHED_FIELDS_FIELD.getPreferredName(), matchedFields);
+            }
+            builder.endObject();
+        }
+
+        @Override
+        protected int doHashCode() {
+            return Objects.hash(name, fragmentOffset, Arrays.hashCode(matchedFields));
+        }
+
+        @Override
+        protected boolean doEquals(Field other) {
+            return Objects.equals(name, other.name)
+                && Objects.equals(fragmentOffset, other.fragmentOffset)
+                && Arrays.equals(matchedFields, other.matchedFields);
+        }
+
+        @Override
+        public Field rewrite(QueryRewriteContext ctx) throws IOException {
+            if (highlightQuery != null) {
+                QueryBuilder rewrite = highlightQuery.rewrite(ctx);
+                if (rewrite != highlightQuery) {
+                    return new Field(this, rewrite);
+                }
+            }
+            return this;
+        }
+    }
+
+    /**
+     * Order for highlight builder
+     *
+     * @opensearch.api
+     */
+    @PublicApi(since = "1.0.0")
+    public enum Order implements Writeable {
+        NONE,
+        SCORE;
+
+        public static Order readFromStream(StreamInput in) throws IOException {
+            return in.readEnum(Order.class);
+        }
+
+        @Override
+        public void writeTo(StreamOutput out) throws IOException {
+            out.writeEnum(this);
+        }
+
+        public static Order fromString(String order) {
+            if (order.toUpperCase(Locale.ROOT).equals(SCORE.name())) {
+                return Order.SCORE;
+            }
+            return NONE;
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /**
+     * Boundary scanner type
+     *
+     * @opensearch.api
+     */
+    @PublicApi(since = "1.0.0")
+    public enum BoundaryScannerType implements Writeable {
+        CHARS,
+        WORD,
+        SENTENCE;
+
+        public static BoundaryScannerType readFromStream(StreamInput in) throws IOException {
+            return in.readEnum(BoundaryScannerType.class);
+        }
+
+        @Override
+        public void writeTo(StreamOutput out) throws IOException {
+            out.writeEnum(this);
+        }
+
+        public static BoundaryScannerType fromString(String boundaryScannerType) {
+            return valueOf(boundaryScannerType.toUpperCase(Locale.ROOT));
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+}

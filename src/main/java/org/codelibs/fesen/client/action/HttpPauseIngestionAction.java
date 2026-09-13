@@ -19,12 +19,12 @@ import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.indices.streamingingestion.IngestionStateShardFailure;
-import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionAction;
-import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
-import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.IngestionStateShardFailure;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the pause ingestion API over HTTP for OpenSearch.

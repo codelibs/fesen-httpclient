@@ -24,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.indices.view.SearchViewAction;
-import org.opensearch.action.search.SearchRequest;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.PointInTimeBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
+import org.codelibs.fesen.opensearch.action.search.SearchRequest;
+import org.codelibs.fesen.opensearch.index.query.QueryBuilders;
+import org.codelibs.fesen.opensearch.search.builder.PointInTimeBuilder;
+import org.codelibs.fesen.opensearch.search.builder.SearchSourceBuilder;
 
 class HttpSearchViewActionTest {
 

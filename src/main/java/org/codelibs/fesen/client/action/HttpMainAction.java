@@ -17,11 +17,11 @@ package org.codelibs.fesen.client.action;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.main.MainAction;
-import org.opensearch.action.main.MainRequest;
-import org.opensearch.action.main.MainResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.main.MainAction;
+import org.codelibs.fesen.opensearch.action.main.MainRequest;
+import org.codelibs.fesen.opensearch.action.main.MainResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Main (cluster info) API over HTTP for OpenSearch/Elasticsearch.

@@ -23,7 +23,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import org.codelibs.fesen.client.node.NodeManager;
 import org.junit.jupiter.api.Test;
-import org.opensearch.common.settings.Settings;
+import org.codelibs.fesen.opensearch.common.settings.Settings;
 
 /**
  * Test class for HttpClient.close() method

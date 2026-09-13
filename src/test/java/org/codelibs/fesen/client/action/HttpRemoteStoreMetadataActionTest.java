@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataAction;
-import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse;
-import org.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreShardMetadata;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.DeprecationHandler;
-import org.opensearch.core.xcontent.NamedXContentRegistry;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreMetadataResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.metadata.RemoteStoreShardMetadata;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
+import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 class HttpRemoteStoreMetadataActionTest {
 

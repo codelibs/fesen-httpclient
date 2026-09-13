@@ -16,113 +16,109 @@
 package org.codelibs.fesen.client;
 
 import org.codelibs.fesen.client.action.indices.create.HttpCreateIndexRequrestBuilder;
-import org.opensearch.action.ActionRequest;
-import org.opensearch.action.ActionType;
-import org.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.opensearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesRequestBuilder;
-import org.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
-import org.opensearch.action.admin.indices.analyze.AnalyzeAction.Request;
-import org.opensearch.action.admin.indices.analyze.AnalyzeAction.Response;
-import org.opensearch.action.admin.indices.analyze.AnalyzeRequestBuilder;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequestBuilder;
-import org.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
-import org.opensearch.action.admin.indices.close.CloseIndexRequest;
-import org.opensearch.action.admin.indices.close.CloseIndexRequestBuilder;
-import org.opensearch.action.admin.indices.close.CloseIndexResponse;
-import org.opensearch.action.admin.indices.create.CreateIndexAction;
-import org.opensearch.action.admin.indices.create.CreateIndexRequest;
-import org.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.opensearch.action.admin.indices.create.CreateIndexResponse;
-import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.opensearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
-import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.opensearch.action.admin.indices.flush.FlushRequest;
-import org.opensearch.action.admin.indices.flush.FlushRequestBuilder;
-import org.opensearch.action.admin.indices.flush.FlushResponse;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeRequestBuilder;
-import org.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
-import org.opensearch.action.admin.indices.get.GetIndexRequest;
-import org.opensearch.action.admin.indices.get.GetIndexRequestBuilder;
-import org.opensearch.action.admin.indices.get.GetIndexResponse;
-import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
-import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
-import org.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
-import org.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.opensearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.opensearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
-import org.opensearch.action.admin.indices.open.OpenIndexRequest;
-import org.opensearch.action.admin.indices.open.OpenIndexRequestBuilder;
-import org.opensearch.action.admin.indices.open.OpenIndexResponse;
-import org.opensearch.action.admin.indices.readonly.AddIndexBlockRequest;
-import org.opensearch.action.admin.indices.readonly.AddIndexBlockRequestBuilder;
-import org.opensearch.action.admin.indices.readonly.AddIndexBlockResponse;
-import org.opensearch.action.admin.indices.recovery.RecoveryRequest;
-import org.opensearch.action.admin.indices.recovery.RecoveryRequestBuilder;
-import org.opensearch.action.admin.indices.recovery.RecoveryResponse;
-import org.opensearch.action.admin.indices.refresh.RefreshRequest;
-import org.opensearch.action.admin.indices.refresh.RefreshRequestBuilder;
-import org.opensearch.action.admin.indices.refresh.RefreshResponse;
-import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
-import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequestBuilder;
-import org.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
-import org.opensearch.action.admin.indices.rollover.RolloverRequest;
-import org.opensearch.action.admin.indices.rollover.RolloverRequestBuilder;
-import org.opensearch.action.admin.indices.rollover.RolloverResponse;
-import org.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
-import org.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
-import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
-import org.opensearch.action.admin.indices.segments.IndicesSegmentsRequestBuilder;
-import org.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
-import org.opensearch.action.admin.indices.settings.get.GetSettingsRequestBuilder;
-import org.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
-import org.opensearch.action.admin.indices.shards.IndicesShardStoreRequestBuilder;
-import org.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
-import org.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
-import org.opensearch.action.admin.indices.shrink.ResizeRequest;
-import org.opensearch.action.admin.indices.shrink.ResizeRequestBuilder;
-import org.opensearch.action.admin.indices.shrink.ResizeResponse;
-import org.opensearch.action.admin.indices.stats.IndicesStatsRequest;
-import org.opensearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
-import org.opensearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
-import org.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
-import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
-import org.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
-import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
-import org.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
-import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
-import org.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequestBuilder;
-import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
-import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequestBuilder;
-import org.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
-import org.opensearch.action.admin.indices.template.put.PutIndexTemplateRequest;
-import org.opensearch.action.admin.indices.template.put.PutIndexTemplateRequestBuilder;
-import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
-import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequestBuilder;
-import org.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
-import org.opensearch.action.admin.indices.upgrade.post.UpgradeRequest;
-import org.opensearch.action.admin.indices.upgrade.post.UpgradeRequestBuilder;
-import org.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
-import org.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
-import org.opensearch.action.admin.indices.validate.query.ValidateQueryRequestBuilder;
-import org.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
-import org.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.opensearch.cluster.metadata.IndexMetadata.APIBlock;
-import org.opensearch.common.action.ActionFuture;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.action.ActionResponse;
-import org.opensearch.threadpool.ThreadPool;
-import org.opensearch.transport.client.IndicesAdminClient;
+import org.codelibs.fesen.opensearch.action.ActionRequest;
+import org.codelibs.fesen.opensearch.action.ActionType;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.alias.get.GetAliasesResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction.Request;
+import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeAction.Response;
+import org.codelibs.fesen.opensearch.action.admin.indices.analyze.AnalyzeRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.cache.clear.ClearIndicesCacheResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexAction;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.flush.FlushResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.forcemerge.ForceMergeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.get.GetIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.refresh.RefreshResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.replication.SegmentReplicationStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.rollover.RolloverResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.scale.searchonly.ScaleIndexRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoreRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shards.IndicesShardStoresResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.shrink.ResizeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.pause.PauseIngestionResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.resume.ResumeIngestionResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.streamingingestion.state.GetIngestionStateResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.delete.DeleteIndexTemplateRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.template.put.PutIndexTemplateRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.get.UpgradeStatusResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.upgrade.post.UpgradeResponse;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequest;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequestBuilder;
+import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
+import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
+import org.codelibs.fesen.opensearch.common.action.ActionFuture;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.action.ActionResponse;
+import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
+import org.codelibs.fesen.opensearch.transport.client.IndicesAdminClient;
 
 /**
  * An {@link IndicesAdminClient} implementation that delegates all indices
@@ -287,16 +283,6 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     @Override
     public void open(final OpenIndexRequest request, final ActionListener<OpenIndexResponse> listener) {
         indicesClient.open(request, listener);
-    }
-
-    @Override
-    public AddIndexBlockRequestBuilder prepareAddBlock(final APIBlock block, final String... indices) {
-        return indicesClient.prepareAddBlock(block, indices);
-    }
-
-    @Override
-    public void addBlock(final AddIndexBlockRequest request, final ActionListener<AddIndexBlockResponse> listener) {
-        indicesClient.addBlock(request, listener);
     }
 
     @Override
@@ -630,50 +616,14 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public void createDataStream(final org.opensearch.action.admin.indices.datastream.CreateDataStreamAction.Request request,
-            final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.createDataStream(request, listener);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> createDataStream(
-            final org.opensearch.action.admin.indices.datastream.CreateDataStreamAction.Request request) {
-        return indicesClient.createDataStream(request);
-    }
-
-    @Override
-    public void deleteDataStream(final org.opensearch.action.admin.indices.datastream.DeleteDataStreamAction.Request request,
-            final ActionListener<AcknowledgedResponse> listener) {
-        indicesClient.deleteDataStream(request, listener);
-    }
-
-    @Override
-    public ActionFuture<AcknowledgedResponse> deleteDataStream(
-            final org.opensearch.action.admin.indices.datastream.DeleteDataStreamAction.Request request) {
-        return indicesClient.deleteDataStream(request);
-    }
-
-    @Override
-    public void getDataStreams(final org.opensearch.action.admin.indices.datastream.GetDataStreamAction.Request request,
-            final ActionListener<org.opensearch.action.admin.indices.datastream.GetDataStreamAction.Response> listener) {
-        indicesClient.getDataStreams(request, listener);
-    }
-
-    @Override
-    public ActionFuture<org.opensearch.action.admin.indices.datastream.GetDataStreamAction.Response> getDataStreams(
-            final org.opensearch.action.admin.indices.datastream.GetDataStreamAction.Request request) {
-        return indicesClient.getDataStreams(request);
-    }
-
-    @Override
-    public void resolveIndex(final org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request,
-            final ActionListener<org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response> listener) {
+    public void resolveIndex(final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request,
+            final ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response> listener) {
         indicesClient.resolveIndex(request, listener);
     }
 
     @Override
-    public ActionFuture<org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response> resolveIndex(
-            final org.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request) {
+    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Response> resolveIndex(
+            final org.codelibs.fesen.opensearch.action.admin.indices.resolve.ResolveIndexAction.Request request) {
         return indicesClient.resolveIndex(request);
     }
 
@@ -694,49 +644,50 @@ public class HttpIndicesAdminClient implements IndicesAdminClient {
     }
 
     @Override
-    public void createView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
-            ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+    public void createView(org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request,
+            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
         indicesClient.createView(request, listener);
     }
 
     @Override
-    public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> createView(
-            org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
+    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> createView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
         return indicesClient.createView(request);
     }
 
     @Override
-    public void getView(org.opensearch.action.admin.indices.view.GetViewAction.Request request,
-            ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+    public void getView(org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Request request,
+            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
         indicesClient.getView(request, listener);
     }
 
     @Override
-    public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> getView(
-            org.opensearch.action.admin.indices.view.GetViewAction.Request request) {
+    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> getView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Request request) {
         return indicesClient.getView(request);
     }
 
     @Override
-    public void deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request,
+    public void deleteView(org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request,
             ActionListener<AcknowledgedResponse> listener) {
         indicesClient.deleteView(request, listener);
     }
 
     @Override
-    public ActionFuture<AcknowledgedResponse> deleteView(org.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
+    public ActionFuture<AcknowledgedResponse> deleteView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction.Request request) {
         return indicesClient.deleteView(request);
     }
 
     @Override
-    public void updateView(org.opensearch.action.admin.indices.view.CreateViewAction.Request request,
-            ActionListener<org.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
+    public void updateView(org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request,
+            ActionListener<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> listener) {
         indicesClient.updateView(request, listener);
     }
 
     @Override
-    public ActionFuture<org.opensearch.action.admin.indices.view.GetViewAction.Response> updateView(
-            org.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
+    public ActionFuture<org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Response> updateView(
+            org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction.Request request) {
         return indicesClient.updateView(request);
     }
 

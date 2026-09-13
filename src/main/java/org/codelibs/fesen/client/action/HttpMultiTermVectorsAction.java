@@ -22,16 +22,16 @@ import java.util.List;
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.util.UrlUtils;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.action.termvectors.MultiTermVectorsAction;
-import org.opensearch.action.termvectors.MultiTermVectorsItemResponse;
-import org.opensearch.action.termvectors.MultiTermVectorsRequest;
-import org.opensearch.action.termvectors.MultiTermVectorsResponse;
-import org.opensearch.action.termvectors.TermVectorsRequest;
-import org.opensearch.action.termvectors.TermVectorsResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsAction;
+import org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsItemResponse;
+import org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsRequest;
+import org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsResponse;
+import org.codelibs.fesen.opensearch.action.termvectors.TermVectorsRequest;
+import org.codelibs.fesen.opensearch.action.termvectors.TermVectorsResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**
  * Handles the Multi Term Vectors API over HTTP for OpenSearch/Elasticsearch.

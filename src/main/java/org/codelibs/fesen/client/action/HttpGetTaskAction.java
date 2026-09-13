@@ -19,12 +19,12 @@ import java.io.IOException;
 
 import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
-import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
-import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
-import org.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
-import org.opensearch.core.action.ActionListener;
-import org.opensearch.core.xcontent.XContentParser;
-import org.opensearch.tasks.TaskResult;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
+import org.codelibs.fesen.opensearch.core.action.ActionListener;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.tasks.TaskResult;
 
 /**
  * Handles the get task API over HTTP for OpenSearch/Elasticsearch,
