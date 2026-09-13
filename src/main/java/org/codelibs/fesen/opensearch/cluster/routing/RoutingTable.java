@@ -61,7 +61,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-
 /**
  * Represents a global cluster-wide routing table for all indices including the
  * version of the current routing state.
@@ -390,10 +389,6 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
     @Override
     public Diff<RoutingTable> diff(RoutingTable previousState) {
         return new RoutingTableDiff(previousState, this);
-    }
-
-    public Diff<RoutingTable> incrementalDiff(RoutingTable previousState) {
-        return new RoutingTableIncrementalDiff(previousState, this);
     }
 
     public static Diff<RoutingTable> readDiffFrom(StreamInput in) throws IOException {

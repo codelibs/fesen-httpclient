@@ -33,15 +33,12 @@ package org.codelibs.fesen.opensearch.search.suggest.completion;
 
 import org.codelibs.fesen.opensearch.OpenSearchParseException;
 import org.codelibs.fesen.opensearch.common.unit.Fuzziness;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaType;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
-import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;

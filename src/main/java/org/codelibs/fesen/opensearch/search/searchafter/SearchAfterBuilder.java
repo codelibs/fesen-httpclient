@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.common.text.Text;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
 import java.math.BigInteger;

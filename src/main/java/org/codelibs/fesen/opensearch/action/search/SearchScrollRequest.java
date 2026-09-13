@@ -36,15 +36,12 @@ import org.codelibs.fesen.opensearch.action.ActionRequest;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
-import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.core.tasks.TaskId;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.search.Scroll;
-import org.codelibs.fesen.opensearch.tasks.Task;
 
 import java.io.IOException;
 import java.util.Map;

@@ -35,9 +35,9 @@ package org.codelibs.fesen.opensearch.search.aggregations.metrics;
 import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
+import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.search.aggregations.ParsedAggregation;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.InternalGeoCentroid.Fields;
 
 import java.io.IOException;
 
@@ -104,5 +104,14 @@ public class ParsedGeoCentroid extends ParsedAggregation implements GeoCentroid 
         ParsedGeoCentroid geoCentroid = PARSER.apply(parser, null);
         geoCentroid.setName(name);
         return geoCentroid;
+    }
+
+    /** JSON field names, previously read from InternalGeoCentroid.Fields. That class is the
+     *  node-side reduce implementation; a client only needs the names. */
+    static class Fields {
+        static final ParseField CENTROID = new ParseField("location");
+        static final ParseField COUNT = new ParseField("count");
+        static final ParseField CENTROID_LAT = new ParseField("lat");
+        static final ParseField CENTROID_LON = new ParseField("lon");
     }
 }

@@ -41,7 +41,6 @@ import org.apache.lucene.util.BytesRefBuilder;
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.action.get.GetRequest;
 import org.codelibs.fesen.opensearch.action.search.SearchRequest;
-import org.codelibs.fesen.opensearch.common.SetOnce;
 import org.codelibs.fesen.opensearch.common.io.stream.BytesStreamOutput;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapValues;

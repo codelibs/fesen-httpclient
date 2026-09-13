@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.cluster.routing.allocation.command;
 
-import org.codelibs.fesen.opensearch.OpenSearchException;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RerouteExplanation;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.network.NetworkModule;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;

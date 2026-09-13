@@ -161,16 +161,6 @@ public class HttpCreateIndexRequest extends CreateIndexRequest {
     }
 
     @Override
-    public void remoteAddress(final TransportAddress remoteAddress) {
-        request.remoteAddress(remoteAddress);
-    }
-
-    @Override
-    public TransportAddress remoteAddress() {
-        return request.remoteAddress();
-    }
-
-    @Override
     public Task createTask(final long id, final String type, final String action, final TaskId parentTaskId,
             final Map<String, String> headers) {
         return request.createTask(id, type, action, parentTaskId, headers);

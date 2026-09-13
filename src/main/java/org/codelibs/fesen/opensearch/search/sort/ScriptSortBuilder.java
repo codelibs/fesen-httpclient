@@ -39,7 +39,6 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
-import org.codelibs.fesen.opensearch.common.util.BigArrays;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;

@@ -34,9 +34,9 @@ package org.codelibs.fesen.opensearch.transport;
 
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
+import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.tasks.TaskId;
-import org.codelibs.fesen.opensearch.core.transport.TransportMessage;
 import org.codelibs.fesen.opensearch.tasks.TaskAwareRequest;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ import java.io.IOException;
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
-public abstract class TransportRequest extends TransportMessage implements TaskAwareRequest {
+public abstract class TransportRequest implements Writeable, TaskAwareRequest {
     /**
      * Empty transport request
      *

@@ -65,7 +65,6 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
     }
 
     public RemoteConnectionInfo(StreamInput input) throws IOException {
-        input.readEnum(RemoteConnectionStrategy.ConnectionStrategy.class);
         modeInfo = null;
         initialConnectionTimeout = input.readTimeValue();
         clusterAlias = input.readString();
@@ -94,7 +93,6 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        out.writeEnum(modeInfo.modeType());
         modeInfo.writeTo(out);
         out.writeTimeValue(initialConnectionTimeout);
         out.writeString(clusterAlias);
@@ -143,6 +141,5 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
 
         String modeName();
 
-        RemoteConnectionStrategy.ConnectionStrategy modeType();
     }
 }

@@ -114,7 +114,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.Validat
 import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.validate.query.ValidateQueryResponse;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.codelibs.fesen.opensearch.common.action.ActionFuture;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;

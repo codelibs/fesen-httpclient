@@ -33,15 +33,12 @@
 package org.codelibs.fesen.opensearch.search.aggregations.bucket.composite;
 
 import org.apache.lucene.index.IndexReader;
-import org.codelibs.fesen.opensearch.common.util.BigArrays;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram.Histogram;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.missing.MissingOrder;
-import org.codelibs.fesen.opensearch.search.sort.SortOrder;
 
 import java.io.IOException;
 import java.util.List;

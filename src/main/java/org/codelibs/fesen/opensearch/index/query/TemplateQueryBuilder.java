@@ -9,10 +9,6 @@
 package org.codelibs.fesen.opensearch.index.query;
 
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
-import org.codelibs.fesen.opensearch.common.xcontent.XContentFactory;
-import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
-import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
@@ -23,7 +19,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.ensureExpectedToken;
 
 /**
  * A query builder that constructs a query based on a template and context variables.

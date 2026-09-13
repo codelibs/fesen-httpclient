@@ -392,29 +392,6 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         this.exists = exists;
     }
 
-    public void setFields(
-        Fields termVectorsByField,
-        Set<String> selectedFields,
-        EnumSet<TermVectorsRequest.Flag> flags,
-        Fields topLevelFields
-    ) throws IOException {
-        setFields(termVectorsByField, selectedFields, flags, topLevelFields, null);
-    }
-
-    public void setFields(
-        Fields termVectorsByField,
-        Set<String> selectedFields,
-        EnumSet<TermVectorsRequest.Flag> flags,
-        Fields topLevelFields,
-        TermVectorsFilter termVectorsFilter
-    ) throws IOException {
-        TermVectorsWriter tvw = new TermVectorsWriter(this);
-
-        if (termVectorsByField != null) {
-            tvw.setFields(termVectorsByField, selectedFields, flags, topLevelFields, termVectorsFilter);
-        }
-    }
-
     public void setTermVectorsField(BytesStreamOutput output) {
         termVectors = output.bytes();
     }

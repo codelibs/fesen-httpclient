@@ -47,8 +47,6 @@ import org.codelibs.fesen.opensearch.action.termvectors.MultiTermVectorsResponse
 import org.codelibs.fesen.opensearch.action.termvectors.TermVectorsRequest;
 import org.codelibs.fesen.opensearch.action.termvectors.TermVectorsResponse;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.lucene.search.MoreLikeThisQuery;
-import org.codelibs.fesen.opensearch.common.lucene.search.XMoreLikeThis;
 import org.codelibs.fesen.opensearch.common.lucene.uid.Versions;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentFactory;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
@@ -93,13 +91,18 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Types are deprecated in [more_like_this] "
         + "queries. The type should no longer be specified in the [like] and [unlike] sections.";
 
-    public static final int DEFAULT_MAX_QUERY_TERMS = XMoreLikeThis.DEFAULT_MAX_QUERY_TERMS;
-    public static final int DEFAULT_MIN_TERM_FREQ = XMoreLikeThis.DEFAULT_MIN_TERM_FREQ;
-    public static final int DEFAULT_MIN_DOC_FREQ = XMoreLikeThis.DEFAULT_MIN_DOC_FREQ;
-    public static final int DEFAULT_MAX_DOC_FREQ = XMoreLikeThis.DEFAULT_MAX_DOC_FREQ;
-    public static final int DEFAULT_MIN_WORD_LENGTH = XMoreLikeThis.DEFAULT_MIN_WORD_LENGTH;
-    public static final int DEFAULT_MAX_WORD_LENGTH = XMoreLikeThis.DEFAULT_MAX_WORD_LENGTH;
-    public static final String DEFAULT_MINIMUM_SHOULD_MATCH = MoreLikeThisQuery.DEFAULT_MINIMUM_SHOULD_MATCH;
+    /* The six defaults below were read from XMoreLikeThis, a 23 KB Lucene
+     * more-like-this implementation that computes interesting terms from an index. A client
+     * only serialises the parameters; the values are inlined so the builder does not carry it. */
+    public static final int DEFAULT_MAX_QUERY_TERMS = 25;
+    public static final int DEFAULT_MIN_TERM_FREQ = 2;
+    public static final int DEFAULT_MIN_DOC_FREQ = 5;
+    public static final int DEFAULT_MAX_DOC_FREQ = Integer.MAX_VALUE;
+    public static final int DEFAULT_MIN_WORD_LENGTH = 0;
+    public static final int DEFAULT_MAX_WORD_LENGTH = 0;
+    /** Was MoreLikeThisQuery.DEFAULT_MINIMUM_SHOULD_MATCH; inlined so the builder does not
+     *  drag in the node-side Lucene query it only borrowed a default from. */
+    public static final String DEFAULT_MINIMUM_SHOULD_MATCH = "30%";
     public static final float DEFAULT_BOOST_TERMS = 0;  // no boost terms
     public static final boolean DEFAULT_INCLUDE = false;
     public static final boolean DEFAULT_FAIL_ON_UNSUPPORTED_FIELDS = true;

@@ -38,7 +38,6 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;

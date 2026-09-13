@@ -46,7 +46,6 @@ import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.core.tasks.TaskId;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.search.Scroll;
 import org.codelibs.fesen.opensearch.search.builder.PointInTimeBuilder;

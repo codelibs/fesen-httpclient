@@ -50,8 +50,6 @@ import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.global.GlobalAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 import org.codelibs.fesen.opensearch.search.aggregations.support.AggregationPath;
 import org.codelibs.fesen.opensearch.search.aggregations.support.AggregationPath.PathElement;
 

@@ -31,7 +31,6 @@
  */
 package org.codelibs.fesen.opensearch.common.lucene.search.function;
 
-import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;

@@ -34,7 +34,6 @@ package org.codelibs.fesen.opensearch.plugins;
 
 import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.bootstrap.JarHell;
 import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContentParser;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -341,7 +340,7 @@ public class PluginInfo implements Writeable, ToXContentObject {
         if (javaVersionString == null) {
             throw new IllegalArgumentException("property [java.version] is missing for plugin [" + name + "]");
         }
-        JarHell.checkVersionFormat(javaVersionString);
+        checkVersionFormat(javaVersionString);
         final String classname = propsMap.remove("classname");
         if (classname == null) {
             throw new IllegalArgumentException("property [classname] is missing for plugin [" + name + "]");
@@ -598,4 +597,23 @@ public class PluginInfo implements Writeable, ToXContentObject {
             .append(customFolderName);
         return information.toString();
     }
+    /**
+     * Verifies that a plugin's declared java version is a legal version string.
+     *
+     * <p>This was {@code JarHell.checkVersionFormat}. JarHell is a 14 KB scanner for duplicate
+     * classes and split packages on a node's classpath; this 13-line check was the only thing
+     * anything here used it for, so the check lives with its caller and the scanner is gone.</p>
+     *
+     * @param targetVersion the version string to validate
+     */
+    static void checkVersionFormat(final String targetVersion) {
+        try {
+            Runtime.Version.parse(targetVersion);
+        } catch (final IllegalArgumentException ex) {
+            throw new IllegalStateException(
+                    String.format(Locale.ROOT, "version string must be a sequence of nonnegative decimal integers separated by \".\"'s and may have "
+                            + "leading zeros but was %s", targetVersion));
+        }
+    }
+
 }

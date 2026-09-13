@@ -44,7 +44,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
 import java.util.Objects;

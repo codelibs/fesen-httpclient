@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.index.query.functionscore;
 
-import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.lucene.search.function.FieldValueFactorFunction;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;

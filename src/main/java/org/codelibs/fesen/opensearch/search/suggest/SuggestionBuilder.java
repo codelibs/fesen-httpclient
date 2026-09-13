@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.search.suggest;
 import org.apache.lucene.analysis.Analyzer;
 import org.codelibs.fesen.opensearch.OpenSearchParseException;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;

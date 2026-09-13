@@ -34,24 +34,12 @@ package org.codelibs.fesen.opensearch.index.query.functionscore;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Explanation;
-import org.codelibs.fesen.opensearch.OpenSearchParseException;
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.common.geo.GeoDistance;
-import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
-import org.codelibs.fesen.opensearch.common.geo.GeoUtils;
-import org.codelibs.fesen.opensearch.common.lucene.search.function.CombineFunction;
-import org.codelibs.fesen.opensearch.common.unit.DistanceUnit;
-import org.codelibs.fesen.opensearch.common.unit.TimeValue;
-import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentFactory;
-import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
-import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
-import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.search.MultiValueMode;
 
 import java.io.IOException;

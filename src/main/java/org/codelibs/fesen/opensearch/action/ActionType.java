@@ -33,11 +33,9 @@
 package org.codelibs.fesen.opensearch.action;
 
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.action.ActionResponse;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
-import org.codelibs.fesen.opensearch.transport.TransportRequestOptions;
 
 /**
  * A generic action. Should strive to make it a singleton.
@@ -71,13 +69,6 @@ public class ActionType<Response extends ActionResponse> {
      */
     public Writeable.Reader<Response> getResponseReader() {
         return responseReader;
-    }
-
-    /**
-     * Optional request options for the action.
-     */
-    public TransportRequestOptions transportOptions(Settings settings) {
-        return TransportRequestOptions.EMPTY;
     }
 
     @Override

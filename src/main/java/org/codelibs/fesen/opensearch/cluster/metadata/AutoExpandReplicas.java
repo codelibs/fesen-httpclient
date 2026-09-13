@@ -31,7 +31,6 @@
 
 package org.codelibs.fesen.opensearch.cluster.metadata;
 
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.decider.Decision;
 import org.codelibs.fesen.opensearch.common.Booleans;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;

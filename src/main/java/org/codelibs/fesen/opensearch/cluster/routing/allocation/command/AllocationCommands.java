@@ -32,9 +32,7 @@
 
 package org.codelibs.fesen.opensearch.cluster.routing.allocation.command;
 
-import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.OpenSearchParseException;
-import org.codelibs.fesen.opensearch.cluster.routing.allocation.RoutingExplanations;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;

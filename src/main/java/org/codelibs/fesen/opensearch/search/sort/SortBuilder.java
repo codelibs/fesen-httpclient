@@ -37,7 +37,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.join.ToChildBlockJoinQuery;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -48,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 
 import java.io.IOException;
 import java.util.ArrayList;

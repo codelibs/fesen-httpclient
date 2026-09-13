@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.Objects;
 import java.util.Set;
 
@@ -90,7 +91,10 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
     final List<DocWriteRequest<?>> requests = new ArrayList<>();
     private final Set<String> indices = new HashSet<>();
 
-    protected TimeValue timeout = BulkShardRequest.DEFAULT_TIMEOUT;
+    /** Was BulkShardRequest.DEFAULT_TIMEOUT, inherited from ReplicationRequest; inlined so a
+     *  bulk request does not drag in the shard-level replication request it only borrowed a
+     *  default from. */
+    protected TimeValue timeout = new TimeValue(1, TimeUnit.MINUTES);
     private ActiveShardCount waitForActiveShards = ActiveShardCount.DEFAULT;
     private RefreshPolicy refreshPolicy = RefreshPolicy.NONE;
     private String globalPipeline;

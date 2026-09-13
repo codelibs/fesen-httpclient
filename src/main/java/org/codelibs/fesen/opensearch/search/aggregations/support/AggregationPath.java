@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.search.aggregations.AggregationExecutionException;
 import org.codelibs.fesen.opensearch.search.aggregations.InternalAggregations;
-import org.codelibs.fesen.opensearch.search.sort.SortOrder;
 
 import java.util.ArrayList;
 import java.util.Iterator;

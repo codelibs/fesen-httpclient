@@ -8,9 +8,7 @@
 
 package org.codelibs.fesen.opensearch.cluster.awarenesshealth;
 
-import org.codelibs.fesen.opensearch.cluster.ClusterState;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;

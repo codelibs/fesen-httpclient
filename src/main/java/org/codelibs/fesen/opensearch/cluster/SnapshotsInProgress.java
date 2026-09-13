@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.repositories.IndexId;
 import org.codelibs.fesen.opensearch.repositories.RepositoryOperation;
 import org.codelibs.fesen.opensearch.repositories.RepositoryShardId;
-import org.codelibs.fesen.opensearch.snapshots.InFlightShardSnapshotStates;
 import org.codelibs.fesen.opensearch.snapshots.Snapshot;
 import org.codelibs.fesen.opensearch.snapshots.SnapshotId;
 
@@ -1107,23 +1106,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
 
     private final List<Entry> entries;
 
-    private static boolean assertConsistentEntries(List<Entry> entries) {
-        final Map<String, Set<ShardId>> assignedShardsByRepo = new HashMap<>();
-        for (Entry entry : entries) {
-            for (final Map.Entry<ShardId, ShardSnapshotStatus> shard : entry.shards().entrySet()) {
-                if (shard.getValue().isActive()) {
-                    assert assignedShardsByRepo.computeIfAbsent(entry.repository(), k -> new HashSet<>()).add(shard.getKey())
-                        : "Found duplicate shard assignments in " + entries;
-                }
-            }
-        }
-        for (String repoName : assignedShardsByRepo.keySet()) {
-            // make sure in-flight-shard-states can be built cleanly for the entries without tripping assertions
-            InFlightShardSnapshotStates.forRepo(repoName, entries);
-        }
-        return true;
-    }
-
     public static SnapshotsInProgress of(List<Entry> entries) {
         if (entries.isEmpty()) {
             return EMPTY;
@@ -1133,7 +1115,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
 
     private SnapshotsInProgress(List<Entry> entries) {
         this.entries = entries;
-        assert assertConsistentEntries(entries);
     }
 
     public List<Entry> entries() {

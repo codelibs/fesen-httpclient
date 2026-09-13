@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
-import org.codelibs.fesen.opensearch.common.xcontent.XContentHelper;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;

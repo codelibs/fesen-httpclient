@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.action.support.replication;
 
-import org.codelibs.fesen.opensearch.action.bulk.BulkShardRequest;
 import org.codelibs.fesen.opensearch.action.delete.DeleteRequest;
 import org.codelibs.fesen.opensearch.action.index.IndexRequest;
 import org.codelibs.fesen.opensearch.action.support.WriteRequest;

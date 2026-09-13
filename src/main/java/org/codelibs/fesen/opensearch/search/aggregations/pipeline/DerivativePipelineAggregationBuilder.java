@@ -32,16 +32,12 @@
 
 package org.codelibs.fesen.opensearch.search.aggregations.pipeline;
 
-import org.codelibs.fesen.opensearch.common.Rounding;
-import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
-import org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
 import org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.codelibs.fesen.opensearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 

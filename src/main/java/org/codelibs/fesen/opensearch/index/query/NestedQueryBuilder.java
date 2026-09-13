@@ -49,15 +49,12 @@ import org.apache.lucene.search.join.BitSetProducer;
 import org.apache.lucene.search.join.ParentChildrenBlockJoinQuery;
 import org.apache.lucene.search.join.ScoreMode;
 import org.codelibs.fesen.opensearch.common.lucene.Lucene;
-import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.SearchHit;
-import org.codelibs.fesen.opensearch.search.internal.SearchContext;
 
 import java.io.IOException;
 import java.util.Locale;

@@ -130,7 +130,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.view.CreateViewAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.view.DeleteViewAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedResponse;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.action.ActionFuture;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;

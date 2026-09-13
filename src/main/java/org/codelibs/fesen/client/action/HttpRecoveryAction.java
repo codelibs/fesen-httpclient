@@ -27,7 +27,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryActio
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;
 import org.codelibs.fesen.opensearch.core.action.ActionListener;
-import org.codelibs.fesen.opensearch.core.action.support.DefaultShardOperationFailedException;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 /**

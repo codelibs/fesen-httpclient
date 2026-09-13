@@ -33,8 +33,6 @@
 package org.codelibs.fesen.opensearch.action.bulk;
 
 import org.codelibs.fesen.opensearch.action.ActionType;
-import org.codelibs.fesen.opensearch.common.settings.Settings;
-import org.codelibs.fesen.opensearch.transport.TransportRequestOptions;
 
 /**
  * Transport action for bulk indexing
@@ -48,10 +46,5 @@ public class BulkAction extends ActionType<BulkResponse> {
 
     private BulkAction() {
         super(NAME, BulkResponse::new);
-    }
-
-    @Override
-    public TransportRequestOptions transportOptions(Settings settings) {
-        return TransportRequestOptions.builder().withType(TransportRequestOptions.Type.BULK).build();
     }
 }

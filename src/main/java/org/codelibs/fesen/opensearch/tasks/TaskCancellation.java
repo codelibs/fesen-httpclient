@@ -9,7 +9,6 @@
 package org.codelibs.fesen.opensearch.tasks;
 
 import org.codelibs.fesen.opensearch.ExceptionsHelper;
-import org.codelibs.fesen.opensearch.core.action.ActionListener;
 
 import java.util.ArrayList;
 import java.util.List;

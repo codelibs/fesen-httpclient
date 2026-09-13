@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.search.suggest.SortBy;
 import org.codelibs.fesen.opensearch.search.suggest.phrase.PhraseSuggestionBuilder.CandidateGenerator;
 
 import java.io.IOException;

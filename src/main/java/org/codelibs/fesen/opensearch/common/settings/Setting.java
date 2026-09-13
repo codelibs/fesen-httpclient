@@ -39,7 +39,6 @@ import org.codelibs.fesen.opensearch.Version;
 import org.codelibs.fesen.opensearch.common.Booleans;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.collect.Tuple;
 import org.codelibs.fesen.opensearch.common.regex.Regex;
 import org.codelibs.fesen.opensearch.common.unit.MemorySizeValue;
 import org.codelibs.fesen.opensearch.common.unit.TimeValue;
@@ -206,8 +205,6 @@ public class Setting<T> implements ToXContentObject {
         Validator<T> validator,
         Property... properties
     ) {
-        assert this instanceof SecureSetting || this.isGroupSetting() || parser.apply(defaultValue.apply(Settings.EMPTY)) != null
-            : "parser returned null";
         this.key = key;
         this.fallbackSetting = fallbackSetting;
         this.defaultValue = defaultValue;

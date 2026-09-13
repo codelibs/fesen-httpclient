@@ -40,8 +40,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
-import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator;
-import org.codelibs.fesen.opensearch.search.aggregations.pipeline.PipelineAggregator.PipelineTree;
 
 import java.io.IOException;
 import java.util.Collection;

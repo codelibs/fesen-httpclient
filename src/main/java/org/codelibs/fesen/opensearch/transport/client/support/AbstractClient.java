@@ -364,7 +364,6 @@ import org.codelibs.fesen.opensearch.action.update.UpdateAction;
 import org.codelibs.fesen.opensearch.action.update.UpdateRequest;
 import org.codelibs.fesen.opensearch.action.update.UpdateRequestBuilder;
 import org.codelibs.fesen.opensearch.action.update.UpdateResponse;
-import org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata.APIBlock;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.action.ActionFuture;
 import org.codelibs.fesen.opensearch.common.settings.Settings;

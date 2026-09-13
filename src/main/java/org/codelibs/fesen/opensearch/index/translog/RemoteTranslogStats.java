@@ -16,7 +16,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
-import org.codelibs.fesen.opensearch.index.remote.RemoteTranslogTransferTracker;
 
 import java.io.IOException;
 import java.util.Objects;

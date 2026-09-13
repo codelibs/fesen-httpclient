@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.ValueType;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.aggregations.metrics.InternalExtendedStats.Fields;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -445,5 +444,32 @@ public class ParsedExtendedStats extends ParsedStats implements ExtendedStats {
         ParsedExtendedStats parsedStats = PARSER.apply(parser, null);
         parsedStats.setName(name);
         return parsedStats;
+    }
+
+    /** JSON field names, previously read from InternalExtendedStats.Fields. That class is the
+     *  node-side reduce implementation; a client only needs the names. */
+    static class Fields {
+        public static final String SUM_OF_SQRS = "sum_of_squares";
+        public static final String SUM_OF_SQRS_AS_STRING = "sum_of_squares_as_string";
+        public static final String VARIANCE = "variance";
+        public static final String VARIANCE_AS_STRING = "variance_as_string";
+        public static final String VARIANCE_POPULATION = "variance_population";
+        public static final String VARIANCE_POPULATION_AS_STRING = "variance_population_as_string";
+        public static final String VARIANCE_SAMPLING = "variance_sampling";
+        public static final String VARIANCE_SAMPLING_AS_STRING = "variance_sampling_as_string";
+        public static final String STD_DEVIATION = "std_deviation";
+        public static final String STD_DEVIATION_AS_STRING = "std_deviation_as_string";
+        public static final String STD_DEVIATION_POPULATION = "std_deviation_population";
+        public static final String STD_DEVIATION_POPULATION_AS_STRING = "std_deviation_population_as_string";
+        public static final String STD_DEVIATION_SAMPLING = "std_deviation_sampling";
+        public static final String STD_DEVIATION_SAMPLING_AS_STRING = "std_deviation_sampling_as_string";
+        public static final String STD_DEVIATION_BOUNDS = "std_deviation_bounds";
+        public static final String STD_DEVIATION_BOUNDS_AS_STRING = "std_deviation_bounds_as_string";
+        public static final String UPPER = "upper";
+        public static final String LOWER = "lower";
+        public static final String UPPER_POPULATION = "upper_population";
+        public static final String LOWER_POPULATION = "lower_population";
+        public static final String UPPER_SAMPLING = "upper_sampling";
+        public static final String LOWER_SAMPLING = "lower_sampling";
     }
 }

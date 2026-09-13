@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
-import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.node.Node;
 import org.codelibs.fesen.opensearch.threadpool.RunnableTaskExecutionListener;
 import org.codelibs.fesen.opensearch.threadpool.TaskAwareRunnable;

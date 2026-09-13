@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.common.geo.GeoPoint;
 import org.codelibs.fesen.opensearch.common.geo.GeoUtils;
 import org.codelibs.fesen.opensearch.common.logging.DeprecationLogger;
 import org.codelibs.fesen.opensearch.common.unit.DistanceUnit;
-import org.codelibs.fesen.opensearch.common.util.BigArrays;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -60,7 +59,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
 import org.codelibs.fesen.opensearch.index.query.GeoValidationMethod;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
 import org.codelibs.fesen.opensearch.index.query.QueryRewriteContext;
-import org.codelibs.fesen.opensearch.search.DocValueFormat;
 import org.codelibs.fesen.opensearch.search.MultiValueMode;
 
 import java.io.IOException;

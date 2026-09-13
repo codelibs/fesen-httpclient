@@ -33,7 +33,6 @@ package org.codelibs.fesen.opensearch.search.suggest;
 
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
