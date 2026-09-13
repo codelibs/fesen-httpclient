@@ -534,21 +534,6 @@ public class AggregatorFactories {
             return changed ? newBuilder : this;
         }
 
-        /**
-         * Build a tree of {@link PipelineAggregator}s to modify the tree of
-         * aggregation results after the final reduction.
-         */
-        public PipelineTree buildPipelineTree() {
-            if (aggregationBuilders.isEmpty() && pipelineAggregatorBuilders.isEmpty()) {
-                return PipelineTree.EMPTY;
-            }
-            Map<String, PipelineTree> subTrees = aggregationBuilders.stream()
-                .collect(toMap(AggregationBuilder::getName, AggregationBuilder::buildPipelineTree));
-            List<PipelineAggregator> aggregators = resolvePipelineAggregatorOrder(pipelineAggregatorBuilders, aggregationBuilders).stream()
-                .map(PipelineAggregationBuilder::create)
-                .collect(toList());
-            return new PipelineTree(subTrees, aggregators);
-        }
     }
 
 }

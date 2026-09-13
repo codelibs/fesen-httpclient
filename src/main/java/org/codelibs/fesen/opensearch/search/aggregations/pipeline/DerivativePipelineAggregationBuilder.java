@@ -143,29 +143,6 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        DocValueFormat formatter;
-        if (format != null) {
-            formatter = new DocValueFormat.Decimal(format);
-        } else {
-            formatter = DocValueFormat.RAW;
-        }
-        Long xAxisUnits = null;
-        if (units != null) {
-            Rounding.DateTimeUnit dateTimeUnit = DateHistogramAggregationBuilder.DATE_FIELD_UNITS.get(units);
-            if (dateTimeUnit != null) {
-                xAxisUnits = dateTimeUnit.getField().getBaseUnit().getDuration().toMillis();
-            } else {
-                TimeValue timeValue = TimeValue.parseTimeValue(units, null, getClass().getSimpleName() + ".unit");
-                if (timeValue != null) {
-                    xAxisUnits = timeValue.getMillis();
-                }
-            }
-        }
-        return new DerivativePipelineAggregator(name, bucketsPaths, formatter, gapPolicy, xAxisUnits, metadata);
-    }
-
-    @Override
     protected void validate(ValidationContext context) {
         if (bucketsPaths.length != 1) {
             context.addValidationError(

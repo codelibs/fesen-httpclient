@@ -153,11 +153,6 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new BucketSortPipelineAggregator(name, sorts, from, size, gapPolicy, metadata);
-    }
-
-    @Override
     protected void validate(ValidationContext context) {
         context.validateHasParent(NAME, name);
         if (sorts.isEmpty() && size == null && from == 0) {

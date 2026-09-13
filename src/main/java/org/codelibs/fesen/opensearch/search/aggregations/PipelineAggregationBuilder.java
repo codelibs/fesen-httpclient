@@ -270,13 +270,6 @@ public abstract class PipelineAggregationBuilder
         }
     }
 
-    /**
-     * Creates the pipeline aggregator
-     *
-     * @return The created aggregator
-     */
-    protected abstract PipelineAggregator create();
-
     /** Associate metadata with this {@link PipelineAggregationBuilder}. */
     @Override
     public abstract PipelineAggregationBuilder setMetadata(Map<String, Object> metadata);

@@ -89,11 +89,6 @@ public class ExtendedStatsBucketPipelineAggregationBuilder extends BucketMetrics
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new ExtendedStatsBucketPipelineAggregator(name, bucketsPaths, sigma, gapPolicy(), formatter(), metadata);
-    }
-
-    @Override
     protected void validate(ValidationContext context) {
         super.validate(context);
         if (sigma < 0.0) {

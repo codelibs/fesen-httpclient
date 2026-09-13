@@ -149,11 +149,6 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new SerialDiffPipelineAggregator(name, bucketsPaths, formatter(), gapPolicy, lag, metadata);
-    }
-
-    @Override
     protected void validate(ValidationContext context) {
         context.validateParentAggSequentiallyOrdered(NAME, name);
     }

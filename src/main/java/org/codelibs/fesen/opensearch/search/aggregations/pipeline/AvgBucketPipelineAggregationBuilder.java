@@ -64,11 +64,6 @@ public class AvgBucketPipelineAggregationBuilder extends BucketMetricsPipelineAg
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new AvgBucketPipelineAggregator(name, bucketsPaths, gapPolicy(), formatter(), metadata);
-    }
-
-    @Override
     protected XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         return builder;
     }

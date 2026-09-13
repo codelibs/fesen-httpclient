@@ -199,11 +199,6 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new MovFnPipelineAggregator(name, bucketsPathString, script, window, shift, formatter(), gapPolicy, metadata);
-    }
-
-    @Override
     protected XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(BUCKETS_PATH.getPreferredName(), bucketsPathString);
         builder.field(Script.SCRIPT_PARSE_FIELD.getPreferredName(), script);

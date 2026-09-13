@@ -116,11 +116,6 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new CumulativeSumPipelineAggregator(name, bucketsPaths, formatter(), metadata);
-    }
-
-    @Override
     protected void validate(ValidationContext context) {
         if (bucketsPaths.length != 1) {
             context.addBucketPathValidationError("must contain a single entry for aggregation [" + name + "]");

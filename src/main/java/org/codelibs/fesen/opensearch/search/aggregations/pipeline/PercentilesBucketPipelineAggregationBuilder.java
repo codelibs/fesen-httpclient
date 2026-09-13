@@ -119,11 +119,6 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new PercentilesBucketPipelineAggregator(name, percents, keyed, bucketsPaths, gapPolicy(), formatter(), metadata);
-    }
-
-    @Override
     protected void validate(ValidationContext context) {
         super.validate(context);
         for (Double p : percents) {

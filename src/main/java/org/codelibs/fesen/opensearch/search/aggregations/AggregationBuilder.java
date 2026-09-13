@@ -151,14 +151,6 @@ public abstract class AggregationBuilder
     }
 
     /**
-     * Build a tree of {@link PipelineAggregator}s to modify the tree of
-     * aggregation results after the final reduction.
-     */
-    public PipelineTree buildPipelineTree() {
-        return factoriesBuilder.buildPipelineTree();
-    }
-
-    /**
      * A rough count of the number of buckets that {@link Aggregator}s built
      * by this builder will contain per parent bucket used to validate sorts
      * and pipeline aggregations. Just "zero", "one", and "many".

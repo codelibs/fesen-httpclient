@@ -64,11 +64,6 @@ public class MinBucketPipelineAggregationBuilder extends BucketMetricsPipelineAg
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new MinBucketPipelineAggregator(name, bucketsPaths, gapPolicy(), formatter(), metadata);
-    }
-
-    @Override
     protected XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException {
         return builder;
     }

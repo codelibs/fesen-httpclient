@@ -207,11 +207,6 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
     }
 
     @Override
-    protected PipelineAggregator createInternal(Map<String, Object> metadata) {
-        return new BucketScriptPipelineAggregator(name, bucketsPathsMap, script, formatter(), gapPolicy, metadata);
-    }
-
-    @Override
     protected XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(BUCKETS_PATH.getPreferredName(), bucketsPathsMap);
         builder.field(Script.SCRIPT_PARSE_FIELD.getPreferredName(), script);

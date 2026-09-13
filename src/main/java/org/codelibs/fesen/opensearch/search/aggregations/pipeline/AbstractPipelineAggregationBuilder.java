@@ -88,19 +88,6 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
         return type;
     }
 
-    protected abstract PipelineAggregator createInternal(Map<String, Object> metadata);
-
-    /**
-     * Creates the pipeline aggregator
-     *
-     * @return The created aggregator
-     */
-    @Override
-    public final PipelineAggregator create() {
-        PipelineAggregator aggregator = createInternal(this.metadata);
-        return aggregator;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public PAB setMetadata(Map<String, Object> metadata) {
