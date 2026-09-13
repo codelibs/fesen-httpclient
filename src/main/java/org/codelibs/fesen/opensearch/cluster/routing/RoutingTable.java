@@ -84,15 +84,6 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         this.indicesRouting = Collections.unmodifiableMap(indicesRouting);
     }
 
-    /**
-     * Returns the version of the {@link RoutingTable}.
-     *
-     * @return version of the {@link RoutingTable}
-     */
-    public long version() {
-        return this.version;
-    }
-
     @Override
     public Iterator<IndexRoutingTable> iterator() {
         return indicesRouting.values().iterator();

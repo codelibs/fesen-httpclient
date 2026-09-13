@@ -59,7 +59,6 @@ public abstract class RescorerBuilder<RB extends RescorerBuilder<RB>>
         NamedWriteable,
         ToXContentObject,
         Rewriteable<RescorerBuilder<RB>> {
-    public static final int DEFAULT_WINDOW_SIZE = 10;
 
     protected Integer windowSize;
 

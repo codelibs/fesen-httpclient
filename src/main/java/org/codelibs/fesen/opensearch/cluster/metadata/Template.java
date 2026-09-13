@@ -122,10 +122,6 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
         }
     }
 
-    public Settings settings() {
-        return settings;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         if (this.settings == null) {

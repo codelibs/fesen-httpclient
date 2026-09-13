@@ -81,10 +81,6 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
     private String sourceDescription;
     private DiscoveryNode targetNode;
 
-    public ShardRouting getShardRouting() {
-        return shardRouting;
-    }
-
     @Override
     public ReplicationLuceneIndex getIndex() {
         return index;

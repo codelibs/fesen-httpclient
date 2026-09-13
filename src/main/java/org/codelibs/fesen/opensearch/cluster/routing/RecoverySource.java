@@ -179,10 +179,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      * @opensearch.internal
      */
     public static final class ExistingStoreRecoverySource extends RecoverySource {
-        /**
-         * Special allocation id that shard has during initialization on allocate_stale_primary
-         */
-        public static final String FORCED_ALLOCATION_ID = "_forced_allocation_";
 
         public static final ExistingStoreRecoverySource INSTANCE = new ExistingStoreRecoverySource(false);
         public static final ExistingStoreRecoverySource FORCE_STALE_PRIMARY_INSTANCE = new ExistingStoreRecoverySource(true);
@@ -286,8 +282,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
     @PublicApi(since = "1.0.0")
     public static class SnapshotRecoverySource extends RecoverySource {
 
-        public static final String NO_API_RESTORE_UUID = "_no_api_";
-
         private final String restoreUUID;
         private final Snapshot snapshot;
         private final IndexId index;
@@ -367,40 +361,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
                 sourceRemoteTranslogRepository = null;
                 pinnedTimestamp = 0L;
             }
-        }
-
-        public String restoreUUID() {
-            return restoreUUID;
-        }
-
-        /**
-         * Gets the {@link IndexId} of the recovery source. May contain {@link IndexMetadata#INDEX_UUID_NA_VALUE} as the index uuid if it
-         * was created by an older version cluster-manager in a mixed version cluster.
-         *
-         * @return IndexId
-         */
-        public IndexId index() {
-            return index;
-        }
-
-        public Version version() {
-            return version;
-        }
-
-        public boolean isSearchableSnapshot() {
-            return isSearchableSnapshot;
-        }
-
-        public String sourceRemoteTranslogRepository() {
-            return sourceRemoteTranslogRepository;
-        }
-
-        public boolean remoteStoreIndexShallowCopy() {
-            return remoteStoreIndexShallowCopy;
-        }
-
-        public long pinnedTimestamp() {
-            return pinnedTimestamp;
         }
 
         @Override
@@ -501,24 +461,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
             restoreUUID = in.readString();
             version = in.readVersion();
             index = new IndexId(in);
-        }
-
-        public String restoreUUID() {
-            return restoreUUID;
-        }
-
-        /**
-         * Gets the {@link IndexId} of the recovery source. May contain {@link IndexMetadata#INDEX_UUID_NA_VALUE} as the index uuid if it
-         * was created by an older version cluster-manager in a mixed version cluster.
-         *
-         * @return IndexId
-         */
-        public IndexId index() {
-            return index;
-        }
-
-        public Version version() {
-            return version;
         }
 
         @Override

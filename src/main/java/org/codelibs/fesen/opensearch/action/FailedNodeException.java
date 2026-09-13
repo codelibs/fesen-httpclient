@@ -48,10 +48,6 @@ public class FailedNodeException extends OpenSearchException {
 
     private final String nodeId;
 
-    public String nodeId() {
-        return this.nodeId;
-    }
-
     public FailedNodeException(StreamInput in) throws IOException {
         super(in);
         nodeId = in.readOptionalString();

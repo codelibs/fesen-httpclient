@@ -111,27 +111,6 @@ public class RefreshStats implements Writeable, ToXContentFragment {
         this.listeners += refreshStats.listeners;
     }
 
-    /*
-     * The total number of external refresh executed.
-     */
-    public long getExternalTotal() {
-        return this.externalTotal;
-    }
-
-    /**
-     * The total time spent executing refreshes (in milliseconds).
-     */
-    public long getTotalTimeInMillis() {
-        return this.totalTimeInMillis;
-    }
-
-    /**
-     * The total time spent executing external refreshes (in milliseconds).
-     */
-    public long getExternalTotalTimeInMillis() {
-        return this.externalTotalTimeInMillis;
-    }
-
     /**
      * The total time refreshes have been executed.
      */
@@ -144,13 +123,6 @@ public class RefreshStats implements Writeable, ToXContentFragment {
      */
     public TimeValue getExternalTotalTime() {
         return new TimeValue(externalTotalTimeInMillis);
-    }
-
-    /**
-     * The number of waiting refresh listeners.
-     */
-    public int getListeners() {
-        return listeners;
     }
 
     @Override

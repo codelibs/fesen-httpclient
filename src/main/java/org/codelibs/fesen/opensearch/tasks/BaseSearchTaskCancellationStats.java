@@ -35,14 +35,6 @@ public abstract class BaseSearchTaskCancellationStats implements ToXContentObjec
         this.totalLongRunningCancelledTaskCount = in.readVLong();
     }
 
-    protected long getCurrentLongRunningCancelledTaskCount() {
-        return this.currentLongRunningCancelledTaskCount;
-    }
-
-    protected long getTotalLongRunningCancelledTaskCount() {
-        return this.totalLongRunningCancelledTaskCount;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

@@ -96,18 +96,6 @@ public final class LinearInterpolation extends SmoothingModel {
         out.writeDouble(unigramLambda);
     }
 
-    public double getTrigramLambda() {
-        return this.trigramLambda;
-    }
-
-    public double getBigramLambda() {
-        return this.bigramLambda;
-    }
-
-    public double getUnigramLambda() {
-        return this.unigramLambda;
-    }
-
     @Override
     protected XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(TRIGRAM_FIELD.getPreferredName(), trigramLambda);

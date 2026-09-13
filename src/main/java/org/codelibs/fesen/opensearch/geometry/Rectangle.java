@@ -134,20 +134,12 @@ public class Rectangle implements Geometry {
         return minX;
     }
 
-    public double getMinAlt() {
-        return minZ;
-    }
-
     public double getMaxLat() {
         return maxY;
     }
 
     public double getMaxLon() {
         return maxX;
-    }
-
-    public double getMaxAlt() {
-        return maxZ;
     }
 
     @Override

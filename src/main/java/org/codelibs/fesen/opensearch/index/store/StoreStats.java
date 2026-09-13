@@ -100,20 +100,8 @@ public class StoreStats implements Writeable, ToXContentFragment {
         return reservedSize == UNKNOWN_RESERVED_BYTES ? 0L : reservedSize;
     }
 
-    public long sizeInBytes() {
-        return sizeInBytes;
-    }
-
-    public long getSizeInBytes() {
-        return sizeInBytes;
-    }
-
     public ByteSizeValue size() {
         return new ByteSizeValue(sizeInBytes);
-    }
-
-    public ByteSizeValue getSize() {
-        return size();
     }
 
     /**

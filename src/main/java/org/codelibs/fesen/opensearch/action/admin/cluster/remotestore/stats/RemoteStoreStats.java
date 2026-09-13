@@ -44,16 +44,8 @@ public class RemoteStoreStats implements Writeable, ToXContentFragment {
         this.shardRouting = new ShardRouting(in);
     }
 
-    public RemoteSegmentTransferTracker.Stats getSegmentStats() {
-        return remoteSegmentShardStats;
-    }
-
     public ShardRouting getShardRouting() {
         return shardRouting;
-    }
-
-    public RemoteTranslogTransferTracker.Stats getTranslogStats() {
-        return remoteTranslogShardStats;
     }
 
     @Override

@@ -61,17 +61,6 @@ public class ClusterRerouteResponse extends AcknowledgedResponse implements ToXC
         explanations = RoutingExplanations.readFrom(in);
     }
 
-    /**
-     * Returns the cluster state resulted from the cluster reroute request execution
-     */
-    public ClusterState getState() {
-        return this.state;
-    }
-
-    public RoutingExplanations getExplanations() {
-        return this.explanations;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

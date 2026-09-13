@@ -282,10 +282,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         }
     }
 
-    public int docId() {
-        return this.docId;
-    }
-
     public void score(float score) {
         this.score = score;
     }
@@ -343,13 +339,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
      */
     public String getId() {
         return id != null ? id.string() : null;
-    }
-
-    /**
-     * If this is a nested hit then nested reference information is returned otherwise <code>null</code> is returned.
-     */
-    public NestedIdentity getNestedIdentity() {
-        return nestedIdentity;
     }
 
     /**
@@ -473,13 +462,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         this.explanation = explanation;
     }
 
-    /**
-     * The shard of the search hit.
-     */
-    public SearchShardTarget getShard() {
-        return shard;
-    }
-
     public void shard(SearchShardTarget target) {
         if (innerHits != null) {
             for (SearchHits innerHits : innerHits.values()) {
@@ -494,13 +476,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             this.index = target.getIndex();
             this.clusterAlias = target.getClusterAlias();
         }
-    }
-
-    /**
-     * Returns the cluster alias this hit comes from or null if it comes from a local cluster
-     */
-    public String getClusterAlias() {
-        return clusterAlias;
     }
 
     public void matchedQueriesWithScores(Map<String, Float> matchedQueries) {
@@ -999,29 +974,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             field = in.readOptionalText();
             offset = in.readInt();
             child = in.readOptionalWriteable(NestedIdentity::new);
-        }
-
-        /**
-         * Returns the nested field in the source this hit originates from
-         */
-        public Text getField() {
-            return field;
-        }
-
-        /**
-         * Returns the offset in the nested array of objects in the source this hit
-         */
-        public int getOffset() {
-            return offset;
-        }
-
-        /**
-         * Returns the next child nested level if there is any, otherwise <code>null</code> is returned.
-         * <p>
-         * In the case of mappings with multiple levels of nested object fields
-         */
-        public NestedIdentity getChild() {
-            return child;
         }
 
         @Override

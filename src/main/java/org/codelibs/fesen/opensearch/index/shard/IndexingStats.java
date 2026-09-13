@@ -276,45 +276,10 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         }
 
         /**
-         * The total number of indexing operations
-         */
-        public long getIndexCount() {
-            return indexCount;
-        }
-
-        /**
-         * The number of failed indexing operations
-         */
-        public long getIndexFailedCount() {
-            return indexFailedCount;
-        }
-
-        /**
          * The total amount of time spend on executing index operations.
          */
         public TimeValue getIndexTime() {
             return new TimeValue(indexTimeInMillis);
-        }
-
-        /**
-         * Returns the currently in-flight indexing operations.
-         */
-        public long getIndexCurrent() {
-            return indexCurrent;
-        }
-
-        /**
-         * Returns the number of delete operation executed
-         */
-        public long getDeleteCount() {
-            return deleteCount;
-        }
-
-        /**
-         * Returns if the index is under merge throttling control
-         */
-        public boolean isThrottled() {
-            return isThrottled;
         }
 
         /**
@@ -331,23 +296,8 @@ public class IndexingStats implements Writeable, ToXContentFragment {
             return new TimeValue(deleteTimeInMillis);
         }
 
-        /**
-         * Returns the currently in-flight delete operations
-         */
-        public long getDeleteCurrent() {
-            return deleteCurrent;
-        }
-
-        public long getNoopUpdateCount() {
-            return noopUpdateCount;
-        }
-
         public DocStatusStats getDocStatusStats() {
             return docStatusStats;
-        }
-
-        public long getMaxLastIndexRequestTimestamp() {
-            return maxLastIndexRequestTimestamp;
         }
 
         @Override
@@ -519,10 +469,6 @@ public class IndexingStats implements Writeable, ToXContentFragment {
             return;
         }
         totalStats.add(indexingStats.totalStats);
-    }
-
-    public Stats getTotal() {
-        return this.totalStats;
     }
 
     @Override

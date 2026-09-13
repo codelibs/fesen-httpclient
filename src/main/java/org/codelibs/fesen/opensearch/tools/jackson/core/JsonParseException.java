@@ -14,7 +14,6 @@ import java.io.IOException;
  * Mirror of {@link tools.jackson.core.exc.StreamReadException} that extends  {@link IOException}
  */
 public class JsonParseException extends IOException {
-    private static final long serialVersionUID = 1L;
 
     public JsonParseException(String message, Throwable cause) {
         super(message, cause);

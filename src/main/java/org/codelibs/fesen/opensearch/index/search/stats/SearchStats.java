@@ -73,18 +73,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
         long total;
         long timeInMillis;
 
-        public long getCurrent() {
-            return current;
-        }
-
-        public long getTotal() {
-            return total;
-        }
-
-        public long getTimeInMillis() {
-            return timeInMillis;
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             if (current < 0) {
@@ -179,10 +167,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
 
         @Nullable
         private RequestStatsLongHolder requestStatsLongHolder;
-
-        public RequestStatsLongHolder getRequestStatsLongHolder() {
-            return requestStatsLongHolder;
-        }
 
         Stats() {
             // for internal use, initializes all counts to 0
@@ -370,24 +354,8 @@ public class SearchStats implements Writeable, ToXContentFragment {
             starTreeQueryFailed += stats.starTreeQueryFailed;
         }
 
-        public long getQueryCount() {
-            return queryCount;
-        }
-
         public TimeValue getQueryTime() {
             return new TimeValue(queryTimeInMillis);
-        }
-
-        public long getQueryTimeInMillis() {
-            return queryTimeInMillis;
-        }
-
-        public long getQueryCurrent() {
-            return queryCurrent;
-        }
-
-        public long getQueryFailedCount() {
-            return queryFailedCount;
         }
 
         public TimeValue getConcurrentQueryTime() {
@@ -402,84 +370,24 @@ public class SearchStats implements Writeable, ToXContentFragment {
             }
         }
 
-        public long getConcurrentQueryTimeInMillis() {
-            return concurrentQueryTimeInMillis;
-        }
-
-        public long getConcurrentQueryCurrent() {
-            return concurrentQueryCurrent;
-        }
-
-        public long getFetchCount() {
-            return fetchCount;
-        }
-
         public TimeValue getFetchTime() {
             return new TimeValue(fetchTimeInMillis);
-        }
-
-        public long getFetchTimeInMillis() {
-            return fetchTimeInMillis;
-        }
-
-        public long getFetchCurrent() {
-            return fetchCurrent;
-        }
-
-        public long getScrollCount() {
-            return scrollCount;
         }
 
         public TimeValue getScrollTime() {
             return new TimeValue(scrollTimeInMillis);
         }
 
-        public long getScrollCurrent() {
-            return scrollCurrent;
-        }
-
-        public long getPitCount() {
-            return pitCount;
-        }
-
         public TimeValue getPitTime() {
             return new TimeValue(pitTimeInMillis);
-        }
-
-        public long getPitTimeInMillis() {
-            return pitTimeInMillis;
-        }
-
-        public long getPitCurrent() {
-            return pitCurrent;
-        }
-
-        public long getSuggestCount() {
-            return suggestCount;
-        }
-
-        public long getSuggestTimeInMillis() {
-            return suggestTimeInMillis;
         }
 
         public TimeValue getSuggestTime() {
             return new TimeValue(suggestTimeInMillis);
         }
 
-        public long getSuggestCurrent() {
-            return suggestCurrent;
-        }
-
-        public long getSearchIdleReactivateCount() {
-            return searchIdleReactivateCount;
-        }
-
         public TimeValue getStarTreeQueryTime() {
             return new TimeValue(starTreeQueryTimeInMillis);
-        }
-
-        public long getStarTreeQueryTimeInMillis() {
-            return starTreeQueryTimeInMillis;
         }
 
         public long getStarTreeQueryCurrent() {
@@ -840,14 +748,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
             return;
         }
         totalStats.add(searchStats.totalStats);
-    }
-
-    public Stats getTotal() {
-        return this.totalStats;
-    }
-
-    public long getOpenContexts() {
-        return this.openContexts;
     }
 
     @Override

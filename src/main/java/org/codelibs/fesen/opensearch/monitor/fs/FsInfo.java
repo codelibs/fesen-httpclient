@@ -131,18 +131,6 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             }
         }
 
-        public String getPath() {
-            return path;
-        }
-
-        public String getMount() {
-            return mount;
-        }
-
-        public String getType() {
-            return type;
-        }
-
         public ByteSizeValue getTotal() {
             return new ByteSizeValue(total);
         }
@@ -653,51 +641,6 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             }
         }
 
-        public DeviceStats[] getDevicesStats() {
-            return devicesStats;
-        }
-
-        public long getTotalOperations() {
-            return totalOperations;
-        }
-
-        public long getTotalReadOperations() {
-            return totalReadOperations;
-        }
-
-        public long getTotalWriteOperations() {
-            return totalWriteOperations;
-        }
-
-        public long getTotalReadKilobytes() {
-            return totalReadKilobytes;
-        }
-
-        public long getTotalWriteKilobytes() {
-            return totalWriteKilobytes;
-        }
-
-        /**
-         * Sum of write time across all devices
-         */
-        public long getTotalWriteTime() {
-            return totalWriteTime;
-        }
-
-        /**
-         * Sum of queue size across all devices
-         */
-        public long getTotalQueueSize() {
-            return totalQueueSize;
-        }
-
-        /**
-         * Sum of IO time across all devices
-         */
-        public long getTotalIOTimeMillis() {
-            return totalIOTimeInMillis;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             if (devicesStats.length > 0) {
@@ -777,14 +720,6 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             res.add(subPath);
         }
         return res;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public IoStats getIoStats() {
-        return ioStats;
     }
 
     @Override

@@ -51,7 +51,6 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public final class RepositoryStatsSnapshot implements Writeable, ToXContentObject {
-    public static final long UNKNOWN_CLUSTER_VERSION = -1;
     private final RepositoryInfo repositoryInfo;
     private final RepositoryStats repositoryStats;
     private final long clusterVersion;
@@ -60,18 +59,6 @@ public final class RepositoryStatsSnapshot implements Writeable, ToXContentObjec
         this.repositoryInfo = new RepositoryInfo(in);
         this.repositoryStats = new RepositoryStats(in);
         this.clusterVersion = in.readLong();
-    }
-
-    public RepositoryInfo getRepositoryInfo() {
-        return repositoryInfo;
-    }
-
-    public RepositoryStats getRepositoryStats() {
-        return repositoryStats;
-    }
-
-    public long getClusterVersion() {
-        return clusterVersion;
     }
 
     @Override

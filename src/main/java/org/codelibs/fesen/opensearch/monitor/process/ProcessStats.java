@@ -80,24 +80,12 @@ public class ProcessStats implements Writeable, ToXContentFragment {
         out.writeOptionalWriteable(mem);
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     public long getOpenFileDescriptors() {
         return openFileDescriptors;
     }
 
-    public long getMaxFileDescriptors() {
-        return maxFileDescriptors;
-    }
-
     public Cpu getCpu() {
         return cpu;
-    }
-
-    public Mem getMem() {
-        return mem;
     }
 
     static final class Fields {

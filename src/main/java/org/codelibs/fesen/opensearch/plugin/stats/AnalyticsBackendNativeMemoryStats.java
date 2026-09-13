@@ -44,27 +44,6 @@ public class AnalyticsBackendNativeMemoryStats implements Writeable, ToXContentF
         this.purgeCount = in.readLong();
     }
 
-    /**
-     * Returns the number of live malloc'd bytes tracked by jemalloc, or -1 on error.
-     */
-    public long getAllocatedBytes() {
-        return allocatedBytes;
-    }
-
-    /**
-     * Returns the physical RSS attributed to jemalloc arenas, or -1 on error.
-     */
-    public long getResidentBytes() {
-        return residentBytes;
-    }
-
-    /**
-     * Returns the number of times jemalloc arenas have been purged.
-     */
-    public long getPurgeCount() {
-        return purgeCount;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeLong(allocatedBytes);

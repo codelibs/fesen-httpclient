@@ -81,16 +81,8 @@ public class MergedSegmentWarmerStats implements Writeable, ToXContentFragment {
         this.totalReceiveTimeMillis += mergedSegmentWarmerStats.totalReceiveTimeMillis;
     }
 
-    public long getTotalInvocationsCount() {
-        return this.totalInvocationsCount;
-    }
-
     public TimeValue getTotalTime() {
         return new TimeValue(totalTimeMillis);
-    }
-
-    public long getOngoingCount() {
-        return ongoingCount;
     }
 
     public ByteSizeValue getTotalReceivedSize() {
@@ -103,10 +95,6 @@ public class MergedSegmentWarmerStats implements Writeable, ToXContentFragment {
 
     public TimeValue getTotalReceiveTime() {
         return new TimeValue(totalReceiveTimeMillis);
-    }
-
-    public long getTotalFailureCount() {
-        return totalFailureCount;
     }
 
     public TimeValue getTotalSendTime() {

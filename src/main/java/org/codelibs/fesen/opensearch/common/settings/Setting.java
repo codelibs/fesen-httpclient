@@ -1064,22 +1064,6 @@ public class Setting<T> implements ToXContentObject {
             out.writeBoolean(isFiltered);
         }
 
-        public int getMin() {
-            return minValue;
-        }
-
-        public int getMax() {
-            return maxValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public boolean getFilterStatus() {
-            return isFiltered;
-        }
-
         @Override
         public Integer apply(String s) {
             return parseInt(s, minValue, maxValue, key, isFiltered);
@@ -1197,22 +1181,6 @@ public class Setting<T> implements ToXContentObject {
             out.writeBoolean(isFiltered);
         }
 
-        public long getMin() {
-            return minValue;
-        }
-
-        public long getMax() {
-            return maxValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public boolean getFilterStatus() {
-            return isFiltered;
-        }
-
         @Override
         public Long apply(String s) {
             return parseLong(s, minValue, maxValue, key, isFiltered);
@@ -1300,22 +1268,6 @@ public class Setting<T> implements ToXContentObject {
             out.writeDouble(maxValue);
             out.writeString(key);
             out.writeBoolean(isFiltered);
-        }
-
-        public double getMin() {
-            return minValue;
-        }
-
-        public double getMax() {
-            return maxValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public boolean getFilterStatus() {
-            return isFiltered;
         }
 
         @Override
@@ -1425,18 +1377,6 @@ public class Setting<T> implements ToXContentObject {
             out.writeString(key);
         }
 
-        public ByteSizeValue getMin() {
-            return minValue;
-        }
-
-        public ByteSizeValue getMax() {
-            return maxValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
         @Override
         public ByteSizeValue apply(String s) {
             return parseByteSize(s, minValue, maxValue, key);
@@ -1514,10 +1454,6 @@ public class Setting<T> implements ToXContentObject {
         public void writeTo(StreamOutput out) throws IOException {
             out.writeString(key);
             out.writeBoolean(useNativeMemory);
-        }
-
-        public String getKey() {
-            return key;
         }
 
         @Override
@@ -1687,18 +1623,6 @@ public class Setting<T> implements ToXContentObject {
             out.writeString(key);
             out.writeTimeValue(minValue);
             out.writeBoolean(isFiltered);
-        }
-
-        public TimeValue getMin() {
-            return minValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public boolean getFilterStatus() {
-            return isFiltered;
         }
 
         @Override

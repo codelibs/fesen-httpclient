@@ -62,14 +62,6 @@ public final class RepositoryShardId implements Writeable {
         this(new IndexId(in), in.readVInt());
     }
 
-    public IndexId index() {
-        return index;
-    }
-
-    public int shardId() {
-        return shard;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(index, shard);

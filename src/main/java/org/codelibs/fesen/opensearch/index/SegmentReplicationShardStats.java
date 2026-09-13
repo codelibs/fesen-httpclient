@@ -50,35 +50,6 @@ public class SegmentReplicationShardStats implements Writeable, ToXContentFragme
         this.currentReplicationLagMillis = in.readVLong();
     }
 
-    public long getCheckpointsBehindCount() {
-        return checkpointsBehindCount;
-    }
-
-    public long getBytesBehindCount() {
-        return bytesBehindCount;
-    }
-
-    public long getCurrentReplicationTimeMillis() {
-        return currentReplicationTimeMillis;
-    }
-
-    /**
-     * Total Replication lag observed.
-     * @return currentReplicationLagMillis
-     */
-    public long getCurrentReplicationLagMillis() {
-        return currentReplicationLagMillis;
-    }
-
-    /**
-     * Total time taken for replicas to catch up. Similar to replication lag except this doesn't include time taken by
-     * primary to upload data to remote store.
-     * @return lastCompletedReplicationTimeMillis
-     */
-    public long getLastCompletedReplicationTimeMillis() {
-        return lastCompletedReplicationTimeMillis;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

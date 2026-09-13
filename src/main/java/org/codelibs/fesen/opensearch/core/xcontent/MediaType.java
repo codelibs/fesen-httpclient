@@ -90,16 +90,6 @@ public interface MediaType extends Writeable {
     XContentBuilder contentBuilder(final OutputStream os) throws IOException;
 
     /**
-     * Accepts a format string, which is most of the time is equivalent to {@link MediaType#subtype()}
-     * and attempts to match the value to an {@link MediaType}.
-     * The comparisons are done in lower case format.
-     * This method will return {@code null} if no match is found
-     */
-    static MediaType fromFormat(String mediaType) {
-        return MediaTypeRegistry.fromFormat(mediaType);
-    }
-
-    /**
      * Attempts to match the given media type with the known {@link MediaType} values. This match is done in a case-insensitive manner.
      * The provided media type can optionally has parameters.
      * This method is suitable for parsing of the {@code Content-Type} and {@code Accept} HTTP headers.

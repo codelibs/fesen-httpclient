@@ -192,57 +192,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
         return taskId;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Returns the task start time
-     */
-    public long getStartTime() {
-        return startTime;
-    }
-
-    /**
-     * Returns the task running time
-     */
-    public long getRunningTimeNanos() {
-        return runningTimeNanos;
-    }
-
-    /**
-     * Returns true if the task supports cancellation
-     */
-    public boolean isCancellable() {
-        return cancellable;
-    }
-
-    /**
-     * Returns true if the task has been cancelled
-     */
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public Long getCancellationStartTime() {
-        return cancellationStartTime;
-    }
-
-    /**
-     * Returns the task resource information
-     */
-    public TaskResourceStats getResourceStats() {
-        return resourceStats;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field("node", taskId.getNodeId());

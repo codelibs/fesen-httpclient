@@ -107,20 +107,6 @@ public class SnapshotIndexStatus implements Iterable<SnapshotIndexShardStatus>, 
         return this.indexShards;
     }
 
-    /**
-     * Shards stats
-     */
-    public SnapshotShardsStats getShardsStats() {
-        return shardsStats;
-    }
-
-    /**
-     * Returns snapshot stats
-     */
-    public SnapshotStats getStats() {
-        return stats;
-    }
-
     @Override
     public Iterator<SnapshotIndexShardStatus> iterator() {
         return indexShards.values().iterator();

@@ -178,15 +178,6 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
         }
 
         /**
-         * Returns {@code true} if the shard copy is in-sync and contains the latest data.
-         * Returns {@code false} if the shard copy is stale or if the shard copy being examined
-         * is for a replica shard allocation.
-         */
-        public boolean isInSync() {
-            return inSync;
-        }
-
-        /**
          * Gets the allocation id for the shard copy, if it exists.
          */
         @Nullable
@@ -202,15 +193,6 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
          */
         public boolean hasMatchingSyncId() {
             return matchingBytes == Long.MAX_VALUE;
-        }
-
-        /**
-         * Gets the number of matching bytes the shard copy has with the primary shard.
-         * Returns {@code Long.MAX_VALUE} if {@link #hasMatchingSyncId()} returns {@code true}.
-         * Returns -1 if not applicable (this value only applies to assigning replica shards).
-         */
-        public long getMatchingBytes() {
-            return matchingBytes;
         }
 
         /**

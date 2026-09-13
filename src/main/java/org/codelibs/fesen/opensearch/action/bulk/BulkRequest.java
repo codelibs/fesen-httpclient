@@ -181,13 +181,6 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
         return requests.size();
     }
 
-    /**
-     * The estimated size in bytes of the bulk request.
-     */
-    public long estimatedSizeInBytes() {
-        return sizeInBytes;
-    }
-
     public ActiveShardCount waitForActiveShards() {
         return this.waitForActiveShards;
     }

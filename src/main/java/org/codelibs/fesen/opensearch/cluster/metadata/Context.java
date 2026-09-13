@@ -64,14 +64,6 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
         this.params = in.readMap();
     }
 
-    public String name() {
-        return name;
-    }
-
-    public String version() {
-        return version;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(name);

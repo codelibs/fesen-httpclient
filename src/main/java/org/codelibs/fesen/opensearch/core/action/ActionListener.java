@@ -127,8 +127,4 @@ public interface ActionListener<Response> {
     static <Response> ActionListener<Response> wrap(Runnable runnable) {
         return wrap(r -> runnable.run(), e -> runnable.run());
     }
-
-    static <T> ActionListener<T> noOp() {
-        return ActionListener.wrap(response -> {}, exception -> {});
-    }
 }

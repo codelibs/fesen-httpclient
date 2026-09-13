@@ -95,10 +95,6 @@ public enum ValueType implements Writeable {
         return preferredName;
     }
 
-    public ValuesSourceType getValuesSourceType() {
-        return valuesSourceType;
-    }
-
     private static List<ValueType> numericValueTypes = Arrays.asList(
         ValueType.DOUBLE,
         ValueType.DATE,
@@ -130,10 +126,6 @@ public enum ValueType implements Writeable {
 
     public boolean isNotA(ValueType valueType) {
         return !isA(valueType);
-    }
-
-    public DocValueFormat defaultFormat() {
-        return defaultFormat;
     }
 
     public static ValueType lenientParse(String type) {

@@ -350,18 +350,7 @@ public class JvmInfo implements ReportingService.Info {
         out.writeString(useCompressedOops);
     }
 
-    /**
-     * The process id.
-     */
-    public long getPid() {
-        return pid;
-    }
-
     public String version() {
-        return this.version;
-    }
-
-    public String getVersion() {
         return this.version;
     }
 
@@ -385,72 +374,12 @@ public class JvmInfo implements ReportingService.Info {
         return usingBundledJdk;
     }
 
-    public long getStartTime() {
-        return this.startTime;
-    }
-
     public Mem getMem() {
         return this.mem;
     }
 
-    public String[] getInputArguments() {
-        return this.inputArguments;
-    }
-
-    public String getBootClassPath() {
-        return this.bootClassPath;
-    }
-
-    public String getClassPath() {
-        return this.classPath;
-    }
-
-    public long getConfiguredInitialHeapSize() {
-        return configuredInitialHeapSize;
-    }
-
     public long getConfiguredMaxHeapSize() {
         return configuredMaxHeapSize;
-    }
-
-    public String onError() {
-        return onError;
-    }
-
-    public String onOutOfMemoryError() {
-        return onOutOfMemoryError;
-    }
-
-    /**
-     * The value of the JVM flag UseCompressedOops, if available otherwise
-     * "unknown". The value "unknown" indicates that an attempt was
-     * made to obtain the value of the flag on this JVM and the attempt
-     * failed.
-     *
-     * @return the value of the JVM flag UseCompressedOops or "unknown"
-     */
-    public String useCompressedOops() {
-        return this.useCompressedOops;
-    }
-
-    public String useG1GC() {
-        return this.useG1GC;
-    }
-
-    public String useSerialGC() {
-        return this.useSerialGC;
-    }
-
-    public long getG1RegionSize() {
-        return g1RegionSize;
-    }
-
-    public String[] getGcCollectors() {
-        return gcCollectors;
-    }
-
-    public String[] getMemoryPools() {
-        return memoryPools;
     }
 
     @Override

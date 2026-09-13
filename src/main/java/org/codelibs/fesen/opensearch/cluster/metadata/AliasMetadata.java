@@ -116,14 +116,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         return filter;
     }
 
-    public CompressedXContent getFilter() {
-        return filter();
-    }
-
-    public String getSearchRouting() {
-        return searchRouting();
-    }
-
     public String searchRouting() {
         return searchRouting;
     }

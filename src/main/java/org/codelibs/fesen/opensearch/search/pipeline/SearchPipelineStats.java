@@ -224,18 +224,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
             responseStats.writeTo(out);
         }
 
-        public String getPipelineId() {
-            return pipelineId;
-        }
-
-        public OperationStats getRequestStats() {
-            return requestStats;
-        }
-
-        public OperationStats getResponseStats() {
-            return responseStats;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -363,18 +351,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
             builder.endObject();
             return builder;
         }
-
-        String getProcessorName() {
-            return processorName;
-        }
-
-        String getProcessorType() {
-            return processorType;
-        }
-
-        OperationStats getStats() {
-            return stats;
-        }
     }
 
     static class FactoryStats implements ToXContentFragment, Writeable {
@@ -490,14 +466,6 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
         public int hashCode() {
             return Objects.hash(requestProcessorFactoryStats, responseProcessorFactoryStats);
         }
-    }
-
-    OperationStats getTotalRequestStats() {
-        return totalRequestStats;
-    }
-
-    OperationStats getTotalResponseStats() {
-        return totalResponseStats;
     }
 
     @Override

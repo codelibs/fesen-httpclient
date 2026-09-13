@@ -313,13 +313,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         }
 
         /**
-         * file name
-         */
-        public String name() {
-            return name;
-        }
-
-        /**
          * file length
          */
         public long length() {

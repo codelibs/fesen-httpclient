@@ -102,18 +102,6 @@ public final class AutoExpandSearchReplicas {
         this.enabled = enabled;
     }
 
-    int getMinSearchReplicas() {
-        return minSearchReplicas;
-    }
-
-    public int getMaxSearchReplicas() {
-        return maxSearchReplicas;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     @Override
     public String toString() {
         return enabled ? minSearchReplicas + "-" + maxSearchReplicas : "false";

@@ -391,19 +391,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         this.cachedTimeThread.start();
     }
 
-    /**
-     * Returns a value of nanoseconds that may be used for relative time calculations
-     * that require the highest precision possible. Performance critical code must use
-     * either {@link #relativeTimeInNanos()} or {@link #relativeTimeInMillis()} which
-     * give better performance at the cost of lower precision.
-     * <p>
-     * This method should only be used for calculating time deltas. For an epoch based
-     * timestamp, see {@link #absoluteTimeInMillis()}.
-     */
-    public long preciseRelativeTimeInNanos() {
-        return System.nanoTime();
-    }
-
     @Override
     public ThreadPoolInfo info() {
         return threadPoolInfo;
@@ -462,10 +449,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
                 e
             )
         );
-    }
-
-    public ScheduledExecutorService scheduler() {
-        return this.scheduler;
     }
 
     /**
@@ -753,10 +736,6 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
         public String getName() {
             return this.name;
-        }
-
-        public ThreadPoolType getThreadPoolType() {
-            return this.type;
         }
 
         public int getMin() {

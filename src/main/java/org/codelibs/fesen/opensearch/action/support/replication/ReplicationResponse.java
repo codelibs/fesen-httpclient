@@ -132,13 +132,6 @@ public class ReplicationResponse extends ActionResponse {
             return failures.length;
         }
 
-        /**
-         * @return The replication failures that have been captured in the case writes have failed on replica shards.
-         */
-        public Failure[] getFailures() {
-            return failures;
-        }
-
         public RestStatus status() {
             RestStatus status = RestStatus.OK;
             for (Failure failure : failures) {
@@ -253,10 +246,6 @@ public class ReplicationResponse extends ActionResponse {
                 this.shardId = shardId;
                 this.nodeId = nodeId;
                 this.primary = primary;
-            }
-
-            public ShardId fullShardId() {
-                return shardId;
             }
 
             /**

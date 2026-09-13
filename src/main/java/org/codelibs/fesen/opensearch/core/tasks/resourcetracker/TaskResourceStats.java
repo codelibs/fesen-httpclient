@@ -65,10 +65,6 @@ public class TaskResourceStats implements Writeable, ToXContentFragment {
         }
     }
 
-    public TaskThreadUsage getThreadUsage() {
-        return threadUsage;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         for (Map.Entry<String, TaskResourceUsage> resourceUsageEntry : resourceUsage.entrySet()) {

@@ -111,10 +111,6 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
             this.index = index;
         }
 
-        public String metricName() {
-            return this.metricName;
-        }
-
         public int getIndex() {
             return index;
         }
@@ -148,10 +144,6 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
         IndexMetric(String name, int index) {
             this.metricName = name;
             this.index = index;
-        }
-
-        public String metricName() {
-            return this.metricName;
         }
 
         public int getIndex() {

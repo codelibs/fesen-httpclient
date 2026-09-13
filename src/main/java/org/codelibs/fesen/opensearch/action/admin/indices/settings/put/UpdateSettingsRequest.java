@@ -97,10 +97,6 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
         return indices;
     }
 
-    public Settings settings() {
-        return settings;
-    }
-
     /**
      * Sets the indices to apply to settings update to
      */

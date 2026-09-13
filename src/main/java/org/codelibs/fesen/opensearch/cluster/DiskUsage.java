@@ -107,10 +107,6 @@ public class DiskUsage implements ToXContentFragment, Writeable {
         return builder;
     }
 
-    public String getNodeId() {
-        return nodeId;
-    }
-
     public String getNodeName() {
         return nodeName;
     }

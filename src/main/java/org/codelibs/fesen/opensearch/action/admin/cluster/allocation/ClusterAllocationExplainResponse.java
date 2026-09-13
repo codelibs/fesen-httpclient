@@ -58,13 +58,6 @@ public class ClusterAllocationExplainResponse extends ActionResponse {
         this.cae = cae;
     }
 
-    /**
-     * Return the explanation for shard allocation in the cluster
-     */
-    public ClusterAllocationExplanation getExplanation() {
-        return this.cae;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         cae.writeTo(out);

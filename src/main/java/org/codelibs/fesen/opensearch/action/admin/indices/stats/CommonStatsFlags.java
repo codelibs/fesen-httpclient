@@ -179,10 +179,6 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         return includeCaches;
     }
 
-    public String[] getLevels() {
-        return levels;
-    }
-
     public String[] groups() {
         return this.groups;
     }
@@ -199,20 +195,8 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         return this.includeUnloadedSegments;
     }
 
-    public boolean includeAllShardIndexingPressureTrackers() {
-        return this.includeAllShardIndexingPressureTrackers;
-    }
-
-    public boolean includeOnlyTopIndexingPressureMetrics() {
-        return this.includeOnlyTopIndexingPressureMetrics;
-    }
-
     public boolean includeSegmentFileSizes() {
         return this.includeSegmentFileSizes;
-    }
-
-    public boolean getIncludeIndicesStatsByLevel() {
-        return this.includeIndicesStatsByLevel;
     }
 
     public boolean isSet(Flag flag) {

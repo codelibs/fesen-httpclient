@@ -141,14 +141,6 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             out.writeOptionalArray(shards);
         }
 
-        public Index getIndex() {
-            return index;
-        }
-
-        public Exception getException() {
-            return exception;
-        }
-
         public boolean hasFailures() {
             if (exception != null) {
                 return true;
@@ -226,14 +218,6 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             return CollectionUtils.isEmpty(failures) == false;
         }
 
-        public int getId() {
-            return id;
-        }
-
-        public Failure[] getFailures() {
-            return failures;
-        }
-
         @Override
         public XContentBuilder toXContent(final XContentBuilder builder, final Params params) throws IOException {
             builder.startObject(String.valueOf(id));
@@ -272,10 +256,6 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             public Failure(final String index, final int shardId, final Throwable reason, final String nodeId) {
                 super(index, shardId, reason);
                 this.nodeId = nodeId;
-            }
-
-            public String getNodeId() {
-                return nodeId;
             }
 
             @Override

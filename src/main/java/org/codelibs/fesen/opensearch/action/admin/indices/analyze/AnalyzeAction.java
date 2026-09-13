@@ -280,10 +280,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             return this.tokens;
         }
 
-        public DetailAnalyzeResponse detail() {
-            return this.detail;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startObject();
@@ -554,22 +550,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             }
         }
 
-        public AnalyzeTokenList analyzer() {
-            return this.analyzer;
-        }
-
-        public CharFilteredText[] charfilters() {
-            return this.charfilters;
-        }
-
-        public AnalyzeTokenList tokenizer() {
-            return tokenizer;
-        }
-
-        public AnalyzeTokenList[] tokenfilters() {
-            return tokenfilters;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -696,14 +676,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             tokens = in.readOptionalArray(AnalyzeToken::new, AnalyzeToken[]::new);
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public AnalyzeToken[] getTokens() {
-            return tokens;
-        }
-
         void toXContentWithoutObject(XContentBuilder builder, Params params) throws IOException {
             builder.field(NAME, this.name);
             builder.startArray(Response.Fields.TOKENS);
@@ -755,14 +727,6 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
         CharFilteredText(StreamInput in) throws IOException {
             name = in.readString();
             texts = in.readStringArray();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String[] getTexts() {
-            return texts;
         }
 
         @Override

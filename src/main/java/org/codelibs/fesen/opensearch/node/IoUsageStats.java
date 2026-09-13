@@ -45,10 +45,6 @@ public class IoUsageStats implements Writeable, ToXContentFragment {
         out.writeDouble(this.ioUtilisationPercent);
     }
 
-    public double getIoUtilisationPercent() {
-        return ioUtilisationPercent;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

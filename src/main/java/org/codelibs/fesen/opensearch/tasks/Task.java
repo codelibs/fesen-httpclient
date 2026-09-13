@@ -84,14 +84,6 @@ public class Task {
 
     public static final Set<String> REQUEST_HEADERS = Set.of(Task.X_OPAQUE_ID, Task.X_REQUEST_ID);
 
-    private static final String TOTAL = "total";
-
-    private static final String AVERAGE = "average";
-
-    private static final String MIN = "min";
-
-    private static final String MAX = "max";
-
     private final long id;
 
     private final String type;
@@ -183,13 +175,6 @@ public class Task {
      */
     public String getDescription() {
         return description;
-    }
-
-    /**
-     * Returns the task's start time as a wall clock time since epoch ({@link System#currentTimeMillis()} style).
-     */
-    public long getStartTime() {
-        return startTime;
     }
 
     /**
@@ -313,17 +298,6 @@ public class Task {
             }
         }
         return maxResourceConsumption;
-    }
-
-    /**
-     * Individual tasks can override this if they want to support task resource tracking. We just need to make sure that
-     * the ThreadPool on which the task runs on have runnable wrapper similar to
-     * {@link org.codelibs.fesen.opensearch.common.util.concurrent.OpenSearchExecutors#newResizable}
-     *
-     * @return true if resource tracking is supported by the task
-     */
-    public boolean supportsResourceTracking() {
-        return false;
     }
 
     /**

@@ -96,13 +96,6 @@ public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
         return timestamp;
     }
 
-    /**
-     * @return the timestamp for when the collection of these statistics started
-     */
-    public long getSinceTime() {
-        return sinceTime;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field("since", sinceTime);

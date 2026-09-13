@@ -79,13 +79,6 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
         return this.retryFailed;
     }
 
-    /**
-     * Returns the allocation commands to execute
-     */
-    public AllocationCommands getCommands() {
-        return commands;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

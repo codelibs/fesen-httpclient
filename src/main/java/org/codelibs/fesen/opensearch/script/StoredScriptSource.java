@@ -410,20 +410,6 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
         return builder;
     }
 
-    /**
-     * @return The language used for compiling this script.
-     */
-    public String getLang() {
-        return lang;
-    }
-
-    /**
-     * @return The source used for compiling this script.
-     */
-    public String getSource() {
-        return source;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

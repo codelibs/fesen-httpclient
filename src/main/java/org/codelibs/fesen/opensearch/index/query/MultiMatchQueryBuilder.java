@@ -164,14 +164,6 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
             this.parseField = parseField;
         }
 
-        public float tieBreaker() {
-            return this.tieBreaker;
-        }
-
-        public MatchQuery.Type matchQueryType() {
-            return matchQueryType;
-        }
-
         public ParseField parseField() {
             return parseField;
         }

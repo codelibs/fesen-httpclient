@@ -54,7 +54,6 @@ public class Regex {
      * This Regex / {@link Pattern} flag is supported from Java 7 on.
      * If set on a Java6 JVM the flag will be ignored.
      */
-    public static final int UNICODE_CHARACTER_CLASS = 0x100; // supported in JAVA7
 
     /**
      * Is the str a simple match pattern.

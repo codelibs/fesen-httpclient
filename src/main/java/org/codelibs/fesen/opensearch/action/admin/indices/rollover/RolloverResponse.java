@@ -132,34 +132,6 @@ public final class RolloverResponse extends ShardsAcknowledgedResponse implement
         this.shardsAcknowledged = shardsAcknowledged;
     }
 
-    /**
-     * Returns the name of the index that the request alias was pointing to
-     */
-    public String getOldIndex() {
-        return oldIndex;
-    }
-
-    /**
-     * Returns the name of the index that the request alias currently points to
-     */
-    public String getNewIndex() {
-        return newIndex;
-    }
-
-    /**
-     * Returns if the rollover execution was skipped even when conditions were met
-     */
-    public boolean isDryRun() {
-        return dryRun;
-    }
-
-    /**
-     * Returns true if the rollover was not simulated and the conditions were met
-     */
-    public boolean isRolledOver() {
-        return rolledOver;
-    }
-
     @Override
     public boolean isShardsAcknowledged() {
         return shardsAcknowledged;

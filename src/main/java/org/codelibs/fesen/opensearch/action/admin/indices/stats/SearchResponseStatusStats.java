@@ -67,10 +67,6 @@ public class SearchResponseStatusStats extends AbstractStatusStats {
         }
     }
 
-    public LongAdder[] getSearchResponseStatusCounter() {
-        return statusCounter;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.SEARCH_RESPONSE_STATUS);

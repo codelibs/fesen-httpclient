@@ -14,7 +14,6 @@ import java.io.IOException;
  * Mirror of {@link tools.jackson.core.exc.StreamWriteException} that extends  {@link IOException}
  */
 public class JsonGenerationException extends IOException {
-    private static final long serialVersionUID = 1L;
 
     public JsonGenerationException(String message, Throwable cause) {
         super(message, cause);

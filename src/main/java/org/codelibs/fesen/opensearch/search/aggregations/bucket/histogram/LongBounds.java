@@ -182,14 +182,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
             && Objects.equals(maxAsStr, other.maxAsStr);
     }
 
-    public Long getMin() {
-        return min;
-    }
-
-    public Long getMax() {
-        return max;
-    }
-
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();

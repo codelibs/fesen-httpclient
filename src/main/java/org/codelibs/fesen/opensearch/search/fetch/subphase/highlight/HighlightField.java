@@ -103,13 +103,6 @@ public class HighlightField implements ToXContentFragment, Writeable {
         return fragments;
     }
 
-    /**
-     * The highlighted fragments. {@code null} if failed to highlight (for example, the field is not stored).
-     */
-    public Text[] getFragments() {
-        return fragments();
-    }
-
     @Override
     public String toString() {
         return "[" + name + "], fragments[" + Arrays.toString(fragments) + "]";

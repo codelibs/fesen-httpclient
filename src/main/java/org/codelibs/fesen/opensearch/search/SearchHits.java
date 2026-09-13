@@ -146,13 +146,6 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
     }
 
     /**
-     * The maximum score of this query.
-     */
-    public float getMaxScore() {
-        return maxScore;
-    }
-
-    /**
      * The hits of the search request (based on the search type, and from / size provided).
      */
     public SearchHit[] getHits() {

@@ -92,10 +92,6 @@ public class PersistedStateStats implements Writeable, ToXContentObject {
         return successCount.get();
     }
 
-    public String getStatsName() {
-        return statsName;
-    }
-
     /**
      * Fields for parsing and toXContent
      *

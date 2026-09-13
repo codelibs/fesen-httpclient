@@ -60,16 +60,8 @@ public abstract class ConcurrentCollections {
         return new ConcurrentHashMap<>();
     }
 
-    public static <V> ConcurrentMapLong<V> newConcurrentMapLong() {
-        return new ConcurrentHashMapLong<>(ConcurrentCollections.<Long, V>newConcurrentMap());
-    }
-
     public static <V> Set<V> newConcurrentSet() {
         return Collections.newSetFromMap(ConcurrentCollections.<V, Boolean>newConcurrentMap());
-    }
-
-    public static <T> Queue<T> newQueue() {
-        return new ConcurrentLinkedQueue<>();
     }
 
     public static <T> Deque<T> newDeque() {

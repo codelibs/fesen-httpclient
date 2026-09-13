@@ -54,14 +54,6 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
         return name;
     }
 
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public long getModifiedAt() {
-        return modifiedAt;
-    }
-
     public static Diff<View> readDiffFrom(final StreamInput in) throws IOException {
         return readDiffFrom(View::new, in);
     }
@@ -95,10 +87,6 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
 
         public Target(final StreamInput in) throws IOException {
             this(in.readString());
-        }
-
-        public String getIndexPattern() {
-            return indexPattern;
         }
 
         @Override

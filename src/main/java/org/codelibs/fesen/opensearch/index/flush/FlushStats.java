@@ -100,27 +100,6 @@ public class FlushStats implements Writeable, ToXContentFragment {
     }
 
     /**
-     * The total number of flush executed.
-     */
-    public long getTotal() {
-        return this.total;
-    }
-
-    /**
-     * The number of flushes that were periodically triggered when translog exceeded the flush threshold.
-     */
-    public long getPeriodic() {
-        return periodic;
-    }
-
-    /**
-     * The total time merges have been executed (in milliseconds).
-     */
-    public long getTotalTimeInMillis() {
-        return this.totalTimeInMillis;
-    }
-
-    /**
      * The total time merges have been executed.
      */
     public TimeValue getTotalTime() {

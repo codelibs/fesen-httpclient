@@ -144,39 +144,6 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
             }
         }
 
-        /**
-         * Node the store belongs to
-         */
-        public DiscoveryNode getNode() {
-            return node;
-        }
-
-        /**
-         * AllocationStatus id of the store, used to select the store that will be
-         * used as a primary.
-         */
-        public String getAllocationId() {
-            return allocationId;
-        }
-
-        /**
-         * Exception while trying to open the
-         * shard index or from when the shard failed
-         */
-        public Exception getStoreException() {
-            return storeException;
-        }
-
-        /**
-         * The allocationStatus status of the store.
-         * {@link AllocationStatus#PRIMARY} indicates a primary shard copy
-         * {@link AllocationStatus#REPLICA} indicates a replica shard copy
-         * {@link AllocationStatus#UNUSED} indicates an unused shard copy
-         */
-        public AllocationStatus getAllocationStatus() {
-            return allocationStatus;
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             node.writeTo(out);

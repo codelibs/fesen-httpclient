@@ -117,10 +117,6 @@ public class DataStreamMetadata implements Metadata.Custom {
         return builder;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(this.dataStreams);

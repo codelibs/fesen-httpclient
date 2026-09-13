@@ -122,13 +122,6 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    /**
-     * The name of the field to slice against
-     */
-    public String getField() {
-        return this.field;
-    }
-
     private SliceBuilder setId(int id) {
         if (id < 0) {
             throw new IllegalArgumentException("id must be greater than or equal to 0");
@@ -149,13 +142,6 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         }
         this.max = max;
         return this;
-    }
-
-    /**
-     * The maximum number of slices.
-     */
-    public int getMax() {
-        return max;
     }
 
     @Override

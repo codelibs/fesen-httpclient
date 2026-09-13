@@ -84,10 +84,6 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         return PARSER.parse(parser, null).build();
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     private int editDistance;
     private boolean transpositions;
     private int fuzzyMinLength;
@@ -131,51 +127,6 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         out.writeVInt(fuzzyMinLength);
         out.writeVInt(fuzzyPrefixLength);
         out.writeVInt(maxDeterminizedStates);
-    }
-
-    /**
-     * Returns the maximum number of edits
-     */
-    public int getEditDistance() {
-        return editDistance;
-    }
-
-    /**
-     * Returns if transpositions option is set
-     * <p>
-     * if transpositions is set, then swapping one character for another counts as one edit instead of two.
-     */
-    public boolean isTranspositions() {
-        return transpositions;
-    }
-
-    /**
-     * Returns the length of input prefix after which edits are applied
-     */
-    public int getFuzzyMinLength() {
-        return fuzzyMinLength;
-    }
-
-    /**
-     * Returns the minimum length of the input prefix required to apply any edits
-     */
-    public int getFuzzyPrefixLength() {
-        return fuzzyPrefixLength;
-    }
-
-    /**
-     * Returns if all measurements (like edit distance, transpositions and lengths) are in unicode code
-     * points (actual letters) instead of bytes.
-     */
-    public boolean isUnicodeAware() {
-        return unicodeAware;
-    }
-
-    /**
-     * Returns the maximum automaton states allowed for fuzzy expansion
-     */
-    public int getMaxDeterminizedStates() {
-        return maxDeterminizedStates;
     }
 
     @Override

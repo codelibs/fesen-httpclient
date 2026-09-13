@@ -208,10 +208,6 @@ public class JvmStats implements Writeable, ToXContentFragment {
         classes.writeTo(out);
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     public TimeValue getUptime() {
         return new TimeValue(uptime);
     }

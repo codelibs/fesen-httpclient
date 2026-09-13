@@ -117,10 +117,6 @@ public class NodeResourceUsageStats implements Writeable, ToXContentFragment {
         return nativeMemoryUtilizationPercent;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(nodeId);

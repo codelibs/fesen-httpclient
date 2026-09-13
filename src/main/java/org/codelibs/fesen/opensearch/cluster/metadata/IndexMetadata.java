@@ -651,9 +651,7 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.UnmodifiableOnRestore
     );
 
-    public static final String SETTING_VERSION_CREATED_STRING = "index.version.created_string";
     public static final String SETTING_VERSION_UPGRADED = "index.version.upgraded";
-    public static final String SETTING_VERSION_UPGRADED_STRING = "index.version.upgraded_string";
     public static final String SETTING_CREATION_DATE = "index.creation_date";
 
     public static final Setting<Long> SETTING_INDEX_CREATION_DATE = Setting.longSetting(
@@ -664,12 +662,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Final
     );
 
-    /**
-     * The user provided name for an index. This is the plain string provided by the user when the index was created.
-     * It might still contain date math expressions etc. (added in 5.0)
-     */
-    public static final String SETTING_INDEX_PROVIDED_NAME = "index.provided_name";
-    public static final String SETTING_PRIORITY = "index.priority";
     public static final Setting<Integer> INDEX_PRIORITY_SETTING = Setting.intSetting(
         "index.priority",
         1,
@@ -677,7 +669,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Dynamic,
         Property.IndexScope
     );
-    public static final String SETTING_CREATION_DATE_STRING = "index.creation_date_string";
     public static final String SETTING_INDEX_UUID = "index.uuid";
     public static final String SETTING_HISTORY_UUID = "index.history.uuid";
     public static final String SETTING_DATA_PATH = "index.data_path";
@@ -1062,11 +1053,7 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     static final String KEY_SPLIT_SHARDS_METADATA = "split_shards_metadata";
     public static final String KEY_PRIMARY_TERMS = "primary_terms";
     public static final String KEY_PRIMARY_TERMS_MAP = "primary_terms_map";
-    public static final String REMOTE_STORE_CUSTOM_KEY = "remote_store";
-    public static final String TRANSLOG_METADATA_KEY = "translog_metadata";
-    public static final String REMOTE_STORE_SSE_ENABLED_INDEX_KEY = "sse_enabled_index";
     public static final String CONTEXT_KEY = "context";
-    public static final String INGESTION_SOURCE_KEY = "ingestion_source";
     public static final String INGESTION_STATUS_KEY = "ingestion_status";
 
     /**
@@ -1115,8 +1102,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.IndexScope,
         Property.Final
     );
-
-    public static final String INDEX_STATE_FILE_PREFIX = "state-";
 
     private final int routingNumShards;
     private final int routingFactor;
@@ -1314,18 +1299,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return indexCreatedVersion;
     }
 
-    public IngestionStatus getIngestionStatus() {
-        return ingestionStatus;
-    }
-
-    /**
-     * Return the {@link Version} on which this index has been upgraded. This
-     * information is typically useful for backward compatibility.
-     */
-    public Version getUpgradedVersion() {
-        return indexUpgradedVersion;
-    }
-
     public State getState() {
         return this.state;
     }
@@ -1338,20 +1311,8 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return numberOfReplicas;
     }
 
-    public int getRoutingPartitionSize() {
-        return routingPartitionSize;
-    }
-
     public int getTotalNumberOfShards() {
         return totalNumberOfShards;
-    }
-
-    /**
-     * Returns the configured {@link #SETTING_WAIT_FOR_ACTIVE_SHARDS}, which defaults
-     * to an active shard count of 1 if not specified.
-     */
-    public ActiveShardCount getWaitForActiveShards() {
-        return waitForActiveShards;
     }
 
     public Settings getSettings() {
@@ -1385,34 +1346,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     public Set<String> inSyncAllocationIds(int shardId) {
         assert shardId >= 0 && shardId < numberOfShards;
         return inSyncAllocationIds.get(shardId);
-    }
-
-    public SplitShardsMetadata getSplitShardsMetadata() {
-        return splitShardsMetadata;
-    }
-
-    public int getIndexTotalShardsPerNodeLimit() {
-        return this.indexTotalShardsPerNodeLimit;
-    }
-
-    public int getIndexTotalRemoteCapableShardsPerNodeLimit() {
-        return this.indexTotalRemoteCapableShardsPerNodeLimit;
-    }
-
-    public int getIndexTotalPrimaryShardsPerNodeLimit() {
-        return this.indexTotalPrimaryShardsPerNodeLimit;
-    }
-
-    public int getIndexTotalRemoteCapablePrimaryShardsPerNodeLimit() {
-        return this.indexTotalRemoteCapablePrimaryShardsPerNodeLimit;
-    }
-
-    public boolean isAppendOnlyIndex() {
-        return this.isAppendOnlyIndex;
-    }
-
-    public boolean bulkAdaptiveShardSelectionEnabled() {
-        return this.bulkAdaptiveShardSelectionEnabled;
     }
 
     @Override
@@ -1896,10 +1829,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return isSystem;
     }
 
-    public Context context() {
-        return context;
-    }
-
     public boolean isRemoteSnapshot() {
         return isRemoteSnapshot;
     }
@@ -2046,26 +1975,14 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
-        public long mappingVersion() {
-            return mappingVersion;
-        }
-
         public Builder mappingVersion(final long mappingVersion) {
             this.mappingVersion = mappingVersion;
             return this;
         }
 
-        public long settingsVersion() {
-            return settingsVersion;
-        }
-
         public Builder settingsVersion(final long settingsVersion) {
             this.settingsVersion = settingsVersion;
             return this;
-        }
-
-        public long aliasesVersion() {
-            return aliasesVersion;
         }
 
         public Builder aliasesVersion(final long aliasesVersion) {
@@ -2082,17 +1999,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
-        public boolean isSystem() {
-            return isSystem;
-        }
-
         public Builder context(Context context) {
             this.context = context;
             return this;
-        }
-
-        public Context context() {
-            return context;
         }
 
         public Builder ingestionStatus(IngestionStatus ingestionStatus) {
@@ -2100,17 +2009,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
-        public IngestionStatus getIngestionStatus() {
-            return ingestionStatus;
-        }
-
         public Builder splitShardsMetadata(SplitShardsMetadata splitShardsMetadata) {
             this.splitShardsMetadata = splitShardsMetadata;
             return this;
-        }
-
-        public SplitShardsMetadata getSplitShardsMetadata() {
-            return splitShardsMetadata;
         }
 
         public IndexMetadata build() {
@@ -2474,15 +2375,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      */
     public int getRoutingNumShards() {
         return routingNumShards;
-    }
-
-    /**
-     * Returns the routing factor for this index. The default is {@code 1}.
-     *
-     * @see #getRoutingFactor(int, int) for details
-     */
-    public int getRoutingFactor() {
-        return routingFactor;
     }
 
     /**

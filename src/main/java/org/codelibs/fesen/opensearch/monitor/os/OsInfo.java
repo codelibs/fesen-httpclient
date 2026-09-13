@@ -76,10 +76,6 @@ public class OsInfo implements ReportingService.Info {
         out.writeOptionalString(version);
     }
 
-    public long getRefreshInterval() {
-        return this.refreshInterval;
-    }
-
     public int getAvailableProcessors() {
         return this.availableProcessors;
     }
@@ -94,14 +90,6 @@ public class OsInfo implements ReportingService.Info {
 
     public String getPrettyName() {
         return prettyName;
-    }
-
-    public String getArch() {
-        return arch;
-    }
-
-    public String getVersion() {
-        return version;
     }
 
     static final class Fields {

@@ -64,25 +64,6 @@ public class ProcessInfo implements ReportingService.Info {
         out.writeBoolean(mlockall);
     }
 
-    public long refreshInterval() {
-        return this.refreshInterval;
-    }
-
-    public long getRefreshInterval() {
-        return this.refreshInterval;
-    }
-
-    /**
-     * The process id.
-     */
-    public long getId() {
-        return id;
-    }
-
-    public boolean isMlockall() {
-        return mlockall;
-    }
-
     static final class Fields {
         static final String PROCESS = "process";
         static final String REFRESH_INTERVAL = "refresh_interval";

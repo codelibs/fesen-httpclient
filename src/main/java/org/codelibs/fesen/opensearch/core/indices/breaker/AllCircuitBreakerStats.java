@@ -81,14 +81,6 @@ public class AllCircuitBreakerStats implements Writeable, ToXContentFragment {
         out.writeArray(allStats);
     }
 
-    /**
-     * Returns inner stats instances for all circuit breakers
-     * @return inner stats instances for all circuit breakers
-     */
-    public CircuitBreakerStats[] getAllStats() {
-        return this.allStats;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.BREAKERS);

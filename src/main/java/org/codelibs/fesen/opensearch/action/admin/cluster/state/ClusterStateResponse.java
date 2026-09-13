@@ -76,21 +76,6 @@ public class ClusterStateResponse extends ActionResponse {
         return this.clusterState;
     }
 
-    /**
-     * The name of the cluster.
-     */
-    public ClusterName getClusterName() {
-        return this.clusterName;
-    }
-
-    /**
-     * Returns whether the request timed out waiting for a cluster state with a metadata version equal or
-     * higher than the specified metadata.
-     */
-    public boolean isWaitForTimedOut() {
-        return waitForTimedOut;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         clusterName.writeTo(out);

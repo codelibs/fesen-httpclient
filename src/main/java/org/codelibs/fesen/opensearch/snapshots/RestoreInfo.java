@@ -77,15 +77,6 @@ public class RestoreInfo implements ToXContentObject, Writeable {
     }
 
     /**
-     * Snapshot name
-     *
-     * @return snapshot name
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
      * Number of shards being restored
      *
      * @return number of being restored
@@ -101,15 +92,6 @@ public class RestoreInfo implements ToXContentObject, Writeable {
      */
     public int failedShards() {
         return totalShards - successfulShards;
-    }
-
-    /**
-     * Number of successful shards
-     *
-     * @return number of successful shards
-     */
-    public int successfulShards() {
-        return successfulShards;
     }
 
     static final class Fields {

@@ -49,10 +49,6 @@ public class RemoteStoreStatsResponse extends BroadcastResponse {
         this.remoteStoreStats = remoteStoreStats;
     }
 
-    public RemoteStoreStats[] getRemoteStoreStats() {
-        return this.remoteStoreStats;
-    }
-
     public Map<String, Map<Integer, List<RemoteStoreStats>>> groupByIndexAndShards() {
         Map<String, Map<Integer, List<RemoteStoreStats>>> indexWiseStats = new HashMap<>();
         for (RemoteStoreStats shardStat : remoteStoreStats) {

@@ -107,10 +107,6 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
         }
     }
 
-    public Template template() {
-        return template;
-    }
-
     @Nullable
     public Map<String, Object> metadata() {
         return metadata;

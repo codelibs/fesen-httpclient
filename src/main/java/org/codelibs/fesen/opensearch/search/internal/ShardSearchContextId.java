@@ -66,14 +66,6 @@ public final class ShardSearchContextId implements Writeable {
         out.writeString(sessionId);
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public long getId() {
-        return id;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -55,14 +55,6 @@ public class TaskThreadUsage implements Writeable, ToXContentFragment {
         return new TaskThreadUsage(in.readInt(), in.readInt());
     }
 
-    public int getThreadExecutions() {
-        return threadExecutions;
-    }
-
-    public int getActiveThreads() {
-        return activeThreads;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(THREAD_EXECUTIONS, threadExecutions);

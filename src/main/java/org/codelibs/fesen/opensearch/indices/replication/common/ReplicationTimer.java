@@ -93,9 +93,4 @@ public class ReplicationTimer implements Writeable {
         time = -1;
         stopTime = 0;
     }
-
-    // only used in tests
-    public long getStartNanoTime() {
-        return startNanoTime;
-    }
 }

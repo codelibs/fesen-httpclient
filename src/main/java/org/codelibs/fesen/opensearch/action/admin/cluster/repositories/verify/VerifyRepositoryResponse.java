@@ -103,14 +103,6 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
             this.name = name;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public String getNodeId() {
-            return nodeId;
-        }
-
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startObject(nodeId);
             {

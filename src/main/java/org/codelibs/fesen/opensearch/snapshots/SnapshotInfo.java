@@ -425,26 +425,6 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
     }
 
     /**
-     * Returns time when snapshot ended; a value of {@code 0L} will be returned if the
-     * snapshot is still running or if {@link #state()} returns {@code null}.
-     *
-     * @return snapshot end time
-     */
-    public long endTime() {
-        return endTime;
-    }
-
-    /**
-     * Returns total number of shards that were snapshotted; a value of {@code 0} will
-     * be returned if {@link #state()} returns {@code null}.
-     *
-     * @return number of shards
-     */
-    public int totalShards() {
-        return totalShards;
-    }
-
-    /**
      * Number of failed shards; a value of {@code 0} will be returned if there were no
      * failed shards, or if {@link #state()} returns {@code null}.
      *
@@ -452,24 +432,6 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
      */
     public int failedShards() {
         return totalShards - successfulShards;
-    }
-
-    /**
-     * Returns total number of shards that were successfully snapshotted; a value of
-     * {@code 0} will be returned if {@link #state()} returns {@code null}.
-     *
-     * @return number of successful shards
-     */
-    public int successfulShards() {
-        return successfulShards;
-    }
-
-    public Boolean includeGlobalState() {
-        return includeGlobalState;
-    }
-
-    public long getPinnedTimestamp() {
-        return pinnedTimestamp;
     }
 
     /**

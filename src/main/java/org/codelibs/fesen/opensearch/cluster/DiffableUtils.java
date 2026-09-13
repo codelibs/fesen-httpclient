@@ -63,13 +63,6 @@ public final class DiffableUtils {
     }
 
     /**
-     * Returns a map key serializer for Integer keys. Encodes as Int.
-     */
-    public static KeySerializer<Integer> getIntKeySerializer() {
-        return IntKeySerializer.INSTANCE;
-    }
-
-    /**
      * Returns a map key serializer for Integer keys. Encodes as VInt.
      */
     public static KeySerializer<Integer> getVIntKeySerializer() {
@@ -536,10 +529,6 @@ public final class DiffableUtils {
         @Override
         public Diff<V> readDiff(StreamInput in, K key) throws IOException {
             throw new UnsupportedOperationException();
-        }
-
-        public static <K, V> NonDiffableValueSerializer<K, V> getAbstractInstance() {
-            return ABSTRACT_INSTANCE;
         }
     }
 

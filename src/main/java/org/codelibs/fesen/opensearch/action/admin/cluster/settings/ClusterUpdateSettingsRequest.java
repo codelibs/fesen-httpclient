@@ -89,14 +89,6 @@ public class ClusterUpdateSettingsRequest extends AcknowledgedRequest<ClusterUpd
         return validationException;
     }
 
-    public Settings transientSettings() {
-        return transientSettings;
-    }
-
-    public Settings persistentSettings() {
-        return persistentSettings;
-    }
-
     /**
      * Sets the transient settings to be updated. They will not survive a full cluster restart
      */

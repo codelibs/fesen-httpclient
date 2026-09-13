@@ -96,10 +96,6 @@ public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writ
         return alias;
     }
 
-    public long getTime() {
-        return time;
-    }
-
     public static Diff<RolloverInfo> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(RolloverInfo::new, in);
     }

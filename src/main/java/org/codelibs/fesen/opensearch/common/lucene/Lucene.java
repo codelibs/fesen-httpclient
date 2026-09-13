@@ -105,10 +105,6 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class Lucene {
-    public static final String LATEST_CODEC = "Lucene104";
-
-    public static final String SOFT_DELETES_FIELD = "__soft_deletes";
-    public static final String PARENT_FIELD = "__nested_parent";
 
     public static final ScoreDoc[] EMPTY_SCORE_DOCS = new ScoreDoc[0];
 
@@ -435,13 +431,6 @@ public class Lucene {
         public void delete() {
             throw new UnsupportedOperationException("This IndexCommit does not support deletions");
         }
-    }
-
-    /**
-     * Returns a numeric docvalues which can be used to soft-delete documents.
-     */
-    public static NumericDocValuesField newSoftDeletesField() {
-        return new NumericDocValuesField(SOFT_DELETES_FIELD, 1);
     }
 
 }

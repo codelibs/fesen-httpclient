@@ -98,14 +98,6 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
         out.writeLong(rewriteTime);
     }
 
-    public long getRewriteTime() {
-        return rewriteTime;
-    }
-
-    public CollectorResult getCollectorResult() {
-        return profileCollector;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

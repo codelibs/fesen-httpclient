@@ -71,10 +71,6 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
         return this.fieldDataCache;
     }
 
-    public boolean fileCache() {
-        return this.fileCache;
-    }
-
     public String[] fields() {
         return this.fields;
     }

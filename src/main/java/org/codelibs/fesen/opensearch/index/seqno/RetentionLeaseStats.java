@@ -54,15 +54,6 @@ public final class RetentionLeaseStats implements ToXContentFragment, Writeable 
     private final RetentionLeases retentionLeases;
 
     /**
-     * The underlying retention lease collection backing this stats object.
-     *
-     * @return the retention lease collection
-     */
-    public RetentionLeases retentionLeases() {
-        return retentionLeases;
-    }
-
-    /**
      * Constructs a new retention lease stats object from a stream. The retention lease stats should have been written via
      * {@link #writeTo(StreamOutput)}.
      *

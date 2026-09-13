@@ -73,8 +73,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
 
     public static final String TYPE = "snapshots";
 
-    public static final String ABORTED_FAILURE_TEXT = "Snapshot was aborted by deletion";
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -405,10 +403,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return userMetadata;
         }
 
-        public boolean partial() {
-            return partial;
-        }
-
         public long startTime() {
             return startTime;
         }
@@ -420,17 +414,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         @Override
         public long repositoryStateId() {
             return repositoryStateId;
-        }
-
-        public String failure() {
-            return failure;
-        }
-
-        /**
-         * What version of metadata to use for the snapshot in the repository
-         */
-        public Version version() {
-            return version;
         }
 
         @Override
@@ -652,10 +635,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         @Nullable
         public String nodeId() {
             return nodeId;
-        }
-
-        public String reason() {
-            return reason;
         }
 
         @Override

@@ -181,14 +181,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
         out.writeBoolean(primary);
     }
 
-    public ShardId getShardId() {
-        return shardId;
-    }
-
-    public synchronized Stage getStage() {
-        return this.stage;
-    }
-
     public ReplicationLuceneIndex getIndex() {
         return index;
     }
@@ -196,14 +188,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
     @Override
     public ReplicationTimer getTimer() {
         return timer;
-    }
-
-    public RecoverySource getRecoverySource() {
-        return recoverySource;
-    }
-
-    public boolean getPrimary() {
-        return primary;
     }
 
     @Override
@@ -316,10 +300,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             checkIndexTime = 0;
         }
 
-        public long checkIndexTime() {
-            return checkIndexTime;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.humanReadableField(Fields.CHECK_INDEX_TIME_IN_MILLIS, Fields.CHECK_INDEX_TIME, new TimeValue(checkIndexTime));
@@ -367,27 +347,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             total = UNKNOWN;
             totalOnStart = UNKNOWN;
             totalLocal = UNKNOWN;
-        }
-
-        /**
-         * returns the total number of translog operations recovered so far
-         */
-        public synchronized int recoveredOperations() {
-            return recovered;
-        }
-
-        /**
-         * returns the total number of translog operations needed to be recovered at this moment.
-         * Note that this can change as the number of operations grows during recovery.
-         * <p>
-         * A value of -1 ({@link RecoveryState.Translog#UNKNOWN} is return if this is unknown (typically a gateway recovery)
-         */
-        public synchronized int totalOperations() {
-            return total;
-        }
-
-        public synchronized int totalLocal() {
-            return totalLocal;
         }
 
         public synchronized float recoveredPercent() {

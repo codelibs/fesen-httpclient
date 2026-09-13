@@ -185,15 +185,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         return shardId;
     }
 
-    /**
-     * Returns the shards id
-     *
-     * @return id of the shard
-     */
-    public ShardId getShardId() {
-        return shardId();
-    }
-
     @Override
     public Iterator<ShardRouting> iterator() {
         return shards.iterator();
@@ -204,13 +195,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
      */
     public int size() {
         return shards.size();
-    }
-
-    /**
-     * Returns the number of this shards instances.
-     */
-    public int getSize() {
-        return size();
     }
 
     /**
@@ -278,13 +262,6 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         int result = shardId.hashCode();
         result = 31 * result + shards.hashCode();
         return result;
-    }
-
-    /**
-     * Returns <code>true</code> iff all shards in the routing table are started otherwise <code>false</code>
-     */
-    public boolean allShardsStarted() {
-        return allShardsStarted;
     }
 
     static class AttributesKey {

@@ -60,25 +60,4 @@ public class XContentFactory {
     public static XContentBuilder jsonBuilder(OutputStream os) throws IOException {
         return new XContentBuilder(JsonXContent.jsonXContent, os);
     }
-
-    /**
-     * Returns a content builder using SMILE format ({@link org.codelibs.fesen.opensearch.common.xcontent.XContentType#SMILE}.
-     */
-    public static XContentBuilder smileBuilder() throws IOException {
-        return MediaTypeRegistry.contentBuilder(XContentType.SMILE);
-    }
-
-    /**
-     * Returns a content builder using YAML format ({@link org.codelibs.fesen.opensearch.common.xcontent.XContentType#YAML}.
-     */
-    public static XContentBuilder yamlBuilder() throws IOException {
-        return MediaTypeRegistry.contentBuilder(XContentType.YAML);
-    }
-
-    /**
-     * Returns a content builder using CBOR format ({@link org.codelibs.fesen.opensearch.common.xcontent.XContentType#CBOR}.
-     */
-    public static XContentBuilder cborBuilder() throws IOException {
-        return MediaTypeRegistry.contentBuilder(XContentType.CBOR);
-    }
 }

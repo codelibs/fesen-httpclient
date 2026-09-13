@@ -116,13 +116,6 @@ public enum ScriptType implements Writeable {
     }
 
     /**
-     * @return The unique id for this {@link ScriptType}.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
      * @return The unique name for this {@link ScriptType} based on the {@link ParseField}.
      */
     public String getName() {

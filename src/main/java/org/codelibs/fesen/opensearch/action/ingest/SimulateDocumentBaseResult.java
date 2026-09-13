@@ -103,10 +103,6 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
         out.writeOptionalWriteable(ingestDocument);
     }
 
-    public Exception getFailure() {
-        return failure;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         if (failure == null && ingestDocument == null) {

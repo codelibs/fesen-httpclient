@@ -171,34 +171,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
         this.analysis = analysisStats;
     }
 
-    public int getIndexCount() {
-        return indexCount;
-    }
-
-    public ShardStats getShards() {
-        return this.shards;
-    }
-
-    public StoreStats getStore() {
-        return store;
-    }
-
-    public FieldDataStats getFieldData() {
-        return fieldData;
-    }
-
-    public QueryCacheStats getQueryCache() {
-        return queryCache;
-    }
-
-    public CompletionStats getCompletion() {
-        return completion;
-    }
-
-    public SegmentsStats getSegments() {
-        return segments;
-    }
-
     public MappingStats getMappings() {
         return mappings;
     }
@@ -278,27 +250,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
         }
 
         /**
-         * number of indices in the cluster
-         */
-        public int getIndices() {
-            return this.indices;
-        }
-
-        /**
-         * total number of shards in the cluster
-         */
-        public int getTotal() {
-            return this.total;
-        }
-
-        /**
-         * total number of primary shards in the cluster
-         */
-        public int getPrimaries() {
-            return this.primaries;
-        }
-
-        /**
          * returns how many *redundant* copies of the data the cluster holds - running with no replicas will return 0
          */
         public double getReplication() {
@@ -306,20 +257,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
                 return 0;
             }
             return (((double) (total - primaries)) / primaries);
-        }
-
-        /**
-         * the maximum number of shards (primary+replicas) an index has
-         */
-        public int getMaxIndexShards() {
-            return this.maxIndexShards;
-        }
-
-        /**
-         * the minimum number of shards (primary+replicas) an index has
-         */
-        public int getMinIndexShards() {
-            return this.minIndexShards;
         }
 
         /**
@@ -333,20 +270,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
         }
 
         /**
-         * the maximum number of primary shards an index has
-         */
-        public int getMaxIndexPrimaryShards() {
-            return this.maxIndexPrimaryShards;
-        }
-
-        /**
-         * the minimum number of primary shards an index has
-         */
-        public int getMinIndexPrimaryShards() {
-            return this.minIndexPrimaryShards;
-        }
-
-        /**
          * the average number primary shards across the indices
          */
         public double getAvgIndexPrimaryShards() {
@@ -357,13 +280,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
         }
 
         /**
-         * minimum replication factor across the indices. See {@link #getReplication}
-         */
-        public double getMinIndexReplication() {
-            return this.minIndexReplication;
-        }
-
-        /**
          * average replication factor across the indices. See {@link #getReplication}
          */
         public double getAvgIndexReplication() {
@@ -371,13 +287,6 @@ public class ClusterStatsIndices implements ToXContentFragment {
                 return -1;
             }
             return this.totalIndexReplication / this.indices;
-        }
-
-        /**
-         * maximum replication factor across the indices. See {@link #getReplication}
-         */
-        public double getMaxIndexReplication() {
-            return this.maxIndexReplication;
         }
 
         public void addIndexShardCount(ShardStats indexShardCount) {

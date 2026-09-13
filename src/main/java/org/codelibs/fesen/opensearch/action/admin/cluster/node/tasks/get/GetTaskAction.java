@@ -40,7 +40,6 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * @opensearch.internal
  */
 public class GetTaskAction extends ActionType<GetTaskResponse> {
-    public static final String TASKS_ORIGIN = "tasks";
 
     public static final GetTaskAction INSTANCE = new GetTaskAction();
     public static final String NAME = "cluster:monitor/task/get";

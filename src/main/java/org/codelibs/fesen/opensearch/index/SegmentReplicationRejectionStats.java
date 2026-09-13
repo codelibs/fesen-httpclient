@@ -39,10 +39,6 @@ public class SegmentReplicationRejectionStats implements Writeable, ToXContentFr
         }
     }
 
-    public long getTotalRejectionCount() {
-        return totalRejectionCount;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject("segment_replication_backpressure");

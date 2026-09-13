@@ -214,48 +214,11 @@ public class FieldCapabilities implements Writeable, ToXContentObject {
     }
 
     /**
-     * Whether this field can be aggregated on all indices.
-     */
-    public boolean isAggregatable() {
-        return isAggregatable;
-    }
-
-    /**
-     * Whether this field is indexed for search on all indices.
-     */
-    public boolean isSearchable() {
-        return isSearchable;
-    }
-
-    /**
-     * The type of the field.
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
      * The list of indices where this field name is defined as {@code type},
      * or null if all indices have the same {@code type} for the field.
      */
     public String[] indices() {
         return indices;
-    }
-
-    /**
-     * The list of indices where this field is not searchable,
-     * or null if the field is searchable in all indices.
-     */
-    public String[] nonSearchableIndices() {
-        return nonSearchableIndices;
-    }
-
-    /**
-     * The list of indices where this field is not aggregatable,
-     * or null if the field is aggregatable in all indices.
-     */
-    public String[] nonAggregatableIndices() {
-        return nonAggregatableIndices;
     }
 
     @Override

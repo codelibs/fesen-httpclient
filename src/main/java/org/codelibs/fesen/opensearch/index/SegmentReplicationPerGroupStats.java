@@ -37,14 +37,6 @@ public class SegmentReplicationPerGroupStats implements Writeable, ToXContentFra
         this.rejectedRequestCount = in.readVLong();
     }
 
-    public long getRejectedRequestCount() {
-        return rejectedRequestCount;
-    }
-
-    public ShardId getShardId() {
-        return shardId;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field("rejected_requests", rejectedRequestCount);

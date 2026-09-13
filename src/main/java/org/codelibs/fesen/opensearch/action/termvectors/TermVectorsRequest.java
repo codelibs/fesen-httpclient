@@ -259,10 +259,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         return doc;
     }
 
-    public MediaType xContentType() {
-        return mediaType;
-    }
-
     /**
      * Sets an artificial document from which term vectors are requested for.
      */

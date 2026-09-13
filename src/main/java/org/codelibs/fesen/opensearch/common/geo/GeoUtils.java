@@ -77,25 +77,10 @@ public class GeoUtils {
     public static final String WKT_BOUNDING_BOX_PARSE_ERROR = "failed to parse WKT bounding box";
     public static final String WKT_BOUNDING_BOX_TYPE_ERROR = "failed to parse WKT bounding box. [%s] found. expected [%s]";
     /** Earth ellipsoid major axis defined by WGS 84 in meters */
-    public static final double EARTH_SEMI_MAJOR_AXIS = 6378137.0;      // meters (WGS 84)
 
     /** Earth ellipsoid minor axis defined by WGS 84 in meters */
-    public static final double EARTH_SEMI_MINOR_AXIS = 6356752.314245; // meters (WGS 84)
 
     /** Earth mean radius defined by WGS 84 in meters */
-    public static final double EARTH_MEAN_RADIUS = 6371008.7714D;      // meters (WGS 84)
-
-    /** Earth axis ratio defined by WGS 84 (0.996647189335) */
-    public static final double EARTH_AXIS_RATIO = EARTH_SEMI_MINOR_AXIS / EARTH_SEMI_MAJOR_AXIS;
-
-    /** Earth ellipsoid equator length in meters */
-    public static final double EARTH_EQUATOR = 2 * Math.PI * EARTH_SEMI_MAJOR_AXIS;
-
-    /** Earth ellipsoid polar distance in meters */
-    public static final double EARTH_POLAR_DISTANCE = Math.PI * EARTH_SEMI_MINOR_AXIS;
-
-    /** rounding error for quantized latitude and longitude values */
-    public static final double TOLERANCE = 1E-6;
 
     /** Returns true if latitude is actually a valid latitude value.*/
     public static boolean isValidLatitude(double latitude) {

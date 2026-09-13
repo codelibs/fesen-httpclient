@@ -387,15 +387,6 @@ public class IndicesOptions implements ToXContentFragment {
     }
 
     /**
-     * @return indices options that requires every specified index to exist, expand wildcards only to open indices,
-     *         includes hidden indices, allows that no indices are resolved from wildcard expressions (not returning an error)
-     *         and forbids the use of closed indices by throwing an error.
-     */
-    public static IndicesOptions strictExpandOpenHiddenAndForbidClosed() {
-        return STRICT_EXPAND_OPEN_HIDDEN_FORBID_CLOSED;
-    }
-
-    /**
      * @return indices options that requires every specified index to exist, expands wildcards only to open indices,
      *         allows that no indices are resolved from wildcard expressions (not returning an error),
      *         forbids the use of closed indices by throwing an error and ignores indices that are throttled.
@@ -434,22 +425,6 @@ public class IndicesOptions implements ToXContentFragment {
      */
     public static IndicesOptions lenientExpandOpen() {
         return LENIENT_EXPAND_OPEN;
-    }
-
-    /**
-     * @return indices options that ignores unavailable indices, expands wildcards to open and hidden indices, and
-     *         allows that no indices are resolved from wildcard expressions (not returning an error).
-     */
-    public static IndicesOptions lenientExpandOpenHidden() {
-        return LENIENT_EXPAND_OPEN_HIDDEN;
-    }
-
-    /**
-     * @return indices options that ignores unavailable indices,  expands wildcards to both open and closed
-     * indices and allows that no indices are resolved from wildcard expressions (not returning an error).
-     */
-    public static IndicesOptions lenientExpand() {
-        return LENIENT_EXPAND_OPEN_CLOSED;
     }
 
     /**

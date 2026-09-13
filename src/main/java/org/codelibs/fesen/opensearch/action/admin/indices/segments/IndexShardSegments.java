@@ -59,10 +59,6 @@ public class IndexShardSegments implements Iterable<ShardSegments> {
         return this.shardId;
     }
 
-    public ShardSegments[] getShards() {
-        return this.shards;
-    }
-
     @Override
     public Iterator<ShardSegments> iterator() {
         return Arrays.stream(shards).iterator();

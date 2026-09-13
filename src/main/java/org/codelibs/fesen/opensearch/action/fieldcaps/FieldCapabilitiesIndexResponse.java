@@ -58,10 +58,6 @@ public class FieldCapabilitiesIndexResponse extends ActionResponse implements Wr
         this.canMatch = in.readBoolean();
     }
 
-    public boolean canMatch() {
-        return canMatch;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(indexName);

@@ -99,13 +99,6 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
     }
 
     /**
-     * Get the concrete list of indices that were requested.
-     */
-    public String[] getIndices() {
-        return indices;
-    }
-
-    /**
      *
      * Get the field capabilities per type for the provided {@code field}.
      */

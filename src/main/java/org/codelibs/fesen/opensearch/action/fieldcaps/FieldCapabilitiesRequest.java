@@ -71,15 +71,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
 
     public FieldCapabilitiesRequest() {}
 
-    /**
-     * Returns <code>true</code> iff the results should be merged.
-     * <p>
-     * Note that when using the high-level REST client, results are always merged (this flag is always considered 'true').
-     */
-    boolean isMergeResults() {
-        return mergeResults;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -152,10 +143,6 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
 
     public QueryBuilder indexFilter() {
         return indexFilter;
-    }
-
-    Long nowInMillis() {
-        return nowInMillis;
     }
 
     @Override

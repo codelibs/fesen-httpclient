@@ -137,20 +137,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     public static final ParseField SEARCH_PIPELINE = new ParseField("search_pipeline");
     public static final ParseField VERBOSE_SEARCH_PIPELINE = new ParseField("verbose_pipeline");
 
-    /**
-     * A static factory method to construct a new search source.
-     */
-    public static SearchSourceBuilder searchSource() {
-        return new SearchSourceBuilder();
-    }
-
-    /**
-     * A static factory method to construct new search highlights.
-     */
-    public static HighlightBuilder highlight() {
-        return new HighlightBuilder();
-    }
-
     private QueryBuilder queryBuilder;
 
     private QueryBuilder postQueryBuilder;
@@ -403,13 +389,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Gets the post filter for this request
-     */
-    public QueryBuilder postFilter() {
-        return postQueryBuilder;
-    }
-
-    /**
      * From index to start the search from. Defaults to {@code 0}.
      */
     public SearchSourceBuilder from(int from) {
@@ -470,28 +449,12 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Indicates whether each search hit will be returned with an explanation of
-     * the hit (ranking)
-     */
-    public Boolean explain() {
-        return explain;
-    }
-
-    /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with a
      * version associated with it.
      */
     public SearchSourceBuilder version(Boolean version) {
         this.version = version;
         return this;
-    }
-
-    /**
-     * Indicates whether the document's version will be included in the search
-     * hits.
-     */
-    public Boolean version() {
-        return version;
     }
 
     /**
@@ -520,13 +483,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Gets the timeout to control how long search is allowed to take.
-     */
-    public TimeValue timeout() {
-        return timeout;
-    }
-
-    /**
      * An optional terminate_after to terminate the search after collecting
      * <code>terminateAfter</code> documents
      */
@@ -536,13 +492,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         }
         this.terminateAfter = terminateAfter;
         return this;
-    }
-
-    /**
-     * Gets the number of documents to terminate after collecting.
-     */
-    public int terminateAfter() {
-        return terminateAfter;
     }
 
     /**
@@ -589,13 +538,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      */
     public List<SortBuilder<?>> sorts() {
         return sorts;
-    }
-
-    /**
-     * Indicates whether scores will be tracked for this request.
-     */
-    public boolean trackScores() {
-        return trackScores;
     }
 
     /**
@@ -653,10 +595,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         return sliceBuilder;
     }
 
-    public CollapseBuilder collapse() {
-        return collapse;
-    }
-
     public SearchSourceBuilder collapse(CollapseBuilder collapse) {
         this.collapse = collapse;
         return this;
@@ -688,20 +626,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         return this;
     }
 
-    /**
-     * Gets the highlighter builder for this request.
-     */
-    public HighlightBuilder highlighter() {
-        return highlightBuilder;
-    }
-
-    /**
-     * Gets the suggester builder for this request.
-     */
-    public SuggestBuilder suggest() {
-        return suggestBuilder;
-    }
-
     public SearchSourceBuilder addRescorer(RescorerBuilder<?> rescoreBuilder) {
         if (rescoreBuilders == null) {
             rescoreBuilders = new ArrayList<>();
@@ -713,14 +637,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     public SearchSourceBuilder clearRescorers() {
         rescoreBuilders = null;
         return this;
-    }
-
-    /**
-     * Return whether to profile query execution, or {@code null} if
-     * unspecified.
-     */
-    public boolean profile() {
-        return profile;
     }
 
     /**
@@ -1412,10 +1328,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
             }
         }
 
-        public float getBoost() {
-            return boost;
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeString(index);
@@ -1539,14 +1451,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
         public String fieldName() {
             return fieldName;
-        }
-
-        public Script script() {
-            return script;
-        }
-
-        public boolean ignoreFailure() {
-            return ignoreFailure;
         }
 
         @Override

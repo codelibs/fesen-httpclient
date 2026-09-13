@@ -33,11 +33,6 @@ package org.codelibs.fesen.opensearch.common.util;
  */
 public final class BitMixer {
 
-    // Don't bother mixing very small key domains much.
-    public static int mix(byte key) {
-        return key * PHI_C32;
-    }
-
     /**
      * Computes David Stafford variant 9 of 64bit mix function (MH3 finalization step,
      * with different shifts and constants).
@@ -56,7 +51,4 @@ public final class BitMixer {
     /*
      * Golden ratio bit mixers.
      */
-
-    private static final int PHI_C32 = 0x9e3779b9;
-    private static final long PHI_C64 = 0x9e3779b97f4a7c15L;
 }

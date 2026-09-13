@@ -73,10 +73,6 @@ public enum ResourceType {
         return statsEnabled;
     }
 
-    public ResourceUsageCalculator getResourceUsageCalculator() {
-        return resourceUsageCalculator;
-    }
-
     public static List<ResourceType> getSortedValues() {
         return sortedValues;
     }

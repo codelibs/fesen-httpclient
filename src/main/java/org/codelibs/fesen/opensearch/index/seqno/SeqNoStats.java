@@ -72,20 +72,6 @@ public class SeqNoStats implements ToXContentFragment, Writeable {
         this(in.readZLong(), in.readZLong(), in.readZLong());
     }
 
-    /** the maximum sequence number seen so far */
-    public long getMaxSeqNo() {
-        return maxSeqNo;
-    }
-
-    /** the maximum sequence number for which all previous operations (including) have been persisted */
-    public long getLocalCheckpoint() {
-        return localCheckpoint;
-    }
-
-    public long getGlobalCheckpoint() {
-        return globalCheckpoint;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeZLong(maxSeqNo);

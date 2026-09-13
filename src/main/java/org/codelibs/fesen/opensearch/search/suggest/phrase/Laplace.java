@@ -80,13 +80,6 @@ public final class Laplace extends SmoothingModel {
         out.writeDouble(alpha);
     }
 
-    /**
-     * @return the laplace model alpha parameter
-     */
-    public double getAlpha() {
-        return this.alpha;
-    }
-
     @Override
     protected XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(ALPHA_FIELD.getPreferredName(), alpha);

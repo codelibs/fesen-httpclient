@@ -75,18 +75,6 @@ public class CircuitBreakingException extends OpenSearchException {
         out.writeEnum(durability);
     }
 
-    public long getBytesWanted() {
-        return this.bytesWanted;
-    }
-
-    public long getByteLimit() {
-        return this.byteLimit;
-    }
-
-    public CircuitBreaker.Durability getDurability() {
-        return durability;
-    }
-
     /** Always returns {@link RestStatus#TOO_MANY_REQUESTS} */
     @Override
     public RestStatus status() {

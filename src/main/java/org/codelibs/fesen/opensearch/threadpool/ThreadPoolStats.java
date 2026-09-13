@@ -144,36 +144,12 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
             return this.threads;
         }
 
-        public int getQueue() {
-            return this.queue;
-        }
-
-        public int getActive() {
-            return this.active;
-        }
-
-        public long getRejected() {
-            return rejected;
-        }
-
-        public int getLargest() {
-            return largest;
-        }
-
-        public long getCompleted() {
-            return this.completed;
-        }
-
         public TimeValue getWaitTime() {
             return TimeValue.timeValueNanos(waitTimeNanos);
         }
 
         public long getWaitTimeNanos() {
             return waitTimeNanos;
-        }
-
-        public int getParallelism() {
-            return parallelism;
         }
 
         @Override

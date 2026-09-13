@@ -73,10 +73,6 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
 
     }
 
-    public static ContextParser<Void, PipelineConfiguration> getParser() {
-        return (parser, context) -> PARSER.apply(parser, null).build();
-    }
-
     private static class Builder {
 
         private String id;
@@ -119,16 +115,6 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
 
     public Map<String, Object> getConfigAsMap() {
         return XContentHelper.convertToMap(config, true, mediaType).v2();
-    }
-
-    // pkg-private for tests
-    MediaType getMediaType() {
-        return mediaType;
-    }
-
-    // pkg-private for tests
-    BytesReference getConfig() {
-        return config;
     }
 
     @Override

@@ -57,13 +57,6 @@ public class ReplicationTask extends Task {
         super(id, type, action, description, parentTaskId, headers);
     }
 
-    /**
-     * Get the current phase of the task.
-     */
-    public String getPhase() {
-        return phase;
-    }
-
     @Override
     public Status getStatus() {
         return new Status(phase);

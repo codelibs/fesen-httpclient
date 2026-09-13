@@ -142,16 +142,8 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
         this.results = Collections.unmodifiableList(responses);
     }
 
-    public String getPipelineId() {
-        return pipelineId;
-    }
-
     public List<SimulateDocumentResult> getResults() {
         return results;
-    }
-
-    public boolean isVerbose() {
-        return verbose;
     }
 
     @Override

@@ -33,7 +33,6 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
  */
 @PublicApi(since = "3.6.0")
 public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionRequest> implements IndicesRequest.Replaceable {
-    public static final String RESET_SETTINGS = "reset_settings";
     private String[] indices;
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
     private ResetSettings[] resetSettings;

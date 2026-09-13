@@ -119,10 +119,6 @@ public final class TaskOperationFailure implements Writeable, ToXContentFragment
         return this.taskId;
     }
 
-    public RestStatus getStatus() {
-        return status;
-    }
-
     public Exception getCause() {
         return reason;
     }

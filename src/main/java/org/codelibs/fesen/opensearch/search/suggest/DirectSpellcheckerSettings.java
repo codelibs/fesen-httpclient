@@ -75,10 +75,6 @@ public class DirectSpellcheckerSettings {
     private static final Comparator<SuggestWord> LUCENE_FREQUENCY = new SuggestWordFrequencyComparator();
     private static final Comparator<SuggestWord> SCORE_COMPARATOR = SuggestWordQueue.DEFAULT_COMPARATOR;
 
-    public SuggestMode suggestMode() {
-        return suggestMode;
-    }
-
     @Override
     public String toString() {
         return "["

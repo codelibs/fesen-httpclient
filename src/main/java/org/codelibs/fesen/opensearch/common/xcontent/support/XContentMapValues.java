@@ -274,10 +274,6 @@ public class XContentMapValues {
         return filtered;
     }
 
-    public static boolean isObject(Object node) {
-        return node instanceof Map;
-    }
-
     public static boolean nodeBooleanValue(Object node) {
         return Booleans.parseBoolean(node.toString());
     }

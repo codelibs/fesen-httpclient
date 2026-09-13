@@ -94,26 +94,6 @@ public class DerivedField implements Writeable, ToXContentFragment {
         return builder;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Script getScript() {
-        return script;
-    }
-
-    public String getPrefilterField() {
-        return prefilterField;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(name, type, script, prefilterField, properties, ignoreMalformed, format);

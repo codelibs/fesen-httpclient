@@ -238,15 +238,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
     }
 
     /**
-     * Returns true if indices with unavailable shards should be be partially snapshotted.
-     *
-     * @return the desired behaviour regarding indices options
-     */
-    public boolean partial() {
-        return partial;
-    }
-
-    /**
      * If set to true the operation should wait for the snapshot completion before returning.
      * <p>
      * By default, the operation will return as soon as snapshot is initialized. It can be changed by setting this
@@ -267,24 +258,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
      */
     public boolean waitForCompletion() {
         return waitForCompletion;
-    }
-
-    /**
-     * Returns repository-specific snapshot settings
-     *
-     * @return repository-specific snapshot settings
-     */
-    public Settings settings() {
-        return this.settings;
-    }
-
-    /**
-     * Returns true if global state should be stored as part of the snapshot
-     *
-     * @return true if global state should be stored as part of the snapshot
-     */
-    public boolean includeGlobalState() {
-        return includeGlobalState;
     }
 
     @Override

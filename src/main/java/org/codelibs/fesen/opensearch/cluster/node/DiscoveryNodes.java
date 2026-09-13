@@ -191,46 +191,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         return null;
     }
 
-    /**
-     * Returns the version of the node with the oldest version in the cluster that is not a client node
-     * <p>
-     * If there are no non-client nodes, Version.CURRENT will be returned.
-     *
-     * @return the oldest version in the cluster
-     */
-    public Version getSmallestNonClientNodeVersion() {
-        return minNonClientNodeVersion;
-    }
-
-    /**
-     * Returns the version of the node with the youngest version in the cluster that is not a client node.
-     * <p>
-     * If there are no non-client nodes, Version.CURRENT will be returned.
-     *
-     * @return the youngest version in the cluster
-     */
-    public Version getLargestNonClientNodeVersion() {
-        return maxNonClientNodeVersion;
-    }
-
-    /**
-     * Returns the version of the node with the oldest version in the cluster.
-     *
-     * @return the oldest version in the cluster
-     */
-    public Version getMinNodeVersion() {
-        return minNodeVersion;
-    }
-
-    /**
-     * Returns the version of the node with the youngest version in the cluster
-     *
-     * @return the youngest version in the cluster
-     */
-    public Version getMaxNodeVersion() {
-        return maxNodeVersion;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

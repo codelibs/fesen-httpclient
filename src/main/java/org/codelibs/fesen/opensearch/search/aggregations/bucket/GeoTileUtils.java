@@ -62,8 +62,6 @@ public final class GeoTileUtils {
 
     private GeoTileUtils() {}
 
-    private static final double PI_DIV_2 = Math.PI / 2;
-
     /**
      * Largest number of tiles (precision) to use.
      * This value cannot be more than (64-5)/2 = 29, because 5 bits are used for zoom level itself (0-31)

@@ -186,22 +186,6 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         }
     }
 
-    public String getProcessorTag() {
-        return processorTag;
-    }
-
-    public Exception getFailure() {
-        return failure;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

@@ -276,10 +276,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         return this.routing;
     }
 
-    public ShardId getShardId() {
-        return this.shardId;
-    }
-
     public Script script() {
         return this.script;
     }
@@ -459,13 +455,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         return this;
     }
 
-    /**
-     * Should this update attempt to detect if it is a noop? Defaults to true.
-     */
-    public boolean detectNoop() {
-        return detectNoop;
-    }
-
     public UpdateRequest fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, this, null);
     }
@@ -477,10 +466,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     public UpdateRequest docAsUpsert(boolean shouldUpsertDoc) {
         this.docAsUpsert = shouldUpsertDoc;
         return this;
-    }
-
-    public boolean scriptedUpsert() {
-        return this.scriptedUpsert;
     }
 
     public UpdateRequest scriptedUpsert(boolean scriptedUpsert) {

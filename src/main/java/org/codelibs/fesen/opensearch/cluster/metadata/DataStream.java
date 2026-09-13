@@ -103,10 +103,6 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         return name;
     }
 
-    public TimestampField getTimeStampField() {
-        return timeStampField;
-    }
-
     public List<Index> getIndices() {
         return indices;
     }
@@ -273,10 +269,6 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
         public Map<String, Object> toMap() {
             return Collections.singletonMap(NAME_FIELD.getPreferredName(), name);
-        }
-
-        public String getName() {
-            return name;
         }
 
         @Override

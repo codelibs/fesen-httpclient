@@ -101,13 +101,6 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
         shardAllocationDecision.writeTo(out);
     }
 
-    /**
-     * Returns the shard allocation decision for attempting to assign or move the shard.
-     */
-    public ShardAllocationDecision getShardAllocationDecision() {
-        return shardAllocationDecision;
-    }
-
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         {

@@ -94,14 +94,6 @@ public class SemverRange implements ToXContentFragment {
     }
 
     /**
-     * Return the range operator for this range.
-     * @return range operator
-     */
-    public RangeOperator getRangeOperator() {
-        return rangeOperator;
-    }
-
-    /**
      * Return the version for this range.
      * @return the range version
      */

@@ -65,8 +65,6 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
     private boolean rewrite;
     private boolean allShards;
 
-    long nowInMillis;
-
     public ValidateQueryRequest() {
         this(Strings.EMPTY_ARRAY);
     }

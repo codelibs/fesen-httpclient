@@ -433,22 +433,6 @@ public abstract class ScrollableHitSource {
             out.writeOptionalString(nodeId);
         }
 
-        public String getIndex() {
-            return index;
-        }
-
-        public Integer getShardId() {
-            return shardId;
-        }
-
-        public RestStatus getStatus() {
-            return this.status;
-        }
-
-        public Throwable getReason() {
-            return reason;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startObject();

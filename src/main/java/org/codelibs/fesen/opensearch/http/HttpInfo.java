@@ -110,8 +110,4 @@ public class HttpInfo implements ReportingService.Info {
     public ByteSizeValue maxContentLength() {
         return new ByteSizeValue(maxContentLength);
     }
-
-    public ByteSizeValue getMaxContentLength() {
-        return maxContentLength();
-    }
 }

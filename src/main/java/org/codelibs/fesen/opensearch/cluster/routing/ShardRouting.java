@@ -293,13 +293,6 @@ public class ShardRouting implements Writeable, ToXContentObject {
     }
 
     /**
-     * Returns the parent shard id if this is a child shard created by split, or null otherwise.
-     */
-    public ShardId getParentShardId() {
-        return parentShardId;
-    }
-
-    /**
      * Returns <code>true</code> iff this shard is assigned to a node ie. not
      * {@link ShardRoutingState#UNASSIGNED unassigned}. Otherwise <code>false</code>
      */

@@ -99,22 +99,6 @@ public class DocsStats implements Writeable, ToXContentFragment {
         this.deleted += other.deleted;
     }
 
-    public long getCount() {
-        return this.count;
-    }
-
-    public long getDeleted() {
-        return this.deleted;
-    }
-
-    /**
-     * Returns the total size in bytes of all documents in this stats.
-     * This value may be more reliable than {@link StoreStats#getSizeInBytes()} in estimating the index size.
-     */
-    public long getTotalSizeInBytes() {
-        return totalSizeInBytes;
-    }
-
     /**
      * Builder for the {@link DocsStats} class.
      * Provides a fluent API for constructing a DocsStats object.

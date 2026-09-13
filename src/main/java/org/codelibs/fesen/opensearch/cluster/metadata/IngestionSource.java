@@ -83,46 +83,6 @@ public class IngestionSource {
         this.sourcePartitionStrategy = sourcePartitionStrategy;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public PointerInitReset getPointerInitReset() {
-        return pointerInitReset;
-    }
-
-    public IngestionErrorStrategy.ErrorStrategy getErrorStrategy() {
-        return errorStrategy;
-    }
-
-    public long getMaxPollSize() {
-        return maxPollSize;
-    }
-
-    public int getNumProcessorThreads() {
-        return numProcessorThreads;
-    }
-
-    public boolean isAllActiveIngestionEnabled() {
-        return allActiveIngestion;
-    }
-
-    public TimeValue getPointerBasedLagUpdateInterval() {
-        return pointerBasedLagUpdateInterval;
-    }
-
-    public IngestionMessageMapper.MapperType getMapperType() {
-        return mapperType;
-    }
-
-    public WarmupConfig getWarmupConfig() {
-        return warmupConfig;
-    }
-
-    public SourcePartitionStrategy getSourcePartitionStrategy() {
-        return sourcePartitionStrategy;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -247,14 +207,6 @@ public class IngestionSource {
         public PointerInitReset(StreamPoller.ResetState type, String value) {
             this.type = type;
             this.value = value;
-        }
-
-        public StreamPoller.ResetState getType() {
-            return type;
-        }
-
-        public String getValue() {
-            return value;
         }
 
         @Override

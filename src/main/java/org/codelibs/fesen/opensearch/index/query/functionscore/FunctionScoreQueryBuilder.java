@@ -371,10 +371,6 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
             out.writeNamedWriteable(scoreFunction);
         }
 
-        public QueryBuilder getFilter() {
-            return filter;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.startObject();

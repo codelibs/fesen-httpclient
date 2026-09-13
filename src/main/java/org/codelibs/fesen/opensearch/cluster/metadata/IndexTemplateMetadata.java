@@ -142,10 +142,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         return this.order;
     }
 
-    public int getOrder() {
-        return order();
-    }
-
     @Nullable
     public Integer version() {
         return version;
@@ -168,10 +164,6 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
             return null;
         }
         return this.mappings.values().iterator().next();
-    }
-
-    public CompressedXContent getMappings() {
-        return this.mappings();
     }
 
     public Map<String, AliasMetadata> aliases() {

@@ -100,10 +100,6 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
             this.lowercase = this.name().toLowerCase(Locale.ROOT);
         }
 
-        public byte getOp() {
-            return op;
-        }
-
         public String getLowercase() {
             return lowercase;
         }
@@ -199,13 +195,6 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
     }
 
     /**
-     * The exact shard the document was changed in.
-     */
-    public ShardId getShardId() {
-        return this.shardId;
-    }
-
-    /**
      * The id of the document changed.
      */
     public String getId() {
@@ -234,15 +223,6 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
      */
     public long getPrimaryTerm() {
         return primaryTerm;
-    }
-
-    /**
-     * Did this request force a refresh? Requests that set {@link WriteRequest#setRefreshPolicy(RefreshPolicy)} to
-     * {@link RefreshPolicy#IMMEDIATE} will always return true for this. Requests that set it to {@link RefreshPolicy#WAIT_UNTIL} will
-     * only return true here if they run out of refresh listener slots (see {@code index.max_refresh_listeners}).
-     */
-    public boolean forcedRefresh() {
-        return forcedRefresh;
     }
 
     @Override

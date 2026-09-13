@@ -113,13 +113,6 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
     }
 
     /**
-     * Returns the id of this point in time
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
      * If specified, the search layer will keep this point in time around for at least the given keep-alive.
      * Otherwise, the point in time will be kept around until the original keep alive elapsed.
      */

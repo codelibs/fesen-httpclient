@@ -60,16 +60,6 @@ public class DeprecatedMessage extends OpenSearchLogMessage {
         this.keyWithXOpaqueId = key + xOpaqueId;
     }
 
-    /**
-     * This method is to reset the key set which is used to log unique deprecation logs only.
-     * The key set helps avoiding the deprecation messages being logged multiple times.
-     * This method is a utility to reset this set for tests so they can run independent of each other.
-     * Otherwise, a warning can be logged by some test and the upcoming test can be impacted by it.
-     */
-    public static void resetDeprecatedMessageForTests() {
-        keyDedupeCache.clear();
-    }
-
     private static Map<String, Object> fieldMap(String key, String xOpaqueId) {
         final MapBuilder<String, Object> builder = MapBuilder.newMapBuilder();
         if (Strings.isNullOrEmpty(key) == false) {

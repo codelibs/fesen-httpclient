@@ -143,14 +143,6 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
             }
         }
 
-        public BigArrays bigArrays() {
-            return bigArrays;
-        }
-
-        public ScriptService scriptService() {
-            return scriptService;
-        }
-
         /**
          * The root of the tree of pipeline aggregations for this request.
          */

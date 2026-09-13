@@ -95,10 +95,6 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
         this.missCount += stats.missCount;
     }
 
-    public long getMemorySizeInBytes() {
-        return this.memorySize;
-    }
-
     public ByteSizeValue getMemorySize() {
         return new ByteSizeValue(memorySize);
     }

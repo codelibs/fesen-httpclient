@@ -135,22 +135,6 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
         failures.record(false);
     }
 
-    public long getLocalRefreshTimeMs() {
-        return localRefreshTimeMs;
-    }
-
-    long getRemoteRefreshTimeMs() {
-        return remoteRefreshTimeMs;
-    }
-
-    long getRemoteRefreshClockTimeMs() {
-        return remoteRefreshClockTimeMs;
-    }
-
-    public DirectoryFileTransferTracker getDirectoryFileTransferTracker() {
-        return directoryFileTransferTracker;
-    }
-
     /**
      * Represents the tracker's state as seen in the stats API.
      *

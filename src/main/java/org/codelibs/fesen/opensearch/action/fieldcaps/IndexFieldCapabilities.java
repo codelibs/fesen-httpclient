@@ -70,18 +70,6 @@ public class IndexFieldCapabilities implements Writeable {
         out.writeMap(meta, StreamOutput::writeString, StreamOutput::writeString);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public boolean isAggregatable() {
-        return isAggregatable;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -118,32 +118,6 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
     }
 
     /**
-     * Returns snapshot
-     */
-    public Snapshot getSnapshot() {
-        return snapshot;
-    }
-
-    /**
-     * Returns snapshot state
-     */
-    public State getState() {
-        return state;
-    }
-
-    /**
-     * Returns true if global state is included in the snapshot, false otherwise.
-     * Can be null if this information is unknown.
-     */
-    public Boolean includeGlobalState() {
-        return includeGlobalState;
-    }
-
-    public SnapshotShardsStats getShardsStats() {
-        return shardsStats;
-    }
-
-    /**
      * Returns list of snapshot indices
      */
     public Map<String, SnapshotIndexStatus> getIndices() {

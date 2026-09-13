@@ -112,38 +112,6 @@ public class CircuitBreakerStats implements Writeable, ToXContentObject {
         out.writeString(name);
     }
 
-    /**
-     * Returns the limit size in byte of the circuit breaker
-     * @return The limit size in byte of the circuit breaker
-     */
-    public long getLimit() {
-        return this.limit;
-    }
-
-    /**
-     * Returns the estimated size in byte of the breaker
-     * @return The estimated size in byte of the breaker
-     */
-    public long getEstimated() {
-        return this.estimated;
-    }
-
-    /**
-     * Returns the number of times the breaker has been tripped
-     * @return The number of times the breaker has been tripped
-     */
-    public long getTrippedCount() {
-        return this.trippedCount;
-    }
-
-    /**
-     * Returns the overhead of the breaker
-     * @return The overhead of the breaker
-     */
-    public double getOverhead() {
-        return this.overhead;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(name.toLowerCase(Locale.ROOT));

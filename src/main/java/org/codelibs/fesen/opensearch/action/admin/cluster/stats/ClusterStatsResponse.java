@@ -124,18 +124,6 @@ public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResp
         return this.timestamp;
     }
 
-    public ClusterHealthStatus getStatus() {
-        return this.status;
-    }
-
-    public ClusterStatsNodes getNodesStats() {
-        return nodesStats;
-    }
-
-    public ClusterStatsIndices getIndicesStats() {
-        return indicesStats;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

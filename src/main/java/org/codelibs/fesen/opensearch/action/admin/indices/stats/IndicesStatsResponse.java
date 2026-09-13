@@ -79,10 +79,6 @@ public class IndicesStatsResponse extends BroadcastResponse {
         this.shards = shards;
     }
 
-    public ShardStats[] getShards() {
-        return this.shards;
-    }
-
     private Map<String, IndexStats> indicesStats;
 
     public Map<String, IndexStats> getIndices() {
@@ -209,9 +205,5 @@ public class IndicesStatsResponse extends BroadcastResponse {
     @Override
     public String toString() {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, false);
-    }
-
-    public static IndicesStatsResponse getEmptyResponse() {
-        return new IndicesStatsResponse(new ShardStats[0], 0, 0, 0, Collections.emptyList());
     }
 }

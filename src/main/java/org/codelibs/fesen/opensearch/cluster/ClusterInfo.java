@@ -158,14 +158,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
         this.avgFreeByte = freeBytes / usages.size();
     }
 
-    public long getAvgFreeByte() {
-        return avgFreeByte;
-    }
-
-    public long getAvgTotalBytes() {
-        return avgTotalBytes;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeMap(this.leastAvailableSpaceUsage, StreamOutput::writeString, (o, v) -> v.writeTo(o));
@@ -311,10 +303,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
             for (final ShardId shardIdCursor : shardIds) {
                 shardIdCursor.writeTo(out);
             }
-        }
-
-        public long getTotal() {
-            return total;
         }
 
         @Override

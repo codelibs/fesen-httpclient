@@ -14,7 +14,6 @@ import java.io.IOException;
  * Mirror of {@link tools.jackson.core.exc.StreamConstraintsException} that extends  {@link IOException}
  */
 public class StreamConstraintsException extends IOException {
-    private static final long serialVersionUID = 1L;
 
     public StreamConstraintsException(String message, Throwable cause) {
         super(message, cause);

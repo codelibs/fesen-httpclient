@@ -219,10 +219,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         }
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     /**
      * Builder for cluster blocks.
      *

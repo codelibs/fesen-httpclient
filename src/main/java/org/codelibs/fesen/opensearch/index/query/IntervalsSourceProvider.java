@@ -233,26 +233,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         public static Match fromXContent(XContentParser parser) {
             return PARSER.apply(parser, null);
         }
-
-        String getQuery() {
-            return query;
-        }
-
-        int getMaxGaps() {
-            return maxGaps;
-        }
-
-        String getAnalyzer() {
-            return analyzer;
-        }
-
-        IntervalFilter getFilter() {
-            return filter;
-        }
-
-        String getUseField() {
-            return useField;
-        }
     }
 
     /**
@@ -336,10 +316,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
 
         public static Disjunction fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
-        }
-
-        IntervalFilter getFilter() {
-            return filter;
         }
     }
 
@@ -452,14 +428,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         public static Combine fromXContent(XContentParser parser) {
             return PARSER.apply(parser, null);
         }
-
-        IntervalMode getMode() {
-            return mode;
-        }
-
-        int getMaxGaps() {
-            return maxGaps;
-        }
     }
 
     /**
@@ -543,18 +511,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
 
         public static Prefix fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
-        }
-
-        String getPrefix() {
-            return prefix;
-        }
-
-        String getAnalyzer() {
-            return analyzer;
-        }
-
-        String getUseField() {
-            return useField;
         }
     }
 
@@ -674,22 +630,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         public static Regexp fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
-
-        String getPattern() {
-            return pattern;
-        }
-
-        int getFlags() {
-            return flags;
-        }
-
-        String getUseField() {
-            return useField;
-        }
-
-        boolean isCaseInsensitive() {
-            return caseInsensitive;
-        }
     }
 
     /**
@@ -782,22 +722,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
 
         public static Wildcard fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
-        }
-
-        String getPattern() {
-            return pattern;
-        }
-
-        String getAnalyzer() {
-            return analyzer;
-        }
-
-        String getUseField() {
-            return useField;
-        }
-
-        Integer getMaxExpansions() {
-            return maxExpansions;
         }
     }
 
@@ -903,30 +827,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
 
         public static Fuzzy fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
-        }
-
-        String getTerm() {
-            return term;
-        }
-
-        int getPrefixLength() {
-            return prefixLength;
-        }
-
-        boolean isTranspositions() {
-            return transpositions;
-        }
-
-        Fuzziness getFuzziness() {
-            return fuzziness;
-        }
-
-        String getAnalyzer() {
-            return analyzer;
-        }
-
-        String getUseField() {
-            return useField;
         }
     }
 
@@ -1052,18 +952,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
                 throw new ParsingException(parser.getTokenLocation(), "Expected [END_OBJECT] but got [" + parser.currentToken() + "]");
             }
             return new IntervalFilter(intervals, type);
-        }
-
-        String getType() {
-            return type;
-        }
-
-        IntervalsSourceProvider getFilter() {
-            return filter;
-        }
-
-        Script getScript() {
-            return script;
         }
     }
 

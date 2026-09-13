@@ -164,10 +164,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         return RestStatus.status(successfulShards, totalShards, shardFailures);
     }
 
-    public SearchResponseSections getInternalResponse() {
-        return internalResponse;
-    }
-
     /**
      * The search hits.
      */
@@ -206,13 +202,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
      */
     public TimeValue getTook() {
         return new TimeValue(tookInMillis);
-    }
-
-    /**
-     * How long the request took in each search phase.
-     */
-    public PhaseTook getPhaseTook() {
-        return phaseTook;
     }
 
     /**
@@ -258,22 +247,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
      */
     public String getScrollId() {
         return scrollId;
-    }
-
-    /**
-     * Returns the encoded string of the search context that the search request is used to executed
-     */
-    public String pointInTimeId() {
-        return pointInTimeId;
-    }
-
-    /**
-     * Returns info about what clusters the search was executed against. Available only in responses obtained
-     * from a Cross Cluster Search request, otherwise <code>null</code>
-     * @see Clusters
-     */
-    public Clusters getClusters() {
-        return clusters;
     }
 
     @Override
@@ -586,27 +559,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
                 builder.endObject();
             }
             return builder;
-        }
-
-        /**
-         * Returns how many total clusters the search was requested to be executed on
-         */
-        public int getTotal() {
-            return total;
-        }
-
-        /**
-         * Returns how many total clusters the search was executed successfully on
-         */
-        public int getSuccessful() {
-            return successful;
-        }
-
-        /**
-         * Returns how many total clusters were during the execution of the search request
-         */
-        public int getSkipped() {
-            return skipped;
         }
 
         @Override

@@ -39,15 +39,7 @@ public enum CacheType {
         this.value = representation;
     }
 
-    public String getSettingPrefix() {
-        return settingPrefix;
-    }
-
     public String getValue() {
         return value;
-    }
-
-    public static Set<String> allValues() {
-        return valuesMap.keySet();
     }
 }

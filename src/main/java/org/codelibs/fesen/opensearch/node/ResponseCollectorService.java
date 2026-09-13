@@ -62,8 +62,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class ResponseCollectorService {
 
-    private static final double ALPHA = 0.3;
-
     private final ConcurrentMap<String, NodeStatistics> nodeIdToStats = ConcurrentCollections.newConcurrentMap();
 
 

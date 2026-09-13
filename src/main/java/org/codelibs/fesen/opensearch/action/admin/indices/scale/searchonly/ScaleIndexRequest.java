@@ -119,13 +119,4 @@ class ScaleIndexRequest extends AcknowledgedRequest<ScaleIndexRequest> {
     public boolean isScaleDown() {
         return scaleDown;
     }
-
-    /**
-     * Returns the indices options that specify how to resolve indices and handle unavailable indices.
-     *
-     * @return the indices options
-     */
-    public IndicesOptions indicesOptions() {
-        return indicesOptions;
-    }
 }

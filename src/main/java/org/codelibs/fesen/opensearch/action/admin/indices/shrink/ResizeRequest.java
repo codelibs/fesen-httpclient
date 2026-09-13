@@ -220,10 +220,6 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         return type;
     }
 
-    public Boolean getCopySettings() {
-        return copySettings;
-    }
-
     /**
      * Sets the maximum size of a primary shard in the new shrunken index.
      * This parameter can be used to calculate the lowest factor of the source index's shards number
@@ -233,13 +229,6 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
      */
     public void setMaxShardSize(ByteSizeValue maxShardSize) {
         this.maxShardSize = maxShardSize;
-    }
-
-    /**
-     * Returns the maximum size of a primary shard in the new shrunken index.
-     */
-    public ByteSizeValue getMaxShardSize() {
-        return maxShardSize;
     }
 
     @Override

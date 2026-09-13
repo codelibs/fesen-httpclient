@@ -135,18 +135,6 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
         return builder;
     }
 
-    public MessageProcessorStats getMessageProcessorStats() {
-        return messageProcessorStats;
-    }
-
-    public ConsumerStats getConsumerStats() {
-        return consumerStats;
-    }
-
-    public PipelineStats getPipelineStats() {
-        return pipelineStats;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -315,14 +303,5 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
             );
             return new PollingIngestStats(messageProcessorStats, consumerStats, pipelineStats);
         }
-    }
-
-    /**
-     * Returns a new builder for creating a {@link PollingIngestStats} instance.
-     *
-     * @return a new {@code Builder} instance
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 }

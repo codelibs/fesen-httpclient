@@ -116,15 +116,6 @@ public final class TaskId implements Writeable {
         out.writeLong(id);
     }
 
-    public static ContextParser<Void, TaskId> parser() {
-        return (p, c) -> {
-            if (p.currentToken() == XContentParser.Token.VALUE_STRING) {
-                return new TaskId(p.text());
-            }
-            throw new OpenSearchParseException("Expected a string but found [{}] instead", p.currentToken());
-        };
-    }
-
     public String getNodeId() {
         return nodeId;
     }

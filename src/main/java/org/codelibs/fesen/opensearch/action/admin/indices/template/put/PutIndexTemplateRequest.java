@@ -145,10 +145,6 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this.order;
     }
 
-    public Integer version() {
-        return this.version;
-    }
-
     public boolean create() {
         return create;
     }
@@ -161,16 +157,8 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this;
     }
 
-    public Settings settings() {
-        return this.settings;
-    }
-
     public String cause() {
         return this.cause;
-    }
-
-    public String mappings() {
-        return this.mappings;
     }
 
     @Override

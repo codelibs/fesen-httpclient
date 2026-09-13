@@ -51,8 +51,6 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @PublicApi(since = "1.0.0")
 public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsRequest> {
 
-    public static final String ALL_SNAPSHOTS = "_all";
-    public static final String CURRENT_SNAPSHOT = "_current";
     public static final boolean DEFAULT_VERBOSE_MODE = true;
 
     private String repository;

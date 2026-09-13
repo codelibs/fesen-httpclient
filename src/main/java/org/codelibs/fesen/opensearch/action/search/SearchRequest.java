@@ -83,7 +83,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     public static final ToXContent.Params FORMAT_PARAMS = new ToXContent.MapParams(Collections.singletonMap("pretty", "false"));
 
-    public static final int DEFAULT_PRE_FILTER_SHARD_SIZE = 128;
     public static final int DEFAULT_BATCHED_REDUCE_SIZE = 512;
 
     private static final long DEFAULT_ABSOLUTE_START_MILLIS = -1;
@@ -347,21 +346,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
             return ShardDocSortBuilder.NAME.equals(((FieldSortBuilder) sb).getFieldName());
         }
         return false;
-    }
-
-    /**
-     * Returns whether the reduction phase that will be performed needs to be final or not.
-     */
-    boolean isFinalReduce() {
-        return finalReduce;
-    }
-
-    /**
-     * Returns the provided <code>absoluteStartMillis</code> when created through {@link #subSearchRequest} and
-     * -1 otherwise.
-     */
-    long getAbsoluteStartMillis() {
-        return absoluteStartMillis;
     }
 
     /**

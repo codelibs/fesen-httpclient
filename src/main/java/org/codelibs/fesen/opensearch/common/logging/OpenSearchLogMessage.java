@@ -56,12 +56,4 @@ public abstract class OpenSearchLogMessage extends ParameterizedMessage {
         super(messagePattern, args);
         this.fields = fields;
     }
-
-    public Object[] getArguments() {
-        return super.getParameters();
-    }
-
-    public String getMessagePattern() {
-        return super.getFormat();
-    }
 }

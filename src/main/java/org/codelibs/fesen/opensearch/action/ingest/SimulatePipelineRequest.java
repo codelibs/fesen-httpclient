@@ -85,14 +85,6 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
         return verbose;
     }
 
-    public BytesReference getSource() {
-        return source;
-    }
-
-    public MediaType getXContentType() {
-        return mediaType;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -122,7 +114,5 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
         static final String DOCS = "docs";
         static final String SOURCE = "_source";
     }
-
-    static final String SIMULATED_PIPELINE_ID = "_simulate_pipeline";
 
 }

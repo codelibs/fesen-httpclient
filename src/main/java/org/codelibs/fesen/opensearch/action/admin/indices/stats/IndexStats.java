@@ -68,10 +68,6 @@ public class IndexStats implements Iterable<IndexShardStats> {
         return uuid;
     }
 
-    public ShardStats[] getShards() {
-        return this.shards;
-    }
-
     private Map<Integer, IndexShardStats> indexShards;
 
     public Map<Integer, IndexShardStats> getIndexShards() {

@@ -95,10 +95,6 @@ public class CompletionStats implements Writeable, ToXContentFragment {
         return new ByteSizeValue(sizeInBytes);
     }
 
-    public FieldMemoryStats getFields() {
-        return fields;
-    }
-
     /**
      * Builder for the {@link CompletionStats} class.
      * Provides a fluent API for constructing a CompletionStats object.

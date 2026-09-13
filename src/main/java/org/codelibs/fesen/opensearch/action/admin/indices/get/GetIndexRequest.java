@@ -105,10 +105,6 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
         return null;
     }
 
-    public boolean humanReadable() {
-        return humanReadable;
-    }
-
     /**
      * Whether to return all default settings for each of the indices.
      *

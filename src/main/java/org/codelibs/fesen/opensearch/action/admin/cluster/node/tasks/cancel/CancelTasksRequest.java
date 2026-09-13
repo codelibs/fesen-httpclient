@@ -70,17 +70,6 @@ public class CancelTasksRequest extends BaseTasksRequest<CancelTasksRequest> {
         return super.match(task) && task instanceof CancellableTask;
     }
 
-    /**
-     * The reason for canceling the task.
-     */
-    public String getReason() {
-        return reason;
-    }
-
-    public boolean waitForCompletion() {
-        return waitForCompletion;
-    }
-
     @Override
     public String getDescription() {
         return "reason["

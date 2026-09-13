@@ -121,10 +121,6 @@ public class SearchPhaseExecutionException extends OpenSearchException {
         return status;
     }
 
-    public ShardSearchFailure[] shardFailures() {
-        return shardFailures;
-    }
-
     private static String buildMessage(String phaseName, String msg, ShardSearchFailure[] shardFailures) {
         StringBuilder sb = new StringBuilder();
         sb.append("Failed to execute phase [").append(phaseName).append("], ").append(msg);
@@ -191,9 +187,5 @@ public class SearchPhaseExecutionException extends OpenSearchException {
     @Override
     public String toString() {
         return buildMessage(phaseName, getMessage(), shardFailures);
-    }
-
-    public String getPhaseName() {
-        return phaseName;
     }
 }

@@ -144,13 +144,6 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    /**
-     * The name of the field to collapse against
-     */
-    public String getField() {
-        return this.field;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject();

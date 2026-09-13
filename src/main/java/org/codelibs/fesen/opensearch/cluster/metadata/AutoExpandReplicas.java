@@ -120,14 +120,6 @@ public final class AutoExpandReplicas {
         this.enabled = enabled;
     }
 
-    int getMinReplicas() {
-        return minReplicas;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     @Override
     public String toString() {
         return enabled ? minReplicas + "-" + maxReplicas : "false";

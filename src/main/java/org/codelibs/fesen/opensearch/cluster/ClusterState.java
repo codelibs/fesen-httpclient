@@ -131,21 +131,11 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     @PublicApi(since = "1.0.0")
     public interface Custom extends NamedDiffable<Custom>, ToXContentFragment, FeatureAware {
 
-        /**
-         * Returns <code>true</code> iff this {@link Custom} is private to the cluster and should never be send to a client.
-         * The default is <code>false</code>;
-         */
-        default boolean isPrivate() {
-            return false;
-        }
-
     }
 
     public static final NamedDiffableValueSerializer<Custom> CUSTOM_VALUE_SERIALIZER = new NamedDiffableValueSerializer<>(Custom.class);
 
     public static final String UNKNOWN_UUID = "_na_";
-
-    public static final long UNKNOWN_VERSION = -1;
 
     private final long version;
 
@@ -202,9 +192,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         return version();
     }
 
-    /** The term a Zen1 cluster-manager publishes with. */
-    private static final long ZEN1_BWC_TERM = 0;
-
     /**
      * This stateUUID is automatically generated for each version of cluster state. It is used to make sure that
      * we are applying diffs to the right previous state.
@@ -243,10 +230,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
 
     public ClusterBlocks blocks() {
         return this.blocks;
-    }
-
-    public ClusterBlocks getBlocks() {
-        return blocks;
     }
 
     public Map<String, Custom> customs() {
@@ -543,10 +526,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         public Builder nodes(DiscoveryNodes nodes) {
             this.nodes = nodes;
             return this;
-        }
-
-        public DiscoveryNodes nodes() {
-            return nodes;
         }
 
         public Builder routingTable(RoutingTable routingTable) {

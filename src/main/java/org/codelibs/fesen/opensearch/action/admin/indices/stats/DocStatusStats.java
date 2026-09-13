@@ -68,10 +68,6 @@ public class DocStatusStats extends AbstractStatusStats {
         }
     }
 
-    public LongAdder[] getDocStatusCounter() {
-        return statusCounter;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.DOC_STATUS);

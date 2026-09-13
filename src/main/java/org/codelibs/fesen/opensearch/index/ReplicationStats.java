@@ -36,10 +36,6 @@ public class ReplicationStats implements ToXContentFragment, Writeable {
         this.maxReplicationLag = in.readVLong();
     }
 
-    public static ReplicationStats empty() {
-        return new ReplicationStats();
-    }
-
     public ReplicationStats() {
 
     }
@@ -50,14 +46,6 @@ public class ReplicationStats implements ToXContentFragment, Writeable {
             totalBytesBehind += other.totalBytesBehind;
             maxReplicationLag = Math.max(other.maxReplicationLag, maxReplicationLag);
         }
-    }
-
-    public long getMaxBytesBehind() {
-        return this.maxBytesBehind;
-    }
-
-    public long getMaxReplicationLag() {
-        return this.maxReplicationLag;
     }
 
     @Override

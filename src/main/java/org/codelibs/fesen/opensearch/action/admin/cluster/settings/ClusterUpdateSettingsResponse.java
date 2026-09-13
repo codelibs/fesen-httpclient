@@ -86,14 +86,6 @@ public class ClusterUpdateSettingsResponse extends AcknowledgedResponse {
         this.transientSettings = transientSettings;
     }
 
-    public Settings getTransientSettings() {
-        return transientSettings;
-    }
-
-    public Settings getPersistentSettings() {
-        return persistentSettings;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

@@ -126,15 +126,6 @@ public final class DateFieldMapper {
         }
 
         /**
-         * Returns the field type name this resolution belongs to.
-         *
-         * @return {@code date} or {@code date_nanos}
-         */
-        public String type() {
-            return type;
-        }
-
-        /**
          * Convert an {@linkplain Instant} into a long value in this resolution.
          *
          * @param instant the instant to convert

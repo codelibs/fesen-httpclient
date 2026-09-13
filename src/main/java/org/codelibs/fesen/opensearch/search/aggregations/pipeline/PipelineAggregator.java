@@ -138,13 +138,5 @@ public abstract class PipelineAggregator {
         this.metadata = metadata;
     }
 
-    public String name() {
-        return name;
-    }
-
-    public String[] bucketsPaths() {
-        return bucketsPaths;
-    }
-
     public abstract InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext);
 }

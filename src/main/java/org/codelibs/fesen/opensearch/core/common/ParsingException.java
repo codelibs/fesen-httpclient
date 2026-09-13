@@ -77,24 +77,6 @@ public class ParsingException extends OpenSearchException {
         columnNumber = in.readInt();
     }
 
-    /**
-     * Line number of the location of the error
-     *
-     * @return the line number or -1 if unknown
-     */
-    public int getLineNumber() {
-        return lineNumber;
-    }
-
-    /**
-     * Column number of the location of the error
-     *
-     * @return the column number or -1 if unknown
-     */
-    public int getColumnNumber() {
-        return columnNumber;
-    }
-
     @Override
     public RestStatus status() {
         return RestStatus.BAD_REQUEST;

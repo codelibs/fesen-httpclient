@@ -95,12 +95,4 @@ public class IngestionUpdateStateResponse extends AcknowledgedResponse {
     public boolean isShardsAcknowledged() {
         return shardsAcknowledged;
     }
-
-    public IngestionStateShardFailure[] getShardFailures() {
-        return shardFailuresList;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
 }

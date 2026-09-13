@@ -110,10 +110,6 @@ public abstract class RemoteTransferTracker {
         uploadTimeMsMovingAverageReference = new AtomicReference<>(new MovingAverage(movingAverageWindowSize));
     }
 
-    ShardId getShardId() {
-        return shardId;
-    }
-
     public void incrementTotalUploadsFailed() {
         checkTotal(totalUploadsStarted.get(), totalUploadsFailed.get(), totalUploadsSucceeded.get(), 1);
         totalUploadsFailed.addAndGet(1);

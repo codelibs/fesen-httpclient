@@ -155,30 +155,8 @@ public class RemoteInfo implements Writeable, ToXContentObject {
         out.writeOptionalString(pathPrefix);
     }
 
-    public String getScheme() {
-        return scheme;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
     public BytesReference getQuery() {
         return query;
-    }
-
-    /**
-     * Time to wait for a response from each request.
-     */
-    public TimeValue getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    /**
-     * Time to wait to connect to the external cluster.
-     */
-    public TimeValue getConnectTimeout() {
-        return connectTimeout;
     }
 
     @Override

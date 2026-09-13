@@ -173,10 +173,6 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
         return source;
     }
 
-    public String origin() {
-        return origin;
-    }
-
     /**
      * @param source
      *            consisting of field/properties pairs (e.g. "field1",

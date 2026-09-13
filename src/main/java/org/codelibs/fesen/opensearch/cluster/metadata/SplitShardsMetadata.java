@@ -38,7 +38,6 @@ import java.util.TreeSet;
  */
 @ExperimentalApi
 public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> implements ToXContentFragment {
-    private static final int MINIMUM_RANGE_LENGTH_THRESHOLD = 1000;
 
     private static final String KEY_ROOT_SHARDS_TO_ALL_CHILDREN = "root_shards_to_all_children";
     private static final String KEY_NUMBER_OF_ROOT_SHARDS = "num_of_root_shards";

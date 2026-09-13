@@ -64,10 +64,6 @@ public final class Sets {
         return set;
     }
 
-    public static <T> Set<T> newConcurrentHashSet() {
-        return Collections.newSetFromMap(new ConcurrentHashMap<>());
-    }
-
     /**
      * A sorted set collector
      *

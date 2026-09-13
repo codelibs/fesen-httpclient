@@ -121,11 +121,6 @@ public final class ThreadContext implements Writeable {
     public static final String PREFIX = "request.headers";
     public static final Setting<Settings> DEFAULT_HEADERS_SETTING = Setting.groupSetting(PREFIX + ".", Property.NodeScope);
 
-    /**
-     * Name for the {@link #stashWithOrigin origin} attribute.
-     */
-    public static final String ACTION_ORIGIN_TRANSIENT_NAME = "action.origin";
-
     // thread context permissions
     private static final Logger logger = LogManager.getLogger(ThreadContext.class);
     private static final ThreadContextStruct DEFAULT_CONTEXT = new ThreadContextStruct();

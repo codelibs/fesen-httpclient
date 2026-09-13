@@ -73,8 +73,6 @@ import static org.codelibs.fesen.opensearch.semver.SemverRange.RANGE_PATTERN;
 @PublicApi(since = "1.0.0")
 public class PluginInfo implements Writeable, ToXContentObject {
 
-    public static final String OPENSEARCH_PLUGIN_PROPERTIES = "plugin-descriptor.properties";
-    public static final String OPENSEARCH_PLUGIN_POLICY = "plugin-security.policy";
     private static final JsonFactory jsonFactory = new JsonFactoryBuilder().configure(JsonReadFeature.ALLOW_UNQUOTED_PROPERTY_NAMES, true)
         .build();
 
@@ -231,42 +229,6 @@ public class PluginInfo implements Writeable, ToXContentObject {
     }
 
     /**
-     * The description of the plugin.
-     *
-     * @return the plugin description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * The entry point to the plugin.
-     *
-     * @return the entry point to the plugin
-     */
-    public String getClassname() {
-        return classname;
-    }
-
-    /**
-     * The custom folder name for the plugin.
-     *
-     * @return the custom folder name for the plugin
-     */
-    public String getFolderName() {
-        return customFolderName;
-    }
-
-    /**
-     * The version of the plugin
-     *
-     * @return the version
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
      * Pretty print the semver ranges and return the string.
      * @return semver ranges string
      */
@@ -278,24 +240,6 @@ public class PluginInfo implements Writeable, ToXContentObject {
             return opensearchVersionRanges.get(0).toString();
         }
         return opensearchVersionRanges.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]"));
-    }
-
-    /**
-     * The version of Java the plugin was built with.
-     *
-     * @return a java version string
-     */
-    public String getJavaVersion() {
-        return javaVersion;
-    }
-
-    /**
-     * Whether or not the plugin has a native controller.
-     *
-     * @return {@code true} if the plugin has a native controller
-     */
-    public boolean hasNativeController() {
-        return hasNativeController;
     }
 
     @Override

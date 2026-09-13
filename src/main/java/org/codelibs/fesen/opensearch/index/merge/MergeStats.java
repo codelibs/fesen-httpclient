@@ -133,43 +133,11 @@ public class MergeStats implements Writeable, ToXContentFragment {
         this.unreferencedFileCleanUpsPerformed += unreferencedFileCleanUpsPerformed;
     }
 
-    public long getUnreferencedFileCleanUpsPerformed() {
-        return this.unreferencedFileCleanUpsPerformed;
-    }
-
-    /**
-     * The total number of merges executed.
-     */
-    public long getTotal() {
-        return this.total;
-    }
-
-    /**
-     * The total time merges have been executed (in milliseconds).
-     */
-    public long getTotalTimeInMillis() {
-        return this.totalTimeInMillis;
-    }
-
-    /**
-     * The total time large merges were stopped so smaller merges could finish.
-     */
-    public long getTotalStoppedTimeInMillis() {
-        return this.totalStoppedTimeInMillis;
-    }
-
     /**
      * The total time large merges were stopped so smaller merges could finish.
      */
     public TimeValue getTotalStoppedTime() {
         return new TimeValue(totalStoppedTimeInMillis);
-    }
-
-    /**
-     * The total time merge IO writes were throttled.
-     */
-    public long getTotalThrottledTimeInMillis() {
-        return this.totalThrottledTimeInMillis;
     }
 
     /**
@@ -186,43 +154,12 @@ public class MergeStats implements Writeable, ToXContentFragment {
         return new TimeValue(totalTimeInMillis);
     }
 
-    public long getTotalNumDocs() {
-        return this.totalNumDocs;
-    }
-
-    public long getTotalSizeInBytes() {
-        return this.totalSizeInBytes;
-    }
-
     public ByteSizeValue getTotalSize() {
         return new ByteSizeValue(totalSizeInBytes);
     }
 
-    public long getTotalBytesPerSecAutoThrottle() {
-        return totalBytesPerSecAutoThrottle;
-    }
-
-    /**
-     * The current number of merges executing.
-     */
-    public long getCurrent() {
-        return this.current;
-    }
-
-    public long getCurrentNumDocs() {
-        return this.currentNumDocs;
-    }
-
-    public long getCurrentSizeInBytes() {
-        return this.currentSizeInBytes;
-    }
-
     public ByteSizeValue getCurrentSize() {
         return new ByteSizeValue(currentSizeInBytes);
-    }
-
-    public MergedSegmentWarmerStats getWarmerStats() {
-        return warmerStats;
     }
 
     @Override

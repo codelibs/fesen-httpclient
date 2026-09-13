@@ -63,11 +63,6 @@ public class FeatureFlags {
      */
     public static final String WRITABLE_WARM_INDEX_EXPERIMENTAL_FLAG = "opensearch.experimental.feature.writable_warm_index.enabled";
 
-    /**
-     * Gates the functionality of background task execution.
-     */
-    public static final String BACKGROUND_TASK_EXECUTION_EXPERIMENTAL = FEATURE_FLAG_PREFIX + "task.background.enabled";
-
     public static final Setting<Boolean> REMOTE_STORE_MIGRATION_EXPERIMENTAL_SETTING = Setting.boolSetting(
         REMOTE_STORE_MIGRATION_EXPERIMENTAL,
         false,

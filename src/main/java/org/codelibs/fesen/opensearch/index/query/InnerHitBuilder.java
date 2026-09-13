@@ -254,10 +254,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
     public InnerHitBuilder setName(String name) {
         this.name = Objects.requireNonNull(name);
         return this;
@@ -266,10 +262,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     public InnerHitBuilder setIgnoreUnmapped(boolean value) {
         this.ignoreUnmapped = value;
         return this;
-    }
-
-    public int getFrom() {
-        return from;
     }
 
     public InnerHitBuilder setFrom(int from) {
@@ -288,17 +280,9 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    public boolean isExplain() {
-        return explain;
-    }
-
     public InnerHitBuilder setExplain(boolean explain) {
         this.explain = explain;
         return this;
-    }
-
-    public boolean isVersion() {
-        return version;
     }
 
     public InnerHitBuilder setVersion(boolean version) {
@@ -306,29 +290,14 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    public boolean isSeqNoAndPrimaryTerm() {
-        return seqNoAndPrimaryTerm;
-    }
-
     public InnerHitBuilder setSeqNoAndPrimaryTerm(boolean seqNoAndPrimaryTerm) {
         this.seqNoAndPrimaryTerm = seqNoAndPrimaryTerm;
         return this;
     }
 
-    public boolean isTrackScores() {
-        return trackScores;
-    }
-
     public InnerHitBuilder setTrackScores(boolean trackScores) {
         this.trackScores = trackScores;
         return this;
-    }
-
-    /**
-     * Gets the stored fields context.
-     */
-    public StoredFieldsContext getStoredFieldsContext() {
-        return storedFieldsContext;
     }
 
     /**
@@ -365,10 +334,6 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    public FetchSourceContext getFetchSourceContext() {
-        return fetchSourceContext;
-    }
-
     public InnerHitBuilder setFetchSourceContext(FetchSourceContext fetchSourceContext) {
         this.fetchSourceContext = fetchSourceContext;
         return this;
@@ -387,26 +352,14 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
-    public HighlightBuilder getHighlightBuilder() {
-        return highlightBuilder;
-    }
-
     public InnerHitBuilder setHighlightBuilder(HighlightBuilder highlightBuilder) {
         this.highlightBuilder = highlightBuilder;
         return this;
     }
 
-    QueryBuilder getQuery() {
-        return query;
-    }
-
     public InnerHitBuilder setInnerCollapse(CollapseBuilder innerCollapseBuilder) {
         this.innerCollapseBuilder = innerCollapseBuilder;
         return this;
-    }
-
-    public CollapseBuilder getInnerCollapseBuilder() {
-        return innerCollapseBuilder;
     }
 
     @Override

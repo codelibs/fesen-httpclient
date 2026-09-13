@@ -240,7 +240,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
      */
     @PublicApi(since = "1.0.0")
     public static class VotingConfigExclusion implements Writeable, ToXContentFragment, Comparable<VotingConfigExclusion> {
-        public static final String MISSING_VALUE_MARKER = "_absent_";
         private final String nodeId;
         private final String nodeName;
 
@@ -262,10 +261,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
 
         public String getNodeId() {
             return nodeId;
-        }
-
-        public String getNodeName() {
-            return nodeName;
         }
 
         private static final ParseField NODE_ID_PARSE_FIELD = new ParseField("node_id");

@@ -14,7 +14,6 @@ import java.io.IOException;
  * Mirror of {@link tools.jackson.core.exc.UnexpectedEndOfInputException} that extends  {@link IOException}
  */
 public class UnexpectedEndOfInputException extends JsonParseException {
-    private static final long serialVersionUID = 1L;
 
     public UnexpectedEndOfInputException(String message, Throwable cause) {
         super(message, cause);

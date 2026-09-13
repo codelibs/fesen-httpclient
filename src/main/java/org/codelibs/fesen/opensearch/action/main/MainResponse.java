@@ -72,24 +72,8 @@ public class MainResponse extends ActionResponse implements ToXContentObject {
         build = in.readBuild();
     }
 
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public Version getVersion() {
-        return version;
-    }
-
     public ClusterName getClusterName() {
         return clusterName;
-    }
-
-    public String getClusterUuid() {
-        return clusterUuid;
-    }
-
-    public Build getBuild() {
-        return build;
     }
 
     @Override

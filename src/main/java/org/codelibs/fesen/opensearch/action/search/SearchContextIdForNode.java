@@ -76,10 +76,6 @@ public final class SearchContextIdForNode implements Writeable {
         return clusterAlias;
     }
 
-    public ShardSearchContextId getSearchContextId() {
-        return searchContextId;
-    }
-
     @Override
     public String toString() {
         return "SearchContextIdForNode{"

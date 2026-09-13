@@ -82,15 +82,6 @@ public enum SnapshotIndexShardStage {
     }
 
     /**
-     * Returns true if snapshot completed (successfully or not)
-     *
-     * @return true if snapshot completed, false otherwise
-     */
-    public boolean completed() {
-        return completed;
-    }
-
-    /**
      * Generate snapshot state from code
      *
      * @param value the state code

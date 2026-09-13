@@ -63,10 +63,6 @@ public class TaskResourceUsage implements Writeable, ToXContentFragment {
         return cpuTimeInNanos;
     }
 
-    public long getMemoryInBytes() {
-        return memoryInBytes;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(CPU_TIME_IN_NANOS.getPreferredName(), cpuTimeInNanos);

@@ -390,13 +390,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 }
 
                 /**
-                 * @return Copy of suggested text with changes from user supplied text highlighted.
-                 */
-                public Text getHighlighted() {
-                    return highlighted;
-                }
-
-                /**
                  * @return The score based on the edit distance difference between the suggested term and the
                  *         term in the suggest text.
                  */

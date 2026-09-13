@@ -222,10 +222,6 @@ public abstract class Rounding implements Writeable {
             return id;
         }
 
-        public String shortName() {
-            return shortName;
-        }
-
         public static DateTimeUnit resolve(byte id) {
             return switch (id) {
                 case 1 -> WEEK_OF_WEEKYEAR;

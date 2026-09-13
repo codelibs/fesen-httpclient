@@ -70,18 +70,6 @@ public class PendingClusterStateStats implements Writeable, ToXContentFragment {
         out.writeVInt(committed);
     }
 
-    public int getCommitted() {
-        return committed;
-    }
-
-    public int getPending() {
-        return pending;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(Fields.QUEUE);

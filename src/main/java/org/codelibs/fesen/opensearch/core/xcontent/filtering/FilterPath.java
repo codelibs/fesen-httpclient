@@ -79,14 +79,6 @@ public class FilterPath {
         return doubleWildcard;
     }
 
-    String getSegment() {
-        return segment;
-    }
-
-    FilterPath getNext() {
-        return next;
-    }
-
     public static FilterPath[] compile(Set<String> filters) {
         if (filters == null || filters.isEmpty()) {
             return null;

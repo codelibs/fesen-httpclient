@@ -83,13 +83,6 @@ public final class StupidBackoff extends SmoothingModel {
         out.writeDouble(discount);
     }
 
-    /**
-     * @return the discount parameter of the model
-     */
-    public double getDiscount() {
-        return this.discount;
-    }
-
     @Override
     protected XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field(DISCOUNT_FIELD.getPreferredName(), discount);

@@ -91,10 +91,6 @@ public class ShardId implements Comparable<ShardId>, ToXContentFragment, Writeab
         hashCode = computeHashCode();
     }
 
-    public long getBaseRamBytesUsed() {
-        return BASE_RAM_BYTES_USED;
-    }
-
     /**
      * Writes this shard id to a stream.
      * @param out the stream to write to

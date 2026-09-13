@@ -151,10 +151,6 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
         return Objects.equals(min, other.min) && Objects.equals(max, other.max);
     }
 
-    public Double getMax() {
-        return max;
-    }
-
     /**
      * returns bounds min if it is defined or POSITIVE_INFINITY otherwise
      */

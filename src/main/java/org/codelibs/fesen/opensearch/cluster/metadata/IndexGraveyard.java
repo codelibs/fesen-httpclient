@@ -350,13 +350,6 @@ public final class IndexGraveyard implements Metadata.Custom {
             deleteDateInMillis = in.readLong();
         }
 
-        /**
-         * The date in milliseconds that the index deletion event occurred, used for logging/debugging.
-         */
-        public long getDeleteDateInMillis() {
-            return deleteDateInMillis;
-        }
-
         @Override
         public void writeTo(final StreamOutput out) throws IOException {
             index.writeTo(out);

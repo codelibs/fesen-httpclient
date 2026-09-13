@@ -876,14 +876,6 @@ public class BulkByScrollTask extends CancellableTask {
             }
         }
 
-        public Status getStatus() {
-            return status;
-        }
-
-        public Exception getException() {
-            return exception;
-        }
-
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             if (exception == null) {

@@ -99,16 +99,4 @@ public class DiscoveryStats implements Writeable, ToXContentFragment {
     static final class Fields {
         static final String DISCOVERY = "discovery";
     }
-
-    public PendingClusterStateStats getQueueStats() {
-        return queueStats;
-    }
-
-    public PublishClusterStateStats getPublishStats() {
-        return publishStats;
-    }
-
-    public ClusterStateStats getClusterStateStats() {
-        return clusterStateStats;
-    }
 }

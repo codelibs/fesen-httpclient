@@ -58,20 +58,6 @@ public class NodesUsageRequest extends BaseNodesRequest<NodesUsageRequest> {
         super(nodesIds);
     }
 
-    /**
-     * Should the node rest actions usage statistics be returned.
-     */
-    public boolean restActions() {
-        return this.restActions;
-    }
-
-    /**
-     * Should the node rest actions usage statistics be returned.
-     */
-    public boolean aggregations() {
-        return this.aggregations;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

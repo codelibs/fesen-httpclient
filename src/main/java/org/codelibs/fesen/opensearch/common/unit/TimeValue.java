@@ -114,10 +114,6 @@ public class TimeValue implements Comparable<TimeValue> {
         return timeUnit.toNanos(duration);
     }
 
-    public long getNanos() {
-        return nanos();
-    }
-
     public long millis() {
         return timeUnit.toMillis(duration);
     }
@@ -138,24 +134,12 @@ public class TimeValue implements Comparable<TimeValue> {
         return ((double) nanos()) / C3;
     }
 
-    public double getSecondsFrac() {
-        return secondsFrac();
-    }
-
     public double minutesFrac() {
         return ((double) nanos()) / C4;
     }
 
-    public double getMinutesFrac() {
-        return minutesFrac();
-    }
-
     public double hoursFrac() {
         return ((double) nanos()) / C5;
-    }
-
-    public double getHoursFrac() {
-        return hoursFrac();
     }
 
     public double daysFrac() {

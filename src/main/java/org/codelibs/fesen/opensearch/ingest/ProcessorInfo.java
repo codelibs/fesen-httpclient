@@ -61,13 +61,6 @@ public class ProcessorInfo implements Writeable, ToXContentObject, Comparable<Pr
         out.writeString(this.type);
     }
 
-    /**
-     * @return The unique processor type
-     */
-    public String getType() {
-        return type;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

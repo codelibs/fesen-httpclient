@@ -249,10 +249,6 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
         public ImmutableCacheStats getStats() {
             return stats;
         }
-
-        public String getDimensionValue() {
-            return dimensionValue;
-        }
     }
 
     // pkg-private for testing

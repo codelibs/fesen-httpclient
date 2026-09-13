@@ -185,18 +185,6 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
             out.writeOptionalString(to);
         }
 
-        public String getKey() {
-            return key;
-        }
-
-        public String getFrom() {
-            return from;
-        }
-
-        public String getTo() {
-            return to;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (obj == null || getClass() != obj.getClass()) {

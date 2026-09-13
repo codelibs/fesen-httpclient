@@ -127,26 +127,6 @@ public final class RangeAggregator {
             out.writeDouble(to);
         }
 
-        public double getFrom() {
-            return this.from;
-        }
-
-        public double getTo() {
-            return this.to;
-        }
-
-        public String getFromAsString() {
-            return this.fromAsStr;
-        }
-
-        public String getToAsString() {
-            return this.toAsStr;
-        }
-
-        public String getKey() {
-            return this.key;
-        }
-
         @Override
         public String toString() {
             return "[" + from + " to " + to + ")";

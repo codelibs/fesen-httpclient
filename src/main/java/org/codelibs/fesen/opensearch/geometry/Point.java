@@ -80,18 +80,6 @@ public class Point implements Geometry {
         return z;
     }
 
-    public double getLat() {
-        return y;
-    }
-
-    public double getLon() {
-        return x;
-    }
-
-    public double getAlt() {
-        return z;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

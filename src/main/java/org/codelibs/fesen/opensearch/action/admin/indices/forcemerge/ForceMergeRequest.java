@@ -60,9 +60,6 @@ import java.util.Arrays;
 @PublicApi(since = "1.0.0")
 public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
-    /** The commit metadata key a force merge stamps its UUID into. */
-    private static final String FORCE_MERGE_UUID_KEY = "force_merge_uuid";
-
     /**
      * Defaults for the Force Merge Request
      *
@@ -114,14 +111,6 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
      */
     public boolean onlyExpungeDeletes() {
         return onlyExpungeDeletes;
-    }
-
-    /**
-     * Force merge UUID to use when force merging or {@code null} if not using one in a mixed version cluster containing nodes older than
-     * {@link #FORCE_MERGE_UUID_VERSION}.
-     */
-    public String forceMergeUUID() {
-        return forceMergeUUID;
     }
 
     /**

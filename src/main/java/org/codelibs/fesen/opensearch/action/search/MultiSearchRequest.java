@@ -74,8 +74,6 @@ import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapV
 @PublicApi(since = "1.0.0")
 public class MultiSearchRequest extends ActionRequest implements CompositeIndicesRequest {
 
-    public static final int MAX_CONCURRENT_SEARCH_REQUESTS_DEFAULT = 0;
-
     private int maxConcurrentSearchRequests = 0;
     private final List<SearchRequest> requests = new ArrayList<>();
 

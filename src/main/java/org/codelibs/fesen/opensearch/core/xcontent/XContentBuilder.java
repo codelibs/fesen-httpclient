@@ -295,10 +295,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
-    public boolean isPrettyPrint() {
-        return this.prettyPrint;
-    }
-
     /**
      * Set the "human readable" flag. Once set, some types of values are written in a
      * format easier to read for a human.

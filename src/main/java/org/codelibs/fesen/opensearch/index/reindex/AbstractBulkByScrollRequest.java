@@ -61,11 +61,6 @@ import static org.codelibs.fesen.opensearch.common.unit.TimeValue.timeValueMinut
 public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScrollRequest<Self>> extends ActionRequest {
 
     public static final int MAX_DOCS_ALL_MATCHES = -1;
-    /**
-     * @deprecated please use MAX_DOCS_ALL_MATCHES instead.
-     */
-    @Deprecated
-    public static final int SIZE_ALL_MATCHES = MAX_DOCS_ALL_MATCHES;
     public static final TimeValue DEFAULT_SCROLL_TIMEOUT = timeValueMinutes(5);
     public static final int DEFAULT_SCROLL_SIZE = 1000;
 

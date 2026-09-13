@@ -378,8 +378,4 @@ public final class MediaTypeRegistry {
             DEFAULT_MEDIA_TYPE = mediaType;
         }
     }
-
-    public static MediaType getDefaultMediaType() {
-        return DEFAULT_MEDIA_TYPE;
-    }
 }

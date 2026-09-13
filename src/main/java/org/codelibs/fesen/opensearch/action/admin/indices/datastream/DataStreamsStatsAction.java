@@ -143,10 +143,6 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
             return totalStoreSize;
         }
 
-        public DataStreamStats[] getDataStreams() {
-            return dataStreams;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -226,18 +222,6 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
             builder.field("maximum_timestamp", maximumTimestamp);
             builder.endObject();
             return builder;
-        }
-
-        public String getDataStream() {
-            return dataStream;
-        }
-
-        public int getBackingIndices() {
-            return backingIndices;
-        }
-
-        public long getMaximumTimestamp() {
-            return maximumTimestamp;
         }
 
         @Override

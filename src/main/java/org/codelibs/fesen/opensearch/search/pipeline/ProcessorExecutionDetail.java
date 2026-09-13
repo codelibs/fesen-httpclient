@@ -51,8 +51,6 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
     private static final ParseField STATUS_FIELD = new ParseField("status");
     private static final ParseField ERROR_MESSAGE_FIELD = new ParseField("error");
     private static final ParseField TAG_FIELD = new ParseField("tag");
-    // Key for processor execution details
-    public static final String PROCESSOR_EXECUTION_DETAILS_KEY = "processorExecutionDetails";
 
     /**
      * Constructor for ProcessorExecutionDetail
@@ -94,35 +92,6 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
         out.writeEnum(status);
         out.writeString(errorMessage);
         out.writeString(tag);
-    }
-
-    public String getProcessorName() {
-        return processorName;
-    }
-
-    public long getDurationMillis() {
-        return durationMillis;
-    }
-
-    public Object getInputData() {
-        return inputData;
-
-    }
-
-    public Object getOutputData() {
-        return outputData;
-    }
-
-    public ProcessorStatus getStatus() {
-        return status;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getTag() {
-        return tag;
     }
 
     /**

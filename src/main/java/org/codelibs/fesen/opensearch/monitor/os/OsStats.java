@@ -431,87 +431,6 @@ public class OsStats implements Writeable, ToXContentFragment {
         private final String memoryLimitInBytes;
         private final String memoryUsageInBytes;
 
-        /**
-         * The control group for the {@code cpuacct} subsystem.
-         *
-         * @return the control group
-         */
-        public String getCpuAcctControlGroup() {
-            return cpuAcctControlGroup;
-        }
-
-        /**
-         * The total CPU time consumed by all tasks in the
-         * {@code cpuacct} control group from
-         * {@link Cgroup#cpuAcctControlGroup}.
-         *
-         * @return the total CPU time in nanoseconds
-         */
-        public long getCpuAcctUsageNanos() {
-            return cpuAcctUsageNanos;
-        }
-
-        /**
-         * The control group for the {@code cpu} subsystem.
-         *
-         * @return the control group
-         */
-        public String getCpuControlGroup() {
-            return cpuControlGroup;
-        }
-
-        /**
-         * The total amount of time for which all tasks in the control
-         * group from {@link Cgroup#cpuControlGroup} can run in one
-         * period as represented by {@link Cgroup#cpuCfsPeriodMicros}.
-         *
-         * @return the total amount of time in microseconds
-         */
-        public long getCpuCfsQuotaMicros() {
-            return cpuCfsQuotaMicros;
-        }
-
-        /**
-         * The CPU time statistics. See {@link CpuStat}.
-         *
-         * @return the CPU time statistics.
-         */
-        public CpuStat getCpuStat() {
-            return cpuStat;
-        }
-
-        /**
-         * The control group for the {@code memory} subsystem.
-         *
-         * @return the control group
-         */
-        public String getMemoryControlGroup() {
-            return memoryControlGroup;
-        }
-
-        /**
-         * The maximum amount of user memory (including file cache).
-         * This is stored as a <code>String</code> because the value can be too big to fit in a
-         * <code>long</code>.  (The alternative would have been <code>BigInteger</code> but then
-         * it would not be possible to index the OS stats document into OpenSearch without
-         * losing information, as <code>BigInteger</code> is not a supported OpenSearch type.)
-         *
-         * @return the maximum amount of user memory (including file cache).
-         */
-        public String getMemoryLimitInBytes() {
-            return memoryLimitInBytes;
-        }
-
-        /**
-         * The total current memory usage by processes in the cgroup (in bytes).
-         * This is stored as a <code>String</code> for consistency with <code>memoryLimitInBytes</code>.
-         *
-         * @return the total current memory usage by processes in the cgroup (in bytes).
-         */
-        public String getMemoryUsageInBytes() {
-            return memoryUsageInBytes;
-        }
-
         public Cgroup(
             final String cpuAcctControlGroup,
             final long cpuAcctUsageNanos,
@@ -606,26 +525,6 @@ public class OsStats implements Writeable, ToXContentFragment {
             private final long numberOfElapsedPeriods;
             private final long numberOfTimesThrottled;
             private final long timeThrottledNanos;
-
-            /**
-             * The number of times tasks in the control group have been
-             * throttled.
-             *
-             * @return the number of times
-             */
-            public long getNumberOfTimesThrottled() {
-                return numberOfTimesThrottled;
-            }
-
-            /**
-             * The total time duration for which tasks in the control
-             * group have been throttled.
-             *
-             * @return the total time in nanoseconds
-             */
-            public long getTimeThrottledNanos() {
-                return timeThrottledNanos;
-            }
 
             public CpuStat(final long numberOfElapsedPeriods, final long numberOfTimesThrottled, final long timeThrottledNanos) {
                 this.numberOfElapsedPeriods = numberOfElapsedPeriods;

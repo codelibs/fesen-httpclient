@@ -75,16 +75,6 @@ public class TaskCancellationStats implements ToXContentFragment, Writeable {
         }
     }
 
-    // package private for testing
-    protected SearchShardTaskCancellationStats getSearchShardTaskCancellationStats() {
-        return this.searchShardTaskCancellationStats;
-    }
-
-    // package private for testing
-    protected SearchTaskCancellationStats getSearchTaskCancellationStats() {
-        return this.searchTaskCancellationStats;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject("task_cancellation");

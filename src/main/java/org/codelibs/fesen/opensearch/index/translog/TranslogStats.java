@@ -152,32 +152,6 @@ public class TranslogStats implements Writeable, ToXContentFragment {
         addRemoteTranslogStats(other.remoteTranslogStats);
     }
 
-    public long getTranslogSizeInBytes() {
-        return translogSizeInBytes;
-    }
-
-    public int estimatedNumberOfOperations() {
-        return numberOfOperations;
-    }
-
-    /** the size of the generations in the translog that weren't yet to committed to lucene */
-    public long getUncommittedSizeInBytes() {
-        return uncommittedSizeInBytes;
-    }
-
-    /** the number of operations in generations of the translog that weren't yet to committed to lucene */
-    public int getUncommittedOperations() {
-        return uncommittedOperations;
-    }
-
-    public long getEarliestLastModifiedAge() {
-        return earliestLastModifiedAge;
-    }
-
-    public RemoteTranslogStats getRemoteTranslogStats() {
-        return remoteTranslogStats;
-    }
-
     /**
      * Builder for the {@link TranslogStats} class.
      * Provides a fluent API for constructing a TranslogStats object.

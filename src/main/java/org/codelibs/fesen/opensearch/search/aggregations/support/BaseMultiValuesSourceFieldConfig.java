@@ -113,22 +113,6 @@ public abstract class BaseMultiValuesSourceFieldConfig implements Writeable, ToX
         return builder;
     }
 
-    public Object getMissing() {
-        return missing;
-    }
-
-    public Script getScript() {
-        return script;
-    }
-
-    public ZoneId getTimeZone() {
-        return timeZone;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

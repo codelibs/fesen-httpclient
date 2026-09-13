@@ -61,7 +61,6 @@ import java.util.function.BiConsumer;
 public final class IngestDocument {
 
     public static final String INGEST_KEY = "_ingest";
-    public static final String PIPELINE_CYCLE_ERROR_MESSAGE = "Cycle detected for pipeline: ";
     private static final String INGEST_KEY_PREFIX = INGEST_KEY + ".";
     private static final String SOURCE_PREFIX = "_source" + ".";
 

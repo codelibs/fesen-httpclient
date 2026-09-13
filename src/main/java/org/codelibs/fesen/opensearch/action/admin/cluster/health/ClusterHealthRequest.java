@@ -193,19 +193,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return level;
     }
 
-    public String getAwarenessAttribute() {
-        return awarenessAttribute;
-    }
-
-    /**
-     * For a given local request, checks if the local node is commissioned or not (default: false).
-     * @return <code>true</code> if local information is to be returned only when local node is also commissioned
-     * <code>false</code> to not check local node if commissioned or not for a local request
-     */
-    public final boolean ensureNodeWeighedIn() {
-        return ensureNodeWeighedIn;
-    }
-
     public boolean isApplyLevelAtTransportLayer() {
         return applyLevelAtTransportLayer;
     }

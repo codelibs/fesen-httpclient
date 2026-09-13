@@ -135,10 +135,6 @@ public interface IndexAbstraction {
         Type(String displayName) {
             this.displayName = displayName;
         }
-
-        public String getDisplayName() {
-            return displayName;
-        }
     }
 
     /**
@@ -362,10 +358,6 @@ public interface IndexAbstraction {
         public boolean isSystem() {
             // No such thing as system data streams (yet)
             return false;
-        }
-
-        public org.codelibs.fesen.opensearch.cluster.metadata.DataStream getDataStream() {
-            return dataStream;
         }
     }
 }

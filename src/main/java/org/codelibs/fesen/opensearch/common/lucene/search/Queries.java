@@ -69,13 +69,6 @@ public class Queries {
         return new MatchNoDocsQuery(reason);
     }
 
-    /**
-     * Creates a new non-nested docs query
-     */
-    public static Query newNonNestedFilter() {
-        return new FieldExistsQuery("_primary_term");
-    }
-
     public static Query applyMinimumShouldMatch(BooleanQuery query, @Nullable String minimumShouldMatch) {
         if (minimumShouldMatch == null) {
             return query;

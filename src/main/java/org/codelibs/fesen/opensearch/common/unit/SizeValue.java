@@ -78,10 +78,6 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         return sizeUnit.toSingles(size);
     }
 
-    public long getSingles() {
-        return singles();
-    }
-
     public double kiloFrac() {
         return ((double) singles()) / SizeUnit.C1;
     }
@@ -94,24 +90,12 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         return ((double) singles()) / SizeUnit.C3;
     }
 
-    public double getGigaFrac() {
-        return gigaFrac();
-    }
-
     public double teraFrac() {
         return ((double) singles()) / SizeUnit.C4;
     }
 
-    public double getTeraFrac() {
-        return teraFrac();
-    }
-
     public double petaFrac() {
         return ((double) singles()) / SizeUnit.C5;
-    }
-
-    public double getPetaFrac() {
-        return petaFrac();
     }
 
     @Override

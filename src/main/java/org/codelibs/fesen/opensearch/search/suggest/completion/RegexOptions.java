@@ -80,10 +80,6 @@ public class RegexOptions implements ToXContentFragment, Writeable {
         PARSER.declareStringOrNull(Builder::setFlags, FLAGS_VALUE);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     static RegexOptions parse(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null).build();
     }
@@ -108,14 +104,6 @@ public class RegexOptions implements ToXContentFragment, Writeable {
     public void writeTo(StreamOutput out) throws IOException {
         out.writeVInt(flagsValue);
         out.writeVInt(maxDeterminizedStates);
-    }
-
-    /**
-     * Returns internal regular expression syntax flag value
-     * see {@link RegexpFlag#value()}
-     */
-    public int getFlagsValue() {
-        return flagsValue;
     }
 
     @Override

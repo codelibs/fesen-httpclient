@@ -145,26 +145,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
         this.jvm = requestedMetrics.contains(ClusterStatsRequest.Metric.JVM) ? new JvmStats(nodeInfos, nodeStats) : null;
     }
 
-    public Counts getCounts() {
-        return this.counts;
-    }
-
-    public OsStats getOs() {
-        return os;
-    }
-
-    public ProcessStats getProcess() {
-        return process;
-    }
-
-    public JvmStats getJvm() {
-        return jvm;
-    }
-
-    public FsInfo.Path getFs() {
-        return fs;
-    }
-
     /**
      * Inner Fields used for creating XContent and parsing
      *
@@ -287,10 +267,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
             this.roles = Collections.unmodifiableMap(new HashMap<>(roles));
         }
 
-        public int getTotal() {
-            return total;
-        }
-
         /**
          * Inner Fields used for creating XContent and parsing
          *
@@ -362,18 +338,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
                 }
             }
             this.mem = new org.codelibs.fesen.opensearch.monitor.os.OsStats.Mem(totalMemory, freeMemory);
-        }
-
-        public int getAvailableProcessors() {
-            return availableProcessors;
-        }
-
-        public int getAllocatedProcessors() {
-            return allocatedProcessors;
-        }
-
-        public org.codelibs.fesen.opensearch.monitor.os.OsStats.Mem getMem() {
-            return mem;
         }
 
         /**
@@ -472,13 +436,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
             this.maxOpenFileDescriptors = maxOpenFileDescriptors;
         }
 
-        /**
-         * Cpu usage in percentages - 100 is 1 core.
-         */
-        public int getCpuPercent() {
-            return cpuPercent;
-        }
-
         public long getAvgOpenFileDescriptors() {
             if (count == 0) {
                 return -1;
@@ -573,13 +530,6 @@ public class ClusterStatsNodes implements ToXContentFragment {
             this.maxUptime = maxUptime;
             this.heapUsed = heapUsed;
             this.heapMax = heapMax;
-        }
-
-        /**
-         * The total number of threads in the cluster
-         */
-        public long getThreads() {
-            return threads;
         }
 
         /**

@@ -109,17 +109,6 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
         this.includeExclude = in.readOptionalWriteable(IncludeExclude::new);
     }
 
-    public String getFormat() {
-        return format;
-    }
-
-    /**
-     * Get terms to include and exclude from the aggregation results
-     */
-    public IncludeExclude getIncludeExclude() {
-        return includeExclude;
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalWriteable(userValueTypeHint);
@@ -176,17 +165,9 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
             return this;
         }
 
-        public ValueType getUserValueTypeHint() {
-            return userValueTypeHint;
-        }
-
         public Builder setUserValueTypeHint(ValueType userValueTypeHint) {
             this.userValueTypeHint = userValueTypeHint;
             return this;
-        }
-
-        public String getFormat() {
-            return format;
         }
 
         public Builder setFormat(String format) {

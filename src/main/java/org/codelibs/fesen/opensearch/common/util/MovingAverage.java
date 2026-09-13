@@ -75,10 +75,6 @@ public class MovingAverage {
         return average;
     }
 
-    public long getCount() {
-        return count;
-    }
-
     public boolean isReady() {
         return count >= windowSize;
     }

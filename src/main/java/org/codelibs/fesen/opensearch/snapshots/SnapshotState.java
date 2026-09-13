@@ -84,24 +84,6 @@ public enum SnapshotState {
     }
 
     /**
-     * Returns true if snapshot completed (successfully or not)
-     *
-     * @return true if snapshot completed, false otherwise
-     */
-    public boolean completed() {
-        return completed;
-    }
-
-    /**
-     * Returns true if snapshot can be restored (at least partially)
-     *
-     * @return true if snapshot can be restored, false otherwise
-     */
-    public boolean restorable() {
-        return restorable;
-    }
-
-    /**
      * Generate snapshot state from code
      *
      * @param value the state code

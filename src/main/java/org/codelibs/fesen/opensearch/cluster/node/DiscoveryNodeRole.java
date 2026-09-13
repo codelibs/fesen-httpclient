@@ -97,17 +97,6 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
 
     private final boolean isDynamicRole;
 
-    /**
-     * Whether this role is known by this node, or is an {@link DiscoveryNodeRole.UnknownRole}.
-     */
-    public final boolean isKnownRole() {
-        return isKnownRole;
-    }
-
-    public final boolean isDynamicRole() {
-        return isDynamicRole;
-    }
-
     public boolean isEnabledByDefault(final Settings settings) {
         return legacySetting() != null && legacySetting().get(settings);
     }

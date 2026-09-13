@@ -59,7 +59,6 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
 
     private String scrollId;
     private Scroll scroll;
-    private transient ParsedScrollId parsedScrollId;
 
     public SearchScrollRequest() {}
 

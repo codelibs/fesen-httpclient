@@ -227,22 +227,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
             versionType.writeTo(out);
         }
 
-        public String index() {
-            return index;
-        }
-
-        public String id() {
-            return id;
-        }
-
-        public BytesReference doc() {
-            return doc;
-        }
-
-        public String[] fields() {
-            return fields;
-        }
-
         public Item fields(String... fields) {
             this.fields = fields;
             return this;
@@ -254,18 +238,6 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         public Item perFieldAnalyzer(Map<String, String> perFieldAnalyzer) {
             this.perFieldAnalyzer = perFieldAnalyzer;
             return this;
-        }
-
-        public String routing() {
-            return routing;
-        }
-
-        public long version() {
-            return version;
-        }
-
-        MediaType mediaType() {
-            return mediaType;
         }
 
         /**

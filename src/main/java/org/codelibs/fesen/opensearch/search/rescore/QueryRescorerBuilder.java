@@ -108,25 +108,11 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
     }
 
     /**
-     * @return the query used for this rescore query
-     */
-    public QueryBuilder getRescoreQuery() {
-        return this.queryBuilder;
-    }
-
-    /**
      * Sets the original query weight for rescoring. The default is {@code 1.0}
      */
     public QueryRescorerBuilder setQueryWeight(float queryWeight) {
         this.queryWeight = queryWeight;
         return this;
-    }
-
-    /**
-     * Gets the original query weight for rescoring. The default is {@code 1.0}
-     */
-    public float getQueryWeight() {
-        return this.queryWeight;
     }
 
     /**
@@ -138,25 +124,11 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
     }
 
     /**
-     * Gets the original query weight for rescoring. The default is {@code 1.0}
-     */
-    public float getRescoreQueryWeight() {
-        return this.rescoreQueryWeight;
-    }
-
-    /**
      * Sets the original query score mode. The default is {@link QueryRescoreMode#Total}.
      */
     public QueryRescorerBuilder setScoreMode(QueryRescoreMode scoreMode) {
         this.scoreMode = scoreMode;
         return this;
-    }
-
-    /**
-     * Gets the original query score mode. The default is {@code total}
-     */
-    public QueryRescoreMode getScoreMode() {
-        return this.scoreMode;
     }
 
     @Override

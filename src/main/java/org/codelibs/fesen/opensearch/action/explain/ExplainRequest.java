@@ -122,10 +122,6 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
         return storedFields;
     }
 
-    public AliasFilter filteringAlias() {
-        return filteringAlias;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = super.validateNonNullIndex();

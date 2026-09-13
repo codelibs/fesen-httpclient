@@ -71,20 +71,6 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.fromList;
  */
 @PublicApi(since = "1.0.0")
 public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilder> {
-    /** default for whether to highlight fields based on the source even if stored separately */
-    public static final boolean DEFAULT_FORCE_SOURCE = false;
-    /** default for whether a field should be highlighted only if a query matches that field */
-    public static final boolean DEFAULT_REQUIRE_FIELD_MATCH = true;
-    /** default for whether {@code fvh} should provide highlighting on filter clauses */
-    public static final boolean DEFAULT_HIGHLIGHT_FILTER = false;
-    /** default for highlight fragments being ordered by score */
-    public static final boolean DEFAULT_SCORE_ORDERED = false;
-    /** the default encoder setting */
-    public static final String DEFAULT_ENCODER = "default";
-    /** default for the maximum number of phrases the fvh will consider */
-    public static final int DEFAULT_PHRASE_LIMIT = 256;
-    /** default for fragment size when there are no matches */
-    public static final int DEFAULT_NO_MATCH_SIZE = 0;
     /** the default number of fragments for highlighting */
     public static final int DEFAULT_NUMBER_OF_FRAGMENTS = 5;
     /** the default number of fragments size in characters */
@@ -190,13 +176,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
     public HighlightBuilder encoder(String encoder) {
         this.encoder = encoder;
         return this;
-    }
-
-    /**
-     * Getter for {@link #encoder(String)}
-     */
-    public String encoder() {
-        return this.encoder;
     }
 
     /**
@@ -351,10 +330,6 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
             out.writeString(name);
             out.writeVInt(fragmentOffset);
             out.writeOptionalStringArray(matchedFields);
-        }
-
-        public String name() {
-            return name;
         }
 
         public Field fragmentOffset(int fragmentOffset) {

@@ -23,11 +23,7 @@ import java.util.Objects;
 @PublicApi(since = "2.18.0")
 public class PageParams implements Writeable {
 
-    public static final String PARAM_SORT = "sort";
-    public static final String PARAM_NEXT_TOKEN = "next_token";
-    public static final String PARAM_SIZE = "size";
     public static final String PARAM_ASC_SORT_VALUE = "asc";
-    public static final String PARAM_DESC_SORT_VALUE = "desc";
 
     private final String requestedTokenStr;
     private final String sort;
@@ -43,18 +39,6 @@ public class PageParams implements Writeable {
         this.requestedTokenStr = requestedToken;
         this.sort = sort;
         this.size = size;
-    }
-
-    public String getSort() {
-        return sort;
-    }
-
-    public String getRequestedToken() {
-        return requestedTokenStr;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     @Override

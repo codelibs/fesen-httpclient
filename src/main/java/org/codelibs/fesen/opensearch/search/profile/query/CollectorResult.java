@@ -61,14 +61,6 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public class CollectorResult implements ToXContentObject, Writeable {
 
-    public static final String REASON_SEARCH_COUNT = "search_count";
-    public static final String REASON_SEARCH_TOP_HITS = "search_top_hits";
-    public static final String REASON_SEARCH_TERMINATE_AFTER_COUNT = "search_terminate_after_count";
-    public static final String REASON_SEARCH_POST_FILTER = "search_post_filter";
-    public static final String REASON_SEARCH_MIN_SCORE = "search_min_score";
-    public static final String REASON_SEARCH_MULTI = "search_multi";
-    public static final String REASON_AGGREGATION = "aggregation";
-    public static final String REASON_AGGREGATION_GLOBAL = "aggregation_global";
     public static final String COLLECTOR_MANAGER = "CollectorManager";
 
     private static final ParseField NAME = new ParseField("name");

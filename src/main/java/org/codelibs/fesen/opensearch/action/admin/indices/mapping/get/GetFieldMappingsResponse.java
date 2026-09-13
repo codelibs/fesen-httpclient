@@ -207,11 +207,6 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
             return XContentHelper.convertToMap(source, true, MediaTypeRegistry.JSON).v2();
         }
 
-        // pkg-private for testing
-        BytesReference getSource() {
-            return source;
-        }
-
         public static FieldMappingMetadata fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }

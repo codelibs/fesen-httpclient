@@ -74,11 +74,4 @@ public final class PathUtils {
     public static Path get(String first, String... more) {
         return DEFAULT.getPath(first, more);
     }
-
-    /**
-     * Returns the default FileSystem.
-     */
-    public static FileSystem getDefaultFileSystem() {
-        return DEFAULT;
-    }
 }

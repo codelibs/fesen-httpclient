@@ -49,13 +49,6 @@ public interface BlobStore extends Closeable {
      */
 
     /**
-     * Returns a boolean indicating if blobStore has object metadata support enabled
-     */
-    default boolean isBlobMetadataEnabled() {
-        return false;
-    }
-
-    /**
      * Metrics for BlobStore interactions
      */
     enum Metric {

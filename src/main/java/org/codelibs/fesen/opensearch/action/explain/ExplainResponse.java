@@ -109,32 +109,12 @@ public class ExplainResponse extends ActionResponse implements StatusToXContentO
         }
     }
 
-    public String getIndex() {
-        return index;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Explanation getExplanation() {
-        return explanation;
-    }
-
     public boolean isMatch() {
         return explanation != null && explanation.isMatch();
     }
 
     public boolean hasExplanation() {
         return explanation != null;
-    }
-
-    public boolean isExists() {
-        return exists;
-    }
-
-    public GetResult getGetResult() {
-        return getResult;
     }
 
     @Override

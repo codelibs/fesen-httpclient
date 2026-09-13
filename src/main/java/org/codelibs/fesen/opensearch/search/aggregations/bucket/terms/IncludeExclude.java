@@ -82,18 +82,6 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
     // can disagree on which terms hash to the required partition.
     private static final int HASH_PARTITIONING_SEED = 31;
 
-    /**
-     * The default length limit for a reg-ex string. The value is derived from {@link IndexSettings#MAX_REGEX_LENGTH_SETTING}.
-     * For context, see:
-     * https://github.com/opensearch-project/OpenSearch/issues/1992
-     * https://github.com/opensearch-project/OpenSearch/issues/2858
-     */
-    private static final int DEFAULT_MAX_REGEX_LENGTH = 1000;
-    /**
-     * The maximum number of prefixes to extract from a regex in tryCreatePrefixOrdinalsFilter
-     */
-    private static final int MAX_PREFIXES = 1000;
-
     // for parsing purposes only
     // TODO: move all aggs to the same package so that this stuff could be pkg-private
     public static IncludeExclude merge(IncludeExclude include, IncludeExclude exclude) {

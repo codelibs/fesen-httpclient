@@ -121,15 +121,6 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
     }
 
     /**
-     * Returns repository type
-     *
-     * @return repository type
-     */
-    public String type() {
-        return this.type;
-    }
-
-    /**
      * Sets the repository settings
      *
      * @param settings repository settings
@@ -141,28 +132,10 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
     }
 
     /**
-     * Returns repository settings
-     *
-     * @return repository settings
-     */
-    public Settings settings() {
-        return this.settings;
-    }
-
-    /**
      * Returns true if repository should be verified after creation
      */
     public boolean verify() {
         return this.verify;
-    }
-
-    /**
-     * Returns repository encryption settings
-     *
-     * @return repository encryption settings
-     */
-    public CryptoSettings cryptoSettings() {
-        return cryptoSettings;
     }
 
     @Override

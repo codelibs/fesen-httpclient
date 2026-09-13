@@ -308,13 +308,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             }
         }
 
-        /**
-         * Type of the action to perform.
-         */
-        public AliasActions.Type actionType() {
-            return type;
-        }
-
         @Override
         public AliasActions indices(String... indices) {
             if (indices == null || indices.length == 0) {
@@ -402,10 +395,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
-        public String filter() {
-            return filter;
-        }
-
         public AliasActions filter(String filter) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[filter] is unsupported for [" + type + "]");
@@ -437,10 +426,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
-        public Boolean writeIndex() {
-            return writeIndex;
-        }
-
         public AliasActions isHidden(Boolean isHidden) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[" + IS_HIDDEN.getPreferredName() + "] is unsupported for [" + type + "]");
@@ -449,20 +434,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
-        public Boolean isHidden() {
-            return isHidden;
-        }
-
         public AliasActions mustExist(Boolean mustExist) {
             if (type != Type.REMOVE) {
                 throw new IllegalArgumentException("[" + MUST_EXIST.getPreferredName() + "] is unsupported for [" + type + "]");
             }
             this.mustExist = mustExist;
             return this;
-        }
-
-        public Boolean mustExist() {
-            return mustExist;
         }
 
         @Override
@@ -583,10 +560,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         }
     }
 
-    public String origin() {
-        return origin;
-    }
-
     /**
      * Add the action to this request and validate it.
      */
@@ -611,10 +584,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         out.writeList(allAliasActions);
         // noinspection StatementWithEmptyBody
         out.writeOptionalString(origin);
-    }
-
-    public IndicesOptions indicesOptions() {
-        return INDICES_OPTIONS;
     }
 
     @Override

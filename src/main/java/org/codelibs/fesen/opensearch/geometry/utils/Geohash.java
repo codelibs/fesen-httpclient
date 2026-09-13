@@ -88,9 +88,7 @@ public class Geohash {
     /** number of bits used for quantizing latitude and longitude values */
     private static final short BITS = 32;
     private static final double LAT_SCALE = (0x1L << (BITS - 1)) / 180.0D;
-    private static final double LAT_DECODE = 180.0D / (0x1L << BITS);
     private static final double LON_SCALE = (0x1L << (BITS - 1)) / 360.0D;
-    private static final double LON_DECODE = 360.0D / (0x1L << BITS);
 
     private static final short MORTON_OFFSET = (BITS << 1) - (PRECISION * 5);
     /** Bit encoded representation of the latitude of north pole */

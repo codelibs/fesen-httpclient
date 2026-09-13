@@ -66,14 +66,6 @@ public class RoutingMissingException extends OpenSearchException {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     @Override
     public RestStatus status() {
         return RestStatus.BAD_REQUEST;

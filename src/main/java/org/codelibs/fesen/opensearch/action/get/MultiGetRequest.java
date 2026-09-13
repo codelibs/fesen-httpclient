@@ -155,18 +155,6 @@ public class MultiGetRequest extends ActionRequest
             return this.storedFields;
         }
 
-        public long version() {
-            return version;
-        }
-
-        public VersionType versionType() {
-            return versionType;
-        }
-
-        public FetchSourceContext fetchSourceContext() {
-            return this.fetchSourceContext;
-        }
-
         /**
          * Allows setting the {@link FetchSourceContext} for this request, controlling if and how _source should be returned.
          */

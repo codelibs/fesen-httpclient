@@ -228,8 +228,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
     public static final String CONTEXT_MODE_API = XContentContext.API.toString();
 
-    public static final String GLOBAL_STATE_FILE_PREFIX = "global-";
-
     public static final NamedDiffableValueSerializer<Custom> CUSTOM_VALUE_SERIALIZER = new NamedDiffableValueSerializer<>(Custom.class);
 
     private final String clusterUUID;
@@ -335,10 +333,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return this.clusterUUIDCommitted;
     }
 
-    public Settings transientSettings() {
-        return this.transientSettings;
-    }
-
     public Settings persistentSettings() {
         return this.persistentSettings;
     }
@@ -352,34 +346,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
      */
     public String[] getConcreteAllIndices() {
         return allIndices;
-    }
-
-    /**
-     * Returns all the concrete indices that are not hidden.
-     */
-    public String[] getConcreteVisibleIndices() {
-        return visibleIndices;
-    }
-
-    /**
-     * Returns all of the concrete indices that are open.
-     */
-    public String[] getConcreteAllOpenIndices() {
-        return allOpenIndices;
-    }
-
-    /**
-     * Returns all of the concrete indices that are open and not hidden.
-     */
-    public String[] getConcreteVisibleOpenIndices() {
-        return visibleOpenIndices;
-    }
-
-    /**
-     * Returns all of the concrete indices that are closed and not hidden.
-     */
-    public String[] getConcreteVisibleClosedIndices() {
-        return visibleClosedIndices;
     }
 
     /**
@@ -426,15 +392,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
      */
     public int getTotalNumberOfShards() {
         return this.totalNumberOfShards;
-    }
-
-    /**
-     * Gets the total number of open shards from all indices. Includes
-     * replicas, but does not include shards that are part of closed indices.
-     * @return The total number of open shards from all indices.
-     */
-    public int getTotalOpenIndexShards() {
-        return this.totalOpenLocalOnlyIndexShards;
     }
 
     @Override
@@ -693,26 +650,14 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
-        public Settings transientSettings() {
-            return this.transientSettings;
-        }
-
         public Builder transientSettings(Settings settings) {
             this.transientSettings = settings;
             return this;
         }
 
-        public Settings persistentSettings() {
-            return this.persistentSettings;
-        }
-
         public Builder persistentSettings(Settings settings) {
             this.persistentSettings = settings;
             return this;
-        }
-
-        public DiffableStringMap hashesOfConsistentSettings() {
-            return this.hashesOfConsistentSettings;
         }
 
         public Builder hashesOfConsistentSettings(DiffableStringMap hashesOfConsistentSettings) {

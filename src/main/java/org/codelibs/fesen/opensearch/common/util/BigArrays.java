@@ -477,14 +477,6 @@ public class BigArrays {
         }
     }
 
-    /**
-     * Return an instance of this BigArrays class with circuit breaking
-     * explicitly enabled, instead of only accounting enabled
-     */
-    public BigArrays withCircuitBreaking() {
-        return this.circuitBreakingInstance;
-    }
-
     private <T extends AbstractBigArray> T resizeInPlace(T array, long newSize) {
         final long oldMemSize = array.ramBytesUsed();
         final long oldSize = array.size();

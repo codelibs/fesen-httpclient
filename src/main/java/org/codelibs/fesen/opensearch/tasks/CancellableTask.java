@@ -104,22 +104,10 @@ public abstract class CancellableTask extends Task {
      */
     public abstract boolean shouldCancelChildrenOnCancellation();
 
-    public TimeValue getCancellationTimeout() {
-        return cancelAfterTimeInterval;
-    }
-
     /**
      * Called after the task is cancelled so that it can take any actions that it has to take.
      */
     protected void onCancelled() {}
-
-    /**
-     * Returns true if this task should be automatically cancelled if the coordinating node that
-     * requested this task left the cluster.
-     */
-    public boolean cancelOnParentLeaving() {
-        return true;
-    }
 
     /**
      * The reason the task was cancelled or null if it hasn't been cancelled.

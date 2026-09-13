@@ -34,8 +34,6 @@ public class CryptoMetadata implements Writeable {
     static final public String KEY_PROVIDER_NAME_KEY = "key_provider_name";
     static final public String KEY_PROVIDER_TYPE_KEY = "key_provider_type";
     static final public String SETTINGS_KEY = "settings";
-    static final private String KMS_KEY_ARN_SETTING = "kms.key_arn";
-    static final private String KMS_ENCRYPTION_CONTEXT_SETTING = "kms.encryption_context";
     private final String keyProviderName;
     private final String keyProviderType;
     private final Settings settings;

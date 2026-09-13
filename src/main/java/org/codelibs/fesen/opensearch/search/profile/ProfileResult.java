@@ -152,20 +152,6 @@ public final class ProfileResult implements Writeable, ToXContentObject {
     }
 
     /**
-     * Retrieve the lucene description of this query (e.g. the "explain" text)
-     */
-    public String getLuceneDescription() {
-        return description;
-    }
-
-    /**
-     * Retrieve the name of the entry (e.g. "TermQuery" or "LongTermsAggregator")
-     */
-    public String getQueryName() {
-        return type;
-    }
-
-    /**
      * Returns the total time (inclusive of children) for this query node.
      *
      * @return  elapsed time in nanoseconds

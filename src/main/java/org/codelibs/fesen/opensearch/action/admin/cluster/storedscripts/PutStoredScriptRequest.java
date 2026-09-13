@@ -96,20 +96,12 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
         return this;
     }
 
-    public String context() {
-        return context;
-    }
-
     public BytesReference content() {
         return content;
     }
 
     public MediaType mediaType() {
         return mediaType;
-    }
-
-    public StoredScriptSource source() {
-        return source;
     }
 
     /**

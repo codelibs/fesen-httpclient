@@ -14,7 +14,6 @@ import java.io.IOException;
  * Mirror of {@link tools.jackson.core.exc.InputCoercionException} that extends  {@link IOException}
  */
 public class InputCoercionException extends JsonParseException {
-    private static final long serialVersionUID = 1L;
 
     public InputCoercionException(String message, Throwable cause) {
         super(message, cause);

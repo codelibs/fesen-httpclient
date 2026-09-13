@@ -244,10 +244,6 @@ public enum XContentType implements MediaType {
         this.index = index;
     }
 
-    public int index() {
-        return index;
-    }
-
     @Override
     public String type() {
         return "application";

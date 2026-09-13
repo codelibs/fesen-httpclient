@@ -69,15 +69,6 @@ public class ShardStats implements Writeable, ToXContentFragment {
     @Nullable
     private PollingIngestStats pollingIngestStats;
 
-    /**
-     * Gets the current retention lease stats.
-     *
-     * @return the current retention lease stats
-     */
-    public RetentionLeaseStats getRetentionLeaseStats() {
-        return retentionLeaseStats;
-    }
-
     private String dataPath;
     private String statePath;
     private boolean isCustomDataPath;
@@ -105,18 +96,6 @@ public class ShardStats implements Writeable, ToXContentFragment {
 
     public CommonStats getStats() {
         return this.commonStats;
-    }
-
-    public String getDataPath() {
-        return dataPath;
-    }
-
-    public String getStatePath() {
-        return statePath;
-    }
-
-    public boolean isCustomDataPath() {
-        return isCustomDataPath;
     }
 
     @Override

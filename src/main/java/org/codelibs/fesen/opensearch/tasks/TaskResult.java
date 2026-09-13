@@ -100,21 +100,6 @@ public final class TaskResult implements Writeable, ToXContentObject {
     }
 
     /**
-     * Get the task that this wraps.
-     */
-    public TaskInfo getTask() {
-        return task;
-    }
-
-    /**
-     * Get the error that finished this task. Will return null if the task didn't finish with an error, it hasn't yet finished, or didn't
-     * store its result.
-     */
-    public BytesReference getError() {
-        return error;
-    }
-
-    /**
      * Convert {@link #getError()} from XContent to a Map for easy processing. Will return an empty map if the task didn't finish with an
      * error, hasn't yet finished, or didn't store its result.
      */
@@ -126,14 +111,6 @@ public final class TaskResult implements Writeable, ToXContentObject {
     }
 
     /**
-     * Get the response that this task finished with. Will return null if the task was finished by an error, it hasn't yet finished, or
-     * didn't store its result.
-     */
-    public BytesReference getResponse() {
-        return response;
-    }
-
-    /**
      * Convert {@link #getResponse()} from XContent to a Map for easy processing. Will return an empty map if the task was finished with an
      * error, hasn't yet finished, or didn't store its result.
      */
@@ -142,10 +119,6 @@ public final class TaskResult implements Writeable, ToXContentObject {
             return emptyMap();
         }
         return convertToMap(response, false).v2();
-    }
-
-    public boolean isCompleted() {
-        return completed;
     }
 
     @Override

@@ -103,13 +103,6 @@ public class OperationStats implements Writeable, ToXContentFragment {
         return failedCount;
     }
 
-    /**
-     * @return The time unit of the stats
-     */
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         return builder.field("count", count)

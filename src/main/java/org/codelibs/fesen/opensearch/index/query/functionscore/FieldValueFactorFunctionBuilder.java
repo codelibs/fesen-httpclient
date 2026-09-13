@@ -85,24 +85,12 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
         return NAME;
     }
 
-    public String fieldName() {
-        return this.field;
-    }
-
-    public float factor() {
-        return this.factor;
-    }
-
     /**
      * Value used instead of the field value for documents that don't have that field defined.
      */
     public FieldValueFactorFunctionBuilder missing(double missing) {
         this.missing = missing;
         return this;
-    }
-
-    public Double missing() {
-        return this.missing;
     }
 
     public FieldValueFactorFunctionBuilder modifier(FieldValueFactorFunction.Modifier modifier) {

@@ -95,10 +95,6 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
         return shardId;
     }
 
-    public OriginalIndices getOriginalIndices() {
-        return originalIndices;
-    }
-
     @Nullable
     public String getClusterAlias() {
         return clusterAlias;

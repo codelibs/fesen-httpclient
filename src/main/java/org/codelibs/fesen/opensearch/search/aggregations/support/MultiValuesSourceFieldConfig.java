@@ -91,10 +91,6 @@ public class MultiValuesSourceFieldConfig extends BaseMultiValuesSourceFieldConf
         this.filter = in.readOptionalNamedWriteable(QueryBuilder.class);
     }
 
-    public QueryBuilder getFilter() {
-        return filter;
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalNamedWriteable(filter);
