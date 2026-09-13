@@ -32,7 +32,6 @@
 
 package org.codelibs.fesen.opensearch.core.xcontent;
 
-import java.util.ServiceLoader;
 
 /**
  * Extension point to customize the error message for unknown fields. We expect
@@ -45,7 +44,13 @@ public interface ErrorOnUnknown {
     /**
      * The implementation of this interface that was loaded from SPI.
      */
-    ErrorOnUnknown IMPLEMENTATION = findImplementation();
+    /**
+     * The single implementation. This used to be resolved with ServiceLoader so that
+     * SuggestingErrorOnUnknown could append a "did you mean" hint; that provider is gone,
+     * along with the service-discovery plumbing and its Levenshtein dependency, so the
+     * message is now the plain one.
+     */
+    ErrorOnUnknown IMPLEMENTATION = (parserName, unknownField, candidates) -> "[" + parserName + "] unknown field [" + unknownField + "]";
 
     /**
      * Build the error message to use when {@link ObjectParser} encounters an unknown field.
@@ -55,28 +60,5 @@ public interface ErrorOnUnknown {
      */
     String errorMessage(String parserName, String unknownField, Iterable<String> candidates);
 
-    /**
-     * Priority that this error message handler should be used.
-     */
-    int priority();
 
-    static ErrorOnUnknown findImplementation() {
-        ErrorOnUnknown best = new ErrorOnUnknown() {
-            @Override
-            public String errorMessage(String parserName, String unknownField, Iterable<String> candidates) {
-                return "[" + parserName + "] unknown field [" + unknownField + "]";
-            }
-
-            @Override
-            public int priority() {
-                return Integer.MIN_VALUE;
-            }
-        };
-        for (ErrorOnUnknown c : ServiceLoader.load(ErrorOnUnknown.class)) {
-            if (best.priority() < c.priority()) {
-                best = c;
-            }
-        }
-        return best;
-    }
 }

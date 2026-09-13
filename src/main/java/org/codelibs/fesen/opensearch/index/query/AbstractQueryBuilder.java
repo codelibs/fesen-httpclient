@@ -35,7 +35,6 @@ package org.codelibs.fesen.opensearch.index.query;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.codelibs.fesen.opensearch.common.lucene.BytesRefs;
-import org.codelibs.fesen.opensearch.common.xcontent.SuggestingErrorOnUnknown;
 import org.codelibs.fesen.opensearch.core.ParseField;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
@@ -305,12 +304,7 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         try {
             result = parser.namedObject(QueryBuilder.class, queryName, null);
         } catch (NamedObjectNotFoundException e) {
-            String message = String.format(
-                Locale.ROOT,
-                "unknown query [%s]%s",
-                queryName,
-                SuggestingErrorOnUnknown.suggest(queryName, e.getCandidates())
-            );
+            String message = String.format(Locale.ROOT, "unknown query [%s]", queryName);
             throw new ParsingException(new XContentLocation(e.getLineNumber(), e.getColumnNumber()), message, e);
         }
         // end_object of the specific query (e.g. match, multi_match etc.) element

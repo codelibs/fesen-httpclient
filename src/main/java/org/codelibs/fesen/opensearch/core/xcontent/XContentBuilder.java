@@ -53,10 +53,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentOpenSearchExtension;
+
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -132,8 +134,11 @@ public final class XContentBuilder implements Closeable, Flushable {
         // treat strings as already converted
         dateTransformers.put(String.class, Function.identity());
 
-        // Load pluggable extensions
-        for (XContentBuilderExtension service : ServiceLoader.load(XContentBuilderExtension.class)) {
+        // The single extension, registered directly. This was a ServiceLoader lookup so that
+        // core did not have to name the xcontent library; there was only ever one
+        // implementation and it ships in this same artifact, so the indirection only created
+        // a way for the date/byte-size writers to disappear silently if it were pruned.
+        for (XContentBuilderExtension service : List.of(new XContentOpenSearchExtension())) {
             Map<Class<?>, Writer> addlWriters = service.getXContentWriters();
             Map<Class<?>, HumanReadableTransformer> addlTransformers = service.getXContentHumanReadableTransformers();
             Map<Class<?>, Function<Object, Object>> addlDateTransformers = service.getDateTransformers();

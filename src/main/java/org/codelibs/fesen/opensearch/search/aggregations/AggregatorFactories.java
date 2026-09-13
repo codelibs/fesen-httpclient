@@ -35,7 +35,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.fesen.opensearch.action.ActionRequestValidationException;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
-import org.codelibs.fesen.opensearch.common.xcontent.SuggestingErrorOnUnknown;
 import org.codelibs.fesen.opensearch.core.common.ParsingException;
 import org.codelibs.fesen.opensearch.core.common.Strings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
@@ -185,12 +184,7 @@ public class AggregatorFactories {
                             try {
                                 aggBuilder = parser.namedObject(BaseAggregationBuilder.class, fieldName, aggregationName);
                             } catch (NamedObjectNotFoundException ex) {
-                                String message = String.format(
-                                    Locale.ROOT,
-                                    "Unknown aggregation type [%s]%s",
-                                    fieldName,
-                                    SuggestingErrorOnUnknown.suggest(fieldName, ex.getCandidates())
-                                );
+                                String message = String.format(Locale.ROOT, "Unknown aggregation type [%s]", fieldName);
                                 throw new ParsingException(new XContentLocation(ex.getLineNumber(), ex.getColumnNumber()), message, ex);
                             }
                     }

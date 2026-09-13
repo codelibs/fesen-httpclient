@@ -34,20 +34,18 @@ package org.codelibs.fesen.opensearch.core.xcontent;
 
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesArray;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
-import org.codelibs.fesen.opensearch.core.xcontent.spi.MediaTypeProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Parses supported internet media types
@@ -68,14 +66,12 @@ public final class MediaTypeRegistry {
     public static final MediaType JSON;
 
     static {
-        List<MediaType> mediaTypes = new ArrayList<>();
-        Map<String, MediaType> amt = new HashMap<>();
-        for (MediaTypeProvider provider : ServiceLoader.load(MediaTypeProvider.class, MediaTypeProvider.class.getClassLoader())) {
-            mediaTypes.addAll(provider.getMediaTypes());
-            amt = Stream.of(amt, provider.getAdditionalMediaTypes())
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
+        // Registered statically. This was a ServiceLoader lookup so that the xcontent library
+        // could contribute its media types without core depending on it; there was only ever
+        // one provider and it lived in this same artifact, so the indirection bought nothing
+        // and risked a silently empty registry if the provider were ever pruned.
+        final List<MediaType> mediaTypes = List.of(XContentType.values());
+        final Map<String, MediaType> amt = Map.of("application/*", XContentType.JSON, "application/x-ndjson", XContentType.JSON);
         register(mediaTypes.toArray(new MediaType[0]), amt);
         JSON = fromMediaType("application/json");
         setDefaultMediaType(JSON);

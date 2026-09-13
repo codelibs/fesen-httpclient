@@ -11,14 +11,13 @@ package org.codelibs.fesen.opensearch.core.compress;
 import org.codelibs.fesen.opensearch.common.Nullable;
 import org.codelibs.fesen.opensearch.common.annotation.InternalApi;
 import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
-import org.codelibs.fesen.opensearch.core.compress.spi.CompressorProvider;
 import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
+
+import org.codelibs.fesen.opensearch.common.compress.DeflateCompressor;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 /**
  * A registry that wraps a static Map singleton which holds a mapping of unique String names (typically the
@@ -32,14 +31,14 @@ import java.util.stream.Collectors;
 @InternalApi
 public final class CompressorRegistry {
 
-    // the backing registry map
-    private static final Map<String, Compressor> registeredCompressors = ServiceLoader.load(
-        CompressorProvider.class,
-        CompressorProvider.class.getClassLoader()
-    )
-        .stream()
-        .flatMap(p -> p.get().getCompressors().stream())
-        .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    // The backing registry map. This used to be assembled with ServiceLoader so that
+    // plugins could contribute compressors. Nothing does: this library is a client that
+    // serialises requests and parses responses, and the two providers it shipped were its
+    // own. Registering statically keeps the same contents while removing a failure mode
+    // that has bitten this fork twice -- a provider pruned as unreachable, the build still
+    // green, and the registry silently empty at runtime.
+    private static final Map<String, Compressor> registeredCompressors =
+        Map.of(NoneCompressor.NAME, new NoneCompressor(), DeflateCompressor.NAME, new DeflateCompressor());
 
     // no instance:
     private CompressorRegistry() {}

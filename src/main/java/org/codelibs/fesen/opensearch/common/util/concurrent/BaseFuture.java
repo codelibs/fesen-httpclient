@@ -33,8 +33,6 @@
 package org.codelibs.fesen.opensearch.common.util.concurrent;
 
 import org.codelibs.fesen.opensearch.common.Nullable;
-import org.codelibs.fesen.opensearch.threadpool.ThreadPool;
-import org.codelibs.fesen.opensearch.transport.Transports;
 
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
@@ -51,7 +49,6 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  */
 public abstract class BaseFuture<V> implements Future<V> {
 
-    private static final String BLOCKING_OP_REASON = "Blocking operation";
 
     /**
      * Synchronization control for AbstractFutures.
@@ -76,7 +73,6 @@ public abstract class BaseFuture<V> implements Future<V> {
      */
     @Override
     public V get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException, ExecutionException {
-        assert timeout <= 0 || blockingAllowed();
         return sync.get(unit.toNanos(timeout));
     }
 
@@ -98,14 +94,7 @@ public abstract class BaseFuture<V> implements Future<V> {
      */
     @Override
     public V get() throws InterruptedException, ExecutionException {
-        assert blockingAllowed();
         return sync.get();
-    }
-
-    // protected so that it can be overridden in specific instances
-    protected boolean blockingAllowed() {
-        return Transports.assertNotTransportThread(BLOCKING_OP_REASON)
-            && ThreadPool.assertNotScheduleThread(BLOCKING_OP_REASON);
     }
 
     @Override
