@@ -110,15 +110,6 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
         return new RareTermsAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public RareTermsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        includeExclude = in.readOptionalWriteable(IncludeExclude::new);
-        maxDocCount = in.readVInt();
-    }
-
     @Override
     protected boolean serializeTargetValueType(Version version) {
         return true;

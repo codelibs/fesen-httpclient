@@ -158,13 +158,6 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
         );
     }
 
-    /**
-     * Read from a stream.
-     */
-    public StringTerms(StreamInput in) throws IOException {
-        super(in, Bucket::new);
-    }
-
     @Override
     public String getWriteableName() {
         return NAME;

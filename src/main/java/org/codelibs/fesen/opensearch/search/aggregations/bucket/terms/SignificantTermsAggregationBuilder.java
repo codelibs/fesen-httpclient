@@ -127,18 +127,6 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
         super(name);
     }
 
-    /**
-     * Read from a Stream.
-     */
-    public SignificantTermsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        bucketCountThresholds = new BucketCountThresholds(in);
-        executionHint = in.readOptionalString();
-        filterBuilder = in.readOptionalNamedWriteable(QueryBuilder.class);
-        includeExclude = in.readOptionalWriteable(IncludeExclude::new);
-        significanceHeuristic = in.readNamedWriteable(SignificanceHeuristic.class);
-    }
-
     protected SignificantTermsAggregationBuilder(
         SignificantTermsAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

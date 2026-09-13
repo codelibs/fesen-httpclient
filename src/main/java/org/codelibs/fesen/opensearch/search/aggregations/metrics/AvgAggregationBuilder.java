@@ -71,13 +71,6 @@ public class AvgAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
         return CoreValuesSourceType.NUMERIC;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public AvgAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected AggregationBuilder shallowCopy(AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         return new AvgAggregationBuilder(this, factoriesBuilder, metadata);

@@ -91,16 +91,6 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
         return new DiversifiedAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public DiversifiedAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        shardSize = in.readVInt();
-        maxDocsPerValue = in.readVInt();
-        executionHint = in.readOptionalString();
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) throws IOException {
         out.writeVInt(shardSize);

@@ -193,18 +193,6 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
         return new MultiTermsAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public MultiTermsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        terms = in.readList(MultiTermsValuesSourceConfig::new);
-        bucketCountThresholds = new TermsAggregator.BucketCountThresholds(in);
-        collectMode = in.readOptionalWriteable(Aggregator.SubAggCollectionMode::readFromStream);
-        order = InternalOrder.Streams.readOrder(in);
-        showTermDocCountError = in.readBoolean();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeList(terms);

@@ -113,23 +113,6 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
         minDocFreq = in.minDocFreq;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public TermSuggestionBuilder(StreamInput in) throws IOException {
-        super(in);
-        suggestMode = SuggestMode.readFromStream(in);
-        accuracy = in.readFloat();
-        sort = SortBy.readFromStream(in);
-        stringDistance = StringDistanceImpl.readFromStream(in);
-        maxEdits = in.readVInt();
-        maxInspections = in.readVInt();
-        maxTermFreq = in.readFloat();
-        prefixLength = in.readVInt();
-        minWordLength = in.readVInt();
-        minDocFreq = in.readFloat();
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         suggestMode.writeTo(out);

@@ -145,13 +145,6 @@ public class UnsignedLongTerms extends InternalMappedTerms<UnsignedLongTerms, Un
         );
     }
 
-    /**
-     * Read from a stream.
-     */
-    public UnsignedLongTerms(StreamInput in) throws IOException {
-        super(in, Bucket::new);
-    }
-
     @Override
     public String getWriteableName() {
         return NAME;

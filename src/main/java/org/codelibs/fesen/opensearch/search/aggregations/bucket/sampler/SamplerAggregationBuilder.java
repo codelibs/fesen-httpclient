@@ -71,14 +71,6 @@ public class SamplerAggregationBuilder extends AbstractAggregationBuilder<Sample
         return new SamplerAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public SamplerAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        shardSize = in.readVInt();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeVInt(shardSize);

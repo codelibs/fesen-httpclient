@@ -154,13 +154,6 @@ public class DoubleTerms extends InternalMappedTerms<DoubleTerms, DoubleTerms.Bu
         );
     }
 
-    /**
-     * Read from a stream.
-     */
-    public DoubleTerms(StreamInput in) throws IOException {
-        super(in, Bucket::new);
-    }
-
     @Override
     public String getWriteableName() {
         return NAME;

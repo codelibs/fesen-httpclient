@@ -142,10 +142,6 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
                 this.indexPattern = indexPattern;
             }
 
-            public Target(final StreamInput in) throws IOException {
-                this.indexPattern = in.readString();
-            }
-
             public String getIndexPattern() {
                 return indexPattern;
             }

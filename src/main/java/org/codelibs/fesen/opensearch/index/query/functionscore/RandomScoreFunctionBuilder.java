@@ -60,17 +60,6 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
         setFunctionName(functionName);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public RandomScoreFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-        if (in.readBoolean()) {
-            seed = in.readInt();
-        }
-        field = in.readOptionalString();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         if (seed != null) {

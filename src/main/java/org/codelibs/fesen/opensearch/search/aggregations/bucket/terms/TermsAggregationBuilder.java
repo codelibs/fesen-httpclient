@@ -158,19 +158,6 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
         return new TermsAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public TermsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        bucketCountThresholds = new BucketCountThresholds(in);
-        collectMode = in.readOptionalWriteable(SubAggCollectionMode::readFromStream);
-        executionHint = in.readOptionalString();
-        includeExclude = in.readOptionalWriteable(IncludeExclude::new);
-        order = InternalOrder.Streams.readOrder(in);
-        showTermDocCountError = in.readBoolean();
-    }
-
     @Override
     protected boolean serializeTargetValueType(Version version) {
         return true;

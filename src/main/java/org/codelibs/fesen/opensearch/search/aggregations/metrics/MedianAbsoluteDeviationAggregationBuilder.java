@@ -74,11 +74,6 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
         super(name);
     }
 
-    public MedianAbsoluteDeviationAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        compression = in.readDouble();
-    }
-
     protected MedianAbsoluteDeviationAggregationBuilder(
         MedianAbsoluteDeviationAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

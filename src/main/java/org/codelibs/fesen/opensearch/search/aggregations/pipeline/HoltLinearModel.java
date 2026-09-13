@@ -79,14 +79,6 @@ public class HoltLinearModel extends MovAvgModel {
         this.beta = beta;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public HoltLinearModel(StreamInput in) throws IOException {
-        alpha = in.readDouble();
-        beta = in.readDouble();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeDouble(alpha);

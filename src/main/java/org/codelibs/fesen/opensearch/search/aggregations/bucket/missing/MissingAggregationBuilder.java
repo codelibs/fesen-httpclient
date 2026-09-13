@@ -83,13 +83,6 @@ public class MissingAggregationBuilder extends ValuesSourceAggregationBuilder<Mi
         return new MissingAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public MissingAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) {
         // Do nothing, no extra state to write to stream

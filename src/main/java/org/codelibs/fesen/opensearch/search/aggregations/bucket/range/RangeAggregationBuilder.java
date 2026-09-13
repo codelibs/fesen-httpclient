@@ -65,13 +65,6 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
         super(name, InternalRange.FACTORY);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public RangeAggregationBuilder(StreamInput in) throws IOException {
-        super(in, InternalRange.FACTORY, Range::new);
-    }
-
     protected RangeAggregationBuilder(
         RangeAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

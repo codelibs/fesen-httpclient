@@ -74,10 +74,6 @@ public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggreg
         super(name, values, percentilesConfig, VALUES_FIELD);
     }
 
-    public PercentileRanksAggregationBuilder(StreamInput in) throws IOException {
-        super(in, VALUES_FIELD);
-    }
-
     private PercentileRanksAggregationBuilder(
         PercentileRanksAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

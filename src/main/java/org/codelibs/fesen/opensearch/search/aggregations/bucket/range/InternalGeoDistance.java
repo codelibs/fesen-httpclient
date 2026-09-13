@@ -133,13 +133,6 @@ public class InternalGeoDistance extends InternalRange<InternalGeoDistance.Bucke
         super(name, ranges, DocValueFormat.RAW, keyed, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalGeoDistance(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public InternalRange.Factory<Bucket, InternalGeoDistance> getFactory() {
         return FACTORY;

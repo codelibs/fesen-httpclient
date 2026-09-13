@@ -85,14 +85,6 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
         return new ExtendedStatsAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ExtendedStatsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        sigma = in.readDouble();
-    }
-
     @Override
     protected ValuesSourceType defaultValueSourceType() {
         return CoreValuesSourceType.NUMERIC;

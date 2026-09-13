@@ -25,8 +25,4 @@ public class IndexCreateBlockException extends ClusterBlockException {
     public IndexCreateBlockException(Set<ClusterBlock> globalLevelBlocks) {
         super(globalLevelBlocks);
     }
-
-    public IndexCreateBlockException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

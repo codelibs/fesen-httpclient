@@ -59,8 +59,4 @@ public class IncompatibleClusterStateVersionException extends OpenSearchExceptio
                 + receivedUuid
         );
     }
-
-    public IncompatibleClusterStateVersionException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

@@ -336,15 +336,6 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
         return addUnboundedFrom(null, from);
     }
 
-    public IpRangeAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        final int numRanges = in.readVInt();
-        for (int i = 0; i < numRanges; ++i) {
-            addRange(new Range(in));
-        }
-        keyed = in.readBoolean();
-    }
-
     @Override
     protected ValuesSourceType defaultValueSourceType() {
         return CoreValuesSourceType.IP;

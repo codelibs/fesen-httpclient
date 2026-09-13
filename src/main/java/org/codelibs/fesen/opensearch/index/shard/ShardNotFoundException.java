@@ -60,8 +60,4 @@ public class ShardNotFoundException extends ResourceNotFoundException {
         super(msg, ex, args);
         setShard(shardId);
     }
-
-    public ShardNotFoundException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

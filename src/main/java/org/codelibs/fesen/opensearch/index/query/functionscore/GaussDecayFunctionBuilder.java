@@ -78,13 +78,6 @@ public class GaussDecayFunctionBuilder extends DecayFunctionBuilder<GaussDecayFu
         super(fieldName, functionBytes);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public GaussDecayFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public String getName() {
         return NAME;

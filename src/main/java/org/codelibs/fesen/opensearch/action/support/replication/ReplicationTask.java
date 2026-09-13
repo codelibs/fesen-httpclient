@@ -76,10 +76,6 @@ public class ReplicationTask extends Task {
             this.phase = requireNonNull(phase, "Phase cannot be null");
         }
 
-        public Status(StreamInput in) throws IOException {
-            phase = in.readString();
-        }
-
         @Override
         public String getWriteableName() {
             return NAME;

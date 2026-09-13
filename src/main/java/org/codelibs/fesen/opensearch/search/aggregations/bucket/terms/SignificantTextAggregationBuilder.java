@@ -308,20 +308,6 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         this.fieldName = fieldName;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public SignificantTextAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        fieldName = in.readString();
-        filterDuplicateText = in.readBoolean();
-        bucketCountThresholds = new BucketCountThresholds(in);
-        filterBuilder = in.readOptionalNamedWriteable(QueryBuilder.class);
-        includeExclude = in.readOptionalWriteable(IncludeExclude::new);
-        significanceHeuristic = in.readNamedWriteable(SignificanceHeuristic.class);
-        sourceFieldNames = in.readOptionalStringArray();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeString(fieldName);

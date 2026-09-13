@@ -72,13 +72,6 @@ public class ScoreSortBuilder extends SortBuilder<ScoreSortBuilder> {
         order(SortOrder.DESC);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ScoreSortBuilder(StreamInput in) throws IOException {
-        order(SortOrder.readFromStream(in));
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         order.writeTo(out);

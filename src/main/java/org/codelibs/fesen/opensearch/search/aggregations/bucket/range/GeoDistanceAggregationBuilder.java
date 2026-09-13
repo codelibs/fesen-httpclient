@@ -272,22 +272,6 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         this.origin = origin;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public GeoDistanceAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        origin = new GeoPoint(in.readDouble(), in.readDouble());
-        int size = in.readVInt();
-        ranges = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            ranges.add(new Range(in));
-        }
-        keyed = in.readBoolean();
-        distanceType = GeoDistance.readFromStream(in);
-        unit = DistanceUnit.readFromStream(in);
-    }
-
     // for parsing
     GeoDistanceAggregationBuilder(String name) {
         this(name, null, InternalGeoDistance.FACTORY);

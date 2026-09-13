@@ -155,15 +155,6 @@ public class ComponentTemplateMetadata implements Metadata.Custom {
             );
         }
 
-        ComponentTemplateMetadataDiff(StreamInput in) throws IOException {
-            this.componentTemplateDiff = DiffableUtils.readJdkMapDiff(
-                in,
-                DiffableUtils.getStringKeySerializer(),
-                ComponentTemplate::new,
-                ComponentTemplate::readComponentTemplateDiffFrom
-            );
-        }
-
         @Override
         public Metadata.Custom apply(Metadata.Custom part) {
             return new ComponentTemplateMetadata(componentTemplateDiff.apply(((ComponentTemplateMetadata) part).componentTemplates));

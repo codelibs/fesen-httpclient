@@ -63,15 +63,6 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
         super(name, NAME, new String[] { bucketsPath });
     }
 
-    /**
-     * Read from a stream.
-     */
-    public PercentilesBucketPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        percents = in.readDoubleArray();
-        keyed = in.readBoolean();
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) throws IOException {
         out.writeDoubleArray(percents);

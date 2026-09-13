@@ -80,14 +80,6 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
         return new NestedAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public NestedAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        path = in.readString();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeString(path);

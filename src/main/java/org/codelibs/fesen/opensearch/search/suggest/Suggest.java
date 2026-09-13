@@ -183,17 +183,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             this.size = size; // The suggested term size specified in request, only used for merging shard responses
         }
 
-        public Suggestion(StreamInput in) throws IOException {
-            name = in.readString();
-            size = in.readVInt();
-            int entriesCount = in.readVInt();
-            entries.clear();
-            for (int i = 0; i < entriesCount; i++) {
-                T newEntry = newEntry(in);
-                entries.add(newEntry);
-            }
-        }
-
         @Override
         public Iterator<T> iterator() {
             return entries.iterator();
@@ -373,13 +362,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
                 public Option(Text text, float score) {
                     this(text, null, score);
-                }
-
-                public Option(StreamInput in) throws IOException {
-                    text = in.readText();
-                    score = in.readFloat();
-                    highlighted = in.readOptionalText();
-                    collateMatch = in.readOptionalBoolean();
                 }
 
                 /**

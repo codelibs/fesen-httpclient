@@ -145,18 +145,6 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
         stageTimer.start();
     }
 
-    public SegmentReplicationState(StreamInput in) throws IOException {
-        index = new ReplicationLuceneIndex(in);
-        shardRouting = new ShardRouting(in);
-        stage = in.readEnum(Stage.class);
-        replicationId = in.readLong();
-        overallTimer = new ReplicationTimer(in);
-        stageTimer = new ReplicationTimer(in);
-        timingData = in.readMap(StreamInput::readString, StreamInput::readLong);
-        sourceDescription = in.readString();
-        targetNode = new DiscoveryNode(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         index.writeTo(out);

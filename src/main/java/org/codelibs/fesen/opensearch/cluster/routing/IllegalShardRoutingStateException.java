@@ -55,11 +55,6 @@ public class IllegalShardRoutingStateException extends RoutingException {
         this.shard = shard;
     }
 
-    public IllegalShardRoutingStateException(StreamInput in) throws IOException {
-        super(in);
-        shard = new ShardRouting(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

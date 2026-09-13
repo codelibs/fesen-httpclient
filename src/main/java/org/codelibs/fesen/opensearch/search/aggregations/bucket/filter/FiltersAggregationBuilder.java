@@ -125,27 +125,6 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
         return new FiltersAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public FiltersAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        keyed = in.readBoolean();
-        int filtersSize = in.readVInt();
-        filters = new ArrayList<>(filtersSize);
-        if (keyed) {
-            for (int i = 0; i < filtersSize; i++) {
-                filters.add(new KeyedFilter(in));
-            }
-        } else {
-            for (int i = 0; i < filtersSize; i++) {
-                filters.add(new KeyedFilter(String.valueOf(i), in.readNamedWriteable(QueryBuilder.class)));
-            }
-        }
-        otherBucket = in.readBoolean();
-        otherBucketKey = in.readString();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeBoolean(keyed);

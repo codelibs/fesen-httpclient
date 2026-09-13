@@ -109,17 +109,6 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
         this.sorts = sorts == null ? Collections.emptyList() : sorts;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public BucketSortPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        sorts = in.readList(FieldSortBuilder::new);
-        from = in.readVInt();
-        size = in.readOptionalVInt();
-        gapPolicy = GapPolicy.readFrom(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeList(sorts);

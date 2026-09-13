@@ -55,14 +55,6 @@ public class ExtendedStatsBucketPipelineAggregationBuilder extends BucketMetrics
         super(name, NAME, new String[] { bucketsPath });
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ExtendedStatsBucketPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        sigma = in.readDouble();
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) throws IOException {
         out.writeDouble(sigma);

@@ -107,37 +107,6 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     private ActiveShardCount waitForActiveShards = ActiveShardCount.DEFAULT;
 
-    public CreateIndexRequest(StreamInput in) throws IOException {
-        super(in);
-        cause = in.readString();
-        index = in.readString();
-        settings = readSettingsFromStream(in);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            int size = in.readVInt();
-            if (size == 1) {
-                String type = in.readString();
-                if (MapperService.SINGLE_MAPPING_NAME.equals(type) == false) {
-                    throw new IllegalArgumentException(
-                        "Expected to receive mapping type of [" + MapperService.SINGLE_MAPPING_NAME + "] but got [" + type + "]"
-                    );
-                }
-                mappings = in.readString();
-            } else if (size != 0) {
-                throw new IllegalStateException("Expected to read 0 or 1 mappings, but received " + size);
-            }
-        } else {
-            mappings = in.readString();
-        }
-        int aliasesSize = in.readVInt();
-        for (int i = 0; i < aliasesSize; i++) {
-            aliases.add(new Alias(in));
-        }
-        waitForActiveShards = ActiveShardCount.readFrom(in);
-        if (in.getVersion().onOrAfter(Version.V_2_17_0)) {
-            context = in.readOptionalWriteable(Context::new);
-        }
-    }
-
     public CreateIndexRequest() {}
 
     /**

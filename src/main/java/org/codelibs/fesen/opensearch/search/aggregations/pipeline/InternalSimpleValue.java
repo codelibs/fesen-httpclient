@@ -59,15 +59,6 @@ public class InternalSimpleValue extends InternalNumericMetricsAggregation.Singl
         this.value = value;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalSimpleValue(StreamInput in) throws IOException {
-        super(in);
-        format = in.readNamedWriteable(DocValueFormat.class);
-        value = in.readDouble();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeNamedWriteable(format);

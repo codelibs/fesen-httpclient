@@ -76,14 +76,6 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
         super(name, NAME, bucketsPath.toArray(new String[0]));
     }
 
-    /**
-     * Read from a stream.
-     */
-    public CumulativeSumPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        format = in.readOptionalString();
-    }
-
     @Override
     protected final void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalString(format);

@@ -58,13 +58,6 @@ public class WeightedRoutingMetadata extends AbstractNamedDiffable<Metadata.Cust
         return this;
     }
 
-    public WeightedRoutingMetadata(StreamInput in) throws IOException {
-        if (in.available() != 0) {
-            this.weightedRouting = new WeightedRouting(in);
-            this.version = in.readLong();
-        }
-    }
-
     public WeightedRoutingMetadata(WeightedRouting weightedRouting, long version) {
         this.weightedRouting = weightedRouting;
         this.version = version;

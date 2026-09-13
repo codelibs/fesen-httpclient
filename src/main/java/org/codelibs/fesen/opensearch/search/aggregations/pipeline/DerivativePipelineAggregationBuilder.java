@@ -71,18 +71,6 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         super(name, NAME, bucketsPaths);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public DerivativePipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        format = in.readOptionalString();
-        if (in.readBoolean()) {
-            gapPolicy = GapPolicy.readFrom(in);
-        }
-        units = in.readOptionalString();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalString(format);

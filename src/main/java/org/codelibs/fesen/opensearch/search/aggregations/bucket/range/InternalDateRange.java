@@ -183,13 +183,6 @@ public class InternalDateRange extends InternalRange<InternalDateRange.Bucket, I
         super(name, ranges, formatter, keyed, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalDateRange(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public String getWriteableName() {
         return DateRangeAggregationBuilder.NAME;

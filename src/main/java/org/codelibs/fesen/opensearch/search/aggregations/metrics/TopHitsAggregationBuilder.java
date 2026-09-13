@@ -120,46 +120,6 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         return new TopHitsAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public TopHitsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        explain = in.readBoolean();
-        fetchSourceContext = in.readOptionalWriteable(FetchSourceContext::new);
-        if (in.readBoolean()) {
-            int size = in.readVInt();
-            docValueFields = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                docValueFields.add(new FieldAndFormat(in));
-            }
-        }
-        storedFieldsContext = in.readOptionalWriteable(StoredFieldsContext::new);
-        from = in.readVInt();
-        highlightBuilder = in.readOptionalWriteable(HighlightBuilder::new);
-        if (in.readBoolean()) {
-            int size = in.readVInt();
-            scriptFields = new HashSet<>(size);
-            for (int i = 0; i < size; i++) {
-                scriptFields.add(new ScriptField(in));
-            }
-        }
-        size = in.readVInt();
-        if (in.readBoolean()) {
-            int size = in.readVInt();
-            sorts = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                sorts.add(in.readNamedWriteable(SortBuilder.class));
-            }
-        }
-        trackScores = in.readBoolean();
-        version = in.readBoolean();
-        seqNoAndPrimaryTerm = in.readBoolean();
-        if (in.readBoolean()) {
-            fetchFields = in.readList(FieldAndFormat::new);
-        }
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeBoolean(explain);

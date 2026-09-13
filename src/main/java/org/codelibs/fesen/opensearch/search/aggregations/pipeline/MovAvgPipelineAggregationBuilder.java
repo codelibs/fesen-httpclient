@@ -80,19 +80,6 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
         super(name, NAME, new String[] { bucketsPath });
     }
 
-    /**
-     * Read from a stream.
-     */
-    public MovAvgPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        format = in.readOptionalString();
-        gapPolicy = GapPolicy.readFrom(in);
-        window = in.readVInt();
-        model = in.readNamedWriteable(MovAvgModel.class);
-        predict = in.readVInt();
-        minimize = in.readOptionalBoolean();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalString(format);

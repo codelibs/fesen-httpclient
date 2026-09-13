@@ -179,51 +179,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     public TermVectorsRequest() {}
 
-    TermVectorsRequest(StreamInput in) throws IOException {
-        super(in);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            // types no longer supported; ignore for BWC
-            in.readString();
-        }
-        id = in.readString();
-
-        if (in.readBoolean()) {
-            doc = in.readBytesReference();
-            if (in.getVersion().onOrAfter(Version.V_2_10_0)) {
-                mediaType = in.readMediaType();
-            } else {
-                mediaType = in.readEnum(XContentType.class);
-            }
-        }
-        routing = in.readOptionalString();
-        preference = in.readOptionalString();
-        long flags = in.readVLong();
-
-        flagsEnum.clear();
-        for (Flag flag : Flag.values()) {
-            if ((flags & (1 << flag.ordinal())) != 0) {
-                flagsEnum.add(flag);
-            }
-        }
-        int numSelectedFields = in.readVInt();
-        if (numSelectedFields > 0) {
-            selectedFields = new HashSet<>();
-            for (int i = 0; i < numSelectedFields; i++) {
-                selectedFields.add(in.readString());
-            }
-        }
-        if (in.readBoolean()) {
-            perFieldAnalyzer = readPerFieldAnalyzer(in.readMap());
-        }
-        if (in.readBoolean()) {
-            filterSettings = new FilterSettings();
-            filterSettings.readFrom(in);
-        }
-        realtime = in.readBoolean();
-        versionType = VersionType.fromValue(in.readByte());
-        version = in.readLong();
-    }
-
     /**
      * Constructs a new term vector request for a document that will be fetch
      * from the provided index. Use {@link #id(String)} to specify the document to load.

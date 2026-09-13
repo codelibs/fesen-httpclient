@@ -253,33 +253,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
                 || assertShardsConsistent(this.source, this.state, this.indices, this.shards, this.clones);
         }
 
-        private Entry(StreamInput in) throws IOException {
-            snapshot = new Snapshot(in);
-            includeGlobalState = in.readBoolean();
-            partial = in.readBoolean();
-            state = State.fromValue(in.readByte());
-            indices = in.readList(IndexId::new);
-            startTime = in.readLong();
-            shards = in.readMap(ShardId::new, ShardSnapshotStatus::readFrom);
-            repositoryStateId = in.readLong();
-            failure = in.readOptionalString();
-            userMetadata = in.readMap();
-            version = in.readVersion();
-            dataStreams = in.readStringList();
-            source = in.readOptionalWriteable(SnapshotId::new);
-            clones = in.readMap(RepositoryShardId::new, ShardSnapshotStatus::readFrom);
-            if (in.getVersion().onOrAfter(Version.V_2_9_0)) {
-                remoteStoreIndexShallowCopy = in.readBoolean();
-            } else {
-                remoteStoreIndexShallowCopy = false;
-            }
-            if (in.getVersion().onOrAfter(Version.V_2_18_0)) {
-                remoteStoreIndexShallowCopyV2 = in.readBoolean();
-            } else {
-                remoteStoreIndexShallowCopyV2 = false;
-            }
-        }
-
         private static boolean assertShardsConsistent(
             SnapshotId source,
             State state,

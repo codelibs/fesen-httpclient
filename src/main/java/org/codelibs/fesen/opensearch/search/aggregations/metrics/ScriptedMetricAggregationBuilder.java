@@ -107,20 +107,6 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
         return new ScriptedMetricAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ScriptedMetricAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        initScript = in.readOptionalWriteable(Script::new);
-        mapScript = in.readOptionalWriteable(Script::new);
-        combineScript = in.readOptionalWriteable(Script::new);
-        reduceScript = in.readOptionalWriteable(Script::new);
-        if (in.readBoolean()) {
-            params = in.readMap();
-        }
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalWriteable(initScript);

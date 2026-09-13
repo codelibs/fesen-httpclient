@@ -131,13 +131,6 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         super(name);
     }
 
-    /** Read from a stream, for internal use only. */
-    public AutoDateHistogramAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        numBuckets = in.readVInt();
-        minimumIntervalExpression = in.readOptionalString();
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) throws IOException {
         out.writeVInt(numBuckets);

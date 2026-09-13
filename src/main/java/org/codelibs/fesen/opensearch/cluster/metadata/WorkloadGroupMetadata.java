@@ -52,10 +52,6 @@ public class WorkloadGroupMetadata implements Metadata.Custom {
         this.workloadGroups = workloadGroups;
     }
 
-    public WorkloadGroupMetadata(StreamInput in) throws IOException {
-        this.workloadGroups = in.readMap(StreamInput::readString, WorkloadGroup::new);
-    }
-
     public Map<String, WorkloadGroup> workloadGroups() {
         return this.workloadGroups;
     }

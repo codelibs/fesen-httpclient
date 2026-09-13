@@ -56,10 +56,6 @@ public class ViewMetadata implements Metadata.Custom {
         this.views = views;
     }
 
-    public ViewMetadata(final StreamInput in) throws IOException {
-        this.views = in.readMap(StreamInput::readString, View::new);
-    }
-
     public Map<String, View> views() {
         return this.views;
     }

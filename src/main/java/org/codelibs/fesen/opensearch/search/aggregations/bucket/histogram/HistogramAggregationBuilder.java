@@ -142,18 +142,6 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         return new HistogramAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /** Read from a stream, for internal use only. */
-    public HistogramAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        order = InternalOrder.Streams.readHistogramOrder(in, true);
-        keyed = in.readBoolean();
-        minDocCount = in.readVLong();
-        interval = in.readDouble();
-        offset = in.readDouble();
-        extendedBounds = in.readOptionalWriteable(DoubleBounds::new);
-        hardBounds = in.readOptionalWriteable(DoubleBounds::new);
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) throws IOException {
         InternalOrder.Streams.writeHistogramOrder(order, out, true);

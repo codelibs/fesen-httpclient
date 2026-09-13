@@ -873,11 +873,6 @@ public class Setting<T> implements ToXContentObject {
             this.isMatching = isMatching;
         }
 
-        public RegexValidator(StreamInput in) throws IOException {
-            this.pattern = Pattern.compile(in.readString());
-            this.isMatching = in.readBoolean();
-        }
-
         Pattern getPattern() {
             return pattern;
         }
@@ -930,13 +925,6 @@ public class Setting<T> implements ToXContentObject {
             this.maxValue = maxValue;
             this.key = key;
             this.isFiltered = isFiltered;
-        }
-
-        public FloatParser(StreamInput in) throws IOException {
-            minValue = in.readFloat();
-            maxValue = in.readFloat();
-            key = in.readString();
-            isFiltered = in.readBoolean();
         }
 
         @Override
@@ -1672,13 +1660,6 @@ public class Setting<T> implements ToXContentObject {
             this.minValue = minValue;
             this.maxValue = maxValue;
             this.isFiltered = isFiltered;
-        }
-
-        public MinMaxTimeValueParser(StreamInput in) throws IOException {
-            key = in.readString();
-            minValue = in.readTimeValue();
-            maxValue = in.readTimeValue();
-            isFiltered = in.readBoolean();
         }
 
         @Override

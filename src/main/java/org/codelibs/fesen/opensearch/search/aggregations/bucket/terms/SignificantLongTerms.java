@@ -141,13 +141,6 @@ public class SignificantLongTerms extends InternalMappedSignificantTerms<Signifi
         super(name, metadata, format, subsetSize, supersetSize, significanceHeuristic, buckets, bucketCountThresholds);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public SignificantLongTerms(StreamInput in) throws IOException {
-        super(in, Bucket::new);
-    }
-
     @Override
     public String getWriteableName() {
         return NAME;

@@ -163,24 +163,6 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
         this.ignoreUnmapped = original.ignoreUnmapped;
     }
 
-    /**
-     * Read from a stream.
-     */
-    @SuppressWarnings("unchecked")
-    public GeoDistanceSortBuilder(StreamInput in) throws IOException {
-        fieldName = in.readString();
-        points.addAll((List<GeoPoint>) in.readGenericValue());
-        geoDistance = GeoDistance.readFromStream(in);
-        unit = DistanceUnit.readFromStream(in);
-        order = SortOrder.readFromStream(in);
-        sortMode = in.readOptionalWriteable(SortMode::readFromStream);
-        nestedFilter = in.readOptionalNamedWriteable(QueryBuilder.class);
-        nestedPath = in.readOptionalString();
-        nestedSort = in.readOptionalWriteable(NestedSortBuilder::new);
-        validation = GeoValidationMethod.readFromStream(in);
-        ignoreUnmapped = in.readBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(fieldName);

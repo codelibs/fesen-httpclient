@@ -69,16 +69,6 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
         super(name, NAME, new String[] { bucketsPath });
     }
 
-    /**
-     * Read from a stream.
-     */
-    public SerialDiffPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        format = in.readOptionalString();
-        gapPolicy = GapPolicy.readFrom(in);
-        lag = in.readVInt();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalString(format);

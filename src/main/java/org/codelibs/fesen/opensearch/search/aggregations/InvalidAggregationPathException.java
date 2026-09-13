@@ -51,8 +51,4 @@ public class InvalidAggregationPathException extends OpenSearchException {
     public InvalidAggregationPathException(String msg, Throwable cause) {
         super(msg, cause);
     }
-
-    public InvalidAggregationPathException(StreamInput in) throws IOException {
-        super(in);
-    }
 }

@@ -88,18 +88,6 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
         this.format = formatter;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalStats(StreamInput in) throws IOException {
-        super(in);
-        format = in.readNamedWriteable(DocValueFormat.class);
-        count = in.readVLong();
-        min = in.readDouble();
-        max = in.readDouble();
-        sum = in.readDouble();
-    }
-
     @Override
     protected final void doWriteTo(StreamOutput out) throws IOException {
         out.writeNamedWriteable(format);

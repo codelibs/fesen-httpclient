@@ -75,13 +75,6 @@ public class MinAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
         return new MinAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public MinAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected ValuesSourceType defaultValueSourceType() {
         return CoreValuesSourceType.NUMERIC;

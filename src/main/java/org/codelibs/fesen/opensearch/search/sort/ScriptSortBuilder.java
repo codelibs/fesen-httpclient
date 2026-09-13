@@ -113,19 +113,6 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
         this.nestedSort = original.nestedSort;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ScriptSortBuilder(StreamInput in) throws IOException {
-        script = new Script(in);
-        type = ScriptSortType.readFromStream(in);
-        order = SortOrder.readFromStream(in);
-        sortMode = in.readOptionalWriteable(SortMode::readFromStream);
-        nestedPath = in.readOptionalString();
-        nestedFilter = in.readOptionalNamedWriteable(QueryBuilder.class);
-        nestedSort = in.readOptionalWriteable(NestedSortBuilder::new);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         script.writeTo(out);

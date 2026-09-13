@@ -58,12 +58,6 @@ public final class SearchContextIdForNode implements Writeable {
         this.searchContextId = searchContextId;
     }
 
-    SearchContextIdForNode(StreamInput in) throws IOException {
-        this.node = in.readString();
-        this.clusterAlias = in.readOptionalString();
-        this.searchContextId = new ShardSearchContextId(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(node);

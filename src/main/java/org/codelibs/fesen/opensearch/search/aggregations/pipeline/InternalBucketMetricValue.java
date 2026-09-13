@@ -65,16 +65,6 @@ public class InternalBucketMetricValue extends InternalNumericMetricsAggregation
         this.format = formatter;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalBucketMetricValue(StreamInput in) throws IOException {
-        super(in);
-        format = in.readNamedWriteable(DocValueFormat.class);
-        value = in.readDouble();
-        keys = in.readStringArray();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeNamedWriteable(format);

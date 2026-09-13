@@ -117,20 +117,6 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
         return new CompositeAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    public CompositeAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        int num = in.readVInt();
-        this.sources = new ArrayList<>(num);
-        for (int i = 0; i < num; i++) {
-            CompositeValuesSourceBuilder<?> builder = CompositeValuesSourceParserHelper.readFrom(in);
-            sources.add(builder);
-        }
-        this.size = in.readVInt();
-        if (in.readBoolean()) {
-            this.after = in.readMap();
-        }
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeVInt(sources.size());

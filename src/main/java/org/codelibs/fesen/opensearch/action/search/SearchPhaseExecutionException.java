@@ -90,12 +90,6 @@ public class SearchPhaseExecutionException extends OpenSearchException {
         return null;
     }
 
-    public SearchPhaseExecutionException(StreamInput in) throws IOException {
-        super(in);
-        phaseName = in.readOptionalString();
-        shardFailures = in.readArray(ShardSearchFailure::readShardSearchFailure, ShardSearchFailure[]::new);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

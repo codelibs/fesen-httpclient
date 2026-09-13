@@ -69,13 +69,6 @@ public class GlobalAggregationBuilder extends AbstractAggregationBuilder<GlobalA
         return new GlobalAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public GlobalAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         // Nothing to write

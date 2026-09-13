@@ -69,13 +69,6 @@ public abstract class RescorerBuilder<RB extends RescorerBuilder<RB>>
      */
     public RescorerBuilder() {}
 
-    /**
-     * Read from a stream.
-     */
-    protected RescorerBuilder(StreamInput in) throws IOException {
-        windowSize = in.readOptionalVInt();
-    }
-
     @Override
     public final void writeTo(StreamOutput out) throws IOException {
         out.writeOptionalVInt(this.windowSize);

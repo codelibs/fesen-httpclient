@@ -53,11 +53,6 @@ public class SimpleModel extends MovAvgModel {
 
     public SimpleModel() {}
 
-    /**
-     * Read from a stream.
-     */
-    public SimpleModel(StreamInput in) throws IOException {}
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         // Nothing to write

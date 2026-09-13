@@ -178,22 +178,6 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         this.showOnlyIntersecting = showOnlyIntersecting;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public AdjacencyMatrixAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        int filtersSize = in.readVInt();
-        separator = in.readString();
-        if (in.getVersion().onOrAfter(Version.V_2_19_0)) {
-            showOnlyIntersecting = in.readBoolean();
-        }
-        filters = new ArrayList<>(filtersSize);
-        for (int i = 0; i < filtersSize; i++) {
-            filters.add(new KeyedFilter(in));
-        }
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeVInt(filters.size());

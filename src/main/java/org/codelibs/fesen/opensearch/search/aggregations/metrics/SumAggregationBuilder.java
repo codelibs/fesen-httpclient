@@ -75,13 +75,6 @@ public class SumAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOn
         return new SumAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public SumAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected ValuesSourceType defaultValueSourceType() {
         return CoreValuesSourceType.NUMERIC;

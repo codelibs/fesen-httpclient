@@ -81,12 +81,6 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         super(name);
     }
 
-    /** Read in object data from a stream, for internal use only. */
-    public VariableWidthHistogramAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        numBuckets = in.readVInt();
-    }
-
     protected VariableWidthHistogramAggregationBuilder(
         VariableWidthHistogramAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

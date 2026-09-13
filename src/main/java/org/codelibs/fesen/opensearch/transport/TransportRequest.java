@@ -57,10 +57,6 @@ public abstract class TransportRequest implements Writeable, TaskAwareRequest {
         public static final Empty INSTANCE = new Empty();
 
         public Empty() {}
-
-        public Empty(StreamInput in) throws IOException {
-            super(in);
-        }
     }
 
     /**

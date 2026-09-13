@@ -78,13 +78,6 @@ public class ExponentialDecayFunctionBuilder extends DecayFunctionBuilder<Expone
         super(fieldName, functionBytes);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ExponentialDecayFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public String getName() {
         return NAME;

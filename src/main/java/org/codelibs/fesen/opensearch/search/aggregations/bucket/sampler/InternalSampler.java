@@ -52,13 +52,6 @@ public class InternalSampler extends InternalSingleBucketAggregation implements 
         super(name, docCount, subAggregations, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public InternalSampler(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public String getWriteableName() {
         return NAME;

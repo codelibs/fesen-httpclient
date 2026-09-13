@@ -85,13 +85,6 @@ public class GeoCentroidAggregationBuilder extends ValuesSourceAggregationBuilde
         return new GeoCentroidAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public GeoCentroidAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) {
         // Do nothing, no extra state to write to stream

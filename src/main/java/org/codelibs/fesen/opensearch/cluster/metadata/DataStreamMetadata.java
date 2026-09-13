@@ -171,15 +171,6 @@ public class DataStreamMetadata implements Metadata.Custom {
             this.dataStreamDiff = DiffableUtils.diff(before.dataStreams, after.dataStreams, DiffableUtils.getStringKeySerializer());
         }
 
-        DataStreamMetadataDiff(StreamInput in) throws IOException {
-            this.dataStreamDiff = DiffableUtils.readJdkMapDiff(
-                in,
-                DiffableUtils.getStringKeySerializer(),
-                DataStream::new,
-                DataStream::readDiffFrom
-            );
-        }
-
         @Override
         public Metadata.Custom apply(Metadata.Custom part) {
             return new DataStreamMetadata(dataStreamDiff.apply(((DataStreamMetadata) part).dataStreams));

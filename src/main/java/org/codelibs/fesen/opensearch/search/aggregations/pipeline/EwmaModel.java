@@ -70,13 +70,6 @@ public class EwmaModel extends MovAvgModel {
         this.alpha = alpha;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public EwmaModel(StreamInput in) throws IOException {
-        alpha = in.readDouble();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeDouble(alpha);

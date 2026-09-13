@@ -84,13 +84,6 @@ public class ValueCountAggregationBuilder extends ValuesSourceAggregationBuilder
         return new ValueCountAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ValueCountAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) {
         // Do nothing, no extra state to write to stream

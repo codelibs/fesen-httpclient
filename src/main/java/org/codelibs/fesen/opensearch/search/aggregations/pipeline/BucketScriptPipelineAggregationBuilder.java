@@ -106,21 +106,6 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
         this(name, convertToBucketsPathMap(bucketsPaths), script);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public BucketScriptPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        int mapSize = in.readVInt();
-        bucketsPathsMap = new HashMap<>(mapSize);
-        for (int i = 0; i < mapSize; i++) {
-            bucketsPathsMap.put(in.readString(), in.readString());
-        }
-        script = new Script(in);
-        format = in.readOptionalString();
-        gapPolicy = GapPolicy.readFrom(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeVInt(bucketsPathsMap.size());

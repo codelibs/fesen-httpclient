@@ -877,16 +877,6 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             this.filter = null;
         }
 
-        public IntervalFilter(StreamInput in) throws IOException {
-            this.type = in.readString();
-            this.filter = in.readOptionalNamedWriteable(IntervalsSourceProvider.class);
-            if (in.readBoolean()) {
-                this.script = new Script(in);
-            } else {
-                this.script = null;
-            }
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;

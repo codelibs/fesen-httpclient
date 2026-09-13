@@ -66,14 +66,6 @@ public class ScriptScoreFunctionBuilder extends ScoreFunctionBuilder<ScriptScore
         setFunctionName(functionName);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ScriptScoreFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-        script = new Script(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         script.writeTo(out);

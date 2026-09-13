@@ -69,14 +69,6 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
         return new ReverseNestedAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public ReverseNestedAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        path = in.readOptionalString();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalString(path);

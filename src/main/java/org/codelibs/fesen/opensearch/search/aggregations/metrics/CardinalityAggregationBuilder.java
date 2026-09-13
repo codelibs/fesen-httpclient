@@ -97,19 +97,6 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
         return CoreValuesSourceType.BYTES;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public CardinalityAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        if (in.readBoolean()) {
-            precisionThreshold = in.readLong();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_19_1)) {
-            executionHint = in.readOptionalString();
-        }
-    }
-
     @Override
     protected AggregationBuilder shallowCopy(AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         return new CardinalityAggregationBuilder(this, factoriesBuilder, metadata);

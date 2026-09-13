@@ -57,15 +57,6 @@ public class SearchException extends OpenSearchException implements OpenSearchWr
         this.shardTarget = shardTarget;
     }
 
-    public SearchException(StreamInput in) throws IOException {
-        super(in);
-        if (in.readBoolean()) {
-            shardTarget = new SearchShardTarget(in);
-        } else {
-            shardTarget = null;
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

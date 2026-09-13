@@ -71,12 +71,6 @@ public class RoutingMissingException extends OpenSearchException {
         return RestStatus.BAD_REQUEST;
     }
 
-    public RoutingMissingException(StreamInput in) throws IOException {
-        super(in);
-        type = in.readString();
-        id = in.readString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

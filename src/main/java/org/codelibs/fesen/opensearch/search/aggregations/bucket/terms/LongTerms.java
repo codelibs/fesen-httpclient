@@ -166,13 +166,6 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
         );
     }
 
-    /**
-     * Read from a stream.
-     */
-    public LongTerms(StreamInput in) throws IOException {
-        super(in, Bucket::new);
-    }
-
     @Override
     public String getWriteableName() {
         return NAME;

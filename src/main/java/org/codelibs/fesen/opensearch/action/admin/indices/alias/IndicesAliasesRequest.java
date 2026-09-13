@@ -263,23 +263,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             this.type = type;
         }
 
-        /**
-         * Read from a stream.
-         */
-        public AliasActions(StreamInput in) throws IOException {
-            type = AliasActions.Type.fromValue(in.readByte());
-            indices = in.readStringArray();
-            aliases = in.readStringArray();
-            filter = in.readOptionalString();
-            routing = in.readOptionalString();
-            searchRouting = in.readOptionalString();
-            indexRouting = in.readOptionalString();
-            writeIndex = in.readOptionalBoolean();
-            isHidden = in.readOptionalBoolean();
-            originalAliases = in.readStringArray();
-            mustExist = in.readOptionalBoolean();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             out.writeByte(type.value());

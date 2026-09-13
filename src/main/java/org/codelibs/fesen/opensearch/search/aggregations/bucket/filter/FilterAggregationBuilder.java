@@ -89,14 +89,6 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
         return new FilterAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public FilterAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        filter = in.readNamedWriteable(QueryBuilder.class);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeNamedWriteable(filter);

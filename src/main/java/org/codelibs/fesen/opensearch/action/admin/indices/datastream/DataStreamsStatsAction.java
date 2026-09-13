@@ -276,12 +276,6 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
             this.maxTimestamp = maxTimestamp;
         }
 
-        public DataStreamShardStats(StreamInput in) throws IOException {
-            this.shardRouting = new ShardRouting(in);
-            this.storeStats = new StoreStats(in);
-            this.maxTimestamp = in.readVLong();
-        }
-
         @Override
         public void writeTo(StreamOutput out) throws IOException {
             shardRouting.writeTo(out);

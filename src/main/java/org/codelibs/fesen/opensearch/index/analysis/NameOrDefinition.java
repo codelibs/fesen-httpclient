@@ -72,15 +72,6 @@ public class NameOrDefinition implements Writeable, ToXContentFragment {
         }
     }
 
-    public NameOrDefinition(StreamInput in) throws IOException {
-        name = in.readOptionalString();
-        if (in.readBoolean()) {
-            definition = Settings.readSettingsFromStream(in);
-        } else {
-            definition = null;
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeOptionalString(name);

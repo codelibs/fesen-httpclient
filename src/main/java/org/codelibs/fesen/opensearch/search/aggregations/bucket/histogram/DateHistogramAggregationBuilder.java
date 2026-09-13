@@ -163,18 +163,6 @@ public class DateHistogramAggregationBuilder extends ValuesSourceAggregationBuil
         return new DateHistogramAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /** Read from a stream, for internal use only. */
-    public DateHistogramAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-        order = InternalOrder.Streams.readHistogramOrder(in, true);
-        keyed = in.readBoolean();
-        minDocCount = in.readVLong();
-        dateHistogramInterval = new DateIntervalWrapper(in);
-        offset = in.readLong();
-        extendedBounds = in.readOptionalWriteable(LongBounds::new);
-        hardBounds = in.readOptionalWriteable(LongBounds::new);
-    }
-
     @Override
     protected ValuesSourceType defaultValueSourceType() {
         return CoreValuesSourceType.DATE;

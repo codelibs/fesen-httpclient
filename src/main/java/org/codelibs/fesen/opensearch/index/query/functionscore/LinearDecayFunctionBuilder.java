@@ -76,13 +76,6 @@ public class LinearDecayFunctionBuilder extends DecayFunctionBuilder<LinearDecay
         super(fieldName, functionBytes);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public LinearDecayFunctionBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     public String getName() {
         return NAME;

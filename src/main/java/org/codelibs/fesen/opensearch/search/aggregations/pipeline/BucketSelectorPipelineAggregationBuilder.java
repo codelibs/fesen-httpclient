@@ -73,16 +73,6 @@ public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAg
         this(name, convertToBucketsPathMap(bucketsPaths), script);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public BucketSelectorPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        bucketsPathsMap = in.readMap(StreamInput::readString, StreamInput::readString);
-        script = new Script(in);
-        gapPolicy = GapPolicy.readFrom(in);
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeMap(bucketsPathsMap, StreamOutput::writeString, StreamOutput::writeString);

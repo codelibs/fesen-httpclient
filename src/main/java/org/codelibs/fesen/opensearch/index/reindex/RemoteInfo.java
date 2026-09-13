@@ -116,27 +116,6 @@ public class RemoteInfo implements Writeable, ToXContentObject {
         this.connectTimeout = requireNonNull(connectTimeout, "[connectTimeout] must be specified");
     }
 
-    /**
-     * Read from a stream.
-     */
-    public RemoteInfo(StreamInput in) throws IOException {
-        scheme = in.readString();
-        host = in.readString();
-        port = in.readVInt();
-        query = in.readBytesReference();
-        username = in.readOptionalString();
-        password = in.readOptionalString();
-        int headersLength = in.readVInt();
-        Map<String, String> headers = new HashMap<>(headersLength);
-        for (int i = 0; i < headersLength; i++) {
-            headers.put(in.readString(), in.readString());
-        }
-        this.headers = unmodifiableMap(headers);
-        socketTimeout = in.readTimeValue();
-        connectTimeout = in.readTimeValue();
-        pathPrefix = in.readOptionalString();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(scheme);

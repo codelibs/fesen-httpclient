@@ -37,10 +37,6 @@ public class ShardDocSortBuilder extends SortBuilder<ShardDocSortBuilder> {
         this.order = SortOrder.ASC; // default to ASC
     }
 
-    public ShardDocSortBuilder(StreamInput in) throws IOException {
-        this.order = SortOrder.readFromStream(in);
-    }
-
     public ShardDocSortBuilder(ShardDocSortBuilder other) {
         this.order = other.order;
     }

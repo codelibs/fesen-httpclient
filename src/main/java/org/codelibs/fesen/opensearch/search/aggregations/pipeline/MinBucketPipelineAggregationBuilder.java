@@ -51,13 +51,6 @@ public class MinBucketPipelineAggregationBuilder extends BucketMetricsPipelineAg
         super(name, NAME, new String[] { bucketsPath });
     }
 
-    /**
-     * Read from a stream.
-     */
-    public MinBucketPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-    }
-
     @Override
     protected void innerWriteTo(StreamOutput out) throws IOException {
         // Do nothing, no extra state to write to stream

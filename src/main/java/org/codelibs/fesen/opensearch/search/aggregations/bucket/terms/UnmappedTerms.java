@@ -81,13 +81,6 @@ public class UnmappedTerms extends InternalTerms<UnmappedTerms, UnmappedTerms.Bu
         super(name, order, order, bucketCountThresholds, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public UnmappedTerms(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected void writeTermTypeInfoTo(StreamOutput out) throws IOException {
         // Nothing to write

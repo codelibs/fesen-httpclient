@@ -127,39 +127,6 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
         generators.putAll(in.generators);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public PhraseSuggestionBuilder(StreamInput in) throws IOException {
-        super(in);
-        maxErrors = in.readFloat();
-        realWordErrorLikelihood = in.readFloat();
-        confidence = in.readFloat();
-        gramSize = in.readOptionalVInt();
-        model = in.readOptionalNamedWriteable(SmoothingModel.class);
-        forceUnigrams = in.readBoolean();
-        tokenLimit = in.readVInt();
-        preTag = in.readOptionalString();
-        postTag = in.readOptionalString();
-        separator = in.readString();
-        if (in.readBoolean()) {
-            collateQuery = new Script(in);
-        }
-        collateParams = in.readMap();
-        collatePrune = in.readOptionalBoolean();
-        int generatorsEntries = in.readVInt();
-        for (int i = 0; i < generatorsEntries; i++) {
-            String type = in.readString();
-            int numberOfGenerators = in.readVInt();
-            List<CandidateGenerator> generatorsList = new ArrayList<>(numberOfGenerators);
-            for (int g = 0; g < numberOfGenerators; g++) {
-                DirectCandidateGeneratorBuilder generator = new DirectCandidateGeneratorBuilder(in);
-                generatorsList.add(generator);
-            }
-            generators.put(type, generatorsList);
-        }
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         out.writeFloat(maxErrors);

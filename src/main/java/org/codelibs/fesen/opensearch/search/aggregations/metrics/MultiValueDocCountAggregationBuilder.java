@@ -46,13 +46,6 @@ public class MultiValueDocCountAggregationBuilder extends ValuesSourceAggregatio
         super(name);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public MultiValueDocCountAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     protected MultiValueDocCountAggregationBuilder(
         MultiValueDocCountAggregationBuilder clone,
         AggregatorFactories.Builder factoryBuilder,

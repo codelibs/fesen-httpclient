@@ -79,10 +79,6 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
 
     private long routedBasedOnClusterVersion = 0;
 
-    public ReplicationRequest(StreamInput in) throws IOException {
-        this(null, in);
-    }
-
     public ReplicationRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(in);
         final boolean thinRead = shardId != null;

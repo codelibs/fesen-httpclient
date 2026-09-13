@@ -91,13 +91,6 @@ public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationB
         return this;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public WeightedAvgAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected AggregationBuilder shallowCopy(Builder factoriesBuilder, Map<String, Object> metadata) {
         return new WeightedAvgAggregationBuilder(this, factoriesBuilder, metadata);

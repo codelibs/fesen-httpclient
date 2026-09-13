@@ -74,14 +74,6 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
         this.backgroundIsSuperset = backgroundIsSuperset;
     }
 
-    /**
-     * Read from a stream.
-     */
-    protected NXYSignificanceHeuristic(StreamInput in) throws IOException {
-        includeNegatives = in.readBoolean();
-        backgroundIsSuperset = in.readBoolean();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeBoolean(includeNegatives);

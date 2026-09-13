@@ -130,17 +130,6 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
         skipDuplicates = in.skipDuplicates;
     }
 
-    /**
-     * Read from a stream.
-     */
-    public CompletionSuggestionBuilder(StreamInput in) throws IOException {
-        super(in);
-        fuzzyOptions = in.readOptionalWriteable(FuzzyOptions::new);
-        regexOptions = in.readOptionalWriteable(RegexOptions::new);
-        contextBytes = in.readOptionalBytesReference();
-        skipDuplicates = in.readBoolean();
-    }
-
     @Override
     public void doWriteTo(StreamOutput out) throws IOException {
         out.writeOptionalWriteable(fuzzyOptions);

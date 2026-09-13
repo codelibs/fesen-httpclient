@@ -37,12 +37,6 @@ public class CryptoSettings implements Writeable, ToXContentObject {
     private String keyProviderType;
     private Settings settings = EMPTY_SETTINGS;
 
-    public CryptoSettings(StreamInput in) throws IOException {
-        keyProviderName = in.readString();
-        keyProviderType = in.readString();
-        settings = readSettingsFromStream(in);
-    }
-
     public CryptoSettings(String keyProviderName) {
         this.keyProviderName = keyProviderName;
     }

@@ -110,20 +110,6 @@ public class MultiGetRequest extends ActionRequest
 
         }
 
-        public Item(StreamInput in) throws IOException {
-            index = in.readString();
-            if (in.getVersion().before(Version.V_2_0_0)) {
-                in.readOptionalString();
-            }
-            id = in.readString();
-            routing = in.readOptionalString();
-            storedFields = in.readOptionalStringArray();
-            version = in.readLong();
-            versionType = VersionType.fromValue(in.readByte());
-
-            fetchSourceContext = in.readOptionalWriteable(FetchSourceContext::new);
-        }
-
         public Item(String index, String id) {
             this.index = index;
             this.id = id;

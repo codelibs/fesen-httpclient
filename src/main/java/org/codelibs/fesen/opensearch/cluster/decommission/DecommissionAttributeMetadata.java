@@ -164,12 +164,6 @@ public class DecommissionAttributeMetadata extends AbstractNamedDiffable<Custom>
         return Version.V_2_4_0;
     }
 
-    public DecommissionAttributeMetadata(StreamInput in) throws IOException {
-        this.decommissionAttribute = new DecommissionAttribute(in);
-        this.status = DecommissionStatus.fromString(in.readString());
-        this.requestID = in.readString();
-    }
-
     public static NamedDiff<Custom> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(Custom.class, TYPE, in);
     }

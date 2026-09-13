@@ -197,19 +197,6 @@ public class HoltWintersModel extends MovAvgModel {
     }
 
     /**
-     * Read from a stream.
-     */
-    public HoltWintersModel(StreamInput in) throws IOException {
-        alpha = in.readDouble();
-        beta = in.readDouble();
-        gamma = in.readDouble();
-        period = in.readVInt();
-        seasonalityType = SeasonalityType.readFrom(in);
-        pad = in.readBoolean();
-        this.padding = inferPadding();
-    }
-
-    /**
      * Only pad if we are multiplicative and padding is enabled. the padding amount is not currently user-configurable.
      */
     private double inferPadding() {

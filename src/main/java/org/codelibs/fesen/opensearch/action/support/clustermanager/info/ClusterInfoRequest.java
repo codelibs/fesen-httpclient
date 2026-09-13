@@ -57,15 +57,6 @@ public abstract class ClusterInfoRequest<Request extends ClusterInfoRequest<Requ
 
     public ClusterInfoRequest() {}
 
-    public ClusterInfoRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            in.readStringArray();
-        }
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

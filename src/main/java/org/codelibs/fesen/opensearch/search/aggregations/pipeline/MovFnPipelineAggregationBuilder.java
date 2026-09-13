@@ -106,16 +106,6 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
         this.window = window;
     }
 
-    public MovFnPipelineAggregationBuilder(StreamInput in) throws IOException {
-        super(in, NAME);
-        bucketsPathString = in.readString();
-        script = new Script(in);
-        format = in.readOptionalString();
-        gapPolicy = GapPolicy.readFrom(in);
-        window = in.readInt();
-        shift = in.readInt();
-    }
-
     @Override
     protected void doWriteTo(StreamOutput out) throws IOException {
         out.writeString(bucketsPathString);

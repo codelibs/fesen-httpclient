@@ -75,13 +75,6 @@ public class StatsAggregationBuilder extends ValuesSourceAggregationBuilder.Leaf
         return new StatsAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public StatsAggregationBuilder(StreamInput in) throws IOException {
-        super(in);
-    }
-
     @Override
     protected ValuesSourceType defaultValueSourceType() {
         return CoreValuesSourceType.NUMERIC;

@@ -32,12 +32,6 @@ public class PauseIngestionRequest extends AcknowledgedRequest<PauseIngestionReq
     private String[] indices;
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
 
-    public PauseIngestionRequest(StreamInput in) throws IOException {
-        super(in);
-        this.indices = in.readStringArray();
-        this.indicesOptions = IndicesOptions.readIndicesOptions(in);
-    }
-
     public PauseIngestionRequest(String[] indices) {
         this.indices = indices;
     }

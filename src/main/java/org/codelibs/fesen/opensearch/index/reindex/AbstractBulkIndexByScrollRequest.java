@@ -53,13 +53,6 @@ public abstract class AbstractBulkIndexByScrollRequest<Self extends AbstractBulk
      */
     private Script script;
 
-    public AbstractBulkIndexByScrollRequest(StreamInput in) throws IOException {
-        super(in);
-        if (in.readBoolean()) {
-            script = new Script(in);
-        }
-    }
-
     /**
      * Constructor for actual use.
      *

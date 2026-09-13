@@ -37,13 +37,6 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
     private ResetSettings[] resetSettings;
 
-    public ResumeIngestionRequest(StreamInput in) throws IOException {
-        super(in);
-        this.indices = in.readStringArray();
-        this.indicesOptions = IndicesOptions.readIndicesOptions(in);
-        this.resetSettings = in.readArray(ResetSettings::new, ResetSettings[]::new);
-    }
-
     /**
      * Constructs a new resume ingestion request.
      */

@@ -54,13 +54,6 @@ public class GetIngestionStateRequest extends BroadcastRequest<GetIngestionState
         this.indexShardPairsList = new ArrayList<>();
     }
 
-    public GetIngestionStateRequest(StreamInput in) throws IOException {
-        super(in);
-        this.shards = in.readVIntArray();
-        this.pageParams = in.readOptionalWriteable(PageParams::new);
-        this.indexShardPairsList = in.readList(IndexShardPair::new);
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;

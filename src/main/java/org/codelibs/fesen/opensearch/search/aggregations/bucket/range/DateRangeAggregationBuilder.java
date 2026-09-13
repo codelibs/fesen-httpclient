@@ -83,13 +83,6 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
         return new DateRangeAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
-    /**
-     * Read from a stream.
-     */
-    public DateRangeAggregationBuilder(StreamInput in) throws IOException {
-        super(in, InternalDateRange.FACTORY, RangeAggregator.Range::new);
-    }
-
     @Override
     public String getType() {
         return NAME;

@@ -54,11 +54,6 @@ public class LinearModel extends MovAvgModel {
 
     public LinearModel() {}
 
-    /**
-     * Read from a stream.
-     */
-    public LinearModel(StreamInput in) {}
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         // No state to write

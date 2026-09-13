@@ -72,15 +72,6 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
     // otherwise it can be removed and above fields can be made final.
     public BaseTasksRequest() {}
 
-    protected BaseTasksRequest(StreamInput in) throws IOException {
-        super(in);
-        taskId = TaskId.readFromStream(in);
-        parentTaskId = TaskId.readFromStream(in);
-        nodes = in.readStringArray();
-        actions = in.readStringArray();
-        timeout = in.readOptionalTimeValue();
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
