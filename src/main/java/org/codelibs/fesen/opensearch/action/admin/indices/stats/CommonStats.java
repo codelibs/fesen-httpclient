@@ -434,25 +434,6 @@ public class CommonStats implements Writeable, ToXContentFragment {
         return recoveryStats;
     }
 
-    /**
-     * Utility method which computes total memory by adding
-     * FieldData, PercolatorCache, Segments (index writer, version map)
-     */
-    public ByteSizeValue getTotalMemory() {
-        long size = 0;
-        if (this.getFieldData() != null) {
-            size += this.getFieldData().getMemorySizeInBytes();
-        }
-        if (this.getQueryCache() != null) {
-            size += this.getQueryCache().getMemorySizeInBytes();
-        }
-        if (this.getSegments() != null) {
-            size += this.getSegments().getIndexWriterMemoryInBytes() + this.getSegments().getVersionMapMemoryInBytes();
-        }
-
-        return new ByteSizeValue(size);
-    }
-
     // note, requires a wrapping object
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {

@@ -240,14 +240,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
     }
 
     /**
-     * The status of the running task. Only available if TaskInfos were build
-     * with the detailed flag.
-     */
-    public Task.Status getStatus() {
-        return status;
-    }
-
-    /**
      * Returns the task start time
      */
     public long getStartTime() {
@@ -277,13 +269,6 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
 
     public Long getCancellationStartTime() {
         return cancellationStartTime;
-    }
-
-    /**
-     * Returns the parent task id
-     */
-    public TaskId getParentTaskId() {
-        return parentTaskId;
     }
 
     /**

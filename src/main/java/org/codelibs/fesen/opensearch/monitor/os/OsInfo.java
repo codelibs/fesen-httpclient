@@ -55,24 +55,6 @@ public class OsInfo implements ReportingService.Info {
     private final String arch;
     private final String version;
 
-    public OsInfo(
-        final long refreshInterval,
-        final int availableProcessors,
-        final int allocatedProcessors,
-        final String name,
-        final String prettyName,
-        final String arch,
-        final String version
-    ) {
-        this.refreshInterval = refreshInterval;
-        this.availableProcessors = availableProcessors;
-        this.allocatedProcessors = allocatedProcessors;
-        this.name = name;
-        this.prettyName = prettyName;
-        this.arch = arch;
-        this.version = version;
-    }
-
     public OsInfo(StreamInput in) throws IOException {
         this.refreshInterval = in.readLong();
         this.availableProcessors = in.readInt();

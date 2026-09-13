@@ -49,10 +49,6 @@ public class TemplatesMetadata extends AbstractDiffable<TemplatesMetadata> imple
         return this.templates;
     }
 
-    public static TemplatesMetadata fromXContent(XContentParser parser) throws IOException {
-        return Builder.fromXContent(parser);
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         Builder.toXContent(this, builder, params);
@@ -109,15 +105,6 @@ public class TemplatesMetadata extends AbstractDiffable<TemplatesMetadata> imple
             this.templates = templates;
         }
 
-        public Builder put(IndexTemplateMetadata.Builder templateBuilder) {
-            return put(templateBuilder.build());
-        }
-
-        public Builder put(IndexTemplateMetadata template) {
-            templates.put(template.name(), template);
-            return this;
-        }
-
         public Builder removeTemplate(String templateName) {
             templates.remove(templateName);
             return this;
@@ -136,26 +123,6 @@ public class TemplatesMetadata extends AbstractDiffable<TemplatesMetadata> imple
             for (IndexTemplateMetadata cursor : templatesMetadata.getTemplates().values()) {
                 IndexTemplateMetadata.Builder.toXContentWithTypes(cursor, builder, params);
             }
-        }
-
-        public static TemplatesMetadata fromXContent(XContentParser parser) throws IOException {
-            Builder builder = new Builder();
-
-            XContentParser.Token token = parser.currentToken();
-            String currentFieldName = parser.currentName();
-            if (currentFieldName == null) {
-                token = parser.nextToken();
-            }
-            if (token == XContentParser.Token.START_OBJECT) {
-                // move to the field name
-                token = parser.nextToken();
-            }
-            if (parser.currentName() != null && token != XContentParser.Token.END_OBJECT) {
-                do {
-                    builder.put(IndexTemplateMetadata.Builder.fromXContent(parser, parser.currentName()));
-                } while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT);
-            }
-            return builder.build();
         }
     }
 }

@@ -505,10 +505,6 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         this.highlightFields = highlightFields;
     }
 
-    public void sortValues(Object[] sortValues, DocValueFormat[] sortValueFormats) {
-        sortValues(new SearchSortValues(sortValues, sortValueFormats));
-    }
-
     public void sortValues(SearchSortValues sortValues) {
         this.sortValues = sortValues;
     }

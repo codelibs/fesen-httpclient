@@ -107,109 +107,48 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
         return this.flags.groups();
     }
 
-    public IndicesStatsRequest docs(boolean docs) {
-        flags.set(CommonStatsFlags.Flag.Docs, docs);
-        return this;
-    }
-
     public boolean docs() {
         return flags.isSet(CommonStatsFlags.Flag.Docs);
-    }
-
-    public IndicesStatsRequest store(boolean store) {
-        flags.set(CommonStatsFlags.Flag.Store, store);
-        return this;
     }
 
     public boolean store() {
         return flags.isSet(CommonStatsFlags.Flag.Store);
     }
 
-    public IndicesStatsRequest indexing(boolean indexing) {
-        flags.set(CommonStatsFlags.Flag.Indexing, indexing);
-
-        return this;
-    }
-
     public boolean indexing() {
         return flags.isSet(CommonStatsFlags.Flag.Indexing);
-    }
-
-    public IndicesStatsRequest get(boolean get) {
-        flags.set(CommonStatsFlags.Flag.Get, get);
-        return this;
     }
 
     public boolean get() {
         return flags.isSet(CommonStatsFlags.Flag.Get);
     }
 
-    public IndicesStatsRequest search(boolean search) {
-        flags.set(CommonStatsFlags.Flag.Search, search);
-        return this;
-    }
-
     public boolean search() {
         return flags.isSet(CommonStatsFlags.Flag.Search);
-    }
-
-    public IndicesStatsRequest merge(boolean merge) {
-        flags.set(CommonStatsFlags.Flag.Merge, merge);
-        return this;
     }
 
     public boolean merge() {
         return flags.isSet(CommonStatsFlags.Flag.Merge);
     }
 
-    public IndicesStatsRequest refresh(boolean refresh) {
-        flags.set(CommonStatsFlags.Flag.Refresh, refresh);
-        return this;
-    }
-
     public boolean refresh() {
         return flags.isSet(CommonStatsFlags.Flag.Refresh);
-    }
-
-    public IndicesStatsRequest flush(boolean flush) {
-        flags.set(CommonStatsFlags.Flag.Flush, flush);
-        return this;
     }
 
     public boolean flush() {
         return flags.isSet(CommonStatsFlags.Flag.Flush);
     }
 
-    public IndicesStatsRequest warmer(boolean warmer) {
-        flags.set(CommonStatsFlags.Flag.Warmer, warmer);
-        return this;
-    }
-
     public boolean warmer() {
         return flags.isSet(CommonStatsFlags.Flag.Warmer);
-    }
-
-    public IndicesStatsRequest queryCache(boolean queryCache) {
-        flags.set(CommonStatsFlags.Flag.QueryCache, queryCache);
-        return this;
     }
 
     public boolean queryCache() {
         return flags.isSet(CommonStatsFlags.Flag.QueryCache);
     }
 
-    public IndicesStatsRequest fieldData(boolean fieldData) {
-        flags.set(CommonStatsFlags.Flag.FieldData, fieldData);
-        return this;
-    }
-
     public boolean fieldData() {
         return flags.isSet(CommonStatsFlags.Flag.FieldData);
-    }
-
-    public IndicesStatsRequest segments(boolean segments) {
-        flags.set(CommonStatsFlags.Flag.Segments, segments);
-        return this;
     }
 
     public boolean segments() {
@@ -225,11 +164,6 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
         return flags.fieldDataFields();
     }
 
-    public IndicesStatsRequest completion(boolean completion) {
-        flags.set(CommonStatsFlags.Flag.Completion, completion);
-        return this;
-    }
-
     public boolean completion() {
         return flags.isSet(CommonStatsFlags.Flag.Completion);
     }
@@ -243,27 +177,12 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
         return flags.completionDataFields();
     }
 
-    public IndicesStatsRequest translog(boolean translog) {
-        flags.set(CommonStatsFlags.Flag.Translog, translog);
-        return this;
-    }
-
     public boolean translog() {
         return flags.isSet(CommonStatsFlags.Flag.Translog);
     }
 
-    public IndicesStatsRequest requestCache(boolean requestCache) {
-        flags.set(CommonStatsFlags.Flag.RequestCache, requestCache);
-        return this;
-    }
-
     public boolean requestCache() {
         return flags.isSet(CommonStatsFlags.Flag.RequestCache);
-    }
-
-    public IndicesStatsRequest recovery(boolean recovery) {
-        flags.set(CommonStatsFlags.Flag.Recovery, recovery);
-        return this;
     }
 
     public boolean recovery() {

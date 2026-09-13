@@ -121,19 +121,6 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
     // the index name "_na_" is never read back, what matters are settings, mappings and aliases
     private CreateIndexRequest createIndexRequest = new CreateIndexRequest("_na_");
 
-    public RolloverRequest(StreamInput in) throws IOException {
-        super(in);
-        rolloverTarget = in.readString();
-        newIndexName = in.readOptionalString();
-        dryRun = in.readBoolean();
-        int size = in.readVInt();
-        for (int i = 0; i < size; i++) {
-            Condition<?> condition = in.readNamedWriteable(Condition.class);
-            this.conditions.put(condition.name, condition);
-        }
-        createIndexRequest = new CreateIndexRequest(in);
-    }
-
     RolloverRequest() {}
 
     public RolloverRequest(String rolloverTarget, String newIndexName) {

@@ -421,22 +421,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
-    public XContentBuilder array(String name, boolean[] values) throws IOException {
-        return field(name).values(values);
-    }
-
-    private XContentBuilder values(boolean[] values) throws IOException {
-        if (values == null) {
-            return nullValue();
-        }
-        startArray();
-        for (boolean b : values) {
-            value(b);
-        }
-        endArray();
-        return this;
-    }
-
     public XContentBuilder value(Boolean value) throws IOException {
         return (value == null) ? nullValue() : value(value.booleanValue());
     }
@@ -673,22 +657,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
-    public XContentBuilder array(String name, BigInteger[] values) throws IOException {
-        return field(name).values(values);
-    }
-
-    private XContentBuilder values(BigInteger[] values) throws IOException {
-        if (values == null) {
-            return nullValue();
-        }
-        startArray();
-        for (BigInteger b : values) {
-            value(b);
-        }
-        endArray();
-        return this;
-    }
-
     public XContentBuilder value(BigInteger value) throws IOException {
         if (value == null) {
             return nullValue();
@@ -707,22 +675,6 @@ public final class XContentBuilder implements Closeable, Flushable {
         }
         ensureNameNotNull(name);
         generatorInstance().writeNumberField(name, value);
-        return this;
-    }
-
-    public XContentBuilder array(String name, BigDecimal[] values) throws IOException {
-        return field(name).values(values);
-    }
-
-    private XContentBuilder values(BigDecimal[] values) throws IOException {
-        if (values == null) {
-            return nullValue();
-        }
-        startArray();
-        for (BigDecimal b : values) {
-            value(b);
-        }
-        endArray();
         return this;
     }
 

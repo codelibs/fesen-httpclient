@@ -377,10 +377,6 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
             return restoreUUID;
         }
 
-        public Snapshot snapshot() {
-            return snapshot;
-        }
-
         /**
          * Gets the {@link IndexId} of the recovery source. May contain {@link IndexMetadata#INDEX_UUID_NA_VALUE} as the index uuid if it
          * was created by an older version cluster-manager in a mixed version cluster.

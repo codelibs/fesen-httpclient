@@ -124,17 +124,6 @@ public class PutRepositoryRequestBuilder extends AcknowledgedRequestBuilder<
     }
 
     /**
-     * Sets the repository settings
-     *
-     * @param source repository settings
-     * @return this builder
-     */
-    public PutRepositoryRequestBuilder setSettings(Map<String, Object> source) {
-        request.settings(source);
-        return this;
-    }
-
-    /**
      * Sets whether or not repository should be verified after creation
      *
      * @param verify true if repository should be verified after registration, false otherwise
@@ -142,17 +131,6 @@ public class PutRepositoryRequestBuilder extends AcknowledgedRequestBuilder<
      */
     public PutRepositoryRequestBuilder setVerify(boolean verify) {
         request.verify(verify);
-        return this;
-    }
-
-    /**
-     * Sets the repository encryption settings
-     *
-     * @param cryptoSettings repository crypto settings builder
-     * @return this builder
-     */
-    public PutRepositoryRequestBuilder setEncryptionSettings(CryptoSettings cryptoSettings) {
-        request.cryptoSettings(cryptoSettings);
         return this;
     }
 }

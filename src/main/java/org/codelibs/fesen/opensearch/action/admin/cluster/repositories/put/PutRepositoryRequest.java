@@ -186,17 +186,6 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
     }
 
     /**
-     * Sets the repository settings.
-     *
-     * @param source repository settings
-     * @return this request
-     */
-    public PutRepositoryRequest settings(Map<String, Object> source) {
-        this.settings = Settings.builder().loadFromMap(source).build();
-        return this;
-    }
-
-    /**
      * Returns repository settings
      *
      * @return repository settings
@@ -221,53 +210,12 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
     }
 
     /**
-     * Sets the repository crypto settings
-     *
-     * @param cryptoSettings repository crypto settings
-     * @return this request
-     */
-    public PutRepositoryRequest cryptoSettings(CryptoSettings cryptoSettings) {
-        this.cryptoSettings = cryptoSettings;
-        return this;
-    }
-
-    /**
      * Returns repository encryption settings
      *
      * @return repository encryption settings
      */
     public CryptoSettings cryptoSettings() {
         return cryptoSettings;
-    }
-
-    /**
-     * Parses repository definition.
-     *
-     * @param repositoryDefinition repository definition
-     */
-    public PutRepositoryRequest source(Map<String, Object> repositoryDefinition) {
-        for (Map.Entry<String, Object> entry : repositoryDefinition.entrySet()) {
-            String name = entry.getKey();
-            if (name.equals("type")) {
-                type(entry.getValue().toString());
-            } else if (name.equals("settings")) {
-                if (!(entry.getValue() instanceof Map)) {
-                    throw new IllegalArgumentException("Malformed settings section, should include an inner object");
-                }
-                @SuppressWarnings("unchecked")
-                Map<String, Object> sub = (Map<String, Object>) entry.getValue();
-                settings(sub);
-            } else if (name.equals("crypto_settings")) {
-                if (!(entry.getValue() instanceof Map)) {
-                    throw new IllegalArgumentException("Malformed encryption_settings section, should include an inner object");
-                }
-                @SuppressWarnings("unchecked")
-                Map<String, Object> sub = (Map<String, Object>) entry.getValue();
-                CryptoSettings cryptoSettings = new CryptoSettings(sub);
-                cryptoSettings(cryptoSettings);
-            }
-        }
-        return this;
     }
 
     @Override

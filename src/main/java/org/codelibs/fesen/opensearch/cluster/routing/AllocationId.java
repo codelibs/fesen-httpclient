@@ -148,94 +148,12 @@ public class AllocationId implements ToXContentObject, Writeable {
     }
 
     /**
-     * Creates a new allocation id for initializing allocation.
-     */
-    public static AllocationId newInitializing() {
-        return new AllocationId(UUIDs.randomBase64UUID(), null, null, null);
-    }
-
-    /**
-     * Creates a new allocation id for initializing allocation based on an existing id.
-     */
-    public static AllocationId newInitializing(String existingAllocationId) {
-        return new AllocationId(existingAllocationId, null, null, null);
-    }
-
-    /**
      * Creates a new allocation id for the target initializing shard that is the result
      * of a relocation.
      */
     public static AllocationId newTargetRelocation(AllocationId allocationId) {
         assert allocationId.getRelocationId() != null;
         return new AllocationId(allocationId.getRelocationId(), allocationId.getId(), null, null);
-    }
-
-    /**
-     * Creates a new allocation id for a shard that moves to be relocated, populating
-     * the transient holder for relocationId.
-     */
-    public static AllocationId newRelocation(AllocationId allocationId) {
-        assert allocationId.getRelocationId() == null;
-        return new AllocationId(allocationId.getId(), UUIDs.randomBase64UUID(), null, null);
-    }
-
-    /**
-     * Creates a new allocation id representing a cancelled relocation.
-     * <p>
-     * Note that this is expected to be called on the allocation id
-     * of the *source* shard.
-     */
-    public static AllocationId cancelRelocation(AllocationId allocationId) {
-        assert allocationId.getRelocationId() != null;
-        return new AllocationId(allocationId.getId(), null, null, null);
-    }
-
-    /**
-     * Creates a new allocation id finalizing a relocation.
-     * <p>
-     * Note that this is expected to be called on the allocation id
-     * of the *target* shard and thus it only needs to clear the relocating id.
-     */
-    public static AllocationId finishRelocation(AllocationId allocationId) {
-        assert allocationId.getRelocationId() != null;
-        return new AllocationId(allocationId.getId(), null, null, null);
-    }
-
-    /**
-     * Creates a new allocation id for a shard that is undergoing split, populating
-     * the transient holder for splitChildAllocationIds.
-     */
-    public static AllocationId newSplit(AllocationId allocationId, int numberOfChildShards) {
-        assert allocationId.getSplitChildAllocationIds() == null && allocationId.getParentAllocationId() == null;
-        List<String> childIds = new ArrayList<>();
-        for (int c = 0; c < numberOfChildShards; c++) {
-            childIds.add(UUIDs.randomBase64UUID());
-        }
-        return new AllocationId(allocationId.getId(), null, childIds, null);
-    }
-
-    /**
-     * Creates a new allocation id for a child shard that is the result of a split.
-     */
-    public static AllocationId newTargetSplit(AllocationId allocationId, String childAllocId) {
-        assert allocationId.getSplitChildAllocationIds() != null;
-        return new AllocationId(childAllocId, null, null, allocationId.getId());
-    }
-
-    /**
-     * Creates a new allocation id representing a cancelled split.
-     */
-    public static AllocationId cancelSplit(AllocationId allocationId) {
-        assert allocationId.getSplitChildAllocationIds() != null;
-        return new AllocationId(allocationId.getId(), null, null, null);
-    }
-
-    /**
-     * Creates a new allocation id finalizing a split on the target child shard.
-     */
-    public static AllocationId finishSplit(AllocationId allocationId) {
-        assert allocationId.getParentAllocationId() != null;
-        return new AllocationId(allocationId.getId(), null, null, null);
     }
 
     /**
@@ -251,20 +169,6 @@ public class AllocationId implements ToXContentObject, Writeable {
      */
     public String getRelocationId() {
         return relocationId;
-    }
-
-    /**
-     * The transient split child allocation ids holding the unique ids which are used for split.
-     */
-    public List<String> getSplitChildAllocationIds() {
-        return splitChildAllocationIds;
-    }
-
-    /**
-     * The transient split parent allocation id holding the unique id that is used for split.
-     */
-    public String getParentAllocationId() {
-        return parentAllocationId;
     }
 
     @Override

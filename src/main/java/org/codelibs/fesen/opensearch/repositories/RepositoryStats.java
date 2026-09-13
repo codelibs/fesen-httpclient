@@ -69,12 +69,6 @@ public class RepositoryStats implements Writeable, ToXContentFragment {
         this.detailed = false;
     }
 
-    public RepositoryStats(Map<BlobStore.Metric, Map<String, Long>> extendedStats, boolean detailed) {
-        this.requestCounts = Collections.emptyMap();
-        this.extendedStats = Collections.unmodifiableMap(extendedStats);
-        this.detailed = detailed;
-    }
-
     public RepositoryStats(StreamInput in) throws IOException {
         this.requestCounts = in.readMap(StreamInput::readString, StreamInput::readLong);
         this.extendedStats = in.readMap(
@@ -82,27 +76,6 @@ public class RepositoryStats implements Writeable, ToXContentFragment {
             i -> i.readMap(StreamInput::readString, StreamInput::readLong)
         );
         this.detailed = in.readBoolean();
-    }
-
-    public RepositoryStats merge(RepositoryStats otherStats) {
-        assert this.detailed == otherStats.detailed;
-        if (detailed) {
-            final Map<BlobStore.Metric, Map<String, Long>> result = new HashMap<>();
-            result.putAll(extendedStats);
-            for (Map.Entry<BlobStore.Metric, Map<String, Long>> entry : otherStats.extendedStats.entrySet()) {
-                for (Map.Entry<String, Long> nested : entry.getValue().entrySet()) {
-                    result.get(entry.getKey()).merge(nested.getKey(), nested.getValue(), Math::addExact);
-                }
-            }
-            return new RepositoryStats(result, true);
-        } else {
-            final Map<String, Long> result = new HashMap<>();
-            result.putAll(requestCounts);
-            for (Map.Entry<String, Long> entry : otherStats.requestCounts.entrySet()) {
-                result.merge(entry.getKey(), entry.getValue(), Math::addExact);
-            }
-            return new RepositoryStats(result);
-        }
     }
 
     @Override

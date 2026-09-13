@@ -36,10 +36,6 @@ public record ShardRange(int shardId, int start, int end) implements Comparable<
         this(in.readVInt(), in.readInt(), in.readInt());
     }
 
-    public boolean contains(int hash) {
-        return hash >= start && hash <= end;
-    }
-
     @Override
     public int compareTo(ShardRange o) {
         return Integer.compare(start, o.start);
@@ -62,26 +58,5 @@ public record ShardRange(int shardId, int start, int end) implements Comparable<
         builder.startObject().field("shard_id", shardId).field("start", start).field("end", end);
         builder.endObject();
         return builder;
-    }
-
-    public static ShardRange parse(XContentParser parser) throws IOException {
-        int shardId = -1, start = -1, end = -1;
-        XContentParser.Token token;
-        String fieldName = null;
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                fieldName = parser.currentName();
-            } else if (token == XContentParser.Token.VALUE_NUMBER) {
-                if ("shard_id".equals(fieldName)) {
-                    shardId = parser.intValue();
-                } else if ("start".equals(fieldName)) {
-                    start = parser.intValue();
-                } else if ("end".equals(fieldName)) {
-                    end = parser.intValue();
-                }
-            }
-        }
-
-        return new ShardRange(shardId, start, end);
     }
 }

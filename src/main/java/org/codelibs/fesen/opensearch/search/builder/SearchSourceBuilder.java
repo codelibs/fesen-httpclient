@@ -916,79 +916,10 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Adds a field to load from the doc values and return as part of the
-     * search request.
-     */
-    public SearchSourceBuilder docValueField(String name, @Nullable String format) {
-        if (docValueFields == null) {
-            docValueFields = new ArrayList<>();
-        }
-        docValueFields.add(new FieldAndFormat(name, format));
-        return this;
-    }
-
-    /**
-     * Adds a field to load from the doc values and return as part of the
-     * search request.
-     */
-    public SearchSourceBuilder docValueField(String name) {
-        return docValueField(name, null);
-    }
-
-    /**
      * Gets the fields to load and return as part of the search request.
      */
     public List<FieldAndFormat> fetchFields() {
         return fetchFields;
-    }
-
-    /**
-     * Adds a field to load and return as part of the search request.
-     */
-    public SearchSourceBuilder fetchField(String name) {
-        return fetchField(name, null);
-    }
-
-    /**
-     * Adds a field to load and return as part of the search request.
-     * @param name the field name.
-     * @param format an optional format string used when formatting values, for example a date format.
-     */
-    public SearchSourceBuilder fetchField(String name, @Nullable String format) {
-        if (fetchFields == null) {
-            fetchFields = new ArrayList<>();
-        }
-        fetchFields.add(new FieldAndFormat(name, format));
-        return this;
-    }
-
-    /**
-     * Adds a script field under the given name with the provided script.
-     *
-     * @param name
-     *            The name of the field
-     * @param script
-     *            The script
-     */
-    public SearchSourceBuilder scriptField(String name, Script script) {
-        scriptField(name, script, false);
-        return this;
-    }
-
-    /**
-     * Adds a script field under the given name with the provided script.
-     *
-     * @param name
-     *            The name of the field
-     * @param script
-     *            The script
-     */
-    public SearchSourceBuilder scriptField(String name, Script script, boolean ignoreFailure) {
-        if (scriptFields == null) {
-            scriptFields = new ArrayList<>();
-        }
-        scriptFields.add(new ScriptField(name, script, ignoreFailure));
-        return this;
     }
 
     /**
@@ -1021,37 +952,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
-     * Adds a derived field with the given name with provided type, script and other parameters
-     * @param name name of the derived field
-     * @param type type of the derived field
-     * @param script script associated with derived field
-     * @param properties map of field name and type of field for nested fields within object derived field
-     * @param prefilterField source text field which is indexed to filter documents for better performance
-     * @param format date format
-     * @param ignoreMalformed ignores malformed fields instead of failing search request
-     */
-    public SearchSourceBuilder derivedField(
-        String name,
-        String type,
-        Script script,
-        Map<String, Object> properties,
-        String prefilterField,
-        String format,
-        Boolean ignoreMalformed
-    ) {
-        if (derivedFields == null) {
-            derivedFields = new ArrayList<>();
-        }
-        DerivedField derivedField = new DerivedField(name, type, script);
-        derivedField.setProperties(properties);
-        derivedField.setPrefilterField(prefilterField);
-        derivedField.setFormat(format);
-        derivedField.setIgnoreMalformed(ignoreMalformed);
-        derivedFields.add(derivedField);
-        return this;
-    }
-
-    /**
      * Sets the boost a specific index or alias will receive when the query is executed
      * against it.
      *
@@ -1072,14 +972,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      */
     public List<IndexBoost> indexBoosts() {
         return indexBoosts;
-    }
-
-    /**
-     * The stats groups this request will be aggregated under.
-     */
-    public SearchSourceBuilder stats(List<String> statsGroups) {
-        this.stats = statsGroups;
-        return this;
     }
 
     /**
@@ -1125,13 +1017,6 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      */
     public Map<String, Object> searchPipelineSource() {
         return searchPipelineSource;
-    }
-
-    /**
-     * @return a search pipeline name defined within the search source (see {@link org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService})
-     */
-    public String pipeline() {
-        return searchPipeline;
     }
 
     /**

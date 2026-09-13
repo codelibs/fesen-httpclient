@@ -183,39 +183,4 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
         builder.endObject();
         return builder;
     }
-
-    public static BulkResponse fromXContent(XContentParser parser) throws IOException {
-        XContentParser.Token token = parser.nextToken();
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
-
-        long took = -1L;
-        long ingestTook = NO_INGEST_TOOK;
-        List<BulkItemResponse> items = new ArrayList<>();
-
-        String currentFieldName = parser.currentName();
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-            } else if (token.isValue()) {
-                if (TOOK.equals(currentFieldName)) {
-                    took = parser.longValue();
-                } else if (INGEST_TOOK.equals(currentFieldName)) {
-                    ingestTook = parser.longValue();
-                } else if (ERRORS.equals(currentFieldName) == false) {
-                    throwUnknownField(currentFieldName, parser.getTokenLocation());
-                }
-            } else if (token == XContentParser.Token.START_ARRAY) {
-                if (ITEMS.equals(currentFieldName)) {
-                    while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                        items.add(BulkItemResponse.fromXContent(parser, items.size()));
-                    }
-                } else {
-                    throwUnknownField(currentFieldName, parser.getTokenLocation());
-                }
-            } else {
-                throwUnknownToken(token, parser.getTokenLocation());
-            }
-        }
-        return new BulkResponse(items.toArray(new BulkItemResponse[0]), took, ingestTook);
-    }
 }

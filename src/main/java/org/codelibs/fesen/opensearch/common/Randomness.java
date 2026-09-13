@@ -108,65 +108,9 @@ public final class Randomness {
         }
     }
 
-    /**
-     * Returns a {@link SecureRandom} via
-     * {@code
-     * FipsDRBG.SHA512_HMAC.fromEntropySource(new BasicEntropySourceProvider(entropySource, true)).build(null, true)
-     * }
-     * if BCFIPS is on classpath and the application is running in FIPS JVM,
-     * otherwise it returns a non-approved {@link SecureRandom}.
-     */
-    public static SecureRandom createSecure() {
-        try {
-            // Equivalent to: boolean approvedOnly = CryptoServicesRegistrar.isInApprovedOnlyMode()
-            var registrarClass = Class.forName("org.bouncycastle.crypto.CryptoServicesRegistrar");
-            var isApprovedOnlyMethod = registrarClass.getMethod("isInApprovedOnlyMode");
-            var approvedOnly = (Boolean) isApprovedOnlyMethod.invoke(null);
-
-            if (approvedOnly) {
-                var isPredictionResistant = true;
-                var entropySource = SecureRandom.getInstance("DEFAULT", "BCFIPS");
-
-                // Equivalent to:
-                // EntropySourceProvider entropyProvider = new BasicEntropySourceProvider(entropySource, isPredictionResistant)
-                var basicEntropyProviderClass = Class.forName("org.bouncycastle.crypto.util.BasicEntropySourceProvider");
-                var entropyConstructor = basicEntropyProviderClass.getConstructor(SecureRandom.class, boolean.class);
-                var entropyProvider = entropyConstructor.newInstance(entropySource, isPredictionResistant);
-
-                // Equivalent to: FipsDRBG.Base sha512Hmac = FipsDRBG.SHA512_HMAC
-                var fipsDrbgClass = Class.forName("org.bouncycastle.crypto.fips.FipsDRBG");
-                var sha512HmacField = fipsDrbgClass.getField("SHA512_HMAC");
-                var sha512Hmac = sha512HmacField.get(null);
-
-                // Equivalent to: FipsDRBG.Builder builder = sha512Hmac.fromEntropySource(entropyProvider)
-                var entropyProviderClass = Class.forName("org.bouncycastle.crypto.EntropySourceProvider");
-                var fromEntropySourceMethod = sha512Hmac.getClass().getMethod("fromEntropySource", entropyProviderClass);
-                var builder = fromEntropySourceMethod.invoke(sha512Hmac, entropyProvider);
-
-                // Equivalent to: SecureRandom drbg = builder.build(null, isPredictionResistant)
-                var buildMethod = builder.getClass().getMethod("build", byte[].class, boolean.class);
-                var drbgInstance = buildMethod.invoke(builder, null, isPredictionResistant);
-
-                return (SecureRandom) drbgInstance;
-            }
-
-            return new SecureRandom();
-        } catch (ReflectiveOperationException | GeneralSecurityException e) {
-            try {
-                return SecureRandom.getInstanceStrong();
-            } catch (NoSuchAlgorithmException ex) {
-                throw new SecurityException("Failed to instantiate SecureRandom: " + e.getMessage(), e);
-            }
-        }
-    }
-
     @SuppressForbidden(reason = "ThreadLocalRandom is okay when not running tests")
     private static Random getWithoutSeed() {
         assert currentMethod == null && getRandomMethod == null : "running under tests but tried to create non-reproducible random";
         return ThreadLocalRandom.current();
-    }
-
-    public static void shuffle(List<?> list) {
-        Collections.shuffle(list, get());
     }
 }

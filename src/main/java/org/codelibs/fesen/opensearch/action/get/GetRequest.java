@@ -86,23 +86,6 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
 
     public GetRequest() {}
 
-    GetRequest(StreamInput in) throws IOException {
-        super(in);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            in.readString();
-        }
-        id = in.readString();
-        routing = in.readOptionalString();
-        preference = in.readOptionalString();
-        refresh = in.readBoolean();
-        storedFields = in.readOptionalStringArray();
-        realtime = in.readBoolean();
-
-        this.versionType = VersionType.fromValue(in.readByte());
-        this.version = in.readLong();
-        fetchSourceContext = in.readOptionalWriteable(FetchSourceContext::new);
-    }
-
     /**
      * Constructs a new get request against the specified index. The {@link #id(String)} must also be set.
      */

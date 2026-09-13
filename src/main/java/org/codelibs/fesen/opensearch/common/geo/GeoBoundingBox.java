@@ -99,22 +99,6 @@ public class GeoBoundingBox implements ToXContentObject, Writeable {
         return bottomRight;
     }
 
-    public double top() {
-        return topLeft.lat();
-    }
-
-    public double bottom() {
-        return bottomRight.lat();
-    }
-
-    public double left() {
-        return topLeft.lon();
-    }
-
-    public double right() {
-        return bottomRight.lon();
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(BOUNDS_FIELD.getPreferredName());
@@ -141,26 +125,6 @@ public class GeoBoundingBox implements ToXContentObject, Writeable {
             builder.array(BOTTOM_RIGHT_FIELD.getPreferredName(), bottomRight.lon(), bottomRight.lat());
         }
         return builder;
-    }
-
-    /**
-     * If the bounding box crosses the date-line (left greater-than right) then the
-     * longitude of the point need only to be higher than the left or lower
-     * than the right. Otherwise, it must be both.
-     *
-     * @param lon the longitude of the point
-     * @param lat the latitude of the point
-     * @return whether the point (lon, lat) is in the specified bounding box
-     */
-    public boolean pointInBounds(double lon, double lat) {
-        if (lat >= bottom() && lat <= top()) {
-            if (left() <= right()) {
-                return lon >= left() && lon <= right();
-            } else {
-                return lon >= left() || lon <= right();
-            }
-        }
-        return false;
     }
 
     @Override

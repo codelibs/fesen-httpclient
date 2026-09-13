@@ -69,14 +69,6 @@ public class ClusterSearchShardsRequestBuilder extends ClusterManagerNodeReadOpe
     }
 
     /**
-     * The routing values to control the shards that the search will be executed on.
-     */
-    public ClusterSearchShardsRequestBuilder setRouting(String... routing) {
-        request.routing(routing);
-        return this;
-    }
-
-    /**
      * Sets the preference to execute the search. Defaults to randomize across shards. Can be set to
      * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
      * or a custom value, which guarantees that the same order

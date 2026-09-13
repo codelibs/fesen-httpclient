@@ -62,13 +62,6 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
  */
 @PublicApi(since = "1.0.0")
 public final class SearchHits implements Writeable, ToXContentFragment, Iterable<SearchHit> {
-    public static SearchHits empty() {
-        return empty(true);
-    }
-
-    public static SearchHits empty(boolean withTotalHits) {
-        return new SearchHits(EMPTY, withTotalHits ? new TotalHits(0, Relation.EQUAL_TO) : null, 0);
-    }
 
     public static final SearchHit[] EMPTY = new SearchHit[0];
 
@@ -164,22 +157,6 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
      */
     public SearchHit[] getHits() {
         return this.hits;
-    }
-
-    /**
-     * Creates a deep copy of this SearchHits instance.
-     *
-     * @return a deep copy of the current SearchHits object
-     * @throws IOException if an I/O exception occurs during serialization or deserialization
-     */
-    public SearchHits deepCopy() throws IOException {
-        try (BytesStreamOutput out = new BytesStreamOutput()) {
-            this.writeTo(out);
-
-            try (StreamInput in = out.bytes().streamInput()) {
-                return new SearchHits(in);
-            }
-        }
     }
 
     /**

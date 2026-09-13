@@ -466,13 +466,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     }
 
     /**
-     * Sets whether network round-trips should be minimized when executing cross-cluster search requests. Defaults to <code>true</code>.
-     */
-    public void setCcsMinimizeRoundtrips(boolean ccsMinimizeRoundtrips) {
-        this.ccsMinimizeRoundtrips = ccsMinimizeRoundtrips;
-    }
-
-    /**
      * A comma separated list of routing values to control the shards the search will be executed on.
      */
     public String routing() {
@@ -484,14 +477,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      */
     public SearchRequest routing(String routing) {
         this.routing = routing;
-        return this;
-    }
-
-    /**
-     * The routing values to control the shards that the search will be executed on.
-     */
-    public SearchRequest routing(String... routings) {
-        this.routing = Strings.arrayToCommaDelimitedString(routings);
         return this;
     }
 
@@ -593,27 +578,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         return scroll(new Scroll(TimeValue.parseTimeValue(keepAlive, null, getClass().getSimpleName() + ".Scroll.keepAlive")));
     }
 
-    /**
-     * Sets if this request should use the request cache or not, assuming that it can (for
-     * example, if "now" is used, it will never be cached). By default (not set, or null,
-     * will default to the index level setting if request cache is enabled or not).
-     */
-    public SearchRequest requestCache(Boolean requestCache) {
-        this.requestCache = requestCache;
-        return this;
-    }
-
     public Boolean requestCache() {
         return this.requestCache;
-    }
-
-    /**
-     * Sets if this request should allow partial results. (If method is not called,
-     * will default to the cluster level setting).
-     */
-    public SearchRequest allowPartialSearchResults(boolean allowPartialSearchResults) {
-        this.allowPartialSearchResults = allowPartialSearchResults;
-        return this;
     }
 
     public Boolean allowPartialSearchResults() {
@@ -697,13 +663,6 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     }
 
     /**
-     * Sets value of phase_took query param if provided by user. Defaults to <code>null</code>.
-     */
-    public void setPhaseTook(Boolean phaseTook) {
-        this.phaseTook = phaseTook;
-    }
-
-    /**
      * Returns a threshold that enforces a pre-filter roundtrip to pre-filter search shards based on query rewriting if the number of shards
      * the search request expands to exceeds the threshold, or <code>null</code> if the threshold is unspecified.
      * This filter roundtrip can limit the number of shards significantly if for
@@ -743,17 +702,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
             : source.trackTotalHitsUpTo();
     }
 
-    public void setCancelAfterTimeInterval(TimeValue cancelAfterTimeInterval) {
-        this.cancelAfterTimeInterval = cancelAfterTimeInterval;
-    }
-
     public TimeValue getCancelAfterTimeInterval() {
         return cancelAfterTimeInterval;
-    }
-
-    public SearchRequest pipeline(String pipeline) {
-        this.pipeline = pipeline;
-        return this;
     }
 
     public String pipeline() {

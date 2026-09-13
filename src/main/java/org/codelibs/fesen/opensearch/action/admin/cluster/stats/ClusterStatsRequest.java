@@ -54,28 +54,6 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
     private final Set<IndexMetric> indexMetricsRequested = new HashSet<>();
     private Boolean computeAllMetrics = true;
 
-    public ClusterStatsRequest(StreamInput in) throws IOException {
-        super(in);
-        if (in.getVersion().onOrAfter(Version.V_2_16_0)) {
-            useAggregatedNodeLevelResponses = in.readOptionalBoolean();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_18_0)) {
-            computeAllMetrics = in.readOptionalBoolean();
-            final long longMetricsFlags = in.readLong();
-            for (Metric metric : Metric.values()) {
-                if ((longMetricsFlags & (1 << metric.getIndex())) != 0) {
-                    requestedMetrics.add(metric);
-                }
-            }
-            final long longIndexMetricFlags = in.readLong();
-            for (IndexMetric indexMetric : IndexMetric.values()) {
-                if ((longIndexMetricFlags & (1 << indexMetric.getIndex())) != 0) {
-                    indexMetricsRequested.add(indexMetric);
-                }
-            }
-        }
-    }
-
     private Boolean useAggregatedNodeLevelResponses = false;
 
     /**

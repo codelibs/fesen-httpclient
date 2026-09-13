@@ -125,20 +125,8 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
         return totalDownloadsSucceeded.get();
     }
 
-    void incrementDownloadsSucceeded() {
-        totalDownloadsSucceeded.addAndGet(1);
-    }
-
-    public long getDownloadBytesSucceeded() {
-        return downloadBytesSucceeded.get();
-    }
-
     public void addDownloadBytesSucceeded(long count) {
         downloadBytesSucceeded.addAndGet(count);
-    }
-
-    public long getTotalDownloadTimeInMillis() {
-        return totalDownloadTimeInMillis.get();
     }
 
     public void addDownloadTimeInMillis(long duration) {
@@ -149,20 +137,12 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
         return lastSuccessfulDownloadTimestamp.get();
     }
 
-    void setLastSuccessfulDownloadTimestamp(long lastSuccessfulDownloadTimestamp) {
-        this.lastSuccessfulDownloadTimestamp.set(lastSuccessfulDownloadTimestamp);
-    }
-
     boolean isDownloadBytesMovingAverageReady() {
         return downloadBytesMovingAverageReference.get().isReady();
     }
 
     double getDownloadBytesMovingAverage() {
         return downloadBytesMovingAverageReference.get().getAverage();
-    }
-
-    void updateDownloadBytesMovingAverage(long count) {
-        updateMovingAverage(count, downloadBytesMutex, downloadBytesMovingAverageReference);
     }
 
     boolean isDownloadBytesPerSecMovingAverageReady() {
@@ -173,66 +153,12 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
         return downloadBytesPerSecMovingAverageReference.get().getAverage();
     }
 
-    void updateDownloadBytesPerSecMovingAverage(long speed) {
-        updateMovingAverage(speed, downloadBytesPerSecMutex, downloadBytesPerSecMovingAverageReference);
-    }
-
     boolean isDownloadTimeMovingAverageReady() {
         return downloadTimeMsMovingAverageReference.get().isReady();
     }
 
     double getDownloadTimeMovingAverage() {
         return downloadTimeMsMovingAverageReference.get().getAverage();
-    }
-
-    void updateDownloadTimeMovingAverage(long duration) {
-        updateMovingAverage(duration, downloadTimeMsMutex, downloadTimeMsMovingAverageReference);
-    }
-
-    /**
-     * Record stats related to a download from Remote Translog Store
-     *
-     * @param prevDownloadBytesSucceeded Number of downloadBytesSucceeded in this tracker before the download was started
-     * @param prevDownloadTimeInMillis   Amount of downloadTimeInMillis in this tracker before the download was started
-     */
-    public void recordDownloadStats(long prevDownloadBytesSucceeded, long prevDownloadTimeInMillis) {
-        setLastSuccessfulDownloadTimestamp(System.currentTimeMillis());
-        incrementDownloadsSucceeded();
-        long bytesDownloaded = getDownloadBytesSucceeded() - prevDownloadBytesSucceeded;
-        updateDownloadBytesMovingAverage(bytesDownloaded);
-        long durationInMillis = getTotalDownloadTimeInMillis() - prevDownloadTimeInMillis;
-        updateDownloadTimeMovingAverage(durationInMillis);
-        if (durationInMillis > 0) {
-            updateDownloadBytesPerSecMovingAverage(bytesDownloaded * 1_000L / durationInMillis);
-        }
-    }
-
-    /**
-     * Gets the tracker's state as seen in the stats API
-     *
-     * @return Stats object with the tracker's stats
-     */
-    public RemoteTranslogTransferTracker.Stats stats() {
-        return new RemoteTranslogTransferTracker.Stats.Builder().shardId(shardId)
-            .lastSuccessfulUploadTimestamp(lastSuccessfulUploadTimestamp.get())
-            .totalUploadsStarted(totalUploadsStarted.get())
-            .totalUploadsSucceeded(totalUploadsSucceeded.get())
-            .totalUploadsFailed(totalUploadsFailed.get())
-            .uploadBytesStarted(uploadBytesStarted.get())
-            .uploadBytesSucceeded(uploadBytesSucceeded.get())
-            .uploadBytesFailed(uploadBytesFailed.get())
-            .totalUploadTimeInMillis(totalUploadTimeInMillis.get())
-            .uploadBytesMovingAverage(uploadBytesMovingAverageReference.get().getAverage())
-            .uploadBytesPerSecMovingAverage(uploadBytesPerSecMovingAverageReference.get().getAverage())
-            .uploadTimeMovingAverage(uploadTimeMsMovingAverageReference.get().getAverage())
-            .lastSuccessfulDownloadTimestamp(lastSuccessfulDownloadTimestamp.get())
-            .totalDownloadsSucceeded(totalDownloadsSucceeded.get())
-            .downloadBytesSucceeded(downloadBytesSucceeded.get())
-            .totalDownloadTimeInMillis(totalDownloadTimeInMillis.get())
-            .downloadBytesMovingAverage(downloadBytesMovingAverageReference.get().getAverage())
-            .downloadBytesPerSecMovingAverage(downloadBytesPerSecMovingAverageReference.get().getAverage())
-            .downloadTimeMovingAverage(downloadTimeMsMovingAverageReference.get().getAverage())
-            .build();
     }
 
     @Override
@@ -412,55 +338,6 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
             this.downloadBytesMovingAverage = builder.downloadBytesMovingAverage;
             this.downloadBytesPerSecMovingAverage = builder.downloadBytesPerSecMovingAverage;
             this.downloadTimeMovingAverage = builder.downloadTimeMovingAverage;
-        }
-
-        /**
-         * This constructor will be deprecated starting in version 3.4.0.
-         * Use {@link Builder} instead.
-         */
-        @Deprecated
-        public Stats(
-            ShardId shardId,
-            long lastSuccessfulUploadTimestamp,
-            long totalUploadsStarted,
-            long totalUploadsSucceeded,
-            long totalUploadsFailed,
-            long uploadBytesStarted,
-            long uploadBytesSucceeded,
-            long uploadBytesFailed,
-            long totalUploadTimeInMillis,
-            double uploadBytesMovingAverage,
-            double uploadBytesPerSecMovingAverage,
-            double uploadTimeMovingAverage,
-            long lastSuccessfulDownloadTimestamp,
-            long totalDownloadsSucceeded,
-            long downloadBytesSucceeded,
-            long totalDownloadTimeInMillis,
-            double downloadBytesMovingAverage,
-            double downloadBytesPerSecMovingAverage,
-            double downloadTimeMovingAverage
-        ) {
-            this.shardId = shardId;
-
-            this.lastSuccessfulUploadTimestamp = lastSuccessfulUploadTimestamp;
-            this.totalUploadsStarted = totalUploadsStarted;
-            this.totalUploadsFailed = totalUploadsFailed;
-            this.totalUploadsSucceeded = totalUploadsSucceeded;
-            this.uploadBytesStarted = uploadBytesStarted;
-            this.uploadBytesFailed = uploadBytesFailed;
-            this.uploadBytesSucceeded = uploadBytesSucceeded;
-            this.totalUploadTimeInMillis = totalUploadTimeInMillis;
-            this.uploadBytesMovingAverage = uploadBytesMovingAverage;
-            this.uploadBytesPerSecMovingAverage = uploadBytesPerSecMovingAverage;
-            this.uploadTimeMovingAverage = uploadTimeMovingAverage;
-
-            this.lastSuccessfulDownloadTimestamp = lastSuccessfulDownloadTimestamp;
-            this.totalDownloadsSucceeded = totalDownloadsSucceeded;
-            this.downloadBytesSucceeded = downloadBytesSucceeded;
-            this.totalDownloadTimeInMillis = totalDownloadTimeInMillis;
-            this.downloadBytesMovingAverage = downloadBytesMovingAverage;
-            this.downloadBytesPerSecMovingAverage = downloadBytesPerSecMovingAverage;
-            this.downloadTimeMovingAverage = downloadTimeMovingAverage;
         }
 
         public Stats(StreamInput in) throws IOException {
@@ -694,15 +571,5 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
                 downloadTimeMovingAverage
             );
         }
-    }
-
-    /**
-     * Validates if the stats in this tracker and the stats contained in the given stats object are same or not
-     *
-     * @param other Stats object to compare this tracker against
-     * @return true if stats are same and false otherwise
-     */
-    boolean hasSameStatsAs(RemoteTranslogTransferTracker.Stats other) {
-        return this.stats().equals(other);
     }
 }

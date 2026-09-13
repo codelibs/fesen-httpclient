@@ -48,18 +48,10 @@ public class MapBuilder<K, V> {
         return new MapBuilder<>();
     }
 
-    public static <K, V> MapBuilder<K, V> newMapBuilder(Map<K, V> map) {
-        return new MapBuilder<>(map);
-    }
-
     private final Map<K, V> map;
 
     public MapBuilder() {
         this.map = new HashMap<>();
-    }
-
-    public MapBuilder(Map<K, V> map) {
-        this.map = new HashMap<>(map);
     }
 
     public MapBuilder<K, V> putAll(Map<K, V> map) {

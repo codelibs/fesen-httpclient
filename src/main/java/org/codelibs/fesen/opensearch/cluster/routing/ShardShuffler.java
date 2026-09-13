@@ -52,11 +52,4 @@ public abstract class ShardShuffler {
      */
     public abstract List<ShardRouting> shuffle(List<ShardRouting> shards, int seed);
 
-    /**
-     * Equivalent to calling <code>shuffle(shards, nextSeed())</code>.
-     */
-    public List<ShardRouting> shuffle(List<ShardRouting> shards) {
-        return shuffle(shards, nextSeed());
-    }
-
 }

@@ -247,20 +247,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
     }
 
     /**
-     * Sets a list of indices that should be included into the snapshot
-     * <p>
-     * The list of indices supports multi-index syntax. For example: "+test*" ,"-test42" will index all indices with
-     * prefix "test" except index "test42". Aliases are supported. An empty list or {"_all"} will snapshot all open
-     * indices in the cluster.
-     *
-     * @return this request
-     */
-    public CreateSnapshotRequest indices(List<String> indices) {
-        this.indices = indices.toArray(new String[0]);
-        return this;
-    }
-
-    /**
      * Returns a list of indices that should be included into the snapshot
      *
      * @return array of index names
@@ -280,17 +266,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
         return indicesOptions;
     }
 
-    /**
-     * Specifies the indices options. Like what type of requested indices to ignore. For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices options
-     * @return this request
-     */
-    public CreateSnapshotRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
     @Override
     public boolean includeDataStreams() {
         return true;
@@ -303,17 +278,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
      */
     public boolean partial() {
         return partial;
-    }
-
-    /**
-     * Set to true to allow indices with unavailable shards to be partially snapshotted.
-     *
-     * @param partial true if indices with unavailable shards should be be partially snapshotted.
-     * @return this request
-     */
-    public CreateSnapshotRequest partial(boolean partial) {
-        this.partial = partial;
-        return this;
     }
 
     /**
@@ -366,39 +330,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
     }
 
     /**
-     * Sets repository-specific snapshot settings in JSON or YAML format
-     * <p>
-     * See repository documentation for more information.
-     *
-     * @param source repository-specific snapshot settings
-     * @param mediaType the content type of the source
-     * @return this request
-     */
-    public CreateSnapshotRequest settings(String source, MediaType mediaType) {
-        this.settings = Settings.builder().loadFromSource(source, mediaType).build();
-        return this;
-    }
-
-    /**
-     * Sets repository-specific snapshot settings.
-     * <p>
-     * See repository documentation for more information.
-     *
-     * @param source repository-specific snapshot settings
-     * @return this request
-     */
-    public CreateSnapshotRequest settings(Map<String, Object> source) {
-        try {
-            XContentBuilder builder = MediaTypeRegistry.contentBuilder(MediaTypeRegistry.JSON);
-            builder.map(source);
-            settings(builder.toString(), builder.contentType());
-        } catch (IOException e) {
-            throw new OpenSearchGenerationException("Failed to generate [" + source + "]", e);
-        }
-        return this;
-    }
-
-    /**
      * Returns repository-specific snapshot settings
      *
      * @return repository-specific snapshot settings
@@ -429,49 +360,6 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
 
     public Map<String, Object> userMetadata() {
         return userMetadata;
-    }
-
-    public CreateSnapshotRequest userMetadata(Map<String, Object> userMetadata) {
-        this.userMetadata = userMetadata;
-        return this;
-    }
-
-    /**
-     * Parses snapshot definition.
-     *
-     * @param source snapshot definition
-     * @return this request
-     */
-    @SuppressWarnings("unchecked")
-    public CreateSnapshotRequest source(Map<String, Object> source) {
-        for (Map.Entry<String, Object> entry : source.entrySet()) {
-            String name = entry.getKey();
-            if (name.equals("indices")) {
-                if (entry.getValue() instanceof String) {
-                    indices(Strings.splitStringByCommaToArray((String) entry.getValue()));
-                } else if (entry.getValue() instanceof List) {
-                    indices((List<String>) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed indices section, should be an array of strings");
-                }
-            } else if (name.equals("partial")) {
-                partial(nodeBooleanValue(entry.getValue(), "partial"));
-            } else if (name.equals("settings")) {
-                if (!(entry.getValue() instanceof Map)) {
-                    throw new IllegalArgumentException("malformed settings section, should indices an inner object");
-                }
-                settings((Map<String, Object>) entry.getValue());
-            } else if (name.equals("include_global_state")) {
-                includeGlobalState = nodeBooleanValue(entry.getValue(), "include_global_state");
-            } else if (name.equals("metadata")) {
-                if (entry.getValue() != null && (entry.getValue() instanceof Map == false)) {
-                    throw new IllegalArgumentException("malformed metadata, should be an object");
-                }
-                userMetadata((Map<String, Object>) entry.getValue());
-            }
-        }
-        indicesOptions(IndicesOptions.fromMap(source, indicesOptions));
-        return this;
     }
 
     @Override

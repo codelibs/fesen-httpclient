@@ -67,36 +67,6 @@ public class ParseFieldRegistry<T> {
     }
 
     /**
-     * Register a parser.
-     */
-    public void register(T value, String name) {
-        register(value, new ParseField(name));
-    }
-
-    /**
-     * Register a parser.
-     */
-    public void register(T value, ParseField parseField) {
-        Tuple<ParseField, T> parseFieldParserTuple = new Tuple<>(parseField, value);
-        for (String name : parseField.getAllNamesIncludedDeprecated()) {
-            Tuple<ParseField, T> previousValue = registry.putIfAbsent(name, parseFieldParserTuple);
-            if (previousValue != null) {
-                throw new IllegalArgumentException(
-                    "["
-                        + previousValue.v2()
-                        + "] already registered for ["
-                        + registryName
-                        + "]["
-                        + name
-                        + "] while trying to register ["
-                        + value
-                        + "]"
-                );
-            }
-        }
-    }
-
-    /**
      * Lookup a value from the registry by name while checking that the name matches the ParseField.
      *
      * @param name The name of the thing to look up.

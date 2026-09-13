@@ -182,14 +182,6 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
         return this;
     }
 
-    /**
-     * Sets the settings to be updated (either json or yaml format)
-     */
-    public UpdateSettingsRequest settings(Map<String, ?> source) {
-        this.settings = Settings.builder().loadFromMap(source).build();
-        return this;
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -205,21 +197,6 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
         settings.toXContent(builder, params);
         builder.endObject();
         return builder;
-    }
-
-    public UpdateSettingsRequest fromXContent(XContentParser parser) throws IOException {
-        Map<String, Object> settings = new HashMap<>();
-        Map<String, Object> bodySettings = parser.map();
-        Object innerBodySettings = bodySettings.get("settings");
-        // clean up in case the body is wrapped with "settings" : { ... }
-        if (innerBodySettings instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> innerBodySettingsMap = (Map<String, Object>) innerBodySettings;
-            settings.putAll(innerBodySettingsMap);
-        } else {
-            settings.putAll(bodySettings);
-        }
-        return this.settings(settings);
     }
 
     @Override

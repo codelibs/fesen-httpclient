@@ -86,11 +86,6 @@ public class MultiTermVectorsRequest extends ActionRequest
         return this;
     }
 
-    public MultiTermVectorsRequest add(String index, String id) {
-        requests.add(new TermVectorsRequest(index, id));
-        return this;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;
@@ -122,51 +117,6 @@ public class MultiTermVectorsRequest extends ActionRequest
 
     public List<TermVectorsRequest> getRequests() {
         return requests;
-    }
-
-    public void add(TermVectorsRequest template, @Nullable XContentParser parser) throws IOException {
-        XContentParser.Token token;
-        String currentFieldName = null;
-        if (parser != null) {
-            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (token == XContentParser.Token.FIELD_NAME) {
-                    currentFieldName = parser.currentName();
-                } else if (token == XContentParser.Token.START_ARRAY) {
-                    if ("docs".equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                            if (token != XContentParser.Token.START_OBJECT) {
-                                throw new IllegalArgumentException("docs array element should include an object");
-                            }
-                            TermVectorsRequest termVectorsRequest = new TermVectorsRequest(template);
-                            TermVectorsRequest.parseRequest(termVectorsRequest, parser);
-                            add(termVectorsRequest);
-                        }
-                    } else if ("ids".equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                            if (!token.isValue()) {
-                                throw new IllegalArgumentException("ids array element should only contain ids");
-                            }
-                            ids.add(parser.text());
-                        }
-                    } else {
-                        throw new OpenSearchParseException("no parameter named [{}] and type ARRAY", currentFieldName);
-                    }
-                } else if (token == XContentParser.Token.START_OBJECT && currentFieldName != null) {
-                    if ("parameters".equals(currentFieldName)) {
-                        TermVectorsRequest.parseRequest(template, parser);
-                    } else {
-                        throw new OpenSearchParseException("no parameter named [{}] and type OBJECT", currentFieldName);
-                    }
-                } else if (currentFieldName != null) {
-                    throw new OpenSearchParseException("_mtermvectors: Parameter [{}] not supported", currentFieldName);
-                }
-            }
-        }
-        for (String id : ids) {
-            TermVectorsRequest curRequest = new TermVectorsRequest(template);
-            curRequest.id(id);
-            requests.add(curRequest);
-        }
     }
 
     @Override

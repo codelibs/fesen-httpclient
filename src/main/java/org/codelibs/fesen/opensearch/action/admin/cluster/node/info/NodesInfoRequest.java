@@ -122,20 +122,6 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
     }
 
     /**
-     * Add multiple metrics
-     */
-    public NodesInfoRequest addMetrics(String... metrics) {
-        SortedSet<String> metricsSet = new TreeSet<>(Arrays.asList(metrics));
-        if (Metric.allMetrics().containsAll(metricsSet) == false) {
-            metricsSet.removeAll(Metric.allMetrics());
-            String plural = metricsSet.size() == 1 ? "" : "s";
-            throw new IllegalStateException("Used illegal metric" + plural + ": " + metricsSet);
-        }
-        requestedMetrics.addAll(metricsSet);
-        return this;
-    }
-
-    /**
      * Remove metric
      */
     public NodesInfoRequest removeMetric(String metric) {

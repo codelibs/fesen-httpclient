@@ -131,38 +131,6 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
         return resetSettings;
     }
 
-    public static ResumeIngestionRequest fromXContent(String[] indices, XContentParser parser) throws IOException {
-        if (parser.currentToken() == null) {
-            parser.nextToken();
-        }
-
-        if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
-            throw new IllegalArgumentException("Expected START_OBJECT but got: " + parser.currentToken());
-        }
-
-        ArrayList<ResetSettings> resetSettingsList = new ArrayList<>();
-
-        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-            String currentFieldName = parser.currentName();
-            parser.nextToken();
-
-            if (RESET_SETTINGS.equals(currentFieldName)) {
-                if (parser.currentToken() != XContentParser.Token.START_ARRAY) {
-                    throw new IllegalArgumentException("Expected START_ARRAY for 'reset_settings'");
-                }
-
-                while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
-                    resetSettingsList.add(ResetSettings.fromXContent(parser));
-                }
-
-            } else {
-                throw new IllegalArgumentException("Unexpected field: " + currentFieldName);
-            }
-        }
-
-        return new ResumeIngestionRequest(indices, resetSettingsList.toArray(new ResetSettings[0]));
-    }
-
     /**
      * Represents reset settings for a given shard to be applied as part of resume operation.
      * @opensearch.api
@@ -212,42 +180,6 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
         public enum ResetMode {
             OFFSET,
             TIMESTAMP
-        }
-
-        public static ResetSettings fromXContent(XContentParser parser) throws IOException {
-            if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
-                throw new IllegalArgumentException("Expected START_OBJECT for ResetSettings but got: " + parser.currentToken());
-            }
-
-            int shard = -1;
-            ResetMode mode = null;
-            String value = null;
-
-            while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-                String fieldName = parser.currentName();
-                parser.nextToken();
-
-                switch (fieldName) {
-                    case "shard" -> shard = parser.intValue();
-                    case "mode" -> {
-                        try {
-                            mode = ResetMode.valueOf(parser.text().toUpperCase(Locale.ROOT));
-                        } catch (IllegalArgumentException e) {
-                            throw new IllegalArgumentException("Invalid value for 'mode': " + parser.text());
-                        }
-                    }
-                    case "value" -> value = parser.text();
-                    default -> throw new IllegalArgumentException("Unexpected field in ResetSettings: " + fieldName);
-                }
-            }
-
-            if (shard < 0 || mode == null || value == null) {
-                throw new IllegalArgumentException(
-                    "Missing required fields in ResetSettings: shard=" + shard + ", mode=" + mode + ", value=" + value
-                );
-            }
-
-            return new ResetSettings(shard, mode, value);
         }
 
     }

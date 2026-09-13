@@ -81,23 +81,8 @@ public class DirectoryFileTransferTracker {
         return transferredBytesFailed.get();
     }
 
-    public void addTransferredBytesFailed(long size, long startTimeInMs) {
-        transferredBytesFailed.getAndAdd(size);
-        addTotalTransferTimeInMs(Math.max(1, System.currentTimeMillis() - startTimeInMs));
-    }
-
     public long getTransferredBytesSucceeded() {
         return transferredBytesSucceeded.get();
-    }
-
-    public void addTransferredBytesSucceeded(long size, long startTimeInMs) {
-        transferredBytesSucceeded.getAndAdd(size);
-        updateSuccessfulTransferSize(size);
-        long currentTimeInMs = System.currentTimeMillis();
-        updateLastTransferTimestampMs(currentTimeInMs);
-        long timeTakenInMS = Math.max(1, currentTimeInMs - startTimeInMs);
-        addTotalTransferTimeInMs(timeTakenInMS);
-        addTransferredBytesPerSec((size * 1_000L) / timeTakenInMS);
     }
 
     public boolean isTransferredBytesPerSecAverageReady() {
@@ -108,10 +93,6 @@ public class DirectoryFileTransferTracker {
         return transferredBytesPerSecMovingAverageReference.get().getAverage();
     }
 
-    public void addTransferredBytesPerSec(long bytesPerSec) {
-        this.transferredBytesPerSecMovingAverageReference.get().record(bytesPerSec);
-    }
-
     public boolean isTransferredBytesAverageReady() {
         return transferredBytesMovingAverageReference.get().isReady();
     }
@@ -120,25 +101,8 @@ public class DirectoryFileTransferTracker {
         return transferredBytesMovingAverageReference.get().getAverage();
     }
 
-    public void updateLastSuccessfulTransferInBytes(long size) {
-        lastSuccessfulTransferInBytes.set(size);
-    }
-
-    public void updateSuccessfulTransferSize(long size) {
-        updateLastSuccessfulTransferInBytes(size);
-        this.transferredBytesMovingAverageReference.get().record(size);
-    }
-
     public long getLastTransferTimestampMs() {
         return lastTransferTimestampMs.get();
-    }
-
-    public void updateLastTransferTimestampMs(long downloadTimestampInMs) {
-        this.lastTransferTimestampMs.set(downloadTimestampInMs);
-    }
-
-    public void addTotalTransferTimeInMs(long totalTransferTimeInMs) {
-        this.totalTransferTimeInMs.addAndGet(totalTransferTimeInMs);
     }
 
     public long getTotalTransferTimeInMs() {
@@ -150,18 +114,6 @@ public class DirectoryFileTransferTracker {
         transferredBytesPerSecMovingAverageReference = new AtomicReference<>(
             new MovingAverage(DIRECTORY_FILES_TRANSFER_DEFAULT_WINDOW_SIZE)
         );
-    }
-
-    public DirectoryFileTransferTracker.Stats stats() {
-        return new Stats.Builder().transferredBytesStarted(transferredBytesStarted.get())
-            .transferredBytesFailed(transferredBytesFailed.get())
-            .transferredBytesSucceeded(transferredBytesSucceeded.get())
-            .lastTransferTimestampMs(lastTransferTimestampMs.get())
-            .totalTransferTimeInMs(totalTransferTimeInMs.get())
-            .transferredBytesMovingAverage(transferredBytesMovingAverageReference.get().getAverage())
-            .lastSuccessfulTransferInBytes(lastSuccessfulTransferInBytes.get())
-            .transferredBytesPerSecMovingAverage(transferredBytesPerSecMovingAverageReference.get().getAverage())
-            .build();
     }
 
     /**

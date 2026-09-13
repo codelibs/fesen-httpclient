@@ -55,14 +55,6 @@ public class SearchScrollRequestBuilder extends ActionRequestBuilder<SearchScrol
     }
 
     /**
-     * The scroll id to use to continue scrolling.
-     */
-    public SearchScrollRequestBuilder setScrollId(String scrollId) {
-        request.scrollId(scrollId);
-        return this;
-    }
-
-    /**
      * If set, will enable scrolling of the search request.
      */
     public SearchScrollRequestBuilder setScroll(Scroll scroll) {

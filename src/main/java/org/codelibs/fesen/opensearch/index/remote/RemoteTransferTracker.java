@@ -182,10 +182,6 @@ public abstract class RemoteTransferTracker {
         return uploadBytesMovingAverageReference.get().getAverage();
     }
 
-    public void updateUploadBytesMovingAverage(long count) {
-        updateMovingAverage(count, uploadBytesMutex, uploadBytesMovingAverageReference);
-    }
-
     boolean isUploadBytesPerSecMovingAverageReady() {
         return uploadBytesPerSecMovingAverageReference.get().isReady();
     }
@@ -194,33 +190,12 @@ public abstract class RemoteTransferTracker {
         return uploadBytesPerSecMovingAverageReference.get().getAverage();
     }
 
-    public void updateUploadBytesPerSecMovingAverage(long speed) {
-        updateMovingAverage(speed, uploadBytesPerSecMutex, uploadBytesPerSecMovingAverageReference);
-    }
-
     boolean isUploadTimeMovingAverageReady() {
         return uploadTimeMsMovingAverageReference.get().isReady();
     }
 
     double getUploadTimeMovingAverage() {
         return uploadTimeMsMovingAverageReference.get().getAverage();
-    }
-
-    public void updateUploadTimeMovingAverage(long duration) {
-        updateMovingAverage(duration, uploadTimeMsMutex, uploadTimeMsMovingAverageReference);
-    }
-
-    /**
-     * Records a new data point for a moving average stat
-     *
-     * @param value The new data point to be added
-     * @param mutex The mutex to use for the update
-     * @param movingAverageReference The atomic reference to be updated
-     */
-    protected void updateMovingAverage(long value, Object mutex, AtomicReference<MovingAverage> movingAverageReference) {
-        synchronized (mutex) {
-            movingAverageReference.get().record(value);
-        }
     }
 
     /**

@@ -233,18 +233,6 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
             }
         }
 
-        public static AllocationStatus fromDecision(Decision.Type decision) {
-            Objects.requireNonNull(decision);
-            switch (decision) {
-                case NO:
-                    return DECIDERS_NO;
-                case THROTTLE:
-                    return DECIDERS_THROTTLED;
-                default:
-                    throw new IllegalArgumentException("no allocation attempt from decision[" + decision + "]");
-            }
-        }
-
         public String value() {
             return toString().toLowerCase(Locale.ROOT);
         }
@@ -374,31 +362,6 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
     }
 
     /**
-     * The timestamp in nanoseconds when the shard became unassigned, based on System.nanoTime().
-     * Used to calculate the delay for delayed shard allocation.
-     * ONLY EXPOSED FOR TESTS!
-     */
-    public long getUnassignedTimeInNanos() {
-        return this.unassignedTimeNanos;
-    }
-
-    /**
-     * Returns optional details explaining the reasons.
-     */
-    @Nullable
-    public String getMessage() {
-        return this.message;
-    }
-
-    /**
-     * Returns additional failure exception details if exists.
-     */
-    @Nullable
-    public Exception getFailure() {
-        return failure;
-    }
-
-    /**
      * Builds a string representation of the message and the failure if exists.
      */
     @Nullable
@@ -414,102 +377,6 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
      */
     public AllocationStatus getLastAllocationStatus() {
         return lastAllocationStatus;
-    }
-
-    /**
-     * A set of nodeIds that failed to complete allocations for this shard. {@link org.codelibs.fesen.opensearch.gateway.ReplicaShardAllocator}
-     * uses this set to avoid repeatedly canceling ongoing recoveries for copies on those nodes although they can perform noop recoveries.
-     * This set will be discarded when a shard moves to started. And if a shard is failed while started (i.e., from started to unassigned),
-     * the currently assigned node won't be added to this set.
-     *
-     * @see <a href="https://opensearch.org">replica shard allocation</a>
-     * @see org.codelibs.fesen.opensearch.cluster.routing.allocation.AllocationService#applyFailedShards(ClusterState, List, List)
-     */
-    public Set<String> getFailedNodeIds() {
-        return failedNodeIds;
-    }
-
-    /**
-     * Returns the node-left delayed allocation timeout from the index settings if explicitly configured,
-     * otherwise returns the cluster-level delayed allocation timeout.
-     */
-    public static TimeValue getNodeLeftDelayedTimeout(final Settings indexSettings, final Settings clusterSettings) {
-        if (INDEX_DELAYED_NODE_LEFT_TIMEOUT_SETTING.exists(indexSettings)) {
-            return INDEX_DELAYED_NODE_LEFT_TIMEOUT_SETTING.get(indexSettings);
-        }
-        return CLUSTER_DELAYED_NODE_LEFT_TIMEOUT_SETTING.get(clusterSettings);
-    }
-
-    /**
-     * Calculates the delay left based on current time (in nanoseconds) and the delay defined by the index settings,
-     * or the built-in cluster default if the index setting is not set.
-     * Only relevant if shard is effectively delayed (see {@link #isDelayed()})
-     * Returns 0 if delay is negative
-     *
-     * @return calculated delay in nanoseconds
-     * @deprecated use {@link #getRemainingDelay(long, Settings, Settings)} with effective cluster settings.
-     */
-    @Deprecated
-    public long getRemainingDelay(final long nanoTimeNow, final Settings indexSettings) {
-        return getRemainingDelay(nanoTimeNow, indexSettings, Settings.EMPTY);
-    }
-
-    /**
-     * Calculates the delay left based on current time (in nanoseconds) and the effective delay defined by
-     * the index settings or the cluster-level default.
-     * Only relevant if shard is effectively delayed (see {@link #isDelayed()})
-     * Returns 0 if delay is negative
-     *
-     * @return calculated delay in nanoseconds
-     */
-    public long getRemainingDelay(final long nanoTimeNow, final Settings indexSettings, final Settings clusterSettings) {
-        long delayTimeoutNanos = getNodeLeftDelayedTimeout(indexSettings, clusterSettings).nanos();
-        assert nanoTimeNow >= unassignedTimeNanos;
-        return Math.max(0L, delayTimeoutNanos - (nanoTimeNow - unassignedTimeNanos));
-    }
-
-    /**
-     * Returns the number of shards that are unassigned and currently being delayed.
-     */
-    public static int getNumberOfDelayedUnassigned(ClusterState state) {
-        Predicate<ShardRouting> predicate = s -> s.state() == ShardRoutingState.UNASSIGNED && s.unassignedInfo().isDelayed();
-        return state.routingTable().shardsMatchingPredicateCount(predicate);
-    }
-
-    /**
-     * Finds the next (closest) delay expiration of an delayed shard in nanoseconds based on current time.
-     * Returns 0 if delay is negative.
-     * Returns -1 if no delayed shard is found.
-     *
-     * @deprecated use {@link #findNextDelayedAllocation(long, ClusterState, Settings)} with effective cluster settings.
-     */
-    @Deprecated
-    public static long findNextDelayedAllocation(long currentNanoTime, ClusterState state) {
-        return findNextDelayedAllocation(currentNanoTime, state, state.metadata().settings());
-    }
-
-    /**
-     * Finds the next (closest) delay expiration of a delayed shard in nanoseconds based on current time
-     * and the supplied effective cluster settings.
-     * Returns 0 if delay is negative.
-     * Returns -1 if no delayed shard is found.
-     */
-    public static long findNextDelayedAllocation(long currentNanoTime, ClusterState state, Settings clusterSettings) {
-        Metadata metadata = state.metadata();
-        RoutingTable routingTable = state.routingTable();
-        long nextDelayNanos = Long.MAX_VALUE;
-        for (ShardRouting shard : routingTable.shardsWithState(ShardRoutingState.UNASSIGNED)) {
-            UnassignedInfo unassignedInfo = shard.unassignedInfo();
-            if (unassignedInfo.isDelayed()) {
-                Settings indexSettings = metadata.index(shard.index()).getSettings();
-                // calculate next time to schedule
-                final long newComputedLeftDelayNanos = unassignedInfo.getRemainingDelay(currentNanoTime, indexSettings, clusterSettings);
-                if (newComputedLeftDelayNanos < nextDelayNanos) {
-                    nextDelayNanos = newComputedLeftDelayNanos;
-                }
-            }
-        }
-        return nextDelayNanos == Long.MAX_VALUE ? -1L : nextDelayNanos;
     }
 
     public String shortSummary() {

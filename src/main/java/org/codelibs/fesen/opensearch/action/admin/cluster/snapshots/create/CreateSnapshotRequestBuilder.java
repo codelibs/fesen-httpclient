@@ -103,17 +103,6 @@ public class CreateSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
     }
 
     /**
-     * Specifies the indices options. Like what type of requested indices to ignore. For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices options
-     * @return this request
-     */
-    public CreateSnapshotRequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
-        return this;
-    }
-
-    /**
      * If set to true the request should wait for the snapshot completion before returning.
      *
      * @param waitForCompletion true if
@@ -121,17 +110,6 @@ public class CreateSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
      */
     public CreateSnapshotRequestBuilder setWaitForCompletion(boolean waitForCompletion) {
         request.waitForCompletion(waitForCompletion);
-        return this;
-    }
-
-    /**
-     * If set to true the request should snapshot indices with unavailable shards
-     *
-     * @param partial true if request should snapshot indices with unavailable shards
-     * @return this builder
-     */
-    public CreateSnapshotRequestBuilder setPartial(boolean partial) {
-        request.partial(partial);
         return this;
     }
 
@@ -157,33 +135,6 @@ public class CreateSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
      * @return this builder
      */
     public CreateSnapshotRequestBuilder setSettings(Settings.Builder settings) {
-        request.settings(settings);
-        return this;
-    }
-
-    /**
-     * Sets repository-specific snapshot settings in YAML or JSON format
-     * <p>
-     * See repository documentation for more information.
-     *
-     * @param source repository-specific snapshot settings
-     * @param xContentType the content type of the source
-     * @return this builder
-     */
-    public CreateSnapshotRequestBuilder setSettings(String source, XContentType xContentType) {
-        request.settings(source, xContentType);
-        return this;
-    }
-
-    /**
-     * Sets repository-specific snapshot settings.
-     * <p>
-     * See repository documentation for more information.
-     *
-     * @param settings repository-specific snapshot settings
-     * @return this builder
-     */
-    public CreateSnapshotRequestBuilder setSettings(Map<String, Object> settings) {
         request.settings(settings);
         return this;
     }

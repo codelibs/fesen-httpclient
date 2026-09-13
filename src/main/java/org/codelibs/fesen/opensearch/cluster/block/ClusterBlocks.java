@@ -109,18 +109,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return indicesBlocks;
     }
 
-    public Set<ClusterBlock> global(ClusterBlockLevel level) {
-        return levelHolders.get(level).global();
-    }
-
-    public Map<String, Set<ClusterBlock>> indices(ClusterBlockLevel level) {
-        return levelHolders.get(level).indices();
-    }
-
-    private Set<ClusterBlock> blocksForIndex(ClusterBlockLevel level, String index) {
-        return indices(level).getOrDefault(index, emptySet());
-    }
-
     private static EnumMap<ClusterBlockLevel, ImmutableLevelHolder> generateLevelHolders(
         Set<ClusterBlock> global,
         final Map<String, Set<ClusterBlock>> indicesBlocks
@@ -165,10 +153,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return false;
     }
 
-    public boolean hasGlobalBlockWithLevel(ClusterBlockLevel level) {
-        return global(level).size() > 0;
-    }
-
     /**
      * Is there a global block with the provided status?
      */
@@ -210,108 +194,12 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return null;
     }
 
-    public void globalBlockedRaiseException(ClusterBlockLevel level) throws ClusterBlockException {
-        ClusterBlockException blockException = globalBlockedException(level);
-        if (blockException != null) {
-            throw blockException;
-        }
-    }
-
-    private boolean globalBlocked(ClusterBlockLevel level) {
-        return global(level).isEmpty() == false;
-    }
-
-    public ClusterBlockException globalBlockedException(ClusterBlockLevel level) {
-        if (globalBlocked(level) == false) {
-            return null;
-        }
-        return new ClusterBlockException(global(level));
-    }
-
-    public IndexCreateBlockException createIndexBlockedException(ClusterBlockLevel level) {
-        if (!globalBlocked(level)) {
-            return null;
-        }
-        return new IndexCreateBlockException(global(level));
-    }
-
-    public void indexBlockedRaiseException(ClusterBlockLevel level, String index) throws ClusterBlockException {
-        ClusterBlockException blockException = indexBlockedException(level, index);
-        if (blockException != null) {
-            throw blockException;
-        }
-    }
-
-    public ClusterBlockException indexBlockedException(ClusterBlockLevel level, String index) {
-        return indicesBlockedException(level, new String[] { index });
-    }
-
-    public boolean indexBlocked(ClusterBlockLevel level, String index) {
-        return globalBlocked(level) || blocksForIndex(level, index).isEmpty() == false;
-    }
-
-    public ClusterBlockException indicesBlockedException(ClusterBlockLevel level, String[] indices) {
-        Set<ClusterBlock> globalLevelBlocks = global(level);
-        Map<String, Set<ClusterBlock>> indexLevelBlocks = new HashMap<>();
-        for (String index : indices) {
-            Set<ClusterBlock> indexBlocks = blocksForIndex(level, index);
-            if (indexBlocks.isEmpty() == false || globalLevelBlocks.isEmpty() == false) {
-                indexLevelBlocks.put(index, Sets.union(indexBlocks, globalLevelBlocks));
-            }
-        }
-        if (indexLevelBlocks.isEmpty()) {
-            if (globalLevelBlocks.isEmpty() == false) {
-                return new ClusterBlockException(globalLevelBlocks);
-            }
-            return null;
-        }
-        return new ClusterBlockException(indexLevelBlocks);
-    }
-
     /**
      * Returns <code>true</code> iff non of the given have a {@link ClusterBlockLevel#METADATA_WRITE} in place where the
      * {@link ClusterBlock#isAllowReleaseResources()} returns <code>false</code>. This is used in places where resources will be released
      * like the deletion of an index to free up resources on nodes.
      * @param indices the indices to check
      */
-
-    public ClusterBlockException indicesAllowReleaseResources(String[] indices) {
-        Set<ClusterBlock> globalBlocks = global(ClusterBlockLevel.METADATA_WRITE).stream()
-            .filter(clusterBlock -> clusterBlock.isAllowReleaseResources() == false)
-            .collect(toSet());
-        Map<String, Set<ClusterBlock>> indexLevelBlocks = new HashMap<>();
-        for (String index : indices) {
-            Set<ClusterBlock> blocks = Sets.union(globalBlocks, blocksForIndex(ClusterBlockLevel.METADATA_WRITE, index))
-                .stream()
-                .filter(clusterBlock -> clusterBlock.isAllowReleaseResources() == false)
-                .collect(toSet());
-            if (blocks.isEmpty() == false) {
-                indexLevelBlocks.put(index, Sets.union(globalBlocks, blocks));
-            }
-        }
-        if (indexLevelBlocks.isEmpty()) {
-            if (globalBlocks.isEmpty() == false) {
-                return new ClusterBlockException(globalBlocks);
-            }
-            return null;
-        }
-        return new ClusterBlockException(indexLevelBlocks);
-    }
-
-    public static ClusterBlockException indicesWithRemoteSnapshotBlockedException(Collection<String> concreteIndices, ClusterState state) {
-        for (String index : concreteIndices) {
-            if (state.blocks().indexBlocked(ClusterBlockLevel.METADATA_WRITE, index)) {
-                IndexMetadata indexMeta = state.metadata().index(index);
-                if (indexMeta != null
-                    && (IndexModule.Type.REMOTE_SNAPSHOT.match(indexMeta.getSettings().get(INDEX_STORE_TYPE_SETTING.getKey())) == false
-                        || ClusterBlocks.INDEX_DATA_READ_ONLY_BLOCK_SETTINGS.stream()
-                            .anyMatch(booleanSetting -> booleanSetting.exists(indexMeta.getSettings())))) {
-                    return state.blocks().indicesBlockedException(ClusterBlockLevel.METADATA_WRITE, concreteIndices.toArray(new String[0]));
-                }
-            }
-        }
-        return null;
-    }
 
     @Override
     public String toString() {
@@ -382,14 +270,6 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         ImmutableLevelHolder(Set<ClusterBlock> global, final Map<String, Set<ClusterBlock>> indices) {
             this.global = global;
             this.indices = Collections.unmodifiableMap(indices);
-        }
-
-        public Set<ClusterBlock> global() {
-            return global;
-        }
-
-        public Map<String, Set<ClusterBlock>> indices() {
-            return indices;
         }
     }
 

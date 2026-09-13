@@ -90,89 +90,6 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
     }
 
     /**
-     * Sets the list of indices that should be restored from snapshot
-     * <p>
-     * The list of indices supports multi-index syntax. For example: "+test*" ,"-test42" will index all indices with
-     * prefix "test" except index "test42". Aliases are not supported. An empty list or {"_all"} will restore all open
-     * indices in the snapshot.
-     *
-     * @param indices list of indices
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIndices(String... indices) {
-        request.indices(indices);
-        return this;
-    }
-
-    /**
-     * Specifies what type of requested indices to ignore and how to deal with wildcard expressions.
-     * For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices to ignore and wildcard indices expressions
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIndicesOptions(IndicesOptions indicesOptions) {
-        request.indicesOptions(indicesOptions);
-        return this;
-    }
-
-    /**
-     * Sets rename pattern that should be applied to restored indices.
-     * <p>
-     * Indices that match the rename pattern will be renamed according to {@link #setRenameReplacement(String)}. The
-     * rename pattern is applied according to the {@link java.util.regex.Matcher#appendReplacement(StringBuffer, String)}
-     * The request will fail if two or more indices will be renamed into the same name.
-     *
-     * @param renamePattern rename pattern
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setRenamePattern(String renamePattern) {
-        request.renamePattern(renamePattern);
-        return this;
-    }
-
-    /**
-     * Sets rename replacement
-     * <p>
-     * See {@link #setRenamePattern(String)} for more information.
-     *
-     * @param renameReplacement rename replacement
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setRenameReplacement(String renameReplacement) {
-        request.renameReplacement(renameReplacement);
-        return this;
-    }
-
-    /**
-     * Sets rename pattern that should be applied to restored indices' aliases.
-     * <p>
-     * Aliases that match the rename pattern will be renamed according to {@link #setRenameAliasReplacement(String)}. The
-     * rename pattern is applied according to the {@link java.util.regex.Matcher#appendReplacement(StringBuffer, String)}
-     * The request will fail if two or more alias will be renamed into the same name.
-     *
-     * @param renameAliasPattern rename alias pattern
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setRenameAliasPattern(String renameAliasPattern) {
-        request.renameAliasPattern(renameAliasPattern);
-        return this;
-    }
-
-    /**
-     * Sets rename replacement
-     * <p>
-     * See {@link #setRenameAliasPattern(String)} for more information.
-     *
-     * @param renameAliasReplacement rename alias replacement
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setRenameAliasReplacement(String renameAliasReplacement) {
-        request.renameAliasReplacement(renameAliasReplacement);
-        return this;
-    }
-
-    /**
      * If this parameter is set to true the operation will wait for completion of restore process before returning.
      *
      * @param waitForCompletion if true the operation will wait for completion
@@ -193,17 +110,6 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
      */
     public RestoreSnapshotRequestBuilder setRestoreGlobalState(boolean restoreGlobalState) {
         request.includeGlobalState(restoreGlobalState);
-        return this;
-    }
-
-    /**
-     * If set to true the restore procedure will restore partially snapshotted indices
-     *
-     * @param partial true if partially snapshotted indices should be restored
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setPartial(boolean partial) {
-        request.partial(partial);
         return this;
     }
 
@@ -249,66 +155,6 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
      */
     public RestoreSnapshotRequestBuilder setIndexSettings(String source, XContentType xContentType) {
         request.indexSettings(source, xContentType);
-        return this;
-    }
-
-    /**
-     * Sets index settings that should be added or replaced during restore
-     *
-     * @param source index settings
-     * @return this builder
-     */
-    public RestoreSnapshotRequestBuilder setIndexSettings(Map<String, Object> source) {
-        request.indexSettings(source);
-        return this;
-    }
-
-    /**
-     * Sets the list of index settings and index settings groups that shouldn't be restored from snapshot
-     */
-    public RestoreSnapshotRequestBuilder setIgnoreIndexSettings(String... ignoreIndexSettings) {
-        request.ignoreIndexSettings(ignoreIndexSettings);
-        return this;
-    }
-
-    /**
-     * Sets the list of index settings and index settings groups that shouldn't be restored from snapshot
-     */
-    public RestoreSnapshotRequestBuilder setIgnoreIndexSettings(List<String> ignoreIndexSettings) {
-        request.ignoreIndexSettings(ignoreIndexSettings);
-        return this;
-    }
-
-    /**
-     * Sets the storage type
-     */
-    public RestoreSnapshotRequestBuilder setStorageType(RestoreSnapshotRequest.StorageType storageType) {
-        request.storageType(storageType);
-        return this;
-    }
-
-    /**
-     * Sets the source remote store repository name
-     */
-    public RestoreSnapshotRequestBuilder setSourceRemoteStoreRepository(String repositoryName) {
-        request.setSourceRemoteStoreRepository(repositoryName);
-        return this;
-    }
-
-    /**
-     * Sets the source remote translog repository name
-     */
-    public RestoreSnapshotRequestBuilder setSourceRemoteTranslogRepository(String repositoryName) {
-        request.setSourceRemoteTranslogRepository(repositoryName);
-        return this;
-    }
-
-    /**
-     * If set to true, a restored index whose name matches the data stream backing-index convention is attached to a
-     * pre-existing data stream of the same name instead of being restored as a standalone index.
-     */
-    public RestoreSnapshotRequestBuilder setAttachToDataStream(boolean attachToDataStream) {
-        request.attachToDataStream(attachToDataStream);
         return this;
     }
 }

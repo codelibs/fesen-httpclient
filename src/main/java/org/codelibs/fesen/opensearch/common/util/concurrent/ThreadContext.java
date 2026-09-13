@@ -206,39 +206,6 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Removes the current context and resets a default context marked with as
-     * originating from the supplied string. The removed context can be
-     * restored by closing the returned {@link StoredContext}. Callers should
-     * be careful to save the current context before calling this method and
-     * restore it any listeners, likely with
-     * {@link ContextPreservingActionListener}. Use {@link OriginSettingClient}
-     * which can be used to do this automatically.
-     * <p>
-     * Without security the origin is ignored, but security uses it to authorize
-     * actions that are made up of many sub-actions. These actions call
-     * {@link #stashWithOrigin} before performing on behalf of a user that
-     * should be allowed even if the user doesn't have permission to perform
-     * those actions on their own.
-     * <p>
-     * For example, a user might not have permission to GET from the tasks index
-     * but the tasks API will perform a get on their behalf using this method
-     * if it can't find the task in memory.
-     *
-     * Usage of stashWithOrigin is guarded by a ThreadContextPermission. In order to use
-     * stashWithOrigin, the codebase needs to explicitly be granted permission in the JSM policy file.
-     *
-     * Add an entry in the grant portion of the policy file like this:
-     *
-     * permission org.codelibs.fesen.opensearch.secure_sm.ThreadContextPermission "stashWithOrigin";
-     */
-    @SuppressWarnings("removal")
-    public StoredContext stashWithOrigin(String origin) {
-        final ThreadContext.StoredContext storedContext = stashContext();
-        putTransient(ACTION_ORIGIN_TRANSIENT_NAME, origin);
-        return storedContext;
-    }
-
-    /**
      * Removes the current context and resets a new context that contains a merge of the current headers and the given headers.
      * The removed context can be restored when closing the returned {@link StoredContext}. The merge strategy is that headers
      * that are already existing are preserved unless they are defaults.
@@ -387,47 +354,6 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Reads the headers from the stream into the current context
-     */
-    public void readHeaders(StreamInput in) throws IOException {
-        setHeaders(readHeadersFromStream(in));
-    }
-
-    public void setHeaders(Tuple<Map<String, String>, Map<String, Set<String>>> headerTuple) {
-        final Map<String, String> requestHeaders = headerTuple.v1();
-        final Map<String, Set<String>> responseHeaders = headerTuple.v2();
-        final ThreadContextStruct struct;
-        if (requestHeaders.isEmpty() && responseHeaders.isEmpty()) {
-            struct = ThreadContextStruct.EMPTY;
-        } else {
-            struct = new ThreadContextStruct(requestHeaders, responseHeaders, Collections.emptyMap(), Collections.emptyMap(), false);
-        }
-        threadLocal.set(struct);
-    }
-
-    public static Tuple<Map<String, String>, Map<String, Set<String>>> readHeadersFromStream(StreamInput in) throws IOException {
-        final Map<String, String> requestHeaders = in.readMap(StreamInput::readString, StreamInput::readString);
-        final Map<String, Set<String>> responseHeaders = in.readMap(StreamInput::readString, input -> {
-            final int size = input.readVInt();
-            if (size == 0) {
-                return Collections.emptySet();
-            } else if (size == 1) {
-                return Collections.singleton(input.readString());
-            } else {
-                // use a linked hash set to preserve order
-                final LinkedHashSet<String> values = new LinkedHashSet<>(size);
-                for (int i = 0; i < size; i++) {
-                    final String value = input.readString();
-                    final boolean added = values.add(value);
-                    assert added : value;
-                }
-                return values;
-            }
-        });
-        return new Tuple<>(requestHeaders, responseHeaders);
-    }
-
-    /**
      * Returns the header for the given key or <code>null</code> if not present
      */
     public String getHeader(String key) {
@@ -484,13 +410,6 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Copies all header key, value pairs into the current context
-     */
-    public void copyHeaders(Iterable<Map.Entry<String, String>> headers) {
-        threadLocal.set(threadLocal.get().copyHeaders(headers));
-    }
-
-    /**
      * Puts a header into the context
      */
     public void putHeader(String key, String value) {
@@ -519,62 +438,11 @@ public final class ThreadContext implements Writeable {
     }
 
     /**
-     * Puts a transient header object into this context
-     */
-    public void putTransient(String key, Object value) {
-        threadLocal.set(threadLocal.get().putTransient(key, value));
-    }
-
-    /**
      * Returns a transient header object or <code>null</code> if there is no header for the given key
      */
     @SuppressWarnings("unchecked") // (T)object
     public <T> T getTransient(String key) {
         return (T) threadLocal.get().transientHeaders.get(key);
-    }
-
-    /**
-     * Add the {@code value} for the specified {@code key} Any duplicate {@code value} is ignored.
-     *
-     * @param key         the header name
-     * @param value       the header value
-     */
-    public void addResponseHeader(final String key, final String value) {
-        addResponseHeader(key, value, v -> v);
-    }
-
-    /**
-     * Update the {@code value} for the specified {@code key}
-     *
-     * @param key         the header name
-     * @param value       the header value
-     */
-    public void updateResponseHeader(final String key, final String value) {
-        updateResponseHeader(key, value, v -> v);
-    }
-
-    /**
-     * Add the {@code value} for the specified {@code key} with the specified {@code uniqueValue} used for de-duplication. Any duplicate
-     * {@code value} after applying {@code uniqueValue} is ignored.
-     *
-     * @param key         the header name
-     * @param value       the header value
-     * @param uniqueValue the function that produces de-duplication values
-     */
-    public void addResponseHeader(final String key, final String value, final Function<String, String> uniqueValue) {
-        threadLocal.set(threadLocal.get().putResponse(key, value, uniqueValue, maxWarningHeaderCount, maxWarningHeaderSize, false));
-    }
-
-    /**
-     * Update the {@code value} for the specified {@code key} with the specified {@code uniqueValue} used for de-duplication. Any duplicate
-     * {@code value} after applying {@code uniqueValue} is ignored.
-     *
-     * @param key         the header name
-     * @param value       the header value
-     * @param uniqueValue the function that produces de-duplication values
-     */
-    public void updateResponseHeader(final String key, final String value, final Function<String, String> uniqueValue) {
-        threadLocal.set(threadLocal.get().putResponse(key, value, uniqueValue, maxWarningHeaderCount, maxWarningHeaderSize, true));
     }
 
     /**
@@ -811,92 +679,6 @@ public final class ThreadContext implements Writeable {
             return new ThreadContextStruct(requestHeaders, newResponseHeaders, transientHeaders, persistentHeaders, isSystemContext);
         }
 
-        private ThreadContextStruct putResponse(
-            final String key,
-            final String value,
-            final Function<String, String> uniqueValue,
-            final int maxWarningHeaderCount,
-            final long maxWarningHeaderSize,
-            final boolean replaceExistingKey
-        ) {
-            assert value != null;
-            long newWarningHeaderSize = warningHeadersSize;
-            // check if we can add another warning header - if max size within limits
-            if (key.equals("Warning") && (maxWarningHeaderSize != -1)) { // if size is NOT unbounded, check its limits
-                if (warningHeadersSize > maxWarningHeaderSize) { // if max size has already been reached before
-                    logger.warn(
-                        "Dropping a warning header, as their total size reached the maximum allowed of ["
-                            + maxWarningHeaderSize
-                            + "] bytes set in ["
-                            + SETTING_HTTP_MAX_WARNING_HEADER_SIZE.getKey()
-                            + "]!"
-                    );
-                    return this;
-                }
-                newWarningHeaderSize += "Warning".getBytes(StandardCharsets.UTF_8).length + value.getBytes(StandardCharsets.UTF_8).length;
-                if (newWarningHeaderSize > maxWarningHeaderSize) {
-                    logger.warn(
-                        "Dropping a warning header, as their total size reached the maximum allowed of ["
-                            + maxWarningHeaderSize
-                            + "] bytes set in ["
-                            + SETTING_HTTP_MAX_WARNING_HEADER_SIZE.getKey()
-                            + "]!"
-                    );
-                    return new ThreadContextStruct(
-                        requestHeaders,
-                        responseHeaders,
-                        transientHeaders,
-                        persistentHeaders,
-                        isSystemContext,
-                        newWarningHeaderSize
-                    );
-                }
-            }
-
-            final Map<String, Set<String>> newResponseHeaders;
-            final Set<String> existingValues = responseHeaders.get(key);
-            if (existingValues != null) {
-                if (existingValues.contains(uniqueValue.apply(value))) {
-                    return this;
-                }
-                Set<String> newValues;
-                if (replaceExistingKey) {
-                    newValues = Stream.of(value).collect(LINKED_HASH_SET_COLLECTOR);
-                } else {
-                    // preserve insertion order
-                    newValues = Stream.concat(existingValues.stream(), Stream.of(value)).collect(LINKED_HASH_SET_COLLECTOR);
-                }
-                newResponseHeaders = new HashMap<>(responseHeaders);
-                newResponseHeaders.put(key, Collections.unmodifiableSet(newValues));
-            } else {
-                newResponseHeaders = new HashMap<>(responseHeaders);
-                newResponseHeaders.put(key, Collections.singleton(value));
-            }
-
-            // check if we can add another warning header - if max count within limits
-            if ((key.equals("Warning")) && (maxWarningHeaderCount != -1)) { // if count is NOT unbounded, check its limits
-                final int warningHeaderCount = newResponseHeaders.containsKey("Warning") ? newResponseHeaders.get("Warning").size() : 0;
-                if (warningHeaderCount > maxWarningHeaderCount) {
-                    logger.warn(
-                        "Dropping a warning header, as their total count reached the maximum allowed of ["
-                            + maxWarningHeaderCount
-                            + "] set in ["
-                            + SETTING_HTTP_MAX_WARNING_HEADER_COUNT.getKey()
-                            + "]!"
-                    );
-                    return this;
-                }
-            }
-            return new ThreadContextStruct(
-                requestHeaders,
-                newResponseHeaders,
-                transientHeaders,
-                persistentHeaders,
-                isSystemContext,
-                newWarningHeaderSize
-            );
-        }
-
         private ThreadContextStruct putTransient(Map<String, Object> values) {
             Map<String, Object> newTransient = new HashMap<>(this.transientHeaders);
             for (Map.Entry<String, Object> entry : values.entrySet()) {
@@ -911,20 +693,6 @@ public final class ThreadContext implements Writeable {
                 newTransient.putIfAbsent(entry.getKey(), entry.getValue());
             }
             return new ThreadContextStruct(requestHeaders, responseHeaders, newTransient, persistentHeaders, isSystemContext);
-        }
-
-        private ThreadContextStruct putTransient(String key, Object value) {
-            Map<String, Object> newTransient = new HashMap<>(this.transientHeaders);
-            putSingleHeader(key, value, newTransient);
-            return new ThreadContextStruct(requestHeaders, responseHeaders, newTransient, persistentHeaders, isSystemContext);
-        }
-
-        private ThreadContextStruct copyHeaders(Iterable<Map.Entry<String, String>> headers) {
-            Map<String, String> newHeaders = new HashMap<>();
-            for (Map.Entry<String, String> header : headers) {
-                newHeaders.put(header.getKey(), header.getValue());
-            }
-            return putHeaders(newHeaders);
         }
 
         private void writeTo(StreamOutput out, Map<String, String> defaultHeaders, Map<String, String> propagatedHeaders)

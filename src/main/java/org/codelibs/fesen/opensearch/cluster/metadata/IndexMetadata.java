@@ -208,15 +208,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             }
             throw new IllegalStateException("No state match for id [" + id + "]");
         }
-
-        public static State fromString(String state) {
-            if ("open".equals(state)) {
-                return OPEN;
-            } else if ("close".equals(state)) {
-                return CLOSE;
-            }
-            throw new IllegalStateException("No state match for [" + state + "]");
-        }
     }
 
     static Setting<Integer> buildNumberOfShardsSetting() {
@@ -1357,61 +1348,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return indexCreatedVersion;
     }
 
-    /**
-     * Gets the ingestion source.
-     *
-     * @return ingestion source, or null if ingestion source is not enabled
-     */
-    public IngestionSource getIngestionSource() {
-        final String ingestionSourceType = INGESTION_SOURCE_TYPE_SETTING.get(settings);
-        if (ingestionSourceType != null && !(NONE_INGESTION_SOURCE_TYPE.equals(ingestionSourceType))) {
-            final StreamPoller.ResetState pointerInitResetType = StreamPoller.ResetState.valueOf(
-                INGESTION_SOURCE_POINTER_INIT_RESET_SETTING.get(settings).toUpperCase(Locale.ROOT)
-            );
-            final String pointerInitResetValue = INGESTION_SOURCE_POINTER_INIT_RESET_VALUE_SETTING.get(settings);
-            IngestionSource.PointerInitReset pointerInitReset = new IngestionSource.PointerInitReset(
-                pointerInitResetType,
-                pointerInitResetValue
-            );
-
-            final IngestionErrorStrategy.ErrorStrategy errorStrategy = INGESTION_SOURCE_ERROR_STRATEGY_SETTING.get(settings);
-            final Map<String, Object> ingestionSourceParams = INGESTION_SOURCE_PARAMS_SETTING.getAsMap(settings);
-            final long maxPollSize = INGESTION_SOURCE_MAX_POLL_SIZE.get(settings);
-            final int pollTimeout = INGESTION_SOURCE_POLL_TIMEOUT.get(settings);
-            final int numProcessorThreads = INGESTION_SOURCE_NUM_PROCESSOR_THREADS_SETTING.get(settings);
-            final int blockingQueueSize = INGESTION_SOURCE_INTERNAL_QUEUE_SIZE_SETTING.get(settings);
-            final boolean allActiveIngestionEnabled = INGESTION_SOURCE_ALL_ACTIVE_INGESTION_SETTING.get(settings);
-            final TimeValue pointerBasedLagUpdateInterval = INGESTION_SOURCE_POINTER_BASED_LAG_UPDATE_INTERVAL_SETTING.get(settings);
-            final IngestionMessageMapper.MapperType mapperType = INGESTION_SOURCE_MAPPER_TYPE_SETTING.get(settings);
-            final Map<String, Object> mapperSettings = INGESTION_SOURCE_MAPPER_SETTINGS.getAsMap(settings);
-            final IngestionSource.SourcePartitionStrategy sourcePartitionStrategy = INGESTION_SOURCE_PARTITION_STRATEGY_SETTING.get(
-                settings
-            );
-
-            // Warmup settings
-            final IngestionSource.WarmupConfig warmupConfig = new IngestionSource.WarmupConfig(
-                INGESTION_SOURCE_WARMUP_TIMEOUT_SETTING.get(settings),
-                INGESTION_SOURCE_WARMUP_LAG_THRESHOLD_SETTING.get(settings)
-            );
-
-            return new IngestionSource.Builder(ingestionSourceType).setParams(ingestionSourceParams)
-                .setPointerInitReset(pointerInitReset)
-                .setErrorStrategy(errorStrategy)
-                .setMaxPollSize(maxPollSize)
-                .setPollTimeout(pollTimeout)
-                .setNumProcessorThreads(numProcessorThreads)
-                .setBlockingQueueSize(blockingQueueSize)
-                .setAllActiveIngestion(allActiveIngestionEnabled)
-                .setPointerBasedLagUpdateInterval(pointerBasedLagUpdateInterval)
-                .setMapperType(mapperType)
-                .setMapperSettings(mapperSettings)
-                .setSourcePartitionStrategy(sourcePartitionStrategy)
-                .setWarmupConfig(warmupConfig)
-                .build();
-        }
-        return null;
-    }
-
     public boolean useIngestionSource() {
         final String ingestionSourceType = INGESTION_SOURCE_TYPE_SETTING.get(settings);
         return ingestionSourceType != null && !(NONE_INGESTION_SOURCE_TYPE.equals(ingestionSourceType));
@@ -1459,10 +1395,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return numberOfReplicas;
     }
 
-    public int getNumberOfSearchOnlyReplicas() {
-        return numberOfSearchOnlyReplicas;
-    }
-
     public int getRoutingPartitionSize() {
         return routingPartitionSize;
     }
@@ -1506,12 +1438,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     public static final String INDEX_RESIZE_SOURCE_NAME_KEY = "index.resize.source.name";
     public static final Setting<String> INDEX_RESIZE_SOURCE_UUID = Setting.simpleString(INDEX_RESIZE_SOURCE_UUID_KEY);
     public static final Setting<String> INDEX_RESIZE_SOURCE_NAME = Setting.simpleString(INDEX_RESIZE_SOURCE_NAME_KEY);
-
-    public Index getResizeSourceIndex() {
-        return INDEX_RESIZE_SOURCE_UUID.exists(settings)
-            ? new Index(INDEX_RESIZE_SOURCE_NAME.get(settings), INDEX_RESIZE_SOURCE_UUID.get(settings))
-            : null;
-    }
 
     Map<String, DiffableStringMap> getCustomData() {
         return this.customData;
@@ -1673,10 +1599,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
 
     public static Diff<IndexMetadata> readDiffFrom(StreamInput in) throws IOException {
         return new IndexMetadataDiff(in);
-    }
-
-    public static IndexMetadata fromXContent(XContentParser parser) throws IOException {
-        return Builder.fromXContent(parser);
     }
 
     @Override
@@ -2180,16 +2102,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return settings.getAsInt(SETTING_NUMBER_OF_SHARDS, -1);
         }
 
-        public Builder numberOfReplicas(int numberOfReplicas) {
-            settings = Settings.builder().put(settings).put(SETTING_NUMBER_OF_REPLICAS, numberOfReplicas).build();
-            return this;
-        }
-
-        public Builder numberOfSearchReplicas(int numberOfSearchReplicas) {
-            settings = Settings.builder().put(settings).put(SETTING_NUMBER_OF_SEARCH_REPLICAS, numberOfSearchReplicas).build();
-            return this;
-        }
-
         public Builder routingPartitionSize(int routingPartitionSize) {
             settings = Settings.builder().put(settings).put(SETTING_ROUTING_PARTITION_SIZE, routingPartitionSize).build();
             return this;
@@ -2200,10 +2112,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
-        public Builder settings(Settings.Builder settings) {
-            return settings(settings.build());
-        }
-
         public Builder settings(Settings settings) {
             this.settings = settings;
             return this;
@@ -2211,16 +2119,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
 
         public MappingMetadata mapping() {
             return mappings.get(MapperService.SINGLE_MAPPING_NAME);
-        }
-
-        public Builder putMapping(String source) throws IOException {
-            putMapping(
-                new MappingMetadata(
-                    MapperService.SINGLE_MAPPING_NAME,
-                    XContentHelper.convertToMap(MediaTypeRegistry.xContent(source).xContent(), source, true)
-                )
-            );
-            return this;
         }
 
         public Builder putMapping(MappingMetadata mappingMd) {
@@ -2315,47 +2213,8 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
-        /**
-         * returns the primary term for the given shard.
-         * See {@link IndexMetadata#primaryTerm(int)} for more information.
-         */
-        public long primaryTerm(int shardId) {
-            if (primaryTermsMap.isEmpty()) {
-                initializePrimaryTerms();
-            }
-            return primaryTermsMap.getOrDefault(shardId, SequenceNumbers.UNASSIGNED_PRIMARY_TERM);
-        }
-
-        /**
-         * sets the primary term for the given shard.
-         * See {@link IndexMetadata#primaryTerm(int)} for more information.
-         */
-        public Builder primaryTerm(int shardId, long primaryTerm) {
-            if (primaryTermsMap.isEmpty()) {
-                initializePrimaryTerms();
-            }
-            primaryTermsMap.put(shardId, primaryTerm);
-            return this;
-        }
-
-        private void primaryTerms(long[] primaryTerms) {
-            for (int shard = 0; shard < primaryTerms.length; shard++) {
-                this.primaryTermsMap.put(shard, primaryTerms[shard]);
-            }
-        }
-
         private void primaryTermsMap(Map<Integer, Long> primaryTermsMap) {
             this.primaryTermsMap = new HashMap<>(primaryTermsMap);
-        }
-
-        private void initializePrimaryTerms() {
-            assert primaryTermsMap.isEmpty();
-            if (numberOfShards() < 0) {
-                throw new IllegalStateException("you must set the number of shards before setting/reading primary terms");
-            }
-            for (int i = 0; i < numberOfShards(); i++) {
-                this.primaryTermsMap.put(i, SequenceNumbers.UNASSIGNED_PRIMARY_TERM);
-            }
         }
 
         public Builder system(boolean system) {
@@ -2705,186 +2564,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
 
             builder.endObject();
         }
-
-        public static IndexMetadata fromXContent(XContentParser parser) throws IOException {
-            if (parser.currentToken() == null) { // fresh parser? move to the first token
-                parser.nextToken();
-            }
-            if (parser.currentToken() == XContentParser.Token.START_OBJECT) {  // on a start object move to next token
-                parser.nextToken();
-            }
-            if (parser.currentToken() != XContentParser.Token.FIELD_NAME) {
-                throw new IllegalArgumentException("expected field name but got a " + parser.currentToken());
-            }
-            Builder builder = new Builder(parser.currentName());
-
-            String currentFieldName = null;
-            XContentParser.Token token = parser.nextToken();
-            if (token != XContentParser.Token.START_OBJECT) {
-                throw new IllegalArgumentException("expected object but got a " + token);
-            }
-            boolean mappingVersion = false;
-            boolean settingsVersion = false;
-            boolean aliasesVersion = false;
-            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (token == XContentParser.Token.FIELD_NAME) {
-                    currentFieldName = parser.currentName();
-                } else if (token == XContentParser.Token.START_OBJECT) {
-                    if (KEY_SETTINGS.equals(currentFieldName)) {
-                        builder.settings(Settings.fromXContent(parser));
-                    } else if (KEY_MAPPINGS.equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                            if (token == XContentParser.Token.FIELD_NAME) {
-                                currentFieldName = parser.currentName();
-                            } else if (token == XContentParser.Token.START_OBJECT) {
-                                String mappingType = currentFieldName;
-                                Map<String, Object> mappingSource = MapBuilder.<String, Object>newMapBuilder()
-                                    .put(mappingType, parser.mapOrdered())
-                                    .map();
-                                builder.putMapping(new MappingMetadata(mappingType, mappingSource));
-                            } else {
-                                throw new IllegalArgumentException("Unexpected token: " + token);
-                            }
-                        }
-                    } else if (KEY_ALIASES.equals(currentFieldName)) {
-                        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-                            builder.putAlias(AliasMetadata.Builder.fromXContent(parser));
-                        }
-                    } else if (KEY_IN_SYNC_ALLOCATIONS.equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                            if (token == XContentParser.Token.FIELD_NAME) {
-                                currentFieldName = parser.currentName();
-                            } else if (token == XContentParser.Token.START_ARRAY) {
-                                String shardId = currentFieldName;
-                                Set<String> allocationIds = new HashSet<>();
-                                while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                                    if (token == XContentParser.Token.VALUE_STRING) {
-                                        allocationIds.add(parser.text());
-                                    }
-                                }
-                                builder.putInSyncAllocationIds(Integer.valueOf(shardId), allocationIds);
-                            } else {
-                                throw new IllegalArgumentException("Unexpected token: " + token);
-                            }
-                        }
-                    } else if (KEY_ROLLOVER_INFOS.equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                            if (token == XContentParser.Token.FIELD_NAME) {
-                                currentFieldName = parser.currentName();
-                            } else if (token == XContentParser.Token.START_OBJECT) {
-                                builder.putRolloverInfo(RolloverInfo.parse(parser, currentFieldName));
-                            } else {
-                                throw new IllegalArgumentException("Unexpected token: " + token);
-                            }
-                        }
-                    } else if ("warmers".equals(currentFieldName)) {
-                        // TODO: This was removed in 2015. We should throw an exception in OpenSearch 4.0.
-                        // throw new IllegalArgumentException("Warmers are not supported anymore");
-                        assert Version.CURRENT.major <= 5;
-                        parser.skipChildren();
-                    } else if (CONTEXT_KEY.equals(currentFieldName)) {
-                        builder.context(Context.fromXContent(parser));
-                    } else if (INGESTION_STATUS_KEY.equals(currentFieldName)) {
-                        builder.ingestionStatus(IngestionStatus.fromXContent(parser));
-                    } else if (KEY_SPLIT_SHARDS_METADATA.equals(currentFieldName)) {
-                        builder.splitShardsMetadata(SplitShardsMetadata.parse(parser));
-                    } else if (KEY_PRIMARY_TERMS_MAP.equals(currentFieldName)) {
-                        Map<Integer, Long> primaryTermsMap = new HashMap<>();
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                            if (token != XContentParser.Token.FIELD_NAME) {
-                                throw new IllegalArgumentException("Unexpected token: " + token);
-                            }
-                            Integer shard = Integer.parseInt(parser.currentName());
-                            token = parser.nextToken();
-                            if (token != XContentParser.Token.VALUE_NUMBER) {
-                                throw new IllegalArgumentException("Unexpected token: " + token);
-                            }
-                            primaryTermsMap.put(shard, parser.longValue());
-                        }
-                        builder.primaryTermsMap(primaryTermsMap);
-                    } else {
-                        // assume it's custom index metadata
-                        builder.putCustom(currentFieldName, parser.mapStrings());
-                    }
-                } else if (token == XContentParser.Token.START_ARRAY) {
-                    if (KEY_MAPPINGS.equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                            if (token == XContentParser.Token.VALUE_EMBEDDED_OBJECT) {
-                                builder.putMapping(new MappingMetadata(new CompressedXContent(parser.binaryValue())));
-                            } else {
-                                Map<String, Object> mapping = parser.mapOrdered();
-                                if (mapping.size() == 1) {
-                                    String mappingType = mapping.keySet().iterator().next();
-                                    builder.putMapping(new MappingMetadata(mappingType, mapping));
-                                }
-                            }
-                        }
-                    } else if (KEY_PRIMARY_TERMS.equals(currentFieldName)) {
-                        final List<Long> list = new ArrayList<>();
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                            if (token == XContentParser.Token.VALUE_NUMBER) {
-                                list.add(parser.longValue());
-                            } else {
-                                throw new IllegalStateException("found a non-numeric value under [" + KEY_PRIMARY_TERMS + "]");
-                            }
-                        }
-                        builder.primaryTerms(list.stream().mapToLong(i -> i).toArray());
-                    } else {
-                        throw new IllegalArgumentException("Unexpected field for an array " + currentFieldName);
-                    }
-                } else if (token.isValue()) {
-                    if (KEY_STATE.equals(currentFieldName)) {
-                        builder.state(State.fromString(parser.text()));
-                    } else if (KEY_VERSION.equals(currentFieldName)) {
-                        builder.version(parser.longValue());
-                    } else if (KEY_MAPPING_VERSION.equals(currentFieldName)) {
-                        mappingVersion = true;
-                        builder.mappingVersion(parser.longValue());
-                    } else if (KEY_SETTINGS_VERSION.equals(currentFieldName)) {
-                        settingsVersion = true;
-                        builder.settingsVersion(parser.longValue());
-                    } else if (KEY_ALIASES_VERSION.equals(currentFieldName)) {
-                        aliasesVersion = true;
-                        builder.aliasesVersion(parser.longValue());
-                    } else if (KEY_ROUTING_NUM_SHARDS.equals(currentFieldName)) {
-                        builder.setRoutingNumShards(parser.intValue());
-                    } else if (KEY_SYSTEM.equals(currentFieldName)) {
-                        builder.system(parser.booleanValue());
-                    } else {
-                        throw new IllegalArgumentException("Unexpected field [" + currentFieldName + "]");
-                    }
-                } else {
-                    throw new IllegalArgumentException("Unexpected token " + token);
-                }
-            }
-
-            assert mappingVersion : "mapping version should be present for indices";
-            assert settingsVersion : "settings version should be present for indices";
-            assert aliasesVersion : "aliases version should be present for indices";
-            return builder.build();
-        }
-    }
-
-    /**
-     * Adds human readable version and creation date settings.
-     * This method is used to display the settings in a human readable format in REST API
-     */
-    public static Settings addHumanReadableSettings(Settings settings) {
-        Settings.Builder builder = Settings.builder().put(settings);
-        Version version = SETTING_INDEX_VERSION_CREATED.get(settings);
-        if (version != Version.V_EMPTY) {
-            builder.put(SETTING_VERSION_CREATED_STRING, version.toString());
-        }
-        Version versionUpgraded = settings.getAsVersion(SETTING_VERSION_UPGRADED, null);
-        if (versionUpgraded != null) {
-            builder.put(SETTING_VERSION_UPGRADED_STRING, versionUpgraded.toString());
-        }
-        Long creationDate = settings.getAsLong(SETTING_CREATION_DATE, null);
-        if (creationDate != null) {
-            ZonedDateTime creationDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(creationDate), ZoneOffset.UTC);
-            builder.put(SETTING_CREATION_DATE_STRING, creationDateTime.toString());
-        }
-        return builder.build();
     }
 
     private static final ToXContent.Params FORMAT_PARAMS;
@@ -2944,122 +2623,6 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      */
     public int getRoutingFactor() {
         return routingFactor;
-    }
-
-    /**
-     * Returns the source shard ID to split the given target shard off
-     *
-     * @param shardId             the id of the target shard to split into
-     * @param sourceIndexMetadata the source index metadata
-     * @param numTargetShards     the total number of shards in the target index
-     * @return a the source shard ID to split off from
-     */
-    public static ShardId selectSplitShard(int shardId, IndexMetadata sourceIndexMetadata, int numTargetShards) {
-        int numSourceShards = sourceIndexMetadata.getNumberOfShards();
-        if (shardId >= numTargetShards) {
-            throw new IllegalArgumentException(
-                "the number of target shards (" + numTargetShards + ") must be greater than the shard id: " + shardId
-            );
-        }
-        final int routingFactor = getRoutingFactor(numSourceShards, numTargetShards);
-        assertSplitMetadata(numSourceShards, numTargetShards, sourceIndexMetadata);
-        return new ShardId(sourceIndexMetadata.getIndex(), shardId / routingFactor);
-    }
-
-    /**
-     * Returns the source shard ID to clone the given target shard off
-     *
-     * @param shardId             the id of the target shard to clone into
-     * @param sourceIndexMetadata the source index metadata
-     * @param numTargetShards     the total number of shards in the target index
-     * @return a the source shard ID to clone from
-     */
-    public static ShardId selectCloneShard(int shardId, IndexMetadata sourceIndexMetadata, int numTargetShards) {
-        int numSourceShards = sourceIndexMetadata.getNumberOfShards();
-        if (numSourceShards != numTargetShards) {
-            throw new IllegalArgumentException(
-                "the number of target shards ("
-                    + numTargetShards
-                    + ") must be the same as the number of"
-                    + " source shards ("
-                    + numSourceShards
-                    + ")"
-            );
-        }
-        return new ShardId(sourceIndexMetadata.getIndex(), shardId);
-    }
-
-    private static void assertSplitMetadata(int numSourceShards, int numTargetShards, IndexMetadata sourceIndexMetadata) {
-        if (numSourceShards > numTargetShards) {
-            throw new IllegalArgumentException(
-                "the number of source shards ["
-                    + numSourceShards
-                    + "] must be less that the number of target shards ["
-                    + numTargetShards
-                    + "]"
-            );
-        }
-        // now we verify that the numRoutingShards is valid in the source index
-        // note: if the number of shards is 1 in the source index we can just assume it's correct since from 1 we can split into anything
-        // this is important to special case here since we use this to validate this in various places in the code but allow to split form
-        // 1 to N but we never modify the sourceIndexMetadata to accommodate for that
-        int routingNumShards = numSourceShards == 1 ? numTargetShards : sourceIndexMetadata.getRoutingNumShards();
-        if (routingNumShards % numTargetShards != 0) {
-            throw new IllegalStateException(
-                "the number of routing shards [" + routingNumShards + "] must be a multiple of the target shards [" + numTargetShards + "]"
-            );
-        }
-        // this is just an additional assertion that ensures we are a factor of the routing num shards.
-        assert sourceIndexMetadata.getNumberOfShards() == 1 // special case - we can split into anything from 1 shard
-            || getRoutingFactor(numTargetShards, routingNumShards) >= 0;
-    }
-
-    /**
-     * Selects the source shards for a local shard recovery. This might either be a split or a shrink operation.
-     *
-     * @param shardId             the target shard ID to select the source shards for
-     * @param sourceIndexMetadata the source metadata
-     * @param numTargetShards     the number of target shards
-     */
-    public static Set<ShardId> selectRecoverFromShards(int shardId, IndexMetadata sourceIndexMetadata, int numTargetShards) {
-        if (sourceIndexMetadata.getNumberOfShards() > numTargetShards) {
-            return selectShrinkShards(shardId, sourceIndexMetadata, numTargetShards);
-        } else if (sourceIndexMetadata.getNumberOfShards() < numTargetShards) {
-            return Collections.singleton(selectSplitShard(shardId, sourceIndexMetadata, numTargetShards));
-        } else {
-            return Collections.singleton(selectCloneShard(shardId, sourceIndexMetadata, numTargetShards));
-        }
-    }
-
-    /**
-     * Returns the source shard ids to shrink into the given shard id.
-     *
-     * @param shardId             the id of the target shard to shrink to
-     * @param sourceIndexMetadata the source index metadata
-     * @param numTargetShards     the total number of shards in the target index
-     * @return a set of shard IDs to shrink into the given shard ID.
-     */
-    public static Set<ShardId> selectShrinkShards(int shardId, IndexMetadata sourceIndexMetadata, int numTargetShards) {
-        if (shardId >= numTargetShards) {
-            throw new IllegalArgumentException(
-                "the number of target shards (" + numTargetShards + ") must be greater than the shard id: " + shardId
-            );
-        }
-        if (sourceIndexMetadata.getNumberOfShards() < numTargetShards) {
-            throw new IllegalArgumentException(
-                "the number of target shards ["
-                    + numTargetShards
-                    + "] must be less that the number of source shards ["
-                    + sourceIndexMetadata.getNumberOfShards()
-                    + "]"
-            );
-        }
-        int routingFactor = getRoutingFactor(sourceIndexMetadata.getNumberOfShards(), numTargetShards);
-        Set<ShardId> shards = new HashSet<>(routingFactor);
-        for (int i = shardId * routingFactor; i < routingFactor * shardId + routingFactor; i++) {
-            shards.add(new ShardId(sourceIndexMetadata.getIndex(), i));
-        }
-        return shards;
     }
 
     /**

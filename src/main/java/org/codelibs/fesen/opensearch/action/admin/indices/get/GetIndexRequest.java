@@ -107,27 +107,6 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
         includeDefaults = in.readBoolean();
     }
 
-    public GetIndexRequest features(Feature... features) {
-        if (features == null) {
-            throw new IllegalArgumentException("features cannot be null");
-        } else {
-            this.features = features;
-        }
-        return this;
-    }
-
-    public GetIndexRequest addFeatures(Feature... features) {
-        if (this.features == DEFAULT_FEATURES) {
-            return features(features);
-        } else {
-            return features(ArrayUtils.concat(features(), features, Feature.class));
-        }
-    }
-
-    public Feature[] features() {
-        return features;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         return null;

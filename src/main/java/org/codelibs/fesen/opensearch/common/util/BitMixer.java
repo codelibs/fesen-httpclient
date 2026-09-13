@@ -58,23 +58,6 @@ public final class BitMixer {
         return mixPhi(key ^ seed);
     }
 
-    // Better mix for larger key domains.
-    public static int mix(int key) {
-        return mix32(key);
-    }
-
-    public static int mix(int key, int seed) {
-        return mix32(key ^ seed);
-    }
-
-    public static int mix(float key) {
-        return mix32(Float.floatToIntBits(key));
-    }
-
-    public static int mix(float key, int seed) {
-        return mix32(Float.floatToIntBits(key) ^ seed);
-    }
-
     public static int mix(double key) {
         return (int) mix64(Double.doubleToLongBits(key));
     }
@@ -89,23 +72,6 @@ public final class BitMixer {
 
     public static int mix(long key, int seed) {
         return (int) mix64(key ^ seed);
-    }
-
-    public static int mix(Object key) {
-        return key == null ? 0 : mix32(key.hashCode());
-    }
-
-    public static int mix(Object key, int seed) {
-        return key == null ? 0 : mix32(key.hashCode() ^ seed);
-    }
-
-    /**
-     * MH3's plain finalization step.
-     */
-    public static int mix32(int k) {
-        k = (k ^ (k >>> 16)) * 0x85ebca6b;
-        k = (k ^ (k >>> 13)) * 0xc2b2ae35;
-        return k ^ (k >>> 16);
     }
 
     /**

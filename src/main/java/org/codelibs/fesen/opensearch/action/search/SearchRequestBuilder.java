@@ -148,14 +148,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * The routing values to control the shards that the search will be executed on.
-     */
-    public SearchRequestBuilder setRouting(String... routing) {
-        request.routing(routing);
-        return this;
-    }
-
-    /**
      * Sets the preference to execute the search. Defaults to randomize across shards. Can be set to
      * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
      * or a custom value, which guarantees that the same order
@@ -258,22 +250,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * The stats groups this request will be aggregated under.
-     */
-    public SearchRequestBuilder setStats(String... statsGroups) {
-        sourceBuilder().stats(Arrays.asList(statsGroups));
-        return this;
-    }
-
-    /**
-     * The stats groups this request will be aggregated under.
-     */
-    public SearchRequestBuilder setStats(List<String> statsGroups) {
-        sourceBuilder().stats(statsGroups);
-        return this;
-    }
-
-    /**
      * Indicates whether the response should contain the stored _source for every hit
      */
     public SearchRequestBuilder setFetchSource(boolean fetch) {
@@ -306,64 +282,10 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Adds a docvalue based field to load and return. The field does not have to be stored,
-     * but its recommended to use non analyzed or numeric fields.
-     *
-     * @param name The field to get from the docvalue
-     */
-    public SearchRequestBuilder addDocValueField(String name, String format) {
-        sourceBuilder().docValueField(name, format);
-        return this;
-    }
-
-    /**
-     * Adds a docvalue based field to load and return. The field does not have to be stored,
-     * but its recommended to use non analyzed or numeric fields.
-     *
-     * @param name The field to get from the docvalue
-     */
-    public SearchRequestBuilder addDocValueField(String name) {
-        return addDocValueField(name, null);
-    }
-
-    /**
-     * Adds a field to load and return. The field must be present in the document _source.
-     *
-     * @param name The field to load
-     */
-    public SearchRequestBuilder addFetchField(String name) {
-        sourceBuilder().fetchField(name, null);
-        return this;
-    }
-
-    /**
-     * Adds a field to load and return. The field must be present in the document _source.
-     *
-     * @param name The field to load
-     * @param format an optional format string used when formatting values, for example a date format.
-     */
-    public SearchRequestBuilder addFetchField(String name, String format) {
-        sourceBuilder().fetchField(name, format);
-        return this;
-    }
-
-    /**
      * Adds a stored field to load and return (note, it must be stored) as part of the search request.
      */
     public SearchRequestBuilder addStoredField(String field) {
         sourceBuilder().storedField(field);
-        return this;
-    }
-
-    /**
-     * Adds a script based field to load and return. The field does not have to be stored,
-     * but its recommended to use non analyzed or numeric fields.
-     *
-     * @param name   The name that will represent this value in the return hit
-     * @param script The script to use
-     */
-    public SearchRequestBuilder addScriptField(String name, Script script) {
-        sourceBuilder().scriptField(name, script);
         return this;
     }
 
@@ -557,25 +479,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     }
 
     /**
-     * Sets if this request should use the request cache or not, assuming that it can (for
-     * example, if "now" is used, it will never be cached). By default (not set, or null,
-     * will default to the index level setting if request cache is enabled or not).
-     */
-    public SearchRequestBuilder setRequestCache(Boolean requestCache) {
-        request.requestCache(requestCache);
-        return this;
-    }
-
-    /**
-     * Sets if this request should allow partial results.  (If method is not called,
-     * will default to the cluster level setting).
-     */
-    public SearchRequestBuilder setAllowPartialSearchResults(boolean allowPartialSearchResults) {
-        request.allowPartialSearchResults(allowPartialSearchResults);
-        return this;
-    }
-
-    /**
      * Should the query be profiled. Defaults to <code>false</code>
      */
     public SearchRequestBuilder setProfile(boolean profile) {
@@ -645,14 +548,6 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      */
     public SearchRequestBuilder setPreFilterShardSize(int preFilterShardSize) {
         this.request.setPreFilterShardSize(preFilterShardSize);
-        return this;
-    }
-
-    /**
-     * Request level time interval to control how long search is allowed to execute after which it is cancelled.
-     */
-    public SearchRequestBuilder setCancelAfterTimeInterval(TimeValue cancelAfterTimeInterval) {
-        this.request.setCancelAfterTimeInterval(cancelAfterTimeInterval);
         return this;
     }
 }

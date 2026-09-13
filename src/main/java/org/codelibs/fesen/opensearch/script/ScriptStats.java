@@ -72,29 +72,6 @@ public class ScriptStats implements Writeable, ToXContentFragment {
 
     /**
      * This constructor will be deprecated starting in version 3.4.0.
-     * Use {@link ScriptStats#aggregate(List)} instead.
-     */
-    @Deprecated
-    public ScriptStats(List<ScriptContextStats> contextStats) {
-        ArrayList<ScriptContextStats> ctxStats = new ArrayList<>(contextStats.size());
-        ctxStats.addAll(contextStats);
-        ctxStats.sort(ScriptContextStats::compareTo);
-        this.contextStats = Collections.unmodifiableList(ctxStats);
-        long compilations = 0;
-        long cacheEvictions = 0;
-        long compilationLimitTriggered = 0;
-        for (ScriptContextStats stats : contextStats) {
-            compilations += stats.getCompilations();
-            cacheEvictions += stats.getCacheEvictions();
-            compilationLimitTriggered += stats.getCompilationLimitTriggered();
-        }
-        this.compilations = compilations;
-        this.cacheEvictions = cacheEvictions;
-        this.compilationLimitTriggered = compilationLimitTriggered;
-    }
-
-    /**
-     * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
      */
     @Deprecated
@@ -127,30 +104,6 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         out.writeVLong(cacheEvictions);
         out.writeVLong(compilationLimitTriggered);
         out.writeList(contextStats);
-    }
-
-    /**
-     * Aggregates a list of {@link ScriptContextStats} into a {@link ScriptStats}.
-     * Sums all metrics across contexts and returns an immutable, sorted, and aggregated result.
-     */
-    public static ScriptStats aggregate(List<ScriptContextStats> contextStats) {
-        ArrayList<ScriptContextStats> ctxStats = new ArrayList<>(contextStats);
-        ctxStats.sort(ScriptContextStats::compareTo);
-
-        long compilations = 0;
-        long cacheEvictions = 0;
-        long compilationLimitTriggered = 0;
-        for (ScriptContextStats stat : ctxStats) {
-            compilations += stat.getCompilations();
-            cacheEvictions += stat.getCacheEvictions();
-            compilationLimitTriggered += stat.getCompilationLimitTriggered();
-        }
-
-        return new Builder().contextStats(Collections.unmodifiableList(new ArrayList<>(ctxStats)))
-            .compilations(compilations)
-            .cacheEvictions(cacheEvictions)
-            .compilationLimitTriggered(compilationLimitTriggered)
-            .build();
     }
 
     public List<ScriptContextStats> getContextStats() {
@@ -198,11 +151,6 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         private long compilationLimitTriggered = 0;
 
         public Builder() {}
-
-        public Builder contextStats(List<ScriptContextStats> contextStats) {
-            this.contextStats = contextStats;
-            return this;
-        }
 
         public Builder compilations(long compilations) {
             this.compilations = compilations;

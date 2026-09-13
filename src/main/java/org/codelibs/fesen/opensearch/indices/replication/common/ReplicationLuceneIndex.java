@@ -78,16 +78,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         targetThrottleTimeInNanos = UNKNOWN;
     }
 
-    public synchronized void addFileDetail(String name, long length, boolean reused) {
-        filesDetails.addFileDetails(name, length, reused);
-    }
-
     public synchronized void setFileDetailsComplete() {
         filesDetails.setComplete();
-    }
-
-    public synchronized void addRecoveredBytesToFile(String name, long bytes) {
-        filesDetails.addRecoveredBytesToFile(name, bytes);
     }
 
     public synchronized void addSourceThrottling(long timeInNanos) {
@@ -202,23 +194,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         for (FileMetadata file : filesDetails.values()) {
             if (file.reused() == false) {
                 total += file.length();
-            }
-        }
-        return total;
-    }
-
-    /**
-     * @return number of bytes still to recover, i.e. {@link ReplicationLuceneIndex#totalRecoverBytes()} minus {@link ReplicationLuceneIndex#recoveredBytes()}, or
-     * {@code -1} if the full set of files to recover is not yet known
-     */
-    public synchronized long bytesStillToRecover() {
-        if (filesDetails.isComplete() == false) {
-            return -1L;
-        }
-        long total = 0L;
-        for (FileMetadata file : filesDetails.values()) {
-            if (file.reused() == false) {
-                total += file.length() - file.recovered();
             }
         }
         return total;
@@ -350,18 +325,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
             return builder;
         }
 
-        public void addFileDetails(String name, long length, boolean reused) {
-            assert complete == false : "addFileDetail for [" + name + "] when file details are already complete";
-            FileMetadata existing = fileMetadataMap.put(name, new FileMetadata(name, length, reused));
-            assert existing == null : "file [" + name + "] is already reported";
-        }
-
-        public void addRecoveredBytesToFile(String name, long bytes) {
-            FileMetadata file = fileMetadataMap.get(name);
-            assert file != null : "file [" + name + "] hasn't been reported";
-            file.addRecoveredBytes(bytes);
-        }
-
         public FileMetadata get(String name) {
             return fileMetadataMap.get(name);
         }
@@ -386,10 +349,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         public Collection<FileMetadata> values() {
             return fileMetadataMap.values();
         }
-
-        public boolean isComplete() {
-            return complete;
-        }
     }
 
     /**
@@ -404,13 +363,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         private long recovered;
         private boolean reused;
 
-        public FileMetadata(String name, long length, boolean reused) {
-            assert name != null;
-            this.name = name;
-            this.length = length;
-            this.reused = reused;
-        }
-
         public FileMetadata(StreamInput in) throws IOException {
             name = in.readString();
             length = in.readVLong();
@@ -424,12 +376,6 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
             out.writeVLong(length);
             out.writeVLong(recovered);
             out.writeBoolean(reused);
-        }
-
-        public void addRecoveredBytes(long bytes) {
-            assert reused == false : "file is marked as reused, can't update recovered bytes";
-            assert bytes >= 0 : "can't recovered negative bytes. got [" + bytes + "]";
-            recovered += bytes;
         }
 
         /**

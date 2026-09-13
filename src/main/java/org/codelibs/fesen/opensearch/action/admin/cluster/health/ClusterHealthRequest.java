@@ -93,33 +93,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         this.indices = indices;
     }
 
-    public ClusterHealthRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        timeout = in.readTimeValue();
-        if (in.readBoolean()) {
-            waitForStatus = ClusterHealthStatus.fromValue(in.readByte());
-        }
-        waitForNoRelocatingShards = in.readBoolean();
-        waitForActiveShards = ActiveShardCount.readFrom(in);
-        waitForNodes = in.readString();
-        if (in.readBoolean()) {
-            waitForEvents = Priority.readFrom(in);
-        }
-        waitForNoInitializingShards = in.readBoolean();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        if (in.getVersion().onOrAfter(Version.V_2_5_0)) {
-            awarenessAttribute = in.readOptionalString();
-            level = in.readEnum(Level.class);
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_6_0)) {
-            ensureNodeWeighedIn = in.readBoolean();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_17_0)) {
-            applyLevelAtTransportLayer = in.readBoolean();
-        }
-    }
-
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);
@@ -188,18 +161,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return timeout;
     }
 
-    public ClusterHealthRequest timeout(TimeValue timeout) {
-        this.timeout = timeout;
-        if (clusterManagerNodeTimeout == DEFAULT_CLUSTER_MANAGER_NODE_TIMEOUT) {
-            clusterManagerNodeTimeout = timeout;
-        }
-        return this;
-    }
-
-    public ClusterHealthRequest timeout(String timeout) {
-        return this.timeout(TimeValue.parseTimeValue(timeout, null, getClass().getSimpleName() + ".timeout"));
-    }
-
     public ClusterHealthStatus waitForStatus() {
         return waitForStatus;
     }
@@ -251,33 +212,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return waitForActiveShards;
     }
 
-    /**
-     * Sets the number of shard copies that must be active across all indices before getting the
-     * health status. Defaults to {@link ActiveShardCount#NONE}, meaning we don't wait on any active shards.
-     * Set this value to {@link ActiveShardCount#ALL} to wait for all shards (primary and
-     * all replicas) to be active across all indices in the cluster. Otherwise, use
-     * {@link ActiveShardCount#from(int)} to set this value to any non-negative integer, up to the
-     * total number of shard copies to wait for.
-     */
-    public ClusterHealthRequest waitForActiveShards(ActiveShardCount waitForActiveShards) {
-        if (waitForActiveShards.equals(ActiveShardCount.DEFAULT)) {
-            // the default for cluster health request is 0, not 1
-            this.waitForActiveShards = ActiveShardCount.NONE;
-        } else {
-            this.waitForActiveShards = waitForActiveShards;
-        }
-        return this;
-    }
-
-    /**
-     * A shortcut for {@link #waitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public ClusterHealthRequest waitForActiveShards(final int waitForActiveShards) {
-        return waitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
-
     public String waitForNodes() {
         return waitForNodes;
     }
@@ -297,30 +231,6 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
 
     public Priority waitForEvents() {
         return this.waitForEvents;
-    }
-
-    /**
-     * Set the level of detail for the health information to be returned.
-     * Only used by the high-level REST Client.
-     */
-    public void level(Level level) {
-        this.level = Objects.requireNonNull(level, "level must not be null");
-    }
-
-    public void setLevel(String level) {
-        switch (level) {
-            case "indices":
-                level(ClusterHealthRequest.Level.INDICES);
-                break;
-            case "shards":
-                level(ClusterHealthRequest.Level.SHARDS);
-                break;
-            case "awareness_attributes":
-                level(ClusterHealthRequest.Level.AWARENESS_ATTRIBUTES);
-                break;
-            default:
-                level(ClusterHealthRequest.Level.CLUSTER);
-        }
     }
 
     /**

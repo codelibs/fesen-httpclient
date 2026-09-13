@@ -56,20 +56,4 @@ public class GetTaskRequestBuilder extends ActionRequestBuilder<GetTaskRequest, 
         request.setTaskId(taskId);
         return this;
     }
-
-    /**
-     * Should this request wait for all found tasks to complete?
-     */
-    public final GetTaskRequestBuilder setWaitForCompletion(boolean waitForCompletion) {
-        request.setWaitForCompletion(waitForCompletion);
-        return this;
-    }
-
-    /**
-     * Timeout to wait for any async actions this request must take. It must take anywhere from 0 to 2.
-     */
-    public final GetTaskRequestBuilder setTimeout(TimeValue timeout) {
-        request.setTimeout(timeout);
-        return this;
-    }
 }

@@ -134,61 +134,6 @@ public class AllocateUnassignedDecision extends AbstractAllocationDecision {
     }
 
     /**
-     * Returns a NO decision with the given {@link AllocationStatus}, and the individual node-level
-     * decisions that comprised the final NO decision if in explain mode.
-     */
-    public static AllocateUnassignedDecision no(AllocationStatus allocationStatus, @Nullable List<NodeAllocationResult> decisions) {
-        return no(allocationStatus, decisions, false);
-    }
-
-    /**
-     * Returns a NO decision for a delayed shard allocation on a replica shard, with the individual node-level
-     * decisions that comprised the final NO decision, if in explain mode.  Instances created with this
-     * method will return {@link AllocationStatus#DELAYED_ALLOCATION} for {@link #getAllocationStatus()}.
-     */
-    public static AllocateUnassignedDecision delayed(long remainingDelay, long totalDelay, @Nullable List<NodeAllocationResult> decisions) {
-        return no(AllocationStatus.DELAYED_ALLOCATION, decisions, false, remainingDelay, totalDelay);
-    }
-
-    /**
-     * Returns a NO decision with the given {@link AllocationStatus}, and the individual node-level
-     * decisions that comprised the final NO decision if in explain mode.
-     */
-    public static AllocateUnassignedDecision no(
-        AllocationStatus allocationStatus,
-        @Nullable List<NodeAllocationResult> decisions,
-        boolean reuseStore
-    ) {
-        return no(allocationStatus, decisions, reuseStore, 0L, 0L);
-    }
-
-    private static AllocateUnassignedDecision no(
-        AllocationStatus allocationStatus,
-        @Nullable List<NodeAllocationResult> decisions,
-        boolean reuseStore,
-        long remainingDelay,
-        long totalDelay
-    ) {
-        if (decisions != null) {
-            return new AllocateUnassignedDecision(allocationStatus, null, null, decisions, reuseStore, remainingDelay, totalDelay);
-        } else {
-            return getCachedDecision(allocationStatus);
-        }
-    }
-
-    /**
-     * Returns a THROTTLE decision, with the individual node-level decisions that
-     * comprised the final THROTTLE decision if in explain mode.
-     */
-    public static AllocateUnassignedDecision throttle(@Nullable List<NodeAllocationResult> decisions) {
-        if (decisions != null) {
-            return new AllocateUnassignedDecision(AllocationStatus.DECIDERS_THROTTLED, null, null, decisions, false, 0L, 0L);
-        } else {
-            return getCachedDecision(AllocationStatus.DECIDERS_THROTTLED);
-        }
-    }
-
-    /**
      * Creates a YES decision with the given individual node-level decisions that
      * comprised the final YES decision, along with the node id to which the shard is assigned and
      * the allocation id for the shard, if available.
@@ -200,24 +145,6 @@ public class AllocateUnassignedDecision extends AbstractAllocationDecision {
         boolean reuseStore
     ) {
         return new AllocateUnassignedDecision(null, assignedNode, allocationId, decisions, reuseStore, 0L, 0L);
-    }
-
-    /**
-     * Creates a {@link AllocateUnassignedDecision} from the given {@link Decision} and the assigned node, if any.
-     */
-    public static AllocateUnassignedDecision fromDecision(
-        Decision decision,
-        @Nullable DiscoveryNode assignedNode,
-        @Nullable List<NodeAllocationResult> nodeDecisions
-    ) {
-        final Type decisionType = decision.type();
-        AllocationStatus allocationStatus = decisionType != Decision.Type.YES ? AllocationStatus.fromDecision(decisionType) : null;
-        return new AllocateUnassignedDecision(allocationStatus, assignedNode, null, nodeDecisions, false, 0L, 0L);
-    }
-
-    private static AllocateUnassignedDecision getCachedDecision(AllocationStatus allocationStatus) {
-        AllocateUnassignedDecision decision = CACHED_DECISIONS.get(allocationStatus);
-        return Objects.requireNonNull(decision, "precomputed decision not found for " + allocationStatus);
     }
 
     @Override

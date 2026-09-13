@@ -370,37 +370,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
             starTreeQueryFailed += stats.starTreeQueryFailed;
         }
 
-        public void addForClosingShard(Stats stats) {
-            queryCount += stats.queryCount;
-            queryTimeInMillis += stats.queryTimeInMillis;
-            queryFailedCount += stats.queryFailedCount;
-
-            concurrentQueryCount += stats.concurrentQueryCount;
-            concurrentQueryTimeInMillis += stats.concurrentQueryTimeInMillis;
-
-            fetchCount += stats.fetchCount;
-            fetchTimeInMillis += stats.fetchTimeInMillis;
-
-            scrollCount += stats.scrollCount;
-            scrollTimeInMillis += stats.scrollTimeInMillis;
-            // need consider the count of the shard's current scroll
-            scrollCount += stats.scrollCurrent;
-
-            suggestCount += stats.suggestCount;
-            suggestTimeInMillis += stats.suggestTimeInMillis;
-
-            pitCount += stats.pitCount;
-            pitTimeInMillis += stats.pitTimeInMillis;
-            pitCurrent += stats.pitCurrent;
-            queryConcurrency += stats.queryConcurrency;
-
-            searchIdleReactivateCount += stats.searchIdleReactivateCount;
-
-            starTreeQueryCount += stats.starTreeQueryCount;
-            starTreeQueryTimeInMillis += stats.starTreeQueryTimeInMillis;
-            starTreeQueryFailed += stats.starTreeQueryFailed;
-        }
-
         public long getQueryCount() {
             return queryCount;
         }
@@ -883,13 +852,6 @@ public class SearchStats implements Writeable, ToXContentFragment {
             return;
         }
         totalStats.add(searchStats.totalStats);
-    }
-
-    public void addTotalsForClosingShard(SearchStats searchStats) {
-        if (searchStats == null) {
-            return;
-        }
-        totalStats.addForClosingShard(searchStats.totalStats);
     }
 
     public Stats getTotal() {

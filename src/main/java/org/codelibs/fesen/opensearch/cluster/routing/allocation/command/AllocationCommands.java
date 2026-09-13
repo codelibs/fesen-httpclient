@@ -119,60 +119,6 @@ public class AllocationCommands implements ToXContentFragment {
         }
     }
 
-    /**
-     * Reads {@link AllocationCommands} from a {@link XContentParser}
-     * <pre>
-     *     {
-     *         "commands" : [
-     *              {"allocate" : {"index" : "test", "shard" : 0, "node" : "test"}}
-     *         ]
-     *     }
-     * </pre>
-     * @param parser {@link XContentParser} to read the commands from
-     * @return {@link AllocationCommands} read
-     * @throws IOException if something bad happens while reading the stream
-     */
-    public static AllocationCommands fromXContent(XContentParser parser) throws IOException {
-        AllocationCommands commands = new AllocationCommands();
-
-        XContentParser.Token token = parser.currentToken();
-        if (token == null) {
-            throw new OpenSearchParseException("No commands");
-        }
-        if (token == XContentParser.Token.FIELD_NAME) {
-            if (!parser.currentName().equals("commands")) {
-                throw new OpenSearchParseException("expected field name to be named [commands], got [{}] instead", parser.currentName());
-            }
-            token = parser.nextToken();
-            if (token != XContentParser.Token.START_ARRAY) {
-                throw new OpenSearchParseException("commands should follow with an array element");
-            }
-        } else if (token == XContentParser.Token.START_ARRAY) {
-            // ok...
-        } else {
-            throw new OpenSearchParseException("expected either field name [commands], or start array, got [{}] instead", token);
-        }
-        while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-            if (token == XContentParser.Token.START_OBJECT) {
-                // move to the command name
-                token = parser.nextToken();
-                String commandName = parser.currentName();
-                token = parser.nextToken();
-                commands.add(parser.namedObject(AllocationCommand.class, commandName, null));
-                // move to the end object one
-                if (parser.nextToken() != XContentParser.Token.END_OBJECT) {
-                    throw new OpenSearchParseException(
-                        "allocation command is malformed, done parsing a command," + " but didn't get END_OBJECT, got [{}] instead",
-                        token
-                    );
-                }
-            } else {
-                throw new OpenSearchParseException("allocation command is malformed, got [{}] instead", token);
-            }
-        }
-        return commands;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startArray("commands");

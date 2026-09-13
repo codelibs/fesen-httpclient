@@ -68,21 +68,6 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
 
     public GetFieldMappingsRequest() {}
 
-    public GetFieldMappingsRequest(StreamInput in) throws IOException {
-        super(in);
-        indices = in.readStringArray();
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            String[] types = in.readStringArray();
-            if (types != Strings.EMPTY_ARRAY) {
-                throw new IllegalArgumentException("Expected empty type array but received [" + Arrays.toString(types) + "]");
-            }
-        }
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        local = in.readBoolean();
-        fields = in.readStringArray();
-        includeDefaults = in.readBoolean();
-    }
-
     /**
      * Indicate whether the receiving node should operate based on local index information or forward requests,
      * where needed, to other nodes. If running locally, request will not raise errors if running locally &amp; missing indices.

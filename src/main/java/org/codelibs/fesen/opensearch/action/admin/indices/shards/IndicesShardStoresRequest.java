@@ -90,24 +90,6 @@ public class IndicesShardStoresRequest extends ClusterManagerNodeReadRequest<Ind
     }
 
     /**
-     * Set statuses to filter shards to get stores info on.
-     * see {@link ClusterHealthStatus} for details.
-     * Defaults to "yellow" and "red" status
-     * @param shardStatuses acceptable values are "green", "yellow", "red" and "all"
-     */
-    public IndicesShardStoresRequest shardStatuses(String... shardStatuses) {
-        statuses = EnumSet.noneOf(ClusterHealthStatus.class);
-        for (String statusString : shardStatuses) {
-            if ("all".equalsIgnoreCase(statusString)) {
-                statuses = EnumSet.allOf(ClusterHealthStatus.class);
-                return this;
-            }
-            statuses.add(ClusterHealthStatus.fromString(statusString));
-        }
-        return this;
-    }
-
-    /**
      * Specifies what type of requested indices to ignore and wildcard indices expressions
      * By default, expands wildcards to both open and closed indices
      */

@@ -124,36 +124,6 @@ public final class InternalAggregations extends Aggregations implements Writeabl
     }
 
     /**
-     * Begin the reduction process.  This should be the entry point for the "first" reduction, e.g. called by
-     * SearchPhaseController or anywhere else that wants to initiate a reduction.  It _should not_ be called
-     * as an intermediate reduction step (e.g. in the middle of an aggregation tree).
-     * <p>
-     * This method first reduces the aggregations, and if it is the final reduce, then reduce the pipeline
-     * aggregations (both embedded parent/sibling as well as top-level sibling pipelines)
-     */
-    public static InternalAggregations topLevelReduce(List<InternalAggregations> aggregationsList, ReduceContext context) {
-        InternalAggregations reduced = reduce(aggregationsList, context);
-        if (reduced == null) {
-            return null;
-        }
-
-        if (context.isFinalReduce()) {
-            List<InternalAggregation> reducedInternalAggs = reduced.getInternalAggregations();
-            reducedInternalAggs = reducedInternalAggs.stream()
-                .map(agg -> agg.reducePipelines(agg, context, context.pipelineTreeRoot().subTree(agg.getName())))
-                .collect(Collectors.toList());
-
-            for (PipelineAggregator pipelineAggregator : context.pipelineTreeRoot().aggregators()) {
-                SiblingPipelineAggregator sib = (SiblingPipelineAggregator) pipelineAggregator;
-                InternalAggregation newAgg = sib.doReduce(from(reducedInternalAggs), context);
-                reducedInternalAggs.add(newAgg);
-            }
-            return from(reducedInternalAggs);
-        }
-        return reduced;
-    }
-
-    /**
      * Reduces the given list of aggregations as well as the top-level pipeline aggregators extracted from the first
      * {@link InternalAggregations} object found in the list.
      * Note that pipeline aggregations _are not_ reduced by this method.  Pipelines are handled

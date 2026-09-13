@@ -181,25 +181,7 @@ public class GeoPoint implements ToXContentFragment {
         }
     }
 
-    public GeoPoint resetFromIndexHash(long hash) {
-        lon = Geohash.decodeLongitude(hash);
-        lat = Geohash.decodeLatitude(hash);
-        return this;
-    }
-
     // todo this is a crutch because LatLonPoint doesn't have a helper for returning .stringValue()
-    // todo remove with next release of lucene
-    public GeoPoint resetFromIndexableField(IndexableField field) {
-        if (field instanceof LatLonPoint) {
-            BytesRef br = field.binaryValue();
-            byte[] bytes = Arrays.copyOfRange(br.bytes, br.offset, br.length);
-            return this.reset(GeoEncodingUtils.decodeLatitude(bytes, 0), GeoEncodingUtils.decodeLongitude(bytes, Integer.BYTES));
-        } else if (field instanceof LatLonDocValuesField) {
-            long encoded = (long) (field.numericValue());
-            return this.reset(GeoEncodingUtils.decodeLatitude((int) (encoded >>> 32)), GeoEncodingUtils.decodeLongitude((int) encoded));
-        }
-        return resetFromIndexHash(Long.parseLong(field.stringValue()));
-    }
 
     public GeoPoint resetFromGeoHash(String geohash) {
         final long hash;
@@ -209,11 +191,6 @@ public class GeoPoint implements ToXContentFragment {
             throw new OpenSearchParseException(ex.getMessage(), ex);
         }
         return this.reset(Geohash.decodeLatitude(hash), Geohash.decodeLongitude(hash));
-    }
-
-    public GeoPoint resetFromGeoHash(long geohashLong) {
-        final int level = (int) (12 - (geohashLong & 15));
-        return this.resetFromIndexHash(BitUtil.flipFlop((geohashLong >>> 4) << ((level * 5) + 2)));
     }
 
     public void writeTo(final StreamOutput out) throws IOException {
@@ -235,14 +212,6 @@ public class GeoPoint implements ToXContentFragment {
 
     public double getLon() {
         return this.lon;
-    }
-
-    public String geohash() {
-        return Geohash.stringEncode(lon, lat);
-    }
-
-    public String getGeohash() {
-        return Geohash.stringEncode(lon, lat);
     }
 
     @Override
@@ -276,10 +245,6 @@ public class GeoPoint implements ToXContentFragment {
 
     public static GeoPoint fromGeohash(String geohash) {
         return new GeoPoint().resetFromGeoHash(geohash);
-    }
-
-    public static GeoPoint fromGeohash(long geohashLong) {
-        return new GeoPoint().resetFromGeoHash(geohashLong);
     }
 
     @Override

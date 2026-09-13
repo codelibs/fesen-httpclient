@@ -64,10 +64,6 @@ import java.util.regex.Pattern;
  */
 public class Queries {
 
-    public static Query newMatchAllQuery() {
-        return new MatchAllDocsQuery();
-    }
-
     /** Return a query that matches no document. */
     public static Query newMatchNoDocsQuery(String reason) {
         return new MatchNoDocsQuery(reason);
@@ -107,27 +103,6 @@ public class Queries {
     /** Return a query that matches all documents but those that match the given query. */
     public static Query not(Query q) {
         return new BooleanQuery.Builder().add(new MatchAllDocsQuery(), Occur.MUST).add(q, Occur.MUST_NOT).build();
-    }
-
-    static boolean isNegativeQuery(Query q) {
-        if (!(q instanceof BooleanQuery)) {
-            return false;
-        }
-        List<BooleanClause> clauses = ((BooleanQuery) q).clauses();
-        return clauses.isEmpty() == false && clauses.stream().allMatch(BooleanClause::isProhibited);
-    }
-
-    public static Query fixNegativeQueryIfNeeded(Query q) {
-        if (isNegativeQuery(q)) {
-            BooleanQuery bq = (BooleanQuery) q;
-            BooleanQuery.Builder builder = new BooleanQuery.Builder();
-            for (BooleanClause clause : bq) {
-                builder.add(clause);
-            }
-            builder.add(newMatchAllQuery(), BooleanClause.Occur.FILTER);
-            return builder.build();
-        }
-        return q;
     }
 
     public static Query applyMinimumShouldMatch(BooleanQuery query, @Nullable String minimumShouldMatch) {

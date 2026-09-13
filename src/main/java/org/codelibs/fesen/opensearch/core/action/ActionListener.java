@@ -220,43 +220,6 @@ public interface ActionListener<Response> {
     }
 
     /**
-     * Notifies every given listener with the response passed to {@link #onResponse(Object)}. If a listener itself throws an exception
-     * the exception is forwarded to {@link #onFailure(Exception)}. If in turn {@link #onFailure(Exception)} fails all remaining
-     * listeners will be processed and the caught exception will be re-thrown.
-     */
-    static <Response> void onResponse(Iterable<ActionListener<Response>> listeners, Response response) {
-        List<Exception> exceptionList = new ArrayList<>();
-        for (ActionListener<Response> listener : listeners) {
-            try {
-                listener.onResponse(response);
-            } catch (Exception ex) {
-                try {
-                    listener.onFailure(ex);
-                } catch (Exception ex1) {
-                    exceptionList.add(ex1);
-                }
-            }
-        }
-        ExceptionsHelper.maybeThrowRuntimeAndSuppress(exceptionList);
-    }
-
-    /**
-     * Notifies every given listener with the failure passed to {@link #onFailure(Exception)}. If a listener itself throws an exception
-     * all remaining listeners will be processed and the caught exception will be re-thrown.
-     */
-    static <Response> void onFailure(Iterable<ActionListener<Response>> listeners, Exception failure) {
-        List<Exception> exceptionList = new ArrayList<>();
-        for (ActionListener<Response> listener : listeners) {
-            try {
-                listener.onFailure(failure);
-            } catch (Exception ex) {
-                exceptionList.add(ex);
-            }
-        }
-        ExceptionsHelper.maybeThrowRuntimeAndSuppress(exceptionList);
-    }
-
-    /**
      * Wraps a given listener and returns a new listener which executes the provided {@code runAfter}
      * callback when the listener is notified via either {@code #onResponse} or {@code #onFailure}.
      */
@@ -329,34 +292,6 @@ public interface ActionListener<Response> {
                 delegate.onFailure(e);
             }
         };
-    }
-
-    /**
-     * Completes the given listener with the result from the provided supplier accordingly.
-     * This method is mainly used to complete a listener with a block of synchronous code.
-     * <p>
-     * If the supplier fails, the listener's onFailure handler will be called.
-     * It is the responsibility of {@code delegate} to handle its own exceptions inside `onResponse` and `onFailure`.
-     */
-    static <Response> void completeWith(ActionListener<Response> listener, CheckedSupplier<Response, ? extends Exception> supplier) {
-        Response response;
-        try {
-            response = supplier.get();
-        } catch (Exception e) {
-            try {
-                listener.onFailure(e);
-            } catch (RuntimeException ex) {
-                assert false : ex;
-                throw ex;
-            }
-            return;
-        }
-        try {
-            listener.onResponse(response);
-        } catch (RuntimeException ex) {
-            assert false : ex;
-            throw ex;
-        }
     }
 
     static <T> ActionListener<T> noOp() {

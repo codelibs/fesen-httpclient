@@ -99,23 +99,6 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
         updateShardStats(startTime, time);
     }
 
-    SnapshotStatus(
-        Snapshot snapshot,
-        State state,
-        List<SnapshotIndexShardStatus> shards,
-        Boolean includeGlobalState,
-        long startTime,
-        long time
-    ) {
-        this.snapshot = Objects.requireNonNull(snapshot);
-        this.state = Objects.requireNonNull(state);
-        this.shards = Objects.requireNonNull(shards);
-        this.includeGlobalState = includeGlobalState;
-        shardsStats = new SnapshotShardsStats(shards);
-        assert time >= 0 : "time must be >= 0 but received [" + time + "]";
-        updateShardStats(startTime, time);
-    }
-
     private SnapshotStatus(
         Snapshot snapshot,
         State state,

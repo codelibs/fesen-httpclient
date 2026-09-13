@@ -136,9 +136,5 @@ public final class FieldValueFactorFunction {
         public String toString() {
             return super.toString().toLowerCase(Locale.ROOT);
         }
-
-        public static Modifier fromString(String modifier) {
-            return valueOf(modifier.toUpperCase(Locale.ROOT));
-        }
     }
 }

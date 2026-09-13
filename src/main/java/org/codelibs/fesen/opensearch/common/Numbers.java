@@ -79,79 +79,6 @@ public final class Numbers {
         return true;
     }
 
-    /** Return the long that {@code n} stores, or throws an exception if the
-     *  stored value cannot be converted to a long that stores the exact same
-     *  value. */
-    public static long toLongExact(Number n) {
-        return switch (n) {
-            case Byte b -> b.longValue();
-            case Short s -> s.longValue();
-            case Integer i -> i.longValue();
-            case Long l -> l;
-            case Float f -> {
-                double d = f.doubleValue();
-                if (d != Math.round(d)) {
-                    throw new IllegalArgumentException(f + " is not an integer value");
-                }
-                yield f.longValue();
-            }
-            case Double d -> {
-                if (d != Math.round(d)) {
-                    throw new IllegalArgumentException(d + " is not an integer value");
-                }
-                yield d.longValue();
-            }
-            case BigDecimal bd -> bd.toBigIntegerExact().longValueExact();
-            case BigInteger bi -> bi.longValueExact();
-            default -> throw new IllegalArgumentException(
-                "Cannot check whether [" + n + "] of class [" + n.getClass().getName() + "] is actually a long"
-            );
-        };
-    }
-
-    /** Return the {@link BigInteger} that {@code n} stores, or throws an exception if the
-     *  stored value cannot be converted to a {@link BigInteger} that stores the exact same
-     *  value. */
-    public static BigInteger toBigIntegerExact(Number n) {
-        return switch (n) {
-            case Byte b -> BigInteger.valueOf(b.longValue());
-            case Short s -> BigInteger.valueOf(s.longValue());
-            case Integer i -> BigInteger.valueOf(i.longValue());
-            case Long l -> BigInteger.valueOf(l.longValue());
-            case Float f -> {
-                double d = f.doubleValue();
-                if (d != Math.round(d)) {
-                    throw new IllegalArgumentException(f + " is not an integer value");
-                }
-                yield BigInteger.valueOf(f.longValue());
-            }
-            case Double d -> {
-                if (d != Math.round(d)) {
-                    throw new IllegalArgumentException(d + " is not an integer value");
-                }
-                yield BigInteger.valueOf(d.longValue());
-            }
-            case BigDecimal bd -> bd.toBigIntegerExact();
-            case BigInteger bi -> bi;
-            default -> throw new IllegalArgumentException(
-                "Cannot convert [" + n + "] of class [" + n.getClass().getName() + "] to a BigInteger"
-            );
-        };
-    }
-
-    /** Return the unsigned long (as {@link BigInteger}) that {@code n} stores, or throws an exception if the
-     *  stored value cannot be converted to an unsigned long that stores the exact same
-     *  value. */
-    public static BigInteger toUnsignedLongExact(Number value) {
-        final BigInteger v = Numbers.toBigIntegerExact(value);
-
-        if (v.compareTo(MAX_UNSIGNED_LONG_VALUE) > 0 || v.compareTo(MIN_UNSIGNED_LONG_VALUE) < 0) {
-            throw new IllegalArgumentException("Value [" + value + "] is out of range for an unsigned long");
-        }
-
-        return v;
-    }
-
     // weak bounds on the BigDecimal representation to allow for coercion
     private static BigDecimal BIGDECIMAL_GREATER_THAN_LONG_MAX_VALUE = BigDecimal.valueOf(Long.MAX_VALUE).add(BigDecimal.ONE);
     private static BigDecimal BIGDECIMAL_LESS_THAN_LONG_MIN_VALUE = BigDecimal.valueOf(Long.MIN_VALUE).subtract(BigDecimal.ONE);
@@ -214,35 +141,6 @@ public final class Numbers {
         }
 
         return bigIntegerValue;
-    }
-
-    /** Return the int that {@code n} stores, or throws an exception if the
-     *  stored value cannot be converted to an int that stores the exact same
-     *  value. */
-    public static int toIntExact(Number n) {
-        return Math.toIntExact(toLongExact(n));
-    }
-
-    /** Return the short that {@code n} stores, or throws an exception if the
-     *  stored value cannot be converted to a short that stores the exact same
-     *  value. */
-    public static short toShortExact(Number n) {
-        long l = toLongExact(n);
-        if (l != (short) l) {
-            throw new ArithmeticException("short overflow: " + l);
-        }
-        return (short) l;
-    }
-
-    /** Return the byte that {@code n} stores, or throws an exception if the
-     *  stored value cannot be converted to a byte that stores the exact same
-     *  value. */
-    public static byte toByteExact(Number n) {
-        long l = toLongExact(n);
-        if (l != (byte) l) {
-            throw new ArithmeticException("byte overflow: " + l);
-        }
-        return (byte) l;
     }
 
     /**

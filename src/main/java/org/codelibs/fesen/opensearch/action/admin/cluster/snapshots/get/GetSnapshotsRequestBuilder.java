@@ -74,38 +74,6 @@ public class GetSnapshotsRequestBuilder extends ClusterManagerNodeOperationReque
     }
 
     /**
-     * Sets list of snapshots to return
-     *
-     * @param snapshots list of snapshots
-     * @return this builder
-     */
-    public GetSnapshotsRequestBuilder setSnapshots(String... snapshots) {
-        request.snapshots(snapshots);
-        return this;
-    }
-
-    /**
-     * Makes the request to return the current snapshot
-     *
-     * @return this builder
-     */
-    public GetSnapshotsRequestBuilder setCurrentSnapshot() {
-        request.snapshots(new String[] { GetSnapshotsRequest.CURRENT_SNAPSHOT });
-        return this;
-    }
-
-    /**
-     * Adds additional snapshots to the list of snapshots to return
-     *
-     * @param snapshots additional snapshots
-     * @return this builder
-     */
-    public GetSnapshotsRequestBuilder addSnapshots(String... snapshots) {
-        request.snapshots(ArrayUtils.concat(request.snapshots(), snapshots));
-        return this;
-    }
-
-    /**
      * Makes the request ignore unavailable snapshots
      *
      * @param ignoreUnavailable true to ignore unavailable snapshots.

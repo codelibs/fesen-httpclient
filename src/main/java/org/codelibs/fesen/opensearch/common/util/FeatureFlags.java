@@ -189,20 +189,6 @@ public class FeatureFlags {
         }
 
         /**
-         * Initialize feature flags map from the following sources:
-         * (Each source overwrites previous feature flags)
-         * - Set from setting default
-         * - Set from JVM system property if flag exists
-         * - Set from provided settings if flag exists
-         * @param openSearchSettings The settings stored in opensearch.yml.
-         */
-        void initializeFeatureFlags(Settings openSearchSettings) {
-            initFromDefaults();
-            initFromSysProperties();
-            initFromSettings(openSearchSettings);
-        }
-
-        /**
          * Set all feature flags according to setting defaults.
          * Overwrites existing entries in feature flags map.
          * Skips flags which are write locked according to TestUtils.FlagLock.
@@ -226,21 +212,6 @@ public class FeatureFlags {
                 String prop = System.getProperty(ff.getKey());
                 if (prop != null) {
                     featureFlags.put(ff, Boolean.valueOf(prop));
-                }
-            }
-        }
-
-        /**
-         * Update feature flags in ALL_FEATURE_FLAG_SETTINGS according to provided settings.
-         * Overwrites existing entries in feature flags map.
-         * Skips flags which are write locked according to TestUtils.FlagLock.
-         * @param settings settings to update feature flags from
-         */
-        private void initFromSettings(Settings settings) {
-            for (Setting<Boolean> ff : featureFlags.keySet()) {
-                if (settings.hasValue(ff.getKey())) {
-                    if (TestUtils.FlagWriteLock.isLocked(ff.getKey())) continue;
-                    featureFlags.put(ff, settings.getAsBoolean(ff.getKey(), ff.getDefault(settings)));
                 }
             }
         }
@@ -276,13 +247,6 @@ public class FeatureFlags {
     }
 
     private static final FeatureFlagsImpl featureFlagsImpl = new FeatureFlagsImpl();
-
-    /**
-     * Server module public API.
-     */
-    public static void initializeFeatureFlags(Settings openSearchSettings) {
-        featureFlagsImpl.initializeFeatureFlags(openSearchSettings);
-    }
 
     public static boolean isEnabled(String featureFlagName) {
         return featureFlagsImpl.isEnabled(featureFlagName);

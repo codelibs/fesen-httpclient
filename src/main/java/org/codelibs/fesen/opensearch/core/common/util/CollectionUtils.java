@@ -102,36 +102,6 @@ public class CollectionUtils {
     }
 
     /**
-     * In place de-duplicates items in a list
-     * Noop if the list is empty or has one item.
-     *
-     * @throws NullPointerException if the list is `null` or comparator is `null`
-     * @param array the list to de-duplicate
-     * @param comparator the comparator to use to compare items
-     * @param <T> the type of the items in the list
-     */
-    public static <T> void sortAndDedup(final List<T> array, Comparator<T> comparator) {
-        // base case: one item
-        if (array.size() <= 1) {
-            return;
-        }
-        array.sort(comparator);
-        ListIterator<T> deduped = array.listIterator();
-        T cmp = deduped.next(); // return the first item and advance
-        Iterator<T> oldArray = array.iterator();
-        oldArray.next(); // advance to the old to the second item (advanced to third below)
-
-        do {
-            T old = oldArray.next(); // get the next item and advance iter
-            if (comparator.compare(cmp, old) != 0 && (cmp = deduped.next()) != old) {
-                deduped.set(old);
-            }
-        } while (oldArray.hasNext());
-        // in place update
-        array.subList(deduped.nextIndex(), array.size()).clear();
-    }
-
-    /**
      * Converts a collection of Integers to an array of ints.
      * @param ints The collection of Integers to convert
      * @return The array of ints
@@ -301,33 +271,6 @@ public class CollectionUtils {
 
     public static <E> ArrayList<E> newSingletonArrayList(E element) {
         return new ArrayList<>(Collections.singletonList(element));
-    }
-
-    public static <E> List<List<E>> eagerPartition(List<E> list, int size) {
-        if (list == null) {
-            throw new NullPointerException("list");
-        }
-        if (size <= 0) {
-            throw new IllegalArgumentException("size <= 0");
-        }
-        List<List<E>> result = new ArrayList<>((int) Math.ceil(list.size() / size));
-
-        List<E> accumulator = new ArrayList<>(size);
-        int count = 0;
-        for (E element : list) {
-            if (count == size) {
-                result.add(accumulator);
-                accumulator = new ArrayList<>(size);
-                count = 0;
-            }
-            accumulator.add(element);
-            count++;
-        }
-        if (count > 0) {
-            result.add(accumulator);
-        }
-
-        return result;
     }
 
     /**

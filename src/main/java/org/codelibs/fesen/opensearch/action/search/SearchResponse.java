@@ -149,31 +149,6 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         int successfulShards,
         int skippedShards,
         long tookInMillis,
-        ShardSearchFailure[] shardFailures,
-        Clusters clusters,
-        String pointInTimeId
-    ) {
-        this(
-            internalResponse,
-            scrollId,
-            totalShards,
-            successfulShards,
-            skippedShards,
-            tookInMillis,
-            null,
-            shardFailures,
-            clusters,
-            pointInTimeId
-        );
-    }
-
-    public SearchResponse(
-        SearchResponseSections internalResponse,
-        String scrollId,
-        int totalShards,
-        int successfulShards,
-        int skippedShards,
-        long tookInMillis,
         PhaseTook phaseTook,
         ShardSearchFailure[] shardFailures,
         Clusters clusters,
@@ -749,29 +724,5 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         public int hashCode() {
             return Objects.hash(phaseTookMap);
         }
-    }
-
-    static SearchResponse empty(Supplier<Long> tookInMillisSupplier, Clusters clusters) {
-        SearchHits searchHits = new SearchHits(new SearchHit[0], new TotalHits(0L, TotalHits.Relation.EQUAL_TO), Float.NaN);
-        InternalSearchResponse internalSearchResponse = new InternalSearchResponse(
-            searchHits,
-            InternalAggregations.EMPTY,
-            null,
-            null,
-            false,
-            null,
-            0
-        );
-        return new SearchResponse(
-            internalSearchResponse,
-            null,
-            0,
-            0,
-            0,
-            tookInMillisSupplier.get(),
-            ShardSearchFailure.EMPTY_ARRAY,
-            clusters,
-            null
-        );
     }
 }

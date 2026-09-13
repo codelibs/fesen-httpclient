@@ -78,10 +78,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
             return this.shardTuple.v1().size() + this.shardTuple.v2().size();
         }
 
-        public boolean containsKey(ShardId shardId) {
-            return this.shardTuple.v1().containsKey(shardId) || this.shardTuple.v2().containsKey(shardId);
-        }
-
         public ShardRouting get(ShardId shardId) {
             if (this.shardTuple.v1().containsKey(shardId)) {
                 return this.shardTuple.v1().get(shardId);
@@ -108,13 +104,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
             }
 
             return ret;
-        }
-
-        public ShardRouting remove(ShardId shardId) {
-            if (this.shardTuple.v1().containsKey(shardId)) {
-                return this.shardTuple.v1().remove(shardId);
-            }
-            return this.shardTuple.v2().remove(shardId);
         }
 
         @Override
@@ -147,12 +136,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
             return res;
         }
 
-        public boolean remove(ShardRouting shard) {
-            boolean res = relocatingShards.remove(shard);
-            relocatingPrimaryShards.remove(shard);
-            return res;
-        }
-
         public int size() {
             return relocatingShards.size();
         }
@@ -167,10 +150,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
 
         public Set<ShardRouting> getRelocatingPrimaryShards() {
             return Collections.unmodifiableSet(relocatingPrimaryShards);
-        }
-
-        public List<ShardRouting> getRelocatingShardsList() {
-            return new ArrayList<>(relocatingShards);
         }
 
         // For assertions/verification
@@ -243,11 +222,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
         return this.node;
     }
 
-    @Nullable
-    public ShardRouting getByShardId(ShardId id) {
-        return shards.get(id);
-    }
-
     /**
      * Get the id of this node
      * @return id of the node
@@ -291,50 +265,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
         shardsByIndex.computeIfAbsent(shard.index(), k -> new LinkedHashSet<>()).add(shard);
     }
 
-    void update(ShardRouting oldShard, ShardRouting newShard) {
-        if (shards.containsKey(oldShard.shardId()) == false) {
-            // Shard was already removed by routing nodes iterator
-            // TODO: change caller logic in RoutingNodes so that this check can go away
-            return;
-        }
-        ShardRouting previousValue = shards.put(newShard.shardId(), newShard);
-        assert previousValue == oldShard : "expected shard " + previousValue + " but was " + oldShard;
-
-        if (oldShard.initializing()) {
-            boolean exist = initializingShards.remove(oldShard);
-            assert exist : "expected shard " + oldShard + " to exist in initializingShards";
-        } else if (oldShard.relocating()) {
-            boolean exist = relocatingShardsBucket.remove(oldShard);
-            assert exist : "expected shard " + oldShard + " to exist in relocatingShards";
-        }
-        shardsByIndex.get(oldShard.index()).remove(oldShard);
-        if (shardsByIndex.get(oldShard.index()).isEmpty()) {
-            shardsByIndex.remove(oldShard.index());
-        }
-        if (newShard.initializing()) {
-            initializingShards.add(newShard);
-        } else if (newShard.relocating()) {
-            relocatingShardsBucket.add(newShard);
-        }
-        shardsByIndex.computeIfAbsent(newShard.index(), k -> new LinkedHashSet<>()).add(newShard);
-    }
-
-    void remove(ShardRouting shard) {
-        ShardRouting previousValue = shards.remove(shard.shardId());
-        assert previousValue == shard : "expected shard " + previousValue + " but was " + shard;
-        if (shard.initializing()) {
-            boolean exist = initializingShards.remove(shard);
-            assert exist : "expected shard " + shard + " to exist in initializingShards";
-        } else if (shard.relocating()) {
-            boolean exist = relocatingShardsBucket.remove(shard);
-            assert exist : "expected shard " + shard + " to exist in relocatingShards";
-        }
-        shardsByIndex.get(shard.index()).remove(shard);
-        if (shardsByIndex.get(shard.index()).isEmpty()) {
-            shardsByIndex.remove(shard.index());
-        }
-    }
-
     /**
      * Determine the number of shards with a specific state
      * @param states set of states which should be counted
@@ -358,73 +288,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
             }
         }
         return count;
-    }
-
-    /**
-     * Determine the shards with a specific state
-     * @param states set of states which should be listed
-     * @return List of shards
-     */
-    public List<ShardRouting> shardsWithState(ShardRoutingState... states) {
-        if (states.length == 1) {
-            if (states[0] == ShardRoutingState.INITIALIZING) {
-                return new ArrayList<>(initializingShards);
-            } else if (states[0] == ShardRoutingState.RELOCATING) {
-                return relocatingShardsBucket.getRelocatingShardsList();
-            }
-        }
-
-        List<ShardRouting> shards = new ArrayList<>();
-        for (ShardRouting shardEntry : this) {
-            for (ShardRoutingState state : states) {
-                if (shardEntry.state() == state) {
-                    shards.add(shardEntry);
-                }
-            }
-        }
-        return shards;
-    }
-
-    /**
-     * Determine the shards of an index with a specific state
-     * @param index id of the index
-     * @param states set of states which should be listed
-     * @return a list of shards
-     */
-    public List<ShardRouting> shardsWithState(String index, ShardRoutingState... states) {
-        List<ShardRouting> shards = new ArrayList<>();
-
-        if (states.length == 1) {
-            if (states[0] == ShardRoutingState.INITIALIZING) {
-                for (ShardRouting shardEntry : initializingShards) {
-                    if (shardEntry.getIndexName().equals(index) == false) {
-                        continue;
-                    }
-                    shards.add(shardEntry);
-                }
-                return shards;
-            } else if (states[0] == ShardRoutingState.RELOCATING) {
-                for (ShardRouting shardEntry : relocatingShardsBucket.getRelocatingShards()) {
-                    if (shardEntry.getIndexName().equals(index) == false) {
-                        continue;
-                    }
-                    shards.add(shardEntry);
-                }
-                return shards;
-            }
-        }
-
-        for (ShardRouting shardEntry : this) {
-            if (!shardEntry.getIndexName().equals(index)) {
-                continue;
-            }
-            for (ShardRoutingState state : states) {
-                if (shardEntry.state() == state) {
-                    shards.add(shardEntry);
-                }
-            }
-        }
-        return shards;
     }
 
     /**
@@ -484,12 +347,6 @@ public class RoutingNode implements Iterable<ShardRouting> {
         sb.append(shards.size());
         sb.append(" assigned shards])");
         return sb.toString();
-    }
-
-    public List<ShardRouting> copyShards() {
-        List<ShardRouting> result = new ArrayList<>();
-        shards.forEach(result::add);
-        return result;
     }
 
     public boolean isEmpty() {

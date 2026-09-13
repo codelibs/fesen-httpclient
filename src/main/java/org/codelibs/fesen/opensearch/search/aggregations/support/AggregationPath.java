@@ -189,17 +189,6 @@ public class AggregationPath {
         return this.pathElements;
     }
 
-    public List<String> getPathElementsAsStringList() {
-        List<String> stringPathElements = new ArrayList<>();
-        for (PathElement pathElement : this.pathElements) {
-            stringPathElements.add(pathElement.name);
-            if (pathElement.key != null) {
-                stringPathElements.add(pathElement.key);
-            }
-        }
-        return stringPathElements;
-    }
-
     /**
      * Looks up the value of this path against a set of aggregation results.
      */

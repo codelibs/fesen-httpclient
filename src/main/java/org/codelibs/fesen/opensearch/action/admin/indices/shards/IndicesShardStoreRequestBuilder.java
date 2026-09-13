@@ -70,14 +70,4 @@ public class IndicesShardStoreRequestBuilder extends ClusterManagerNodeReadOpera
         request.indicesOptions(indicesOptions);
         return this;
     }
-
-    /**
-     * Set statuses to filter shards to get stores info on.
-     * @param shardStatuses acceptable values are "green", "yellow", "red" and "all"
-     * see {@link ClusterHealthStatus} for details
-     */
-    public IndicesShardStoreRequestBuilder setShardStatuses(String... shardStatuses) {
-        request.shardStatuses(shardStatuses);
-        return this;
-    }
 }

@@ -99,14 +99,6 @@ public class UpdateSettingsRequestBuilder extends AcknowledgedRequestBuilder<
         return this;
     }
 
-    /**
-     * Sets the settings to be updated
-     */
-    public UpdateSettingsRequestBuilder setSettings(Map<String, Object> source) {
-        request.settings(source);
-        return this;
-    }
-
     public UpdateSettingsRequestBuilder setPreserveExisting(boolean preserveExisting) {
         request.setPreserveExisting(preserveExisting);
         return this;

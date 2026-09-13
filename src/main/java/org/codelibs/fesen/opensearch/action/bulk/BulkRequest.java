@@ -106,64 +106,8 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     public BulkRequest() {}
 
-    public BulkRequest(StreamInput in) throws IOException {
-        super(in);
-        waitForActiveShards = ActiveShardCount.readFrom(in);
-        requests.addAll(in.readList(i -> DocWriteRequest.readDocumentRequest(null, i)));
-        refreshPolicy = RefreshPolicy.readFrom(in);
-        timeout = in.readTimeValue();
-        if (in.getVersion().onOrAfter(Version.V_2_14_0) && in.getVersion().before(Version.V_3_0_0)) {
-            in.readInt(); // formerly batch_size
-        }
-        requests.stream().map(DocWriteRequest::index).forEach(indices::add);
-    }
-
     public BulkRequest(@Nullable String globalIndex) {
         this.globalIndex = globalIndex;
-    }
-
-    /**
-     * Adds a list of requests to be executed. Either index or delete requests.
-     */
-    public BulkRequest add(DocWriteRequest<?>... requests) {
-        for (DocWriteRequest<?> request : requests) {
-            add(request);
-        }
-        return this;
-    }
-
-    /**
-     * Add a request to the current BulkRequest.
-     * <p>
-     * Note for internal callers: This method does not respect all global parameters.
-     *                            Only the global index is applied to the request objects.
-     *                            Global parameters would be respected if the request was serialized for a REST call as it is
-     *                            in the high level rest client.
-     * @param request Request to add
-     * @return the current bulk request
-     */
-    public BulkRequest add(DocWriteRequest<?> request) {
-        if (request instanceof IndexRequest) {
-            add((IndexRequest) request);
-        } else if (request instanceof DeleteRequest) {
-            add((DeleteRequest) request);
-        } else if (request instanceof UpdateRequest) {
-            add((UpdateRequest) request);
-        } else {
-            throw new IllegalArgumentException("No support for request [" + request + "]");
-        }
-        indices.add(request.index());
-        return this;
-    }
-
-    /**
-     * Adds a list of requests to be executed. Either index or delete requests.
-     */
-    public BulkRequest add(Iterable<DocWriteRequest<?>> requests) {
-        for (DocWriteRequest<?> request : requests) {
-            add(request);
-        }
-        return this;
     }
 
     /**
@@ -244,94 +188,6 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
         return sizeInBytes;
     }
 
-    /**
-     * Adds a framed data in binary format
-     */
-    public BulkRequest add(byte[] data, int from, int length, MediaType mediaType) throws IOException {
-        return add(data, from, length, null, mediaType);
-    }
-
-    /**
-     * Adds a framed data in binary format
-     */
-    public BulkRequest add(byte[] data, int from, int length, @Nullable String defaultIndex, MediaType mediaType) throws IOException {
-        return add(new BytesArray(data, from, length), defaultIndex, mediaType);
-    }
-
-    /**
-     * Adds a framed data in binary format
-     */
-    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, MediaType mediaType) throws IOException {
-        return add(data, defaultIndex, null, null, null, null, true, mediaType);
-    }
-
-    /**
-     * Adds a framed data in binary format
-     */
-    public BulkRequest add(BytesReference data, @Nullable String defaultIndex, boolean allowExplicitIndex, MediaType mediaType)
-        throws IOException {
-        return add(data, defaultIndex, null, null, null, null, allowExplicitIndex, mediaType);
-    }
-
-    public BulkRequest add(
-        BytesReference data,
-        @Nullable String defaultIndex,
-        @Nullable String defaultRouting,
-        @Nullable FetchSourceContext defaultFetchSourceContext,
-        @Nullable String defaultPipeline,
-        boolean allowExplicitIndex,
-        MediaType mediaType
-    ) throws IOException {
-        return add(data, defaultIndex, defaultRouting, defaultFetchSourceContext, defaultPipeline, null, allowExplicitIndex, mediaType);
-    }
-
-    public BulkRequest add(
-        BytesReference data,
-        @Nullable String defaultIndex,
-        @Nullable String defaultRouting,
-        @Nullable FetchSourceContext defaultFetchSourceContext,
-        @Nullable String defaultPipeline,
-        @Nullable Boolean defaultRequireAlias,
-        boolean allowExplicitIndex,
-        MediaType mediaType
-    ) throws IOException {
-        String routing = valueOrDefault(defaultRouting, globalRouting);
-        String pipeline = valueOrDefault(defaultPipeline, globalPipeline);
-        Boolean requireAlias = valueOrDefault(defaultRequireAlias, globalRequireAlias);
-        new BulkRequestParser().parse(
-            data,
-            defaultIndex,
-            routing,
-            defaultFetchSourceContext,
-            pipeline,
-            requireAlias,
-            allowExplicitIndex,
-            mediaType,
-            this::internalAdd,
-            this::internalAdd,
-            this::add
-        );
-        return this;
-    }
-
-    /**
-     * Sets the number of shard copies that must be active before proceeding with the write.
-     * See {@link ReplicationRequest#waitForActiveShards(ActiveShardCount)} for details.
-     */
-    public BulkRequest waitForActiveShards(ActiveShardCount waitForActiveShards) {
-        this.waitForActiveShards = waitForActiveShards;
-        return this;
-    }
-
-    /**
-     * A shortcut for {@link #waitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public BulkRequest waitForActiveShards(final int waitForActiveShards) {
-        return waitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
-
     public ActiveShardCount waitForActiveShards() {
         return this.waitForActiveShards;
     }
@@ -345,14 +201,6 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
     @Override
     public RefreshPolicy getRefreshPolicy() {
         return refreshPolicy;
-    }
-
-    /**
-     * A timeout to wait if the index operation can't be performed immediately. Defaults to {@code 1m}.
-     */
-    public final BulkRequest timeout(TimeValue timeout) {
-        this.timeout = timeout;
-        return this;
     }
 
     /**
@@ -387,13 +235,6 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
     public final BulkRequest routing(String globalRouting) {
         this.globalRouting = globalRouting;
         return this;
-    }
-
-    /**
-     * A timeout to wait if the index operation can't be performed immediately. Defaults to {@code 1m}.
-     */
-    public final BulkRequest timeout(String timeout) {
-        return timeout(TimeValue.parseTimeValue(timeout, null, getClass().getSimpleName() + ".timeout"));
     }
 
     public TimeValue timeout() {
@@ -478,13 +319,6 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     private static String valueOrDefault(String value, String globalDefault) {
         if (Strings.isNullOrEmpty(value) && Strings.isNullOrEmpty(globalDefault) == false) {
-            return globalDefault;
-        }
-        return value;
-    }
-
-    private static Boolean valueOrDefault(Boolean value, Boolean globalDefault) {
-        if (Objects.isNull(value) && !Objects.isNull(globalDefault)) {
             return globalDefault;
         }
         return value;

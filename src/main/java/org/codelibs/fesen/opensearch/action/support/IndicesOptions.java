@@ -49,7 +49,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapValues.nodeBooleanValue;
-import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapValues.nodeStringArrayValue;
 
 /**
  * Controls how to deal with unavailable concrete indices (closed or missing), how wildcard expressions are expanded
@@ -73,22 +72,6 @@ public class IndicesOptions implements ToXContentFragment {
 
         public static final EnumSet<WildcardStates> NONE = EnumSet.noneOf(WildcardStates.class);
 
-        public static EnumSet<WildcardStates> parseParameter(Object value, EnumSet<WildcardStates> defaultStates) {
-            if (value == null) {
-                return defaultStates;
-            }
-
-            EnumSet<WildcardStates> states = EnumSet.noneOf(WildcardStates.class);
-            String[] wildcards = nodeStringArrayValue(value);
-            // TODO why do we let patterns like "none,all" or "open,none,closed" get used. The location of 'none' in the array changes the
-            // meaning of the resulting value
-            for (String wildcard : wildcards) {
-                updateSetForValue(states, wildcard);
-            }
-
-            return states;
-        }
-
         public static XContentBuilder toXContent(EnumSet<WildcardStates> states, XContentBuilder builder) throws IOException {
             if (states.isEmpty()) {
                 builder.field("expand_wildcards", "none");
@@ -101,28 +84,6 @@ public class IndicesOptions implements ToXContentFragment {
                 );
             }
             return builder;
-        }
-
-        private static void updateSetForValue(EnumSet<WildcardStates> states, String wildcard) {
-            switch (wildcard) {
-                case "open":
-                    states.add(OPEN);
-                    break;
-                case "closed":
-                    states.add(CLOSED);
-                    break;
-                case "hidden":
-                    states.add(HIDDEN);
-                    break;
-                case "none":
-                    states.clear();
-                    break;
-                case "all":
-                    states.addAll(EnumSet.allOf(WildcardStates.class));
-                    break;
-                default:
-                    throw new IllegalArgumentException("No valid expand wildcard value [" + wildcard + "]");
-            }
         }
     }
 
@@ -402,58 +363,6 @@ public class IndicesOptions implements ToXContentFragment {
         return new IndicesOptions(opts, wildcards);
     }
 
-    public static IndicesOptions fromMap(Map<String, Object> map, IndicesOptions defaultSettings) {
-        return fromParameters(
-            map.containsKey("expand_wildcards") ? map.get("expand_wildcards") : map.get("expandWildcards"),
-            map.containsKey("ignore_unavailable") ? map.get("ignore_unavailable") : map.get("ignoreUnavailable"),
-            map.containsKey("allow_no_indices") ? map.get("allow_no_indices") : map.get("allowNoIndices"),
-            map.containsKey("ignore_throttled") ? map.get("ignore_throttled") : map.get("ignoreThrottled"),
-            defaultSettings
-        );
-    }
-
-    /**
-     * Returns true if the name represents a valid name for one of the indices option
-     * false otherwise
-     */
-    public static boolean isIndicesOptions(String name) {
-        return "expand_wildcards".equals(name)
-            || "expandWildcards".equals(name)
-            || "ignore_unavailable".equals(name)
-            || "ignoreUnavailable".equals(name)
-            || "ignore_throttled".equals(name)
-            || "ignoreThrottled".equals(name)
-            || "allow_no_indices".equals(name)
-            || "allowNoIndices".equals(name);
-    }
-
-    public static IndicesOptions fromParameters(
-        Object wildcardsString,
-        Object ignoreUnavailableString,
-        Object allowNoIndicesString,
-        Object ignoreThrottled,
-        IndicesOptions defaultSettings
-    ) {
-        if (wildcardsString == null && ignoreUnavailableString == null && allowNoIndicesString == null && ignoreThrottled == null) {
-            return defaultSettings;
-        }
-
-        EnumSet<WildcardStates> wildcards = WildcardStates.parseParameter(wildcardsString, defaultSettings.expandWildcards);
-
-        // note that allowAliasesToMultipleIndices is not exposed, always true (only for internal use)
-        return fromOptions(
-            nodeBooleanValue(ignoreUnavailableString, "ignore_unavailable", defaultSettings.ignoreUnavailable()),
-            nodeBooleanValue(allowNoIndicesString, "allow_no_indices", defaultSettings.allowNoIndices()),
-            wildcards.contains(WildcardStates.OPEN),
-            wildcards.contains(WildcardStates.CLOSED),
-            wildcards.contains(WildcardStates.HIDDEN),
-            defaultSettings.allowAliasesToMultipleIndices(),
-            defaultSettings.forbidClosedIndices(),
-            defaultSettings.ignoreAliases(),
-            nodeBooleanValue(ignoreThrottled, "ignore_throttled", defaultSettings.ignoreThrottled())
-        );
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startArray("expand_wildcards");
@@ -471,87 +380,6 @@ public class IndicesOptions implements ToXContentFragment {
     private static final ParseField IGNORE_UNAVAILABLE_FIELD = new ParseField("ignore_unavailable");
     private static final ParseField IGNORE_THROTTLED_FIELD = new ParseField("ignore_throttled");
     private static final ParseField ALLOW_NO_INDICES_FIELD = new ParseField("allow_no_indices");
-
-    public static IndicesOptions fromXContent(XContentParser parser) throws IOException {
-        EnumSet<WildcardStates> wildcardStates = null;
-        Boolean allowNoIndices = null;
-        Boolean ignoreUnavailable = null;
-        boolean ignoreThrottled = false;
-        Token token = parser.currentToken() == Token.START_OBJECT ? parser.currentToken() : parser.nextToken();
-        String currentFieldName = null;
-        if (token != Token.START_OBJECT) {
-            throw new OpenSearchParseException("expected START_OBJECT as the token but was " + token);
-        }
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-            } else if (token == Token.START_ARRAY) {
-                if (EXPAND_WILDCARDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                    if (wildcardStates == null) {
-                        wildcardStates = EnumSet.noneOf(WildcardStates.class);
-                        while ((token = parser.nextToken()) != Token.END_ARRAY) {
-                            if (token.isValue()) {
-                                WildcardStates.updateSetForValue(wildcardStates, parser.text());
-                            } else {
-                                throw new OpenSearchParseException(
-                                    "expected values within array for " + EXPAND_WILDCARDS_FIELD.getPreferredName()
-                                );
-                            }
-                        }
-                    } else {
-                        throw new OpenSearchParseException("already parsed expand_wildcards");
-                    }
-                } else {
-                    throw new OpenSearchParseException(
-                        EXPAND_WILDCARDS_FIELD.getPreferredName() + " is the only field that is an array in IndicesOptions"
-                    );
-                }
-            } else if (token.isValue()) {
-                if (EXPAND_WILDCARDS_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                    if (wildcardStates == null) {
-                        wildcardStates = EnumSet.noneOf(WildcardStates.class);
-                        WildcardStates.updateSetForValue(wildcardStates, parser.text());
-                    } else {
-                        throw new OpenSearchParseException("already parsed expand_wildcards");
-                    }
-                } else if (IGNORE_UNAVAILABLE_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                    ignoreUnavailable = parser.booleanValue();
-                } else if (ALLOW_NO_INDICES_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                    allowNoIndices = parser.booleanValue();
-                } else if (IGNORE_THROTTLED_FIELD.match(currentFieldName, parser.getDeprecationHandler())) {
-                    ignoreThrottled = parser.booleanValue();
-                } else {
-                    throw new OpenSearchParseException(
-                        "could not read indices options. unexpected index option [" + currentFieldName + "]"
-                    );
-                }
-            } else {
-                throw new OpenSearchParseException("could not read indices options. unexpected object field [" + currentFieldName + "]");
-            }
-        }
-
-        if (wildcardStates == null) {
-            throw new OpenSearchParseException("indices options xcontent did not contain " + EXPAND_WILDCARDS_FIELD.getPreferredName());
-        }
-        if (ignoreUnavailable == null) {
-            throw new OpenSearchParseException("indices options xcontent did not contain " + IGNORE_UNAVAILABLE_FIELD.getPreferredName());
-        }
-        if (allowNoIndices == null) {
-            throw new OpenSearchParseException("indices options xcontent did not contain " + ALLOW_NO_INDICES_FIELD.getPreferredName());
-        }
-
-        return IndicesOptions.fromOptions(
-            ignoreUnavailable,
-            allowNoIndices,
-            wildcardStates.contains(WildcardStates.OPEN),
-            wildcardStates.contains(WildcardStates.CLOSED),
-            wildcardStates.contains(WildcardStates.HIDDEN),
-            true,
-            false,
-            false,
-            ignoreThrottled
-        );
-    }
 
     /**
      * @return indices options that requires every specified index to exist, expands wildcards only to open indices and

@@ -191,19 +191,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
     }
 
     /**
-     * Get a {@link Map} of the coordinating only nodes (nodes which are neither cluster-manager, nor data, nor ingest nodes) arranged by their ids
-     *
-     * @return {@link Map} of the coordinating only nodes arranged by their ids
-     */
-    public Map<String, DiscoveryNode> getCoordinatingOnlyNodes() {
-        final HashMap<String, DiscoveryNode> nodes = new HashMap<>(this.nodes);
-        nodes.keySet().removeAll(clusterManagerNodes.keySet());
-        nodes.keySet().removeAll(dataNodes.keySet());
-        nodes.keySet().removeAll(ingestNodes.keySet());
-        return Collections.unmodifiableMap(nodes);
-    }
-
-    /**
      * Returns a stream of all nodes, with cluster-manager nodes at the front
      */
     public Stream<DiscoveryNode> clusterManagersFirstStream() {
@@ -221,27 +208,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
      */
     public DiscoveryNode get(String nodeId) {
         return nodes.get(nodeId);
-    }
-
-    /**
-     * Determine if a given node id exists
-     *
-     * @param nodeId id of the node which existence should be verified
-     * @return <code>true</code> if the node exists. Otherwise <code>false</code>
-     */
-    public boolean nodeExists(String nodeId) {
-        return nodes.containsKey(nodeId);
-    }
-
-    /**
-     * Determine if a given node exists
-     *
-     * @param node of the node which existence should be verified
-     * @return <code>true</code> if the node exists. Otherwise <code>false</code>
-     */
-    public boolean nodeExists(DiscoveryNode node) {
-        DiscoveryNode existing = nodes.get(node.getId());
-        return existing != null && existing.equals(node);
     }
 
     /**
@@ -344,159 +310,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
      */
     public Version getMaxNodeVersion() {
         return maxNodeVersion;
-    }
-
-    /**
-     * Resolve a node with a given id
-     *
-     * @param node id of the node to discover
-     * @return discovered node matching the given id
-     * @throws IllegalArgumentException if more than one node matches the request or no nodes have been resolved
-     */
-    public DiscoveryNode resolveNode(String node) {
-        String[] resolvedNodeIds = resolveNodes(node);
-        if (resolvedNodeIds.length > 1) {
-            throw new IllegalArgumentException(
-                "resolved [" + node + "] into [" + resolvedNodeIds.length + "] nodes, where expected to be resolved to a single node"
-            );
-        }
-        if (resolvedNodeIds.length == 0) {
-            throw new IllegalArgumentException("failed to resolve [" + node + "], no matching nodes");
-        }
-        return nodes.get(resolvedNodeIds[0]);
-    }
-
-    /**
-     * Resolves a set of nodes according to the given sequence of node specifications. Implements the logic in various APIs that allow the
-     * user to run the action on a subset of the nodes in the cluster. See [Node specification] in the reference manual for full details.
-     * <p>
-     * Works by tracking the current set of nodes and applying each node specification in sequence. The set starts out empty and each node
-     * specification may either add or remove nodes. For instance:
-     * <p>
-     * - _local, _cluster_manager (_master) and _all respectively add to the subset the local node, the currently-elected cluster_manager, and all the nodes
-     * - node IDs, names, hostnames and IP addresses all add to the subset any nodes which match
-     * - a wildcard-based pattern of the form "attr*:value*" adds to the subset all nodes with a matching attribute with a matching value
-     * - role:true adds to the subset all nodes with a matching role
-     * - role:false removes from the subset all nodes with a matching role.
-     * <p>
-     * An empty sequence of node specifications returns all nodes, since the corresponding actions run on all nodes by default.
-     */
-    public String[] resolveNodes(String... nodes) {
-        if (nodes == null || nodes.length == 0) {
-            return StreamSupport.stream(this.spliterator(), false).map(DiscoveryNode::getId).toArray(String[]::new);
-        } else {
-            final HashSet<String> resolvedNodesIds = new HashSet<>(nodes.length);
-            for (String nodeId : nodes) {
-                if (nodeId == null) {
-                    // don't silence the underlying issue, it is a bug, so lets fail if assertions are enabled
-                    assert nodeId != null : "nodeId should not be null";
-                    continue;
-                } else if (nodeId.equals("_local")) {
-                    String localNodeId = getLocalNodeId();
-                    if (localNodeId != null) {
-                        resolvedNodesIds.add(localNodeId);
-                    }
-                } else if (nodeId.equals("_master") || nodeId.equals("_cluster_manager")) {
-                    String clusterManagerNodeId = getClusterManagerNodeId();
-                    if (clusterManagerNodeId != null) {
-                        resolvedNodesIds.add(clusterManagerNodeId);
-                    }
-                } else if (nodeExists(nodeId)) {
-                    resolvedNodesIds.add(nodeId);
-                } else {
-                    for (DiscoveryNode node : this) {
-                        if ("_all".equals(nodeId)
-                            || Regex.simpleMatch(nodeId, node.getName())
-                            || Regex.simpleMatch(nodeId, node.getHostAddress())
-                            || Regex.simpleMatch(nodeId, node.getHostName())) {
-                            resolvedNodesIds.add(node.getId());
-                        }
-                    }
-                    int index = nodeId.indexOf(':');
-                    if (index != -1) {
-                        String matchAttrName = nodeId.substring(0, index);
-                        String matchAttrValue = nodeId.substring(index + 1);
-                        if (DiscoveryNodeRole.DATA_ROLE.roleName().equals(matchAttrName)) {
-                            if (Booleans.parseBoolean(matchAttrValue, true)) {
-                                resolvedNodesIds.addAll(dataNodes.keySet());
-                            } else {
-                                resolvedNodesIds.removeAll(dataNodes.keySet());
-                            }
-                        } else if (roleNameIsClusterManager(matchAttrName)) {
-                            if (Booleans.parseBoolean(matchAttrValue, true)) {
-                                resolvedNodesIds.addAll(clusterManagerNodes.keySet());
-                            } else {
-                                resolvedNodesIds.removeAll(clusterManagerNodes.keySet());
-                            }
-                        } else if (DiscoveryNodeRole.INGEST_ROLE.roleName().equals(matchAttrName)) {
-                            if (Booleans.parseBoolean(matchAttrValue, true)) {
-                                resolvedNodesIds.addAll(ingestNodes.keySet());
-                            } else {
-                                resolvedNodesIds.removeAll(ingestNodes.keySet());
-                            }
-                        } else if (DiscoveryNode.COORDINATING_ONLY.equals(matchAttrName)) {
-                            if (Booleans.parseBoolean(matchAttrValue, true)) {
-                                resolvedNodesIds.addAll(getCoordinatingOnlyNodes().keySet());
-                            } else {
-                                resolvedNodesIds.removeAll(getCoordinatingOnlyNodes().keySet());
-                            }
-                        } else {
-                            for (DiscoveryNode node : this) {
-                                for (DiscoveryNodeRole role : Sets.difference(node.getRoles(), DiscoveryNodeRole.BUILT_IN_ROLES)) {
-                                    if (role.roleName().equals(matchAttrName)) {
-                                        if (Booleans.parseBoolean(matchAttrValue, true)) {
-                                            resolvedNodesIds.add(node.getId());
-                                        } else {
-                                            resolvedNodesIds.remove(node.getId());
-                                        }
-                                    }
-                                }
-                            }
-                            for (DiscoveryNode node : this) {
-                                for (Map.Entry<String, String> entry : node.getAttributes().entrySet()) {
-                                    String attrName = entry.getKey();
-                                    String attrValue = entry.getValue();
-                                    if (Regex.simpleMatch(matchAttrName, attrName) && Regex.simpleMatch(matchAttrValue, attrValue)) {
-                                        resolvedNodesIds.add(node.getId());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return resolvedNodesIds.toArray(new String[0]);
-        }
-    }
-
-    public DiscoveryNodes newNode(DiscoveryNode node) {
-        return new Builder(this).add(node).build();
-    }
-
-    /**
-     * Returns the changes comparing this nodes to the provided nodes.
-     */
-    public Delta delta(DiscoveryNodes other) {
-        final List<DiscoveryNode> removed = new ArrayList<>();
-        final List<DiscoveryNode> added = new ArrayList<>();
-        for (DiscoveryNode node : other) {
-            if (this.nodeExists(node) == false) {
-                removed.add(node);
-            }
-        }
-        for (DiscoveryNode node : this) {
-            if (other.nodeExists(node) == false) {
-                added.add(node);
-            }
-        }
-
-        return new Delta(
-            other.getClusterManagerNode(),
-            getClusterManagerNode(),
-            localNodeId,
-            Collections.unmodifiableList(removed),
-            Collections.unmodifiableList(added)
-        );
     }
 
     @Override
@@ -712,10 +525,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         return new Builder();
     }
 
-    public static Builder builder(DiscoveryNodes nodes) {
-        return new Builder(nodes);
-    }
-
     /**
      * Builder of a map of discovery nodes.
      *
@@ -730,25 +539,6 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
 
         public Builder() {
             nodes = new HashMap<>();
-        }
-
-        public Builder(DiscoveryNodes nodes) {
-            this.clusterManagerNodeId = nodes.getClusterManagerNodeId();
-            this.localNodeId = nodes.getLocalNodeId();
-            this.nodes = new HashMap<>(nodes.getNodes());
-        }
-
-        /**
-         * adds a disco node to the builder. Will throw an {@link IllegalArgumentException} if
-         * the supplied node doesn't pass the pre-flight checks performed by {@link #validateAdd(DiscoveryNode)}
-         */
-        public Builder add(DiscoveryNode node) {
-            final String preflight = validateAdd(node);
-            if (preflight != null) {
-                throw new IllegalArgumentException(preflight);
-            }
-            putUnsafe(node);
-            return this;
         }
 
         /**
@@ -866,18 +656,5 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         public boolean isLocalNodeElectedClusterManager() {
             return clusterManagerNodeId != null && clusterManagerNodeId.equals(localNodeId);
         }
-    }
-
-    /**
-     * Check if the given name of the node role is 'cluster_manager' or 'master'.
-     * The method is added for {@link #resolveNodes} to keep the code clear, when support the both above roles.
-     * @deprecated As of 2.0, because promoting inclusive language. MASTER_ROLE is deprecated.
-     * @param matchAttrName a given String for a name of the node role.
-     * @return true if the given roleName is 'cluster_manger' or 'master'
-     */
-    @Deprecated
-    private boolean roleNameIsClusterManager(String matchAttrName) {
-        return DiscoveryNodeRole.MASTER_ROLE.roleName().equals(matchAttrName)
-            || DiscoveryNodeRole.CLUSTER_MANAGER_ROLE.roleName().equals(matchAttrName);
     }
 }

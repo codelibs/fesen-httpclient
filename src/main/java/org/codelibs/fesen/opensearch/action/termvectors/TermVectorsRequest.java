@@ -233,32 +233,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         this.id = id;
     }
 
-    /**
-     * Constructs a new term vector request for a document that will be fetch
-     * from the provided index. Use {@link #id(String)} to specify the document to load.
-     */
-    public TermVectorsRequest(TermVectorsRequest other) {
-        super(other.index());
-        this.id = other.id();
-        if (other.doc != null) {
-            this.doc = new BytesArray(other.doc().toBytesRef(), true);
-            this.mediaType = other.mediaType;
-        }
-        this.flagsEnum = other.getFlags().clone();
-        this.preference = other.preference();
-        this.routing = other.routing();
-        if (other.selectedFields != null) {
-            this.selectedFields = new HashSet<>(other.selectedFields);
-        }
-        if (other.perFieldAnalyzer != null) {
-            this.perFieldAnalyzer = new HashMap<>(other.perFieldAnalyzer);
-        }
-        this.realtime = other.realtime();
-        this.version = other.version();
-        this.versionType = VersionType.fromValue(other.versionType().getValue());
-        this.filterSettings = other.filterSettings();
-    }
-
     public TermVectorsRequest(MultiGetRequest.Item item) {
         super(item.index());
         this.id = item.id();
@@ -294,13 +268,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     public MediaType xContentType() {
         return mediaType;
-    }
-
-    /**
-     * Sets an artificial document from which term vectors are requested for.
-     */
-    public TermVectorsRequest doc(XContentBuilder documentBuilder) {
-        return this.doc(BytesReference.bytes(documentBuilder), true, documentBuilder.contentType());
     }
 
     /**
@@ -485,14 +452,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         return this.filterSettings;
     }
 
-    /**
-     * Sets the settings for filtering out terms.
-     */
-    public TermVectorsRequest filterSettings(FilterSettings settings) {
-        this.filterSettings = settings;
-        return this;
-    }
-
     public long version() {
         return version;
     }
@@ -588,75 +547,6 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
         TermStatistics
     }
 
-    /**
-     * populates a request object (pre-populated with defaults) based on a parser.
-     */
-    public static void parseRequest(TermVectorsRequest termVectorsRequest, XContentParser parser) throws IOException {
-        XContentParser.Token token;
-        String currentFieldName = null;
-        List<String> fields = new ArrayList<>();
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-            } else if (currentFieldName != null) {
-                if (FIELDS.match(currentFieldName, parser.getDeprecationHandler())) {
-                    if (token == XContentParser.Token.START_ARRAY) {
-                        while (parser.nextToken() != XContentParser.Token.END_ARRAY) {
-                            fields.add(parser.text());
-                        }
-                    } else {
-                        throw new OpenSearchParseException("failed to parse term vectors request. field [fields] must be an array");
-                    }
-                } else if (OFFSETS.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.offsets(parser.booleanValue());
-                } else if (POSITIONS.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.positions(parser.booleanValue());
-                } else if (PAYLOADS.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.payloads(parser.booleanValue());
-                } else if (currentFieldName.equals("term_statistics") || currentFieldName.equals("termStatistics")) {
-                    termVectorsRequest.termStatistics(parser.booleanValue());
-                } else if (currentFieldName.equals("field_statistics") || currentFieldName.equals("fieldStatistics")) {
-                    termVectorsRequest.fieldStatistics(parser.booleanValue());
-                } else if (DFS.match(currentFieldName, parser.getDeprecationHandler())) {
-                    throw new IllegalArgumentException("distributed frequencies is not supported anymore for term vectors");
-                } else if (currentFieldName.equals("per_field_analyzer") || currentFieldName.equals("perFieldAnalyzer")) {
-                    termVectorsRequest.perFieldAnalyzer(readPerFieldAnalyzer(parser.map()));
-                } else if (FILTER.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.filterSettings(readFilterSettings(parser));
-                } else if (INDEX.match(currentFieldName, parser.getDeprecationHandler())) {
-                    // the following is important for multi request parsing.
-                    termVectorsRequest.index = parser.text();
-                } else if (ID.match(currentFieldName, parser.getDeprecationHandler())) {
-                    if (termVectorsRequest.doc != null) {
-                        throw new OpenSearchParseException(
-                            "failed to parse term vectors request. " + "either [id] or [doc] can be specified, but not both!"
-                        );
-                    }
-                    termVectorsRequest.id = parser.text();
-                } else if (DOC.match(currentFieldName, parser.getDeprecationHandler())) {
-                    if (termVectorsRequest.id != null) {
-                        throw new OpenSearchParseException(
-                            "failed to parse term vectors request. " + "either [id] or [doc] can be specified, but not both!"
-                        );
-                    }
-                    termVectorsRequest.doc(jsonBuilder().copyCurrentStructure(parser));
-                } else if (ROUTING.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.routing = parser.text();
-                } else if (VERSION.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.version = parser.longValue();
-                } else if (VERSION_TYPE.match(currentFieldName, parser.getDeprecationHandler())) {
-                    termVectorsRequest.versionType = VersionType.fromString(parser.text());
-                } else {
-                    throw new OpenSearchParseException("failed to parse term vectors request. unknown field [{}]", currentFieldName);
-                }
-            }
-        }
-        if (fields.size() > 0) {
-            String[] fieldsAsArray = new String[fields.size()];
-            termVectorsRequest.selectedFields(fields.toArray(fieldsAsArray));
-        }
-    }
-
     public static Map<String, String> readPerFieldAnalyzer(Map<String, Object> map) {
         Map<String, String> mapStrStr = new HashMap<>();
         for (Map.Entry<String, Object> e : map.entrySet()) {
@@ -671,39 +561,5 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
             }
         }
         return mapStrStr;
-    }
-
-    private static FilterSettings readFilterSettings(XContentParser parser) throws IOException {
-        FilterSettings settings = new FilterSettings();
-        XContentParser.Token token;
-        String currentFieldName = null;
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-            } else if (currentFieldName != null) {
-                if (currentFieldName.equals("max_num_terms")) {
-                    settings.maxNumTerms = parser.intValue();
-                } else if (currentFieldName.equals("min_term_freq")) {
-                    settings.minTermFreq = parser.intValue();
-                } else if (currentFieldName.equals("max_term_freq")) {
-                    settings.maxTermFreq = parser.intValue();
-                } else if (currentFieldName.equals("min_doc_freq")) {
-                    settings.minDocFreq = parser.intValue();
-                } else if (currentFieldName.equals("max_doc_freq")) {
-                    settings.maxDocFreq = parser.intValue();
-                } else if (currentFieldName.equals("min_word_length")) {
-                    settings.minWordLength = parser.intValue();
-                } else if (currentFieldName.equals("max_word_length")) {
-                    settings.maxWordLength = parser.intValue();
-                } else {
-                    throw new OpenSearchParseException(
-                        "failed to parse term vectors request. "
-                            + "the field [{}] is not valid for filter parameter for term vector request",
-                        currentFieldName
-                    );
-                }
-            }
-        }
-        return settings;
     }
 }

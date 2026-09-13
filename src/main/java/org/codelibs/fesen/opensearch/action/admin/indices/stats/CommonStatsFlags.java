@@ -281,23 +281,6 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         return flags.contains(flag);
     }
 
-    boolean unSet(Flag flag) {
-        return flags.remove(flag);
-    }
-
-    void set(Flag flag) {
-        flags.add(flag);
-    }
-
-    public CommonStatsFlags set(Flag flag, boolean add) {
-        if (add) {
-            set(flag);
-        } else {
-            unSet(flag);
-        }
-        return this;
-    }
-
     @Override
     public CommonStatsFlags clone() {
         try {

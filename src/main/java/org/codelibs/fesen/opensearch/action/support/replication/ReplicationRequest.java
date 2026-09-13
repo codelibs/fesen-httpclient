@@ -114,22 +114,6 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
         this.timeout = DEFAULT_TIMEOUT;
     }
 
-    /**
-     * A timeout to wait if the index operation can't be performed immediately. Defaults to {@code 1m}.
-     */
-    @SuppressWarnings("unchecked")
-    public final Request timeout(TimeValue timeout) {
-        this.timeout = timeout;
-        return (Request) this;
-    }
-
-    /**
-     * A timeout to wait if the index operation can't be performed immediately. Defaults to {@code 1m}.
-     */
-    public final Request timeout(String timeout) {
-        return timeout(TimeValue.parseTimeValue(timeout, null, getClass().getSimpleName() + ".timeout"));
-    }
-
     public TimeValue timeout() {
         return timeout;
     }
@@ -165,44 +149,6 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
     @Nullable
     public ShardId shardId() {
         return shardId;
-    }
-
-    /**
-     * Sets the number of shard copies that must be active before proceeding with the replication
-     * operation. Defaults to {@link ActiveShardCount#DEFAULT}, which requires one shard copy
-     * (the primary) to be active. Set this value to {@link ActiveShardCount#ALL} to
-     * wait for all shards (primary and all replicas) to be active. Otherwise, use
-     * {@link ActiveShardCount#from(int)} to set this value to any non-negative integer, up to the
-     * total number of shard copies (number of replicas + 1).
-     */
-    @SuppressWarnings("unchecked")
-    public final Request waitForActiveShards(ActiveShardCount waitForActiveShards) {
-        this.waitForActiveShards = waitForActiveShards;
-        return (Request) this;
-    }
-
-    /**
-     * A shortcut for {@link #waitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public final Request waitForActiveShards(final int waitForActiveShards) {
-        return waitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
-
-    /**
-     * Sets the minimum version of the cluster state that is required on the next node before we redirect to another primary.
-     * Used to prevent redirect loops, see also {@link TransportReplicationAction.ReroutePhase#doRun()}
-     */
-    @SuppressWarnings("unchecked")
-    protected Request routedBasedOnClusterVersion(long routedBasedOnClusterVersion) {
-        this.routedBasedOnClusterVersion = routedBasedOnClusterVersion;
-        return (Request) this;
-    }
-
-    // visible for testing
-    public long routedBasedOnClusterVersion() {
-        return routedBasedOnClusterVersion;
     }
 
     @Override
@@ -260,12 +206,5 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
      */
     public void onRetry() {
         // nothing by default
-    }
-
-    protected void cloneProperties(ReplicationRequest<?> target) {
-        target.waitForActiveShards(waitForActiveShards());
-        target.timeout(timeout());
-        target.routedBasedOnClusterVersion(routedBasedOnClusterVersion());
-        target.setParentTask(getParentTask());
     }
 }

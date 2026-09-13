@@ -48,35 +48,6 @@ public final class CharArrays {
     private CharArrays() {}
 
     /**
-     * Decodes the provided byte[] to a UTF-8 char[]. This is done while avoiding
-     * conversions to String. The provided byte[] is not modified by this method, so
-     * the caller needs to take care of clearing the value if it is sensitive.
-     */
-    public static char[] utf8BytesToChars(byte[] utf8Bytes) {
-        final ByteBuffer byteBuffer = ByteBuffer.wrap(utf8Bytes);
-        final CharBuffer charBuffer = StandardCharsets.UTF_8.decode(byteBuffer);
-        final char[] chars;
-        if (charBuffer.hasArray()) {
-            // there is no guarantee that the char buffers backing array is the right size
-            // so we need to make a copy
-            chars = Arrays.copyOfRange(charBuffer.array(), charBuffer.position(), charBuffer.limit());
-            Arrays.fill(charBuffer.array(), (char) 0); // clear sensitive data
-        } else {
-            final int length = charBuffer.limit() - charBuffer.position();
-            chars = new char[length];
-            charBuffer.get(chars);
-            // if the buffer is not read only we can reset and fill with 0's
-            if (charBuffer.isReadOnly() == false) {
-                charBuffer.clear(); // reset
-                for (int i = 0; i < charBuffer.limit(); i++) {
-                    charBuffer.put((char) 0);
-                }
-            }
-        }
-        return chars;
-    }
-
-    /**
      * Encodes the provided char[] to a UTF-8 byte[]. This is done while avoiding
      * conversions to String. The provided char[] is not modified by this method, so
      * the caller needs to take care of clearing the value if it is sensitive.

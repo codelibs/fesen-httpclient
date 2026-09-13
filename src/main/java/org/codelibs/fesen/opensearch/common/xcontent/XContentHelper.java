@@ -189,25 +189,6 @@ public class XContentHelper {
 
     /**
      * Convert a string in some {@link XContent} format to a {@link Map}. Throws an {@link OpenSearchParseException} if there is any
-     * error.
-     */
-    public static Map<String, Object> convertToMap(XContent xContent, String string, boolean ordered) throws OpenSearchParseException {
-        // It is safe to use EMPTY here because this never uses namedObject
-        try (
-            XContentParser parser = xContent.createParser(
-                NamedXContentRegistry.EMPTY,
-                DeprecationHandler.THROW_UNSUPPORTED_OPERATION,
-                string
-            )
-        ) {
-            return ordered ? parser.mapOrdered() : parser.map();
-        } catch (IOException e) {
-            throw new OpenSearchParseException("Failed to parse content to map", e);
-        }
-    }
-
-    /**
-     * Convert a string in some {@link XContent} format to a {@link Map}. Throws an {@link OpenSearchParseException} if there is any
      * error. Note that unlike {@link #convertToMap(BytesReference, boolean)}, this doesn't automatically uncompress the input.
      */
     public static Map<String, Object> convertToMap(XContent xContent, InputStream input, boolean ordered) throws OpenSearchParseException {
@@ -331,116 +312,6 @@ public class XContentHelper {
     }
 
     /**
-     * Updates the provided changes into the source. If the key exists in the changes, it overrides the one in source
-     * unless both are Maps, in which case it recursively updated it.
-     *
-     * @param source                 the original map to be updated
-     * @param changes                the changes to update into updated
-     * @param checkUpdatesAreUnequal should this method check if updates to the same key (that are not both maps) are
-     *                               unequal?  This is just a .equals check on the objects, but that can take some time on long strings.
-     * @return true if the source map was modified
-     */
-    public static boolean update(Map<String, Object> source, Map<String, Object> changes, boolean checkUpdatesAreUnequal) {
-        boolean modified = false;
-        for (Map.Entry<String, Object> changesEntry : changes.entrySet()) {
-            if (!source.containsKey(changesEntry.getKey())) {
-                // safe to copy, change does not exist in source
-                source.put(changesEntry.getKey(), changesEntry.getValue());
-                modified = true;
-                continue;
-            }
-            Object old = source.get(changesEntry.getKey());
-            if (old instanceof Map && changesEntry.getValue() instanceof Map) {
-                // recursive merge maps
-                modified |= update(
-                    (Map<String, Object>) source.get(changesEntry.getKey()),
-                    (Map<String, Object>) changesEntry.getValue(),
-                    checkUpdatesAreUnequal && !modified
-                );
-                continue;
-            }
-            // update the field
-            source.put(changesEntry.getKey(), changesEntry.getValue());
-            if (modified) {
-                continue;
-            }
-            if (!checkUpdatesAreUnequal) {
-                modified = true;
-                continue;
-            }
-            modified = !Objects.equals(old, changesEntry.getValue());
-        }
-        return modified;
-    }
-
-    /**
-     * Merges the defaults provided as the second parameter into the content of the first. Only does recursive merge
-     * for inner maps.
-     */
-    public static void mergeDefaults(Map<String, Object> content, Map<String, Object> defaults) {
-        for (Map.Entry<String, Object> defaultEntry : defaults.entrySet()) {
-            if (!content.containsKey(defaultEntry.getKey())) {
-                // copy it over, it does not exists in the content
-                content.put(defaultEntry.getKey(), defaultEntry.getValue());
-            } else {
-                // in the content and in the default, only merge compound ones (maps)
-                if (content.get(defaultEntry.getKey()) instanceof Map && defaultEntry.getValue() instanceof Map) {
-                    mergeDefaults((Map<String, Object>) content.get(defaultEntry.getKey()), (Map<String, Object>) defaultEntry.getValue());
-                } else if (content.get(defaultEntry.getKey()) instanceof List && defaultEntry.getValue() instanceof List) {
-                    List defaultList = (List) defaultEntry.getValue();
-                    List contentList = (List) content.get(defaultEntry.getKey());
-
-                    List mergedList = new ArrayList();
-                    if (allListValuesAreMapsOfOne(defaultList) && allListValuesAreMapsOfOne(contentList)) {
-                        // all are in the form of [ {"key1" : {}}, {"key2" : {}} ], merge based on keys
-                        Map<String, Map<String, Object>> processed = new LinkedHashMap<>();
-                        for (Object o : contentList) {
-                            Map<String, Object> map = (Map<String, Object>) o;
-                            Map.Entry<String, Object> entry = map.entrySet().iterator().next();
-                            processed.put(entry.getKey(), map);
-                        }
-                        for (Object o : defaultList) {
-                            Map<String, Object> map = (Map<String, Object>) o;
-                            Map.Entry<String, Object> entry = map.entrySet().iterator().next();
-                            if (processed.containsKey(entry.getKey())) {
-                                mergeDefaults(processed.get(entry.getKey()), map);
-                            } else {
-                                // put the default entries after the content ones.
-                                processed.put(entry.getKey(), map);
-                            }
-                        }
-                        for (Map<String, Object> map : processed.values()) {
-                            mergedList.add(map);
-                        }
-                    } else {
-                        // if both are lists, simply combine them, first the defaults, then the content
-                        // just make sure not to add the same value twice
-                        mergedList.addAll(defaultList);
-                        for (Object o : contentList) {
-                            if (!mergedList.contains(o)) {
-                                mergedList.add(o);
-                            }
-                        }
-                    }
-                    content.put(defaultEntry.getKey(), mergedList);
-                }
-            }
-        }
-    }
-
-    private static boolean allListValuesAreMapsOfOne(List list) {
-        for (Object o : list) {
-            if (!(o instanceof Map)) {
-                return false;
-            }
-            if (((Map) o).size() != 1) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Writes a "raw" (bytes) field, handling cases where the bytes are compressed, and tries to optimize writing using
      * {@link XContentBuilder#rawField(String, InputStream)}.
      * @deprecated use {@link #writeRawField(String, BytesReference, XContentType, XContentBuilder, Params)} to avoid content type
@@ -456,25 +327,6 @@ public class XContentHelper {
         } else {
             try (InputStream stream = source.streamInput()) {
                 builder.rawField(field, stream);
-            }
-        }
-    }
-
-    /**
-     * Writes a "raw" (bytes) field, handling cases where the bytes are compressed, and tries to optimize writing using
-     * {@link XContentBuilder#rawField(String, InputStream, MediaType)}.
-     */
-    public static void writeRawField(String field, BytesReference source, XContentType xContentType, XContentBuilder builder, Params params)
-        throws IOException {
-        Objects.requireNonNull(xContentType);
-        Compressor compressor = CompressorRegistry.compressor(source);
-        if (compressor != null) {
-            try (InputStream compressedStreamInput = compressor.threadLocalInputStream(source.streamInput())) {
-                builder.rawField(field, compressedStreamInput, xContentType);
-            }
-        } else {
-            try (InputStream stream = source.streamInput()) {
-                builder.rawField(field, stream, xContentType);
             }
         }
     }

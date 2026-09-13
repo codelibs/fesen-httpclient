@@ -96,28 +96,6 @@ public class SnapshotsStatusRequestBuilder extends ClusterManagerNodeOperationRe
     }
 
     /**
-     * Sets list of indices to return
-     *
-     * @param indices list of indices
-     * @return this builder
-     */
-    public SnapshotsStatusRequestBuilder setIndices(String... indices) {
-        request.indices(indices);
-        return this;
-    }
-
-    /**
-     * Adds additional indices to the list of indices to return
-     *
-     * @param indices additional indices
-     * @return this builder
-     */
-    public SnapshotsStatusRequestBuilder addIndices(String... indices) {
-        request.indices(ArrayUtils.concat(request.indices(), indices));
-        return this;
-    }
-
-    /**
      * Set to <code>true</code> to ignore unavailable snapshots and indices, instead of throwing an exception.
      * Defaults to <code>false</code>, which means unavailable snapshots and indices cause an exception to be thrown.
      *

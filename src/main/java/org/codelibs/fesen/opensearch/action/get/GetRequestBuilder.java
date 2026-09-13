@@ -105,33 +105,6 @@ public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetReq
     }
 
     /**
-     * Indicate that _source should be returned, with an "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param include An optional include (optionally wildcarded) pattern to filter the returned _source
-     * @param exclude An optional exclude (optionally wildcarded) pattern to filter the returned _source
-     */
-    public GetRequestBuilder setFetchSource(@Nullable String include, @Nullable String exclude) {
-        return setFetchSource(
-            include == null ? Strings.EMPTY_ARRAY : new String[] { include },
-            exclude == null ? Strings.EMPTY_ARRAY : new String[] { exclude }
-        );
-    }
-
-    /**
-     * Indicate that _source should be returned, with an "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param includes An optional list of include (optionally wildcarded) pattern to filter the returned _source
-     * @param excludes An optional list of exclude (optionally wildcarded) pattern to filter the returned _source
-     */
-    public GetRequestBuilder setFetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
-        FetchSourceContext context = request.fetchSourceContext() == null ? FetchSourceContext.FETCH_SOURCE : request.fetchSourceContext();
-        request.fetchSourceContext(new FetchSourceContext(context.fetchSource(), includes, excludes));
-        return this;
-    }
-
-    /**
      * Should a refresh be executed before this get operation causing the operation to
      * return the latest value. Note, heavy get should not set this to {@code true}. Defaults
      * to {@code false}.

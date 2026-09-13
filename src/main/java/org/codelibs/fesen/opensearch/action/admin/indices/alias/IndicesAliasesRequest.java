@@ -443,22 +443,6 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             }
         }
 
-        public AliasActions filter(QueryBuilder filter) {
-            if (filter == null) {
-                this.filter = null;
-                return this;
-            }
-            try {
-                XContentBuilder builder = XContentFactory.jsonBuilder();
-                filter.toXContent(builder, ToXContent.EMPTY_PARAMS);
-                builder.close();
-                this.filter = builder.toString();
-                return this;
-            } catch (IOException e) {
-                throw new OpenSearchGenerationException("Failed to build json for alias request", e);
-            }
-        }
-
         public AliasActions writeIndex(Boolean writeIndex) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[is_write_index] is unsupported for [" + type + "]");

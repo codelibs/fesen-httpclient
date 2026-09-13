@@ -71,17 +71,6 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
     private final boolean routingRequired;
 
     @SuppressWarnings("unchecked")
-    public MappingMetadata(CompressedXContent mapping) {
-        this.source = mapping;
-        Map<String, Object> mappingMap = XContentHelper.convertToMap(mapping.compressedReference(), true).v2();
-        if (mappingMap.size() != 1) {
-            throw new IllegalStateException("Can't derive type from mapping, no root type: " + mapping.string());
-        }
-        this.type = mappingMap.keySet().iterator().next();
-        this.routingRequired = isRoutingRequired((Map<String, Object>) mappingMap.get(this.type));
-    }
-
-    @SuppressWarnings("unchecked")
     public MappingMetadata(String type, Map<String, Object> mapping) {
         this.type = type;
         try {
@@ -145,10 +134,6 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
      */
     public Map<String, Object> getSourceAsMap() throws OpenSearchParseException {
         return sourceAsMap();
-    }
-
-    public boolean routingRequired() {
-        return this.routingRequired;
     }
 
     @Override

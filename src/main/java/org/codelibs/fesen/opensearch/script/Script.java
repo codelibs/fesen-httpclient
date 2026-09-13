@@ -323,30 +323,6 @@ public final class Script implements ToXContentObject, Writeable {
     }
 
     /**
-     * Parse the script configured in the given settings.
-     */
-    public static Script parse(Settings settings) {
-        try (XContentBuilder builder = JsonXContent.contentBuilder()) {
-            builder.startObject();
-            settings.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            builder.endObject();
-            try (
-                InputStream stream = BytesReference.bytes(builder).streamInput();
-                XContentParser parser = JsonXContent.jsonXContent.createParser(
-                    NamedXContentRegistry.EMPTY,
-                    LoggingDeprecationHandler.INSTANCE,
-                    stream
-                )
-            ) {
-                return parse(parser);
-            }
-        } catch (IOException e) {
-            // it should not happen since we are not actually reading from a stream but an in-memory byte[]
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
      * This will parse XContent into a {@link Script}.  The following formats can be parsed:
      * <p>
      * The simple format defaults to an {@link ScriptType#INLINE} with no compiler options or user-defined params:
@@ -430,88 +406,6 @@ public final class Script implements ToXContentObject, Writeable {
         }
 
         return PARSER.apply(parser, null).build(defaultLang);
-    }
-
-    /**
-     * Parse a {@link Script} from an {@link Object}, that can either be a {@link String} or a {@link Map}.
-     * @see #parse(XContentParser, String)
-     * @param config  The object to parse the script from.
-     * @return        The parsed {@link Script}.
-     */
-    @SuppressWarnings("unchecked")
-    public static Script parse(Object config) {
-        Objects.requireNonNull(config, "Script must not be null");
-        if (config instanceof String str) {
-            return new Script(str);
-        } else if (config instanceof Map<?, ?>) {
-            Map<String, Object> configMap = (Map<String, Object>) config;
-            String script = null;
-            ScriptType type = null;
-            String lang = null;
-            Map<String, Object> params = Collections.emptyMap();
-            Map<String, String> options = Collections.emptyMap();
-            for (Map.Entry<String, Object> entry : configMap.entrySet()) {
-                String parameterName = entry.getKey();
-                Object parameterValue = entry.getValue();
-                if (Script.LANG_PARSE_FIELD.match(parameterName, LoggingDeprecationHandler.INSTANCE)) {
-                    if (parameterValue instanceof String || parameterValue == null) {
-                        lang = (String) parameterValue;
-                    } else {
-                        throw new OpenSearchParseException("Value must be of type String: [" + parameterName + "]");
-                    }
-                } else if (Script.PARAMS_PARSE_FIELD.match(parameterName, LoggingDeprecationHandler.INSTANCE)) {
-                    if (parameterValue instanceof Map<?, ?> || parameterValue == null) {
-                        params = (Map<String, Object>) parameterValue;
-                    } else {
-                        throw new OpenSearchParseException("Value must be of type Map: [" + parameterName + "]");
-                    }
-                } else if (Script.OPTIONS_PARSE_FIELD.match(parameterName, LoggingDeprecationHandler.INSTANCE)) {
-                    if (parameterValue instanceof Map<?, ?> || parameterValue == null) {
-                        options = (Map<String, String>) parameterValue;
-                    } else {
-                        throw new OpenSearchParseException("Value must be of type Map: [" + parameterName + "]");
-                    }
-                } else if (ScriptType.INLINE.getParseField().match(parameterName, LoggingDeprecationHandler.INSTANCE)) {
-                    if (parameterValue instanceof String || parameterValue == null) {
-                        script = (String) parameterValue;
-                        type = ScriptType.INLINE;
-                    } else {
-                        throw new OpenSearchParseException("Value must be of type String: [" + parameterName + "]");
-                    }
-                } else if (ScriptType.STORED.getParseField().match(parameterName, LoggingDeprecationHandler.INSTANCE)) {
-                    if (parameterValue instanceof String || parameterValue == null) {
-                        script = (String) parameterValue;
-                        type = ScriptType.STORED;
-                    } else {
-                        throw new OpenSearchParseException("Value must be of type String: [" + parameterName + "]");
-                    }
-                } else {
-                    deprecationLogger.deprecate("script_unsupported_fields", "script section does not support [" + parameterName + "]");
-                }
-            }
-            if (script == null) {
-                throw new OpenSearchParseException(
-                    "Expected one of [{}] or [{}] fields, but found none",
-                    ScriptType.INLINE.getParseField().getPreferredName(),
-                    ScriptType.STORED.getParseField().getPreferredName()
-                );
-            }
-            assert type != null : "if script is not null, type should definitely not be null";
-
-            if (type == ScriptType.STORED) {
-                if (lang != null) {
-                    throw new IllegalArgumentException(
-                        "[" + Script.LANG_PARSE_FIELD.getPreferredName() + "] cannot be specified for stored scripts"
-                    );
-                }
-
-                return new Script(type, null, script, null, params);
-            } else {
-                return new Script(type, lang == null ? DEFAULT_SCRIPT_LANG : lang, script, options, params);
-            }
-        } else {
-            throw new IllegalArgumentException("Script value should be a String or a Map");
-        }
     }
 
     private final ScriptType type;
@@ -692,22 +586,6 @@ public final class Script implements ToXContentObject, Writeable {
     }
 
     /**
-     * @return The {@link ScriptType} for this {@link Script}.
-     */
-    public ScriptType getType() {
-        return type;
-    }
-
-    /**
-     * @return The language for this {@link Script} if the {@link ScriptType} is {@link ScriptType#INLINE}.
-     *         For {@link ScriptType#STORED} scripts this should be null, but can
-     *         be specified to access scripts stored as part of the stored scripts deprecated API.
-     */
-    public String getLang() {
-        return lang;
-    }
-
-    /**
      * @return The id for this {@link Script} if the {@link ScriptType} is {@link ScriptType#STORED}.
      *         The code for this {@link Script} if the {@link ScriptType} is {@link ScriptType#INLINE}.
      */
@@ -721,13 +599,6 @@ public final class Script implements ToXContentObject, Writeable {
      */
     public Map<String, String> getOptions() {
         return options;
-    }
-
-    /**
-     * @return The map of user-defined params for this {@link Script}.
-     */
-    public Map<String, Object> getParams() {
-        return params;
     }
 
     @Override

@@ -589,10 +589,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         return new Builder(clusterName);
     }
 
-    public static Builder builder(ClusterState state) {
-        return new Builder(state);
-    }
-
     /**
      * Builder for cluster state.
      *
@@ -611,19 +607,6 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         private final Map<String, Custom> customs;
         private boolean fromDiff;
         private int minimumClusterManagerNodesOnPublishingClusterManager = -1;
-
-        public Builder(ClusterState state) {
-            this.clusterName = state.clusterName;
-            this.version = state.version();
-            this.uuid = state.stateUUID();
-            this.nodes = state.nodes();
-            this.routingTable = state.routingTable();
-            this.metadata = state.metadata();
-            this.blocks = state.blocks();
-            this.customs = new HashMap<>(state.customs());
-            this.minimumClusterManagerNodesOnPublishingClusterManager = state.minimumClusterManagerNodesOnPublishingClusterManager;
-            this.fromDiff = false;
-        }
 
         public Builder(ClusterName clusterName) {
             customs = new HashMap<>();

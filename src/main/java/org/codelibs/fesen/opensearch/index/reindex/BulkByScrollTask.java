@@ -108,26 +108,6 @@ public class BulkByScrollTask extends CancellableTask {
         return emptyStatus();
     }
 
-    /**
-     * Build the status for this task given a snapshot of the information of running slices. This is only supported if the task is
-     * set as a leader for slice subtasks
-     */
-    public TaskInfo taskInfoGivenSubtaskInfo(String localNodeId, List<TaskInfo> sliceInfo) {
-        if (isLeader() == false) {
-            throw new IllegalStateException("This task is not set to be a leader of other slice subtasks");
-        }
-
-        List<BulkByScrollTask.StatusOrException> sliceStatuses = Arrays.asList(
-            new BulkByScrollTask.StatusOrException[leaderState.getSlices()]
-        );
-        for (TaskInfo t : sliceInfo) {
-            BulkByScrollTask.Status status = (BulkByScrollTask.Status) t.getStatus();
-            sliceStatuses.set(status.getSliceId(), new BulkByScrollTask.StatusOrException(status));
-        }
-        Status status = leaderState.getStatus(sliceStatuses);
-        return taskInfo(localNodeId, getDescription(), status);
-    }
-
     private BulkByScrollTask.Status emptyStatus() {
         return new Status(Collections.emptyList(), getReasonCancelled());
     }
@@ -762,13 +742,6 @@ public class BulkByScrollTask extends CancellableTask {
             if (false == sliceStatuses.isEmpty()) {
                 builder.append(",workers=").append(sliceStatuses);
             }
-        }
-
-        /**
-         * The id of the slice that this status is reporting or {@code null} if this isn't the status of a sub-slice.
-         */
-        Integer getSliceId() {
-            return sliceId;
         }
 
         /**

@@ -57,18 +57,6 @@ public class Strings {
     // General convenience methods for working with Strings
     // ---------------------------------------------------------------------
 
-    public static void spaceify(int spaces, String from, StringBuilder to) throws Exception {
-        try (BufferedReader reader = new BufferedReader(new StringReader(from))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                for (int i = 0; i < spaces; i++) {
-                    to.append(' ');
-                }
-                to.append(line).append('\n');
-            }
-        }
-    }
-
     /**
      * Check that the given CharSequence is neither <code>null</code> nor of length 0.
      * Note: Will return <code>true</code> for a CharSequence that purely consists of whitespace.
@@ -206,46 +194,6 @@ public class Strings {
             }
         }
         return true;
-    }
-
-    /**
-     * Replace all occurrences of a substring within a string with
-     * another string.
-     *
-     * @param inString   String to examine
-     * @param oldPattern String to replace
-     * @param newPattern String to insert
-     * @return a String with the replacements
-     */
-    public static String replace(String inString, String oldPattern, String newPattern) {
-        if (!hasLength(inString) || !hasLength(oldPattern) || newPattern == null) {
-            return inString;
-        }
-        StringBuilder sb = new StringBuilder();
-        int pos = 0; // our position in the old string
-        int index = inString.indexOf(oldPattern);
-        // the index of an occurrence we've found, or -1
-        int patLen = oldPattern.length();
-        while (index >= 0) {
-            sb.append(inString, pos, index);
-            sb.append(newPattern);
-            pos = index + patLen;
-            index = inString.indexOf(oldPattern, pos);
-        }
-        sb.append(inString.substring(pos));
-        // remember to append any characters to the right of a match
-        return sb.toString();
-    }
-
-    /**
-     * Delete all occurrences of the given substring.
-     *
-     * @param inString the original String
-     * @param pattern  the pattern to delete all occurrences of
-     * @return the resulting String
-     */
-    public static String delete(String inString, String pattern) {
-        return replace(inString, pattern, "");
     }
 
     /**
@@ -620,17 +568,6 @@ public class Strings {
             }
             sb.append(arr[i]);
         }
-    }
-
-    /**
-     * Convenience method to return a String array as a CSV String.
-     * E.g. useful for <code>toString()</code> implementations.
-     *
-     * @param arr the array to display
-     * @return the delimited String
-     */
-    public static String arrayToCommaDelimitedString(Object[] arr) {
-        return arrayToDelimitedString(arr, ",");
     }
 
     /**

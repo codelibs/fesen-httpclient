@@ -120,13 +120,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
     private final String maxAsStr;
 
     /**
-     * Construct with parsed bounds.
-     */
-    public LongBounds(Long min, Long max) {
-        this(min, max, null, null);
-    }
-
-    /**
      * Construct with unparsed bounds.
      */
     public LongBounds(String minAsStr, String maxAsStr) {
@@ -159,12 +152,6 @@ public class LongBounds implements ToXContentFragment, Writeable {
         out.writeOptionalLong(max);
         out.writeOptionalString(minAsStr);
         out.writeOptionalString(maxAsStr);
-    }
-
-    LongBounds round(Rounding rounding) {
-        // Extended bounds shouldn't be effected by the offset
-        Rounding effectiveRounding = rounding.withoutOffset();
-        return new LongBounds(min != null ? effectiveRounding.round(min) : null, max != null ? effectiveRounding.round(max) : null);
     }
 
     @Override

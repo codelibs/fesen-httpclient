@@ -129,28 +129,6 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
     }
 
     /**
-     * Sets the document to index in bytes form.
-     */
-    public IndexRequestBuilder setSource(byte[] source, MediaType mediaType) {
-        request.source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the document to index in bytes form (assumed to be safe to be used from different
-     * threads).
-     *
-     * @param source The source to index
-     * @param offset The offset in the byte array
-     * @param length The length of the data
-     * @param mediaType The type/format of the source
-     */
-    public IndexRequestBuilder setSource(byte[] source, int offset, int length, MediaType mediaType) {
-        request.source(source, offset, length, mediaType);
-        return this;
-    }
-
-    /**
      * Constructs a simple document with a field name and value pairs.
      * <p>
      * <b>Note: the number of objects passed to this method must be an even

@@ -128,30 +128,6 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
     /**
      * Adds an alias to the index.
      *
-     * @param indices       The indices
-     * @param alias         The alias
-     * @param filterBuilder The filter
-     */
-    public IndicesAliasesRequestBuilder addAlias(String indices[], String alias, QueryBuilder filterBuilder) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().indices(indices).alias(alias).filter(filterBuilder));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
-     * @param index         The index
-     * @param alias         The alias
-     * @param filterBuilder The filter
-     */
-    public IndicesAliasesRequestBuilder addAlias(String index, String alias, QueryBuilder filterBuilder) {
-        request.addAliasAction(IndicesAliasesRequest.AliasActions.add().index(index).alias(alias).filter(filterBuilder));
-        return this;
-    }
-
-    /**
-     * Adds an alias to the index.
-     *
      * @param index         The index
      * @param alias         The alias
      * @param writeIndex    write index flag

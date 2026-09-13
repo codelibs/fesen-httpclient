@@ -86,28 +86,6 @@ public final class CompressedXContent {
     }
 
     /**
-     * Create a {@link CompressedXContent} out of a {@link ToXContent} instance.
-     */
-    public CompressedXContent(ToXContent xcontent, ToXContent.Params params) throws IOException {
-        BytesStreamOutput bStream = new BytesStreamOutput();
-        OutputStream compressedStream = CompressorRegistry.defaultCompressor().threadLocalOutputStream(bStream);
-        CRC32 crc32 = new CRC32();
-        OutputStream checkedStream = new CheckedOutputStream(compressedStream, crc32);
-        try (XContentBuilder builder = XContentFactory.jsonBuilder(checkedStream)) {
-            if (xcontent.isFragment()) {
-                builder.startObject();
-            }
-            xcontent.toXContent(builder, params);
-            if (xcontent.isFragment()) {
-                builder.endObject();
-            }
-        }
-        this.bytes = BytesReference.toBytes(bStream.bytes());
-        this.crc32 = (int) crc32.getValue();
-        assertConsistent();
-    }
-
-    /**
      * Create a {@link CompressedXContent} out of a serialized {@link ToXContent}
      * that may already be compressed.
      */

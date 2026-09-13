@@ -74,15 +74,4 @@ public class NodesInfoRequestBuilder extends NodesOperationRequestBuilder<NodesI
         request.addMetric(metric);
         return this;
     }
-
-    /**
-     * Add an array of metrics to the request.
-     *
-     * @param metrics Metric names as strings.
-     * @return This, for request chaining.
-     */
-    public NodesInfoRequestBuilder addMetrics(String... metrics) {
-        request.addMetrics(metrics);
-        return this;
-    }
 }

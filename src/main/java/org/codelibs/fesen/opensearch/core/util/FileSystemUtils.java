@@ -104,22 +104,6 @@ public final class FileSystemUtils {
     }
 
     /**
-     * Deletes all subdirectories in the given path recursively
-     * @throws java.lang.IllegalArgumentException if the given path is not a directory
-     */
-    public static void deleteSubDirectories(Path... paths) throws IOException {
-        for (Path path : paths) {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-                for (Path subPath : stream) {
-                    if (Files.isDirectory(subPath)) {
-                        IOUtils.rm(subPath);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Check that a directory exists, is a directory and is readable
      * by the current user
      */
@@ -157,37 +141,6 @@ public final class FileSystemUtils {
             throw new IllegalArgumentException("URL cannot have port. Found: [" + url.getPort() + ']');
         }
         return url.openStream();
-    }
-
-    /**
-     * Returns an array of all files in the given directory matching.
-     */
-    public static Path[] files(Path from, DirectoryStream.Filter<Path> filter) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(from, filter)) {
-            return toArray(stream);
-        }
-    }
-
-    /**
-     * Returns an array of all files in the given directory.
-     */
-    public static Path[] files(Path directory) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-            return toArray(stream);
-        }
-    }
-
-    /**
-     * Returns an array of all files in the given directory matching the glob.
-     */
-    public static Path[] files(Path directory, String glob) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, glob)) {
-            return toArray(stream);
-        }
-    }
-
-    private static Path[] toArray(DirectoryStream<Path> stream) {
-        return StreamSupport.stream(stream.spliterator(), false).toArray(length -> new Path[length]);
     }
 
 }

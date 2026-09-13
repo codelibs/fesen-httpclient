@@ -290,37 +290,6 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
         }
     }
 
-    public Rounding createRounding(ZoneId timeZone, long offset) {
-        Rounding.Builder tzRoundingBuilder;
-        if (isEmpty()) {
-            throw new IllegalArgumentException("Invalid interval specified, must be non-null and non-empty");
-        }
-        DateIntervalWrapper.IntervalTypeEnum intervalType = getIntervalType();
-        if (intervalType.equals(DateIntervalWrapper.IntervalTypeEnum.FIXED)) {
-            tzRoundingBuilder = Rounding.builder(tryIntervalAsFixedUnit());
-        } else if (intervalType.equals(DateIntervalWrapper.IntervalTypeEnum.CALENDAR)) {
-            tzRoundingBuilder = Rounding.builder(tryIntervalAsCalendarUnit());
-        } else {
-            // We're not sure what the interval was originally (legacy) so use old behavior of assuming
-            // calendar first, then fixed. Required because fixed/cal overlap in places ("1h")
-            DateTimeUnit calInterval = tryIntervalAsCalendarUnit();
-            TimeValue fixedInterval = tryIntervalAsFixedUnit();
-            if (calInterval != null) {
-                tzRoundingBuilder = Rounding.builder(calInterval);
-            } else if (fixedInterval != null) {
-                tzRoundingBuilder = Rounding.builder(fixedInterval);
-            } else {
-                // If we get here we have exhausted our options and are not able to parse this interval
-                throw new IllegalArgumentException("Unable to parse interval [" + dateHistogramInterval + "]");
-            }
-        }
-        if (timeZone != null) {
-            tzRoundingBuilder.timeZone(timeZone);
-        }
-        tzRoundingBuilder.offset(offset);
-        return tzRoundingBuilder.build();
-    }
-
     private void setIntervalType(IntervalTypeEnum type) {
         // If we're the same or have no existing type, just use the provided type
         if (intervalType.equals(IntervalTypeEnum.NONE) || type.equals(intervalType)) {
@@ -377,13 +346,6 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
             default:
                 throw new IllegalStateException("Unknown interval type.");
         }
-    }
-
-    public boolean isEmpty() {
-        if (intervalType.equals(IntervalTypeEnum.NONE)) {
-            return true;
-        }
-        return dateHistogramInterval == null || Strings.isNullOrEmpty(dateHistogramInterval.toString());
     }
 
     @Override

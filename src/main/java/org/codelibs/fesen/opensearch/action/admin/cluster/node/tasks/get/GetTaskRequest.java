@@ -87,35 +87,10 @@ public class GetTaskRequest extends ActionRequest {
     }
 
     /**
-     * Should this request wait for all found tasks to complete?
-     */
-    public GetTaskRequest setWaitForCompletion(boolean waitForCompletion) {
-        this.waitForCompletion = waitForCompletion;
-        return this;
-    }
-
-    /**
      * Timeout to wait for any async actions this request must take. It must take anywhere from 0 to 2.
      */
     public TimeValue getTimeout() {
         return timeout;
-    }
-
-    /**
-     * Timeout to wait for any async actions this request must take. It must take anywhere from 0 to 2.
-     */
-    public GetTaskRequest setTimeout(TimeValue timeout) {
-        this.timeout = timeout;
-        return this;
-    }
-
-    GetTaskRequest nodeRequest(String thisNodeId, long thisTaskId) {
-        GetTaskRequest copy = new GetTaskRequest();
-        copy.setParentTask(thisNodeId, thisTaskId);
-        copy.setTaskId(taskId);
-        copy.setTimeout(timeout);
-        copy.setWaitForCompletion(waitForCompletion);
-        return copy;
     }
 
     @Override

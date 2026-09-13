@@ -29,14 +29,6 @@ public class RemoteStoreMetadataRequestBuilder extends BroadcastOperationRequest
     }
 
     /**
-     * Sets timeout of request.
-     */
-    public final RemoteStoreMetadataRequestBuilder setTimeout(TimeValue timeout) {
-        request.timeout(timeout);
-        return this;
-    }
-
-    /**
      * Sets shards preference of request.
      */
     public final RemoteStoreMetadataRequestBuilder setShards(String... shards) {

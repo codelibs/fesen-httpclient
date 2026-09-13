@@ -380,21 +380,6 @@ public abstract class StreamInput extends InputStream {
     }
 
     @Nullable
-    public SecureString readOptionalSecureString() throws IOException {
-        SecureString value = null;
-        BytesReference bytesRef = readOptionalBytesReference();
-        if (bytesRef != null) {
-            byte[] bytes = BytesReference.toBytes(bytesRef);
-            try {
-                value = new SecureString(CharArrays.utf8BytesToChars(bytes));
-            } finally {
-                Arrays.fill(bytes, (byte) 0);
-            }
-        }
-        return value;
-    }
-
-    @Nullable
     public Float readOptionalFloat() throws IOException {
         if (readBoolean()) {
             return readFloat();
@@ -553,16 +538,6 @@ public abstract class StreamInput extends InputStream {
         throw new IOException("Invalid string; unexpected character: " + c + " hex: " + Integer.toHexString(c));
     }
 
-    public SecureString readSecureString() throws IOException {
-        BytesReference bytesRef = readBytesReference();
-        byte[] bytes = BytesReference.toBytes(bytesRef);
-        try {
-            return new SecureString(CharArrays.utf8BytesToChars(bytes));
-        } finally {
-            Arrays.fill(bytes, (byte) 0);
-        }
-    }
-
     public final float readFloat() throws IOException {
         return Float.intBitsToFloat(readInt());
     }
@@ -647,36 +622,6 @@ public abstract class StreamInput extends InputStream {
         Map<K, V> map = new HashMap<>(size);
         readIntoMap(keyReader, valueReader, map, size);
         return map;
-    }
-
-    /**
-     * Read a serialized map into a SortedMap using the default ordering for the keys. If the result is empty it might be immutable.
-     */
-    public <K extends Comparable<K>, V> SortedMap<K, V> readOrderedMap(Writeable.Reader<K> keyReader, Writeable.Reader<V> valueReader)
-        throws IOException {
-        return readOrderedMap(keyReader, valueReader, null);
-    }
-
-    /**
-     * Read a serialized map into a SortedMap, specifying a Comparator for the keys. If the result is empty it might be immutable.
-     */
-    public <K extends Comparable<K>, V> SortedMap<K, V> readOrderedMap(
-        Writeable.Reader<K> keyReader,
-        Writeable.Reader<V> valueReader,
-        @Nullable Comparator<K> keyComparator
-    ) throws IOException {
-        int size = readArraySize();
-        if (size == 0) {
-            return Collections.emptySortedMap();
-        }
-        SortedMap<K, V> sortedMap;
-        if (keyComparator == null) {
-            sortedMap = new TreeMap<>();
-        } else {
-            sortedMap = new TreeMap<>(keyComparator);
-        }
-        readIntoMap(keyReader, valueReader, sortedMap, size);
-        return sortedMap;
     }
 
     private <K, V> void readIntoMap(Writeable.Reader<K> keyReader, Writeable.Reader<V> valueReader, Map<K, V> map, int size)

@@ -108,30 +108,6 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
 
     private Integer version;
 
-    public PutIndexTemplateRequest(StreamInput in) throws IOException {
-        super(in);
-        cause = in.readString();
-        name = in.readString();
-        indexPatterns = in.readStringList();
-        order = in.readInt();
-        create = in.readBoolean();
-        settings = readSettingsFromStream(in);
-        if (in.getVersion().before(Version.V_2_0_0)) {
-            int size = in.readVInt();
-            for (int i = 0; i < size; i++) {
-                in.readString();    // type - cannot assert on _doc because 7x allows arbitrary type names
-                this.mappings = in.readString();
-            }
-        } else {
-            this.mappings = in.readOptionalString();
-        }
-        int aliasesSize = in.readVInt();
-        for (int i = 0; i < aliasesSize; i++) {
-            aliases.add(new Alias(in));
-        }
-        version = in.readOptionalVInt();
-    }
-
     public PutIndexTemplateRequest() {}
 
     /**
@@ -177,18 +153,8 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this.indexPatterns;
     }
 
-    public PutIndexTemplateRequest order(int order) {
-        this.order = order;
-        return this;
-    }
-
     public int order() {
         return this.order;
-    }
-
-    public PutIndexTemplateRequest version(Integer version) {
-        this.version = version;
-        return this;
     }
 
     public Integer version() {
@@ -232,14 +198,6 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this;
     }
 
-    /**
-     * The settings to create the index template with (either json or yaml format).
-     */
-    public PutIndexTemplateRequest settings(Map<String, Object> source) {
-        this.settings = Settings.builder().loadFromMap(source).build();
-        return this;
-    }
-
     public Settings settings() {
         return this.settings;
     }
@@ -256,224 +214,12 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
         return this.cause;
     }
 
-    /**
-     * Adds mapping that will be added when the index gets created.
-     *
-     * @param source The mapping source
-     * @param mediaType The type of content contained within the source
-     */
-    public PutIndexTemplateRequest mapping(String source, MediaType mediaType) {
-        return mapping(new BytesArray(source), mediaType);
-    }
-
-    /**
-     * Adds mapping that will be added when the index gets created.
-     *
-     * @param source The mapping source
-     */
-    public PutIndexTemplateRequest mapping(XContentBuilder source) {
-        return mapping(BytesReference.bytes(source), source.contentType());
-    }
-
-    /**
-     * Adds mapping that will be added when the index gets created.
-     *
-     * @param source The mapping source
-     * @param mediaType the source content type
-     */
-    public PutIndexTemplateRequest mapping(BytesReference source, MediaType mediaType) {
-        Objects.requireNonNull(mediaType);
-        Map<String, Object> mappingAsMap = XContentHelper.convertToMap(source, false, mediaType).v2();
-        return mapping(mappingAsMap);
-    }
-
-    /**
-     * Adds mapping that will be added when the index gets created.
-     *
-     * @param source The mapping source
-     */
-    public PutIndexTemplateRequest mapping(Map<String, Object> source) {
-        if (source.size() != 1 || source.containsKey(MapperService.SINGLE_MAPPING_NAME) == false) {
-            source = Map.of(MapperService.SINGLE_MAPPING_NAME, source);
-        }
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.map(source);
-            mappings = builder.toString();
-            return this;
-        } catch (IOException e) {
-            throw new OpenSearchGenerationException("Failed to generate [" + source + "]", e);
-        }
-    }
-
-    /**
-     * A specialized simplified mapping source method, takes the form of simple properties definition:
-     * ("field1", "type=string,store=true").
-     */
-    public PutIndexTemplateRequest mapping(String... source) {
-        mapping(PutMappingRequest.simpleMapping(source));
-        return this;
-    }
-
     public String mappings() {
         return this.mappings;
     }
 
-    /**
-     * The template source definition.
-     */
-    public PutIndexTemplateRequest source(XContentBuilder templateBuilder) {
-        try {
-            return source(BytesReference.bytes(templateBuilder), templateBuilder.contentType());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to build json for template request", e);
-        }
-    }
-
-    /**
-     * The template source definition.
-     */
-    @SuppressWarnings("unchecked")
-    public PutIndexTemplateRequest source(Map<String, Object> templateSource) {
-        Map<String, Object> source = templateSource;
-        for (Map.Entry<String, Object> entry : source.entrySet()) {
-            String name = entry.getKey();
-            if (name.equals("template")) {
-                // This is needed to allow for bwc (beats, logstash) with pre-5.0 templates (#21009)
-                if (entry.getValue() instanceof String) {
-                    deprecationLogger.deprecate(
-                        "put_index_template_field",
-                        "Deprecated field [template] used, replaced by [index_patterns]"
-                    );
-                    patterns(Collections.singletonList((String) entry.getValue()));
-                }
-            } else if (name.equals("index_patterns")) {
-                if (entry.getValue() instanceof String) {
-                    patterns(Collections.singletonList((String) entry.getValue()));
-                } else if (entry.getValue() instanceof List) {
-                    List<String> elements = ((List<?>) entry.getValue()).stream().map(Object::toString).collect(Collectors.toList());
-                    patterns(elements);
-                } else {
-                    throw new IllegalArgumentException("Malformed [template] value, should be a string or a list of strings");
-                }
-            } else if (name.equals("order")) {
-                order(XContentMapValues.nodeIntegerValue(entry.getValue(), order()));
-            } else if ("version".equals(name)) {
-                if ((entry.getValue() instanceof Integer) == false) {
-                    throw new IllegalArgumentException("Malformed [version] value, should be an integer");
-                }
-                version((Integer) entry.getValue());
-            } else if (name.equals("settings")) {
-                if ((entry.getValue() instanceof Map) == false) {
-                    throw new IllegalArgumentException("Malformed [settings] section, should include an inner object");
-                }
-                settings((Map<String, Object>) entry.getValue());
-            } else if (name.equals("mappings")) {
-                Map<String, Object> mappings = (Map<String, Object>) entry.getValue();
-                for (Map.Entry<String, Object> entry1 : mappings.entrySet()) {
-                    if (!(entry1.getValue() instanceof Map)) {
-                        throw new IllegalArgumentException(
-                            "Malformed [mappings] section for type ["
-                                + entry1.getKey()
-                                + "], should include an inner object describing the mapping"
-                        );
-                    }
-                    mapping((Map<String, Object>) entry1.getValue());
-                }
-            } else if (name.equals("aliases")) {
-                aliases((Map<String, Object>) entry.getValue());
-            } else {
-                throw new OpenSearchParseException("unknown key [{}] in the template ", name);
-            }
-        }
-        return this;
-    }
-
-    /**
-     * The template source definition.
-     */
-    public PutIndexTemplateRequest source(String templateSource, XContentType xContentType) {
-        return source(XContentHelper.convertToMap(xContentType.xContent(), templateSource, true));
-    }
-
-    /**
-     * The template source definition.
-     */
-    public PutIndexTemplateRequest source(byte[] source, MediaType mediaType) {
-        return source(source, 0, source.length, mediaType);
-    }
-
-    /**
-     * The template source definition.
-     */
-    public PutIndexTemplateRequest source(byte[] source, int offset, int length, MediaType mediaType) {
-        return source(new BytesArray(source, offset, length), mediaType);
-    }
-
-    /**
-     * The template source definition.
-     */
-    public PutIndexTemplateRequest source(BytesReference source, MediaType mediaType) {
-        return source(XContentHelper.convertToMap(source, true, mediaType).v2());
-    }
-
     public Set<Alias> aliases() {
         return this.aliases;
-    }
-
-    /**
-     * Sets the aliases that will be associated with the index when it gets created
-     */
-    public PutIndexTemplateRequest aliases(Map<String, ?> source) {
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.map(source);
-            return aliases(BytesReference.bytes(builder));
-        } catch (IOException e) {
-            throw new OpenSearchGenerationException("Failed to generate [" + source + "]", e);
-        }
-    }
-
-    /**
-     * Sets the aliases that will be associated with the index when it gets created
-     */
-    public PutIndexTemplateRequest aliases(XContentBuilder source) {
-        return aliases(BytesReference.bytes(source));
-    }
-
-    /**
-     * Sets the aliases that will be associated with the index when it gets created
-     */
-    public PutIndexTemplateRequest aliases(String source) {
-        return aliases(new BytesArray(source));
-    }
-
-    /**
-     * Sets the aliases that will be associated with the index when it gets created
-     */
-    public PutIndexTemplateRequest aliases(BytesReference source) {
-        // EMPTY is safe here because we never call namedObject
-        try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
-            // move to the first alias
-            parser.nextToken();
-            while ((parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                alias(Alias.fromXContent(parser));
-            }
-            return this;
-        } catch (IOException e) {
-            throw new OpenSearchParseException("Failed to parse aliases", e);
-        }
-    }
-
-    /**
-     * Adds an alias that will be added when the index gets created.
-     *
-     * @param alias   The metadata for the new alias
-     * @return  the index template creation request
-     */
-    public PutIndexTemplateRequest alias(Alias alias) {
-        aliases.add(alias);
-        return this;
     }
 
     @Override

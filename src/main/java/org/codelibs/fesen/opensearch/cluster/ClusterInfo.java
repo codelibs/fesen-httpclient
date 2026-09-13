@@ -296,25 +296,10 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     }
 
     /**
-     * Returns the shard size for the given shard routing or <code>null</code> it that metric is not available.
-     */
-    public Long getShardSize(ShardRouting shardRouting) {
-        return shardSizes.get(shardIdentifierFromRouting(shardRouting));
-    }
-
-    /**
      * Returns the nodes absolute data-path the given shard is allocated on or <code>null</code> if the information is not available.
      */
     public String getDataPath(ShardRouting shardRouting) {
         return routingToDataPath.get(shardRouting);
-    }
-
-    /**
-     * Returns the shard size for the given shard routing or <code>defaultValue</code> it that metric is not available.
-     */
-    public long getShardSize(ShardRouting shardRouting, long defaultValue) {
-        Long shardSize = getShardSize(shardRouting);
-        return shardSize == null ? defaultValue : shardSize;
     }
 
     /**
@@ -323,14 +308,6 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     public ReservedSpace getReservedSpace(String nodeId, String dataPath) {
         final ReservedSpace result = reservedSpace.get(new NodeAndPath(nodeId, dataPath));
         return result == null ? ReservedSpace.EMPTY : result;
-    }
-
-    /**
-     * Method that incorporates the ShardId for the shard into a string that
-     * includes a 'p' or 'r' depending on whether the shard is a primary.
-     */
-    static String shardIdentifierFromRouting(ShardRouting shardRouting) {
-        return shardRouting.shardId().toString() + "[" + (shardRouting.primary() ? "p" : "r") + "]";
     }
 
     /**

@@ -280,25 +280,6 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
         }
     }
 
-    /** write a document write (index/delete/update) request without shard id*/
-    static void writeDocumentRequestThin(StreamOutput out, DocWriteRequest<?> request) throws IOException {
-        switch (request) {
-            case IndexRequest indexRequest -> {
-                out.writeByte((byte) 0);
-                indexRequest.writeThin(out);
-            }
-            case DeleteRequest deleteRequest -> {
-                out.writeByte((byte) 1);
-                deleteRequest.writeThin(out);
-            }
-            case UpdateRequest updateRequest -> {
-                out.writeByte((byte) 2);
-                updateRequest.writeThin(out);
-            }
-            default -> throw new IllegalStateException("invalid request [" + request.getClass().getSimpleName() + " ]");
-        }
-    }
-
     static ActionRequestValidationException validateSeqNoBasedCASParams(
         DocWriteRequest request,
         ActionRequestValidationException validationException

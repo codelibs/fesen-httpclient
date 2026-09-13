@@ -29,14 +29,6 @@ public class RemoteStoreStatsRequestBuilder extends BroadcastOperationRequestBui
     }
 
     /**
-     * Sets timeout of request.
-     */
-    public final RemoteStoreStatsRequestBuilder setTimeout(TimeValue timeout) {
-        request.timeout(timeout);
-        return this;
-    }
-
-    /**
      * Sets shards preference of request.
      */
     public final RemoteStoreStatsRequestBuilder setShards(String... shards) {

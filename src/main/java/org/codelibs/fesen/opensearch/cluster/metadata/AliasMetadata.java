@@ -143,10 +143,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         return searchRouting;
     }
 
-    public String getIndexRouting() {
-        return indexRouting();
-    }
-
     public String indexRouting() {
         return indexRouting;
     }
@@ -303,14 +299,6 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         public Builder filter(CompressedXContent filter) {
             this.filter = filter;
             return this;
-        }
-
-        public Builder filter(String filter) {
-            if (Strings.hasLength(filter) == false) {
-                this.filter = null;
-                return this;
-            }
-            return filter(XContentHelper.convertToMap(MediaTypeRegistry.xContent(filter).xContent(), filter, true));
         }
 
         public Builder filter(Map<String, Object> filter) {

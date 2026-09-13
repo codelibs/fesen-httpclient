@@ -86,8 +86,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
     private final List<Suggestion<? extends Entry<? extends Option>>> suggestions;
 
-    private Map<String, Suggestion<? extends Entry<? extends Option>>> suggestMap;
-
     public Suggest(List<Suggestion<? extends Entry<? extends Option>>> suggestions) {
         // we sort suggestions by their names to ensure iteration over suggestions are consistent
         // this is needed as we need to fill in suggestion docs in SearchPhaseController#sortDocs
@@ -114,20 +112,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
      */
     public int size() {
         return suggestions.size();
-    }
-
-    public <T extends Suggestion<? extends Entry<? extends Option>>> T getSuggestion(String name) {
-        if (suggestions.isEmpty() || name == null) {
-            return null;
-        } else if (suggestions.size() == 1) {
-            return (T) (name.equals(suggestions.get(0).name) ? suggestions.get(0) : null);
-        } else if (this.suggestMap == null) {
-            suggestMap = new HashMap<>();
-            for (Suggest.Suggestion<? extends Entry<? extends Option>> item : suggestions) {
-                suggestMap.put(item.getName(), item);
-            }
-        }
-        return (T) suggestMap.get(name);
     }
 
 
@@ -170,28 +154,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             }
         }
         return new Suggest(suggestions);
-    }
-
-    public static List<Suggestion<? extends Entry<? extends Option>>> reduce(Map<String, List<Suggest.Suggestion>> groupedSuggestions) {
-        List<Suggestion<? extends Entry<? extends Option>>> reduced = new ArrayList<>(groupedSuggestions.size());
-        for (Map.Entry<String, List<Suggestion>> unmergedResults : groupedSuggestions.entrySet()) {
-            List<Suggestion> value = unmergedResults.getValue();
-            Class<? extends Suggestion> suggestionClass = null;
-            for (Suggestion suggestion : value) {
-                if (suggestionClass == null) {
-                    suggestionClass = suggestion.getClass();
-                } else if (suggestionClass != suggestion.getClass()) {
-                    throw new IllegalArgumentException(
-                        "detected mixed suggestion results, due to querying on old and new completion suggester,"
-                            + " query on a single completion suggester version"
-                    );
-                }
-            }
-            Suggestion reduce = value.get(0).reduce(value);
-            reduce.trim();
-            reduced.add(reduce);
-        }
-        return reduced;
     }
 
     /**
@@ -249,10 +211,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             }
         }
 
-        public void addTerm(T entry) {
-            entries.add(entry);
-        }
-
         /**
          * Returns a integer representing the type of the suggestion. This is used for
          * internal serialization over the network.
@@ -288,58 +246,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
          */
         public int getSize() {
             return size;
-        }
-
-        /**
-         * Merges the result of another suggestion into this suggestion.
-         * For internal usage.
-         */
-        public Suggestion<T> reduce(List<Suggestion<T>> toReduce) {
-            if (toReduce.size() == 1) {
-                return toReduce.get(0);
-            } else if (toReduce.isEmpty()) {
-                return null;
-            }
-            Suggestion<T> leader = toReduce.get(0);
-            List<T> entries = leader.entries;
-            final int size = entries.size();
-            Comparator<Option> sortComparator = sortComparator();
-            List<T> currentEntries = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                for (Suggestion<T> suggestion : toReduce) {
-                    if (suggestion.entries.size() != size) {
-                        throw new IllegalStateException(
-                            "Can't merge suggest result, this might be caused by suggest calls "
-                                + "across multiple indices with different analysis chains. Suggest entries have different sizes actual ["
-                                + suggestion.entries.size()
-                                + "] expected ["
-                                + size
-                                + "]"
-                        );
-                    }
-                    assert suggestion.name.equals(leader.name);
-                    currentEntries.add(suggestion.entries.get(i));
-                }
-                T entry = (T) entries.get(i).reduce(currentEntries);
-                entry.sort(sortComparator);
-                entries.set(i, entry);
-                currentEntries.clear();
-            }
-            return leader;
-        }
-
-        protected Comparator<Option> sortComparator() {
-            return COMPARATOR;
-        }
-
-        /**
-         * Trims the number of options per suggest text term to the requested size.
-         * For internal usage.
-         */
-        public void trim() {
-            for (Entry<?> entry : entries) {
-                entry.trim(size);
-            }
         }
 
         protected abstract T newEntry(StreamInput in) throws IOException;
@@ -403,17 +309,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             return suggestion.get();
         }
 
-        protected static <E extends Suggestion.Entry<?>> void parseEntries(
-            XContentParser parser,
-            Suggestion<E> suggestion,
-            CheckedFunction<XContentParser, E, IOException> entryParser
-        ) throws IOException {
-            ensureExpectedToken(XContentParser.Token.START_ARRAY, parser.currentToken(), parser);
-            while ((parser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                suggestion.addTerm(entryParser.apply(parser));
-            }
-        }
-
         /**
          * Represents a part from the suggest text with suggested options.
          *
@@ -440,73 +335,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             }
 
             protected Entry() {}
-
-            public Entry(StreamInput in) throws IOException {
-                text = in.readText();
-                offset = in.readVInt();
-                length = in.readVInt();
-                int suggestedWords = in.readVInt();
-                options = new ArrayList<>(suggestedWords);
-                for (int j = 0; j < suggestedWords; j++) {
-                    O newOption = newOption(in);
-                    options.add(newOption);
-                }
-            }
-
-            public void addOption(O option) {
-                options.add(option);
-            }
-
-            protected void addOptions(List<O> options) {
-                for (O option : options) {
-                    addOption(option);
-                }
-            }
-
-            protected void sort(Comparator<O> comparator) {
-                CollectionUtil.timSort(options, comparator);
-            }
-
-            protected <T extends Entry<O>> Entry<O> reduce(List<T> toReduce) {
-                if (toReduce.size() == 1) {
-                    return toReduce.get(0);
-                }
-                final Map<O, O> entries = new HashMap<>();
-                Entry<O> leader = toReduce.get(0);
-                for (Entry<O> entry : toReduce) {
-                    if (!leader.text.equals(entry.text)) {
-                        throw new IllegalStateException(
-                            "Can't merge suggest entries, this might be caused by suggest calls "
-                                + "across multiple indices with different analysis chains. Suggest entries have different text actual ["
-                                + entry.text
-                                + "] expected ["
-                                + leader.text
-                                + "]"
-                        );
-                    }
-                    assert leader.offset == entry.offset;
-                    assert leader.length == entry.length;
-                    leader.merge(entry);
-                    for (O option : entry) {
-                        O merger = entries.get(option);
-                        if (merger == null) {
-                            entries.put(option, option);
-                        } else {
-                            merger.mergeInto(option);
-                        }
-                    }
-                }
-                leader.options.clear();
-                for (O option : entries.keySet()) {
-                    leader.addOption(option);
-                }
-                return leader;
-            }
-
-            /**
-             * Merge any extra fields for this subtype.
-             */
-            protected void merge(Entry<O> other) {}
 
             /**
              * @return the text (analyzed by suggest analyzer) originating from the suggest text. Usually this is a
@@ -541,13 +369,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
              */
             public List<O> getOptions() {
                 return options;
-            }
-
-            void trim(int size) {
-                int optionsToRemove = Math.max(0, options.size() - size);
-                for (int i = 0; i < optionsToRemove; i++) {
-                    options.remove(options.size() - 1);
-                }
             }
 
             @Override
@@ -700,17 +521,6 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                     }
 
                     return builder;
-                }
-
-                protected void mergeInto(Option otherOption) {
-                    score = Math.max(score, otherOption.score);
-                    if (otherOption.collateMatch != null) {
-                        if (collateMatch == null) {
-                            collateMatch = otherOption.collateMatch;
-                        } else {
-                            collateMatch |= otherOption.collateMatch;
-                        }
-                    }
                 }
 
                 /*

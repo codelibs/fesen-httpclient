@@ -187,35 +187,6 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         return Strings.format1Decimals(value, suffix);
     }
 
-    public static SizeValue parseSizeValue(String sValue) throws OpenSearchParseException {
-        return parseSizeValue(sValue, null);
-    }
-
-    public static SizeValue parseSizeValue(String sValue, SizeValue defaultValue) throws OpenSearchParseException {
-        if (sValue == null) {
-            return defaultValue;
-        }
-        long singles;
-        try {
-            if (sValue.endsWith("k") || sValue.endsWith("K")) {
-                singles = (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * SizeUnit.C1);
-            } else if (sValue.endsWith("m") || sValue.endsWith("M")) {
-                singles = (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * SizeUnit.C2);
-            } else if (sValue.endsWith("g") || sValue.endsWith("G")) {
-                singles = (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * SizeUnit.C3);
-            } else if (sValue.endsWith("t") || sValue.endsWith("T")) {
-                singles = (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * SizeUnit.C4);
-            } else if (sValue.endsWith("p") || sValue.endsWith("P")) {
-                singles = (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * SizeUnit.C5);
-            } else {
-                singles = Long.parseLong(sValue);
-            }
-        } catch (NumberFormatException e) {
-            throw new OpenSearchParseException("failed to parse [{}]", e, sValue);
-        }
-        return new SizeValue(singles, SizeUnit.SINGLE);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

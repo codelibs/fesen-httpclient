@@ -179,17 +179,6 @@ public enum DistanceUnit implements Writeable {
     }
 
     /**
-     * Parses a given distance and converts it to this unit.
-     *
-     * @param distance String defining a distance (value and unit)
-     * @param defaultUnit unit to expect if none if provided
-     * @return parsed distance
-     */
-    public double parse(String distance, DistanceUnit defaultUnit) {
-        return parse(distance, defaultUnit, this);
-    }
-
-    /**
      * Convert a String to a {@link DistanceUnit}
      *
      * @param unit name of the unit

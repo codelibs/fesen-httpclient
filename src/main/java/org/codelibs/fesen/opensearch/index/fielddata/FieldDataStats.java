@@ -110,10 +110,6 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
         }
     }
 
-    public long getMemorySizeInBytes() {
-        return this.memorySize;
-    }
-
     public ByteSizeValue getMemorySize() {
         return new ByteSizeValue(memorySize);
     }

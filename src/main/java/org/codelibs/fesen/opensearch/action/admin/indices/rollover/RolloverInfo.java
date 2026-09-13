@@ -92,10 +92,6 @@ public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writ
         this.metConditions = (List) in.readNamedWriteableList(Condition.class);
     }
 
-    public static RolloverInfo parse(XContentParser parser, String alias) {
-        return PARSER.apply(parser, alias);
-    }
-
     public String getAlias() {
         return alias;
     }

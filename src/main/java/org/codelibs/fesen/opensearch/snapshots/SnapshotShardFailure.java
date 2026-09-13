@@ -183,16 +183,6 @@ public class SnapshotShardFailure extends ShardOperationFailedException {
         return new SnapshotShardFailure(nodeId, shardId, nonNullReason, restStatus);
     }
 
-    /**
-     * Deserializes snapshot failure information from JSON
-     *
-     * @param parser JSON parser
-     * @return snapshot failure information
-     */
-    public static SnapshotShardFailure fromXContent(XContentParser parser) throws IOException {
-        return SNAPSHOT_SHARD_FAILURE_PARSER.parse(parser, null);
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();

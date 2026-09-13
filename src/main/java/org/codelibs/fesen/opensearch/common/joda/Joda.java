@@ -357,40 +357,6 @@ public class Joda {
         }
     }
 
-    public static DateFormatter getStrictStandardDateFormatter() {
-        // 2014/10/10
-        DateTimeFormatter shortFormatter = new DateTimeFormatterBuilder().appendFixedDecimal(DateTimeFieldType.year(), 4)
-            .appendLiteral('/')
-            .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-            .appendLiteral('/')
-            .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-            .toFormatter()
-            .withZoneUTC();
-
-        // 2014/10/10 12:12:12
-        DateTimeFormatter longFormatter = new DateTimeFormatterBuilder().appendFixedDecimal(DateTimeFieldType.year(), 4)
-            .appendLiteral('/')
-            .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-            .appendLiteral('/')
-            .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-            .appendLiteral(' ')
-            .appendFixedSignedDecimal(DateTimeFieldType.hourOfDay(), 2)
-            .appendLiteral(':')
-            .appendFixedSignedDecimal(DateTimeFieldType.minuteOfHour(), 2)
-            .appendLiteral(':')
-            .appendFixedSignedDecimal(DateTimeFieldType.secondOfMinute(), 2)
-            .toFormatter()
-            .withZoneUTC();
-
-        DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder().append(
-            longFormatter.withZone(DateTimeZone.UTC).getPrinter(),
-            new DateTimeParser[] { longFormatter.getParser(), shortFormatter.getParser(), new EpochTimeParser(true) }
-        );
-
-        DateTimeFormatter formatter = builder.toFormatter().withLocale(Locale.ROOT).withZone(DateTimeZone.UTC).withDefaultYear(1970);
-        return new JodaDateFormatter("yyyy/MM/dd HH:mm:ss||yyyy/MM/dd||epoch_millis", formatter, formatter);
-    }
-
     public static final DurationFieldType Quarters = new DurationFieldType("quarters") {
         @Override
         public DurationField getField(Chronology chronology) {

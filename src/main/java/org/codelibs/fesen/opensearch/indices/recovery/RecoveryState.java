@@ -193,16 +193,6 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
         return this.stage;
     }
 
-    protected void validateAndSetStage(Stage expected, Stage next) {
-        if (stage != expected) {
-            assert false : "can't move recovery to stage [" + next + "]. current stage: [" + stage + "] (expected [" + expected + "])";
-            throw new IllegalStateException(
-                "can't move recovery to stage [" + next + "]. current stage: [" + stage + "] (expected [" + expected + "])"
-            );
-        }
-        stage = next;
-    }
-
     public synchronized void validateCurrentStage(Stage expected) {
         if (stage != expected) {
             assert false : "expected stage [" + expected + "]; but current stage is [" + stage + "]";
@@ -210,55 +200,8 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
         }
     }
 
-    // synchronized is strictly speaking not needed (this is called by a single thread), but just to be safe
-    public synchronized RecoveryState setStage(Stage stage) {
-        switch (stage) {
-            case INIT:
-                // reinitializing stop remove all state except for start time
-                this.stage = Stage.INIT;
-                getIndex().reset();
-                getVerifyIndex().reset();
-                getTranslog().reset();
-                break;
-            case INDEX:
-                validateAndSetStage(Stage.INIT, stage);
-                getIndex().start();
-                break;
-            case VERIFY_INDEX:
-                validateAndSetStage(Stage.INDEX, stage);
-                getIndex().stop();
-                getVerifyIndex().start();
-                break;
-            case TRANSLOG:
-                validateAndSetStage(Stage.VERIFY_INDEX, stage);
-                getVerifyIndex().stop();
-                getTranslog().start();
-                break;
-            case FINALIZE:
-                assert getIndex().bytesStillToRecover() >= 0 : "moving to stage FINALIZE without completing file details";
-                validateAndSetStage(Stage.TRANSLOG, stage);
-                getTranslog().stop();
-                break;
-            case DONE:
-                validateAndSetStage(Stage.FINALIZE, stage);
-                getTimer().stop();
-                break;
-            default:
-                throw new IllegalArgumentException("unknown RecoveryState.Stage [" + stage + "]");
-        }
-        return this;
-    }
-
     public ReplicationLuceneIndex getIndex() {
         return index;
-    }
-
-    public VerifyIndex getVerifyIndex() {
-        return this.verifyIndex;
-    }
-
-    public Translog getTranslog() {
-        return translog;
     }
 
     @Override

@@ -260,28 +260,6 @@ public class RemoteStoreNodeAttribute {
         return false;
     }
 
-    public static boolean isRemoteDataAttributePresent(Settings settings) {
-        return isSegmentRepoConfigured(settings) || isTranslogRepoConfigured(settings);
-    }
-
-    public static boolean isSegmentRepoConfigured(Settings settings) {
-        for (String prefix : REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
-            if (settings.getByPrefix(Node.NODE_ATTRIBUTES.getKey() + prefix).isEmpty() == false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isTranslogRepoConfigured(Settings settings) {
-        for (String prefix : REMOTE_TRANSLOG_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
-            if (settings.getByPrefix(Node.NODE_ATTRIBUTES.getKey() + prefix).isEmpty() == false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isRemoteClusterStateConfigured(Settings settings) {
         for (String prefix : REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS) {
             if (settings.getByPrefix(Node.NODE_ATTRIBUTES.getKey() + prefix).isEmpty() == false) {
@@ -330,76 +308,6 @@ public class RemoteStoreNodeAttribute {
         return this.repositoriesMetadata;
     }
 
-    /**
-     * Return {@link Map} of all the supported data repo names listed on {@link RemoteStoreNodeAttribute#SUPPORTED_DATA_REPO_NAME_ATTRIBUTES}
-     *
-     * @param node Node to fetch attributes from
-     * @return {@link Map} of all remote store data repo attribute keys and their values
-     */
-    public static Map<String, String> getDataRepoNames(DiscoveryNode node) {
-        assert remoteDataAttributesPresent(node.getAttributes());
-        Map<String, String> dataRepoNames = new HashMap<>();
-        for (List<String> supportedRepoAttribute : SUPPORTED_DATA_REPO_NAME_ATTRIBUTES) {
-            Tuple<String, String> value = getValue(node.getAttributes(), supportedRepoAttribute);
-            if (value != null && value.v1() != null) {
-                dataRepoNames.put(value.v2(), value.v1());
-            }
-        }
-        return dataRepoNames;
-    }
-
-    private static boolean remoteDataAttributesPresent(Map<String, String> nodeAttrs) {
-        for (List<String> supportedRepoAttribute : SUPPORTED_DATA_REPO_NAME_ATTRIBUTES) {
-            Tuple<String, String> value = getValue(nodeAttrs, supportedRepoAttribute);
-            if (value == null || value.v1() == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static String getClusterStateRepoName(Map<String, String> repos) {
-        return getValueFromAnyKey(repos, REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    public static String getRoutingTableRepoName(Map<String, String> repos) {
-        return getValueFromAnyKey(repos, REMOTE_ROUTING_TABLE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    public static String getSegmentRepoName(Map<String, String> repos) {
-        return getValueFromAnyKey(repos, REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    public static String getTranslogRepoName(Map<String, String> repos) {
-        return getValueFromAnyKey(repos, REMOTE_TRANSLOG_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    private static String getValueFromAnyKey(Map<String, String> repos, List<String> keys) {
-        for (String key : keys) {
-            if (repos.get(key) != null) {
-                return repos.get(key);
-            }
-        }
-        return null;
-    }
-
-    public static String getClusterStateRepoName(Settings settings) {
-        return getValueFromAnyKey(settings, REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    public static String getRoutingTableRepoName(Settings settings) {
-        return getValueFromAnyKey(settings, REMOTE_ROUTING_TABLE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
-    }
-
-    private static String getValueFromAnyKey(Settings settings, List<String> keys) {
-        for (String key : keys) {
-            if (settings.get(Node.NODE_ATTRIBUTES.getKey() + key) != null) {
-                return settings.get(Node.NODE_ATTRIBUTES.getKey() + key);
-            }
-        }
-        return null;
-    }
-
     public static boolean isClusterStateRepoConfigured(Map<String, String> attributes) {
         return containsKey(attributes, REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
     }
@@ -430,29 +338,6 @@ public class RemoteStoreNodeAttribute {
                 : Objects.hash(repositoryMetadata.name(), repositoryMetadata.type(), repositoryMetadata.settings()));
         }
         return hashCode;
-    }
-
-    /**
-     * Checks if 2 instances are equal, with option to skip check for a list of repos.
-     * *
-     * @param o other instance
-     * @param reposToSkip list of repos to skip check for equality
-     * @return {@code true} iff both instances are equal, not including the repositories in both instances if they are part of reposToSkip.
-     */
-    public boolean equalsWithRepoSkip(Object o, List<String> reposToSkip) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RemoteStoreNodeAttribute that = (RemoteStoreNodeAttribute) o;
-        return this.getRepositoriesMetadata().equalsIgnoreGenerationsWithRepoSkip(that.getRepositoriesMetadata(), reposToSkip);
-    }
-
-    public boolean equalsForRepositories(Object otherNode, List<String> repositoryToValidate) {
-        if (this == otherNode) return true;
-        if (otherNode == null || getClass() != otherNode.getClass()) return false;
-
-        RemoteStoreNodeAttribute other = (RemoteStoreNodeAttribute) otherNode;
-        return this.getRepositoriesMetadata().equalsIgnoreGenerationsForRepo(other.repositoriesMetadata, repositoryToValidate);
     }
 
     @Override

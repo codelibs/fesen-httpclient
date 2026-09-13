@@ -911,24 +911,6 @@ public final class Settings implements ToXContentFragment {
             return this;
         }
 
-        public Builder copy(String key, Settings source) {
-            return copy(key, key, source);
-        }
-
-        public Builder copy(String key, String sourceKey, Settings source) {
-            if (source.settings.containsKey(sourceKey) == false) {
-                throw new IllegalArgumentException("source key not found in the source settings");
-            }
-            final Object value = source.settings.get(sourceKey);
-            if (value instanceof List) {
-                return putList(key, (List) value);
-            } else if (value == null) {
-                return putNull(key);
-            } else {
-                return put(key, Settings.toString(value));
-            }
-        }
-
         /**
          * Sets a null value for the given setting key
          */
@@ -1134,120 +1116,10 @@ public final class Settings implements ToXContentFragment {
             return this;
         }
 
-        /**
-         * Loads settings from a url that represents them using {@link #fromXContent(XContentParser)}
-         * Note: Loading from a path doesn't allow <code>null</code> values in the incoming xcontent
-         */
-        public Builder loadFromPath(Path path) throws IOException {
-            // NOTE: loadFromStream will close the input stream
-            return loadFromStream(path.getFileName().toString(), Files.newInputStream(path), false);
-        }
-
-        /**
-         * Loads settings from a stream that represents them using {@link #fromXContent(XContentParser)}
-         */
-        public Builder loadFromStream(String resourceName, InputStream is, boolean acceptNullValues) throws IOException {
-            final MediaType mediaType;
-            if (resourceName.endsWith(".json")) {
-                mediaType = MediaTypeRegistry.JSON;
-            } else if (resourceName.endsWith(".yml") || resourceName.endsWith(".yaml")) {
-                mediaType = XContentType.YAML;
-            } else {
-                throw new IllegalArgumentException("unable to detect content type from resource name [" + resourceName + "]");
-            }
-            // fromXContent doesn't use named xcontent or deprecation.
-            try (
-                XContentParser parser = mediaType.xContent()
-                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, is)
-            ) {
-                if (parser.currentToken() == null) {
-                    if (parser.nextToken() == null) {
-                        return this; // empty file
-                    }
-                }
-                put(fromXContent(parser, acceptNullValues, true));
-            } catch (OpenSearchParseException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new SettingsException("Failed to load settings from [" + resourceName + "]", e);
-            } finally {
-                IOUtils.close(is);
-            }
-            return this;
-        }
-
         public Builder putProperties(final Map<String, String> esSettings, final Function<String, String> keyFunction) {
             for (final Map.Entry<String, String> esSetting : esSettings.entrySet()) {
                 final String key = esSetting.getKey();
                 put(keyFunction.apply(key), esSetting.getValue());
-            }
-            return this;
-        }
-
-        /**
-         * Runs across all the settings set on this builder and
-         * replaces {@code ${...}} elements in each setting with
-         * another setting already set on this builder.
-         */
-        public Builder replacePropertyPlaceholders() {
-            return replacePropertyPlaceholders(System::getenv);
-        }
-
-        // visible for testing
-        Builder replacePropertyPlaceholders(Function<String, String> getenv) {
-            PropertyPlaceholder propertyPlaceholder = new PropertyPlaceholder("${", "}", false);
-            PropertyPlaceholder.PlaceholderResolver placeholderResolver = new PropertyPlaceholder.PlaceholderResolver() {
-                @Override
-                public String resolvePlaceholder(String placeholderName) {
-                    final String value = getenv.apply(placeholderName);
-                    if (value != null) {
-                        return value;
-                    }
-                    return Settings.toString(map.get(placeholderName));
-                }
-
-                @Override
-                public boolean shouldIgnoreMissing(String placeholderName) {
-                    return placeholderName.startsWith("prompt.");
-                }
-
-                @Override
-                public boolean shouldRemoveMissingPlaceholder(String placeholderName) {
-                    return !placeholderName.startsWith("prompt.");
-                }
-            };
-
-            Iterator<Map.Entry<String, Object>> entryItr = map.entrySet().iterator();
-            while (entryItr.hasNext()) {
-                Map.Entry<String, Object> entry = entryItr.next();
-                if (entry.getValue() == null) {
-                    // a null value obviously can't be replaced
-                    continue;
-                }
-                if (entry.getValue() instanceof List) {
-                    final ListIterator<String> li = ((List<String>) entry.getValue()).listIterator();
-                    while (li.hasNext()) {
-                        final String settingValueRaw = li.next();
-                        final String settingValueResolved = propertyPlaceholder.replacePlaceholders(settingValueRaw, placeholderResolver);
-                        li.set(settingValueResolved);
-                    }
-                    continue;
-                }
-
-                String value = propertyPlaceholder.replacePlaceholders(Settings.toString(entry.getValue()), placeholderResolver);
-                // if the values exists and has length, we should maintain it in the map
-                // otherwise, the replace process resolved into removing it
-                if (Strings.hasLength(value) == true) {
-                    // try to parse the value as a list first
-                    final Optional<List<String>> optList = tryParseableStringToList(value);
-                    if (optList.isPresent()) {
-                        entry.setValue(optList.get());
-                    } else {
-                        entry.setValue(value);
-                    }
-                } else {
-                    entryItr.remove();
-                }
             }
             return this;
         }
@@ -1279,34 +1151,6 @@ public final class Settings implements ToXContentFragment {
         public Settings build() {
             processLegacyLists(map);
             return new Settings(map, secureSettings.get());
-        }
-
-        /**
-         * Tries to parse the placeholder value as a list (fe [], ["a", "b", "c"])
-         * @param parsableString placeholder value to parse
-         * @return the {@link Optional} result of the parsing attempt
-         */
-        private static Optional<List<String>> tryParseableStringToList(String parsableString) {
-            // fromXContent doesn't use named xcontent or deprecation.
-            try (
-                XContentParser xContentParser = MediaTypeRegistry.JSON.xContent()
-                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, parsableString)
-            ) {
-                XContentParser.Token token = xContentParser.nextToken();
-                if (token != XContentParser.Token.START_ARRAY) {
-                    return Optional.empty();
-                }
-                ArrayList<String> list = new ArrayList<>();
-                while ((token = xContentParser.nextToken()) != XContentParser.Token.END_ARRAY) {
-                    if (token != XContentParser.Token.VALUE_STRING) {
-                        return Optional.empty();
-                    }
-                    list.add(xContentParser.text());
-                }
-                return Optional.of(list);
-            } catch (IOException e) {
-                return Optional.empty();
-            }
         }
     }
 

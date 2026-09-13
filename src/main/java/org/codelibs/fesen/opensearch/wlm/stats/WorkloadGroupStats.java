@@ -143,28 +143,6 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
         }
 
         /**
-         * static factory method to convert {@link WorkloadGroupState} into {@link WorkloadGroupStatsHolder}
-         * @param workloadGroupState which needs to be converted
-         * @return WorkloadGroupStatsHolder object
-         */
-        public static WorkloadGroupStatsHolder from(WorkloadGroupState workloadGroupState) {
-            final WorkloadGroupStatsHolder statsHolder = new WorkloadGroupStatsHolder();
-
-            Map<ResourceType, ResourceStats> resourceStatsMap = new HashMap<>();
-
-            for (Map.Entry<ResourceType, ResourceTypeState> resourceTypeStateEntry : workloadGroupState.getResourceState().entrySet()) {
-                resourceStatsMap.put(resourceTypeStateEntry.getKey(), ResourceStats.from(resourceTypeStateEntry.getValue()));
-            }
-
-            statsHolder.completions = workloadGroupState.getTotalCompletions();
-            statsHolder.rejections = workloadGroupState.getTotalRejections();
-            statsHolder.failures = workloadGroupState.getFailures();
-            statsHolder.cancellations = workloadGroupState.getTotalCancellations();
-            statsHolder.resourceStats = resourceStatsMap;
-            return statsHolder;
-        }
-
-        /**
          * Writes the @param {statsHolder} to @param {out}
          * @param out StreamOutput
          * @param statsHolder WorkloadGroupStatsHolder
@@ -231,12 +209,6 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
         private final long cancellations;
         private final long rejections;
 
-        public ResourceStats(double currentUsage, long cancellations, long rejections) {
-            this.currentUsage = currentUsage;
-            this.cancellations = cancellations;
-            this.rejections = rejections;
-        }
-
         public ResourceStats(StreamInput in) throws IOException {
             this.currentUsage = in.readDouble();
             this.cancellations = in.readVLong();
@@ -253,19 +225,6 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
 
         public long getRejections() {
             return rejections;
-        }
-
-        /**
-         * static factory method to convert {@link ResourceTypeState} into {@link ResourceStats}
-         * @param resourceTypeState which needs to be converted
-         * @return WorkloadGroupStatsHolder object
-         */
-        public static ResourceStats from(ResourceTypeState resourceTypeState) {
-            return new ResourceStats(
-                resourceTypeState.getLastRecordedUsage(),
-                resourceTypeState.cancellations.count(),
-                resourceTypeState.rejections.count()
-            );
         }
 
         /**

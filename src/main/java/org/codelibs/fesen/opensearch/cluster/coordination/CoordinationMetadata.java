@@ -164,10 +164,6 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
             .field(VOTING_CONFIG_EXCLUSIONS_FIELD.getPreferredName(), votingConfigExclusions);
     }
 
-    public static CoordinationMetadata fromXContent(XContentParser parser) throws IOException {
-        return PARSER.parse(parser, null);
-    }
-
     public long term() {
         return term;
     }

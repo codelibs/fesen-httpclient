@@ -100,72 +100,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
     }
 
     /**
-     * Creates the initial {@link Entry} when starting a snapshot, if no shard-level snapshot work is to be done the resulting entry
-     * will be in state {@link State#SUCCESS} right away otherwise it will be in state {@link State#STARTED}.
-     */
-    public static Entry startedEntry(
-        Snapshot snapshot,
-        boolean includeGlobalState,
-        boolean partial,
-        List<IndexId> indices,
-        List<String> dataStreams,
-        long startTime,
-        long repositoryStateId,
-        final Map<ShardId, ShardSnapshotStatus> shards,
-        Map<String, Object> userMetadata,
-        Version version,
-        boolean remoteStoreIndexShallowCopy
-    ) {
-        return new SnapshotsInProgress.Entry(
-            snapshot,
-            includeGlobalState,
-            partial,
-            completed(shards.values()) ? State.SUCCESS : State.STARTED,
-            indices,
-            dataStreams,
-            startTime,
-            repositoryStateId,
-            shards,
-            null,
-            userMetadata,
-            version,
-            remoteStoreIndexShallowCopy
-        );
-    }
-
-    public static Entry startedEntry(
-        Snapshot snapshot,
-        boolean includeGlobalState,
-        boolean partial,
-        List<IndexId> indices,
-        List<String> dataStreams,
-        long startTime,
-        long repositoryStateId,
-        final Map<ShardId, ShardSnapshotStatus> shards,
-        Map<String, Object> userMetadata,
-        Version version,
-        boolean remoteStoreIndexShallowCopy,
-        boolean remoteStoreIndexShallowCopyV2
-    ) {
-        return new SnapshotsInProgress.Entry(
-            snapshot,
-            includeGlobalState,
-            partial,
-            completed(shards.values()) ? State.SUCCESS : State.STARTED,
-            indices,
-            dataStreams,
-            startTime,
-            repositoryStateId,
-            shards,
-            null,
-            userMetadata,
-            version,
-            remoteStoreIndexShallowCopy,
-            remoteStoreIndexShallowCopyV2
-        );
-    }
-
-    /**
      * Creates the initial snapshot clone entry
      *
      * @param snapshot snapshot to clone into
@@ -542,30 +476,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             );
         }
 
-        public Entry withClones(final Map<RepositoryShardId, ShardSnapshotStatus> updatedClones) {
-            if (updatedClones.equals(clones)) {
-                return this;
-            }
-            return new Entry(
-                snapshot,
-                includeGlobalState,
-                partial,
-                completed(updatedClones.values()) ? (hasFailures(updatedClones) ? State.FAILED : State.SUCCESS) : state,
-                indices,
-                dataStreams,
-                startTime,
-                repositoryStateId,
-                shards,
-                failure,
-                userMetadata,
-                version,
-                source,
-                updatedClones,
-                remoteStoreIndexShallowCopy,
-                remoteStoreIndexShallowCopyV2
-            );
-        }
-
         public Entry withRemoteStoreIndexShallowCopy(final boolean remoteStoreIndexShallowCopy) {
             return new Entry(
                 snapshot,
@@ -587,117 +497,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             );
         }
 
-        /**
-         * Create a new instance by aborting this instance. Moving all in-progress shards to {@link ShardState#ABORTED} if assigned to a
-         * data node or to {@link ShardState#FAILED} if not assigned to any data node.
-         * If the instance had no in-progress shard snapshots assigned to data nodes it's moved to state {@link State#SUCCESS}, otherwise
-         * it's moved to state {@link State#ABORTED}.
-         * In the special case where this instance has not yet made any progress on any shard this method just returns
-         * {@code null} since no abort is needed and the snapshot can simply be removed from the cluster state outright.
-         *
-         * @return aborted snapshot entry or {@code null} if entry can be removed from the cluster state directly
-         */
-        @Nullable
-        public Entry abort() {
-            final Map<ShardId, ShardSnapshotStatus> shardsBuilder = new HashMap<>();
-            boolean completed = true;
-            boolean allQueued = true;
-            for (final Map.Entry<ShardId, ShardSnapshotStatus> shardEntry : shards.entrySet()) {
-                ShardSnapshotStatus status = shardEntry.getValue();
-                allQueued &= status.state() == ShardState.QUEUED;
-                if (status.state().completed() == false) {
-                    final String nodeId = status.nodeId();
-                    status = new ShardSnapshotStatus(
-                        nodeId,
-                        nodeId == null ? ShardState.FAILED : ShardState.ABORTED,
-                        "aborted by snapshot deletion",
-                        status.generation()
-                    );
-                }
-                completed &= status.state().completed();
-                shardsBuilder.put(shardEntry.getKey(), status);
-            }
-            if (allQueued) {
-                return null;
-            }
-            return fail(shardsBuilder, completed ? State.SUCCESS : State.ABORTED, ABORTED_FAILURE_TEXT);
-        }
-
-        public Entry fail(final Map<ShardId, ShardSnapshotStatus> shards, State state, String failure) {
-            return new Entry(
-                snapshot,
-                includeGlobalState,
-                partial,
-                state,
-                indices,
-                dataStreams,
-                startTime,
-                repositoryStateId,
-                shards,
-                failure,
-                userMetadata,
-                version,
-                source,
-                clones,
-                remoteStoreIndexShallowCopy,
-                remoteStoreIndexShallowCopyV2
-            );
-        }
-
-        /**
-         * Create a new instance that has its shard assignments replaced by the given shard assignment map.
-         * If the given shard assignments show all shard snapshots in a completed state then the returned instance will be of state
-         * {@link State#SUCCESS}, otherwise the state remains unchanged.
-         *
-         * @param shards new shard snapshot states
-         * @return new snapshot entry
-         */
-        public Entry withShardStates(final Map<ShardId, ShardSnapshotStatus> shards) {
-            if (completed(shards.values())) {
-                return new Entry(
-                    snapshot,
-                    includeGlobalState,
-                    partial,
-                    State.SUCCESS,
-                    indices,
-                    dataStreams,
-                    startTime,
-                    repositoryStateId,
-                    shards,
-                    failure,
-                    userMetadata,
-                    version,
-                    remoteStoreIndexShallowCopy
-                );
-            }
-            return withStartedShards(shards);
-        }
-
-        /**
-         * Same as {@link #withShardStates} but does not check if the snapshot completed and thus is only to be used when starting new
-         * shard snapshots on data nodes for a running snapshot.
-         */
-        public Entry withStartedShards(final Map<ShardId, ShardSnapshotStatus> shards) {
-            final SnapshotsInProgress.Entry updated = new Entry(
-                snapshot,
-                includeGlobalState,
-                partial,
-                state,
-                indices,
-                dataStreams,
-                startTime,
-                repositoryStateId,
-                shards,
-                failure,
-                userMetadata,
-                version,
-                remoteStoreIndexShallowCopy
-            );
-            assert updated.state().completed() == false && completed(updated.shards().values()) == false
-                : "Only running snapshots allowed but saw [" + updated + "]";
-            return updated;
-        }
-
         @Override
         public String repository() {
             return snapshot.getRepository();
@@ -705,14 +504,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
 
         public Snapshot snapshot() {
             return this.snapshot;
-        }
-
-        public Map<ShardId, ShardSnapshotStatus> shards() {
-            return this.shards;
-        }
-
-        public State state() {
-            return state;
         }
 
         public List<IndexId> indices() {
@@ -1001,11 +792,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return nodeId;
         }
 
-        @Nullable
-        public String generation() {
-            return this.generation;
-        }
-
         public String reason() {
             return reason;
         }
@@ -1211,10 +997,6 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             this.value = value;
             this.completed = completed;
             this.failed = failed;
-        }
-
-        public boolean completed() {
-            return completed;
         }
 
         public boolean failed() {

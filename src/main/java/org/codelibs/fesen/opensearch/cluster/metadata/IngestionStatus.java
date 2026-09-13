@@ -42,29 +42,6 @@ public record IngestionStatus(boolean isPaused) implements Writeable, ToXContent
         return builder;
     }
 
-    public static IngestionStatus fromXContent(XContentParser parser) throws IOException {
-        boolean isPaused = false;
-
-        XContentParser.Token token = parser.currentToken();
-        if (token == null) {
-            token = parser.nextToken();
-        }
-
-        if (token == XContentParser.Token.START_OBJECT) {
-            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (token == XContentParser.Token.FIELD_NAME) {
-                    String fieldName = parser.currentName();
-                    if (IS_PAUSED.equals(fieldName)) {
-                        parser.nextToken();
-                        isPaused = parser.booleanValue();
-                    }
-                }
-            }
-        }
-
-        return new IngestionStatus(isPaused);
-    }
-
     public static IngestionStatus getDefaultValue() {
         return new IngestionStatus(false);
     }

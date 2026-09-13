@@ -256,46 +256,6 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
         return getShardInfo().status();
     }
 
-    /**
-     * Return the relative URI for the location of the document suitable for use in the {@code Location} header. The use of relative URIs is
-     * permitted as of HTTP/1.1 (cf. https://tools.ietf.org/html/rfc7231#section-7.1.2).
-     *
-     * @param routing custom routing or {@code null} if custom routing is not used
-     * @return the relative URI for the location of the document
-     */
-    public String getLocation(@Nullable String routing) {
-        final String encodedIndex;
-        final String encodedType;
-        final String encodedId;
-        final String encodedRouting;
-        try {
-            // encode the path components separately otherwise the path separators will be encoded
-            encodedIndex = URLEncoder.encode(getIndex(), "UTF-8");
-            encodedType = URLEncoder.encode(MapperService.SINGLE_MAPPING_NAME, "UTF-8");
-            encodedId = URLEncoder.encode(getId(), "UTF-8");
-            encodedRouting = routing == null ? null : URLEncoder.encode(routing, "UTF-8");
-        } catch (final UnsupportedEncodingException e) {
-            throw new AssertionError(e);
-        }
-        final String routingStart = "?routing=";
-        final int bufferSizeExcludingRouting = 3 + encodedIndex.length() + encodedType.length() + encodedId.length();
-        final int bufferSize;
-        if (encodedRouting == null) {
-            bufferSize = bufferSizeExcludingRouting;
-        } else {
-            bufferSize = bufferSizeExcludingRouting + routingStart.length() + encodedRouting.length();
-        }
-        final StringBuilder location = new StringBuilder(bufferSize);
-        location.append('/').append(encodedIndex);
-        location.append('/').append(encodedType);
-        location.append('/').append(encodedId);
-        if (encodedRouting != null) {
-            location.append(routingStart).append(encodedRouting);
-        }
-
-        return location.toString();
-    }
-
     public void writeThin(StreamOutput out) throws IOException {
         super.writeTo(out);
         writeWithoutShardId(out);

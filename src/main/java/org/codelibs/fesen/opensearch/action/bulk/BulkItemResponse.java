@@ -105,80 +105,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
     }
 
     /**
-     * Reads a {@link BulkItemResponse} from a {@link XContentParser}.
-     *
-     * @param parser the {@link XContentParser}
-     * @param id the id to assign to the parsed {@link BulkItemResponse}. It is usually the index of
-     *           the item in the {@link BulkResponse#getItems} array.
-     */
-    public static BulkItemResponse fromXContent(XContentParser parser, int id) throws IOException {
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);
-
-        XContentParser.Token token = parser.nextToken();
-        ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
-
-        String currentFieldName = parser.currentName();
-        token = parser.nextToken();
-
-        final OpType opType = OpType.fromString(currentFieldName);
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
-
-        DocWriteResponse.Builder builder = null;
-        CheckedConsumer<XContentParser, IOException> itemParser = null;
-
-        if (opType == OpType.INDEX || opType == OpType.CREATE) {
-            final IndexResponse.Builder indexResponseBuilder = new IndexResponse.Builder();
-            builder = indexResponseBuilder;
-            itemParser = (indexParser) -> IndexResponse.parseXContentFields(indexParser, indexResponseBuilder);
-
-        } else if (opType == OpType.UPDATE) {
-            final UpdateResponse.Builder updateResponseBuilder = new UpdateResponse.Builder();
-            builder = updateResponseBuilder;
-            itemParser = (updateParser) -> UpdateResponse.parseXContentFields(updateParser, updateResponseBuilder);
-
-        } else if (opType == OpType.DELETE) {
-            final DeleteResponse.Builder deleteResponseBuilder = new DeleteResponse.Builder();
-            builder = deleteResponseBuilder;
-            itemParser = (deleteParser) -> DeleteResponse.parseXContentFields(deleteParser, deleteResponseBuilder);
-        } else {
-            throwUnknownField(currentFieldName, parser.getTokenLocation());
-        }
-
-        RestStatus status = null;
-        OpenSearchException exception = null;
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-            }
-
-            if (ERROR.equals(currentFieldName)) {
-                if (token == XContentParser.Token.START_OBJECT) {
-                    exception = OpenSearchException.fromXContent(parser);
-                }
-            } else if (STATUS.equals(currentFieldName)) {
-                if (token == XContentParser.Token.VALUE_NUMBER) {
-                    status = RestStatus.fromCode(parser.intValue());
-                }
-            } else {
-                itemParser.accept(parser);
-            }
-        }
-
-        ensureExpectedToken(XContentParser.Token.END_OBJECT, token, parser);
-        token = parser.nextToken();
-        ensureExpectedToken(XContentParser.Token.END_OBJECT, token, parser);
-
-        BulkItemResponse bulkItemResponse;
-        if (exception != null) {
-            Failure failure = new Failure(builder.getShardId().getIndexName(), builder.getId(), exception, status);
-            bulkItemResponse = new BulkItemResponse(id, opType, failure);
-        } else {
-            bulkItemResponse = new BulkItemResponse(id, opType, builder.build());
-        }
-        return bulkItemResponse;
-    }
-
-    /**
      * Represents a failure.
      *
      * @opensearch.api
@@ -462,26 +388,6 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
     private Failure failure;
 
     BulkItemResponse() {}
-
-    BulkItemResponse(ShardId shardId, StreamInput in) throws IOException {
-        id = in.readVInt();
-        opType = OpType.fromId(in.readByte());
-
-        byte type = in.readByte();
-        if (type == 0) {
-            response = new IndexResponse(shardId, in);
-        } else if (type == 1) {
-            response = new DeleteResponse(shardId, in);
-        } else if (type == 3) { // make 3 instead of 2, because 2 is already in use for 'no responses'
-            response = new UpdateResponse(shardId, in);
-        } else if (type != 2) {
-            throw new IllegalArgumentException("Unexpected type [" + type + "]");
-        }
-
-        if (in.readBoolean()) {
-            failure = new Failure(in);
-        }
-    }
 
     BulkItemResponse(StreamInput in) throws IOException {
         id = in.readVInt();

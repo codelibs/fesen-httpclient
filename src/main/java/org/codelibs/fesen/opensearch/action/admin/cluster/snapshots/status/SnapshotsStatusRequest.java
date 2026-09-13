@@ -183,25 +183,6 @@ public class SnapshotsStatusRequest extends ClusterManagerNodeRequest<SnapshotsS
     }
 
     /**
-     * Returns the names of the indices.
-     *
-     * @return the names of indices
-     */
-    public String[] indices() {
-        return this.indices;
-    }
-
-    /**
-     * Sets the list of indices to be returned
-     *
-     * @return this request
-     */
-    public SnapshotsStatusRequest indices(String[] indices) {
-        this.indices = indices;
-        return this;
-    }
-
-    /**
      * Set to <code>true</code> to ignore unavailable snapshots and indices, instead of throwing an exception.
      * Defaults to <code>false</code>, which means unavailable snapshots and indices cause an exception to be thrown.
      *

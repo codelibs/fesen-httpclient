@@ -93,30 +93,6 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
     }
 
     /**
-     * Creates a new instance that has the given repository moved to the given {@code safeGeneration} and {@code pendingGeneration}.
-     *
-     * @param repoName          repository name
-     * @param safeGeneration    new safe generation
-     * @param pendingGeneration new pending generation
-     * @return new instance with updated generations
-     */
-    public RepositoriesMetadata withUpdatedGeneration(String repoName, long safeGeneration, long pendingGeneration) {
-        int indexOfRepo = -1;
-        for (int i = 0; i < repositories.size(); i++) {
-            if (repositories.get(i).name().equals(repoName)) {
-                indexOfRepo = i;
-                break;
-            }
-        }
-        if (indexOfRepo < 0) {
-            throw new IllegalArgumentException("Unknown repository [" + repoName + "]");
-        }
-        final List<RepositoryMetadata> updatedRepos = new ArrayList<>(repositories);
-        updatedRepos.set(indexOfRepo, new RepositoryMetadata(repositories.get(indexOfRepo), safeGeneration, pendingGeneration));
-        return new RepositoriesMetadata(updatedRepos);
-    }
-
-    /**
      * Returns list of currently registered repositories
      *
      * @return list of repositories
@@ -167,58 +143,6 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
         }
         for (int i = 0; i < repositories.size(); i++) {
             if (repositories.get(i).equalsIgnoreGenerations(other.repositories.get(i)) == false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Checks if this instance and the give instance share the same repositories, with option to skip checking for a list of repos.
-     * This will support
-     * @param other other repositories metadata
-     * @param reposToSkip list of repos to skip check for equality
-     * @return {@code true} iff both instances contain the same repositories apart from differences in generations, not including repos provided in reposToSkip.
-     */
-    public boolean equalsIgnoreGenerationsWithRepoSkip(@Nullable RepositoriesMetadata other, List<String> reposToSkip) {
-        if (other == null) {
-            return false;
-        }
-        List<RepositoryMetadata> currentRepositories = repositories.stream()
-            .filter(repo -> !reposToSkip.contains(repo.name()))
-            .collect(Collectors.toList());
-        List<RepositoryMetadata> otherRepositories = other.repositories.stream()
-            .filter(repo -> !reposToSkip.contains(repo.name()))
-            .collect(Collectors.toList());
-
-        return equalsRepository(currentRepositories, otherRepositories);
-    }
-
-    public boolean equalsIgnoreGenerationsForRepo(@Nullable RepositoriesMetadata other, List<String> reposToValidate) {
-        if (other == null) {
-            return false;
-        }
-        List<RepositoryMetadata> currentRepositories = repositories.stream()
-            .filter(repo -> reposToValidate.contains(repo.name()))
-            .collect(Collectors.toList());
-        List<RepositoryMetadata> otherRepositories = other.repositories.stream()
-            .filter(repo -> reposToValidate.contains(repo.name()))
-            .collect(Collectors.toList());
-
-        return equalsRepository(currentRepositories, otherRepositories);
-    }
-
-    public static boolean equalsRepository(List<RepositoryMetadata> currentRepositories, List<RepositoryMetadata> otherRepositories) {
-        if (otherRepositories.size() != currentRepositories.size()) {
-            return false;
-        }
-        // Sort repos by name for ordered comparison
-        Comparator<RepositoryMetadata> compareByName = (o1, o2) -> o1.name().compareTo(o2.name());
-        currentRepositories.sort(compareByName);
-        otherRepositories.sort(compareByName);
-
-        for (int i = 0; i < currentRepositories.size(); i++) {
-            if (currentRepositories.get(i).equalsIgnoreGenerations(otherRepositories.get(i)) == false) {
                 return false;
             }
         }

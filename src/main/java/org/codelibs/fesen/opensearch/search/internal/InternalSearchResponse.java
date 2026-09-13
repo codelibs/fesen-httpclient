@@ -57,35 +57,6 @@ import java.util.List;
  */
 @PublicApi(since = "1.0.0")
 public class InternalSearchResponse extends SearchResponseSections implements Writeable, ToXContentFragment {
-    public static InternalSearchResponse empty() {
-        return empty(true);
-    }
-
-    public static InternalSearchResponse empty(boolean withTotalHits) {
-        return new InternalSearchResponse(SearchHits.empty(withTotalHits), null, null, null, false, null, 1);
-    }
-
-    public InternalSearchResponse(
-        SearchHits hits,
-        InternalAggregations aggregations,
-        Suggest suggest,
-        SearchProfileShardResults profileResults,
-        boolean timedOut,
-        Boolean terminatedEarly,
-        int numReducePhases
-    ) {
-        this(
-            hits,
-            aggregations,
-            suggest,
-            profileResults,
-            timedOut,
-            terminatedEarly,
-            numReducePhases,
-            Collections.emptyList(),
-            Collections.emptyList()
-        );
-    }
 
     public InternalSearchResponse(
         SearchHits hits,

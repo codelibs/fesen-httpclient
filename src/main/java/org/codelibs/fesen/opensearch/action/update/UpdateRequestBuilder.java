@@ -96,23 +96,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     }
 
     /**
-     * Indicate that _source should be returned with every hit, with an
-     * "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param include
-     *            An optional include (optionally wildcarded) pattern to filter
-     *            the returned _source
-     * @param exclude
-     *            An optional exclude (optionally wildcarded) pattern to filter
-     *            the returned _source
-     */
-    public UpdateRequestBuilder setFetchSource(@Nullable String include, @Nullable String exclude) {
-        request.fetchSource(include, exclude);
-        return this;
-    }
-
-    /**
      * Indicate that _source should be returned, with an
      * "include" and/or "exclude" set which can include simple wildcard
      * elements.
@@ -188,24 +171,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     }
 
     /**
-     * Sets the number of shard copies that must be active before proceeding with the write.
-     * See {@link ReplicationRequest#waitForActiveShards(ActiveShardCount)} for details.
-     */
-    public UpdateRequestBuilder setWaitForActiveShards(ActiveShardCount waitForActiveShards) {
-        request.waitForActiveShards(waitForActiveShards);
-        return this;
-    }
-
-    /**
-     * A shortcut for {@link #setWaitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public UpdateRequestBuilder setWaitForActiveShards(final int waitForActiveShards) {
-        return setWaitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
-
-    /**
      * Sets the doc to use for updates when a script is not specified.
      */
     public UpdateRequestBuilder setDoc(IndexRequest indexRequest) {
@@ -242,22 +207,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
      */
     public UpdateRequestBuilder setDoc(String source, MediaType mediaType) {
         request.doc(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequestBuilder setDoc(byte[] source, MediaType mediaType) {
-        request.doc(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequestBuilder setDoc(byte[] source, int offset, int length, MediaType mediaType) {
-        request.doc(source, offset, length, mediaType);
         return this;
     }
 
@@ -317,22 +266,6 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
      */
     public UpdateRequestBuilder setUpsert(String source, MediaType mediaType) {
         request.upsert(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequestBuilder setUpsert(byte[] source, MediaType mediaType) {
-        request.upsert(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequestBuilder setUpsert(byte[] source, int offset, int length, MediaType mediaType) {
-        request.upsert(source, offset, length, mediaType);
         return this;
     }
 

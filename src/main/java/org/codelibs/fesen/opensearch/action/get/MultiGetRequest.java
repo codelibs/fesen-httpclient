@@ -152,21 +152,8 @@ public class MultiGetRequest extends ActionRequest
             return this.id;
         }
 
-        /**
-         * The routing associated with this document.
-         */
-        public Item routing(String routing) {
-            this.routing = routing;
-            return this;
-        }
-
         public String routing() {
             return this.routing;
-        }
-
-        public Item storedFields(String... fields) {
-            this.storedFields = fields;
-            return this;
         }
 
         public String[] storedFields() {
@@ -177,18 +164,8 @@ public class MultiGetRequest extends ActionRequest
             return version;
         }
 
-        public Item version(long version) {
-            this.version = version;
-            return this;
-        }
-
         public VersionType versionType() {
             return versionType;
-        }
-
-        public Item versionType(VersionType versionType) {
-            this.versionType = versionType;
-            return this;
         }
 
         public FetchSourceContext fetchSourceContext() {
@@ -293,11 +270,6 @@ public class MultiGetRequest extends ActionRequest
         return this;
     }
 
-    public MultiGetRequest add(String index, String id) {
-        items.add(new Item(index, id));
-        return this;
-    }
-
     @Override
     public ActionRequestValidationException validate() {
         ActionRequestValidationException validationException = null;
@@ -349,212 +321,6 @@ public class MultiGetRequest extends ActionRequest
     public MultiGetRequest refresh(boolean refresh) {
         this.refresh = refresh;
         return this;
-    }
-
-    public MultiGetRequest add(
-        @Nullable String defaultIndex,
-        @Nullable String[] defaultFields,
-        @Nullable FetchSourceContext defaultFetchSource,
-        @Nullable String defaultRouting,
-        XContentParser parser,
-        boolean allowExplicitIndex
-    ) throws IOException {
-        Token token;
-        String currentFieldName = null;
-        if ((token = parser.nextToken()) != Token.START_OBJECT) {
-            final String message = String.format(Locale.ROOT, "unexpected token [%s], expected [%s]", token, Token.START_OBJECT);
-            throw new ParsingException(parser.getTokenLocation(), message);
-        }
-        while ((token = parser.nextToken()) != Token.END_OBJECT) {
-            if (token == Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-            } else if (token == Token.START_ARRAY) {
-                if ("docs".equals(currentFieldName)) {
-                    parseDocuments(parser, this.items, defaultIndex, defaultFields, defaultFetchSource, defaultRouting, allowExplicitIndex);
-                } else if ("ids".equals(currentFieldName)) {
-                    parseIds(parser, this.items, defaultIndex, defaultFields, defaultFetchSource, defaultRouting);
-                } else {
-                    final String message = String.format(
-                        Locale.ROOT,
-                        "unknown key [%s] for a %s, expected [docs] or [ids]",
-                        currentFieldName,
-                        token
-                    );
-                    throw new ParsingException(parser.getTokenLocation(), message);
-                }
-            } else {
-                final String message = String.format(
-                    Locale.ROOT,
-                    "unexpected token [%s], expected [%s] or [%s]",
-                    token,
-                    Token.FIELD_NAME,
-                    Token.START_ARRAY
-                );
-                throw new ParsingException(parser.getTokenLocation(), message);
-            }
-        }
-        return this;
-    }
-
-    private static void parseDocuments(
-        XContentParser parser,
-        List<Item> items,
-        @Nullable String defaultIndex,
-        @Nullable String[] defaultFields,
-        @Nullable FetchSourceContext defaultFetchSource,
-        @Nullable String defaultRouting,
-        boolean allowExplicitIndex
-    ) throws IOException {
-        String currentFieldName = null;
-        Token token;
-        while ((token = parser.nextToken()) != Token.END_ARRAY) {
-            if (token != Token.START_OBJECT) {
-                throw new IllegalArgumentException("docs array element should include an object");
-            }
-            String index = defaultIndex;
-            String id = null;
-            String routing = defaultRouting;
-            List<String> storedFields = null;
-            long version = Versions.MATCH_ANY;
-            VersionType versionType = VersionType.INTERNAL;
-
-            FetchSourceContext fetchSourceContext = FetchSourceContext.FETCH_SOURCE;
-
-            while ((token = parser.nextToken()) != Token.END_OBJECT) {
-                if (token == Token.FIELD_NAME) {
-                    currentFieldName = parser.currentName();
-                } else if (token.isValue()) {
-                    if (INDEX.match(currentFieldName, parser.getDeprecationHandler())) {
-                        if (!allowExplicitIndex) {
-                            throw new IllegalArgumentException("explicit index in multi get is not allowed");
-                        }
-                        index = parser.text();
-                    } else if (ID.match(currentFieldName, parser.getDeprecationHandler())) {
-                        id = parser.text();
-                    } else if (ROUTING.match(currentFieldName, parser.getDeprecationHandler())) {
-                        routing = parser.text();
-                    } else if (FIELDS.match(currentFieldName, parser.getDeprecationHandler())) {
-                        throw new ParsingException(
-                            parser.getTokenLocation(),
-                            "Unsupported field [fields] used, expected [stored_fields] instead"
-                        );
-                    } else if (STORED_FIELDS.match(currentFieldName, parser.getDeprecationHandler())) {
-                        storedFields = new ArrayList<>();
-                        storedFields.add(parser.text());
-                    } else if (VERSION.match(currentFieldName, parser.getDeprecationHandler())) {
-                        version = parser.longValue();
-                    } else if (VERSION_TYPE.match(currentFieldName, parser.getDeprecationHandler())) {
-                        versionType = VersionType.fromString(parser.text());
-                    } else if (SOURCE.match(currentFieldName, parser.getDeprecationHandler())) {
-                        if (parser.isBooleanValue()) {
-                            fetchSourceContext = new FetchSourceContext(
-                                parser.booleanValue(),
-                                fetchSourceContext.includes(),
-                                fetchSourceContext.excludes()
-                            );
-                        } else if (token == Token.VALUE_STRING) {
-                            fetchSourceContext = new FetchSourceContext(
-                                fetchSourceContext.fetchSource(),
-                                new String[] { parser.text() },
-                                fetchSourceContext.excludes()
-                            );
-                        } else {
-                            throw new OpenSearchParseException("illegal type for _source: [{}]", token);
-                        }
-                    } else {
-                        throw new OpenSearchParseException("failed to parse multi get request. unknown field [{}]", currentFieldName);
-                    }
-                } else if (token == Token.START_ARRAY) {
-                    if (FIELDS.match(currentFieldName, parser.getDeprecationHandler())) {
-                        throw new ParsingException(
-                            parser.getTokenLocation(),
-                            "Unsupported field [fields] used, expected [stored_fields] instead"
-                        );
-                    } else if (STORED_FIELDS.match(currentFieldName, parser.getDeprecationHandler())) {
-                        storedFields = new ArrayList<>();
-                        while ((token = parser.nextToken()) != Token.END_ARRAY) {
-                            storedFields.add(parser.text());
-                        }
-                    } else if (SOURCE.match(currentFieldName, parser.getDeprecationHandler())) {
-                        ArrayList<String> includes = new ArrayList<>();
-                        while ((token = parser.nextToken()) != Token.END_ARRAY) {
-                            includes.add(parser.text());
-                        }
-                        fetchSourceContext = new FetchSourceContext(
-                            fetchSourceContext.fetchSource(),
-                            includes.toArray(Strings.EMPTY_ARRAY),
-                            fetchSourceContext.excludes()
-                        );
-                    }
-
-                } else if (token == Token.START_OBJECT) {
-                    if (SOURCE.match(currentFieldName, parser.getDeprecationHandler())) {
-                        List<String> currentList = null, includes = null, excludes = null;
-
-                        while ((token = parser.nextToken()) != Token.END_OBJECT) {
-                            if (token == Token.FIELD_NAME) {
-                                currentFieldName = parser.currentName();
-                                if ("includes".equals(currentFieldName) || "include".equals(currentFieldName)) {
-                                    currentList = includes != null ? includes : (includes = new ArrayList<>(2));
-                                } else if ("excludes".equals(currentFieldName) || "exclude".equals(currentFieldName)) {
-                                    currentList = excludes != null ? excludes : (excludes = new ArrayList<>(2));
-                                } else {
-                                    throw new OpenSearchParseException("source definition may not contain [{}]", parser.text());
-                                }
-                            } else if (token == Token.START_ARRAY) {
-                                while ((token = parser.nextToken()) != Token.END_ARRAY) {
-                                    currentList.add(parser.text());
-                                }
-                            } else if (token.isValue()) {
-                                currentList.add(parser.text());
-                            } else {
-                                throw new OpenSearchParseException("unexpected token while parsing source settings");
-                            }
-                        }
-
-                        fetchSourceContext = new FetchSourceContext(
-                            fetchSourceContext.fetchSource(),
-                            includes == null ? Strings.EMPTY_ARRAY : includes.toArray(new String[0]),
-                            excludes == null ? Strings.EMPTY_ARRAY : excludes.toArray(new String[0])
-                        );
-                    }
-                }
-            }
-            String[] aFields;
-            if (storedFields != null) {
-                aFields = storedFields.toArray(new String[0]);
-            } else {
-                aFields = defaultFields;
-            }
-            items.add(
-                new Item(index, id).routing(routing)
-                    .storedFields(aFields)
-                    .version(version)
-                    .versionType(versionType)
-                    .fetchSourceContext(fetchSourceContext == FetchSourceContext.FETCH_SOURCE ? defaultFetchSource : fetchSourceContext)
-            );
-        }
-    }
-
-    public static void parseIds(
-        XContentParser parser,
-        List<Item> items,
-        @Nullable String defaultIndex,
-        @Nullable String[] defaultFields,
-        @Nullable FetchSourceContext defaultFetchSource,
-        @Nullable String defaultRouting
-    ) throws IOException {
-        Token token;
-        while ((token = parser.nextToken()) != Token.END_ARRAY) {
-            if (!token.isValue()) {
-                throw new IllegalArgumentException("ids array element should only contain ids");
-            }
-            items.add(
-                new Item(defaultIndex, parser.text()).storedFields(defaultFields)
-                    .fetchSourceContext(defaultFetchSource)
-                    .routing(defaultRouting)
-            );
-        }
     }
 
     @Override

@@ -63,25 +63,6 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
         this.nodeList = nodeList;
     }
 
-    // Constructor use by Unit test case.
-    ClusterAwarenessAttributeValueHealth(
-        String name,
-        int activeShards,
-        int initializingShards,
-        int relocatingShards,
-        int unassignedShards,
-        int nodes,
-        double weights
-    ) {
-        this.name = name;
-        this.activeShards = activeShards;
-        this.initializingShards = initializingShards;
-        this.relocatingShards = relocatingShards;
-        this.unassignedShards = unassignedShards;
-        this.nodes = nodes;
-        this.weight = weights;
-    }
-
     public ClusterAwarenessAttributeValueHealth(final StreamInput in) throws IOException {
         name = in.readString();
         activeShards = in.readVInt();
@@ -90,86 +71,6 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
         unassignedShards = in.readVInt();
         nodes = in.readVInt();
         weight = in.readDouble();
-    }
-
-    public static ClusterAwarenessAttributeValueHealth fromXContent(XContentParser parser) throws IOException {
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-        XContentParser.Token token = parser.nextToken();
-        ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
-        ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
-        String attributeName = parser.currentName();
-        int active_shards = 0;
-        int initializing_shards = 0;
-        int relocating_shards = 0;
-        int unassigned_shards = 0;
-        int nodes = 0;
-        double weight = 0.0;
-        String currentFieldName;
-
-        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-            if (token == XContentParser.Token.FIELD_NAME) {
-                currentFieldName = parser.currentName();
-                switch (currentFieldName) {
-                    case ACTIVE_SHARDS:
-                        if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-                            throw new OpenSearchParseException(
-                                "failed to parse active shards field, expected number but found unknown type"
-                            );
-                        }
-                        active_shards = parser.intValue();
-                        break;
-                    case INITIALIZING_SHARDS:
-                        if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-                            throw new OpenSearchParseException(
-                                "failed to parse initializing shards field, expected number but found unknown type"
-                            );
-                        }
-                        initializing_shards = parser.intValue();
-                        break;
-                    case RELOCATING_SHARDS:
-                        if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-                            throw new OpenSearchParseException(
-                                "failed to parse relocating shards field, expected number but found unknown type"
-                            );
-                        }
-                        relocating_shards = parser.intValue();
-                        break;
-                    case UNASSIGNED_SHARDS:
-                        if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-                            throw new OpenSearchParseException("failed to parse unassigned field, expected number but found unknown type");
-                        }
-                        unassigned_shards = parser.intValue();
-                        break;
-                    case NODES:
-                        if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-                            throw new OpenSearchParseException("failed to parse node field, expected number but found unknown type");
-                        }
-                        nodes = parser.intValue();
-                        break;
-                    case WEIGHTS:
-                        if (parser.nextToken() != XContentParser.Token.VALUE_NUMBER) {
-                            throw new OpenSearchParseException("failed to parse weight field, expected number but found unknown type");
-                        }
-                        weight = parser.doubleValue();
-                        break;
-                }
-            } else {
-                throw new OpenSearchParseException(
-                    "failed to parse awareness attribute health, expected [{}] but found [{}]",
-                    XContentParser.Token.FIELD_NAME,
-                    token
-                );
-            }
-        }
-        return new ClusterAwarenessAttributeValueHealth(
-            attributeName,
-            active_shards,
-            initializing_shards,
-            relocating_shards,
-            unassigned_shards,
-            nodes,
-            weight
-        );
     }
 
     public int getActiveShards() {

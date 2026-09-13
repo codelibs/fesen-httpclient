@@ -96,11 +96,6 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
         return scrollId;
     }
 
-    public SearchScrollRequest scrollId(String scrollId) {
-        this.scrollId = scrollId;
-        return this;
-    }
-
     /**
      * If set, will enable scrolling of the search request.
      */
@@ -166,31 +161,5 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
         }
         builder.endObject();
         return builder;
-    }
-
-    /**
-     * Parse a search scroll request from a request body provided through the REST layer.
-     * Values that are already be set and are also found while parsing will be overridden.
-     */
-    public void fromXContent(XContentParser parser) throws IOException {
-        if (parser.nextToken() != XContentParser.Token.START_OBJECT) {
-            throw new IllegalArgumentException("Malformed content, must start with an object");
-        } else {
-            XContentParser.Token token;
-            String currentFieldName = null;
-            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (token == XContentParser.Token.FIELD_NAME) {
-                    currentFieldName = parser.currentName();
-                } else if ("scroll_id".equals(currentFieldName) && token == XContentParser.Token.VALUE_STRING) {
-                    scrollId(parser.text());
-                } else if ("scroll".equals(currentFieldName) && token == XContentParser.Token.VALUE_STRING) {
-                    scroll(new Scroll(TimeValue.parseTimeValue(parser.text(), null, "scroll")));
-                } else {
-                    throw new IllegalArgumentException(
-                        "Unknown parameter [" + currentFieldName + "] in request body or parameter is of the wrong type[" + token + "] "
-                    );
-                }
-            }
-        }
     }
 }

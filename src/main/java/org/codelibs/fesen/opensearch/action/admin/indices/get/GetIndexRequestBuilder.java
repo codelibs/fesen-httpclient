@@ -47,14 +47,4 @@ public class GetIndexRequestBuilder extends ClusterInfoRequestBuilder<GetIndexRe
     public GetIndexRequestBuilder(OpenSearchClient client, GetIndexAction action, String... indices) {
         super(client, action, new GetIndexRequest().indices(indices));
     }
-
-    public GetIndexRequestBuilder setFeatures(GetIndexRequest.Feature... features) {
-        request.features(features);
-        return this;
-    }
-
-    public GetIndexRequestBuilder addFeatures(GetIndexRequest.Feature... features) {
-        request.addFeatures(features);
-        return this;
-    }
 }

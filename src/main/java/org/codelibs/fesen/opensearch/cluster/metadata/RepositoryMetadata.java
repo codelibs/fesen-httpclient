@@ -89,10 +89,6 @@ public class RepositoryMetadata implements Writeable {
         this(name, type, settings, UNKNOWN_REPO_GEN, EMPTY_REPO_GEN, cryptoMetadata);
     }
 
-    public RepositoryMetadata(RepositoryMetadata metadata, long generation, long pendingGeneration) {
-        this(metadata.name, metadata.type, metadata.settings, generation, pendingGeneration, metadata.cryptoMetadata);
-    }
-
     public RepositoryMetadata(String name, String type, Settings settings, long generation, long pendingGeneration) {
         this(name, type, settings, generation, pendingGeneration, null);
     }

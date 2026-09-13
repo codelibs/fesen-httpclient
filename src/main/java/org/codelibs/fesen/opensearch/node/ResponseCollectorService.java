@@ -86,20 +86,6 @@ public final class ResponseCollectorService {
         });
     }
 
-    public Map<String, ComputedNodeStats> getAllNodeStatistics() {
-        final int clientNum = nodeIdToStats.size();
-        // Transform the mutable object internally used for accounting into the computed version
-        Map<String, ComputedNodeStats> nodeStats = new HashMap<>(nodeIdToStats.size());
-        nodeIdToStats.forEach((k, v) -> { nodeStats.put(k, new ComputedNodeStats(clientNum, v)); });
-        return nodeStats;
-    }
-
-    public AdaptiveSelectionStats getAdaptiveStats(Map<String, Long> clientSearchConnections) {
-        return new AdaptiveSelectionStats.Builder().clientOutgoingConnections(clientSearchConnections)
-            .nodeComputedStats(getAllNodeStatistics())
-            .build();
-    }
-
     /**
      * Optionally return a {@code NodeStatistics} for the given nodeid, if
      * response information exists for the given node. Returns an empty

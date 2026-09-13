@@ -106,38 +106,6 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
     }
 
     /**
-     * Returns BytesReference composed of the provided ByteBuffers.
-     */
-    static BytesReference fromByteBuffers(ByteBuffer[] buffers) {
-        int bufferCount = buffers.length;
-        if (bufferCount == 0) {
-            return BytesArray.EMPTY;
-        } else if (bufferCount == 1) {
-            return fromByteBuffer(buffers[0]);
-        } else {
-            BytesReference[] references = new BytesReference[bufferCount];
-            for (int i = 0; i < bufferCount; ++i) {
-                references[i] = fromByteBuffer(buffers[i]);
-            }
-
-            return CompositeBytesReference.of(references);
-        }
-    }
-
-    /**
-     * Returns BytesReference composed of the provided ByteBuffer.
-     */
-    static BytesReference fromByteBuffer(ByteBuffer buffer) {
-        if (buffer.hasArray()) {
-            return new BytesArray(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.remaining());
-        } else {
-            final byte[] array = new byte[buffer.remaining()];
-            buffer.asReadOnlyBuffer().get(array, 0, buffer.remaining());
-            return new BytesArray(array);
-        }
-    }
-
-    /**
      * Returns BytesReference either wrapping the provided {@link ByteArray} or in case the has a backing raw byte array one that wraps
      * that backing array directly.
      */

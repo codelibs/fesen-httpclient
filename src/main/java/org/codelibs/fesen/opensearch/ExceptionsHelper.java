@@ -110,13 +110,6 @@ public final class ExceptionsHelper {
     // utility class: no ctor
     private ExceptionsHelper() {}
 
-    public static RuntimeException convertToRuntime(Exception e) {
-        return switch (e) {
-            case RuntimeException re -> re;
-            default -> new OpenSearchException(e);
-        };
-    }
-
     public static OpenSearchException convertToOpenSearchException(Exception e) {
         return switch (e) {
             case OpenSearchException oe -> oe;
@@ -224,21 +217,6 @@ public final class ExceptionsHelper {
 
     public static String formatStackTrace(final StackTraceElement[] stackTrace) {
         return Arrays.stream(stackTrace).skip(1).map(e -> "\tat " + e).collect(Collectors.joining("\n"));
-    }
-
-    /**
-     * Rethrows the first exception in the list and adds all remaining to the suppressed list.
-     * If the given list is empty no exception is thrown
-     *
-     */
-    public static <T extends Throwable> void rethrowAndSuppress(List<T> exceptions) throws T {
-        T main = null;
-        for (T ex : exceptions) {
-            main = useOrSuppress(main, ex);
-        }
-        if (main != null) {
-            throw main;
-        }
     }
 
     /**
@@ -385,32 +363,6 @@ public final class ExceptionsHelper {
                 new Thread(() -> { throw error; }).start();
             }
         });
-    }
-
-    /**
-     * Run passed runnable and catch exception and translate exception into runtime exception using
-     * {@link ExceptionsHelper#convertToRuntime(Exception)}
-     * @param supplier to run
-     */
-    public static <R, E extends Exception> R catchAsRuntimeException(CheckedSupplier<R, E> supplier) {
-        try {
-            return supplier.get();
-        } catch (Exception e) {
-            throw convertToRuntime(e);
-        }
-    }
-
-    /**
-     * Run passed runnable and catch exception and translate exception into runtime exception using
-     * {@link ExceptionsHelper#convertToRuntime(Exception)}
-     * @param runnable to run
-     */
-    public static void catchAsRuntimeException(CheckedRunnable<Exception> runnable) {
-        try {
-            runnable.run();
-        } catch (Exception e) {
-            throw convertToRuntime(e);
-        }
     }
 
     /**

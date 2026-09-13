@@ -83,103 +83,40 @@ public class DirectSpellcheckerSettings {
         this.suggestMode = suggestMode;
     }
 
-    public float accuracy() {
-        return accuracy;
-    }
-
     public void accuracy(float accuracy) {
         this.accuracy = accuracy;
-    }
-
-    public SortBy sort() {
-        return sort;
     }
 
     public void sort(SortBy sort) {
         this.sort = sort;
     }
 
-    public StringDistance stringDistance() {
-        return stringDistance;
-    }
-
     public void stringDistance(StringDistance distance) {
         this.stringDistance = distance;
-    }
-
-    public int maxEdits() {
-        return maxEdits;
     }
 
     public void maxEdits(int maxEdits) {
         this.maxEdits = maxEdits;
     }
 
-    public int maxInspections() {
-        return maxInspections;
-    }
-
     public void maxInspections(int maxInspections) {
         this.maxInspections = maxInspections;
-    }
-
-    public float maxTermFreq() {
-        return maxTermFreq;
     }
 
     public void maxTermFreq(float maxTermFreq) {
         this.maxTermFreq = maxTermFreq;
     }
 
-    public int prefixLength() {
-        return prefixLength;
-    }
-
     public void prefixLength(int prefixLength) {
         this.prefixLength = prefixLength;
-    }
-
-    public int minWordLength() {
-        return minWordLength;
     }
 
     public void minWordLength(int minWordLength) {
         this.minWordLength = minWordLength;
     }
 
-    public float minDocFreq() {
-        return minDocFreq;
-    }
-
     public void minDocFreq(float minDocFreq) {
         this.minDocFreq = minDocFreq;
-    }
-
-    public DirectSpellChecker createDirectSpellChecker() {
-
-        DirectSpellChecker directSpellChecker = new DirectSpellChecker();
-        directSpellChecker.setAccuracy(accuracy());
-        Comparator<SuggestWord> comparator;
-        switch (sort()) {
-            case SCORE:
-                comparator = SCORE_COMPARATOR;
-                break;
-            case FREQUENCY:
-                comparator = LUCENE_FREQUENCY;
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal suggest sort: " + sort());
-        }
-        directSpellChecker.setComparator(comparator);
-        directSpellChecker.setDistance(stringDistance());
-        directSpellChecker.setMaxEdits(maxEdits());
-        directSpellChecker.setMaxInspections(maxInspections());
-        directSpellChecker.setMaxQueryFrequency(maxTermFreq());
-        directSpellChecker.setMinPrefix(prefixLength());
-        directSpellChecker.setMinQueryLength(minWordLength());
-        directSpellChecker.setThresholdFrequency(minDocFreq());
-        directSpellChecker.setLowerCaseTerms(false);
-        return directSpellChecker;
     }
 
     @Override

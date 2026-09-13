@@ -67,28 +67,6 @@ public class SearchSortValues implements ToXContentFragment, Writeable {
         this.rawSortValues = EMPTY_ARRAY;
     }
 
-    public SearchSortValues(Object[] rawSortValues, DocValueFormat[] sortValueFormats) {
-        Objects.requireNonNull(rawSortValues);
-        Objects.requireNonNull(sortValueFormats);
-        if (rawSortValues.length != sortValueFormats.length) {
-            throw new IllegalArgumentException("formattedSortValues and sortValueFormats must hold the same number of items");
-        }
-        this.rawSortValues = rawSortValues;
-        this.formattedSortValues = Arrays.copyOf(rawSortValues, rawSortValues.length);
-        for (int i = 0; i < rawSortValues.length; ++i) {
-            Object sortValue = rawSortValues[i];
-            if (sortValue instanceof BytesRef bytesRef) {
-                this.formattedSortValues[i] = sortValueFormats[i].format(bytesRef);
-            } else if ((sortValue instanceof Long longValue) && (sortValueFormats[i] == DocValueFormat.UNSIGNED_LONG_SHIFTED)) {
-                this.formattedSortValues[i] = sortValueFormats[i].format(longValue);
-            } else if ((sortValue instanceof Long longValue) && (sortValueFormats[i] == DocValueFormat.UNSIGNED_LONG)) {
-                this.formattedSortValues[i] = sortValueFormats[i].format(longValue);
-            } else {
-                this.formattedSortValues[i] = sortValue;
-            }
-        }
-    }
-
     SearchSortValues(StreamInput in) throws IOException {
         this.formattedSortValues = in.readArray(Lucene::readSortValue, Object[]::new);
         this.rawSortValues = in.readArray(Lucene::readSortValue, Object[]::new);

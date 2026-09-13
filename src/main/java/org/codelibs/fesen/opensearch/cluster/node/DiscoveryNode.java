@@ -77,59 +77,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     static final String COORDINATING_ONLY = "coordinating_only";
 
-    public static boolean nodeRequiresLocalStorage(Settings settings) {
-        boolean localStorageEnable = Node.NODE_LOCAL_STORAGE_SETTING.get(settings);
-        if (localStorageEnable == false && (isDataNode(settings) || isClusterManagerNode(settings))) {
-            // TODO: make this a proper setting validation logic, requiring multi-settings validation
-            throw new IllegalArgumentException("storage can not be disabled for cluster-manager and data nodes");
-        }
-        return localStorageEnable;
-    }
-
-    public static boolean hasRole(final Settings settings, final DiscoveryNodeRole role) {
-        /*
-         * This method can be called before the o.e.n.NodeRoleSettings.NODE_ROLES_SETTING is initialized. We do not want to trigger
-         * initialization prematurely because that will bake the default roles before plugins have had a chance to register them. Therefore,
-         * to avoid initializing this setting prematurely, we avoid using the actual node roles setting instance here.
-         */
-        if (settings.hasValue("node.roles")) {
-            return settings.getAsList("node.roles").contains(role.roleName());
-        } else if (role.legacySetting() != null && settings.hasValue(role.legacySetting().getKey())) {
-            return role.legacySetting().get(settings);
-        } else {
-            return role.isEnabledByDefault(settings);
-        }
-    }
-
-    public static boolean isClusterManagerNode(Settings settings) {
-        return hasRole(settings, DiscoveryNodeRole.MASTER_ROLE) || hasRole(settings, DiscoveryNodeRole.CLUSTER_MANAGER_ROLE);
-    }
-
-    /**
-     * Due to the way that plugins may not be available when settings are being initialized,
-     * not all roles may be available from a static/initializing context such as a {@link Setting}
-     * default value function. In that case, be warned that this may not include all plugin roles.
-     */
-    public static boolean isDataNode(final Settings settings) {
-        return getRolesFromSettings(settings).stream().anyMatch(DiscoveryNodeRole::canContainData);
-    }
-
-    public static boolean isIngestNode(Settings settings) {
-        return hasRole(settings, DiscoveryNodeRole.INGEST_ROLE);
-    }
-
-    public static boolean isRemoteClusterClient(final Settings settings) {
-        return hasRole(settings, DiscoveryNodeRole.REMOTE_CLUSTER_CLIENT_ROLE);
-    }
-
-    public static boolean isWarmNode(Settings settings) {
-        return hasRole(settings, DiscoveryNodeRole.WARM_ROLE);
-    }
-
-    public static boolean isDedicatedWarmNode(Settings settings) {
-        return getRolesFromSettings(settings).stream().allMatch(DiscoveryNodeRole.WARM_ROLE::equals);
-    }
-
     private final String nodeName;
     private final String nodeId;
     private final String ephemeralId;
@@ -307,37 +254,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
             node.getRoles(),
             node.getVersion()
         );
-    }
-
-    /** Creates a DiscoveryNode representing the local node. */
-    public static DiscoveryNode createLocal(Settings settings, TransportAddress publishAddress, String nodeId) {
-        Map<String, String> attributes = Node.NODE_ATTRIBUTES.getAsMap(settings);
-        Set<DiscoveryNodeRole> roles = getRolesFromSettings(settings);
-        return new DiscoveryNode(Node.NODE_NAME_SETTING.get(settings), nodeId, publishAddress, attributes, roles, Version.CURRENT);
-    }
-
-    /** extract node roles from the given settings */
-    public static Set<DiscoveryNodeRole> getRolesFromSettings(final Settings settings) {
-        if (NODE_ROLES_SETTING.exists(settings)) {
-            validateLegacySettings(settings, roleMap);
-            return Collections.unmodifiableSet(new HashSet<>(NODE_ROLES_SETTING.get(settings)));
-        } else {
-            return roleMap.values().stream().filter(s -> s.isEnabledByDefault(settings)).collect(Collectors.toSet());
-        }
-    }
-
-    private static void validateLegacySettings(final Settings settings, final Map<String, DiscoveryNodeRole> roleMap) {
-        for (final DiscoveryNodeRole role : roleMap.values()) {
-            if (role.legacySetting() != null && role.legacySetting().exists(settings)) {
-                final String message = String.format(
-                    Locale.ROOT,
-                    "can not explicitly configure node roles and use legacy role setting [%s]=[%s]",
-                    role.legacySetting().getKey(),
-                    role.legacySetting().get(settings)
-                );
-                throw new IllegalArgumentException(message);
-            }
-        }
     }
 
     /**
@@ -683,25 +599,6 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     public static Set<DiscoveryNodeRole> getPossibleRoles() {
         return Collections.unmodifiableSet(new HashSet<>(roleMap.values()));
-    }
-
-    public static void setAdditionalRoles(final Set<DiscoveryNodeRole> additionalRoles) {
-        assert additionalRoles.stream().allMatch(r -> r.legacySetting() == null || r.legacySetting().isDeprecated()) : additionalRoles;
-        final Map<String, DiscoveryNodeRole> roleNameToPossibleRoles = rolesToMap(
-            Stream.concat(DiscoveryNodeRole.BUILT_IN_ROLES.stream(), additionalRoles.stream())
-        );
-        // collect the abbreviation names into a map to ensure that there are not any duplicate abbreviations
-        final Map<String, DiscoveryNodeRole> roleNameAbbreviationToPossibleRoles = Collections.unmodifiableMap(
-            roleNameToPossibleRoles.values()
-                .stream()
-                .collect(Collectors.toMap(DiscoveryNodeRole::roleNameAbbreviation, Function.identity()))
-        );
-        assert roleNameToPossibleRoles.size() == roleNameAbbreviationToPossibleRoles.size() : "roles by name ["
-            + roleNameToPossibleRoles
-            + "], roles by name abbreviation ["
-            + roleNameAbbreviationToPossibleRoles
-            + "]";
-        roleMap = roleNameToPossibleRoles;
     }
 
     /**

@@ -74,7 +74,6 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
     private final boolean fetchSource;
     private final String[] includes;
     private final String[] excludes;
-    private Function<Map<String, ?>, Map<String, Object>> filter;
 
     public FetchSourceContext(boolean fetchSource, String[] includes, String[] excludes) {
         this.fetchSource = fetchSource;
@@ -329,16 +328,5 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
         result = 31 * result + (includes != null ? Arrays.hashCode(includes) : 0);
         result = 31 * result + (excludes != null ? Arrays.hashCode(excludes) : 0);
         return result;
-    }
-
-    /**
-     * Returns a filter function that expects the source map as an input and returns
-     * the filtered map.
-     */
-    public Function<Map<String, ?>, Map<String, Object>> getFilter() {
-        if (filter == null) {
-            filter = XContentMapValues.filter(includes, excludes, true);
-        }
-        return filter;
     }
 }

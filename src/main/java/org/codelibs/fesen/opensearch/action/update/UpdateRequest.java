@@ -306,117 +306,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     }
 
     /**
-     * @deprecated Use {@link #script()} instead
-     */
-    @Deprecated
-    public ScriptType scriptType() {
-        return this.script == null ? null : this.script.getType();
-    }
-
-    /**
-     * @deprecated Use {@link #script()} instead
-     */
-    @Deprecated
-    public Map<String, Object> scriptParams() {
-        return this.script == null ? null : this.script.getParams();
-    }
-
-    /**
-     * The script to execute. Note, make sure not to send different script each
-     * times and instead use script params if possible with the same
-     * (automatically compiled) script.
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest script(String script, ScriptType scriptType) {
-        updateOrCreateScript(script, scriptType, null, null);
-        return this;
-    }
-
-    /**
-     * The script to execute. Note, make sure not to send different script each
-     * times and instead use script params if possible with the same
-     * (automatically compiled) script.
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest script(String script) {
-        updateOrCreateScript(script, ScriptType.INLINE, null, null);
-        return this;
-    }
-
-    /**
-     * The language of the script to execute.
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest scriptLang(String scriptLang) {
-        updateOrCreateScript(null, null, scriptLang, null);
-        return this;
-    }
-
-    /**
-     * @deprecated Use {@link #script()} instead
-     */
-    @Deprecated
-    public String scriptLang() {
-        return script == null ? null : script.getLang();
-    }
-
-    /**
-     * Add a script parameter.
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest addScriptParam(String name, Object value) {
-        Script script = script();
-        if (script == null) {
-            HashMap<String, Object> scriptParams = new HashMap<>();
-            scriptParams.put(name, value);
-            updateOrCreateScript(null, null, null, scriptParams);
-        } else {
-            Map<String, Object> scriptParams = script.getParams();
-            if (scriptParams == null) {
-                scriptParams = new HashMap<>();
-                scriptParams.put(name, value);
-                updateOrCreateScript(null, null, null, scriptParams);
-            } else {
-                scriptParams.put(name, value);
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Sets the script parameters to use with the script.
-     *
-     * @deprecated Use {@link #script(Script)} instead
-     */
-    @Deprecated
-    public UpdateRequest scriptParams(Map<String, Object> scriptParams) {
-        updateOrCreateScript(null, null, null, scriptParams);
-        return this;
-    }
-
-    private void updateOrCreateScript(String scriptContent, ScriptType type, String lang, Map<String, Object> params) {
-        Script script = script();
-        if (script == null) {
-            script = new Script(type == null ? ScriptType.INLINE : type, lang, scriptContent == null ? "" : scriptContent, params);
-        } else {
-            String newScriptContent = scriptContent == null ? script.getIdOrCode() : scriptContent;
-            ScriptType newScriptType = type == null ? script.getType() : type;
-            String newScriptLang = lang == null ? script.getLang() : lang;
-            Map<String, Object> newScriptParams = params == null ? script.getParams() : params;
-            script = new Script(newScriptType, newScriptLang, newScriptContent, newScriptParams);
-        }
-        script(script);
-    }
-
-    /**
      * The script to execute. Note, make sure not to send different script each
      * times and instead use script params if possible with the same
      * (automatically compiled) script.
@@ -453,26 +342,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         @Nullable Map<String, Object> scriptParams
     ) {
         this.script = new Script(scriptType, scriptLang, script, scriptParams);
-        return this;
-    }
-
-    /**
-     * Indicate that _source should be returned with every hit, with an
-     * "include" and/or "exclude" set which can include simple wildcard
-     * elements.
-     *
-     * @param include
-     *            An optional include (optionally wildcarded) pattern to filter
-     *            the returned _source
-     * @param exclude
-     *            An optional exclude (optionally wildcarded) pattern to filter
-     *            the returned _source
-     */
-    public UpdateRequest fetchSource(@Nullable String include, @Nullable String exclude) {
-        FetchSourceContext context = this.fetchSourceContext == null ? FetchSourceContext.FETCH_SOURCE : this.fetchSourceContext;
-        String[] includes = include == null ? Strings.EMPTY_ARRAY : new String[] { include };
-        String[] excludes = exclude == null ? Strings.EMPTY_ARRAY : new String[] { exclude };
-        this.fetchSourceContext = new FetchSourceContext(context.fetchSource(), includes, excludes);
         return this;
     }
 
@@ -622,24 +491,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     }
 
     /**
-     * Sets the number of shard copies that must be active before proceeding with the write.
-     * See {@link ReplicationRequest#waitForActiveShards(ActiveShardCount)} for details.
-     */
-    public UpdateRequest waitForActiveShards(ActiveShardCount waitForActiveShards) {
-        this.waitForActiveShards = waitForActiveShards;
-        return this;
-    }
-
-    /**
-     * A shortcut for {@link #waitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public UpdateRequest waitForActiveShards(final int waitForActiveShards) {
-        return waitForActiveShards(ActiveShardCount.from(waitForActiveShards));
-    }
-
-    /**
      * Sets the doc to use for updates when a script is not specified.
      */
     public UpdateRequest doc(IndexRequest doc) {
@@ -676,22 +527,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
      */
     public UpdateRequest doc(String source, MediaType mediaType) {
         safeDoc().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequest doc(byte[] source, MediaType mediaType) {
-        safeDoc().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc to use for updates when a script is not specified.
-     */
-    public UpdateRequest doc(byte[] source, int offset, int length, MediaType mediaType) {
-        safeDoc().source(source, offset, length, mediaType);
         return this;
     }
 
@@ -762,22 +597,6 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
      */
     public UpdateRequest upsert(String source, MediaType mediaType) {
         safeUpsertRequest().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequest upsert(byte[] source, MediaType mediaType) {
-        safeUpsertRequest().source(source, mediaType);
-        return this;
-    }
-
-    /**
-     * Sets the doc source of the update request to be used when the document does not exists.
-     */
-    public UpdateRequest upsert(byte[] source, int offset, int length, MediaType mediaType) {
-        safeUpsertRequest().source(source, offset, length, mediaType);
         return this;
     }
 

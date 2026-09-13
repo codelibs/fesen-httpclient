@@ -66,16 +66,6 @@ public class ClusterHealthRequestBuilder extends ClusterManagerNodeReadOperation
         return this;
     }
 
-    public ClusterHealthRequestBuilder setTimeout(TimeValue timeout) {
-        request.timeout(timeout);
-        return this;
-    }
-
-    public ClusterHealthRequestBuilder setTimeout(String timeout) {
-        request.timeout(timeout);
-        return this;
-    }
-
     public ClusterHealthRequestBuilder setWaitForStatus(ClusterHealthStatus waitForStatus) {
         request.waitForStatus(waitForStatus);
         return this;
@@ -114,34 +104,6 @@ public class ClusterHealthRequestBuilder extends ClusterManagerNodeReadOperation
     }
 
     /**
-     * Sets the number of shard copies that must be active before getting the health status.
-     * Defaults to {@link ActiveShardCount#NONE}, meaning we don't wait on any active shards.
-     * Set this value to {@link ActiveShardCount#ALL} to wait for all shards (primary and
-     * all replicas) to be active across all indices in the cluster. Otherwise, use
-     * {@link ActiveShardCount#from(int)} to set this value to any non-negative integer, up to the
-     * total number of shard copies that would exist across all indices in the cluster.
-     */
-    public ClusterHealthRequestBuilder setWaitForActiveShards(ActiveShardCount waitForActiveShards) {
-        if (waitForActiveShards.equals(ActiveShardCount.DEFAULT)) {
-            // the default for cluster health is 0, not 1
-            request.waitForActiveShards(ActiveShardCount.NONE);
-        } else {
-            request.waitForActiveShards(waitForActiveShards);
-        }
-        return this;
-    }
-
-    /**
-     * A shortcut for {@link #setWaitForActiveShards(ActiveShardCount)} where the numerical
-     * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
-     * to get the ActiveShardCount.
-     */
-    public ClusterHealthRequestBuilder setWaitForActiveShards(int waitForActiveShards) {
-        request.waitForActiveShards(waitForActiveShards);
-        return this;
-    }
-
-    /**
      * Waits for N number of nodes. Use "12" for exact mapping, "&gt;12" and "&lt;12" for range.
      */
     public ClusterHealthRequestBuilder setWaitForNodes(String waitForNodes) {
@@ -156,11 +118,6 @@ public class ClusterHealthRequestBuilder extends ClusterManagerNodeReadOperation
 
     public ClusterHealthRequestBuilder setAwarenessAttribute(String awarenessAttribute) {
         request.setAwarenessAttribute(awarenessAttribute);
-        return this;
-    }
-
-    public ClusterHealthRequestBuilder setLevel(String level) {
-        request.setLevel(level);
         return this;
     }
 

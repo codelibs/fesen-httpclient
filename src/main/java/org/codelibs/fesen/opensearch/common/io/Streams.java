@@ -102,37 +102,6 @@ public abstract class Streams {
     // ---------------------------------------------------------------------
 
     /**
-     * Copy the contents of the given Reader to the given Writer.
-     * Closes both when done.
-     *
-     * @param in  the Reader to copy from
-     * @param out the Writer to copy to
-     * @return the number of characters copied
-     * @throws IOException in case of I/O errors
-     */
-    public static int copy(Reader in, Writer out) throws IOException {
-        Objects.requireNonNull(in, "No Reader specified");
-        Objects.requireNonNull(out, "No Writer specified");
-        // Leverage try-with-resources to close in and out so that exceptions in close() are either propagated or added as suppressed
-        // exceptions to the main exception
-        try (Reader in2 = in; Writer out2 = out) {
-            return doCopy(in2, out2);
-        }
-    }
-
-    private static int doCopy(Reader in, Writer out) throws IOException {
-        int byteCount = 0;
-        char[] buffer = new char[BUFFER_SIZE];
-        int bytesRead;
-        while ((bytesRead = in.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
-            byteCount += bytesRead;
-        }
-        out.flush();
-        return byteCount;
-    }
-
-    /**
      * Copy the contents of the given String to the given output Writer.
      * Closes the write when done.
      *
@@ -148,20 +117,6 @@ public abstract class Streams {
         }
     }
 
-    /**
-     * Copy the contents of the given Reader into a String.
-     * Closes the reader when done.
-     *
-     * @param in the reader to copy from
-     * @return the String that has been copied to
-     * @throws IOException in case of I/O errors
-     */
-    public static String copyToString(Reader in) throws IOException {
-        StringWriter out = new StringWriter();
-        copy(in, out);
-        return out.toString();
-    }
-
     @Deprecated
     public static int readFully(InputStream reader, byte[] dest) throws IOException {
         return reader.readNBytes(dest, 0, dest.length);
@@ -172,21 +127,6 @@ public abstract class Streams {
      */
     public static long consumeFully(InputStream inputStream) throws IOException {
         return org.codelibs.fesen.opensearch.common.util.io.Streams.copy(inputStream, NULL_OUTPUT_STREAM);
-    }
-
-    public static List<String> readAllLines(InputStream input) throws IOException {
-        final List<String> lines = new ArrayList<>();
-        readAllLines(input, lines::add);
-        return lines;
-    }
-
-    public static void readAllLines(InputStream input, Consumer<String> consumer) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                consumer.accept(line);
-            }
-        }
     }
 
     /**

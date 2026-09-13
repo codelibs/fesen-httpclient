@@ -82,20 +82,6 @@ public final class TaskResult implements Writeable, ToXContentObject {
         this(completed, task, null, null);
     }
 
-    /**
-     * Construct a {@linkplain TaskResult} for a task that completed with an error.
-     */
-    public TaskResult(TaskInfo task, Exception error) throws IOException {
-        this(true, task, toXContent(error), null);
-    }
-
-    /**
-     * Construct a {@linkplain TaskResult} for a task that completed successfully.
-     */
-    public TaskResult(TaskInfo task, ToXContent response) throws IOException {
-        this(true, task, null, XContentHelper.toXContent(response, MediaTypeRegistry.JSON, true));
-    }
-
     public TaskResult(boolean completed, TaskInfo task, @Nullable BytesReference error, @Nullable BytesReference result) {
         this.completed = completed;
         this.task = requireNonNull(task, "task is required");

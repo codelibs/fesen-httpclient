@@ -100,15 +100,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
         private void toXContent(XContentBuilder builder) throws IOException {
             builder.field("storage_type", text);
         }
-
-        private static StorageType fromString(String string) {
-            for (StorageType type : values()) {
-                if (type.text.equals(string)) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException("Invalid storage_type: " + string);
-        }
     }
 
     private String snapshot;
@@ -143,16 +134,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     public enum AliasWriteIndexPolicy {
         PRESERVE,
         STRIP_WRITE_INDEX;
-
-        public static AliasWriteIndexPolicy fromString(String value) {
-            try {
-                return valueOf(value.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException(
-                    "Unknown alias_write_index_policy [" + value + "]. Valid values are: " + Arrays.toString(values())
-                );
-            }
-        }
     }
 
     private AliasWriteIndexPolicy aliasWriteIndexPolicy = AliasWriteIndexPolicy.PRESERVE;
@@ -170,44 +151,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     public RestoreSnapshotRequest(String repository, String snapshot) {
         this.snapshot = snapshot;
         this.repository = repository;
-    }
-
-    public RestoreSnapshotRequest(StreamInput in) throws IOException {
-        super(in);
-        snapshot = in.readString();
-        repository = in.readString();
-        indices = in.readStringArray();
-        indicesOptions = IndicesOptions.readIndicesOptions(in);
-        renamePattern = in.readOptionalString();
-        renameReplacement = in.readOptionalString();
-        waitForCompletion = in.readBoolean();
-        includeGlobalState = in.readBoolean();
-        partial = in.readBoolean();
-        includeAliases = in.readBoolean();
-        indexSettings = readSettingsFromStream(in);
-        ignoreIndexSettings = in.readStringArray();
-        snapshotUuid = in.readOptionalString();
-        if (in.getVersion().onOrAfter(Version.V_2_7_0)) {
-            storageType = in.readEnum(StorageType.class);
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_10_0)) {
-            sourceRemoteStoreRepository = in.readOptionalString();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_17_0)) {
-            sourceRemoteTranslogRepository = in.readOptionalString();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_18_0)) {
-            renameAliasPattern = in.readOptionalString();
-        }
-        if (in.getVersion().onOrAfter(Version.V_2_18_0)) {
-            renameAliasReplacement = in.readOptionalString();
-        }
-        if (in.getVersion().onOrAfter(Version.V_3_3_0)) {
-            aliasWriteIndexPolicy = in.readEnum(AliasWriteIndexPolicy.class);
-        }
-        if (in.getVersion().onOrAfter(Version.V_3_8_0)) {
-            attachToDataStream = in.readBoolean();
-        }
     }
 
     @Override
@@ -325,36 +268,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sets the list of indices that should be restored from snapshot
-     * <p>
-     * The list of indices supports multi-index syntax. For example: "+test*" ,"-test42" will index all indices with
-     * prefix "test" except index "test42". Aliases are not supported. An empty list or {"_all"} will restore all open
-     * indices in the snapshot.
-     *
-     * @param indices list of indices
-     * @return this request
-     */
-    public RestoreSnapshotRequest indices(String... indices) {
-        this.indices = indices;
-        return this;
-    }
-
-    /**
-     * Sets the list of indices that should be restored from snapshot
-     * <p>
-     * The list of indices supports multi-index syntax. For example: "+test*" ,"-test42" will index all indices with
-     * prefix "test" except index "test42". Aliases are not supported. An empty list or {"_all"} will restore all open
-     * indices in the snapshot.
-     *
-     * @param indices list of indices
-     * @return this request
-     */
-    public RestoreSnapshotRequest indices(List<String> indices) {
-        this.indices = indices.toArray(new String[0]);
-        return this;
-    }
-
-    /**
      * Returns list of indices that should be restored from snapshot
      */
     public String[] indices() {
@@ -372,51 +285,12 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Specifies what type of requested indices to ignore and how to deal with wildcard expressions.
-     * For example indices that don't exist.
-     *
-     * @param indicesOptions the desired behaviour regarding indices to ignore and wildcard indices expressions
-     * @return this request
-     */
-    public RestoreSnapshotRequest indicesOptions(IndicesOptions indicesOptions) {
-        this.indicesOptions = indicesOptions;
-        return this;
-    }
-
-    /**
-     * Sets rename pattern that should be applied to restored indices.
-     * <p>
-     * Indices that match the rename pattern will be renamed according to {@link #renameReplacement(String)}. The
-     * rename pattern is applied according to the {@link java.util.regex.Matcher#appendReplacement(StringBuffer, String)}
-     * The request will fail if two or more indices will be renamed into the same name.
-     *
-     * @param renamePattern rename pattern
-     * @return this request
-     */
-    public RestoreSnapshotRequest renamePattern(String renamePattern) {
-        this.renamePattern = renamePattern;
-        return this;
-    }
-
-    /**
      * Returns rename pattern
      *
      * @return rename pattern
      */
     public String renamePattern() {
         return renamePattern;
-    }
-
-    /**
-     * Sets rename replacement
-     * <p>
-     * See {@link #renamePattern(String)} for more information.
-     *
-     * @param renameReplacement rename replacement
-     */
-    public RestoreSnapshotRequest renameReplacement(String renameReplacement) {
-        this.renameReplacement = renameReplacement;
-        return this;
     }
 
     /**
@@ -429,39 +303,12 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sets rename pattern that should be applied to restored indices' alias.
-     * <p>
-     * Alias that match the rename pattern will be renamed according to {@link #renameAliasReplacement(String)}. The
-     * rename pattern is applied according to the {@link java.util.regex.Matcher#appendReplacement(StringBuffer, String)}
-     * If two or more aliases are renamed into the same name, they will be merged.
-     *
-     * @param renameAliasPattern rename pattern
-     * @return this request
-     */
-    public RestoreSnapshotRequest renameAliasPattern(String renameAliasPattern) {
-        this.renameAliasPattern = renameAliasPattern;
-        return this;
-    }
-
-    /**
      * Returns rename alias pattern
      *
      * @return rename alias pattern
      */
     public String renameAliasPattern() {
         return renameAliasPattern;
-    }
-
-    /**
-     * Sets rename alias replacement
-     * <p>
-     * See {@link #renameAliasPattern(String)} for more information.
-     *
-     * @param renameAliasReplacement rename replacement
-     */
-    public RestoreSnapshotRequest renameAliasReplacement(String renameAliasReplacement) {
-        this.renameAliasReplacement = renameAliasReplacement;
-        return this;
     }
 
     /**
@@ -500,33 +347,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
      */
     public boolean partial() {
         return partial;
-    }
-
-    /**
-     * Set to true to allow indices with failed to snapshot shards should be partially restored.
-     *
-     * @param partial true if indices with failed to snapshot shards should be partially restored.
-     * @return this request
-     */
-    public RestoreSnapshotRequest partial(boolean partial) {
-        this.partial = partial;
-        return this;
-    }
-
-    /**
-     * Sets the list of index settings and index settings groups that shouldn't be restored from snapshot
-     */
-    public RestoreSnapshotRequest ignoreIndexSettings(String... ignoreIndexSettings) {
-        this.ignoreIndexSettings = ignoreIndexSettings;
-        return this;
-    }
-
-    /**
-     * Sets the list of index settings and index settings groups that shouldn't be restored from snapshot
-     */
-    public RestoreSnapshotRequest ignoreIndexSettings(List<String> ignoreIndexSettings) {
-        this.ignoreIndexSettings = ignoreIndexSettings.toArray(new String[0]);
-        return this;
     }
 
     /**
@@ -603,14 +423,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sets settings that should be added/changed in all restored indices
-     */
-    public RestoreSnapshotRequest indexSettings(Map<String, Object> source) {
-        this.indexSettings = Settings.builder().loadFromMap(source).build();
-        return this;
-    }
-
-    /**
      * Returns settings that should be added/changed in all restored indices
      */
     public Settings indexSettings() {
@@ -640,39 +452,11 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sets the storage type for this request.
-     */
-    public RestoreSnapshotRequest storageType(StorageType storageType) {
-        this.storageType = storageType;
-        return this;
-    }
-
-    /**
      * Gets the storage type for this request. {@link StorageType#LOCAL} is the
      * implicit default if not overridden.
      */
     public StorageType storageType() {
         return storageType;
-    }
-
-    /**
-     * Sets Source Remote Store Repository for all the restored indices
-     *
-     * @param sourceRemoteStoreRepository name of the remote store repository that should be used for all restored indices.
-     */
-    public RestoreSnapshotRequest setSourceRemoteStoreRepository(String sourceRemoteStoreRepository) {
-        this.sourceRemoteStoreRepository = sourceRemoteStoreRepository;
-        return this;
-    }
-
-    /**
-     * Sets Source Remote Translog Repository for all the restored indices
-     *
-     * @param sourceRemoteTranslogRepository name of the remote translog repository that should be used for all restored indices.
-     */
-    public RestoreSnapshotRequest setSourceRemoteTranslogRepository(String sourceRemoteTranslogRepository) {
-        this.sourceRemoteTranslogRepository = sourceRemoteTranslogRepository;
-        return this;
     }
 
     /**
@@ -694,17 +478,6 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * Sets alias write index policy for controlling how writeIndex attribute is handled during restore
-     *
-     * @param policy the policy to apply
-     * @return this request
-     */
-    public RestoreSnapshotRequest aliasWriteIndexPolicy(AliasWriteIndexPolicy policy) {
-        this.aliasWriteIndexPolicy = Objects.requireNonNull(policy);
-        return this;
-    }
-
-    /**
      * Returns alias write index policy
      *
      * @return alias write index policy
@@ -714,126 +487,10 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
     }
 
     /**
-     * When {@code true}, a restored index whose name matches the data stream backing-index convention
-     * ({@code .ds-<dataStream>-NNNNNN}) is attached to a pre-existing data stream of the same name as part of the
-     * restore. Defaults to {@code false}, in which case such an index is restored as a standalone index.
-     *
-     * @param attachToDataStream whether to attach matching restored indices to their data stream
-     * @return this request
-     */
-    public RestoreSnapshotRequest attachToDataStream(boolean attachToDataStream) {
-        this.attachToDataStream = attachToDataStream;
-        return this;
-    }
-
-    /**
      * Returns whether matching restored indices are attached to their data stream.
      */
     public boolean attachToDataStream() {
         return attachToDataStream;
-    }
-
-    /**
-     * Parses restore definition
-     *
-     * @param source restore definition
-     * @return this request
-     */
-    @SuppressWarnings("unchecked")
-    public RestoreSnapshotRequest source(Map<String, Object> source) {
-        for (Map.Entry<String, Object> entry : source.entrySet()) {
-            String name = entry.getKey();
-            if (name.equals("indices")) {
-                if (entry.getValue() instanceof String) {
-                    indices(Strings.splitStringByCommaToArray((String) entry.getValue()));
-                } else if (entry.getValue() instanceof ArrayList) {
-                    indices((ArrayList<String>) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed indices section, should be an array of strings");
-                }
-            } else if (name.equals("partial")) {
-                partial(nodeBooleanValue(entry.getValue(), "partial"));
-            } else if (name.equals("settings")) {
-                if (!(entry.getValue() instanceof Map)) {
-                    throw new IllegalArgumentException("malformed settings section");
-                }
-                DEPRECATION_LOGGER.deprecate(
-                    "RestoreSnapshotRequest#settings",
-                    "specifying [settings] when restoring a snapshot has no effect and will not be supported in a future version"
-                );
-            } else if (name.equals("include_global_state")) {
-                includeGlobalState = nodeBooleanValue(entry.getValue(), "include_global_state");
-            } else if (name.equals("include_aliases")) {
-                includeAliases = nodeBooleanValue(entry.getValue(), "include_aliases");
-            } else if (name.equals("rename_pattern")) {
-                if (entry.getValue() instanceof String) {
-                    renamePattern((String) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed rename_pattern");
-                }
-            } else if (name.equals("rename_replacement")) {
-                if (entry.getValue() instanceof String) {
-                    renameReplacement((String) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed rename_replacement");
-                }
-            } else if (name.equals("rename_alias_pattern")) {
-                if (entry.getValue() instanceof String) {
-                    renameAliasPattern((String) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed rename_alias_pattern");
-                }
-            } else if (name.equals("rename_alias_replacement")) {
-                if (entry.getValue() instanceof String) {
-                    renameAliasReplacement((String) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed rename_alias_replacement");
-                }
-            } else if (name.equals("index_settings")) {
-                if (!(entry.getValue() instanceof Map)) {
-                    throw new IllegalArgumentException("malformed index_settings section");
-                }
-                indexSettings((Map<String, Object>) entry.getValue());
-            } else if (name.equals("ignore_index_settings")) {
-                if (entry.getValue() instanceof String) {
-                    ignoreIndexSettings(Strings.splitStringByCommaToArray((String) entry.getValue()));
-                } else if (entry.getValue() instanceof List) {
-                    ignoreIndexSettings((List<String>) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed ignore_index_settings section, should be an array of strings");
-                }
-            } else if (name.equals("storage_type")) {
-
-                if (entry.getValue() instanceof String) {
-                    storageType(StorageType.fromString((String) entry.getValue()));
-                } else {
-                    throw new IllegalArgumentException("malformed storage_type");
-                }
-
-            } else if (name.equals("source_remote_store_repository")) {
-                if (entry.getValue() instanceof String) {
-                    setSourceRemoteStoreRepository((String) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed source_remote_store_repository");
-                }
-            } else if (name.equals("source_remote_translog_repository")) {
-                if (entry.getValue() instanceof String) {
-                    setSourceRemoteTranslogRepository((String) entry.getValue());
-                } else {
-                    throw new IllegalArgumentException("malformed source_remote_translog_repository");
-                }
-            } else if ("alias_write_index_policy".equals(name)) {
-                aliasWriteIndexPolicy(AliasWriteIndexPolicy.fromString((String) entry.getValue()));
-            } else if (name.equals("attach_to_data_stream")) {
-                attachToDataStream(nodeBooleanValue(entry.getValue(), "attach_to_data_stream"));
-            } else {
-                if (IndicesOptions.isIndicesOptions(name) == false) {
-                    throw new IllegalArgumentException("Unknown parameter " + name);
-                }
-            }
-        }
-        indicesOptions(IndicesOptions.fromMap(source, indicesOptions));
-        return this;
     }
 
     @Override

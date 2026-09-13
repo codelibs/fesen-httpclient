@@ -141,16 +141,6 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
     }
 
     /**
-     * Sets the list of snapshots to be returned
-     *
-     * @return this request
-     */
-    public GetSnapshotsRequest snapshots(String[] snapshots) {
-        this.snapshots = snapshots;
-        return this;
-    }
-
-    /**
      * Set to true to ignore unavailable snapshots
      *
      * @return this request

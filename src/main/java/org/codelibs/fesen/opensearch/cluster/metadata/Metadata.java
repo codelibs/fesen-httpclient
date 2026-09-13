@@ -110,22 +110,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     public static final Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+$");
 
     /**
-     * Utility to identify whether input index uses SEGMENT replication strategy in established cluster state metadata.
-     * Note: Method intended for use by other plugins as well.
-     *
-     * @param indexName Index name
-     * @return true if index uses SEGMENT replication, false otherwise
-     */
-    public boolean isSegmentReplicationEnabled(String indexName) {
-        return Optional.ofNullable(index(indexName))
-            .map(
-                indexMetadata -> ReplicationType.parseString(indexMetadata.getSettings().get(IndexMetadata.SETTING_REPLICATION_TYPE))
-                    .equals(ReplicationType.SEGMENT)
-            )
-            .orElse(false);
-    }
-
-    /**
      * Context of the XContent.
      *
      * @opensearch.api
@@ -174,11 +158,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     public interface Custom extends NamedDiffable<Custom>, ToXContentFragment, ClusterState.FeatureAware {
 
         EnumSet<XContentContext> context();
-
-        static Custom fromXContent(XContentParser parser, String name) throws IOException {
-            // handling any Exception is caller's responsibility
-            return parser.namedObject(Custom.class, name, null);
-        }
     }
 
     public static final Setting<Integer> DEFAULT_REPLICA_COUNT_SETTING = Setting.intSetting(
@@ -356,13 +335,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return this.clusterUUIDCommitted;
     }
 
-    /**
-     * Returns the merged transient and persistent settings.
-     */
-    public Settings settings() {
-        return this.settings;
-    }
-
     public Settings transientSettings() {
         return this.transientSettings;
     }
@@ -377,134 +349,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
     public CoordinationMetadata coordinationMetadata() {
         return this.coordinationMetadata;
-    }
-
-    public boolean hasAlias(String alias) {
-        IndexAbstraction indexAbstraction = getIndicesLookup().get(alias);
-        if (indexAbstraction != null) {
-            return indexAbstraction.getType() == IndexAbstraction.Type.ALIAS;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean equalsAliases(Metadata other) {
-        for (IndexMetadata otherIndex : other.indices().values()) {
-            IndexMetadata thisIndex = index(otherIndex.getIndex());
-            if (thisIndex == null) {
-                return false;
-            }
-            if (otherIndex.getAliases().equals(thisIndex.getAliases()) == false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public SortedMap<String, IndexAbstraction> getIndicesLookup() {
-        return indicesLookup;
-    }
-
-    /**
-     * Finds the specific index aliases that point to the requested concrete indices directly
-     * or that match with the indices via wildcards.
-     *
-     * @param concreteIndices The concrete indices that the aliases must point to in order to be returned.
-     * @return A map of index name to the list of aliases metadata. If a concrete index does not have matching
-     * aliases then the result will <b>not</b> include the index's key.
-     */
-    public Map<String, List<AliasMetadata>> findAllAliases(final String[] concreteIndices) {
-        return findAliases(Strings.EMPTY_ARRAY, concreteIndices);
-    }
-
-    /**
-     * Finds the specific index aliases that match with the specified aliases directly or partially via wildcards, and
-     * that point to the specified concrete indices (directly or matching indices via wildcards).
-     *
-     * @param aliasesRequest The request to find aliases for
-     * @param concreteIndices The concrete indices that the aliases must point to in order to be returned.
-     * @return A map of index name to the list of aliases metadata. If a concrete index does not have matching
-     * aliases then the result will <b>not</b> include the index's key.
-     */
-    public Map<String, List<AliasMetadata>> findAliases(final AliasesRequest aliasesRequest, final String[] concreteIndices) {
-        return findAliases(aliasesRequest.aliases(), concreteIndices);
-    }
-
-    /**
-     * Finds the specific index aliases that match with the specified aliases directly or partially via wildcards, and
-     * that point to the specified concrete indices (directly or matching indices via wildcards).
-     *
-     * @param aliases The aliases to look for. Might contain include or exclude wildcards.
-     * @param concreteIndices The concrete indices that the aliases must point to in order to be returned
-     * @return A map of index name to the list of aliases metadata. If a concrete index does not have matching
-     * aliases then the result will <b>not</b> include the index's key.
-     */
-    private Map<String, List<AliasMetadata>> findAliases(final String[] aliases, final String[] concreteIndices) {
-        assert aliases != null;
-        assert concreteIndices != null;
-        if (concreteIndices.length == 0) {
-            return Map.of();
-        }
-        String[] patterns = new String[aliases.length];
-        boolean[] include = new boolean[aliases.length];
-        for (int i = 0; i < aliases.length; i++) {
-            String alias = aliases[i];
-            if (alias.charAt(0) == '-') {
-                patterns[i] = alias.substring(1);
-                include[i] = false;
-            } else {
-                patterns[i] = alias;
-                include[i] = true;
-            }
-        }
-        boolean matchAllAliases = patterns.length == 0;
-        final Map<String, List<AliasMetadata>> mapBuilder = new HashMap<>();
-        for (String index : concreteIndices) {
-            IndexMetadata indexMetadata = indices.get(index);
-            List<AliasMetadata> filteredValues = new ArrayList<>();
-            for (final AliasMetadata value : indexMetadata.getAliases().values()) {
-                boolean matched = matchAllAliases;
-                String alias = value.alias();
-                for (int i = 0; i < patterns.length; i++) {
-                    if (include[i]) {
-                        if (matched == false) {
-                            String pattern = patterns[i];
-                            matched = ALL.equals(pattern) || Regex.simpleMatch(pattern, alias);
-                        }
-                    } else if (matched) {
-                        matched = Regex.simpleMatch(patterns[i], alias) == false;
-                    }
-                }
-                if (matched) {
-                    filteredValues.add(value);
-                }
-            }
-            if (filteredValues.isEmpty() == false) {
-                // Make the list order deterministic
-                CollectionUtil.timSort(filteredValues, Comparator.comparing(AliasMetadata::alias));
-                mapBuilder.put(index, Collections.unmodifiableList(filteredValues));
-            }
-        }
-        return mapBuilder;
-    }
-
-    /**
-     * Finds the parent data streams, if any, for the specified concrete indices.
-     */
-    public Map<String, IndexAbstraction.DataStream> findDataStreams(String[] concreteIndices) {
-        assert concreteIndices != null;
-        final Map<String, IndexAbstraction.DataStream> builder = new HashMap<>();
-        final SortedMap<String, IndexAbstraction> lookup = getIndicesLookup();
-        for (String indexName : concreteIndices) {
-            IndexAbstraction index = lookup.get(indexName);
-            assert index != null;
-            assert index.getType() == IndexAbstraction.Type.CONCRETE_INDEX;
-            if (index.getParentDataStream() != null) {
-                builder.put(indexName, index.getParentDataStream());
-            }
-        }
-        return Collections.unmodifiableMap(builder);
     }
 
     private static String mergePaths(String path, String field) {
@@ -557,126 +401,13 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     }
 
     /**
-     * Returns indexing routing for the given <code>aliasOrIndex</code>. Resolves routing from the alias metadata used
-     * in the write index.
-     */
-    public String resolveWriteIndexRouting(@Nullable String routing, String aliasOrIndex) {
-        if (aliasOrIndex == null) {
-            return routing;
-        }
-
-        IndexAbstraction result = getIndicesLookup().get(aliasOrIndex);
-        if (result == null || result.getType() != IndexAbstraction.Type.ALIAS) {
-            return routing;
-        }
-        IndexMetadata writeIndex = result.getWriteIndex();
-        if (writeIndex == null) {
-            throw new IllegalArgumentException("alias [" + aliasOrIndex + "] does not have a write index");
-        }
-        AliasMetadata aliasMd = writeIndex.getAliases().get(result.getName());
-        if (aliasMd.indexRouting() != null) {
-            if (aliasMd.indexRouting().indexOf(',') != -1) {
-                throw new IllegalArgumentException(
-                    "index/alias ["
-                        + aliasOrIndex
-                        + "] provided with routing value ["
-                        + aliasMd.getIndexRouting()
-                        + "] that resolved to several routing values, rejecting operation"
-                );
-            }
-            if (routing != null) {
-                if (!routing.equals(aliasMd.indexRouting())) {
-                    throw new IllegalArgumentException(
-                        "Alias ["
-                            + aliasOrIndex
-                            + "] has index routing associated with it ["
-                            + aliasMd.indexRouting()
-                            + "], and was provided with routing value ["
-                            + routing
-                            + "], rejecting operation"
-                    );
-                }
-            }
-            // Alias routing overrides the parent routing (if any).
-            return aliasMd.indexRouting();
-        }
-        return routing;
-    }
-
-    /**
      * Returns indexing routing for the given index.
      */
     // TODO: This can be moved to IndexNameExpressionResolver too, but this means that we will support wildcards and other expressions
-    // in the index,bulk,update and delete apis.
-    public String resolveIndexRouting(@Nullable String routing, String aliasOrIndex) {
-        if (aliasOrIndex == null) {
-            return routing;
-        }
-
-        IndexAbstraction result = getIndicesLookup().get(aliasOrIndex);
-        if (result == null || result.getType() != IndexAbstraction.Type.ALIAS) {
-            return routing;
-        }
-        IndexAbstraction.Alias alias = (IndexAbstraction.Alias) result;
-        if (result.getIndices().size() > 1) {
-            rejectSingleIndexOperation(aliasOrIndex, result);
-        }
-        AliasMetadata aliasMd = alias.getFirstAliasMetadata();
-        if (aliasMd.indexRouting() != null) {
-            if (aliasMd.indexRouting().indexOf(',') != -1) {
-                throw new IllegalArgumentException(
-                    "index/alias ["
-                        + aliasOrIndex
-                        + "] provided with routing value ["
-                        + aliasMd.getIndexRouting()
-                        + "] that resolved to several routing values, rejecting operation"
-                );
-            }
-            if (routing != null) {
-                if (!routing.equals(aliasMd.indexRouting())) {
-                    throw new IllegalArgumentException(
-                        "Alias ["
-                            + aliasOrIndex
-                            + "] has index routing associated with it ["
-                            + aliasMd.indexRouting()
-                            + "], and was provided with routing value ["
-                            + routing
-                            + "], rejecting operation"
-                    );
-                }
-            }
-            // Alias routing overrides the parent routing (if any).
-            return aliasMd.indexRouting();
-        }
-        return routing;
-    }
-
-    private void rejectSingleIndexOperation(String aliasOrIndex, IndexAbstraction result) {
-        String[] indexNames = new String[result.getIndices().size()];
-        int i = 0;
-        for (IndexMetadata indexMetadata : result.getIndices()) {
-            indexNames[i++] = indexMetadata.getIndex().getName();
-        }
-        throw new IllegalArgumentException(
-            "Alias ["
-                + aliasOrIndex
-                + "] has more than one index associated with it ["
-                + Arrays.toString(indexNames)
-                + "], can't execute a single index op"
-        );
-    }
-
-    public boolean hasIndex(String index) {
-        return indices.containsKey(index);
-    }
 
     public boolean hasIndex(Index index) {
         IndexMetadata metadata = index(index.getName());
         return metadata != null && metadata.getIndexUUID().equals(index.getUUID());
-    }
-
-    public boolean hasConcreteIndex(String index) {
-        return getIndicesLookup().containsKey(index);
     }
 
     public IndexMetadata index(String index) {
@@ -694,34 +425,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     /** Returns true iff existing index has the same {@link IndexMetadata} instance */
     public boolean hasIndexMetadata(final IndexMetadata indexMetadata) {
         return indices.get(indexMetadata.getIndex().getName()) == indexMetadata;
-    }
-
-    /**
-     * Returns the {@link IndexMetadata} for this index.
-     * @throws IndexNotFoundException if no metadata for this index is found
-     */
-    public IndexMetadata getIndexSafe(Index index) {
-        IndexMetadata metadata = index(index.getName());
-        if (metadata != null) {
-            if (metadata.getIndexUUID().equals(index.getUUID())) {
-                return metadata;
-            }
-            throw new IndexNotFoundException(
-                index,
-                new IllegalStateException(
-                    "index uuid doesn't match expected: [" + index.getUUID() + "] but got: [" + metadata.getIndexUUID() + "]"
-                )
-            );
-        }
-        throw new IndexNotFoundException(index);
-    }
-
-    public Map<String, IndexMetadata> indices() {
-        return this.indices;
-    }
-
-    public Map<String, IndexMetadata> getIndices() {
-        return indices();
     }
 
     public Map<String, IndexTemplateMetadata> templates() {
@@ -848,91 +551,17 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return types != null && types.length == 1 && ALL.equals(types[0]);
     }
 
-    /**
-     * @param concreteIndex The concrete index to check if routing is required
-     * @return Whether routing is required according to the mapping for the specified index and type
-     */
-    public boolean routingRequired(String concreteIndex) {
-        IndexMetadata indexMetadata = indices.get(concreteIndex);
-        if (indexMetadata != null) {
-            MappingMetadata mappingMetadata = indexMetadata.mapping();
-            if (mappingMetadata != null) {
-                return mappingMetadata.routingRequired();
-            }
-        }
-        return false;
-    }
-
     @Override
     public Iterator<IndexMetadata> iterator() {
         return indices.values().iterator();
-    }
-
-    public static boolean isGlobalStateEquals(Metadata metadata1, Metadata metadata2) {
-        if (!isCoordinationMetadataEqual(metadata1, metadata2)) {
-            return false;
-        }
-        if (!metadata1.hashesOfConsistentSettings.equals(metadata2.hashesOfConsistentSettings)) {
-            return false;
-        }
-        if (!metadata1.clusterUUID.equals(metadata2.clusterUUID)) {
-            return false;
-        }
-        if (metadata1.clusterUUIDCommitted != metadata2.clusterUUIDCommitted) {
-            return false;
-        }
-        return isGlobalResourcesMetadataEquals(metadata1, metadata2);
-    }
-
-    /**
-     * Compares Metadata entities persisted in Remote Store.
-     */
-    public static boolean isGlobalResourcesMetadataEquals(Metadata metadata1, Metadata metadata2) {
-        if (!isSettingsMetadataEqual(metadata1, metadata2)) {
-            return false;
-        }
-        if (!isTemplatesMetadataEqual(metadata1, metadata2)) {
-            return false;
-        }
-        // Check if any persistent metadata needs to be saved
-        return isCustomMetadataEqual(metadata1, metadata2);
-    }
-
-    public static boolean isCoordinationMetadataEqual(Metadata metadata1, Metadata metadata2) {
-        return metadata1.coordinationMetadata.equals(metadata2.coordinationMetadata);
-    }
-
-    public static boolean isSettingsMetadataEqual(Metadata metadata1, Metadata metadata2) {
-        return metadata1.persistentSettings.equals(metadata2.persistentSettings);
     }
 
     public static boolean isTransientSettingsMetadataEqual(Metadata metadata1, Metadata metadata2) {
         return metadata1.transientSettings.equals(metadata2.transientSettings);
     }
 
-    public static boolean isTemplatesMetadataEqual(Metadata metadata1, Metadata metadata2) {
-        return metadata1.templates.equals(metadata2.templates);
-    }
-
     public static boolean isHashesOfConsistentSettingsEqual(Metadata metadata1, Metadata metadata2) {
         return metadata1.hashesOfConsistentSettings.equals(metadata2.hashesOfConsistentSettings);
-    }
-
-    public static boolean isCustomMetadataEqual(Metadata metadata1, Metadata metadata2) {
-        int customCount1 = 0;
-        for (Map.Entry<String, Custom> cursor : metadata1.customs.entrySet()) {
-            if (cursor.getValue().context().contains(XContentContext.GATEWAY)) {
-                if (!cursor.getValue().equals(metadata2.custom(cursor.getKey()))) return false;
-                customCount1++;
-            }
-        }
-        int customCount2 = 0;
-        for (final Custom cursor : metadata2.customs.values()) {
-            if (cursor.context().contains(XContentContext.GATEWAY)) {
-                customCount2++;
-            }
-        }
-        return customCount1 == customCount2;
     }
 
     @Override
@@ -942,10 +571,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
     public static Diff<Metadata> readDiffFrom(StreamInput in) throws IOException {
         return new MetadataDiff(in);
-    }
-
-    public static Metadata fromXContent(XContentParser parser) throws IOException {
-        return Builder.fromXContent(parser);
     }
 
     @Override
@@ -1096,10 +721,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return new Builder();
     }
 
-    public static Builder builder(Metadata metadata) {
-        return new Builder(metadata);
-    }
-
     /**
      * Builder of metadata.
      *
@@ -1133,20 +754,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             indexGraveyard(IndexGraveyard.builder().build()); // create new empty index graveyard to initialize
         }
 
-        public Builder(Metadata metadata) {
-            this.clusterUUID = metadata.clusterUUID;
-            this.clusterUUIDCommitted = metadata.clusterUUIDCommitted;
-            this.coordinationMetadata = metadata.coordinationMetadata;
-            this.transientSettings = metadata.transientSettings;
-            this.persistentSettings = metadata.persistentSettings;
-            this.hashesOfConsistentSettings = metadata.hashesOfConsistentSettings;
-            this.version = metadata.version;
-            this.indices = new HashMap<>(metadata.indices);
-            this.templates = new HashMap<>(metadata.templates.getTemplates());
-            this.customs = new HashMap<>(metadata.customs);
-            this.previousMetadata = metadata;
-        }
-
         public Builder put(IndexMetadata.Builder indexMetadataBuilder) {
             // we know its a new one, increment the version and store
             indexMetadataBuilder.version(indexMetadataBuilder.version() + 1);
@@ -1165,26 +772,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             }
             indices.put(indexMetadata.getIndex().getName(), indexMetadata);
             return this;
-        }
-
-        public IndexMetadata get(String index) {
-            return indices.get(index);
-        }
-
-        public IndexMetadata getSafe(Index index) {
-            IndexMetadata indexMetadata = get(index.getName());
-            if (indexMetadata != null) {
-                if (indexMetadata.getIndexUUID().equals(index.getUUID())) {
-                    return indexMetadata;
-                }
-                throw new IndexNotFoundException(
-                    index,
-                    new IllegalStateException(
-                        "index uuid doesn't match expected: [" + index.getUUID() + "] but got: [" + indexMetadata.getIndexUUID() + "]"
-                    )
-                );
-            }
-            throw new IndexNotFoundException(index);
         }
 
         public Builder remove(String index) {
@@ -1218,12 +805,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
         public Builder templates(Map<String, IndexTemplateMetadata> templates) {
             this.templates.putAll(templates);
-            return this;
-        }
-
-        public Builder templates(TemplatesMetadata templatesMetadata) {
-            this.templates.clear();
-            this.templates.putAll(templatesMetadata.getTemplates());
             return this;
         }
 
@@ -1303,62 +884,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
-        public Builder workloadGroups(final Map<String, WorkloadGroup> workloadGroups) {
-            this.customs.put(WorkloadGroupMetadata.TYPE, new WorkloadGroupMetadata(workloadGroups));
-            return this;
-        }
-
-        public Builder put(final WorkloadGroup workloadGroup) {
-            Objects.requireNonNull(workloadGroup, "workloadGroup should not be null");
-            Map<String, WorkloadGroup> existing = new HashMap<>(getWorkloadGroups());
-            existing.put(workloadGroup.get_id(), workloadGroup);
-            return workloadGroups(existing);
-        }
-
-        public Builder remove(final WorkloadGroup workloadGroup) {
-            Objects.requireNonNull(workloadGroup, "workloadGroup should not be null");
-            Map<String, WorkloadGroup> existing = new HashMap<>(getWorkloadGroups());
-            existing.remove(workloadGroup.get_id());
-            return workloadGroups(existing);
-        }
-
-        private Map<String, WorkloadGroup> getWorkloadGroups() {
-            return Optional.ofNullable(this.customs.get(WorkloadGroupMetadata.TYPE))
-                .map(o -> (WorkloadGroupMetadata) o)
-                .map(WorkloadGroupMetadata::workloadGroups)
-                .orElse(Collections.emptyMap());
-        }
-
-        private Map<String, View> getViews() {
-            return Optional.ofNullable(customs.get(ViewMetadata.TYPE))
-                .map(o -> (ViewMetadata) o)
-                .map(vmd -> vmd.views())
-                .orElse(new HashMap<>());
-        }
-
-        public View view(final String viewName) {
-            return getViews().get(viewName);
-        }
-
-        public Builder views(final Map<String, View> views) {
-            this.customs.put(ViewMetadata.TYPE, new ViewMetadata(views));
-            return this;
-        }
-
-        public Builder put(final View view) {
-            Objects.requireNonNull(view, "view cannot be null");
-            final var replacementViews = new HashMap<>(getViews());
-            replacementViews.put(view.getName(), view);
-            return views(replacementViews);
-        }
-
-        public Builder removeView(final String viewName) {
-            Objects.requireNonNull(viewName, "viewName cannot be null");
-            final var replacementViews = new HashMap<>(getViews());
-            replacementViews.remove(viewName);
-            return views(replacementViews);
-        }
-
         public Custom getCustom(String type) {
             return customs.get(type);
         }
@@ -1399,56 +924,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return (DecommissionAttributeMetadata) getCustom(DecommissionAttributeMetadata.TYPE);
         }
 
-        public Builder updateSettings(Settings settings, String... indices) {
-            if (indices == null || indices.length == 0) {
-                indices = this.indices.keySet().toArray(new String[0]);
-            }
-            for (String index : indices) {
-                IndexMetadata indexMetadata = this.indices.get(index);
-                if (indexMetadata == null) {
-                    throw new IndexNotFoundException(index);
-                }
-                put(IndexMetadata.builder(indexMetadata).settings(Settings.builder().put(indexMetadata.getSettings()).put(settings)));
-            }
-            return this;
-        }
-
-        /**
-         * Update the number of replicas for the specified indices.
-         *
-         * @param numberOfReplicas the number of replicas
-         * @param indices          the indices to update the number of replicas for
-         * @return the builder
-         */
-        public Builder updateNumberOfReplicas(final int numberOfReplicas, final String[] indices) {
-            for (String index : indices) {
-                IndexMetadata indexMetadata = this.indices.get(index);
-                if (indexMetadata == null) {
-                    throw new IndexNotFoundException(index);
-                }
-                put(IndexMetadata.builder(indexMetadata).numberOfReplicas(numberOfReplicas));
-            }
-            return this;
-        }
-
-        /**
-         * Update the number of search replicas for the specified indices.
-         *
-         * @param numberOfSearchReplicas the number of search replicas
-         * @param indices          the indices to update the number of replicas for
-         * @return the builder
-         */
-        public Builder updateNumberOfSearchReplicas(final int numberOfSearchReplicas, final String[] indices) {
-            for (String index : indices) {
-                IndexMetadata indexMetadata = this.indices.get(index);
-                if (indexMetadata == null) {
-                    throw new IndexNotFoundException(index);
-                }
-                put(IndexMetadata.builder(indexMetadata).numberOfSearchReplicas(numberOfSearchReplicas));
-            }
-            return this;
-        }
-
         public Builder coordinationMetadata(CoordinationMetadata coordinationMetadata) {
             this.coordinationMetadata = coordinationMetadata;
             return this;
@@ -1478,11 +953,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
         public Builder hashesOfConsistentSettings(DiffableStringMap hashesOfConsistentSettings) {
             this.hashesOfConsistentSettings = hashesOfConsistentSettings;
-            return this;
-        }
-
-        public Builder hashesOfConsistentSettings(Map<String, String> hashesOfConsistentSettings) {
-            this.hashesOfConsistentSettings = new DiffableStringMap(hashesOfConsistentSettings);
             return this;
         }
 
@@ -1839,75 +1309,6 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
                 }
             }
             builder.endObject();
-        }
-
-        public static Metadata fromXContent(XContentParser parser) throws IOException {
-            Builder builder = new Builder();
-
-            // we might get here after the meta-data element, or on a fresh parser
-            XContentParser.Token token = parser.currentToken();
-            String currentFieldName = parser.currentName();
-            if (!"meta-data".equals(currentFieldName)) {
-                token = parser.nextToken();
-                if (token == XContentParser.Token.START_OBJECT) {
-                    // move to the field name (meta-data)
-                    token = parser.nextToken();
-                    if (token != XContentParser.Token.FIELD_NAME) {
-                        throw new IllegalArgumentException("Expected a field name but got " + token);
-                    }
-                    // move to the next object
-                    token = parser.nextToken();
-                }
-                currentFieldName = parser.currentName();
-            }
-
-            if (!"meta-data".equals(parser.currentName())) {
-                throw new IllegalArgumentException("Expected [meta-data] as a field name but got " + currentFieldName);
-            }
-            if (token != XContentParser.Token.START_OBJECT) {
-                throw new IllegalArgumentException("Expected a START_OBJECT but got " + token);
-            }
-
-            while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (token == XContentParser.Token.FIELD_NAME) {
-                    currentFieldName = parser.currentName();
-                } else if (token == XContentParser.Token.START_OBJECT) {
-                    if ("cluster_coordination".equals(currentFieldName)) {
-                        builder.coordinationMetadata(CoordinationMetadata.fromXContent(parser));
-                    } else if ("settings".equals(currentFieldName)) {
-                        builder.persistentSettings(Settings.fromXContent(parser));
-                    } else if ("indices".equals(currentFieldName)) {
-                        while ((token = parser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                            builder.put(IndexMetadata.Builder.fromXContent(parser), false);
-                        }
-                    } else if ("hashes_of_consistent_settings".equals(currentFieldName)) {
-                        builder.hashesOfConsistentSettings(parser.mapStrings());
-                    } else if ("templates".equals(currentFieldName)) {
-                        builder.templates(TemplatesMetadata.fromXContent(parser));
-                    } else {
-                        try {
-                            Custom custom = Custom.fromXContent(parser, currentFieldName);
-                            builder.putCustom(custom.getWriteableName(), custom);
-                        } catch (NamedObjectNotFoundException ex) {
-                            logger.warn("Skipping unknown custom object with type {}", currentFieldName);
-                            parser.skipChildren();
-                        }
-                    }
-                } else if (token.isValue()) {
-                    if ("version".equals(currentFieldName)) {
-                        builder.version = parser.longValue();
-                    } else if ("cluster_uuid".equals(currentFieldName) || "uuid".equals(currentFieldName)) {
-                        builder.clusterUUID = parser.text();
-                    } else if ("cluster_uuid_committed".equals(currentFieldName)) {
-                        builder.clusterUUIDCommitted = parser.booleanValue();
-                    } else {
-                        throw new IllegalArgumentException("Unexpected field [" + currentFieldName + "]");
-                    }
-                } else {
-                    throw new IllegalArgumentException("Unexpected token " + token);
-                }
-            }
-            return builder.build();
         }
     }
 

@@ -129,22 +129,6 @@ public class DerivedField implements Writeable, ToXContentFragment {
         return Boolean.TRUE.equals(ignoreMalformed);
     }
 
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
-
-    public void setPrefilterField(String prefilterField) {
-        this.prefilterField = prefilterField;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public void setIgnoreMalformed(boolean ignoreMalformed) {
-        this.ignoreMalformed = ignoreMalformed;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(name, type, script, prefilterField, properties, ignoreMalformed, format);

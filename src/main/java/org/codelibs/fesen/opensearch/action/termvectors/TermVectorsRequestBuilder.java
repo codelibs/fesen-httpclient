@@ -81,14 +81,6 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
     }
 
     /**
-     * Sets the artificial document from which to generate term vectors.
-     */
-    public TermVectorsRequestBuilder setDoc(XContentBuilder xContent) {
-        request.doc(xContent);
-        return this;
-    }
-
-    /**
      * Sets the routing. Required if routing isn't id based.
      */
     public TermVectorsRequestBuilder setRouting(String routing) {
@@ -187,14 +179,6 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
      */
     public TermVectorsRequestBuilder setPerFieldAnalyzer(Map<String, String> perFieldAnalyzer) {
         request.perFieldAnalyzer(perFieldAnalyzer);
-        return this;
-    }
-
-    /**
-     * Sets the settings for filtering out terms.
-     */
-    public TermVectorsRequestBuilder setFilterSettings(TermVectorsRequest.FilterSettings filterSettings) {
-        request.filterSettings(filterSettings);
         return this;
     }
 }

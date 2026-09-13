@@ -294,48 +294,6 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
          * Use {@link Builder} instead.
          */
         @Deprecated
-        public DeviceStats(
-            final int majorDeviceNumber,
-            final int minorDeviceNumber,
-            final String deviceName,
-            final long currentReadsCompleted,
-            final long currentSectorsRead,
-            final long currentWritesCompleted,
-            final long currentSectorsWritten,
-            final long currentReadTime,
-            final long currentWriteTime,
-            final long currrentQueueSize,
-            final long currentIOTime,
-            final DeviceStats previousDeviceStats
-        ) {
-            this(
-                majorDeviceNumber,
-                minorDeviceNumber,
-                deviceName,
-                currentReadsCompleted,
-                previousDeviceStats != null ? previousDeviceStats.currentReadsCompleted : -1,
-                currentSectorsWritten,
-                previousDeviceStats != null ? previousDeviceStats.currentSectorsWritten : -1,
-                currentSectorsRead,
-                previousDeviceStats != null ? previousDeviceStats.currentSectorsRead : -1,
-                currentWritesCompleted,
-                previousDeviceStats != null ? previousDeviceStats.currentWritesCompleted : -1,
-                currentReadTime,
-                previousDeviceStats != null ? previousDeviceStats.currentReadTime : -1,
-                currentWriteTime,
-                previousDeviceStats != null ? previousDeviceStats.currentWriteTime : -1,
-                currrentQueueSize,
-                previousDeviceStats != null ? previousDeviceStats.currentQueueSize : -1,
-                currentIOTime,
-                previousDeviceStats != null ? previousDeviceStats.currentIOTime : -1
-            );
-        }
-
-        /**
-         * This constructor will be deprecated starting in version 3.4.0.
-         * Use {@link Builder} instead.
-         */
-        @Deprecated
         private DeviceStats(
             final int majorDeviceNumber,
             final int minorDeviceNumber,
@@ -650,39 +608,6 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         final long totalWriteTime;
         final long totalQueueSize;
         final long totalIOTimeInMillis;
-
-        public IoStats(final DeviceStats[] devicesStats) {
-            this.devicesStats = devicesStats;
-            long totalOperations = 0;
-            long totalReadOperations = 0;
-            long totalWriteOperations = 0;
-            long totalReadKilobytes = 0;
-            long totalWriteKilobytes = 0;
-            long totalReadTime = 0;
-            long totalWriteTime = 0;
-            long totalQueueSize = 0;
-            long totalIOTimeInMillis = 0;
-            for (DeviceStats deviceStats : devicesStats) {
-                totalOperations += deviceStats.operations() != -1 ? deviceStats.operations() : 0;
-                totalReadOperations += deviceStats.readOperations() != -1 ? deviceStats.readOperations() : 0;
-                totalWriteOperations += deviceStats.writeOperations() != -1 ? deviceStats.writeOperations() : 0;
-                totalReadKilobytes += deviceStats.readKilobytes() != -1 ? deviceStats.readKilobytes() : 0;
-                totalWriteKilobytes += deviceStats.writeKilobytes() != -1 ? deviceStats.writeKilobytes() : 0;
-                totalReadTime += deviceStats.readTime() != -1 ? deviceStats.readTime() : 0;
-                totalWriteTime += deviceStats.writeTime() != -1 ? deviceStats.writeTime() : 0;
-                totalQueueSize += deviceStats.queueSize() != -1 ? deviceStats.queueSize() : 0;
-                totalIOTimeInMillis += deviceStats.ioTimeInMillis() != -1 ? deviceStats.ioTimeInMillis() : 0;
-            }
-            this.totalOperations = totalOperations;
-            this.totalReadOperations = totalReadOperations;
-            this.totalWriteOperations = totalWriteOperations;
-            this.totalReadKilobytes = totalReadKilobytes;
-            this.totalWriteKilobytes = totalWriteKilobytes;
-            this.totalReadTime = totalReadTime;
-            this.totalWriteTime = totalWriteTime;
-            this.totalQueueSize = totalQueueSize;
-            this.totalIOTimeInMillis = totalIOTimeInMillis;
-        }
 
         public IoStats(StreamInput in) throws IOException {
             final int length = in.readVInt();
