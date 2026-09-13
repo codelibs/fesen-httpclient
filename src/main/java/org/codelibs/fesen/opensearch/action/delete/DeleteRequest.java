@@ -48,7 +48,6 @@ import org.codelibs.fesen.opensearch.core.index.shard.ShardId;
 import org.codelibs.fesen.opensearch.index.VersionType;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.transport.client.Client;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 

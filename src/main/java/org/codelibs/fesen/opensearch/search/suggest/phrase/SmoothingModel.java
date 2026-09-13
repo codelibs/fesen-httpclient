@@ -37,7 +37,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.search.suggest.phrase.WordScorer.WordScorerFactory;
 
 import java.io.IOException;
 
@@ -107,8 +106,6 @@ public abstract class SmoothingModel implements NamedWriteable, ToXContentFragme
         }
         return model;
     }
-
-    public abstract WordScorerFactory buildWordScorerFactory();
 
     /**
      * subtype specific implementation of "equals".

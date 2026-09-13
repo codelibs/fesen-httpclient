@@ -38,11 +38,11 @@ import org.codelibs.fesen.opensearch.common.collect.MapBuilder;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
 import org.codelibs.fesen.opensearch.common.settings.Setting;
 import org.codelibs.fesen.opensearch.common.settings.Setting.Property;
+import org.codelibs.fesen.opensearch.core.common.unit.ByteSizeValue;
 import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
-import org.codelibs.fesen.opensearch.http.HttpTransportSettings;
 import org.codelibs.fesen.opensearch.tasks.Task;
 import org.codelibs.fesen.opensearch.tasks.TaskThreadContextStatePropagator;
 
@@ -66,8 +66,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import static org.codelibs.fesen.opensearch.http.HttpTransportSettings.SETTING_HTTP_MAX_WARNING_HEADER_COUNT;
-import static org.codelibs.fesen.opensearch.http.HttpTransportSettings.SETTING_HTTP_MAX_WARNING_HEADER_SIZE;
 
 /**
  * A ThreadContext is a map of string headers and a transient map of keyed objects that are associated with
@@ -100,6 +98,25 @@ import static org.codelibs.fesen.opensearch.http.HttpTransportSettings.SETTING_H
  */
 @PublicApi(since = "1.0.0")
 public final class ThreadContext implements Writeable {
+
+    /**
+     * The two http.max_warning_header_* settings, defined here rather than imported from
+     * http/HttpTransportSettings. That class is the node's HTTP *server* configuration --
+     * bind host, port range, CORS, pipelining -- none of which a client has any use for;
+     * these two were the only members anything here read. Definitions are verbatim, so the
+     * keys, defaults and validation are unchanged.
+     */
+    public static final Setting<Integer> SETTING_HTTP_MAX_WARNING_HEADER_COUNT = Setting.intSetting(
+        "http.max_warning_header_count",
+        -1,
+        -1,
+        Setting.Property.NodeScope
+    );
+    public static final Setting<ByteSizeValue> SETTING_HTTP_MAX_WARNING_HEADER_SIZE = Setting.byteSizeSetting(
+        "http.max_warning_header_size",
+        new ByteSizeValue(-1),
+        Setting.Property.NodeScope
+    );
 
     public static final String PREFIX = "request.headers";
     public static final Setting<Settings> DEFAULT_HEADERS_SETTING = Setting.groupSetting(PREFIX + ".", Property.NodeScope);
@@ -811,7 +828,7 @@ public final class ThreadContext implements Writeable {
                         "Dropping a warning header, as their total size reached the maximum allowed of ["
                             + maxWarningHeaderSize
                             + "] bytes set in ["
-                            + HttpTransportSettings.SETTING_HTTP_MAX_WARNING_HEADER_SIZE.getKey()
+                            + SETTING_HTTP_MAX_WARNING_HEADER_SIZE.getKey()
                             + "]!"
                     );
                     return this;
@@ -822,7 +839,7 @@ public final class ThreadContext implements Writeable {
                         "Dropping a warning header, as their total size reached the maximum allowed of ["
                             + maxWarningHeaderSize
                             + "] bytes set in ["
-                            + HttpTransportSettings.SETTING_HTTP_MAX_WARNING_HEADER_SIZE.getKey()
+                            + SETTING_HTTP_MAX_WARNING_HEADER_SIZE.getKey()
                             + "]!"
                     );
                     return new ThreadContextStruct(
@@ -864,7 +881,7 @@ public final class ThreadContext implements Writeable {
                         "Dropping a warning header, as their total count reached the maximum allowed of ["
                             + maxWarningHeaderCount
                             + "] set in ["
-                            + HttpTransportSettings.SETTING_HTTP_MAX_WARNING_HEADER_COUNT.getKey()
+                            + SETTING_HTTP_MAX_WARNING_HEADER_COUNT.getKey()
                             + "]!"
                     );
                     return this;

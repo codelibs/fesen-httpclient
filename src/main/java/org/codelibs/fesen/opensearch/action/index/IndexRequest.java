@@ -62,9 +62,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.MediaTypeRegistry;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.index.VersionType;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
-import org.codelibs.fesen.opensearch.index.mapper.extrasource.ExtraFieldValues;
 import org.codelibs.fesen.opensearch.transport.client.Client;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -113,7 +111,6 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     private String routing;
 
     private BytesReference source;
-    private ExtraFieldValues extraFieldValues = ExtraFieldValues.EMPTY;
 
     private OpType opType = OpType.INDEX;
 
@@ -156,9 +153,8 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
         routing = in.readOptionalString();
         source = in.readBytesReference();
         if (in.getVersion().onOrAfter(Version.V_3_7_0)) {
-            extraFieldValues = Objects.requireNonNullElse(in.readOptionalWriteable(ExtraFieldValues::new), ExtraFieldValues.EMPTY);
-        } else {
-            extraFieldValues = ExtraFieldValues.EMPTY;
+            // extra field values: read and discarded, this client never sends them
+            in.readOptionalBytesReference();
         }
         opType = OpType.fromId(in.readByte());
         version = in.readLong();
@@ -396,7 +392,7 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * @param source The map to index
      */
     public IndexRequest source(Map<String, ?> source) throws OpenSearchGenerationException {
-        return source(source, Requests.INDEX_CONTENT_TYPE);
+        return source(source, MediaTypeRegistry.JSON);
     }
 
     /**
@@ -440,7 +436,7 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * </p>
      */
     public IndexRequest source(Object... source) {
-        return source(Requests.INDEX_CONTENT_TYPE, source);
+        return source(MediaTypeRegistry.JSON, source);
     }
 
     /**
@@ -501,23 +497,6 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      */
     public IndexRequest source(byte[] source, int offset, int length, MediaType mediaType) {
         return source(new BytesArray(source, offset, length), mediaType);
-    }
-
-    /**
-     * Sets extra field values to be ingested outside of {@code _source}.
-     * <p>
-     * {@code null} clears the values and resets to {@link ExtraFieldValues#EMPTY}.
-     */
-    public IndexRequest extraFieldValues(ExtraFieldValues values) {
-        this.extraFieldValues = values == null ? ExtraFieldValues.EMPTY : values;
-        return this;
-    }
-
-    /**
-     * Returns the extra field values associated with this request, or {@link ExtraFieldValues#EMPTY} if none.
-     */
-    public ExtraFieldValues extraFieldValues() {
-        return extraFieldValues;
     }
 
     /**
@@ -702,7 +681,7 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
         out.writeOptionalString(routing);
         out.writeBytesReference(source);
         if (out.getVersion().onOrAfter(Version.V_3_7_0)) {
-            out.writeOptionalWriteable(extraFieldValues.isEmpty() ? null : extraFieldValues);
+            out.writeOptionalWriteable(null);
         }
         out.writeByte(opType.getId());
         out.writeLong(version);

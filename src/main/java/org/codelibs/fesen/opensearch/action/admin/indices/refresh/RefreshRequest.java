@@ -36,7 +36,6 @@ import org.codelibs.fesen.opensearch.action.support.broadcast.BroadcastRequest;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.transport.client.IndicesAdminClient;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 

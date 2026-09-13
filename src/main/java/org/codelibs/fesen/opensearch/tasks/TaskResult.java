@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentHelper;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 import java.util.Map;
@@ -94,7 +93,7 @@ public final class TaskResult implements Writeable, ToXContentObject {
      * Construct a {@linkplain TaskResult} for a task that completed successfully.
      */
     public TaskResult(TaskInfo task, ToXContent response) throws IOException {
-        this(true, task, null, XContentHelper.toXContent(response, Requests.INDEX_CONTENT_TYPE, true));
+        this(true, task, null, XContentHelper.toXContent(response, MediaTypeRegistry.JSON, true));
     }
 
     public TaskResult(boolean completed, TaskInfo task, @Nullable BytesReference error, @Nullable BytesReference result) {
@@ -240,7 +239,7 @@ public final class TaskResult implements Writeable, ToXContentObject {
     }
 
     private static BytesReference toXContent(Exception error) throws IOException {
-        try (XContentBuilder builder = MediaTypeRegistry.contentBuilder(Requests.INDEX_CONTENT_TYPE)) {
+        try (XContentBuilder builder = MediaTypeRegistry.contentBuilder(MediaTypeRegistry.JSON)) {
             builder.startObject();
             OpenSearchException.generateThrowableXContent(builder, ToXContent.EMPTY_PARAMS, error);
             builder.endObject();

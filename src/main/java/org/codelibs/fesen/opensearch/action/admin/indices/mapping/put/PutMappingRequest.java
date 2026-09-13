@@ -55,7 +55,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.transport.client.IndicesAdminClient;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 import java.io.InputStream;

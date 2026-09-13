@@ -47,8 +47,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.search.suggest.SuggestionBuilder;
-import org.codelibs.fesen.opensearch.search.suggest.completion.context.ContextMapping;
-import org.codelibs.fesen.opensearch.search.suggest.completion.context.ContextMappings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -288,35 +286,6 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
             throw new OpenSearchParseException("the required field option [" + FIELDNAME_FIELD.getPreferredName() + "] is missing");
         }
         return new CompletionSuggestionBuilder(field, builder);
-    }
-
-    static Map<String, List<ContextMapping.InternalQueryContext>> parseContextBytes(
-        BytesReference contextBytes,
-        NamedXContentRegistry xContentRegistry,
-        ContextMappings contextMappings
-    ) throws IOException {
-        try (
-            XContentParser contextParser = XContentHelper.createParser(
-                xContentRegistry,
-                LoggingDeprecationHandler.INSTANCE,
-                contextBytes,
-                CONTEXT_BYTES_XCONTENT_TYPE
-            )
-        ) {
-            contextParser.nextToken();
-            Map<String, List<ContextMapping.InternalQueryContext>> queryContexts = new HashMap<>(contextMappings.size());
-            assert contextParser.currentToken() == XContentParser.Token.START_OBJECT;
-            XContentParser.Token currentToken;
-            String currentFieldName;
-            while ((currentToken = contextParser.nextToken()) != XContentParser.Token.END_OBJECT) {
-                if (currentToken == XContentParser.Token.FIELD_NAME) {
-                    currentFieldName = contextParser.currentName();
-                    final ContextMapping<?> mapping = contextMappings.get(currentFieldName);
-                    queryContexts.put(currentFieldName, mapping.parseQueryContext(contextParser));
-                }
-            }
-            return queryContexts;
-        }
     }
 
     @Override

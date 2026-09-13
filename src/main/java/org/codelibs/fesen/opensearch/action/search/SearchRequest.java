@@ -56,7 +56,6 @@ import org.codelibs.fesen.opensearch.search.sort.FieldSortBuilder;
 import org.codelibs.fesen.opensearch.search.sort.ShardDocSortBuilder;
 import org.codelibs.fesen.opensearch.search.sort.SortBuilder;
 import org.codelibs.fesen.opensearch.transport.client.Client;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 import java.util.Arrays;

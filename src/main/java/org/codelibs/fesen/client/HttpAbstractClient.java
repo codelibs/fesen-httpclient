@@ -56,9 +56,6 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllo
 import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.allocation.ClusterAllocationExplainResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.decommission.awareness.delete.DeleteDecommissionStateRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.decommission.awareness.get.GetDecommissionStateRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.decommission.awareness.put.DecommissionRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
@@ -97,7 +94,6 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.Remo
 import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.remotestore.stats.RemoteStoreStatsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.cleanup.CleanupRepositoryRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequestBuilder;
@@ -124,9 +120,6 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchSh
 import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.shards.ClusterSearchShardsResponse;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.routing.weighted.delete.ClusterDeleteWeightedRoutingRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.routing.weighted.get.ClusterGetWeightedRoutingRequest;
-import org.codelibs.fesen.opensearch.action.admin.cluster.shards.routing.weighted.put.ClusterPutWeightedRoutingRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;

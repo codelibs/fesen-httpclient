@@ -42,7 +42,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token;
-import org.codelibs.fesen.opensearch.search.suggest.phrase.WordScorer.WordScorerFactory;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -182,22 +181,4 @@ public final class LinearInterpolation extends SmoothingModel {
         return new LinearInterpolation(trigramLambda, bigramLambda, unigramLambda);
     }
 
-    @Override
-    public WordScorerFactory buildWordScorerFactory() {
-        return (
-            IndexReader reader,
-            Terms terms,
-            String field,
-            double realWordLikelihood,
-            BytesRef separator) -> new LinearInterpolatingScorer(
-                reader,
-                terms,
-                field,
-                realWordLikelihood,
-                separator,
-                trigramLambda,
-                bigramLambda,
-                unigramLambda
-            );
-    }
 }

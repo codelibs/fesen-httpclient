@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.index.VersionType;
 import org.codelibs.fesen.opensearch.index.mapper.MapperService;
 import org.codelibs.fesen.opensearch.search.fetch.subphase.FetchSourceContext;
 import org.codelibs.fesen.opensearch.transport.client.Client;
-import org.codelibs.fesen.opensearch.transport.client.Requests;
 
 import java.io.IOException;
 import java.util.Objects;
