@@ -48,9 +48,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.close.CloseIndexRespon
 import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.create.CreateIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.datastream.CreateDataStreamAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.datastream.DeleteDataStreamAction;
-import org.codelibs.fesen.opensearch.action.admin.indices.datastream.GetDataStreamAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
@@ -76,9 +73,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMapping
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.readonly.AddIndexBlockRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.readonly.AddIndexBlockRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.readonly.AddIndexBlockResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;

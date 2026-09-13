@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.action.AliasesRequest;
 import org.codelibs.fesen.opensearch.action.CompositeIndicesRequest;
 import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
 import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedRequest;
-import org.codelibs.fesen.opensearch.cluster.metadata.AliasAction;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentFactory;
 import org.codelibs.fesen.opensearch.core.ParseField;

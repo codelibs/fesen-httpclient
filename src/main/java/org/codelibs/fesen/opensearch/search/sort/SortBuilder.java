@@ -47,7 +47,6 @@ import org.codelibs.fesen.opensearch.core.xcontent.NamedObjectNotFoundException;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentObject;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.index.query.QueryBuilder;
-import org.codelibs.fesen.opensearch.index.query.QueryShardException;
 import org.codelibs.fesen.opensearch.index.query.Rewriteable;
 import org.codelibs.fesen.opensearch.search.DocValueFormat;
 

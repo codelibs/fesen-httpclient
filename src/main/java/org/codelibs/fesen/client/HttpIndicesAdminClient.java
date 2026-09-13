@@ -61,9 +61,6 @@ import org.codelibs.fesen.opensearch.action.admin.indices.mapping.put.PutMapping
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.open.OpenIndexResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.readonly.AddIndexBlockRequest;
-import org.codelibs.fesen.opensearch.action.admin.indices.readonly.AddIndexBlockRequestBuilder;
-import org.codelibs.fesen.opensearch.action.admin.indices.readonly.AddIndexBlockResponse;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.indices.recovery.RecoveryResponse;

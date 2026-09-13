@@ -33,7 +33,6 @@
 package org.codelibs.fesen.opensearch.transport.client;
 
 import org.codelibs.fesen.opensearch.action.admin.indices.segments.IndicesSegmentResponse;
-import org.codelibs.fesen.opensearch.action.admin.indices.segments.PitSegmentsRequest;
 import org.codelibs.fesen.opensearch.action.admin.indices.view.ListViewNamesAction;
 import org.codelibs.fesen.opensearch.action.admin.indices.view.SearchViewAction;
 import org.codelibs.fesen.opensearch.action.bulk.BulkRequest;

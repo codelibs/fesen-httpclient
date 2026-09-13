@@ -33,7 +33,6 @@ package org.codelibs.fesen.opensearch.common.util.concurrent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codelibs.fesen.opensearch.action.support.ContextPreservingActionListener;
 import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 import org.codelibs.fesen.opensearch.common.collect.MapBuilder;
 import org.codelibs.fesen.opensearch.common.collect.Tuple;
@@ -46,7 +45,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 import org.codelibs.fesen.opensearch.http.HttpTransportSettings;
 import org.codelibs.fesen.opensearch.tasks.Task;
 import org.codelibs.fesen.opensearch.tasks.TaskThreadContextStatePropagator;
-import org.codelibs.fesen.opensearch.transport.client.OriginSettingClient;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

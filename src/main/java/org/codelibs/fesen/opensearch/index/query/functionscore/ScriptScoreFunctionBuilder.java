@@ -38,7 +38,6 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.StreamInput;
 import org.codelibs.fesen.opensearch.core.common.io.stream.StreamOutput;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
-import org.codelibs.fesen.opensearch.index.query.QueryShardException;
 import org.codelibs.fesen.opensearch.script.Script;
 
 import java.io.IOException;
