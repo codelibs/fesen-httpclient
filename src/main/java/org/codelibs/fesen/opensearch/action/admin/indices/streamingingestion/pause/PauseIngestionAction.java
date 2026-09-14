@@ -17,7 +17,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class PauseIngestionAction extends ActionType<PauseIngestionResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PauseIngestionAction INSTANCE = new PauseIngestionAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/ingestion/pause";
 
     private PauseIngestionAction() {

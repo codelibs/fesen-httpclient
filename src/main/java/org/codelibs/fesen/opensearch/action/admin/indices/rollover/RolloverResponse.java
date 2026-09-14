@@ -114,6 +114,17 @@ public final class RolloverResponse extends ShardsAcknowledgedResponse implement
         shardsAcknowledged = in.readBoolean();
     }
 
+    /**
+     * Creates a new RolloverResponse.
+     *
+     * @param oldIndex the old index
+     * @param newIndex the new index
+     * @param conditionResults the condition results
+     * @param dryRun the dry run
+     * @param rolledOver the rolled over
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     */
     public RolloverResponse(
         String oldIndex,
         String newIndex,
@@ -166,6 +177,12 @@ public final class RolloverResponse extends ShardsAcknowledgedResponse implement
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static RolloverResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

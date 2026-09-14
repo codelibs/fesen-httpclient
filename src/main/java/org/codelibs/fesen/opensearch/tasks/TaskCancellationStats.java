@@ -32,6 +32,9 @@ public class TaskCancellationStats implements ToXContentFragment, Writeable {
 
     /**
      * Backward-compatible constructor without native stats.
+     *
+     * @param searchTaskCancellationStats the search task cancellation stats
+     * @param searchShardTaskCancellationStats the search shard task cancellation stats
      */
     public TaskCancellationStats(
         SearchTaskCancellationStats searchTaskCancellationStats,
@@ -57,6 +60,12 @@ public class TaskCancellationStats implements ToXContentFragment, Writeable {
         this.nativeStats = nativeStats;
     }
 
+    /**
+     * Creates a new TaskCancellationStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TaskCancellationStats(StreamInput in) throws IOException {
         if (in.getVersion().onOrAfter(Version.V_3_0_0)) {
             searchTaskCancellationStats = new SearchTaskCancellationStats(in);

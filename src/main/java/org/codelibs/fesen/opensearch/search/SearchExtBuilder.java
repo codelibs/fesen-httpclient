@@ -57,6 +57,11 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
  */
 @PublicApi(since = "1.0.0")
 public abstract class SearchExtBuilder implements NamedWriteable, ToXContentFragment {
+    /**
+     * Creates a new SearchExtBuilder.
+     */
+    public SearchExtBuilder() {
+    }
 
     public abstract int hashCode();
 

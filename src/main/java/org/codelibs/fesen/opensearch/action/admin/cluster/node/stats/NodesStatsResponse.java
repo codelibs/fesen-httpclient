@@ -53,10 +53,23 @@ import java.util.List;
 @PublicApi(since = "1.0.0")
 public class NodesStatsResponse extends BaseNodesResponse<NodeStats> implements ToXContentFragment {
 
+    /**
+     * Creates a new NodesStatsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodesStatsResponse(StreamInput in) throws IOException {
         super(in);
     }
 
+    /**
+     * Creates a new NodesStatsResponse.
+     *
+     * @param clusterName the cluster name
+     * @param nodes the nodes
+     * @param failures the failures
+     */
     public NodesStatsResponse(ClusterName clusterName, List<NodeStats> nodes, List<FailedNodeException> failures) {
         super(clusterName, nodes, failures);
     }

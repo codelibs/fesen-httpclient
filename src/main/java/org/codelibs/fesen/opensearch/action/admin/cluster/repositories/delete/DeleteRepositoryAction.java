@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class DeleteRepositoryAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteRepositoryAction INSTANCE = new DeleteRepositoryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/repository/delete";
 
     private DeleteRepositoryAction() {

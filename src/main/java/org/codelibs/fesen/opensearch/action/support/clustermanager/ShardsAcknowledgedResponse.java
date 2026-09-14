@@ -51,8 +51,17 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  */
 public abstract class ShardsAcknowledgedResponse extends AcknowledgedResponse {
 
+    /**
+     * The SHARDS_ACKNOWLEDGED constant.
+     */
     protected static final ParseField SHARDS_ACKNOWLEDGED = new ParseField("shards_acknowledged");
 
+    /**
+     * Performs the declare acknowledged and shards acknowledged fields step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     */
     protected static <T extends ShardsAcknowledgedResponse> void declareAcknowledgedAndShardsAcknowledgedFields(
         ConstructingObjectParser<T, Void> objectParser
     ) {
@@ -67,6 +76,13 @@ public abstract class ShardsAcknowledgedResponse extends AcknowledgedResponse {
 
     private final boolean shardsAcknowledged;
 
+    /**
+     * Creates a new ShardsAcknowledgedResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @param readShardsAcknowledged the read shards acknowledged
+     * @throws IOException if an I/O error occurs
+     */
     protected ShardsAcknowledgedResponse(StreamInput in, boolean readShardsAcknowledged) throws IOException {
         super(in);
         if (readShardsAcknowledged) {
@@ -76,6 +92,12 @@ public abstract class ShardsAcknowledgedResponse extends AcknowledgedResponse {
         }
     }
 
+    /**
+     * Creates a new ShardsAcknowledgedResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     */
     protected ShardsAcknowledgedResponse(boolean acknowledged, boolean shardsAcknowledged) {
         super(acknowledged);
         assert acknowledged || shardsAcknowledged == false; // if it's not acknowledged, then shards acked should be false too
@@ -86,11 +108,19 @@ public abstract class ShardsAcknowledgedResponse extends AcknowledgedResponse {
      * Returns true if the requisite number of shards were started before
      * returning from the index creation operation. If {@link #isAcknowledged()}
      * is false, then this also returns false.
+     *
+     * @return the shards acknowledged flag
      */
     public boolean isShardsAcknowledged() {
         return shardsAcknowledged;
     }
 
+    /**
+     * Writes the shards acknowledged.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected void writeShardsAcknowledged(StreamOutput out) throws IOException {
         out.writeBoolean(shardsAcknowledged);
     }

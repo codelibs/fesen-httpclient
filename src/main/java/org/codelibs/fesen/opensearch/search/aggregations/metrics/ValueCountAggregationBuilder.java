@@ -53,7 +53,13 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public class ValueCountAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource, ValueCountAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "value_count";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<ValueCountAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         ValueCountAggregationBuilder::new
@@ -62,10 +68,22 @@ public class ValueCountAggregationBuilder extends ValuesSourceAggregationBuilder
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new ValueCountAggregationBuilder.
+     *
+     * @param name the name
+     */
     public ValueCountAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new ValueCountAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected ValueCountAggregationBuilder(
         ValueCountAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

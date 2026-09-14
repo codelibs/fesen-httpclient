@@ -61,10 +61,22 @@ public class HttpInfo implements ReportingService.Info {
     private final BoundTransportAddress address;
     private final long maxContentLength;
 
+    /**
+     * Creates a new HttpInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public HttpInfo(StreamInput in) throws IOException {
         this(new BoundTransportAddress(in), in.readLong());
     }
 
+    /**
+     * Creates a new HttpInfo.
+     *
+     * @param address the address
+     * @param maxContentLength the max content length
+     */
     public HttpInfo(BoundTransportAddress address, long maxContentLength) {
         this.address = address;
         this.maxContentLength = maxContentLength;
@@ -107,6 +119,11 @@ public class HttpInfo implements ReportingService.Info {
         return builder;
     }
 
+    /**
+     * Returns the max content length.
+     *
+     * @return the max content length
+     */
     public ByteSizeValue maxContentLength() {
         return new ByteSizeValue(maxContentLength);
     }

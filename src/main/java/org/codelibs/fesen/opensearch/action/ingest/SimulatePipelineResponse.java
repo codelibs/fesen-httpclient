@@ -63,6 +63,9 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
     private boolean verbose;
     private List<SimulateDocumentResult> results;
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<SimulatePipelineResponse, Void> PARSER = new ConstructingObjectParser<>(
         "simulate_pipeline_response",
@@ -119,6 +122,12 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
         }, new ParseField(Fields.DOCUMENTS));
     }
 
+    /**
+     * Creates a new SimulatePipelineResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SimulatePipelineResponse(StreamInput in) throws IOException {
         super(in);
         this.pipelineId = in.readOptionalString();
@@ -136,12 +145,24 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
         }
     }
 
+    /**
+     * Creates a new SimulatePipelineResponse.
+     *
+     * @param pipelineId the pipeline identifier
+     * @param verbose the verbose
+     * @param responses the responses
+     */
     public SimulatePipelineResponse(String pipelineId, boolean verbose, List<SimulateDocumentResult> responses) {
         this.pipelineId = pipelineId;
         this.verbose = verbose;
         this.results = Collections.unmodifiableList(responses);
     }
 
+    /**
+     * Returns the results.
+     *
+     * @return the results
+     */
     public List<SimulateDocumentResult> getResults() {
         return results;
     }
@@ -168,6 +189,12 @@ public class SimulatePipelineResponse extends ActionResponse implements ToXConte
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static SimulatePipelineResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

@@ -21,6 +21,9 @@ import tools.jackson.core.io.SerializedString;
 import tools.jackson.core.util.DefaultIndenter;
 import tools.jackson.core.util.DefaultPrettyPrinter;
 
+/**
+ * The XObjectWriteContext class.
+ */
 public class XObjectWriteContext extends ObjectWriteContext.Base {
     private static final XObjectWriteContext DEFAULT_INSTANCE = new XObjectWriteContext(false);
 
@@ -28,6 +31,12 @@ public class XObjectWriteContext extends ObjectWriteContext.Base {
     private static final DefaultPrettyPrinter.Indenter INDENTER = new DefaultIndenter("  ", LF.getValue());
     private final PrettyPrinter prettyPrinter;
 
+    /**
+     * Creates this instance.
+     *
+     * @param prettyPrint the pretty print
+     * @return the new instance
+     */
     public static XObjectWriteContext create(boolean prettyPrint) {
         if (prettyPrint == true) {
             return new XObjectWriteContext(prettyPrint);

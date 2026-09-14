@@ -61,6 +61,9 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public class SuggestBuilder implements Writeable, ToXContentObject {
+    /**
+     * The GLOBAL_TEXT_FIELD constant.
+     */
     protected static final ParseField GLOBAL_TEXT_FIELD = new ParseField("text");
 
     private String globalText;
@@ -73,6 +76,9 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SuggestBuilder(StreamInput in) throws IOException {
         globalText = in.readOptionalString();
@@ -99,6 +105,9 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
      * <p>
      * The suggest text gets analyzed by the suggest analyzer or the suggest field search analyzer.
      * For each analyzed token, suggested terms are suggested if possible.
+     *
+     * @param globalText the global text
+     * @return this instance
      */
     public SuggestBuilder setGlobalText(@Nullable String globalText) {
         this.globalText = globalText;
@@ -108,6 +117,9 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
     /**
      * Adds an {@link org.codelibs.fesen.opensearch.search.suggest.SuggestionBuilder} instance under a user defined name.
      * The order in which the <code>Suggestions</code> are added, is the same as in the response.
+     * @param name the name
+     * @param suggestion the suggestion
+     * @return this instance
      * @throws IllegalArgumentException if two suggestions added have the same name
      */
     public SuggestBuilder addSuggestion(String name, SuggestionBuilder<?> suggestion) {
@@ -135,6 +147,13 @@ public class SuggestBuilder implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SuggestBuilder fromXContent(XContentParser parser) throws IOException {
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         String fieldName = null;

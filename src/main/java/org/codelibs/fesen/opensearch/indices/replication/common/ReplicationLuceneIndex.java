@@ -39,19 +39,36 @@ import java.util.Map;
 public final class ReplicationLuceneIndex extends ReplicationTimer implements ToXContentFragment, Writeable {
     private final FilesDetails filesDetails;
 
+    /**
+     * The UNKNOWN constant.
+     */
     public static final long UNKNOWN = -1L;
 
     private long sourceThrottlingInNanos = UNKNOWN;
     private long targetThrottleTimeInNanos = UNKNOWN;
 
+    /**
+     * Creates a new ReplicationLuceneIndex.
+     */
     public ReplicationLuceneIndex() {
         this(new FilesDetails());
     }
 
+    /**
+     * Creates a new ReplicationLuceneIndex.
+     *
+     * @param filesDetails the files details
+     */
     public ReplicationLuceneIndex(FilesDetails filesDetails) {
         this.filesDetails = filesDetails;
     }
 
+    /**
+     * Creates a new ReplicationLuceneIndex by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ReplicationLuceneIndex(StreamInput in) throws IOException {
         super(in);
         filesDetails = new FilesDetails(in);
@@ -74,16 +91,28 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         targetThrottleTimeInNanos = UNKNOWN;
     }
 
+    /**
+     * Returns the source throttling.
+     *
+     * @return the source throttling
+     */
     public synchronized TimeValue sourceThrottling() {
         return TimeValue.timeValueNanos(sourceThrottlingInNanos);
     }
 
+    /**
+     * Returns the target throttling.
+     *
+     * @return the target throttling
+     */
     public synchronized TimeValue targetThrottling() {
         return TimeValue.timeValueNanos(targetThrottleTimeInNanos);
     }
 
     /**
      * total number of files that are part of this recovery, both re-used and recovered
+     *
+     * @return the total file count
      */
     public synchronized int totalFileCount() {
         return filesDetails.size();
@@ -91,6 +120,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
     /**
      * number of file that were recovered (excluding on ongoing files)
+     *
+     * @return the recovered file count
      */
     public synchronized int recoveredFileCount() {
         int count = 0;
@@ -104,6 +135,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
     /**
      * percent of recovered (i.e., not reused) files out of the total files to be recovered
+     *
+     * @return the recovered files percent
      */
     public synchronized float recoveredFilesPercent() {
         int total = 0;
@@ -129,6 +162,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
     /**
      * total number of bytes in th shard
+     *
+     * @return the total bytes
      */
     public synchronized long totalBytes() {
         long total = 0;
@@ -140,6 +175,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
     /**
      * total number of bytes recovered so far, including both existing and reused
+     *
+     * @return the recovered bytes
      */
     public synchronized long recoveredBytes() {
         long recovered = 0;
@@ -151,6 +188,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
     /**
      * percent of bytes recovered out of total files bytes *to be* recovered
+     *
+     * @return the recovered bytes percent
      */
     public synchronized float recoveredBytesPercent() {
         long total = 0;
@@ -172,6 +211,11 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         }
     }
 
+    /**
+     * Returns the reused file count.
+     *
+     * @return the reused file count
+     */
     public synchronized int reusedFileCount() {
         int reused = 0;
         for (FileMetadata file : filesDetails.values()) {
@@ -182,6 +226,11 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         return reused;
     }
 
+    /**
+     * Returns the reused bytes.
+     *
+     * @return the reused bytes
+     */
     public synchronized long reusedBytes() {
         long reused = 0;
         for (FileMetadata file : filesDetails.values()) {
@@ -297,6 +346,12 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
         private long recovered;
         private boolean reused;
 
+        /**
+         * Creates a new FileMetadata by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public FileMetadata(StreamInput in) throws IOException {
             name = in.readString();
             length = in.readVLong();
@@ -314,6 +369,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
         /**
          * file length
+         *
+         * @return the length
          */
         public long length() {
             return length;
@@ -321,6 +378,8 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
         /**
          * number of bytes recovered for this file (so far). 0 if the file is reused
+         *
+         * @return the recovered
          */
         public long recovered() {
             return recovered;
@@ -328,11 +387,18 @@ public final class ReplicationLuceneIndex extends ReplicationTimer implements To
 
         /**
          * returns true if the file is reused from a local copy
+         *
+         * @return the reused
          */
         public boolean reused() {
             return reused;
         }
 
+        /**
+         * Returns the fully recovered.
+         *
+         * @return the fully recovered
+         */
         public boolean fullyRecovered() {
             return reused == false && length == recovered;
         }

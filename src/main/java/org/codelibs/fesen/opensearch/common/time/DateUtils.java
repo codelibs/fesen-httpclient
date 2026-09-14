@@ -57,6 +57,18 @@ import static org.codelibs.fesen.opensearch.common.time.DateUtilsRounding.utcMil
  * @opensearch.internal
  */
 public class DateUtils {
+    /**
+     * Creates a new DateUtils.
+     */
+    public DateUtils() {
+    }
+
+    /**
+     * Returns the zone identifier to date time zone.
+     *
+     * @param zoneId the zone identifier
+     * @return the zone identifier to date time zone
+     */
     public static DateTimeZone zoneIdToDateTimeZone(ZoneId zoneId) {
         if (zoneId == null) {
             return null;
@@ -71,6 +83,9 @@ public class DateUtils {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DateUtils.class);
     // pkg private for tests
     static final Map<String, String> DEPRECATED_SHORT_TIMEZONES;
+    /**
+     * The DEPRECATED_SHORT_TZ_IDS constant.
+     */
     public static final Set<String> DEPRECATED_SHORT_TZ_IDS;
     static {
         Map<String, String> tzs = new HashMap<>();
@@ -84,6 +99,9 @@ public class DateUtils {
     }
 
     // Map of deprecated timezones and their recommended new counterpart
+    /**
+     * The DEPRECATED_LONG_TIMEZONES constant.
+     */
     public static final Map<String, String> DEPRECATED_LONG_TIMEZONES;
     static {
         Map<String, String> tzs = new HashMap<>();
@@ -204,6 +222,12 @@ public class DateUtils {
         DEPRECATED_LONG_TIMEZONES = Collections.unmodifiableMap(tzs);
     }
 
+    /**
+     * Returns the date time zone to zone identifier.
+     *
+     * @param timeZone the time zone
+     * @return the date time zone to zone identifier
+     */
     public static ZoneId dateTimeZoneToZoneId(DateTimeZone timeZone) {
         if (timeZone == null) {
             return null;
@@ -215,6 +239,12 @@ public class DateUtils {
         return of(timeZone.getID());
     }
 
+    /**
+     * Creates an instance from the given input.
+     *
+     * @param zoneId the zone identifier
+     * @return the new instance
+     */
     public static ZoneId of(String zoneId) {
         String deprecatedId = DEPRECATED_SHORT_TIMEZONES.get(zoneId);
         if (deprecatedId != null) {
@@ -261,6 +291,9 @@ public class DateUtils {
      * <p>
      * Useful for checking if all values for the field are within some range,
      * even if the range's endpoints are not valid nanosecond resolution.
+     *
+     * @param instant the instant
+     * @return this instance
      */
     public static Instant clampToNanosRange(Instant instant) {
         if (instant.isBefore(Instant.EPOCH)) {

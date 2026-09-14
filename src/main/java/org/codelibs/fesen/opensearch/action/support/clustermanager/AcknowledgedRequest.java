@@ -45,17 +45,30 @@ import static org.codelibs.fesen.opensearch.common.unit.TimeValue.timeValueSecon
  * Abstract class that allows to mark action requests that support acknowledgements.
  * Facilitates consistency across different api.
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public abstract class AcknowledgedRequest<Request extends ClusterManagerNodeRequest<Request>> extends ClusterManagerNodeRequest<Request>
     implements
         AckedRequest {
 
+    /**
+     * The DEFAULT_ACK_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_ACK_TIMEOUT = timeValueSeconds(30);
+    /**
+     * The DEFAULT_TASK_EXECUTION_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_TASK_EXECUTION_TIMEOUT = timeValueHours(1);
 
+    /**
+     * The timeout.
+     */
     protected TimeValue timeout = DEFAULT_ACK_TIMEOUT;
 
+    /**
+     * Creates a new AcknowledgedRequest.
+     */
     protected AcknowledgedRequest() {}
 
     /**

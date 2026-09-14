@@ -111,6 +111,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link ValueCount} aggregation with the given name.
+     *
+     * @param name the name
+     * @return this instance
      */
     public static ValueCountAggregationBuilder count(String name) {
         return new ValueCountAggregationBuilder(name);
@@ -118,6 +121,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Avg} aggregation with the given name.
+     *
+     * @param name the name
+     * @return this instance
      */
     public static AvgAggregationBuilder avg(String name) {
         return new AvgAggregationBuilder(name);
@@ -125,6 +131,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Max} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the max
      */
     public static MaxAggregationBuilder max(String name) {
         return new MaxAggregationBuilder(name);
@@ -132,6 +141,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Min} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the min
      */
     public static MinAggregationBuilder min(String name) {
         return new MinAggregationBuilder(name);
@@ -139,6 +151,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Sum} aggregation with the given name.
+     *
+     * @param name the name
+     * @return this instance
      */
     public static SumAggregationBuilder sum(String name) {
         return new SumAggregationBuilder(name);
@@ -146,6 +161,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Stats} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the stats
      */
     public static StatsAggregationBuilder stats(String name) {
         return new StatsAggregationBuilder(name);
@@ -153,6 +171,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link ExtendedStats} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the extended stats
      */
     public static ExtendedStatsAggregationBuilder extendedStats(String name) {
         return new ExtendedStatsAggregationBuilder(name);
@@ -160,6 +181,10 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Filter} aggregation with the given name.
+     *
+     * @param name the name
+     * @param filter the filter
+     * @return this instance
      */
     public static FilterAggregationBuilder filter(String name, QueryBuilder filter) {
         return new FilterAggregationBuilder(name, filter);
@@ -167,6 +192,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Sampler} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the sampler
      */
     public static SamplerAggregationBuilder sampler(String name) {
         return new SamplerAggregationBuilder(name);
@@ -174,6 +202,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Global} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the global
      */
     public static GlobalAggregationBuilder global(String name) {
         return new GlobalAggregationBuilder(name);
@@ -181,6 +212,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Missing} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the missing
      */
     public static MissingAggregationBuilder missing(String name) {
         return new MissingAggregationBuilder(name);
@@ -188,6 +222,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Histogram} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the histogram
      */
     public static HistogramAggregationBuilder histogram(String name) {
         return new HistogramAggregationBuilder(name);
@@ -195,6 +232,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link SignificantTerms} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the significant terms
      */
     public static SignificantTermsAggregationBuilder significantTerms(String name) {
         return new SignificantTermsAggregationBuilder(name);
@@ -203,6 +243,9 @@ public class AggregationBuilders {
     /**
      * Create a new {@link DateHistogramAggregationBuilder} aggregation with the given
      * name.
+     *
+     * @param name the name
+     * @return the date histogram
      */
     public static DateHistogramAggregationBuilder dateHistogram(String name) {
         return new DateHistogramAggregationBuilder(name);
@@ -210,6 +253,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Range} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the range
      */
     public static RangeAggregationBuilder range(String name) {
         return new RangeAggregationBuilder(name);
@@ -218,6 +264,9 @@ public class AggregationBuilders {
     /**
      * Create a new {@link DateRangeAggregationBuilder} aggregation with the
      * given name.
+     *
+     * @param name the name
+     * @return the date range
      */
     public static DateRangeAggregationBuilder dateRange(String name) {
         return new DateRangeAggregationBuilder(name);
@@ -226,6 +275,9 @@ public class AggregationBuilders {
     /**
      * Create a new {@link IpRangeAggregationBuilder} aggregation with the
      * given name.
+     *
+     * @param name the name
+     * @return the IP range
      */
     public static IpRangeAggregationBuilder ipRange(String name) {
         return new IpRangeAggregationBuilder(name);
@@ -233,6 +285,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Terms} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the terms
      */
     public static TermsAggregationBuilder terms(String name) {
         return new TermsAggregationBuilder(name);
@@ -240,6 +295,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Percentiles} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the percentiles
      */
     public static PercentilesAggregationBuilder percentiles(String name) {
         return new PercentilesAggregationBuilder(name);
@@ -247,6 +305,10 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link PercentileRanks} aggregation with the given name.
+     *
+     * @param name the name
+     * @param values the values
+     * @return this instance
      */
     public static PercentileRanksAggregationBuilder percentileRanks(String name, double[] values) {
         return new PercentileRanksAggregationBuilder(name, values);
@@ -254,6 +316,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link Cardinality} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the cardinality
      */
     public static CardinalityAggregationBuilder cardinality(String name) {
         return new CardinalityAggregationBuilder(name);
@@ -261,6 +326,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link TopHits} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the top hits
      */
     public static TopHitsAggregationBuilder topHits(String name) {
         return new TopHitsAggregationBuilder(name);
@@ -268,6 +336,9 @@ public class AggregationBuilders {
 
     /**
      * Create a new {@link ScriptedMetric} aggregation with the given name.
+     *
+     * @param name the name
+     * @return the scripted metric
      */
     public static ScriptedMetricAggregationBuilder scriptedMetric(String name) {
         return new ScriptedMetricAggregationBuilder(name);

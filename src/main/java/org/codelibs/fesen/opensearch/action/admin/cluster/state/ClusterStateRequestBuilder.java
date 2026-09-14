@@ -49,6 +49,12 @@ public class ClusterStateRequestBuilder extends ClusterManagerNodeReadOperationR
     ClusterStateResponse,
     ClusterStateRequestBuilder> {
 
+    /**
+     * Creates a new ClusterStateRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterStateRequestBuilder(OpenSearchClient client, ClusterStateAction action) {
         super(client, action, new ClusterStateRequest());
     }

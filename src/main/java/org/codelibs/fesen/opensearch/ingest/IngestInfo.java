@@ -54,6 +54,9 @@ public class IngestInfo implements ReportingService.Info {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public IngestInfo(StreamInput in) throws IOException {
         processors = new TreeSet<>();

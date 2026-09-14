@@ -57,12 +57,36 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public abstract class Decision implements ToXContent, Writeable {
+    /**
+     * Creates a new Decision.
+     */
+    public Decision() {
+    }
 
+    /**
+     * The ALWAYS constant.
+     */
     public static final Decision ALWAYS = new Single(Type.YES);
+    /**
+     * The YES constant.
+     */
     public static final Decision YES = new Single(Type.YES);
+    /**
+     * The NO constant.
+     */
     public static final Decision NO = new Single(Type.NO);
+    /**
+     * The THROTTLE constant.
+     */
     public static final Decision THROTTLE = new Single(Type.THROTTLE);
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static Decision readFrom(StreamInput in) throws IOException {
         // Determine whether to read a Single or Multi Decision
         if (in.readBoolean()) {
@@ -90,8 +114,17 @@ public abstract class Decision implements ToXContent, Writeable {
      */
     @PublicApi(since = "1.0.0")
     public enum Type implements Writeable {
+        /**
+         * The YES value.
+         */
         YES(1),
+        /**
+         * The THROTTLE value.
+         */
         THROTTLE(2),
+        /**
+         * The NO value.
+         */
         NO(0);
 
         private final int id;
@@ -100,6 +133,13 @@ public abstract class Decision implements ToXContent, Writeable {
             this.id = id;
         }
 
+        /**
+         * Reads this instance from the given input.
+         *
+         * @param in the input to read from
+         * @return the from
+         * @throws IOException if an I/O error occurs
+         */
         public static Type readFrom(StreamInput in) throws IOException {
             int i = in.readVInt();
             switch (i) {
@@ -129,18 +169,24 @@ public abstract class Decision implements ToXContent, Writeable {
 
     /**
      * Get the description label for this decision.
+     *
+     * @return the label
      */
     @Nullable
     public abstract String label();
 
     /**
      * Get the explanation for this decision.
+     *
+     * @return the explanation
      */
     @Nullable
     public abstract String getExplanation();
 
     /**
      * Return the list of all decisions that make up this decision
+     *
+     * @return the decisions
      */
     public abstract List<Decision> getDecisions();
 
@@ -156,6 +202,9 @@ public abstract class Decision implements ToXContent, Writeable {
         private String explanationString;
         private Object[] explanationParams;
 
+        /**
+         * Creates a new Single.
+         */
         public Single() {
 
         }
@@ -174,6 +223,7 @@ public abstract class Decision implements ToXContent, Writeable {
          * @param type {@link Type} of the decision
          * @param explanation An explanation of this {@link Decision}
          * @param explanationParams A set of additional parameters
+         * @param label the label
          */
         public Single(Type type, @Nullable String label, @Nullable String explanation, @Nullable Object... explanationParams) {
             this.type = type;
@@ -269,6 +319,11 @@ public abstract class Decision implements ToXContent, Writeable {
      * @opensearch.internal
      */
     public static class Multi extends Decision implements ToXContentFragment {
+        /**
+         * Creates a new Multi.
+         */
+        public Multi() {
+        }
 
         private final List<Decision> decisions = new ArrayList<>();
 

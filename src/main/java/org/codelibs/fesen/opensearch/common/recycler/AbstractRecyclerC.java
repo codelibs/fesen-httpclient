@@ -35,9 +35,15 @@ package org.codelibs.fesen.opensearch.common.recycler;
 /**
  * Base recycler.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public abstract class AbstractRecyclerC<T> implements Recycler.C<T> {
+    /**
+     * Creates a new AbstractRecyclerC.
+     */
+    public AbstractRecyclerC() {
+    }
 
     @Override
     public abstract T newInstance();

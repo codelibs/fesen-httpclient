@@ -44,10 +44,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractLifecycleComponent implements LifecycleComponent {
 
+    /**
+     * The lifecycle.
+     */
     protected final Lifecycle lifecycle = new Lifecycle();
 
     private final List<LifecycleListener> listeners = new CopyOnWriteArrayList<>();
 
+    /**
+     * Creates a new AbstractLifecycleComponent.
+     */
     protected AbstractLifecycleComponent() {}
 
     @Override
@@ -82,6 +88,9 @@ public abstract class AbstractLifecycleComponent implements LifecycleComponent {
         }
     }
 
+    /**
+     * Starts this instance.
+     */
     protected abstract void doStart();
 
     @Override
@@ -101,6 +110,9 @@ public abstract class AbstractLifecycleComponent implements LifecycleComponent {
         }
     }
 
+    /**
+     * Stops this instance.
+     */
     protected abstract void doStop();
 
     @Override
@@ -128,5 +140,10 @@ public abstract class AbstractLifecycleComponent implements LifecycleComponent {
         }
     }
 
+    /**
+     * Closes this instance and releases the resources it holds.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doClose() throws IOException;
 }

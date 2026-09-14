@@ -62,6 +62,14 @@ public class ProfileShardResult implements Writeable {
 
     private NetworkTime networkTime;
 
+    /**
+     * Creates a new ProfileShardResult.
+     *
+     * @param queryProfileResults the query profile results
+     * @param aggProfileShardResult the agg profile shard result
+     * @param fetchProfileResult the fetch profile result
+     * @param networkTime the network time
+     */
     public ProfileShardResult(
         List<QueryProfileShardResult> queryProfileResults,
         AggregationProfileShardResult aggProfileShardResult,
@@ -74,6 +82,12 @@ public class ProfileShardResult implements Writeable {
         this.networkTime = networkTime;
     }
 
+    /**
+     * Creates a new ProfileShardResult by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ProfileShardResult(StreamInput in) throws IOException {
         int profileSize = in.readVInt();
         List<QueryProfileShardResult> queryProfileResults = new ArrayList<>(profileSize);
@@ -104,18 +118,38 @@ public class ProfileShardResult implements Writeable {
         networkTime.writeTo(out);
     }
 
+    /**
+     * Returns the query profile results.
+     *
+     * @return the query profile results
+     */
     public List<QueryProfileShardResult> getQueryProfileResults() {
         return queryProfileResults;
     }
 
+    /**
+     * Returns the aggregation profile results.
+     *
+     * @return the aggregation profile results
+     */
     public AggregationProfileShardResult getAggregationProfileResults() {
         return aggProfileShardResult;
     }
 
+    /**
+     * Returns the fetch profile result.
+     *
+     * @return the fetch profile result
+     */
     public FetchProfileShardResult getFetchProfileResult() {
         return fetchProfileResult;
     }
 
+    /**
+     * Returns the network time.
+     *
+     * @return the network time
+     */
     public NetworkTime getNetworkTime() {
         return networkTime;
     }

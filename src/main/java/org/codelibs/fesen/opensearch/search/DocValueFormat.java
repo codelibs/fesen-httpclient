@@ -69,61 +69,108 @@ import java.util.function.LongSupplier;
  */
 @PublicApi(since = "1.0.0")
 public interface DocValueFormat extends NamedWriteable {
+    /**
+     * The mask 2 63.
+     */
     long MASK_2_63 = 0x8000000000000000L;
+    /**
+     * The biginteger 2 64 minus one.
+     */
     BigInteger BIGINTEGER_2_64_MINUS_ONE = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE); // 2^64 -1
 
     /** Format a long value. This is used by terms and histogram aggregations
      *  to format keys for fields that use longs as a doc value representation
-     *  such as the {@code long} and {@code date} fields. */
+      * such as the {@code long} and {@code date} fields.
+     *
+     * @param value the value
+     * @return this instance
+      */
     default Object format(long value) {
         throw new UnsupportedOperationException();
     }
 
     /** Format a double value. This is used by terms and stats aggregations
      *  to format keys for fields that use numbers as a doc value representation
-     *  such as the {@code long}, {@code double} or {@code date} fields. */
+      * such as the {@code long}, {@code double} or {@code date} fields.
+     *
+     * @param value the value
+     * @return this instance
+      */
     default Object format(double value) {
         throw new UnsupportedOperationException();
     }
 
     /** Format a unsigned long value. This is used by terms and histogram aggregations
      *  to format keys for fields that use unsigned longs as a doc value representation
-     *  such as the {@code unsigned_long} field. */
+      * such as the {@code unsigned_long} field.
+     *
+     * @param value the value
+     * @return this instance
+      */
     default BigInteger format(BigInteger value) {
         throw new UnsupportedOperationException();
     }
 
     /** Format a binary value. This is used by terms aggregations to format
      *  keys for fields that use binary doc value representations such as the
-     *  {@code keyword} and {@code ip} fields. */
+      * {@code keyword} and {@code ip} fields.
+     *
+     * @param value the value
+     * @return this instance
+      */
     default Object format(BytesRef value) {
         throw new UnsupportedOperationException();
     }
 
     /** Parse a value that was formatted with {@link #format(long)} back to the
-     *  original long value. */
+      * original long value.
+     *
+     * @param value the value
+     * @param roundUp the round up
+     * @param now the now
+     * @return this instance
+      */
     default long parseLong(String value, boolean roundUp, LongSupplier now) {
         throw new UnsupportedOperationException();
     }
 
     /** Parse a value that was formatted with {@link #format(long)} back to the
-     *  original unsigned long value. */
+      * original unsigned long value.
+     *
+     * @param value the value
+     * @param roundUp the round up
+     * @param now the now
+     * @return this instance
+      */
     default BigInteger parseUnsignedLong(String value, boolean roundUp, LongSupplier now) {
         throw new UnsupportedOperationException();
     }
 
     /** Parse a value that was formatted with {@link #format(double)} back to
-     *  the original double value. */
+      * the original double value.
+     *
+     * @param value the value
+     * @param roundUp the round up
+     * @param now the now
+     * @return this instance
+      */
     default double parseDouble(String value, boolean roundUp, LongSupplier now) {
         throw new UnsupportedOperationException();
     }
 
     /** Parse a value that was formatted with {@link #format(BytesRef)} back
-     *  to the original BytesRef. */
+      * to the original BytesRef.
+     *
+     * @param value the value
+     * @return this instance
+      */
     default BytesRef parseBytesRef(String value) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * The raw.
+     */
     DocValueFormat RAW = new DocValueFormat() {
 
         @Override
@@ -191,6 +238,9 @@ public interface DocValueFormat extends NamedWriteable {
         }
     };
 
+    /**
+     * The binary.
+     */
     DocValueFormat BINARY = new DocValueFormat() {
 
         @Override
@@ -221,6 +271,9 @@ public interface DocValueFormat extends NamedWriteable {
      */
     final class DateTime implements DocValueFormat {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "date_time";
 
         final DateFormatter formatter;
@@ -228,6 +281,13 @@ public interface DocValueFormat extends NamedWriteable {
         private final DateMathParser parser;
         final DateFieldMapper.Resolution resolution;
 
+        /**
+         * Creates a new DateTime.
+         *
+         * @param formatter the formatter
+         * @param timeZone the time zone
+         * @param resolution the resolution
+         */
         public DateTime(DateFormatter formatter, ZoneId timeZone, DateFieldMapper.Resolution resolution) {
             this.formatter = formatter;
             this.timeZone = Objects.requireNonNull(timeZone);
@@ -235,6 +295,12 @@ public interface DocValueFormat extends NamedWriteable {
             this.resolution = resolution;
         }
 
+        /**
+         * Creates a new DateTime by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public DateTime(StreamInput in) throws IOException {
             if (in.getVersion().onOrAfter(Version.V_2_12_0)) {
                 this.formatter = DateFormatter.forPattern(in.readString(), in.readOptionalString());
@@ -320,6 +386,9 @@ public interface DocValueFormat extends NamedWriteable {
         }
     }
 
+    /**
+     * The geohash.
+     */
     DocValueFormat GEOHASH = new DocValueFormat() {
 
         @Override
@@ -341,6 +410,9 @@ public interface DocValueFormat extends NamedWriteable {
         }
     };
 
+    /**
+     * The geotile.
+     */
     DocValueFormat GEOTILE = new DocValueFormat() {
 
         @Override
@@ -362,6 +434,9 @@ public interface DocValueFormat extends NamedWriteable {
         }
     };
 
+    /**
+     * The boolean.
+     */
     DocValueFormat BOOLEAN = new DocValueFormat() {
 
         @Override
@@ -399,6 +474,9 @@ public interface DocValueFormat extends NamedWriteable {
         }
     };
 
+    /**
+     * The IP.
+     */
     DocValueFormat IP = new DocValueFormat() {
 
         @Override
@@ -434,17 +512,31 @@ public interface DocValueFormat extends NamedWriteable {
      */
     final class Decimal implements DocValueFormat {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "decimal";
         private static final DecimalFormatSymbols SYMBOLS = new DecimalFormatSymbols(Locale.ROOT);
 
         final String pattern;
         private final NumberFormat format;
 
+        /**
+         * Creates a new Decimal.
+         *
+         * @param pattern the pattern
+         */
         public Decimal(String pattern) {
             this.pattern = pattern;
             this.format = new DecimalFormat(pattern, SYMBOLS);
         }
 
+        /**
+         * Creates a new Decimal by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Decimal(StreamInput in) throws IOException {
             this(in.readString());
         }

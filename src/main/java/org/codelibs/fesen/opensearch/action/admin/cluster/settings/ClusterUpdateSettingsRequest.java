@@ -78,6 +78,9 @@ public class ClusterUpdateSettingsRequest extends AcknowledgedRequest<ClusterUpd
     private Settings transientSettings = EMPTY_SETTINGS;
     private Settings persistentSettings = EMPTY_SETTINGS;
 
+    /**
+     * Creates a new ClusterUpdateSettingsRequest.
+     */
     public ClusterUpdateSettingsRequest() {}
 
     @Override
@@ -91,6 +94,9 @@ public class ClusterUpdateSettingsRequest extends AcknowledgedRequest<ClusterUpd
 
     /**
      * Sets the transient settings to be updated. They will not survive a full cluster restart
+     *
+     * @param settings the settings
+     * @return the transient settings
      */
     public ClusterUpdateSettingsRequest transientSettings(Settings settings) {
         this.transientSettings = settings;

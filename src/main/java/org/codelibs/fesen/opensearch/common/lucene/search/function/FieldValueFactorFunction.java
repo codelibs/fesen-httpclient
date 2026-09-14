@@ -60,60 +60,90 @@ public final class FieldValueFactorFunction {
      * @opensearch.internal
      */
     public enum Modifier implements Writeable {
+        /**
+         * The NONE value.
+         */
         NONE {
             @Override
             public double apply(double n) {
                 return n;
             }
         },
+        /**
+         * The LOG value.
+         */
         LOG {
             @Override
             public double apply(double n) {
                 return Math.log10(n);
             }
         },
+        /**
+         * The LOG1P value.
+         */
         LOG1P {
             @Override
             public double apply(double n) {
                 return Math.log10(n + 1);
             }
         },
+        /**
+         * The LOG2P value.
+         */
         LOG2P {
             @Override
             public double apply(double n) {
                 return Math.log10(n + 2);
             }
         },
+        /**
+         * The LN value.
+         */
         LN {
             @Override
             public double apply(double n) {
                 return Math.log(n);
             }
         },
+        /**
+         * The LN1P value.
+         */
         LN1P {
             @Override
             public double apply(double n) {
                 return Math.log1p(n);
             }
         },
+        /**
+         * The LN2P value.
+         */
         LN2P {
             @Override
             public double apply(double n) {
                 return Math.log1p(n + 1);
             }
         },
+        /**
+         * The SQUARE value.
+         */
         SQUARE {
             @Override
             public double apply(double n) {
                 return Math.pow(n, 2);
             }
         },
+        /**
+         * The SQRT value.
+         */
         SQRT {
             @Override
             public double apply(double n) {
                 return Math.sqrt(n);
             }
         },
+        /**
+         * The RECIPROCAL value.
+         */
         RECIPROCAL {
             @Override
             public double apply(double n) {
@@ -121,6 +151,12 @@ public final class FieldValueFactorFunction {
             }
         };
 
+        /**
+         * Applies this instance to the given input.
+         *
+         * @param n the n
+         * @return this instance
+         */
         public abstract double apply(double n);
 
         @Override
@@ -128,6 +164,13 @@ public final class FieldValueFactorFunction {
             out.writeEnum(this);
         }
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static Modifier readFromStream(StreamInput in) throws IOException {
             return in.readEnum(Modifier.class);
         }

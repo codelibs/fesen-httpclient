@@ -57,6 +57,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class ComponentTemplateMetadata implements Metadata.Custom {
+    /**
+     * The TYPE constant.
+     */
     public static final String TYPE = "component_template";
     private static final ParseField COMPONENT_TEMPLATE = new ParseField("component_template");
     @SuppressWarnings("unchecked")
@@ -78,10 +81,20 @@ public class ComponentTemplateMetadata implements Metadata.Custom {
     }
     private final Map<String, ComponentTemplate> componentTemplates;
 
+    /**
+     * Creates a new ComponentTemplateMetadata.
+     *
+     * @param componentTemplates the component templates
+     */
     public ComponentTemplateMetadata(Map<String, ComponentTemplate> componentTemplates) {
         this.componentTemplates = componentTemplates;
     }
 
+    /**
+     * Returns the component templates.
+     *
+     * @return the component templates
+     */
     public Map<String, ComponentTemplate> componentTemplates() {
         return this.componentTemplates;
     }

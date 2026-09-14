@@ -56,6 +56,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geo_distance";
 
     /** Default for distance unit computation. */
@@ -99,6 +102,9 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public GeoDistanceQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -128,7 +134,8 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
 
     /** Sets the center point for the query.
      * @param point the center of the query
-     **/
+     * @return the point
+      */
     public GeoDistanceQueryBuilder point(GeoPoint point) {
         if (point == null) {
             throw new IllegalArgumentException("center point must not be null");
@@ -141,23 +148,39 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
      * Sets the center point of the query.
      * @param lat latitude of center
      * @param lon longitude of center
-     * */
+     * @return the point
+      */
     public GeoDistanceQueryBuilder point(double lat, double lon) {
         this.center = new GeoPoint(lat, lon);
         return this;
     }
 
-    /** Returns the center point of the distance query. */
+    /**
+     * Returns the center point of the distance query.
+     *
+     * @return the point
+     */
     public GeoPoint point() {
         return this.center;
     }
 
-    /** Sets the distance from the center using the default distance unit.*/
+    /**
+     * Sets the distance from the center using the default distance unit.
+     *
+     * @param distance the distance
+     * @return the distance
+     */
     public GeoDistanceQueryBuilder distance(String distance) {
         return distance(distance, DistanceUnit.DEFAULT);
     }
 
-    /** Sets the distance from the center for this query. */
+    /**
+     * Sets the distance from the center for this query.
+     *
+     * @param distance the distance
+     * @param unit the unit
+     * @return the distance
+     */
     public GeoDistanceQueryBuilder distance(String distance, DistanceUnit unit) {
         if (Strings.isEmpty(distance)) {
             throw new IllegalArgumentException("distance must not be null or empty");
@@ -173,17 +196,32 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
         return this;
     }
 
-    /** Sets the distance from the center for this query. */
+    /**
+     * Sets the distance from the center for this query.
+     *
+     * @param distance the distance
+     * @param unit the unit
+     * @return the distance
+     */
     public GeoDistanceQueryBuilder distance(double distance, DistanceUnit unit) {
         return distance(Double.toString(distance), unit);
     }
 
-    /** Returns the distance configured as radius. */
+    /**
+     * Returns the distance configured as radius.
+     *
+     * @return the distance
+     */
     public double distance() {
         return distance;
     }
 
-    /** Sets the center point for this query. */
+    /**
+     * Sets the center point for this query.
+     *
+     * @param geohash the geohash
+     * @return the geohash
+     */
     public GeoDistanceQueryBuilder geohash(String geohash) {
         if (Strings.isEmpty(geohash)) {
             throw new IllegalArgumentException("geohash must not be null or empty");
@@ -192,7 +230,12 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
         return this;
     }
 
-    /** Which type of geo distance calculation method to use. */
+    /**
+     * Which type of geo distance calculation method to use.
+     *
+     * @param geoDistance the geo distance
+     * @return the geo distance
+     */
     public GeoDistanceQueryBuilder geoDistance(GeoDistance geoDistance) {
         if (geoDistance == null) {
             throw new IllegalArgumentException("geoDistance must not be null");
@@ -201,17 +244,29 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
         return this;
     }
 
-    /** Returns geo distance calculation type to use. */
+    /**
+     * Returns geo distance calculation type to use.
+     *
+     * @return the geo distance
+     */
     public GeoDistance geoDistance() {
         return this.geoDistance;
     }
 
-    /** Set validation method for geo coordinates. */
+    /**
+     * Set validation method for geo coordinates.
+     *
+     * @param method the method
+     */
     public void setValidationMethod(GeoValidationMethod method) {
         this.validationMethod = method;
     }
 
-    /** Returns validation method for geo coordinates. */
+    /**
+     * Returns validation method for geo coordinates.
+     *
+     * @return the validation method
+     */
     public GeoValidationMethod getValidationMethod() {
         return this.validationMethod;
     }
@@ -220,6 +275,9 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
      * Sets whether the query builder should ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @param ignoreUnmapped the ignore unmapped
+     * @return the ignore unmapped
      */
     public GeoDistanceQueryBuilder ignoreUnmapped(boolean ignoreUnmapped) {
         this.ignoreUnmapped = ignoreUnmapped;
@@ -230,6 +288,8 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
      * Gets whether the query builder will ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @return the ignore unmapped
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
@@ -247,6 +307,13 @@ public class GeoDistanceQueryBuilder extends AbstractQueryBuilder<GeoDistanceQue
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoDistanceQueryBuilder fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
 

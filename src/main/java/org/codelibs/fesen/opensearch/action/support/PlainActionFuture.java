@@ -37,10 +37,22 @@ import org.codelibs.fesen.opensearch.common.CheckedConsumer;
 /**
  * Creates a new future for a plain action.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public class PlainActionFuture<T> extends AdapterActionFuture<T, T> {
+    /**
+     * Creates a new PlainActionFuture.
+     */
+    public PlainActionFuture() {
+    }
 
+    /**
+     * Creates a new future.
+     *
+     * @param <T> the element type
+     * @return the new future
+     */
     public static <T> PlainActionFuture<T> newFuture() {
         return new PlainActionFuture<>();
     }

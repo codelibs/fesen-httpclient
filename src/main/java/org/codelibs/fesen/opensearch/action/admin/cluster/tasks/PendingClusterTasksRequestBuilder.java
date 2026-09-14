@@ -47,6 +47,12 @@ public class PendingClusterTasksRequestBuilder extends ClusterManagerNodeReadOpe
     PendingClusterTasksResponse,
     PendingClusterTasksRequestBuilder> {
 
+    /**
+     * Creates a new PendingClusterTasksRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public PendingClusterTasksRequestBuilder(OpenSearchClient client, PendingClusterTasksAction action) {
         super(client, action, new PendingClusterTasksRequest());
     }

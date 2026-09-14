@@ -55,6 +55,12 @@ public class OsInfo implements ReportingService.Info {
     private final String arch;
     private final String version;
 
+    /**
+     * Creates a new OsInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public OsInfo(StreamInput in) throws IOException {
         this.refreshInterval = in.readLong();
         this.availableProcessors = in.readInt();
@@ -76,18 +82,38 @@ public class OsInfo implements ReportingService.Info {
         out.writeOptionalString(version);
     }
 
+    /**
+     * Returns the available processors.
+     *
+     * @return the available processors
+     */
     public int getAvailableProcessors() {
         return this.availableProcessors;
     }
 
+    /**
+     * Returns the allocated processors.
+     *
+     * @return the allocated processors
+     */
     public int getAllocatedProcessors() {
         return this.allocatedProcessors;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the pretty name.
+     *
+     * @return the pretty name
+     */
     public String getPrettyName() {
         return prettyName;
     }

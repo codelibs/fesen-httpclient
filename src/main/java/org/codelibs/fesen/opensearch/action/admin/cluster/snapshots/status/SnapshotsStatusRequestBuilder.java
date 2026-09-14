@@ -50,6 +50,9 @@ public class SnapshotsStatusRequestBuilder extends ClusterManagerNodeOperationRe
 
     /**
      * Constructs the new snapshot status request
+     *
+     * @param client the client
+     * @param action the action
      */
     public SnapshotsStatusRequestBuilder(OpenSearchClient client, SnapshotsStatusAction action) {
         super(client, action, new SnapshotsStatusRequest());
@@ -57,6 +60,10 @@ public class SnapshotsStatusRequestBuilder extends ClusterManagerNodeOperationRe
 
     /**
      * Constructs the new snapshot status request with specified repository
+     *
+     * @param client the client
+     * @param action the action
+     * @param repository the repository
      */
     public SnapshotsStatusRequestBuilder(OpenSearchClient client, SnapshotsStatusAction action, String repository) {
         super(client, action, new SnapshotsStatusRequest(repository));

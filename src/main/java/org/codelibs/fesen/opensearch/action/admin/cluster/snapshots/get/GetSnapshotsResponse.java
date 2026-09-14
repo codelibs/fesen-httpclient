@@ -76,6 +76,11 @@ public class GetSnapshotsResponse extends ActionResponse implements ToXContentOb
 
     private final List<SnapshotInfo> snapshots;
 
+    /**
+     * Creates a new GetSnapshotsResponse.
+     *
+     * @param snapshots the snapshots
+     */
     public GetSnapshotsResponse(List<SnapshotInfo> snapshots) {
         this.snapshots = Collections.unmodifiableList(snapshots);
     }
@@ -111,6 +116,13 @@ public class GetSnapshotsResponse extends ActionResponse implements ToXContentOb
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GetSnapshotsResponse fromXContent(XContentParser parser) throws IOException {
         return GET_SNAPSHOT_PARSER.parse(parser, null);
     }

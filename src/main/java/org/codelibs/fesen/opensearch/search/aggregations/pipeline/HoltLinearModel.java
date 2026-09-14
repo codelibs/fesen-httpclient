@@ -49,6 +49,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class HoltLinearModel extends MovAvgModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "holt";
 
     private static final double DEFAULT_ALPHA = 0.3;
@@ -70,10 +73,19 @@ public class HoltLinearModel extends MovAvgModel {
      */
     private final double beta;
 
+    /**
+     * Creates a new HoltLinearModel.
+     */
     public HoltLinearModel() {
         this(DEFAULT_ALPHA, DEFAULT_BETA);
     }
 
+    /**
+     * Creates a new HoltLinearModel.
+     *
+     * @param alpha the alpha
+     * @param beta the beta
+     */
     public HoltLinearModel(double alpha, double beta) {
         this.alpha = alpha;
         this.beta = beta;
@@ -159,6 +171,9 @@ public class HoltLinearModel extends MovAvgModel {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final AbstractModelParser PARSER = new AbstractModelParser() {
         @Override
         public MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize) throws ParseException {
@@ -193,6 +208,12 @@ public class HoltLinearModel extends MovAvgModel {
      * @opensearch.internal
      */
     public static class HoltLinearModelBuilder implements MovAvgModelBuilder {
+        /**
+         * Creates a new HoltLinearModelBuilder.
+         */
+        public HoltLinearModelBuilder() {
+        }
+
         private double alpha = DEFAULT_ALPHA;
         private double beta = DEFAULT_BETA;
 

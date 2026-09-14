@@ -108,11 +108,16 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     private boolean writeIndexOnly;
 
+    /**
+     * Creates a new PutMappingRequest.
+     */
     public PutMappingRequest() {}
 
     /**
      * Constructs a new put mapping request against one or more indices. If nothing is set then
      * it will be executed against all indices.
+     *
+     * @param indices the indices
      */
     public PutMappingRequest(String... indices) {
         this.indices = indices;
@@ -167,12 +172,16 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     /**
      * The mapping source definition.
+     *
+     * @return the source
      */
     public String source() {
         return source;
     }
 
     /**
+     * Returns the simple mapping.
+     *
      * @param source
      *            consisting of field/properties pairs (e.g. "field1",
      *            "type=string,store=true")
@@ -232,6 +241,9 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     /**
      * The mapping source definition.
+     *
+     * @param mappingBuilder the mapping builder
+     * @return the source
      */
     public PutMappingRequest source(XContentBuilder mappingBuilder) {
         return source(BytesReference.bytes(mappingBuilder), mappingBuilder.contentType());
@@ -239,6 +251,10 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     /**
      * The mapping source definition.
+     *
+     * @param mappingSource the mapping source
+     * @param mediaType the media type
+     * @return the source
      */
     public PutMappingRequest source(String mappingSource, MediaType mediaType) {
         return source(new BytesArray(mappingSource), mediaType);
@@ -246,6 +262,10 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
 
     /**
      * The mapping source definition.
+     *
+     * @param mappingSource the mapping source
+     * @param mediaType the media type
+     * @return the source
      */
     public PutMappingRequest source(BytesReference mappingSource, MediaType mediaType) {
         Objects.requireNonNull(mediaType);
@@ -257,11 +277,22 @@ public class PutMappingRequest extends AcknowledgedRequest<PutMappingRequest> im
         }
     }
 
+    /**
+     * Writes the index only.
+     *
+     * @param writeIndexOnly the write index only
+     * @return this instance
+     */
     public PutMappingRequest writeIndexOnly(boolean writeIndexOnly) {
         this.writeIndexOnly = writeIndexOnly;
         return this;
     }
 
+    /**
+     * Writes the index only.
+     *
+     * @return this instance
+     */
     public boolean writeIndexOnly() {
         return writeIndexOnly;
     }

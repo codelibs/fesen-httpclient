@@ -61,6 +61,12 @@ import static java.util.stream.Collectors.toList;
  * @opensearch.internal
  */
 public abstract class InternalOrder extends BucketOrder {
+    /**
+     * Creates a new InternalOrder.
+     */
+    public InternalOrder() {
+    }
+
     // TODO merge the contents of this file into BucketOrder. The way it is now is relic.
     /**
      * {@link Bucket} ordering strategy to sort by a sub-aggregation.
@@ -84,6 +90,11 @@ public abstract class InternalOrder extends BucketOrder {
             this.path = AggregationPath.parse(path);
         }
 
+        /**
+         * Returns the path.
+         *
+         * @return the path
+         */
         public AggregationPath path() {
             return path;
         }
@@ -366,6 +377,11 @@ public abstract class InternalOrder extends BucketOrder {
      * @opensearch.internal
      */
     public static class Streams {
+        /**
+         * Creates a new Streams.
+         */
+        public Streams() {
+        }
 
         /**
          * Read a {@link BucketOrder} from a {@link StreamInput}.
@@ -454,6 +470,11 @@ public abstract class InternalOrder extends BucketOrder {
      * @opensearch.internal
      */
     public static class Parser {
+        /**
+         * Creates a new Parser.
+         */
+        public Parser() {
+        }
 
         private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(Parser.class);
 
@@ -490,6 +511,13 @@ public abstract class InternalOrder extends BucketOrder {
             return resolveOrderParam(orderKey, orderAsc);
         }
 
+        /**
+         * Resolves the order param.
+         *
+         * @param orderKey the order key
+         * @param orderAsc the order asc
+         * @return the order param
+         */
         public static BucketOrder resolveOrderParam(String orderKey, boolean orderAsc) {
             // _term and _time order deprecated in 6.0; replaced by _key
             if ("_term".equals(orderKey) || "_time".equals(orderKey)) {

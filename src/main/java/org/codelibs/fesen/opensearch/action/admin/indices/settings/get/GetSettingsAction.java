@@ -41,9 +41,18 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetSettingsAction extends ActionType<GetSettingsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetSettingsAction INSTANCE = new GetSettingsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/settings/get";
 
+    /**
+     * Creates a new GetSettingsAction.
+     */
     public GetSettingsAction() {
         super(NAME, GetSettingsResponse::new);
     }

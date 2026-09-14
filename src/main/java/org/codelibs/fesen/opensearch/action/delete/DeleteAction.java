@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class DeleteAction extends ActionType<DeleteResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteAction INSTANCE = new DeleteAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/write/delete";
 
     private DeleteAction() {

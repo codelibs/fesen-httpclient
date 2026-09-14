@@ -91,8 +91,20 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         long fileCacheReserved = -1;
         long fileCacheUtilized = 0;
 
+        /**
+         * Creates a new Path.
+         */
         public Path() {}
 
+        /**
+         * Creates a new Path.
+         *
+         * @param path the path
+         * @param mount the mount
+         * @param total the total
+         * @param free the free
+         * @param available the available
+         */
         public Path(String path, @Nullable String mount, long total, long free, long available) {
             this.path = path;
             this.mount = mount;
@@ -103,6 +115,9 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public Path(StreamInput in) throws IOException {
             path = in.readOptionalString();
@@ -131,22 +146,47 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             }
         }
 
+        /**
+         * Returns the total.
+         *
+         * @return the total
+         */
         public ByteSizeValue getTotal() {
             return new ByteSizeValue(total);
         }
 
+        /**
+         * Returns the free.
+         *
+         * @return the free
+         */
         public ByteSizeValue getFree() {
             return new ByteSizeValue(free);
         }
 
+        /**
+         * Returns the available.
+         *
+         * @return the available
+         */
         public ByteSizeValue getAvailable() {
             return new ByteSizeValue(available);
         }
 
+        /**
+         * Returns the file cache reserved.
+         *
+         * @return the file cache reserved
+         */
         public ByteSizeValue getFileCacheReserved() {
             return new ByteSizeValue(fileCacheReserved);
         }
 
+        /**
+         * Returns the file cache utilized.
+         *
+         * @return the file cache utilized
+         */
         public ByteSizeValue getFileCacheUtilized() {
             return new ByteSizeValue(fileCacheUtilized);
         }
@@ -164,6 +204,11 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             return current + other;
         }
 
+        /**
+         * Adds this instance.
+         *
+         * @param path the path
+         */
         public void add(Path path) {
             total = adjustForHugeFilesystems(addLong(total, path.total));
             free = adjustForHugeFilesystems(addLong(free, path.free));
@@ -324,6 +369,12 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             this.previousIOTime = previousIOTime;
         }
 
+        /**
+         * Creates a new DeviceStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public DeviceStats(StreamInput in) throws IOException {
             majorDeviceNumber = in.readVInt();
             minorDeviceNumber = in.readVInt();
@@ -382,30 +433,55 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             }
         }
 
+        /**
+         * Returns the operations.
+         *
+         * @return the operations
+         */
         public long operations() {
             if (previousReadsCompleted == -1 || previousWritesCompleted == -1) return -1;
 
             return (currentReadsCompleted - previousReadsCompleted) + (currentWritesCompleted - previousWritesCompleted);
         }
 
+        /**
+         * Reads the operations.
+         *
+         * @return the operations
+         */
         public long readOperations() {
             if (previousReadsCompleted == -1) return -1;
 
             return (currentReadsCompleted - previousReadsCompleted);
         }
 
+        /**
+         * Writes the operations.
+         *
+         * @return this instance
+         */
         public long writeOperations() {
             if (previousWritesCompleted == -1) return -1;
 
             return (currentWritesCompleted - previousWritesCompleted);
         }
 
+        /**
+         * Reads the kilobytes.
+         *
+         * @return the kilobytes
+         */
         public long readKilobytes() {
             if (previousSectorsRead == -1) return -1;
 
             return (currentSectorsRead - previousSectorsRead) / 2;
         }
 
+        /**
+         * Writes the kilobytes.
+         *
+         * @return this instance
+         */
         public long writeKilobytes() {
             if (previousSectorsWritten == -1) return -1;
 
@@ -414,6 +490,8 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
 
         /**
          * Total time taken for all read operations
+         *
+         * @return the time
          */
         public long readTime() {
             if (previousReadTime == -1) return -1;
@@ -422,6 +500,8 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
 
         /**
          * Total time taken for all write operations
+         *
+         * @return this instance
          */
         public long writeTime() {
             if (previousWriteTime == -1) return -1;
@@ -430,6 +510,8 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
 
         /**
          * Queue size based on weighted time spent doing I/Os
+         *
+         * @return the queue size
          */
         public long queueSize() {
             if (previousQueueSize == -1) return -1;
@@ -438,6 +520,8 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
 
         /**
          * Total time spent doing I/Os
+         *
+         * @return the I/O time in milliseconds
          */
         public long ioTimeInMillis() {
             if (previousIOTime == -1) return -1;
@@ -445,6 +529,11 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             return (currentIOTime - previousIOTime);
         }
 
+        /**
+         * Returns the device name.
+         *
+         * @return the device name
+         */
         public String getDeviceName() {
             return deviceName;
         }
@@ -474,63 +563,138 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
             private long currentIOTime = 0;
             private long previousIOTime = 0;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Returns the major device number.
+             *
+             * @param number the number
+             * @return the major device number
+             */
             public Builder majorDeviceNumber(int number) {
                 this.majorDeviceNumber = number;
                 return this;
             }
 
+            /**
+             * Returns the minor device number.
+             *
+             * @param number the number
+             * @return the minor device number
+             */
             public Builder minorDeviceNumber(int number) {
                 this.minorDeviceNumber = number;
                 return this;
             }
 
+            /**
+             * Returns the device name.
+             *
+             * @param name the name
+             * @return the device name
+             */
             public Builder deviceName(String name) {
                 this.deviceName = name;
                 return this;
             }
 
+            /**
+             * Returns the current reads completed.
+             *
+             * @param completed the completed
+             * @return the current reads completed
+             */
             public Builder currentReadsCompleted(long completed) {
                 this.currentReadsCompleted = completed;
                 return this;
             }
 
+            /**
+             * Returns the current sectors read.
+             *
+             * @param read the read
+             * @return the current sectors read
+             */
             public Builder currentSectorsRead(long read) {
                 this.currentSectorsRead = read;
                 return this;
             }
 
+            /**
+             * Returns the current writes completed.
+             *
+             * @param completed the completed
+             * @return the current writes completed
+             */
             public Builder currentWritesCompleted(long completed) {
                 this.currentWritesCompleted = completed;
                 return this;
             }
 
+            /**
+             * Returns the current sectors written.
+             *
+             * @param written the written
+             * @return the current sectors written
+             */
             public Builder currentSectorsWritten(long written) {
                 this.currentSectorsWritten = written;
                 return this;
             }
 
+            /**
+             * Returns the current read time.
+             *
+             * @param time the time
+             * @return the current read time
+             */
             public Builder currentReadTime(long time) {
                 this.currentReadTime = time;
                 return this;
             }
 
+            /**
+             * Returns the current write time.
+             *
+             * @param time the time
+             * @return the current write time
+             */
             public Builder currentWriteTime(long time) {
                 this.currentWriteTime = time;
                 return this;
             }
 
+            /**
+             * Returns the current queue size.
+             *
+             * @param size the size
+             * @return the current queue size
+             */
             public Builder currentQueueSize(long size) {
                 this.currentQueueSize = size;
                 return this;
             }
 
+            /**
+             * Returns the current I/O time.
+             *
+             * @param time the time
+             * @return the current I/O time
+             */
             public Builder currentIOTime(long time) {
                 this.currentIOTime = time;
                 return this;
             }
 
+            /**
+             * Returns the previous device stats.
+             *
+             * @param deviceStats the device stats
+             * @return the previous device stats
+             */
             public Builder previousDeviceStats(DeviceStats deviceStats) {
                 this.previousReadsCompleted = (deviceStats != null) ? deviceStats.currentReadsCompleted : -1;
                 this.previousWritesCompleted = (deviceStats != null) ? deviceStats.currentWritesCompleted : -1;
@@ -597,6 +761,12 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         final long totalQueueSize;
         final long totalIOTimeInMillis;
 
+        /**
+         * Creates a new IoStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public IoStats(StreamInput in) throws IOException {
             final int length = in.readVInt();
             final DeviceStats[] devicesStats = new DeviceStats[length];
@@ -674,6 +844,13 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
     private final IoStats ioStats;
     private final Path total;
 
+    /**
+     * Creates a new FsInfo.
+     *
+     * @param timestamp the timestamp
+     * @param ioStats the I/O stats
+     * @param paths the paths
+     */
     public FsInfo(long timestamp, IoStats ioStats, Path[] paths) {
         this.timestamp = timestamp;
         this.ioStats = ioStats;
@@ -683,6 +860,9 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public FsInfo(StreamInput in) throws IOException {
         timestamp = in.readVLong();
@@ -704,6 +884,11 @@ public class FsInfo implements Iterable<FsInfo.Path>, Writeable, ToXContentFragm
         }
     }
 
+    /**
+     * Returns the total.
+     *
+     * @return the total
+     */
     public Path getTotal() {
         return total;
     }

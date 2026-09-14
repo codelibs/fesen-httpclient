@@ -49,10 +49,19 @@ public class ShardIngestionState implements Writeable, ToXContentFragment {
     private boolean isPrimary;
     private String nodeName;
 
+    /**
+     * Creates a new ShardIngestionState.
+     */
     public ShardIngestionState() {
         this("", -1, "", "", false, false, "", true, "");
     }
 
+    /**
+     * Creates a new ShardIngestionState by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardIngestionState(StreamInput in) throws IOException {
         this.index = in.readString();
         this.shardId = in.readVInt();
@@ -72,6 +81,19 @@ public class ShardIngestionState implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Creates a new ShardIngestionState.
+     *
+     * @param index the index
+     * @param shardId the shard identifier
+     * @param pollerState the poller state
+     * @param errorPolicy the error policy
+     * @param isPollerPaused the is poller paused
+     * @param isWriteBlockEnabled the is write block enabled
+     * @param batchStartPointer the batch start pointer
+     * @param isPrimary the is primary
+     * @param nodeName the node name
+     */
     public ShardIngestionState(
         String index,
         int shardId,
@@ -128,6 +150,9 @@ public class ShardIngestionState implements Writeable, ToXContentFragment {
 
     /**
      * Groups list of ShardIngestionStates by the index name.
+     *
+     * @param shardIngestionStates the shard ingestion states
+     * @return the group shard state by index
      */
     public static Map<String, List<ShardIngestionState>> groupShardStateByIndex(ShardIngestionState[] shardIngestionStates) {
         Map<String, List<ShardIngestionState>> shardIngestionStatesByIndex = new HashMap<>();
@@ -140,38 +165,83 @@ public class ShardIngestionState implements Writeable, ToXContentFragment {
         return shardIngestionStatesByIndex;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return index;
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public int getShardId() {
         return shardId;
     }
 
+    /**
+     * Returns the poller state.
+     *
+     * @return the poller state
+     */
     public String getPollerState() {
         return pollerState;
     }
 
+    /**
+     * Returns the error policy.
+     *
+     * @return the error policy
+     */
     public String getErrorPolicy() {
         return errorPolicy;
     }
 
+    /**
+     * Returns the poller paused flag.
+     *
+     * @return the poller paused flag
+     */
     public boolean isPollerPaused() {
         return isPollerPaused;
     }
 
+    /**
+     * Returns the write block enabled flag.
+     *
+     * @return the write block enabled flag
+     */
     public boolean isWriteBlockEnabled() {
         return isWriteBlockEnabled;
     }
 
+    /**
+     * Returns the batch start pointer.
+     *
+     * @return the batch start pointer
+     */
     public String getBatchStartPointer() {
         return batchStartPointer;
     }
 
+    /**
+     * Returns the primary flag.
+     *
+     * @return the primary flag
+     */
     public boolean isPrimary() {
         return isPrimary;
     }
 
+    /**
+     * Returns the node name.
+     *
+     * @return the node name
+     */
     public String getNodeName() {
         return nodeName;
     }

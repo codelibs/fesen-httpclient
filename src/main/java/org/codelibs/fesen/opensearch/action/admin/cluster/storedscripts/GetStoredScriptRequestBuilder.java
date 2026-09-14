@@ -47,10 +47,22 @@ public class GetStoredScriptRequestBuilder extends ClusterManagerNodeReadOperati
     GetStoredScriptResponse,
     GetStoredScriptRequestBuilder> {
 
+    /**
+     * Creates a new GetStoredScriptRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public GetStoredScriptRequestBuilder(OpenSearchClient client, GetStoredScriptAction action) {
         super(client, action, new GetStoredScriptRequest());
     }
 
+    /**
+     * Sets the identifier.
+     *
+     * @param id the identifier
+     * @return this instance
+     */
     public GetStoredScriptRequestBuilder setId(String id) {
         request.id(id);
         return this;

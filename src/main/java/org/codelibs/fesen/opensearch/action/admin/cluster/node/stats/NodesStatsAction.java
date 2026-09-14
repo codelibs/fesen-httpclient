@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class NodesStatsAction extends ActionType<NodesStatsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final NodesStatsAction INSTANCE = new NodesStatsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/nodes/stats";
 
     private NodesStatsAction() {

@@ -54,6 +54,9 @@ public class DeleteRepositoryRequest extends AcknowledgedRequest<DeleteRepositor
 
     private String name;
 
+    /**
+     * Creates a new DeleteRepositoryRequest.
+     */
     public DeleteRepositoryRequest() {}
 
     /**

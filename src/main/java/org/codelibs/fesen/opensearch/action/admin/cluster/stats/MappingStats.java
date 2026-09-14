@@ -66,6 +66,9 @@ public final class MappingStats implements ToXContentFragment, Writeable {
 
     /**
      * Create {@link MappingStats} from the given cluster state.
+     *
+     * @param state the state
+     * @return the new instance
      */
     public static MappingStats of(ClusterState state) {
         Map<String, IndexFeatureStats> fieldTypes = new HashMap<>();

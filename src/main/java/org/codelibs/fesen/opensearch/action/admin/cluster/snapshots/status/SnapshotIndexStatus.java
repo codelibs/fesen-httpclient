@@ -81,6 +81,14 @@ public class SnapshotIndexStatus implements Iterable<SnapshotIndexShardStatus>, 
         this.indexShards = unmodifiableMap(indexShards);
     }
 
+    /**
+     * Creates a new SnapshotIndexStatus.
+     *
+     * @param index the index
+     * @param indexShards the index shards
+     * @param shardsStats the shards stats
+     * @param stats the stats
+     */
     public SnapshotIndexStatus(
         String index,
         Map<Integer, SnapshotIndexShardStatus> indexShards,
@@ -95,6 +103,8 @@ public class SnapshotIndexStatus implements Iterable<SnapshotIndexShardStatus>, 
 
     /**
      * Returns the index name
+     *
+     * @return the index
      */
     public String getIndex() {
         return this.index;
@@ -102,6 +112,8 @@ public class SnapshotIndexStatus implements Iterable<SnapshotIndexShardStatus>, 
 
     /**
      * A shard id to index snapshot shard status map
+     *
+     * @return the shards
      */
     public Map<Integer, SnapshotIndexShardStatus> getShards() {
         return this.indexShards;

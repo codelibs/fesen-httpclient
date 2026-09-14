@@ -111,9 +111,21 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
      */
     @PublicApi(since = "1.0.0")
     public static class Failure implements Writeable, ToXContentFragment {
+        /**
+         * The INDEX_FIELD constant.
+         */
         public static final String INDEX_FIELD = "index";
+        /**
+         * The ID_FIELD constant.
+         */
         public static final String ID_FIELD = "id";
+        /**
+         * The CAUSE_FIELD constant.
+         */
         public static final String CAUSE_FIELD = "cause";
+        /**
+         * The STATUS_FIELD constant.
+         */
         public static final String STATUS_FIELD = "status";
 
         private final String index;
@@ -130,10 +142,22 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
          */
         @PublicApi(since = "3.0.0")
         public enum FailureSource {
+            /**
+             * The UNKNOWN value.
+             */
             UNKNOWN((byte) 0),
             // Pipeline execution failure
+            /**
+             * The PIPELINE value.
+             */
             PIPELINE((byte) 1),
+            /**
+             * The VALIDATION value.
+             */
             VALIDATION((byte) 2),
+            /**
+             * The WRITE_PROCESSING value.
+             */
             WRITE_PROCESSING((byte) 3);
 
             private final byte sourceType;
@@ -142,10 +166,21 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
                 this.sourceType = sourceType;
             }
 
+            /**
+             * Returns the source type.
+             *
+             * @return the source type
+             */
             public byte getSourceType() {
                 return sourceType;
             }
 
+            /**
+             * Creates an instance from source type.
+             *
+             * @param sourceType the source type
+             * @return the new source type
+             */
             public static FailureSource fromSourceType(byte sourceType) {
                 return switch (sourceType) {
                     case 0 -> UNKNOWN;
@@ -157,6 +192,9 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
             }
         }
 
+        /**
+         * The PARSER constant.
+         */
         public static final ConstructingObjectParser<Failure, Void> PARSER = new ConstructingObjectParser<>(
             "bulk_failures",
             true,
@@ -169,6 +207,14 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
             PARSER.declareInt(constructorArg(), new ParseField(STATUS_FIELD));
         }
 
+        /**
+         * Creates a new Failure.
+         *
+         * @param index the index
+         * @param id the identifier
+         * @param cause the cause
+         * @param status the status
+         */
         public Failure(String index, String id, Exception cause, RestStatus status) {
             this(
                 index,
@@ -204,6 +250,9 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public Failure(StreamInput in) throws IOException {
             index = in.readString();
@@ -243,6 +292,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
         /**
          * The index name of the action.
+         *
+         * @return the index
          */
         public String getIndex() {
             return this.index;
@@ -250,6 +301,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
         /**
          * The id of the action.
+         *
+         * @return the identifier
          */
         public String getId() {
             return id;
@@ -257,6 +310,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
         /**
          * The failure message.
+         *
+         * @return the message
          */
         public String getMessage() {
             return this.cause.toString();
@@ -264,6 +319,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
         /**
          * The rest status.
+         *
+         * @return the status
          */
         public RestStatus getStatus() {
             return this.status;
@@ -271,6 +328,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
         /**
          * The actual cause of the failure.
+         *
+         * @return the cause
          */
         public Exception getCause() {
             return cause;
@@ -325,12 +384,26 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
         }
     }
 
+    /**
+     * Creates a new BulkItemResponse.
+     *
+     * @param id the identifier
+     * @param opType the op type
+     * @param response the response
+     */
     public BulkItemResponse(int id, OpType opType, DocWriteResponse response) {
         this.id = id;
         this.response = response;
         this.opType = opType;
     }
 
+    /**
+     * Creates a new BulkItemResponse.
+     *
+     * @param id the identifier
+     * @param opType the op type
+     * @param failure the failure
+     */
     public BulkItemResponse(int id, OpType opType, Failure failure) {
         this.id = id;
         this.opType = opType;
@@ -339,6 +412,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
     /**
      * The index name of the action.
+     *
+     * @return the index
      */
     public String getIndex() {
         if (failure != null) {
@@ -349,6 +424,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
     /**
      * The id of the action.
+     *
+     * @return the identifier
      */
     public String getId() {
         if (failure != null) {
@@ -359,6 +436,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
     /**
      * Is this a failed execution of an operation.
+     *
+     * @return the failed flag
      */
     public boolean isFailed() {
         return failure != null;
@@ -366,6 +445,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
     /**
      * The failure message, {@code null} if it did not fail.
+     *
+     * @return the failure message
      */
     public String getFailureMessage() {
         if (failure != null) {
@@ -376,6 +457,8 @@ public class BulkItemResponse implements Writeable, StatusToXContentObject {
 
     /**
      * The actual failure object if there was a failure.
+     *
+     * @return the failure
      */
     public Failure getFailure() {
         return this.failure;

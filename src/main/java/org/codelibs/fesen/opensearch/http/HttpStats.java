@@ -65,6 +65,9 @@ public class HttpStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param serverOpen the server open
+     * @param totalOpened the total opened
      */
     @Deprecated
     public HttpStats(long serverOpen, long totalOpened) {
@@ -72,6 +75,12 @@ public class HttpStats implements Writeable, ToXContentFragment {
         this.totalOpen = totalOpened;
     }
 
+    /**
+     * Creates a new HttpStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public HttpStats(StreamInput in) throws IOException {
         serverOpen = in.readVLong();
         totalOpen = in.readVLong();
@@ -97,13 +106,28 @@ public class HttpStats implements Writeable, ToXContentFragment {
         private long serverOpen = 0;
         private long totalOpen = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the server open.
+         *
+         * @param serverOpen the server open
+         * @return the server open
+         */
         public Builder serverOpen(long serverOpen) {
             this.serverOpen = serverOpen;
             return this;
         }
 
+        /**
+         * Returns the total open.
+         *
+         * @param totalOpen the total open
+         * @return the total open
+         */
         public Builder totalOpen(long totalOpen) {
             this.totalOpen = totalOpen;
             return this;

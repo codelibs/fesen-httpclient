@@ -63,12 +63,24 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public class ReplicationResponse extends ActionResponse {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final ReplicationResponse.ShardInfo.Failure[] EMPTY = new ReplicationResponse.ShardInfo.Failure[0];
 
     private ShardInfo shardInfo;
 
+    /**
+     * Creates a new ReplicationResponse.
+     */
     public ReplicationResponse() {}
 
+    /**
+     * Creates a new ReplicationResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ReplicationResponse(StreamInput in) throws IOException {
         super(in);
         shardInfo = new ReplicationResponse.ShardInfo(in);
@@ -79,10 +91,20 @@ public class ReplicationResponse extends ActionResponse {
         shardInfo.writeTo(out);
     }
 
+    /**
+     * Returns the shard info.
+     *
+     * @return the shard info
+     */
     public ShardInfo getShardInfo() {
         return shardInfo;
     }
 
+    /**
+     * Sets the shard info.
+     *
+     * @param shardInfo the shard info
+     */
     public void setShardInfo(ShardInfo shardInfo) {
         this.shardInfo = shardInfo;
     }
@@ -104,8 +126,17 @@ public class ReplicationResponse extends ActionResponse {
         private int successful;
         private Failure[] failures = EMPTY;
 
+        /**
+         * Creates a new ShardInfo.
+         */
         public ShardInfo() {}
 
+        /**
+         * Creates a new ShardInfo by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public ShardInfo(StreamInput in) throws IOException {
             total = in.readVInt();
             successful = in.readVInt();
@@ -118,6 +149,13 @@ public class ReplicationResponse extends ActionResponse {
             }
         }
 
+        /**
+         * Creates a new ShardInfo.
+         *
+         * @param total the total
+         * @param successful the successful
+         * @param failures the failures
+         */
         public ShardInfo(int total, int successful, Failure... failures) {
             assert total >= 0 && successful >= 0;
             this.total = total;
@@ -126,12 +164,19 @@ public class ReplicationResponse extends ActionResponse {
         }
 
         /**
+         * Returns the failed.
+         *
          * @return The total number of replication failures.
          */
         public int getFailed() {
             return failures.length;
         }
 
+        /**
+         * Returns the status.
+         *
+         * @return the status
+         */
         public RestStatus status() {
             RestStatus status = RestStatus.OK;
             for (Failure failure : failures) {
@@ -169,6 +214,13 @@ public class ReplicationResponse extends ActionResponse {
             return builder;
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static ShardInfo fromXContent(XContentParser parser) throws IOException {
             XContentParser.Token token = parser.currentToken();
             ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
@@ -231,6 +283,12 @@ public class ReplicationResponse extends ActionResponse {
             private final String nodeId;
             private final boolean primary;
 
+            /**
+             * Creates a new Failure by reading it from the given input.
+             *
+             * @param in the input to read from
+             * @throws IOException if an I/O error occurs
+             */
             public Failure(StreamInput in) throws IOException {
                 shardId = new ShardId(in);
                 super.shardId = shardId.getId();
@@ -241,6 +299,15 @@ public class ReplicationResponse extends ActionResponse {
                 primary = in.readBoolean();
             }
 
+            /**
+             * Creates a new Failure.
+             *
+             * @param shardId the shard identifier
+             * @param nodeId the node identifier
+             * @param cause the cause
+             * @param status the status
+             * @param primary the primary
+             */
             public Failure(ShardId shardId, @Nullable String nodeId, Exception cause, RestStatus status, boolean primary) {
                 super(shardId.getIndexName(), shardId.getId(), ExceptionsHelper.detailedMessage(cause), status, cause);
                 this.shardId = shardId;
@@ -249,6 +316,8 @@ public class ReplicationResponse extends ActionResponse {
             }
 
             /**
+             * Returns the primary.
+             *
              * @return Whether this failure occurred on a primary shard.
              * (this only reports true for delete by query)
              */
@@ -281,6 +350,13 @@ public class ReplicationResponse extends ActionResponse {
                 return builder;
             }
 
+            /**
+             * Parses an instance from the given parser.
+             *
+             * @param parser the parser
+             * @return the new XContent
+             * @throws IOException if an I/O error occurs
+             */
             public static Failure fromXContent(XContentParser parser) throws IOException {
                 XContentParser.Token token = parser.currentToken();
                 ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);

@@ -42,9 +42,18 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class PutPipelineAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PutPipelineAction INSTANCE = new PutPipelineAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/ingest/pipeline/put";
 
+    /**
+     * Creates a new PutPipelineAction.
+     */
     public PutPipelineAction() {
         super(NAME, AcknowledgedResponse::new);
     }

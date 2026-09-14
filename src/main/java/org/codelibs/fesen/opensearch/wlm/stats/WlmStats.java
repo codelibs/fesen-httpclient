@@ -25,6 +25,12 @@ import java.util.Objects;
 public class WlmStats extends BaseNodeResponse implements ToXContentObject, Writeable {
     private final WorkloadGroupStats workloadGroupStats;
 
+    /**
+     * Creates a new WlmStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public WlmStats(StreamInput in) throws IOException {
         super(in);
         workloadGroupStats = new WorkloadGroupStats(in);
@@ -54,6 +60,11 @@ public class WlmStats extends BaseNodeResponse implements ToXContentObject, Writ
         return Objects.hash(workloadGroupStats);
     }
 
+    /**
+     * Returns the workload group stats.
+     *
+     * @return the workload group stats
+     */
     public WorkloadGroupStats getWorkloadGroupStats() {
         return workloadGroupStats;
     }

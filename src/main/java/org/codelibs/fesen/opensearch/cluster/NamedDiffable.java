@@ -38,6 +38,7 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.VersionedNamedWriteab
 /**
  * Diff that also support {@link VersionedNamedWriteable} interface
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public interface NamedDiffable<T> extends Diffable<T>, VersionedNamedWriteable {

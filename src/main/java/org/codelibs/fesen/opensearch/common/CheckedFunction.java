@@ -39,10 +39,20 @@ import java.util.function.Function;
 /**
  * A {@link Function}-like interface which allows throwing checked exceptions.
  *
+ * @param <T> the element type
+ * @param <R> the result type
+ * @param <E> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 @FunctionalInterface
 public interface CheckedFunction<T, R, E extends Exception> {
+    /**
+     * Applies this instance to the given input.
+     *
+     * @param t the t
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     R apply(T t) throws E;
 }

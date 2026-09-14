@@ -36,8 +36,16 @@ public class OperationMetrics {
      */
     private TimeUnit targetTimeUnit = TimeUnit.MILLISECONDS;
 
+    /**
+     * Creates a new OperationMetrics.
+     */
     public OperationMetrics() {}
 
+    /**
+     * Creates a new OperationMetrics.
+     *
+     * @param targetTimeUnit the target time unit
+     */
     public OperationMetrics(TimeUnit targetTimeUnit) {
         this.targetTimeUnit = targetTimeUnit;
     }
@@ -95,6 +103,11 @@ public class OperationMetrics {
         }
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param other the other instance
+     */
     public void add(OperationMetrics other) {
         // Don't try copying over current, since in-flight requests will be linked to the existing metrics instance.
         failed.inc(other.failed.count());
@@ -102,6 +115,8 @@ public class OperationMetrics {
     }
 
     /**
+     * Creates a new stats.
+     *
      * @return an immutable snapshot of the current metric values.
      */
     public OperationStats createStats() {

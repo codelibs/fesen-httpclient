@@ -43,18 +43,34 @@ public abstract class TemplateScript {
 
     private final Map<String, Object> params;
 
+    /**
+     * Creates a new TemplateScript.
+     *
+     * @param params the serialization parameters
+     */
     public TemplateScript(Map<String, Object> params) {
         this.params = params;
     }
 
-    /** Return the parameters for this script. */
+    /**
+     * Return the parameters for this script.
+     *
+     * @return the params
+     */
     public Map<String, Object> getParams() {
         return params;
     }
 
+    /**
+     * The PARAMETERS constant.
+     */
     public static final String[] PARAMETERS = {};
 
-    /** Run a template and return the resulting string, encoded in utf8 bytes. */
+    /**
+     * Run a template and return the resulting string, encoded in utf8 bytes.
+     *
+     * @return this instance
+     */
     public abstract String execute();
 
     /**
@@ -63,8 +79,17 @@ public abstract class TemplateScript {
      * @opensearch.internal
      */
     public interface Factory {
+        /**
+         * Creates a new instance.
+         *
+         * @param params the serialization parameters
+         * @return the new instance
+         */
         TemplateScript newInstance(Map<String, Object> params);
     }
 
+    /**
+     * The CONTEXT constant.
+     */
     public static final ScriptContext<Factory> CONTEXT = new ScriptContext<>("template", Factory.class);
 }

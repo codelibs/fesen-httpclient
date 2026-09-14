@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class RefreshAction extends ActionType<RefreshResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final RefreshAction INSTANCE = new RefreshAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/refresh";
 
     private RefreshAction() {

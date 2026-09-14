@@ -54,6 +54,9 @@ public final class Snapshot implements Writeable {
 
     /**
      * Constructs a snapshot.
+     *
+     * @param repository the repository
+     * @param snapshotId the snapshot identifier
      */
     public Snapshot(final String repository, final SnapshotId snapshotId) {
         this.repository = Objects.requireNonNull(repository);
@@ -63,6 +66,9 @@ public final class Snapshot implements Writeable {
 
     /**
      * Constructs a snapshot from the stream input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public Snapshot(final StreamInput in) throws IOException {
         repository = in.readString();
@@ -72,6 +78,8 @@ public final class Snapshot implements Writeable {
 
     /**
      * Gets the repository name for the snapshot.
+     *
+     * @return the repository
      */
     public String getRepository() {
         return repository;
@@ -79,6 +87,8 @@ public final class Snapshot implements Writeable {
 
     /**
      * Gets the snapshot id for the snapshot.
+     *
+     * @return the snapshot identifier
      */
     public SnapshotId getSnapshotId() {
         return snapshotId;

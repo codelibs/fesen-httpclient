@@ -37,10 +37,21 @@ public class DeletePitResponse extends ActionResponse implements StatusToXConten
 
     private final List<DeletePitInfo> deletePitResults;
 
+    /**
+     * Creates a new DeletePitResponse.
+     *
+     * @param deletePitResults the delete pit results
+     */
     public DeletePitResponse(List<DeletePitInfo> deletePitResults) {
         this.deletePitResults = deletePitResults;
     }
 
+    /**
+     * Creates a new DeletePitResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DeletePitResponse(StreamInput in) throws IOException {
         super(in);
         int size = in.readVInt();
@@ -51,6 +62,11 @@ public class DeletePitResponse extends ActionResponse implements StatusToXConten
 
     }
 
+    /**
+     * Returns the delete pit results.
+     *
+     * @return the delete pit results
+     */
     public List<DeletePitInfo> getDeletePitResults() {
         return deletePitResults;
     }
@@ -96,6 +112,13 @@ public class DeletePitResponse extends ActionResponse implements StatusToXConten
         PARSER.declareObjectArray(constructorArg(), DeletePitInfo.PARSER, new ParseField("pits"));
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static DeletePitResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

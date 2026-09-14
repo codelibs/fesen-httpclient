@@ -38,10 +38,18 @@ import java.util.List;
  * Represents a MultiLine geometry object on the earth's surface.
  */
 public class MultiLine extends GeometryCollection<Line> {
+    /**
+     * The EMPTY constant.
+     */
     public static final MultiLine EMPTY = new MultiLine();
 
     private MultiLine() {}
 
+    /**
+     * Creates a new MultiLine.
+     *
+     * @param lines the lines
+     */
     public MultiLine(List<Line> lines) {
         super(lines);
     }

@@ -38,6 +38,9 @@ import org.codelibs.fesen.opensearch.geometry.utils.WellKnownText;
  * Represents a lat/lon rectangle in decimal degrees and optional altitude in meters.
  */
 public class Rectangle implements Geometry {
+    /**
+     * The EMPTY constant.
+     */
     public static final Rectangle EMPTY = new Rectangle();
     /**
      * minimum latitude value (in degrees)
@@ -78,6 +81,11 @@ public class Rectangle implements Geometry {
 
     /**
      * Constructs a bounding box by first validating the provided latitude and longitude coordinates
+     *
+     * @param minX the min x
+     * @param maxX the max x
+     * @param maxY the max y
+     * @param minY the min y
      */
     public Rectangle(double minX, double maxX, double maxY, double minY) {
         this(minX, maxX, maxY, minY, Double.NaN, Double.NaN);
@@ -85,6 +93,13 @@ public class Rectangle implements Geometry {
 
     /**
      * Constructs a bounding box by first validating the provided latitude and longitude coordinates
+     *
+     * @param minX the min x
+     * @param maxX the max x
+     * @param maxY the max y
+     * @param minY the min y
+     * @param minZ the min z
+     * @param maxZ the max z
      */
     public Rectangle(double minX, double maxX, double maxY, double minY, double minZ, double maxZ) {
         this.minX = minX;
@@ -102,42 +117,92 @@ public class Rectangle implements Geometry {
         }
     }
 
+    /**
+     * Returns the min y.
+     *
+     * @return the min y
+     */
     public double getMinY() {
         return minY;
     }
 
+    /**
+     * Returns the min x.
+     *
+     * @return the min x
+     */
     public double getMinX() {
         return minX;
     }
 
+    /**
+     * Returns the min z.
+     *
+     * @return the min z
+     */
     public double getMinZ() {
         return minZ;
     }
 
+    /**
+     * Returns the max y.
+     *
+     * @return the max y
+     */
     public double getMaxY() {
         return maxY;
     }
 
+    /**
+     * Returns the max x.
+     *
+     * @return the max x
+     */
     public double getMaxX() {
         return maxX;
     }
 
+    /**
+     * Returns the max z.
+     *
+     * @return the max z
+     */
     public double getMaxZ() {
         return maxZ;
     }
 
+    /**
+     * Returns the min lat.
+     *
+     * @return the min lat
+     */
     public double getMinLat() {
         return minY;
     }
 
+    /**
+     * Returns the min lon.
+     *
+     * @return the min lon
+     */
     public double getMinLon() {
         return minX;
     }
 
+    /**
+     * Returns the max lat.
+     *
+     * @return the max lat
+     */
     public double getMaxLat() {
         return maxY;
     }
 
+    /**
+     * Returns the max lon.
+     *
+     * @return the max lon
+     */
     public double getMaxLon() {
         return maxX;
     }

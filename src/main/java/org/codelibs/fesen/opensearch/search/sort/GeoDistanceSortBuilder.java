@@ -79,8 +79,17 @@ import static org.codelibs.fesen.opensearch.search.sort.NestedSortBuilder.NESTED
 public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(GeoDistanceSortBuilder.class);
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "_geo_distance";
+    /**
+     * The ALTERNATIVE_NAME constant.
+     */
     public static final String ALTERNATIVE_NAME = "_geoDistance";
+    /**
+     * The DEFAULT_VALIDATION constant.
+     */
     public static final GeoValidationMethod DEFAULT_VALIDATION = GeoValidationMethod.DEFAULT;
 
     private static final ParseField UNIT_FIELD = new ParseField("unit");
@@ -180,7 +189,9 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns the geo point like field the distance based sort operates on.
-     * */
+     *
+     * @return the field name
+      */
     public String fieldName() {
         return this.fieldName;
     }
@@ -190,6 +201,7 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
      *
      * @param lat latitude.
      * @param lon longitude.
+     * @return the point
      */
     public GeoDistanceSortBuilder point(double lat, double lon) {
         points.add(new GeoPoint(lat, lon));
@@ -200,6 +212,7 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
      * The point to create the range distance facets from.
      *
      * @param points reference points.
+     * @return the points
      */
     public GeoDistanceSortBuilder points(GeoPoint... points) {
         this.points.addAll(Arrays.asList(points));
@@ -208,6 +221,8 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns the points to create the range distance facets from.
+     *
+     * @return the points
      */
     public GeoPoint[] points() {
         return this.points.toArray(new GeoPoint[0]);
@@ -215,6 +230,9 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * The geo distance type used to compute the distance.
+     *
+     * @param geoDistance the geo distance
+     * @return the geo distance
      */
     public GeoDistanceSortBuilder geoDistance(GeoDistance geoDistance) {
         this.geoDistance = geoDistance;
@@ -223,6 +241,8 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns the geo distance type used to compute the distance.
+     *
+     * @return the geo distance
      */
     public GeoDistance geoDistance() {
         return this.geoDistance;
@@ -230,6 +250,9 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * The distance unit to use. Defaults to {@link org.codelibs.fesen.opensearch.common.unit.DistanceUnit#METERS}
+     *
+     * @param unit the unit
+     * @return the unit
      */
     public GeoDistanceSortBuilder unit(DistanceUnit unit) {
         this.unit = unit;
@@ -238,6 +261,8 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns the distance unit to use. Defaults to {@link org.codelibs.fesen.opensearch.common.unit.DistanceUnit#METERS}
+     *
+     * @return the unit
      */
     public DistanceUnit unit() {
         return this.unit;
@@ -245,6 +270,9 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Sets validation method for this sort builder.
+     *
+     * @param method the method
+     * @return the validation
      */
     public GeoDistanceSortBuilder validation(GeoValidationMethod method) {
         this.validation = method;
@@ -253,6 +281,8 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns the validation method to use for this sort builder.
+     *
+     * @return the validation
      */
     public GeoValidationMethod validation() {
         return validation;
@@ -261,6 +291,9 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
     /**
      * Defines which distance to use for sorting in the case a document contains multiple geo points.
      * Possible values: min and max
+     *
+     * @param sortMode the sort mode
+     * @return this instance
      */
     public GeoDistanceSortBuilder sortMode(SortMode sortMode) {
         Objects.requireNonNull(sortMode, "sort mode cannot be null");
@@ -271,7 +304,11 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
         return this;
     }
 
-    /** Returns which distance to use for sorting in the case a document contains multiple geo points. */
+    /**
+     * Returns which distance to use for sorting in the case a document contains multiple geo points.
+     *
+     * @return this instance
+     */
     public SortMode sortMode() {
         return this.sortMode;
     }
@@ -280,9 +317,11 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
      * Sets the nested filter that the nested objects should match with in order to
      * be taken into account for sorting.
      *
+     * @param nestedFilter the nested filter
+     * @return this instance
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)}
      *             and retrieve with {@link #getNestedSort()}
-     **/
+      */
     @Deprecated
     public GeoDistanceSortBuilder setNestedFilter(QueryBuilder nestedFilter) {
         if (this.nestedSort != null) {
@@ -295,9 +334,10 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
     /**
      * Returns the nested filter that the nested objects should match with in order to be taken into account
      * for sorting.
+     * @return the nested filter
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)}
      *             and retrieve with {@link #getNestedSort()}
-     **/
+      */
     @Deprecated
     public QueryBuilder getNestedFilter() {
         return this.nestedFilter;
@@ -306,9 +346,11 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
     /**
      * Sets the nested path if sorting occurs on a field that is inside a nested object. By default when sorting on a
      * field inside a nested object, the nearest upper nested object is selected as nested path.
+     * @param nestedPath the nested path
+     * @return this instance
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)}
      *             and retrieve with {@link #getNestedSort()}
-     **/
+      */
     @Deprecated
     public GeoDistanceSortBuilder setNestedPath(String nestedPath) {
         if (this.nestedSort != null) {
@@ -321,9 +363,10 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
     /**
      * Returns the nested path if sorting occurs on a field that is inside a nested object. By default when sorting on a
      * field inside a nested object, the nearest upper nested object is selected as nested path.
+     * @return the nested path
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)}
      *             and retrieve with {@link #getNestedSort()}
-     **/
+      */
     @Deprecated
     public String getNestedPath() {
         return this.nestedPath;
@@ -331,6 +374,8 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns the {@link NestedSortBuilder}
+     *
+     * @return the nested sort
      */
     public NestedSortBuilder getNestedSort() {
         return this.nestedSort;
@@ -341,6 +386,9 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
      * object. The {@link NestedSortBuilder} takes a `path` argument and an optional
      * nested filter that the nested objects should match with in
      * order to be taken into account for sorting.
+     *
+     * @param nestedSort the nested sort
+     * @return this instance
      */
     public GeoDistanceSortBuilder setNestedSort(final NestedSortBuilder nestedSort) {
         if (this.nestedFilter != null || this.nestedPath != null) {
@@ -352,11 +400,19 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
 
     /**
      * Returns true if unmapped geo fields should be treated as located at an infinite distance
+     *
+     * @return the ignore unmapped
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
     }
 
+    /**
+     * Returns the ignore unmapped.
+     *
+     * @param ignoreUnmapped the ignore unmapped
+     * @return the ignore unmapped
+     */
     public GeoDistanceSortBuilder ignoreUnmapped(boolean ignoreUnmapped) {
         this.ignoreUnmapped = ignoreUnmapped;
         return this;
@@ -453,6 +509,8 @@ public class GeoDistanceSortBuilder extends SortBuilder<GeoDistanceSortBuilder> 
      * @param elementName in some sort syntax variations the field name precedes the xContent object that specifies
      *                    further parameters, e.g. in '{ "foo": { "order" : "asc"} }'. When parsing the inner object,
      *                    the field name can be passed in via this argument
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static GeoDistanceSortBuilder fromXContent(XContentParser parser, String elementName) throws IOException {
         String fieldName = null;

@@ -25,11 +25,23 @@ public abstract class BaseSearchTaskCancellationStats implements ToXContentObjec
     private final long currentLongRunningCancelledTaskCount;
     private final long totalLongRunningCancelledTaskCount;
 
+    /**
+     * Creates a new BaseSearchTaskCancellationStats.
+     *
+     * @param currentTaskCount the current task count
+     * @param totalTaskCount the total task count
+     */
     public BaseSearchTaskCancellationStats(long currentTaskCount, long totalTaskCount) {
         this.currentLongRunningCancelledTaskCount = currentTaskCount;
         this.totalLongRunningCancelledTaskCount = totalTaskCount;
     }
 
+    /**
+     * Creates a new BaseSearchTaskCancellationStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BaseSearchTaskCancellationStats(StreamInput in) throws IOException {
         this.currentLongRunningCancelledTaskCount = in.readVLong();
         this.totalLongRunningCancelledTaskCount = in.readVLong();

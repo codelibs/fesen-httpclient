@@ -47,6 +47,13 @@ import org.codelibs.fesen.opensearch.common.lucene.search.Queries;
 @Deprecated
 public class ExtendedCommonTermsQuery extends CommonTermsQuery {
 
+    /**
+     * Creates a new ExtendedCommonTermsQuery.
+     *
+     * @param highFreqOccur the high freq occur
+     * @param lowFreqOccur the low freq occur
+     * @param maxTermFrequency the max term frequency
+     */
     public ExtendedCommonTermsQuery(Occur highFreqOccur, Occur lowFreqOccur, float maxTermFrequency) {
         super(highFreqOccur, lowFreqOccur, maxTermFrequency);
     }
@@ -59,6 +66,13 @@ public class ExtendedCommonTermsQuery extends CommonTermsQuery {
         return calcMinimumNumberShouldMatch(lowFreqMinNumShouldMatchSpec, numOptional);
     }
 
+    /**
+     * Returns the calc minimum number should match.
+     *
+     * @param spec the spec
+     * @param numOptional the num optional
+     * @return the calc minimum number should match
+     */
     protected int calcMinimumNumberShouldMatch(String spec, int numOptional) {
         if (spec == null) {
             return 0;
@@ -71,10 +85,20 @@ public class ExtendedCommonTermsQuery extends CommonTermsQuery {
         return calcMinimumNumberShouldMatch(highFreqMinNumShouldMatchSpec, numOptional);
     }
 
+    /**
+     * Sets the high freq minimum number should match.
+     *
+     * @param spec the spec
+     */
     public void setHighFreqMinimumNumberShouldMatch(String spec) {
         this.highFreqMinNumShouldMatchSpec = spec;
     }
 
+    /**
+     * Sets the low freq minimum number should match.
+     *
+     * @param spec the spec
+     */
     public void setLowFreqMinimumNumberShouldMatch(String spec) {
         this.lowFreqMinNumShouldMatchSpec = spec;
     }

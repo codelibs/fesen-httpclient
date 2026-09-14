@@ -45,6 +45,7 @@ import java.io.IOException;
 /**
  * Base class for requests targeting a list of nodes
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public abstract class BaseNodesRequest<Request extends BaseNodesRequest<Request>> extends ActionRequest {
@@ -73,29 +74,61 @@ public abstract class BaseNodesRequest<Request extends BaseNodesRequest<Request>
 
     private TimeValue timeout;
 
+    /**
+     * Creates a new BaseNodesRequest.
+     *
+     * @param nodesIds the nodes identifiers
+     */
     protected BaseNodesRequest(String... nodesIds) {
         this.nodesIds = nodesIds;
     }
 
+    /**
+     * Creates a new BaseNodesRequest.
+     *
+     * @param concreteNodes the concrete nodes
+     */
     protected BaseNodesRequest(DiscoveryNode... concreteNodes) {
         this.nodesIds = null;
         this.concreteNodes = concreteNodes;
     }
 
+    /**
+     * Returns the nodes identifiers.
+     *
+     * @return the nodes identifiers
+     */
     public final String[] nodesIds() {
         return nodesIds;
     }
 
+    /**
+     * Returns the nodes identifiers.
+     *
+     * @param nodesIds the nodes identifiers
+     * @return the nodes identifiers
+     */
     @SuppressWarnings("unchecked")
     public final Request nodesIds(String... nodesIds) {
         this.nodesIds = nodesIds;
         return (Request) this;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
     public TimeValue timeout() {
         return this.timeout;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @param timeout the timeout
+     * @return the timeout
+     */
     @SuppressWarnings("unchecked")
     public final Request timeout(String timeout) {
         this.timeout = TimeValue.parseTimeValue(timeout, DEFAULT_TIMEOUT_SECS, getClass().getSimpleName() + ".timeout");

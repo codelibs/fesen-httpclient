@@ -69,6 +69,12 @@ public class ClusterStatsNodeResponse extends BaseNodeResponse {
     private ClusterHealthStatus clusterStatus;
     private AggregatedNodeLevelStats aggregatedNodeLevelStats;
 
+    /**
+     * Creates a new ClusterStatsNodeResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterStatsNodeResponse(StreamInput in) throws IOException {
         super(in);
         clusterStatus = null;
@@ -85,30 +91,59 @@ public class ClusterStatsNodeResponse extends BaseNodeResponse {
         }
     }
 
+    /**
+     * Returns the node info.
+     *
+     * @return the node info
+     */
     public NodeInfo nodeInfo() {
         return this.nodeInfo;
     }
 
+    /**
+     * Returns the node stats.
+     *
+     * @return the node stats
+     */
     public NodeStats nodeStats() {
         return this.nodeStats;
     }
 
     /**
      * Cluster Health Status, only populated on cluster-manager nodes.
+     *
+     * @return the cluster status
      */
     @Nullable
     public ClusterHealthStatus clusterStatus() {
         return clusterStatus;
     }
 
+    /**
+     * Returns the shards stats.
+     *
+     * @return the shards stats
+     */
     public ShardStats[] shardsStats() {
         return this.shardsStats;
     }
 
+    /**
+     * Returns the aggregated node level stats.
+     *
+     * @return the aggregated node level stats
+     */
     public AggregatedNodeLevelStats getAggregatedNodeLevelStats() {
         return aggregatedNodeLevelStats;
     }
 
+    /**
+     * Reads the node response.
+     *
+     * @param in the input to read from
+     * @return the node response
+     * @throws IOException if an I/O error occurs
+     */
     public static ClusterStatsNodeResponse readNodeResponse(StreamInput in) throws IOException {
         return new ClusterStatsNodeResponse(in);
     }
@@ -145,12 +180,24 @@ public class ClusterStatsNodeResponse extends BaseNodeResponse {
         CommonStats commonStats;
         Map<String, AggregatedIndexStats> indexStatsMap;
 
+        /**
+         * Creates a new AggregatedNodeLevelStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         protected AggregatedNodeLevelStats(StreamInput in) throws IOException {
             super(in);
             commonStats = in.readOptionalWriteable(CommonStats::new);
             indexStatsMap = in.readMap(StreamInput::readString, AggregatedIndexStats::new);
         }
 
+        /**
+         * Creates a new AggregatedNodeLevelStats.
+         *
+         * @param node the node
+         * @param indexShardsStats the index shards stats
+         */
         protected AggregatedNodeLevelStats(DiscoveryNode node, ShardStats[] indexShardsStats) {
             super(node);
             this.commonStats = new CommonStats();
@@ -199,14 +246,29 @@ public class ClusterStatsNodeResponse extends BaseNodeResponse {
      */
     @PublicApi(since = "2.16.0")
     public static class AggregatedIndexStats implements Writeable {
+        /**
+         * The total.
+         */
         public int total = 0;
+        /**
+         * The primaries.
+         */
         public int primaries = 0;
 
+        /**
+         * Creates a new AggregatedIndexStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public AggregatedIndexStats(StreamInput in) throws IOException {
             total = in.readVInt();
             primaries = in.readVInt();
         }
 
+        /**
+         * Creates a new AggregatedIndexStats.
+         */
         public AggregatedIndexStats() {}
 
         @Override

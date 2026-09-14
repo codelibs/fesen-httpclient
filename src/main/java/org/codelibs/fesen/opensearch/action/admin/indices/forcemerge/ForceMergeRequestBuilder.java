@@ -51,6 +51,12 @@ public class ForceMergeRequestBuilder extends BroadcastOperationRequestBuilder<
     ForceMergeResponse,
     ForceMergeRequestBuilder> {
 
+    /**
+     * Creates a new ForceMergeRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ForceMergeRequestBuilder(OpenSearchClient client, ForceMergeAction action) {
         super(client, action, new ForceMergeRequest());
     }

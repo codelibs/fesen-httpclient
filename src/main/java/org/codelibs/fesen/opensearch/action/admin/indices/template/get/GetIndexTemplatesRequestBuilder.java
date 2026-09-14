@@ -46,6 +46,13 @@ public class GetIndexTemplatesRequestBuilder extends ClusterManagerNodeReadOpera
     GetIndexTemplatesResponse,
     GetIndexTemplatesRequestBuilder> {
 
+    /**
+     * Creates a new GetIndexTemplatesRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param names the names
+     */
     public GetIndexTemplatesRequestBuilder(OpenSearchClient client, GetIndexTemplatesAction action, String... names) {
         super(client, action, new GetIndexTemplatesRequest(names));
     }

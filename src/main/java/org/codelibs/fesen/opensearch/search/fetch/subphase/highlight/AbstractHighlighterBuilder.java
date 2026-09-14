@@ -65,6 +65,7 @@ import static org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder.par
  * This abstract class holds parameters shared by {@link HighlightBuilder} and {@link HighlightBuilder.Field}
  * and provides the common setters, equality, hashCode calculation and common serialization
  *
+ * @param <HB> the hb type
  * @opensearch.internal
  */
 public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterBuilder<?>>
@@ -72,70 +73,205 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
         Writeable,
         Rewriteable<HB>,
         ToXContentObject {
+    /**
+     * The PRE_TAGS_FIELD constant.
+     */
     public static final ParseField PRE_TAGS_FIELD = new ParseField("pre_tags");
+    /**
+     * The POST_TAGS_FIELD constant.
+     */
     public static final ParseField POST_TAGS_FIELD = new ParseField("post_tags");
+    /**
+     * The FIELDS_FIELD constant.
+     */
     public static final ParseField FIELDS_FIELD = new ParseField("fields");
+    /**
+     * The ORDER_FIELD constant.
+     */
     public static final ParseField ORDER_FIELD = new ParseField("order");
+    /**
+     * The HIGHLIGHT_FILTER_FIELD constant.
+     */
     public static final ParseField HIGHLIGHT_FILTER_FIELD = new ParseField("highlight_filter");
+    /**
+     * The FRAGMENT_SIZE_FIELD constant.
+     */
     public static final ParseField FRAGMENT_SIZE_FIELD = new ParseField("fragment_size");
+    /**
+     * The FRAGMENT_OFFSET_FIELD constant.
+     */
     public static final ParseField FRAGMENT_OFFSET_FIELD = new ParseField("fragment_offset");
+    /**
+     * The NUMBER_OF_FRAGMENTS_FIELD constant.
+     */
     public static final ParseField NUMBER_OF_FRAGMENTS_FIELD = new ParseField("number_of_fragments");
+    /**
+     * The ENCODER_FIELD constant.
+     */
     public static final ParseField ENCODER_FIELD = new ParseField("encoder");
+    /**
+     * The REQUIRE_FIELD_MATCH_FIELD constant.
+     */
     public static final ParseField REQUIRE_FIELD_MATCH_FIELD = new ParseField("require_field_match");
+    /**
+     * The BOUNDARY_SCANNER_FIELD constant.
+     */
     public static final ParseField BOUNDARY_SCANNER_FIELD = new ParseField("boundary_scanner");
+    /**
+     * The BOUNDARY_MAX_SCAN_FIELD constant.
+     */
     public static final ParseField BOUNDARY_MAX_SCAN_FIELD = new ParseField("boundary_max_scan");
+    /**
+     * The BOUNDARY_CHARS_FIELD constant.
+     */
     public static final ParseField BOUNDARY_CHARS_FIELD = new ParseField("boundary_chars");
+    /**
+     * The BOUNDARY_SCANNER_LOCALE_FIELD constant.
+     */
     public static final ParseField BOUNDARY_SCANNER_LOCALE_FIELD = new ParseField("boundary_scanner_locale");
+    /**
+     * The TYPE_FIELD constant.
+     */
     public static final ParseField TYPE_FIELD = new ParseField("type");
+    /**
+     * The FRAGMENTER_FIELD constant.
+     */
     public static final ParseField FRAGMENTER_FIELD = new ParseField("fragmenter");
+    /**
+     * The NO_MATCH_SIZE_FIELD constant.
+     */
     public static final ParseField NO_MATCH_SIZE_FIELD = new ParseField("no_match_size");
+    /**
+     * The FORCE_SOURCE_FIELD constant.
+     */
     public static final ParseField FORCE_SOURCE_FIELD = new ParseField("force_source");
+    /**
+     * The PHRASE_LIMIT_FIELD constant.
+     */
     public static final ParseField PHRASE_LIMIT_FIELD = new ParseField("phrase_limit");
+    /**
+     * The OPTIONS_FIELD constant.
+     */
     public static final ParseField OPTIONS_FIELD = new ParseField("options");
+    /**
+     * The HIGHLIGHT_QUERY_FIELD constant.
+     */
     public static final ParseField HIGHLIGHT_QUERY_FIELD = new ParseField("highlight_query");
+    /**
+     * The MATCHED_FIELDS_FIELD constant.
+     */
     public static final ParseField MATCHED_FIELDS_FIELD = new ParseField("matched_fields");
+    /**
+     * The MAX_ANALYZER_OFFSET_FIELD constant.
+     */
     public static final ParseField MAX_ANALYZER_OFFSET_FIELD = new ParseField("max_analyzer_offset");
 
+    /**
+     * The pre tags.
+     */
     protected String[] preTags;
 
+    /**
+     * The post tags.
+     */
     protected String[] postTags;
 
+    /**
+     * The fragment size.
+     */
     protected Integer fragmentSize;
 
+    /**
+     * The num of fragments.
+     */
     protected Integer numOfFragments;
 
+    /**
+     * The highlighter type.
+     */
     protected String highlighterType;
 
+    /**
+     * The fragmenter.
+     */
     protected String fragmenter;
 
+    /**
+     * The highlight query.
+     */
     protected QueryBuilder highlightQuery;
 
+    /**
+     * The order.
+     */
     protected Order order;
 
+    /**
+     * The highlight filter.
+     */
     protected Boolean highlightFilter;
 
+    /**
+     * The force source.
+     */
     protected Boolean forceSource;
 
+    /**
+     * The boundary scanner type.
+     */
     protected BoundaryScannerType boundaryScannerType;
 
+    /**
+     * The boundary max scan.
+     */
     protected Integer boundaryMaxScan;
 
+    /**
+     * The boundary chars.
+     */
     protected char[] boundaryChars;
 
+    /**
+     * The boundary scanner locale.
+     */
     protected Locale boundaryScannerLocale;
 
+    /**
+     * The no match size.
+     */
     protected Integer noMatchSize;
 
+    /**
+     * The phrase limit.
+     */
     protected Integer phraseLimit;
 
+    /**
+     * The options.
+     */
     protected Map<String, Object> options;
 
+    /**
+     * The require field match.
+     */
     protected Boolean requireFieldMatch;
 
+    /**
+     * The max analyzer offset.
+     */
     protected Integer maxAnalyzerOffset = null;
 
+    /**
+     * Creates a new AbstractHighlighterBuilder.
+     */
     public AbstractHighlighterBuilder() {}
 
+    /**
+     * Creates a new AbstractHighlighterBuilder.
+     *
+     * @param template the template
+     * @param queryBuilder the query builder
+     */
     protected AbstractHighlighterBuilder(AbstractHighlighterBuilder<?> template, QueryBuilder queryBuilder) {
         preTags = template.preTags;
         postTags = template.postTags;
@@ -160,6 +296,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected AbstractHighlighterBuilder(StreamInput in) throws IOException {
         preTags(in.readOptionalStringArray());
@@ -241,10 +380,19 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
     /**
      * Set the pre tags that will be used for highlighting.
+     *
+     * @param preTags the pre tags
+     * @return the pre tags
      */
     @SuppressWarnings("unchecked")
     public HB preTags(String... preTags) {
@@ -253,6 +401,8 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
+     * Returns the pre tags.
+     *
      * @return the value set by {@link #preTags(String...)}
      */
     public String[] preTags() {
@@ -261,6 +411,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Set the post tags that will be used for highlighting.
+     *
+     * @param postTags the post tags
+     * @return the post tags
      */
     @SuppressWarnings("unchecked")
     public HB postTags(String... postTags) {
@@ -269,6 +422,8 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
+     * Returns the post tags.
+     *
      * @return the value set by {@link #postTags(String...)}
      */
     public String[] postTags() {
@@ -277,6 +432,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Set the fragment size in characters, defaults to {@link HighlightBuilder#DEFAULT_FRAGMENT_CHAR_SIZE}
+     *
+     * @param fragmentSize the fragment size
+     * @return the fragment size
      */
     @SuppressWarnings("unchecked")
     public HB fragmentSize(Integer fragmentSize) {
@@ -286,6 +444,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Set the number of fragments, defaults to {@link HighlightBuilder#DEFAULT_NUMBER_OF_FRAGMENTS}
+     *
+     * @param numOfFragments the num of fragments
+     * @return the num of fragments
      */
     @SuppressWarnings("unchecked")
     public HB numOfFragments(Integer numOfFragments) {
@@ -298,6 +459,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
      * are {@code unified}, {@code plain} and {@code fvh}.
      * Defaults to {@code unified}.
      * Details of the different highlighter types are covered in the reference guide.
+     *
+     * @param highlighterType the highlighter type
+     * @return the highlighter type
      */
     @SuppressWarnings("unchecked")
     public HB highlighterType(String highlighterType) {
@@ -310,6 +474,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
      * This option is only applicable when using the plain highlighterType {@code highlighter}.
      * Permitted values are "simple" or "span" relating to {@link SimpleFragmenter} and
      * {@link SimpleSpanFragmenter} implementations respectively with the default being "span"
+     *
+     * @param fragmenter the fragmenter
+     * @return the fragmenter
      */
     @SuppressWarnings("unchecked")
     public HB fragmenter(String fragmenter) {
@@ -319,6 +486,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Sets a query to be used for highlighting instead of the search query.
+     *
+     * @param highlightQuery the highlight query
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public HB highlightQuery(QueryBuilder highlightQuery) {
@@ -327,6 +497,8 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     }
 
     /**
+     * Highlights the query.
+     *
      * @return the value set by {@link #highlightQuery(QueryBuilder)}
      */
     public QueryBuilder highlightQuery() {
@@ -337,6 +509,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
      * The order of fragments per field. By default, ordered by the order in the
      * highlighted text. Can be {@code score}, which then it will be ordered
      * by score of the fragments, or {@code none}.
+     *
+     * @param order the order
+     * @return the order
      */
     public HB order(String order) {
         return order(Order.fromString(order));
@@ -345,6 +520,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     /**
      * By default, fragments of a field are ordered by the order in the highlighted text.
      * If set to {@link Order#SCORE}, this changes order to score of the fragments.
+     *
+     * @param scoreOrdered the score ordered
+     * @return the order
      */
     @SuppressWarnings("unchecked")
     public HB order(Order scoreOrdered) {
@@ -356,6 +534,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
      * Set this to true when using the highlighterType {@code fvh}
      * and you want to provide highlighting on filter clauses in your
      * query. Default is {@code false}.
+     *
+     * @param highlightFilter the highlight filter
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public HB highlightFilter(Boolean highlightFilter) {
@@ -366,6 +547,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     /**
      * When using the highlighterType {@code fvh} this setting
      * controls which scanner to use for fragment boundaries, and defaults to "simple".
+     *
+     * @param boundaryScannerType the boundary scanner type
+     * @return the boundary scanner type
      */
     @SuppressWarnings("unchecked")
     public HB boundaryScannerType(String boundaryScannerType) {
@@ -376,6 +560,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     /**
      * When using the highlighterType {@code fvh} this setting
      * controls which scanner to use for fragment boundaries, and defaults to "simple".
+     *
+     * @param boundaryScannerType the boundary scanner type
+     * @return the boundary scanner type
      */
     @SuppressWarnings("unchecked")
     public HB boundaryScannerType(BoundaryScannerType boundaryScannerType) {
@@ -386,6 +573,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     /**
      * When using the highlighterType {@code fvh} this setting
      * controls how far to look for boundary characters, and defaults to 20.
+     *
+     * @param boundaryMaxScan the boundary max scan
+     * @return the boundary max scan
      */
     @SuppressWarnings("unchecked")
     public HB boundaryMaxScan(Integer boundaryMaxScan) {
@@ -397,6 +587,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
      * When using the highlighterType {@code fvh} this setting
      * defines what constitutes a boundary for highlighting. It’s a single string with
      * each boundary character defined in it. It defaults to .,!? \t\n
+     *
+     * @param boundaryChars the boundary chars
+     * @return the boundary chars
      */
     @SuppressWarnings("unchecked")
     public HB boundaryChars(char[] boundaryChars) {
@@ -407,6 +600,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
     /**
      * When using the highlighterType {@code fvh} and boundaryScannerType {@code break_iterator}, this setting
      * controls the locale to use by the BreakIterator, defaults to "root".
+     *
+     * @param boundaryScannerLocale the boundary scanner locale
+     * @return the boundary scanner locale
      */
     @SuppressWarnings("unchecked")
     public HB boundaryScannerLocale(String boundaryScannerLocale) {
@@ -418,6 +614,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Allows to set custom options for custom highlighters.
+     *
+     * @param options the options
+     * @return the options
      */
     @SuppressWarnings("unchecked")
     public HB options(Map<String, Object> options) {
@@ -429,6 +628,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
      * Set to true to cause a field to be highlighted only if a query matches that field.
      * Default is false meaning that terms are highlighted on all requested fields regardless
      * if the query matches specifically on them.
+     *
+     * @param requireFieldMatch the require field match
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public HB requireFieldMatch(Boolean requireFieldMatch) {
@@ -472,6 +674,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * Forces the highlighting to highlight fields based on the source even if fields are stored separately.
+     *
+     * @param forceSource the force source
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public HB forceSource(Boolean forceSource) {
@@ -487,6 +692,12 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
         return builder;
     }
 
+    /**
+     * Performs the inner XContent step.
+     *
+     * @param builder the content builder
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void innerXContent(XContentBuilder builder) throws IOException;
 
     void commonOptionsToXContent(XContentBuilder builder) throws IOException {
@@ -623,6 +834,8 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * fields only present in subclass should contribute to hashCode in the implementation
+     *
+     * @return the hash code of this instance
      */
     protected abstract int doHashCode();
 
@@ -659,6 +872,9 @@ public abstract class AbstractHighlighterBuilder<HB extends AbstractHighlighterB
 
     /**
      * fields only present in subclass should be checked for equality in the implementation
+     *
+     * @param other the other instance
+     * @return the equals
      */
     protected abstract boolean doEquals(HB other);
 

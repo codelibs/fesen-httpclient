@@ -59,6 +59,9 @@ public class MainResponse extends ActionResponse implements ToXContentObject {
     private ClusterName clusterName;
     private String clusterUuid;
     private Build build;
+    /**
+     * The TAGLINE constant.
+     */
     public static final String TAGLINE = "The OpenSearch Project: https://opensearch.org/";
 
     MainResponse() {}
@@ -72,6 +75,11 @@ public class MainResponse extends ActionResponse implements ToXContentObject {
         build = in.readBuild();
     }
 
+    /**
+     * Returns the cluster name.
+     *
+     * @return the cluster name
+     */
     public ClusterName getClusterName() {
         return clusterName;
     }
@@ -138,6 +146,12 @@ public class MainResponse extends ActionResponse implements ToXContentObject {
         }, (parser, context) -> parser.map(), new ParseField("version"));
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static MainResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

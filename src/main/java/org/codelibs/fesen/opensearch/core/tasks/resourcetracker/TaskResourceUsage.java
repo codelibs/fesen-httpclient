@@ -41,6 +41,12 @@ public class TaskResourceUsage implements Writeable, ToXContentFragment {
     private final long cpuTimeInNanos;
     private final long memoryInBytes;
 
+    /**
+     * Creates a new TaskResourceUsage.
+     *
+     * @param cpuTimeInNanos the CPU time in nanoseconds
+     * @param memoryInBytes the memory in bytes
+     */
     public TaskResourceUsage(long cpuTimeInNanos, long memoryInBytes) {
         this.cpuTimeInNanos = cpuTimeInNanos;
         this.memoryInBytes = memoryInBytes;
@@ -48,6 +54,10 @@ public class TaskResourceUsage implements Writeable, ToXContentFragment {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
      */
     public static TaskResourceUsage readFromStream(StreamInput in) throws IOException {
         return new TaskResourceUsage(in.readVLong(), in.readVLong());
@@ -59,6 +69,11 @@ public class TaskResourceUsage implements Writeable, ToXContentFragment {
         out.writeVLong(memoryInBytes);
     }
 
+    /**
+     * Returns the CPU time in nanoseconds.
+     *
+     * @return the CPU time in nanoseconds
+     */
     public long getCpuTimeInNanos() {
         return cpuTimeInNanos;
     }
@@ -70,6 +85,9 @@ public class TaskResourceUsage implements Writeable, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<TaskResourceUsage, Void> PARSER = new ConstructingObjectParser<>(
         "task_resource_usage",
         a -> new TaskResourceUsage((Long) a[0], (Long) a[1])
@@ -80,6 +98,12 @@ public class TaskResourceUsage implements Writeable, ToXContentFragment {
         PARSER.declareLong(constructorArg(), MEMORY_IN_BYTES);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static TaskResourceUsage fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

@@ -83,12 +83,26 @@ public final class GeoJson {
     private final boolean coerce;
     private final GeometryValidator validator;
 
+    /**
+     * Creates a new GeoJson.
+     *
+     * @param rightOrientation the right orientation
+     * @param coerce the coerce
+     * @param validator the validator
+     */
     public GeoJson(boolean rightOrientation, boolean coerce, GeometryValidator validator) {
         this.rightOrientation = rightOrientation;
         this.coerce = coerce;
         this.validator = validator;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public Geometry fromXContent(XContentParser parser) throws IOException {
         try (XContentSubParser subParser = new XContentSubParser(parser)) {
             Geometry geometry = PARSER.apply(subParser, this);
@@ -97,6 +111,15 @@ public final class GeoJson {
         }
     }
 
+    /**
+     * Writes this instance to the given content builder.
+     *
+     * @param geometry the geometry
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static XContentBuilder toXContent(Geometry geometry, XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject();
         builder.field(FIELD_TYPE.getPreferredName(), getGeoJsonName(geometry));
@@ -221,6 +244,9 @@ public final class GeoJson {
 
     /**
      * Produces that same GeoJSON as toXContent only in parsed map form
+     *
+     * @param geometry the geometry
+     * @return the map
      */
     public static Map<String, Object> toMap(Geometry geometry) {
         Map<String, Object> root = new HashMap<>();
@@ -538,6 +564,12 @@ public final class GeoJson {
         }
     }
 
+    /**
+     * Returns the geo JSON name.
+     *
+     * @param geometry the geometry
+     * @return the geo JSON name
+     */
     public static String getGeoJsonName(Geometry geometry) {
         return geometry.visit(new GeometryVisitor<String, RuntimeException>() {
             @Override

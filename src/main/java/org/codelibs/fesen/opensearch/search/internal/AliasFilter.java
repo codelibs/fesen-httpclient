@@ -56,13 +56,28 @@ public final class AliasFilter implements Writeable, Rewriteable<AliasFilter> {
     private final String[] aliases;
     private final QueryBuilder filter;
 
+    /**
+     * The EMPTY constant.
+     */
     public static final AliasFilter EMPTY = new AliasFilter(null, Strings.EMPTY_ARRAY);
 
+    /**
+     * Creates a new AliasFilter.
+     *
+     * @param filter the filter
+     * @param aliases the aliases
+     */
     public AliasFilter(QueryBuilder filter, String... aliases) {
         this.aliases = aliases == null ? Strings.EMPTY_ARRAY : aliases;
         this.filter = filter;
     }
 
+    /**
+     * Creates a new AliasFilter by reading it from the given input.
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
+     */
     public AliasFilter(StreamInput input) throws IOException {
         aliases = input.readStringArray();
         filter = input.readOptionalNamedWriteable(QueryBuilder.class);
@@ -89,6 +104,8 @@ public final class AliasFilter implements Writeable, Rewriteable<AliasFilter> {
     /**
      * Returns the aliases patters that are used to compose the {@link QueryBuilder}
      * returned from {@link #getQueryBuilder()}
+     *
+     * @return the aliases
      */
     public String[] getAliases() {
         return aliases;
@@ -96,6 +113,8 @@ public final class AliasFilter implements Writeable, Rewriteable<AliasFilter> {
 
     /**
      * Returns the alias filter {@link QueryBuilder} or <code>null</code> if there is no such filter
+     *
+     * @return the query builder
      */
     public QueryBuilder getQueryBuilder() {
         return filter;

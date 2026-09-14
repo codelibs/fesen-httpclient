@@ -46,8 +46,17 @@ import java.io.IOException;
  */
 @PublicApi(since = "1.0.0")
 public enum ClusterHealthStatus implements Writeable {
+    /**
+     * The GREEN value.
+     */
     GREEN((byte) 0),
+    /**
+     * The YELLOW value.
+     */
     YELLOW((byte) 1),
+    /**
+     * The RED value.
+     */
     RED((byte) 2);
 
     private byte value;
@@ -56,6 +65,11 @@ public enum ClusterHealthStatus implements Writeable {
         this.value = value;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public byte value() {
         return value;
     }
@@ -68,12 +82,22 @@ public enum ClusterHealthStatus implements Writeable {
     /**
      * Read from a stream.
      *
+     * @param in the input to read from
+     * @return the from
      * @throws IllegalArgumentException if the value is unrecognized
+     * @throws IOException if an I/O error occurs
      */
     public static ClusterHealthStatus readFrom(StreamInput in) throws IOException {
         return fromValue(in.readByte());
     }
 
+    /**
+     * Creates an instance from value.
+     *
+     * @param value the value
+     * @return the new value
+     * @throws IOException if an I/O error occurs
+     */
     public static ClusterHealthStatus fromValue(byte value) throws IOException {
         switch (value) {
             case 0:
@@ -87,6 +111,12 @@ public enum ClusterHealthStatus implements Writeable {
         }
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param status the status
+     * @return the new string
+     */
     public static ClusterHealthStatus fromString(String status) {
         if (status.equalsIgnoreCase("green")) {
             return GREEN;

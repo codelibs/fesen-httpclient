@@ -48,12 +48,22 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class GetRequestBuilder extends SingleShardOperationRequestBuilder<GetRequest, GetResponse, GetRequestBuilder> {
 
+    /**
+     * Creates a new GetRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     */
     public GetRequestBuilder(OpenSearchClient client, GetAction action, @Nullable String index) {
         super(client, action, new GetRequest(index));
     }
 
     /**
      * Sets the id of the document to fetch.
+     *
+     * @param id the identifier
+     * @return this instance
      */
     public GetRequestBuilder setId(String id) {
         request.id(id);

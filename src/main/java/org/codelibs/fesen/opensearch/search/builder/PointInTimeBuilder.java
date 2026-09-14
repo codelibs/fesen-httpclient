@@ -78,10 +78,21 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
     private final String id;
     private TimeValue keepAlive;
 
+    /**
+     * Creates a new PointInTimeBuilder.
+     *
+     * @param id the identifier
+     */
     public PointInTimeBuilder(String id) {
         this.id = Objects.requireNonNull(id);
     }
 
+    /**
+     * Creates a new PointInTimeBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PointInTimeBuilder(StreamInput in) throws IOException {
         id = in.readString();
         keepAlive = in.readOptionalTimeValue();
@@ -104,6 +115,13 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static PointInTimeBuilder fromXContent(XContentParser parser) throws IOException {
         final XContentParams params = PARSER.parse(parser, null);
         if (params.id == null) {
@@ -115,6 +133,9 @@ public final class PointInTimeBuilder implements Writeable, ToXContentObject {
     /**
      * If specified, the search layer will keep this point in time around for at least the given keep-alive.
      * Otherwise, the point in time will be kept around until the original keep alive elapsed.
+     *
+     * @param keepAlive the keep alive
+     * @return this instance
      */
     public PointInTimeBuilder setKeepAlive(TimeValue keepAlive) {
         this.keepAlive = keepAlive;

@@ -15,6 +15,12 @@ import java.io.IOException;
  */
 public class JsonGenerationException extends IOException {
 
+    /**
+     * Creates a new JsonGenerationException.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public JsonGenerationException(String message, Throwable cause) {
         super(message, cause);
     }

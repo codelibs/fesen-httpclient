@@ -53,6 +53,9 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public class StoredFieldsContext implements Writeable {
+    /**
+     * The _NONE_ constant.
+     */
     public static final String _NONE_ = "_none_";
 
     private final List<String> fieldNames;
@@ -69,6 +72,11 @@ public class StoredFieldsContext implements Writeable {
         this.fieldNames = new ArrayList<>(fieldNames);
     }
 
+    /**
+     * Creates a new StoredFieldsContext.
+     *
+     * @param other the other instance
+     */
     public StoredFieldsContext(StoredFieldsContext other) {
         this.fetchFields = other.fetchFields();
         if (other.fieldNames() != null) {
@@ -78,6 +86,12 @@ public class StoredFieldsContext implements Writeable {
         }
     }
 
+    /**
+     * Creates a new StoredFieldsContext by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public StoredFieldsContext(StreamInput in) throws IOException {
         this.fetchFields = in.readBoolean();
         if (fetchFields) {
@@ -97,6 +111,8 @@ public class StoredFieldsContext implements Writeable {
 
     /**
      * Gets the field names to load and return as part of the search request.
+     *
+     * @return the field names
      */
     public List<String> fieldNames() {
         return fieldNames;
@@ -104,6 +120,9 @@ public class StoredFieldsContext implements Writeable {
 
     /**
      * Adds the field names {@code fieldNames} to the list of fields to load.
+     *
+     * @param fieldNames the field names
+     * @return this instance
      */
     public StoredFieldsContext addFieldNames(List<String> fieldNames) {
         if (fetchFields == false || fieldNames.contains(_NONE_)) {
@@ -115,6 +134,8 @@ public class StoredFieldsContext implements Writeable {
 
     /**
      * Returns true if the stored fields should be fetched, false otherwise.
+     *
+     * @return this instance
      */
     public boolean fetchFields() {
         return fetchFields;
@@ -139,6 +160,13 @@ public class StoredFieldsContext implements Writeable {
         return result;
     }
 
+    /**
+     * Writes this instance to the given content builder.
+     *
+     * @param preferredName the preferred name
+     * @param builder the content builder
+     * @throws IOException if an I/O error occurs
+     */
     public void toXContent(String preferredName, XContentBuilder builder) throws IOException {
         if (fetchFields == false) {
             builder.field(preferredName, _NONE_);
@@ -156,6 +184,12 @@ public class StoredFieldsContext implements Writeable {
         }
     }
 
+    /**
+     * Creates an instance from list.
+     *
+     * @param fieldNames the field names
+     * @return the new list
+     */
     public static StoredFieldsContext fromList(List<String> fieldNames) {
         if (fieldNames.size() == 1 && _NONE_.equals(fieldNames.get(0))) {
             return new StoredFieldsContext(false);
@@ -166,6 +200,14 @@ public class StoredFieldsContext implements Writeable {
         return new StoredFieldsContext(fieldNames);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param fieldName the field name
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static StoredFieldsContext fromXContent(String fieldName, XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
 

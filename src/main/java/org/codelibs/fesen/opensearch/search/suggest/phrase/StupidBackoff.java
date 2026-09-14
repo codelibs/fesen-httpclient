@@ -62,6 +62,9 @@ public final class StupidBackoff extends SmoothingModel {
      * Default discount parameter for {@link StupidBackoff} smoothing
      */
     public static final double DEFAULT_BACKOFF_DISCOUNT = 0.4;
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "stupid_backoff";
     private static final ParseField DISCOUNT_FIELD = new ParseField("discount");
     static final ParseField PARSE_FIELD = new ParseField(NAME);
@@ -105,6 +108,13 @@ public final class StupidBackoff extends SmoothingModel {
         return Objects.hash(discount);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SmoothingModel fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         String fieldName = null;

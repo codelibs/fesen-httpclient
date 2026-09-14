@@ -71,8 +71,10 @@ public enum ScriptType implements Writeable {
 
     /**
      * Reads an int from the input stream and converts it to a {@link ScriptType}.
+     * @param in the input to read from
      * @return The ScriptType read from the stream. Throws an {@link IllegalStateException}
      * if no ScriptType is found based on the id.
+     * @throws IOException if an I/O error occurs
      */
     public static ScriptType readFrom(StreamInput in) throws IOException {
         int id = in.readVInt();
@@ -116,6 +118,8 @@ public enum ScriptType implements Writeable {
     }
 
     /**
+     * Returns the name.
+     *
      * @return The unique name for this {@link ScriptType} based on the {@link ParseField}.
      */
     public String getName() {
@@ -123,6 +127,8 @@ public enum ScriptType implements Writeable {
     }
 
     /**
+     * Returns the parse field.
+     *
      * @return Specifies the name used to parse input from queries.
      */
     public ParseField getParseField() {

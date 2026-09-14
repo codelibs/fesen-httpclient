@@ -57,12 +57,23 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "exists";
 
+    /**
+     * The FIELD_FIELD constant.
+     */
     public static final ParseField FIELD_FIELD = new ParseField("field");
 
     private final String fieldName;
 
+    /**
+     * Creates a new ExistsQueryBuilder.
+     *
+     * @param fieldName the field name
+     */
     public ExistsQueryBuilder(String fieldName) {
         if (Strings.isEmpty(fieldName)) {
             throw new IllegalArgumentException("field name is null or empty");
@@ -72,6 +83,9 @@ public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public ExistsQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -99,6 +113,13 @@ public class ExistsQueryBuilder extends AbstractQueryBuilder<ExistsQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ExistsQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldPattern = null;
         String queryName = null;

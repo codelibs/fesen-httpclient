@@ -54,6 +54,11 @@ public class CreateSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
 
     /**
      * Constructs a new create snapshot request builder with specified repository and snapshot names
+     *
+     * @param client the client
+     * @param action the action
+     * @param repository the repository
+     * @param snapshot the snapshot
      */
     public CreateSnapshotRequestBuilder(OpenSearchClient client, CreateSnapshotAction action, String repository, String snapshot) {
         super(client, action, new CreateSnapshotRequest(repository, snapshot));
@@ -66,6 +71,7 @@ public class CreateSnapshotRequestBuilder extends ClusterManagerNodeOperationReq
      * prefix "test" except index "test42". Aliases are supported. An empty list or {"_all"} will snapshot all open
      * indices in the cluster.
      *
+     * @param indices the indices
      * @return this builder
      */
     public CreateSnapshotRequestBuilder setIndices(String... indices) {

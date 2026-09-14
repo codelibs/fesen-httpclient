@@ -90,6 +90,12 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
         Status.declareFields(PARSER);
     }
 
+    /**
+     * Creates a new BulkByScrollResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BulkByScrollResponse(StreamInput in) throws IOException {
         super(in);
         took = in.readTimeValue();
@@ -99,6 +105,15 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
         timedOut = in.readBoolean();
     }
 
+    /**
+     * Creates a new BulkByScrollResponse.
+     *
+     * @param took the took
+     * @param status the status
+     * @param bulkFailures the bulk failures
+     * @param searchFailures the search failures
+     * @param timedOut the timed out
+     */
     public BulkByScrollResponse(
         TimeValue took,
         BulkByScrollTask.Status status,
@@ -113,6 +128,12 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
         this.timedOut = timedOut;
     }
 
+    /**
+     * Creates a new BulkByScrollResponse.
+     *
+     * @param toMerge the to merge
+     * @param reasonCancelled the reason cancelled
+     */
     public BulkByScrollResponse(Iterable<BulkByScrollResponse> toMerge, @Nullable String reasonCancelled) {
         long mergedTook = 0;
         List<BulkByScrollTask.StatusOrException> statuses = new ArrayList<>();
@@ -129,44 +150,91 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
         status = new BulkByScrollTask.Status(statuses, reasonCancelled);
     }
 
+    /**
+     * Returns the took.
+     *
+     * @return the took
+     */
     public TimeValue getTook() {
         return took;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public BulkByScrollTask.Status getStatus() {
         return status;
     }
 
+    /**
+     * Returns the created.
+     *
+     * @return the created
+     */
     public long getCreated() {
         return status.getCreated();
     }
 
+    /**
+     * Returns the total.
+     *
+     * @return the total
+     */
     public long getTotal() {
         return status.getTotal();
     }
 
+    /**
+     * Returns the deleted.
+     *
+     * @return the deleted
+     */
     public long getDeleted() {
         return status.getDeleted();
     }
 
+    /**
+     * Returns the updated.
+     *
+     * @return the updated
+     */
     public long getUpdated() {
         return status.getUpdated();
     }
 
+    /**
+     * Returns the batches.
+     *
+     * @return the batches
+     */
     public int getBatches() {
         return status.getBatches();
     }
 
+    /**
+     * Returns the version conflicts.
+     *
+     * @return the version conflicts
+     */
     public long getVersionConflicts() {
         return status.getVersionConflicts();
     }
 
+    /**
+     * Returns the noops.
+     *
+     * @return the noops
+     */
     public long getNoops() {
         return status.getNoops();
     }
 
     /**
      * The number of times that the request had retry bulk actions.
+     *
+     * @return the bulk retries
      */
     public long getBulkRetries() {
         return status.getBulkRetries();
@@ -174,6 +242,8 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
 
     /**
      * The number of times that the request had retry search actions.
+     *
+     * @return the search retries
      */
     public long getSearchRetries() {
         return status.getSearchRetries();
@@ -181,6 +251,8 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
 
     /**
      * All of the bulk failures. Version conflicts are only included if the request sets abortOnVersionConflict to true (the default).
+     *
+     * @return the bulk failures
      */
     public List<Failure> getBulkFailures() {
         return bulkFailures;
@@ -188,6 +260,8 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
 
     /**
      * All search failures.
+     *
+     * @return the search failures
      */
     public List<ScrollableHitSource.SearchFailure> getSearchFailures() {
         return searchFailures;
@@ -195,6 +269,8 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
 
     /**
      * Did any of the sub-requests that were part of this request timeout?
+     *
+     * @return the timed out flag
      */
     public boolean isTimedOut() {
         return timedOut;
@@ -227,6 +303,12 @@ public class BulkByScrollResponse extends ActionResponse implements ToXContentFr
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static BulkByScrollResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null).buildResponse();
     }

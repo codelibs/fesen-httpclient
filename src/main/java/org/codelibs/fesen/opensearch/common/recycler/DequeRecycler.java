@@ -37,6 +37,7 @@ import java.util.Deque;
 /**
  * A {@link Recycler} implementation based on a {@link Deque}. This implementation is NOT thread-safe.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public class DequeRecycler<T> extends AbstractRecycler<T> {
@@ -44,6 +45,13 @@ public class DequeRecycler<T> extends AbstractRecycler<T> {
     final Deque<T> deque;
     final int maxSize;
 
+    /**
+     * Creates a new DequeRecycler.
+     *
+     * @param c the c
+     * @param queue the queue
+     * @param maxSize the max size
+     */
     public DequeRecycler(C<T> c, Deque<T> queue, int maxSize) {
         super(c);
         this.deque = queue;
@@ -59,12 +67,20 @@ public class DequeRecycler<T> extends AbstractRecycler<T> {
         return new DV(v, true);
     }
 
-    /** Called before releasing an object, returns true if the object should be recycled and false otherwise. */
+    /**
+     * Called before releasing an object, returns true if the object should be recycled and false otherwise.
+     *
+     * @return the before release
+     */
     protected boolean beforeRelease() {
         return deque.size() < maxSize;
     }
 
-    /** Called after a release. */
+    /**
+     * Called after a release.
+     *
+     * @param recycled the recycled
+     */
     protected void afterRelease(boolean recycled) {
         // nothing to do
     }

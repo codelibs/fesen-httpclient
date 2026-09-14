@@ -106,6 +106,9 @@ import static org.codelibs.fesen.opensearch.common.settings.Settings.writeSettin
 @PublicApi(since = "1.0.0")
 public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragment, VerifiableWriteable {
 
+    /**
+     * The INDEX_READ_ONLY_BLOCK constant.
+     */
     public static final ClusterBlock INDEX_READ_ONLY_BLOCK = new ClusterBlock(
         5,
         "index read-only (api)",
@@ -115,6 +118,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         RestStatus.FORBIDDEN,
         EnumSet.of(ClusterBlockLevel.WRITE, ClusterBlockLevel.METADATA_WRITE)
     );
+    /**
+     * The INDEX_READ_BLOCK constant.
+     */
     public static final ClusterBlock INDEX_READ_BLOCK = new ClusterBlock(
         7,
         "index read (api)",
@@ -124,6 +130,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         RestStatus.FORBIDDEN,
         EnumSet.of(ClusterBlockLevel.READ)
     );
+    /**
+     * The INDEX_WRITE_BLOCK constant.
+     */
     public static final ClusterBlock INDEX_WRITE_BLOCK = new ClusterBlock(
         8,
         "index write (api)",
@@ -133,6 +142,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         RestStatus.FORBIDDEN,
         EnumSet.of(ClusterBlockLevel.WRITE)
     );
+    /**
+     * The INDEX_METADATA_BLOCK constant.
+     */
     public static final ClusterBlock INDEX_METADATA_BLOCK = new ClusterBlock(
         9,
         "index metadata (api)",
@@ -142,6 +154,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         RestStatus.FORBIDDEN,
         EnumSet.of(ClusterBlockLevel.METADATA_WRITE, ClusterBlockLevel.METADATA_READ)
     );
+    /**
+     * The INDEX_READ_ONLY_ALLOW_DELETE_BLOCK constant.
+     */
     public static final ClusterBlock INDEX_READ_ONLY_ALLOW_DELETE_BLOCK = new ClusterBlock(
         12,
         "disk usage exceeded flood-stage watermark, index has read-only-allow-delete block",
@@ -152,6 +167,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         EnumSet.of(ClusterBlockLevel.METADATA_WRITE, ClusterBlockLevel.WRITE)
     );
 
+    /**
+     * The REMOTE_READ_ONLY_ALLOW_DELETE constant.
+     */
     public static final ClusterBlock REMOTE_READ_ONLY_ALLOW_DELETE = new ClusterBlock(
         13,
         "remote index is read-only",
@@ -163,6 +181,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     );
 
     // Block ID and block for scale operations (IDs 20-29 reserved for scaling)
+    /**
+     * The INDEX_SEARCH_ONLY_BLOCK_ID constant.
+     */
     public static final int INDEX_SEARCH_ONLY_BLOCK_ID = 20;
 
     /**
@@ -187,7 +208,13 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      */
     @PublicApi(since = "1.0.0")
     public enum State {
+        /**
+         * The OPEN value.
+         */
         OPEN((byte) 0),
+        /**
+         * The CLOSE value.
+         */
         CLOSE((byte) 1);
 
         private final byte id;
@@ -196,10 +223,21 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             this.id = id;
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public byte id() {
             return this.id;
         }
 
+        /**
+         * Creates an instance from identifier.
+         *
+         * @param id the identifier
+         * @return the new identifier
+         */
         public static State fromId(byte id) {
             if (id == 0) {
                 return OPEN;
@@ -248,11 +286,23 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         );
     }
 
+    /**
+     * The INDEX_SETTING_PREFIX constant.
+     */
     public static final String INDEX_SETTING_PREFIX = "index.";
+    /**
+     * The SETTING_NUMBER_OF_SHARDS constant.
+     */
     public static final String SETTING_NUMBER_OF_SHARDS = "index.number_of_shards";
+    /**
+     * The SETTING_NUMBER_OF_VIRTUAL_SHARDS constant.
+     */
     public static final String SETTING_NUMBER_OF_VIRTUAL_SHARDS = "index.number_of_virtual_shards";
     static final String DEFAULT_NUMBER_OF_SHARDS = "opensearch.index.default_number_of_shards";
     static final String MAX_NUMBER_OF_SHARDS = "opensearch.index.max_number_of_shards";
+    /**
+     * The INDEX_NUMBER_OF_SHARDS_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_NUMBER_OF_SHARDS_SETTING = buildNumberOfShardsSetting();
     /**
      * Settings for configuring the number of virtual shards on an index.
@@ -270,7 +320,13 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Final
     );
 
+    /**
+     * The SETTING_NUMBER_OF_REPLICAS constant.
+     */
     public static final String SETTING_NUMBER_OF_REPLICAS = "index.number_of_replicas";
+    /**
+     * The INDEX_NUMBER_OF_REPLICAS_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_NUMBER_OF_REPLICAS_SETTING = Setting.intSetting(
         SETTING_NUMBER_OF_REPLICAS,
         1,
@@ -287,6 +343,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * updates.  //TODO: Once physical isolation is introduced, reference the setting here.
      */
     public static final String SETTING_NUMBER_OF_SEARCH_REPLICAS = "index.number_of_search_replicas";
+    /**
+     * The INDEX_NUMBER_OF_SEARCH_REPLICAS_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_NUMBER_OF_SEARCH_REPLICAS_SETTING = Setting.intSetting(
         SETTING_NUMBER_OF_SEARCH_REPLICAS,
         0,
@@ -295,7 +354,13 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.IndexScope
     );
 
+    /**
+     * The SETTING_ROUTING_PARTITION_SIZE constant.
+     */
     public static final String SETTING_ROUTING_PARTITION_SIZE = "index.routing_partition_size";
+    /**
+     * The INDEX_ROUTING_PARTITION_SIZE_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_ROUTING_PARTITION_SIZE_SETTING = Setting.intSetting(
         SETTING_ROUTING_PARTITION_SIZE,
         1,
@@ -303,6 +368,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.IndexScope
     );
 
+    /**
+     * The INDEX_NUMBER_OF_ROUTING_SHARDS_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_NUMBER_OF_ROUTING_SHARDS_SETTING = Setting.intSetting(
         "index.number_of_routing_shards",
         INDEX_NUMBER_OF_SHARDS_SETTING,
@@ -340,6 +408,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Used to specify the replication type for the index. By default, document replication is used.
      */
     public static final String SETTING_REPLICATION_TYPE = "index.replication.type";
+    /**
+     * The INDEX_REPLICATION_TYPE_SETTING constant.
+     */
     public static final Setting<ReplicationType> INDEX_REPLICATION_TYPE_SETTING = new Setting<>(
         SETTING_REPLICATION_TYPE,
         ReplicationType.DOCUMENT.toString(),
@@ -374,12 +445,27 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Final
     );
 
+    /**
+     * The SETTING_REMOTE_STORE_ENABLED constant.
+     */
     public static final String SETTING_REMOTE_STORE_ENABLED = "index.remote_store.enabled";
+    /**
+     * The SETTING_INDEX_APPEND_ONLY_ENABLED constant.
+     */
     public static final String SETTING_INDEX_APPEND_ONLY_ENABLED = "index.append_only.enabled";
+    /**
+     * The SETTING_BULK_ADAPTIVE_SHARD_SELECTION_ENABLED constant.
+     */
     public static final String SETTING_BULK_ADAPTIVE_SHARD_SELECTION_ENABLED = "index.bulk.adaptive_shard_selection.enabled";
 
+    /**
+     * The SETTING_REMOTE_SEGMENT_STORE_REPOSITORY constant.
+     */
     public static final String SETTING_REMOTE_SEGMENT_STORE_REPOSITORY = "index.remote_store.segment.repository";
 
+    /**
+     * The SETTING_REMOTE_TRANSLOG_STORE_REPOSITORY constant.
+     */
     public static final String SETTING_REMOTE_TRANSLOG_STORE_REPOSITORY = "index.remote_store.translog.repository";
 
     /**
@@ -537,6 +623,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         }
     }
 
+    /**
+     * The INDEX_REMOTE_TRANSLOG_REPOSITORY_SETTING constant.
+     */
     public static final Setting<String> INDEX_REMOTE_TRANSLOG_REPOSITORY_SETTING = Setting.simpleString(
         SETTING_REMOTE_TRANSLOG_STORE_REPOSITORY,
         new Setting.Validator<>() {
@@ -575,9 +664,21 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Dynamic
     );
 
+    /**
+     * The SETTING_AUTO_EXPAND_REPLICAS constant.
+     */
     public static final String SETTING_AUTO_EXPAND_REPLICAS = "index.auto_expand_replicas";
+    /**
+     * The SETTING_AUTO_EXPAND_SEARCH_REPLICAS constant.
+     */
     public static final String SETTING_AUTO_EXPAND_SEARCH_REPLICAS = "index.auto_expand_search_replicas";
+    /**
+     * The INDEX_AUTO_EXPAND_REPLICAS_SETTING constant.
+     */
     public static final Setting<AutoExpandReplicas> INDEX_AUTO_EXPAND_REPLICAS_SETTING = AutoExpandReplicas.SETTING;
+    /**
+     * The INDEX_AUTO_EXPAND_SEARCH_REPLICAS_SETTING constant.
+     */
     public static final Setting<AutoExpandSearchReplicas> INDEX_AUTO_EXPAND_SEARCH_REPLICAS_SETTING = AutoExpandSearchReplicas.SETTING;
 
     /**
@@ -587,11 +688,29 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      */
     @PublicApi(since = "1.0.0")
     public enum APIBlock implements Writeable {
+        /**
+         * The READ_ONLY value.
+         */
         READ_ONLY("read_only", INDEX_READ_ONLY_BLOCK),
+        /**
+         * The READ value.
+         */
         READ("read", INDEX_READ_BLOCK),
+        /**
+         * The WRITE value.
+         */
         WRITE("write", INDEX_WRITE_BLOCK),
+        /**
+         * The METADATA value.
+         */
         METADATA("metadata", INDEX_METADATA_BLOCK),
+        /**
+         * The READ_ONLY_ALLOW_DELETE value.
+         */
         READ_ONLY_ALLOW_DELETE("read_only_allow_delete", INDEX_READ_ONLY_ALLOW_DELETE_BLOCK),
+        /**
+         * The SEARCH_ONLY value.
+         */
         SEARCH_ONLY("search_only", INDEX_SEARCH_ONLY_BLOCK);
 
         final String name;
@@ -606,14 +725,29 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             this.block = block;
         }
 
+        /**
+         * Returns the setting name.
+         *
+         * @return the setting name
+         */
         public String settingName() {
             return settingName;
         }
 
+        /**
+         * Returns the setting.
+         *
+         * @return the setting
+         */
         public Setting<Boolean> setting() {
             return setting;
         }
 
+        /**
+         * Returns the block.
+         *
+         * @return the block
+         */
         public ClusterBlock getBlock() {
             return block;
         }
@@ -624,25 +758,64 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         }
     }
 
+    /**
+     * The SETTING_READ_ONLY constant.
+     */
     public static final String SETTING_READ_ONLY = APIBlock.READ_ONLY.settingName();
+    /**
+     * The INDEX_READ_ONLY_SETTING constant.
+     */
     public static final Setting<Boolean> INDEX_READ_ONLY_SETTING = APIBlock.READ_ONLY.setting();
 
+    /**
+     * The SETTING_BLOCKS_READ constant.
+     */
     public static final String SETTING_BLOCKS_READ = APIBlock.READ.settingName();
+    /**
+     * The INDEX_BLOCKS_READ_SETTING constant.
+     */
     public static final Setting<Boolean> INDEX_BLOCKS_READ_SETTING = APIBlock.READ.setting();
 
+    /**
+     * The SETTING_BLOCKS_WRITE constant.
+     */
     public static final String SETTING_BLOCKS_WRITE = APIBlock.WRITE.settingName();
+    /**
+     * The INDEX_BLOCKS_WRITE_SETTING constant.
+     */
     public static final Setting<Boolean> INDEX_BLOCKS_WRITE_SETTING = APIBlock.WRITE.setting();
 
+    /**
+     * The SETTING_BLOCKS_METADATA constant.
+     */
     public static final String SETTING_BLOCKS_METADATA = APIBlock.METADATA.settingName();
+    /**
+     * The INDEX_BLOCKS_METADATA_SETTING constant.
+     */
     public static final Setting<Boolean> INDEX_BLOCKS_METADATA_SETTING = APIBlock.METADATA.setting();
 
+    /**
+     * The SETTING_READ_ONLY_ALLOW_DELETE constant.
+     */
     public static final String SETTING_READ_ONLY_ALLOW_DELETE = APIBlock.READ_ONLY_ALLOW_DELETE.settingName();
+    /**
+     * The INDEX_BLOCKS_READ_ONLY_ALLOW_DELETE_SETTING constant.
+     */
     public static final Setting<Boolean> INDEX_BLOCKS_READ_ONLY_ALLOW_DELETE_SETTING = APIBlock.READ_ONLY_ALLOW_DELETE.setting();
 
+    /**
+     * The INDEX_BLOCKS_SEARCH_ONLY_SETTING constant.
+     */
     public static final Setting<Boolean> INDEX_BLOCKS_SEARCH_ONLY_SETTING = APIBlock.SEARCH_ONLY.setting();
 
+    /**
+     * The SETTING_VERSION_CREATED constant.
+     */
     public static final String SETTING_VERSION_CREATED = "index.version.created";
 
+    /**
+     * The SETTING_INDEX_VERSION_CREATED constant.
+     */
     public static final Setting<Version> SETTING_INDEX_VERSION_CREATED = Setting.versionSetting(
         SETTING_VERSION_CREATED,
         Version.V_EMPTY,
@@ -651,9 +824,18 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.UnmodifiableOnRestore
     );
 
+    /**
+     * The SETTING_VERSION_UPGRADED constant.
+     */
     public static final String SETTING_VERSION_UPGRADED = "index.version.upgraded";
+    /**
+     * The SETTING_CREATION_DATE constant.
+     */
     public static final String SETTING_CREATION_DATE = "index.creation_date";
 
+    /**
+     * The SETTING_INDEX_CREATION_DATE constant.
+     */
     public static final Setting<Long> SETTING_INDEX_CREATION_DATE = Setting.longSetting(
         SETTING_CREATION_DATE,
         -1,
@@ -662,6 +844,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Final
     );
 
+    /**
+     * The INDEX_PRIORITY_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_PRIORITY_SETTING = Setting.intSetting(
         "index.priority",
         1,
@@ -669,9 +854,21 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.Dynamic,
         Property.IndexScope
     );
+    /**
+     * The SETTING_INDEX_UUID constant.
+     */
     public static final String SETTING_INDEX_UUID = "index.uuid";
+    /**
+     * The SETTING_HISTORY_UUID constant.
+     */
     public static final String SETTING_HISTORY_UUID = "index.history.uuid";
+    /**
+     * The SETTING_DATA_PATH constant.
+     */
     public static final String SETTING_DATA_PATH = "index.data_path";
+    /**
+     * The INDEX_DATA_PATH_SETTING constant.
+     */
     public static final Setting<String> INDEX_DATA_PATH_SETTING = new Setting<>(
         SETTING_DATA_PATH,
         "",
@@ -679,8 +876,14 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.IndexScope
     );
 
+    /**
+     * The INDEX_UUID_NA_VALUE constant.
+     */
     public static final String INDEX_UUID_NA_VALUE = Strings.UNKNOWN_UUID_VALUE;
 
+    /**
+     * The INDEX_UUID_SETTING constant.
+     */
     public static final Setting<String> INDEX_UUID_SETTING = Setting.simpleString(
         SETTING_INDEX_UUID,
         INDEX_UUID_NA_VALUE,
@@ -689,6 +892,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.UnmodifiableOnRestore
     );
 
+    /**
+     * The SETTING_INDEX_HISTORY_UUID constant.
+     */
     public static final Setting<String> SETTING_INDEX_HISTORY_UUID = Setting.simpleString(
         SETTING_HISTORY_UUID,
         INDEX_UUID_NA_VALUE,
@@ -697,21 +903,42 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.UnmodifiableOnRestore
     );
 
+    /**
+     * The INDEX_ROUTING_REQUIRE_GROUP_PREFIX constant.
+     */
     public static final String INDEX_ROUTING_REQUIRE_GROUP_PREFIX = "index.routing.allocation.require";
+    /**
+     * The INDEX_ROUTING_INCLUDE_GROUP_PREFIX constant.
+     */
     public static final String INDEX_ROUTING_INCLUDE_GROUP_PREFIX = "index.routing.allocation.include";
+    /**
+     * The INDEX_ROUTING_EXCLUDE_GROUP_PREFIX constant.
+     */
     public static final String INDEX_ROUTING_EXCLUDE_GROUP_PREFIX = "index.routing.allocation.exclude";
+    /**
+     * The INDEX_ROUTING_REQUIRE_GROUP_SETTING constant.
+     */
     public static final Setting.AffixSetting<String> INDEX_ROUTING_REQUIRE_GROUP_SETTING = Setting.prefixKeySetting(
         INDEX_ROUTING_REQUIRE_GROUP_PREFIX + ".",
         key -> Setting.simpleString(key, value -> IP_VALIDATOR.accept(key, value), Property.Dynamic, Property.IndexScope)
     );
+    /**
+     * The INDEX_ROUTING_INCLUDE_GROUP_SETTING constant.
+     */
     public static final Setting.AffixSetting<String> INDEX_ROUTING_INCLUDE_GROUP_SETTING = Setting.prefixKeySetting(
         INDEX_ROUTING_INCLUDE_GROUP_PREFIX + ".",
         key -> Setting.simpleString(key, value -> IP_VALIDATOR.accept(key, value), Property.Dynamic, Property.IndexScope)
     );
+    /**
+     * The INDEX_ROUTING_EXCLUDE_GROUP_SETTING constant.
+     */
     public static final Setting.AffixSetting<String> INDEX_ROUTING_EXCLUDE_GROUP_SETTING = Setting.prefixKeySetting(
         INDEX_ROUTING_EXCLUDE_GROUP_PREFIX + ".",
         key -> Setting.simpleString(key, value -> IP_VALIDATOR.accept(key, value), Property.Dynamic, Property.IndexScope)
     );
+    /**
+     * The INDEX_ROUTING_INITIAL_RECOVERY_GROUP_SETTING constant.
+     */
     public static final Setting.AffixSetting<String> INDEX_ROUTING_INITIAL_RECOVERY_GROUP_SETTING = Setting.prefixKeySetting(
         "index.routing.allocation.initial_recovery.",
         key -> Setting.simpleString(key)
@@ -728,6 +955,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Setting.Property.IndexScope
     );
 
+    /**
+     * The SETTING_INDEX_HIDDEN constant.
+     */
     public static final String SETTING_INDEX_HIDDEN = "index.hidden";
     /**
      * Whether the index is considered hidden or not. A hidden index will not be resolved in
@@ -744,7 +974,13 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Used to specify the type for the ingestion index. If not specified, the ingestion source not enabled
      */
     public static final String SETTING_INGESTION_SOURCE_TYPE = "index.ingestion_source.type";
+    /**
+     * The NONE_INGESTION_SOURCE_TYPE constant.
+     */
     public static final String NONE_INGESTION_SOURCE_TYPE = "none";
+    /**
+     * The INGESTION_SOURCE_TYPE_SETTING constant.
+     */
     public static final Setting<String> INGESTION_SOURCE_TYPE_SETTING = Setting.simpleString(
         SETTING_INGESTION_SOURCE_TYPE,
         NONE_INGESTION_SOURCE_TYPE,
@@ -767,6 +1003,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Used to specify initial reset policy for the ingestion pointer. If not specified, default to the latest
      */
     public static final String SETTING_INGESTION_SOURCE_POINTER_INIT_RESET = "index.ingestion_source.pointer.init.reset";
+    /**
+     * The INGESTION_SOURCE_POINTER_INIT_RESET_SETTING constant.
+     */
     public static final Setting<String> INGESTION_SOURCE_POINTER_INIT_RESET_SETTING = Setting.simpleString(
         SETTING_INGESTION_SOURCE_POINTER_INIT_RESET,
         StreamPoller.ResetState.LATEST.name(),
@@ -821,6 +1060,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines the setting for the value to be used when resetting by offset or timestamp.
      */
     public static final String SETTING_INGESTION_SOURCE_POINTER_INIT_RESET_VALUE = "index.ingestion_source.pointer.init.reset.value";
+    /**
+     * The INGESTION_SOURCE_POINTER_INIT_RESET_VALUE_SETTING constant.
+     */
     public static final Setting<String> INGESTION_SOURCE_POINTER_INIT_RESET_VALUE_SETTING = Setting.simpleString(
         SETTING_INGESTION_SOURCE_POINTER_INIT_RESET_VALUE,
         "",
@@ -832,6 +1074,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines the error strategy for pull-based ingestion.
      */
     public static final String SETTING_INGESTION_SOURCE_ERROR_STRATEGY = "index.ingestion_source.error_strategy";
+    /**
+     * The INGESTION_SOURCE_ERROR_STRATEGY_SETTING constant.
+     */
     public static final Setting<IngestionErrorStrategy.ErrorStrategy> INGESTION_SOURCE_ERROR_STRATEGY_SETTING = new Setting<>(
         SETTING_INGESTION_SOURCE_ERROR_STRATEGY,
         IngestionErrorStrategy.ErrorStrategy.DROP.name(),
@@ -845,6 +1090,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines the max poll size per batch for pull-based ingestion.
      */
     public static final String SETTING_INGESTION_SOURCE_MAX_POLL_SIZE = "index.ingestion_source.poll.max_batch_size";
+    /**
+     * The INGESTION_SOURCE_MAX_POLL_SIZE constant.
+     */
     public static final Setting<Long> INGESTION_SOURCE_MAX_POLL_SIZE = Setting.longSetting(
         SETTING_INGESTION_SOURCE_MAX_POLL_SIZE,
         1000,
@@ -857,6 +1105,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines the poll timeout for pull-based ingestion in milliseconds.
      */
     public static final String SETTING_INGESTION_SOURCE_POLL_TIMEOUT = "index.ingestion_source.poll.timeout";
+    /**
+     * The INGESTION_SOURCE_POLL_TIMEOUT constant.
+     */
     public static final Setting<Integer> INGESTION_SOURCE_POLL_TIMEOUT = Setting.intSetting(
         SETTING_INGESTION_SOURCE_POLL_TIMEOUT,
         1000,
@@ -869,6 +1120,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines the number of processor threads that will write to the lucene index.
      */
     public static final String SETTING_INGESTION_SOURCE_NUM_PROCESSOR_THREADS = "index.ingestion_source.num_processor_threads";
+    /**
+     * The INGESTION_SOURCE_NUM_PROCESSOR_THREADS_SETTING constant.
+     */
     public static final Setting<Integer> INGESTION_SOURCE_NUM_PROCESSOR_THREADS_SETTING = Setting.intSetting(
         SETTING_INGESTION_SOURCE_NUM_PROCESSOR_THREADS,
         1,
@@ -881,6 +1135,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines the internal blocking queue size that is used to decouple poller and processor in pull-based ingestion.
      */
     public static final String SETTING_INGESTION_SOURCE_INTERNAL_QUEUE_SIZE = "index.ingestion_source.internal_queue_size";
+    /**
+     * The INGESTION_SOURCE_INTERNAL_QUEUE_SIZE_SETTING constant.
+     */
     public static final Setting<Integer> INGESTION_SOURCE_INTERNAL_QUEUE_SIZE_SETTING = Setting.intSetting(
         SETTING_INGESTION_SOURCE_INTERNAL_QUEUE_SIZE,
         100,
@@ -897,6 +1154,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      */
     public static final String SETTING_INGESTION_SOURCE_POINTER_BASED_LAG_UPDATE_INTERVAL =
         "index.ingestion_source.pointer_based_lag_update_interval";
+    /**
+     * The INGESTION_SOURCE_POINTER_BASED_LAG_UPDATE_INTERVAL_SETTING constant.
+     */
     public static final Setting<TimeValue> INGESTION_SOURCE_POINTER_BASED_LAG_UPDATE_INTERVAL_SETTING = Setting.positiveTimeSetting(
         SETTING_INGESTION_SOURCE_POINTER_BASED_LAG_UPDATE_INTERVAL,
         new TimeValue(10, TimeUnit.SECONDS),
@@ -908,6 +1168,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Defines how the incoming ingestion message payload is mapped to the internal message format.
      */
     public static final String SETTING_INGESTION_SOURCE_MAPPER_TYPE = "index.ingestion_source.mapper_type";
+    /**
+     * The INGESTION_SOURCE_MAPPER_TYPE_SETTING constant.
+     */
     public static final Setting<IngestionMessageMapper.MapperType> INGESTION_SOURCE_MAPPER_TYPE_SETTING = new Setting<>(
         SETTING_INGESTION_SOURCE_MAPPER_TYPE,
         IngestionMessageMapper.MapperType.DEFAULT.getName(),
@@ -922,6 +1185,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * "modulo": each shard consumes all partitions where partition % numShards == shardId.
      */
     public static final String SETTING_INGESTION_SOURCE_PARTITION_STRATEGY = "index.ingestion_source.source_partition_strategy";
+    /**
+     * The INGESTION_SOURCE_PARTITION_STRATEGY_SETTING constant.
+     */
     public static final Setting<IngestionSource.SourcePartitionStrategy> INGESTION_SOURCE_PARTITION_STRATEGY_SETTING = new Setting<>(
         SETTING_INGESTION_SOURCE_PARTITION_STRATEGY,
         IngestionSource.SourcePartitionStrategy.SIMPLE.getName(),
@@ -936,6 +1202,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * This mode is currently not supported with segment replication.
      */
     public static final String SETTING_INGESTION_SOURCE_ALL_ACTIVE_INGESTION = "index.ingestion_source.all_active";
+    /**
+     * The INGESTION_SOURCE_ALL_ACTIVE_INGESTION_SETTING constant.
+     */
     public static final Setting<Boolean> INGESTION_SOURCE_ALL_ACTIVE_INGESTION_SETTING = Setting.boolSetting(
         SETTING_INGESTION_SOURCE_ALL_ACTIVE_INGESTION,
         false,
@@ -981,6 +1250,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Setting.Property.Final
     );
 
+    /**
+     * The INGESTION_SOURCE_PARAMS_SETTING constant.
+     */
     public static final Setting.AffixSetting<Object> INGESTION_SOURCE_PARAMS_SETTING = Setting.prefixKeySetting(
         "index.ingestion_source.param.",
         key -> new Setting<>(key, "", (value) -> {
@@ -1006,6 +1278,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * A value of -1 means warmup is disabled (the default). A value >= 0 enables warmup with that timeout.
      */
     public static final String SETTING_INGESTION_SOURCE_WARMUP_TIMEOUT = "index.ingestion_source.warmup.timeout";
+    /**
+     * The INGESTION_SOURCE_WARMUP_TIMEOUT_SETTING constant.
+     */
     public static final Setting<TimeValue> INGESTION_SOURCE_WARMUP_TIMEOUT_SETTING = Setting.timeSetting(
         SETTING_INGESTION_SOURCE_WARMUP_TIMEOUT,
         TimeValue.timeValueMillis(-1),
@@ -1019,6 +1294,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * A value of 0 means fully caught up (no lag).
      */
     public static final String SETTING_INGESTION_SOURCE_WARMUP_LAG_THRESHOLD = "index.ingestion_source.warmup.lag_threshold";
+    /**
+     * The INGESTION_SOURCE_WARMUP_LAG_THRESHOLD_SETTING constant.
+     */
     public static final Setting<Long> INGESTION_SOURCE_WARMUP_LAG_THRESHOLD_SETTING = Setting.longSetting(
         SETTING_INGESTION_SOURCE_WARMUP_LAG_THRESHOLD,
         100L,
@@ -1031,6 +1309,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * an internal index format description, allowing us to find out if this index is upgraded or needs upgrading
      */
     private static final String INDEX_FORMAT = "index.format";
+    /**
+     * The INDEX_FORMAT_SETTING constant.
+     */
     public static final Setting<Integer> INDEX_FORMAT_SETTING = Setting.intSetting(
         INDEX_FORMAT,
         0,
@@ -1038,6 +1319,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Setting.Property.Final
     );
 
+    /**
+     * The KEY_IN_SYNC_ALLOCATIONS constant.
+     */
     public static final String KEY_IN_SYNC_ALLOCATIONS = "in_sync_allocations";
     static final String KEY_VERSION = "version";
     static final String KEY_MAPPING_VERSION = "mapping_version";
@@ -1051,9 +1335,21 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     static final String KEY_ROLLOVER_INFOS = "rollover_info";
     static final String KEY_SYSTEM = "system";
     static final String KEY_SPLIT_SHARDS_METADATA = "split_shards_metadata";
+    /**
+     * The KEY_PRIMARY_TERMS constant.
+     */
     public static final String KEY_PRIMARY_TERMS = "primary_terms";
+    /**
+     * The KEY_PRIMARY_TERMS_MAP constant.
+     */
     public static final String KEY_PRIMARY_TERMS_MAP = "primary_terms_map";
+    /**
+     * The CONTEXT_KEY constant.
+     */
     public static final String CONTEXT_KEY = "context";
+    /**
+     * The INGESTION_STATUS_KEY constant.
+     */
     public static final String INGESTION_STATUS_KEY = "ingestion_status";
 
     /**
@@ -1096,6 +1392,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         Property.IndexScope
     );
 
+    /**
+     * The PLUGGABLE_DATAFORMAT_ENABLED_SETTING constant.
+     */
     public static final Setting<Boolean> PLUGGABLE_DATAFORMAT_ENABLED_SETTING = Setting.boolSetting(
         "index.pluggable.dataformat.enabled",
         false,
@@ -1252,26 +1551,56 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         assert numberOfShards * routingFactor == routingNumShards : routingNumShards + " must be a multiple of " + numberOfShards;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public Index getIndex() {
         return index;
     }
 
+    /**
+     * Returns the index UUID.
+     *
+     * @return the index UUID
+     */
     public String getIndexUUID() {
         return index.getUUID();
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long getVersion() {
         return this.version;
     }
 
+    /**
+     * Returns the mapping version.
+     *
+     * @return the mapping version
+     */
     public long getMappingVersion() {
         return mappingVersion;
     }
 
+    /**
+     * Returns the settings version.
+     *
+     * @return the settings version
+     */
     public long getSettingsVersion() {
         return settingsVersion;
     }
 
+    /**
+     * Returns the aliases version.
+     *
+     * @return the aliases version
+     */
     public long getAliasesVersion() {
         return aliasesVersion;
     }
@@ -1282,7 +1611,10 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * <p>
      * Note: since we increment the term every time a shard is assigned, the term for any operational shard (i.e., a shard
      * that can be indexed into) is larger than 0. See how the cluster-manager applies routing changes.
-     **/
+     *
+     * @param shardId the shard identifier
+     * @return the primary term
+      */
     public long primaryTerm(int shardId) {
         Long pTerm = this.primaryTermsMap.get(shardId);
         if (pTerm == null) {
@@ -1294,37 +1626,71 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
     /**
      * Return the {@link Version} on which this index has been created. This
      * information is typically useful for backward compatibility.
+     *
+     * @return the creation version
      */
     public Version getCreationVersion() {
         return indexCreatedVersion;
     }
 
+    /**
+     * Returns the state.
+     *
+     * @return the state
+     */
     public State getState() {
         return this.state;
     }
 
+    /**
+     * Returns the number of shards.
+     *
+     * @return the number of shards
+     */
     public int getNumberOfShards() {
         return numberOfShards;
     }
 
+    /**
+     * Returns the number of replicas.
+     *
+     * @return the number of replicas
+     */
     public int getNumberOfReplicas() {
         return numberOfReplicas;
     }
 
+    /**
+     * Returns the total number of shards.
+     *
+     * @return the total number of shards
+     */
     public int getTotalNumberOfShards() {
         return totalNumberOfShards;
     }
 
+    /**
+     * Returns the settings.
+     *
+     * @return the settings
+     */
     public Settings getSettings() {
         return settings;
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @return the aliases
+     */
     public Map<String, AliasMetadata> getAliases() {
         return this.aliases;
     }
 
     /**
      * Return the concrete mapping for this index or {@code null} if this index has no mappings at all.
+     *
+     * @return the mapping
      */
     @Nullable
     public MappingMetadata mapping() {
@@ -1334,15 +1700,38 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return null;
     }
 
+    /**
+     * The INDEX_RESIZE_SOURCE_UUID_KEY constant.
+     */
     public static final String INDEX_RESIZE_SOURCE_UUID_KEY = "index.resize.source.uuid";
+    /**
+     * The INDEX_RESIZE_SOURCE_NAME_KEY constant.
+     */
     public static final String INDEX_RESIZE_SOURCE_NAME_KEY = "index.resize.source.name";
+    /**
+     * The INDEX_RESIZE_SOURCE_UUID constant.
+     */
     public static final Setting<String> INDEX_RESIZE_SOURCE_UUID = Setting.simpleString(INDEX_RESIZE_SOURCE_UUID_KEY);
+    /**
+     * The INDEX_RESIZE_SOURCE_NAME constant.
+     */
     public static final Setting<String> INDEX_RESIZE_SOURCE_NAME = Setting.simpleString(INDEX_RESIZE_SOURCE_NAME_KEY);
 
+    /**
+     * Returns the rollover infos.
+     *
+     * @return the rollover infos
+     */
     public Map<String, RolloverInfo> getRolloverInfos() {
         return rolloverInfos;
     }
 
+    /**
+     * Returns the in sync allocation identifiers.
+     *
+     * @param shardId the shard identifier
+     * @return the in sync allocation identifiers
+     */
     public Set<String> inSyncAllocationIds(int shardId) {
         assert shardId >= 0 && shardId < numberOfShards;
         return inSyncAllocationIds.get(shardId);
@@ -1437,6 +1826,13 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         return new IndexMetadataDiff(previousState, this);
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<IndexMetadata> readDiffFrom(StreamInput in) throws IOException {
         return new IndexMetadataDiff(in);
     }
@@ -1622,6 +2018,13 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         }
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static IndexMetadata readFrom(StreamInput in) throws IOException {
         Builder builder = new Builder(in.readString());
         builder.version(in.readLong());
@@ -1825,18 +2228,40 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             .toString();
     }
 
+    /**
+     * Returns the system flag.
+     *
+     * @return the system flag
+     */
     public boolean isSystem() {
         return isSystem;
     }
 
+    /**
+     * Returns the remote snapshot flag.
+     *
+     * @return the remote snapshot flag
+     */
     public boolean isRemoteSnapshot() {
         return isRemoteSnapshot;
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @param index the index
+     * @return the builder
+     */
     public static Builder builder(String index) {
         return new Builder(index);
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @param indexMetadata the index metadata
+     * @return the builder
+     */
     public static Builder builder(IndexMetadata indexMetadata) {
         return new Builder(indexMetadata);
     }
@@ -1868,6 +2293,11 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         private IngestionStatus ingestionStatus;
         private SplitShardsMetadata splitShardsMetadata;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param index the index
+         */
         public Builder(String index) {
             this.index = index;
             this.mappings = new HashMap<>();
@@ -1878,6 +2308,11 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             this.isSystem = false;
         }
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param indexMetadata the index metadata
+         */
         public Builder(IndexMetadata indexMetadata) {
             this.index = indexMetadata.getIndex().getName();
             this.state = indexMetadata.state;
@@ -1902,6 +2337,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
         /**
          * Sets the number of shards that should be used for routing. This should only be used if the number of shards in
          * an index has changed ie if the index is shrunk.
+         *
+         * @param routingNumShards the routing num shards
+         * @return this instance
          */
         public Builder setRoutingNumShards(int routingNumShards) {
             this.routingNumShards = routingNumShards;
@@ -1912,6 +2350,7 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
          * Returns number of shards that should be used for routing. By default this method will return the number of shards
          * for this index.
          *
+         * @return the routing num shards
          * @see #setRoutingNumShards(int)
          * @see #numberOfShards()
          */
@@ -1928,11 +2367,23 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return settings.getAsInt(SETTING_NUMBER_OF_SHARDS, -1);
         }
 
+        /**
+         * Returns the settings.
+         *
+         * @param settings the settings
+         * @return the settings
+         */
         public Builder settings(Settings settings) {
             this.settings = settings;
             return this;
         }
 
+        /**
+         * Puts the mapping.
+         *
+         * @param mappingMd the mapping MD
+         * @return this instance
+         */
         public Builder putMapping(MappingMetadata mappingMd) {
             mappings.clear();
             if (mappingMd != null) {
@@ -1941,50 +2392,111 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             return this;
         }
 
+        /**
+         * Returns the state.
+         *
+         * @param state the state
+         * @return the state
+         */
         public Builder state(State state) {
             this.state = state;
             return this;
         }
 
+        /**
+         * Puts the alias.
+         *
+         * @param aliasMetadata the alias metadata
+         * @return this instance
+         */
         public Builder putAlias(AliasMetadata aliasMetadata) {
             aliases.put(aliasMetadata.alias(), aliasMetadata);
             return this;
         }
 
+        /**
+         * Puts the custom.
+         *
+         * @param type the type
+         * @param customIndexMetadata the custom index metadata
+         * @return this instance
+         */
         public Builder putCustom(String type, Map<String, String> customIndexMetadata) {
             this.customMetadata.put(type, new DiffableStringMap(customIndexMetadata));
             return this;
         }
 
+        /**
+         * Puts the in sync allocation identifiers.
+         *
+         * @param shardId the shard identifier
+         * @param allocationIds the allocation identifiers
+         * @return this instance
+         */
         public Builder putInSyncAllocationIds(int shardId, Set<String> allocationIds) {
             inSyncAllocationIds.put(shardId, new HashSet<>(allocationIds));
             return this;
         }
 
+        /**
+         * Puts the rollover info.
+         *
+         * @param rolloverInfo the rollover info
+         * @return this instance
+         */
         public Builder putRolloverInfo(RolloverInfo rolloverInfo) {
             rolloverInfos.put(rolloverInfo.getAlias(), rolloverInfo);
             return this;
         }
 
+        /**
+         * Returns the version.
+         *
+         * @return the version
+         */
         public long version() {
             return this.version;
         }
 
+        /**
+         * Returns the version.
+         *
+         * @param version the version
+         * @return the version
+         */
         public Builder version(long version) {
             this.version = version;
             return this;
         }
 
+        /**
+         * Returns the mapping version.
+         *
+         * @param mappingVersion the mapping version
+         * @return the mapping version
+         */
         public Builder mappingVersion(final long mappingVersion) {
             this.mappingVersion = mappingVersion;
             return this;
         }
 
+        /**
+         * Returns the settings version.
+         *
+         * @param settingsVersion the settings version
+         * @return the settings version
+         */
         public Builder settingsVersion(final long settingsVersion) {
             this.settingsVersion = settingsVersion;
             return this;
         }
 
+        /**
+         * Returns the aliases version.
+         *
+         * @param aliasesVersion the aliases version
+         * @return the aliases version
+         */
         public Builder aliasesVersion(final long aliasesVersion) {
             this.aliasesVersion = aliasesVersion;
             return this;
@@ -1994,26 +2506,55 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             this.primaryTermsMap = new HashMap<>(primaryTermsMap);
         }
 
+        /**
+         * Returns the system.
+         *
+         * @param system the system
+         * @return the system
+         */
         public Builder system(boolean system) {
             this.isSystem = system;
             return this;
         }
 
+        /**
+         * Returns the context.
+         *
+         * @param context the context
+         * @return the context
+         */
         public Builder context(Context context) {
             this.context = context;
             return this;
         }
 
+        /**
+         * Returns the ingestion status.
+         *
+         * @param ingestionStatus the ingestion status
+         * @return the ingestion status
+         */
         public Builder ingestionStatus(IngestionStatus ingestionStatus) {
             this.ingestionStatus = ingestionStatus;
             return this;
         }
 
+        /**
+         * Splits the shards metadata.
+         *
+         * @param splitShardsMetadata the split shards metadata
+         * @return this instance
+         */
         public Builder splitShardsMetadata(SplitShardsMetadata splitShardsMetadata) {
             this.splitShardsMetadata = splitShardsMetadata;
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IndexMetadata build() {
             final Map<String, AliasMetadata> tmpAliases = aliases;
             Settings tmpSettings = settings;
@@ -2200,6 +2741,14 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
             );
         }
 
+        /**
+         * Writes this instance to the given content builder.
+         *
+         * @param indexMetadata the index metadata
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @throws IOException if an I/O error occurs
+         */
         public static void toXContent(IndexMetadata indexMetadata, XContentBuilder builder, ToXContent.Params params) throws IOException {
             Metadata.XContentContext context = Metadata.XContentContext.valueOf(
                 params.param(CONTEXT_MODE_PARAM, Metadata.CONTEXT_MODE_API)
@@ -2340,6 +2889,9 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * Return the version the index was created from the provided index settings
      * <p>
      * This looks for the presence of the {@link Version} object with key {@link IndexMetadata#SETTING_VERSION_CREATED}
+     *
+     * @param indexSettings the index settings
+     * @return this instance
      */
     public static Version indexCreated(final Settings indexSettings) {
         final Version indexVersion;
@@ -2372,6 +2924,8 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * {@code org.codelibs.fesen.opensearch.cluster.routing.OperationRouting#generateShardId(IndexMetadata, String, String)} to route documents
      * to shards based on their ID or their specific routing value. The default value is {@link #getNumberOfShards()}. This value only
      * changes if and index is shrunk.
+     *
+     * @return the routing num shards
      */
     public int getRoutingNumShards() {
         return routingNumShards;
@@ -2417,6 +2971,8 @@ public class IndexMetadata implements Diffable<IndexMetadata>, ToXContentFragmen
      * - For ".ds-logs-000002" it will return 2
      * - For "&lt;logs-{now/d}-3&gt;" it'll return 3
      *
+     * @param indexName the index name
+     * @return this instance
      * @throws IllegalArgumentException if the index doesn't contain a "-" separator or if the last token after the separator is not a
      *                                  number
      */

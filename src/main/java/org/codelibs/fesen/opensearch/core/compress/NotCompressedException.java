@@ -41,6 +41,9 @@ package org.codelibs.fesen.opensearch.core.compress;
  */
 public class NotCompressedException extends RuntimeException {
 
+    /**
+     * Creates a new NotCompressedException.
+     */
     public NotCompressedException() {
         super();
     }

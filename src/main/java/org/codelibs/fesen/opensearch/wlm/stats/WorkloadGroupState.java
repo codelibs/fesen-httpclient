@@ -43,6 +43,9 @@ public class WorkloadGroupState {
      */
     private final Map<ResourceType, ResourceTypeState> resourceState;
 
+    /**
+     * Creates a new WorkloadGroupState.
+     */
     public WorkloadGroupState() {
         resourceState = new EnumMap<>(ResourceType.class);
         for (ResourceType resourceType : ResourceType.values()) {
@@ -53,6 +56,7 @@ public class WorkloadGroupState {
     }
 
     /**
+     * Returns the total completions.
      *
      * @return co-ordinator completions in the workload group
      */
@@ -61,6 +65,7 @@ public class WorkloadGroupState {
     }
 
     /**
+     * Returns the total rejections.
      *
      * @return rejections in the workload group
      */
@@ -69,6 +74,7 @@ public class WorkloadGroupState {
     }
 
     /**
+     * Returns the failures.
      *
      * @return failures in the workload group
      */
@@ -76,6 +82,11 @@ public class WorkloadGroupState {
         return failures.count();
     }
 
+    /**
+     * Returns the total cancellations.
+     *
+     * @return the total cancellations
+     */
     public long getTotalCancellations() {
         return totalCancellations.count();
     }
@@ -92,19 +103,43 @@ public class WorkloadGroupState {
      * This class holds the resource level stats for the workload group
      */
     public static class ResourceTypeState {
+        /**
+         * The resource type.
+         */
         public final ResourceType resourceType;
+        /**
+         * The cancellations.
+         */
         public final CounterMetric cancellations = new CounterMetric();
+        /**
+         * The rejections.
+         */
         public final CounterMetric rejections = new CounterMetric();
         private double lastRecordedUsage = 0;
 
+        /**
+         * Creates a new ResourceTypeState.
+         *
+         * @param resourceType the resource type
+         */
         public ResourceTypeState(ResourceType resourceType) {
             this.resourceType = resourceType;
         }
 
+        /**
+         * Sets the last recorded usage.
+         *
+         * @param recordedUsage the recorded usage
+         */
         public void setLastRecordedUsage(double recordedUsage) {
             lastRecordedUsage = recordedUsage;
         }
 
+        /**
+         * Returns the last recorded usage.
+         *
+         * @return the last recorded usage
+         */
         public double getLastRecordedUsage() {
             return lastRecordedUsage;
         }

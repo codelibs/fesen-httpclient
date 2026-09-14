@@ -54,6 +54,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class HoltWintersModel extends MovAvgModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "holt_winters";
 
     private static final double DEFAULT_ALPHA = 0.3;
@@ -69,7 +72,13 @@ public class HoltWintersModel extends MovAvgModel {
      * @opensearch.internal
      */
     public enum SeasonalityType {
+        /**
+         * The ADDITIVE value.
+         */
         ADDITIVE((byte) 0, "add"),
+        /**
+         * The MULTIPLICATIVE value.
+         */
         MULTIPLICATIVE((byte) 1, "mult");
 
         /**
@@ -110,6 +119,9 @@ public class HoltWintersModel extends MovAvgModel {
 
         /**
          * Serialize the SeasonalityType to the output stream
+         *
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
          */
         public void writeTo(StreamOutput out) throws IOException {
             out.writeByte(id);
@@ -120,6 +132,7 @@ public class HoltWintersModel extends MovAvgModel {
          *
          * @param in  the input stream
          * @return    SeasonalityType Enum
+         * @throws IOException if an I/O error occurs
          */
         public static SeasonalityType readFrom(StreamInput in) throws IOException {
             byte id = in.readByte();
@@ -182,10 +195,23 @@ public class HoltWintersModel extends MovAvgModel {
     private final boolean pad;
     private final double padding;
 
+    /**
+     * Creates a new HoltWintersModel.
+     */
     public HoltWintersModel() {
         this(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_GAMMA, DEFAULT_PERIOD, DEFAULT_SEASONALITY_TYPE, DEFAULT_PAD);
     }
 
+    /**
+     * Creates a new HoltWintersModel.
+     *
+     * @param alpha the alpha
+     * @param beta the beta
+     * @param gamma the gamma
+     * @param period the period
+     * @param seasonalityType the seasonality type
+     * @param pad the pad
+     */
     public HoltWintersModel(double alpha, double beta, double gamma, int period, SeasonalityType seasonalityType, boolean pad) {
         this.alpha = alpha;
         this.beta = beta;
@@ -310,6 +336,9 @@ public class HoltWintersModel extends MovAvgModel {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final AbstractModelParser PARSER = new AbstractModelParser() {
         @Override
         public MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize) throws ParseException {
@@ -390,6 +419,11 @@ public class HoltWintersModel extends MovAvgModel {
      * @opensearch.internal
      */
     public static class HoltWintersModelBuilder implements MovAvgModelBuilder {
+        /**
+         * Creates a new HoltWintersModelBuilder.
+         */
+        public HoltWintersModelBuilder() {
+        }
 
         private double alpha = DEFAULT_ALPHA;
         private double beta = DEFAULT_BETA;
@@ -424,21 +458,45 @@ public class HoltWintersModel extends MovAvgModel {
             return this;
         }
 
+        /**
+         * Returns the gamma.
+         *
+         * @param gamma the gamma
+         * @return the gamma
+         */
         public HoltWintersModelBuilder gamma(double gamma) {
             this.gamma = gamma;
             return this;
         }
 
+        /**
+         * Returns the period.
+         *
+         * @param period the period
+         * @return the period
+         */
         public HoltWintersModelBuilder period(int period) {
             this.period = period;
             return this;
         }
 
+        /**
+         * Returns the seasonality type.
+         *
+         * @param type the type
+         * @return the seasonality type
+         */
         public HoltWintersModelBuilder seasonalityType(SeasonalityType type) {
             this.seasonalityType = type;
             return this;
         }
 
+        /**
+         * Pads this instance.
+         *
+         * @param pad the pad
+         * @return this instance
+         */
         public HoltWintersModelBuilder pad(boolean pad) {
             this.pad = pad;
             return this;

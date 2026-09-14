@@ -50,7 +50,17 @@ import java.util.Map;
  * @opensearch.internal
  */
 public abstract class ParsedAggregation implements Aggregation, ToXContentFragment {
+    /**
+     * Creates a new ParsedAggregation.
+     */
+    public ParsedAggregation() {
+    }
 
+    /**
+     * Performs the declare aggregation fields step.
+     *
+     * @param objectParser the object parser
+     */
     protected static void declareAggregationFields(AbstractObjectParser<? extends ParsedAggregation, ?> objectParser) {
         objectParser.declareObject(
             (parsedAgg, metadata) -> parsedAgg.metadata = Collections.unmodifiableMap(metadata),
@@ -60,6 +70,9 @@ public abstract class ParsedAggregation implements Aggregation, ToXContentFragme
     }
 
     private String name;
+    /**
+     * The metadata.
+     */
     protected Map<String, Object> metadata;
 
     @Override
@@ -67,6 +80,11 @@ public abstract class ParsedAggregation implements Aggregation, ToXContentFragme
         return name;
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the name
+     */
     protected void setName(String name) {
         this.name = name;
     }
@@ -89,11 +107,24 @@ public abstract class ParsedAggregation implements Aggregation, ToXContentFragme
         return builder;
     }
 
+    /**
+     * Returns the XContent body.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent body
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException;
 
     /**
      * Parse a token of type XContentParser.Token.VALUE_NUMBER or XContentParser.Token.STRING to a double.
      * In other cases the default value is returned instead.
+     *
+     * @param parser the parser
+     * @param defaultNullValue the default null value
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     protected static double parseDouble(XContentParser parser, double defaultNullValue) throws IOException {
         Token currentToken = parser.currentToken();

@@ -56,9 +56,15 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  */
 public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSource.Numeric, MedianAbsoluteDeviationAggregationBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "median_absolute_deviation";
     private static final ParseField COMPRESSION_FIELD = new ParseField("compression");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<MedianAbsoluteDeviationAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         MedianAbsoluteDeviationAggregationBuilder::new
@@ -70,10 +76,22 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
 
     private double compression = 1000d;
 
+    /**
+     * Creates a new MedianAbsoluteDeviationAggregationBuilder.
+     *
+     * @param name the name
+     */
     public MedianAbsoluteDeviationAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MedianAbsoluteDeviationAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected MedianAbsoluteDeviationAggregationBuilder(
         MedianAbsoluteDeviationAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -85,6 +103,8 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
 
     /**
      * Returns the compression factor of the t-digest sketches used
+     *
+     * @return the compression
      */
     public double compression() {
         return compression;
@@ -92,6 +112,9 @@ public class MedianAbsoluteDeviationAggregationBuilder extends LeafOnly<ValuesSo
 
     /**
      * Set the compression factor of the t-digest sketches used
+     *
+     * @param compression the compression
+     * @return the compression
      */
     public MedianAbsoluteDeviationAggregationBuilder compression(double compression) {
         if (compression <= 0d) {

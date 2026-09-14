@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class PutStoredScriptAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PutStoredScriptAction INSTANCE = new PutStoredScriptAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/script/put";
 
     private PutStoredScriptAction() {

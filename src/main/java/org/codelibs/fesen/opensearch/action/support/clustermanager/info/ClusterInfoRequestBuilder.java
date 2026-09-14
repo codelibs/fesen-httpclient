@@ -41,6 +41,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Transport request builder for cluster information
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <Builder> the builder type
  * @opensearch.internal
  */
 public abstract class ClusterInfoRequestBuilder<
@@ -51,10 +54,23 @@ public abstract class ClusterInfoRequestBuilder<
         Response,
         Builder> {
 
+    /**
+     * Creates a new ClusterInfoRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected ClusterInfoRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
+    /**
+     * Adds the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public Builder addIndices(String... indices) {
         request.indices(ArrayUtils.concat(request.indices(), indices));

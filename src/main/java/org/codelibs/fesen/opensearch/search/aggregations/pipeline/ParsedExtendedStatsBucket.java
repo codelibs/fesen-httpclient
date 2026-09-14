@@ -42,6 +42,11 @@ import org.codelibs.fesen.opensearch.search.aggregations.metrics.ParsedExtendedS
  * @opensearch.internal
  */
 public class ParsedExtendedStatsBucket extends ParsedExtendedStats implements ExtendedStatsBucket {
+    /**
+     * Creates a new ParsedExtendedStatsBucket.
+     */
+    public ParsedExtendedStatsBucket() {
+    }
 
     @Override
     public String getType() {
@@ -58,6 +63,13 @@ public class ParsedExtendedStatsBucket extends ParsedExtendedStats implements Ex
         declareExtendedStatsFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedExtendedStatsBucket fromXContent(XContentParser parser, final String name) {
         ParsedExtendedStatsBucket parsedStatsBucket = PARSER.apply(parser, null);
         parsedStatsBucket.setName(name);

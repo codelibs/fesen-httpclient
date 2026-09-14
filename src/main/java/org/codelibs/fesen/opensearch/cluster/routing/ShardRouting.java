@@ -84,6 +84,17 @@ public class ShardRouting implements Writeable, ToXContentObject {
     /**
      * A constructor to internally create shard routing instances, note, the internal flag should only be set to true
      * by either this class or tests. Visible for testing.
+     *
+     * @param shardId the shard identifier
+     * @param currentNodeId the current node identifier
+     * @param relocatingNodeId the relocating node identifier
+     * @param primary the primary
+     * @param searchOnly the search only
+     * @param state the state
+     * @param recoverySource the recovery source
+     * @param unassignedInfo the unassigned info
+     * @param allocationId the allocation identifier
+     * @param expectedShardSize the expected shard size
      */
     protected ShardRouting(
         ShardId shardId,
@@ -113,6 +124,22 @@ public class ShardRouting implements Writeable, ToXContentObject {
         );
     }
 
+    /**
+     * Creates a new ShardRouting.
+     *
+     * @param shardId the shard identifier
+     * @param currentNodeId the current node identifier
+     * @param relocatingNodeId the relocating node identifier
+     * @param primary the primary
+     * @param searchOnly the search only
+     * @param state the state
+     * @param recoverySource the recovery source
+     * @param unassignedInfo the unassigned info
+     * @param allocationId the allocation identifier
+     * @param expectedShardSize the expected shard size
+     * @param recoveringChildShards the recovering child shards
+     * @param parentShardId the parent shard identifier
+     */
     protected ShardRouting(
         ShardId shardId,
         String currentNodeId,
@@ -183,6 +210,12 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * Creates a new unassigned shard.
+     *
+     * @param shardId the shard identifier
+     * @param primary the primary
+     * @param recoverySource the recovery source
+     * @param unassignedInfo the unassigned info
+     * @return the new unassigned
      */
     public static ShardRouting newUnassigned(
         ShardId shardId,
@@ -195,6 +228,13 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * Creates a new unassigned shard, overloaded for bwc for searchOnly addition.
+     *
+     * @param shardId the shard identifier
+     * @param primary the primary
+     * @param search the search
+     * @param recoverySource the recovery source
+     * @param unassignedInfo the unassigned info
+     * @return the new unassigned
      */
     public static ShardRouting newUnassigned(
         ShardId shardId,
@@ -217,12 +257,19 @@ public class ShardRouting implements Writeable, ToXContentObject {
         );
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @return this instance
+     */
     public Index index() {
         return shardId.getIndex();
     }
 
     /**
      * The index name.
+     *
+     * @return the index name
      */
     public String getIndexName() {
         return shardId.getIndexName();
@@ -230,6 +277,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The shard id.
+     *
+     * @return the identifier
      */
     public int id() {
         return shardId.id();
@@ -237,6 +286,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The shard id.
+     *
+     * @return the identifier
      */
     public int getId() {
         return id();
@@ -244,6 +295,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The shard is unassigned (not allocated to any node).
+     *
+     * @return the unassigned
      */
     public boolean unassigned() {
         return state == ShardRoutingState.UNASSIGNED;
@@ -252,6 +305,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
     /**
      * The shard is initializing (usually recovering either from peer shard
      * or from gateway).
+     *
+     * @return the initializing
      */
     public boolean initializing() {
         return state == ShardRoutingState.INITIALIZING;
@@ -263,6 +318,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
      * {@link ShardRoutingState#SPLITTING splitting} or
      * {@link ShardRoutingState#RELOCATING relocating} to another node.
      * Otherwise <code>false</code>
+     *
+     * @return the active
      */
     public boolean active() {
         return started() || relocating() || splitting();
@@ -270,6 +327,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The shard is in started mode.
+     *
+     * @return the started
      */
     public boolean started() {
         return state == ShardRoutingState.STARTED;
@@ -279,6 +338,7 @@ public class ShardRouting implements Writeable, ToXContentObject {
      * Returns <code>true</code> iff the this shard is currently relocating to
      * another node. Otherwise <code>false</code>
      *
+     * @return the relocating
      * @see ShardRoutingState#RELOCATING
      */
     public boolean relocating() {
@@ -287,6 +347,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * Returns <code>true</code> iff the shard is in splitting state.
+     *
+     * @return the splitting
      */
     public boolean splitting() {
         return state == ShardRoutingState.SPLITTING;
@@ -295,6 +357,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
     /**
      * Returns <code>true</code> iff this shard is assigned to a node ie. not
      * {@link ShardRoutingState#UNASSIGNED unassigned}. Otherwise <code>false</code>
+     *
+     * @return the assigned to node
      */
     public boolean assignedToNode() {
         return currentNodeId != null;
@@ -302,6 +366,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The current node id the shard is allocated on.
+     *
+     * @return the current node identifier
      */
     public String currentNodeId() {
         return this.currentNodeId;
@@ -309,6 +375,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The relocating node id the shard is either relocating to or relocating from.
+     *
+     * @return the relocating node identifier
      */
     public String relocatingNodeId() {
         return this.relocatingNodeId;
@@ -318,6 +386,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
      * Returns a shard routing representing the target shard.
      * The target shard routing will be the INITIALIZING state and have relocatingNodeId set to the
      * source node.
+     *
+     * @return the target relocating shard
      */
     public ShardRouting getTargetRelocatingShard() {
         assert relocating();
@@ -327,6 +397,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
     /**
      * Additional metadata on why the shard is/was unassigned. The metadata is kept around
      * until the shard moves to STARTED.
+     *
+     * @return the unassigned info
      */
     @Nullable
     public UnassignedInfo unassignedInfo() {
@@ -335,6 +407,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * An id that uniquely identifies an allocation.
+     *
+     * @return the allocation identifier
      */
     @Nullable
     public AllocationId allocationId() {
@@ -343,6 +417,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * Returns <code>true</code> iff this shard is a primary.
+     *
+     * @return the primary
      */
     public boolean primary() {
         return this.primary;
@@ -350,6 +426,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * Returns <code>true</code> iff this shard is a search only replica.
+     *
+     * @return the search only flag
      */
     public boolean isSearchOnly() {
         return searchOnly;
@@ -357,6 +435,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The shard state.
+     *
+     * @return the state
      */
     public ShardRoutingState state() {
         return this.state;
@@ -364,11 +444,20 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * The shard id.
+     *
+     * @return the shard identifier
      */
     public ShardId shardId() {
         return shardId;
     }
 
+    /**
+     * Creates a new ShardRouting.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardRouting(ShardId shardId, StreamInput in) throws IOException {
         this.shardId = shardId;
         currentNodeId = in.readOptionalString();
@@ -401,6 +490,12 @@ public class ShardRouting implements Writeable, ToXContentObject {
         parentShardId = null;
     }
 
+    /**
+     * Creates a new ShardRouting by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardRouting(StreamInput in) throws IOException {
         this(new ShardId(in), in);
     }
@@ -435,7 +530,12 @@ public class ShardRouting implements Writeable, ToXContentObject {
         writeToThin(out);
     }
 
-    /** returns true if the current routing is identical to the other routing in all but meta fields, i.e., unassigned info */
+    /**
+     * returns true if the current routing is identical to the other routing in all but meta fields, i.e., unassigned info
+     *
+     * @param other the other instance
+     * @return the equals ignoring metadata
+     */
     public boolean equalsIgnoringMetadata(ShardRouting other) {
         if (primary != other.primary) {
             return false;
@@ -506,6 +606,8 @@ public class ShardRouting implements Writeable, ToXContentObject {
 
     /**
      * A short description of the shard.
+     *
+     * @return the short summary
      */
     public String shortSummary() {
         StringBuilder sb = new StringBuilder();
@@ -573,6 +675,11 @@ public class ShardRouting implements Writeable, ToXContentObject {
         return recoverySource;
     }
 
+    /**
+     * Returns the unassigned reason index created.
+     *
+     * @return the unassigned reason index created
+     */
     public boolean unassignedReasonIndexCreated() {
         if (unassignedInfo != null) {
             return unassignedInfo.getReason() == UnassignedInfo.Reason.INDEX_CREATED;

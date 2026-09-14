@@ -110,6 +110,12 @@ public final class ExceptionsHelper {
     // utility class: no ctor
     private ExceptionsHelper() {}
 
+    /**
+     * Returns the status.
+     *
+     * @param t the t
+     * @return the status
+     */
     public static RestStatus status(Throwable t) {
         return switch (t) {
             case OpenSearchException ose -> ose.status();
@@ -122,6 +128,12 @@ public final class ExceptionsHelper {
         };
     }
 
+    /**
+     * Returns the summary message.
+     *
+     * @param t the t
+     * @return the summary message
+     */
     public static String summaryMessage(Throwable t) {
         return switch (t) {
             case OpenSearchException ose -> getExceptionSimpleClassName(t) + "[" + ose.getMessage() + "]";
@@ -133,6 +145,12 @@ public final class ExceptionsHelper {
         };
     }
 
+    /**
+     * Unwraps the cause.
+     *
+     * @param t the t
+     * @return this instance
+     */
     public static Throwable unwrapCause(Throwable t) {
         int counter = 0;
         Throwable result = t;
@@ -173,6 +191,8 @@ public final class ExceptionsHelper {
     }
 
     /**
+     * @param t the t
+     * @return the detailed message
      * @deprecated Don't swallow exceptions, allow them to propagate.
      */
     @Deprecated
@@ -201,6 +221,12 @@ public final class ExceptionsHelper {
         }
     }
 
+    /**
+     * Returns the stack trace.
+     *
+     * @param e the exception
+     * @return the stack trace
+     */
     public static String stackTrace(Throwable e) {
         StringWriter stackTraceStringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stackTraceStringWriter);
@@ -208,6 +234,12 @@ public final class ExceptionsHelper {
         return stackTraceStringWriter.toString();
     }
 
+    /**
+     * Formats the stack trace.
+     *
+     * @param stackTrace the stack trace
+     * @return this instance
+     */
     public static String formatStackTrace(final StackTraceElement[] stackTrace) {
         return Arrays.stream(stackTrace).skip(1).map(e -> "\tat " + e).collect(Collectors.joining("\n"));
     }
@@ -215,6 +247,9 @@ public final class ExceptionsHelper {
     /**
      * Throws a runtime exception with all given exceptions added as suppressed.
      * If the given list is empty no exception is thrown
+     *
+     * @param <T> the element type
+     * @param exceptions the exceptions
      */
     public static <T extends Throwable> void maybeThrowRuntimeAndSuppress(List<T> exceptions) {
         T main = null;
@@ -226,6 +261,14 @@ public final class ExceptionsHelper {
         }
     }
 
+    /**
+     * Returns the use or suppress.
+     *
+     * @param <T> the element type
+     * @param first the first
+     * @param second the second
+     * @return the use or suppress
+     */
     public static <T extends Throwable> T useOrSuppress(T first, T second) {
         if (first == null) {
             return second;
@@ -268,6 +311,9 @@ public final class ExceptionsHelper {
 
     /**
      * Throws the specified exception. If null if specified then <code>true</code> is returned.
+     *
+     * @param e the exception
+     * @return the re throw if not null
      */
     public static boolean reThrowIfNotNull(@Nullable Throwable e) {
         if (e != null) {
@@ -280,6 +326,14 @@ public final class ExceptionsHelper {
         return true;
     }
 
+    /**
+     * Unwraps the causes and suppressed.
+     *
+     * @param <T> the element type
+     * @param cause the cause
+     * @param predicate the predicate
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Throwable> Optional<T> unwrapCausesAndSuppressed(Throwable cause, Predicate<Throwable> predicate) {
         if (predicate.test(cause)) {
@@ -317,6 +371,9 @@ public final class ExceptionsHelper {
 
     /**
      * Deduplicate the failures by exception message and index.
+     *
+     * @param failures the failures
+     * @return the group by
      */
     public static ShardOperationFailedException[] groupBy(ShardOperationFailedException[] failures) {
         List<ShardOperationFailedException> uniqueFailures = new ArrayList<>();

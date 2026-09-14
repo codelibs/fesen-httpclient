@@ -62,6 +62,11 @@ public class GetMappingsResponse extends ActionResponse implements ToXContentFra
 
     private final Map<String, MappingMetadata> mappings;
 
+    /**
+     * Creates a new GetMappingsResponse.
+     *
+     * @param mappings the mappings
+     */
     public GetMappingsResponse(final Map<String, MappingMetadata> mappings) {
         this.mappings = Collections.unmodifiableMap(mappings);
     }
@@ -93,10 +98,20 @@ public class GetMappingsResponse extends ActionResponse implements ToXContentFra
         mappings = Collections.unmodifiableMap(indexMapBuilder);
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public Map<String, MappingMetadata> mappings() {
         return mappings;
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public Map<String, MappingMetadata> getMappings() {
         return mappings();
     }

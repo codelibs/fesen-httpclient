@@ -59,6 +59,8 @@ public class IngestStats implements Writeable, ToXContentFragment {
     private final Map<String, List<ProcessorStat>> processorStats;
 
     /**
+     * Creates a new IngestStats.
+     *
      * @param totalStats - The total stats for Ingest. This is the logically the sum of all pipeline stats,
      *                   and pipeline stats are logically the sum of the processor stats.
      * @param pipelineStats - The stats for a given ingest pipeline.
@@ -72,6 +74,9 @@ public class IngestStats implements Writeable, ToXContentFragment {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public IngestStats(StreamInput in) throws IOException {
         this.totalStats = new OperationStats(in);
@@ -148,6 +153,11 @@ public class IngestStats implements Writeable, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * Returns the processor stats.
+     *
+     * @return the processor stats
+     */
     public Map<String, List<ProcessorStat>> getProcessorStats() {
         return processorStats;
     }
@@ -203,15 +213,31 @@ public class IngestStats implements Writeable, ToXContentFragment {
         private final String pipelineId;
         private final OperationStats stats;
 
+        /**
+         * Creates a new PipelineStat.
+         *
+         * @param pipelineId the pipeline identifier
+         * @param stats the stats
+         */
         public PipelineStat(String pipelineId, OperationStats stats) {
             this.pipelineId = pipelineId;
             this.stats = stats;
         }
 
+        /**
+         * Returns the pipeline identifier.
+         *
+         * @return the pipeline identifier
+         */
         public String getPipelineId() {
             return pipelineId;
         }
 
+        /**
+         * Returns the stats.
+         *
+         * @return the stats
+         */
         public OperationStats getStats() {
             return stats;
         }
@@ -238,20 +264,42 @@ public class IngestStats implements Writeable, ToXContentFragment {
         private final String type;
         private final OperationStats stats;
 
+        /**
+         * Creates a new ProcessorStat.
+         *
+         * @param name the name
+         * @param type the type
+         * @param stats the stats
+         */
         public ProcessorStat(String name, String type, OperationStats stats) {
             this.name = name;
             this.type = type;
             this.stats = stats;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Returns the type.
+         *
+         * @return the type
+         */
         public String getType() {
             return type;
         }
 
+        /**
+         * Returns the stats.
+         *
+         * @return the stats
+         */
         public OperationStats getStats() {
             return stats;
         }

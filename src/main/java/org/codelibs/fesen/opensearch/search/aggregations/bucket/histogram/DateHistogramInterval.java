@@ -51,23 +51,55 @@ import java.util.Objects;
  */
 public class DateHistogramInterval implements Writeable, ToXContentFragment {
 
+    /**
+     * The SECOND constant.
+     */
     public static final DateHistogramInterval SECOND = new DateHistogramInterval("1s");
+    /**
+     * The MINUTE constant.
+     */
     public static final DateHistogramInterval MINUTE = new DateHistogramInterval("1m");
+    /**
+     * The HOUR constant.
+     */
     public static final DateHistogramInterval HOUR = new DateHistogramInterval("1h");
+    /**
+     * The DAY constant.
+     */
     public static final DateHistogramInterval DAY = new DateHistogramInterval("1d");
+    /**
+     * The WEEK constant.
+     */
     public static final DateHistogramInterval WEEK = new DateHistogramInterval("1w");
+    /**
+     * The MONTH constant.
+     */
     public static final DateHistogramInterval MONTH = new DateHistogramInterval("1M");
+    /**
+     * The QUARTER constant.
+     */
     public static final DateHistogramInterval QUARTER = new DateHistogramInterval("1q");
+    /**
+     * The YEAR constant.
+     */
     public static final DateHistogramInterval YEAR = new DateHistogramInterval("1y");
 
     private final String expression;
 
+    /**
+     * Creates a new DateHistogramInterval.
+     *
+     * @param expression the expression
+     */
     public DateHistogramInterval(String expression) {
         this.expression = expression;
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public DateHistogramInterval(StreamInput in) throws IOException {
         expression = in.readString();

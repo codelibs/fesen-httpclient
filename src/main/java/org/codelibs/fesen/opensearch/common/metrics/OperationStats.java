@@ -39,6 +39,14 @@ public class OperationStats implements Writeable, ToXContentFragment {
         "time_in_millis"
     );
 
+    /**
+     * Creates a new OperationStats.
+     *
+     * @param count the count
+     * @param totalTime the total time
+     * @param current the current
+     * @param failedCount the failed count
+     */
     public OperationStats(long count, long totalTime, long current, long failedCount) {
         this.count = count;
         this.totalTime = totalTime;
@@ -46,6 +54,15 @@ public class OperationStats implements Writeable, ToXContentFragment {
         this.failedCount = failedCount;
     }
 
+    /**
+     * Creates a new OperationStats.
+     *
+     * @param count the count
+     * @param totalTime the total time
+     * @param current the current
+     * @param failedCount the failed count
+     * @param timeUnit the time unit
+     */
     public OperationStats(long count, long totalTime, long current, long failedCount, TimeUnit timeUnit) {
         this(count, totalTime, current, failedCount);
         this.timeUnit = timeUnit;
@@ -53,6 +70,9 @@ public class OperationStats implements Writeable, ToXContentFragment {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public OperationStats(StreamInput in) throws IOException {
         count = in.readVLong();
@@ -76,6 +96,8 @@ public class OperationStats implements Writeable, ToXContentFragment {
     }
 
     /**
+     * Returns the count.
+     *
      * @return The total number of executed operations.
      */
     public long getCount() {
@@ -83,6 +105,8 @@ public class OperationStats implements Writeable, ToXContentFragment {
     }
 
     /**
+     * Returns the total time.
+     *
      * @return The total time spent of in target time unit. Default is millis.
      */
     public long getTotalTime() {
@@ -90,6 +114,8 @@ public class OperationStats implements Writeable, ToXContentFragment {
     }
 
     /**
+     * Returns the current.
+     *
      * @return The total number of operations currently executing.
      */
     public long getCurrent() {
@@ -97,6 +123,8 @@ public class OperationStats implements Writeable, ToXContentFragment {
     }
 
     /**
+     * Returns the failed count.
+     *
      * @return The total number of operations that have failed.
      */
     public long getFailedCount() {

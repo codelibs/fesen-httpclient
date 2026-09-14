@@ -39,46 +39,64 @@ package org.codelibs.fesen.opensearch.search.aggregations.metrics;
 public interface Stats extends NumericMetricsAggregation.MultiValue {
 
     /**
+     * Returns the count.
+     *
      * @return The number of values that were aggregated.
      */
     long getCount();
 
     /**
+     * Returns the min.
+     *
      * @return The minimum value of all aggregated values.
      */
     double getMin();
 
     /**
+     * Returns the max.
+     *
      * @return The maximum value of all aggregated values.
      */
     double getMax();
 
     /**
+     * Returns the avg.
+     *
      * @return The avg value over all aggregated values.
      */
     double getAvg();
 
     /**
+     * Returns the sum.
+     *
      * @return The sum of aggregated values.
      */
     double getSum();
 
     /**
+     * Returns the min as string.
+     *
      * @return The minimum value of all aggregated values as a String.
      */
     String getMinAsString();
 
     /**
+     * Returns the max as string.
+     *
      * @return The maximum value of all aggregated values as a String.
      */
     String getMaxAsString();
 
     /**
+     * Returns the avg as string.
+     *
      * @return The avg value over all aggregated values as a String.
      */
     String getAvgAsString();
 
     /**
+     * Returns the sum as string.
+     *
      * @return The sum of aggregated values as a String.
      */
     String getSumAsString();

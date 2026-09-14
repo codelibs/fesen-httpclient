@@ -33,11 +33,26 @@ public class RemoteStoreStatsResponse extends BroadcastResponse {
 
     private final RemoteStoreStats[] remoteStoreStats;
 
+    /**
+     * Creates a new RemoteStoreStatsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RemoteStoreStatsResponse(StreamInput in) throws IOException {
         super(in);
         remoteStoreStats = in.readArray(RemoteStoreStats::new, RemoteStoreStats[]::new);
     }
 
+    /**
+     * Creates a new RemoteStoreStatsResponse.
+     *
+     * @param remoteStoreStats the remote store stats
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param failedShards the failed shards
+     * @param shardFailures the shard failures
+     */
     public RemoteStoreStatsResponse(
         RemoteStoreStats[] remoteStoreStats,
         int totalShards,
@@ -49,6 +64,11 @@ public class RemoteStoreStatsResponse extends BroadcastResponse {
         this.remoteStoreStats = remoteStoreStats;
     }
 
+    /**
+     * Returns the group by index and shards.
+     *
+     * @return the group by index and shards
+     */
     public Map<String, Map<Integer, List<RemoteStoreStats>>> groupByIndexAndShards() {
         Map<String, Map<Integer, List<RemoteStoreStats>>> indexWiseStats = new HashMap<>();
         for (RemoteStoreStats shardStat : remoteStoreStats) {

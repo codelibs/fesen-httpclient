@@ -37,5 +37,10 @@ package org.codelibs.fesen.opensearch.common.util.concurrent;
  * @opensearch.internal
  */
 public interface WrappedRunnable extends Runnable {
+    /**
+     * Unwraps this instance.
+     *
+     * @return this instance
+     */
     Runnable unwrap();
 }

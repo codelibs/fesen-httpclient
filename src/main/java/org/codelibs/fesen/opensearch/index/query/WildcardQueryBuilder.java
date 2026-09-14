@@ -57,6 +57,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuilder> implements MultiTermQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "wildcard";
 
     private static final ParseField WILDCARD_FIELD = new ParseField("wildcard");
@@ -69,6 +72,9 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
 
     private String rewrite;
 
+    /**
+     * The DEFAULT_CASE_INSENSITIVITY constant.
+     */
     public static final boolean DEFAULT_CASE_INSENSITIVITY = false;
     private static final ParseField CASE_INSENSITIVE_FIELD = new ParseField("case_insensitive");
     private boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;
@@ -97,6 +103,9 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public WildcardQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -119,24 +128,51 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
         return fieldName;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public String value() {
         return value;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param rewrite the rewrite
+     * @return this instance
+     */
     public WildcardQueryBuilder rewrite(String rewrite) {
         this.rewrite = rewrite;
         return this;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @return this instance
+     */
     public String rewrite() {
         return this.rewrite;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @param caseInsensitive the case insensitive
+     * @return the case insensitive
+     */
     public WildcardQueryBuilder caseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
         return this;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @return the case insensitive
+     */
     public boolean caseInsensitive() {
         return this.caseInsensitive;
     }
@@ -162,6 +198,13 @@ public class WildcardQueryBuilder extends AbstractQueryBuilder<WildcardQueryBuil
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static WildcardQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         String rewrite = null;

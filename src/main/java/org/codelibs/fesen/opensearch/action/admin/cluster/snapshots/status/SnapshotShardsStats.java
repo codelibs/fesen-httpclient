@@ -85,6 +85,16 @@ public class SnapshotShardsStats implements ToXContentObject {
         }
     }
 
+    /**
+     * Creates a new SnapshotShardsStats.
+     *
+     * @param initializingShards the initializing shards
+     * @param startedShards the started shards
+     * @param finalizingShards the finalizing shards
+     * @param doneShards the done shards
+     * @param failedShards the failed shards
+     * @param totalShards the total shards
+     */
     public SnapshotShardsStats(
         int initializingShards,
         int startedShards,
@@ -103,6 +113,8 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     /**
      * Number of shards with the snapshot in the initializing stage
+     *
+     * @return the initializing shards
      */
     public int getInitializingShards() {
         return initializingShards;
@@ -110,6 +122,8 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     /**
      * Number of shards with the snapshot in the started stage
+     *
+     * @return the started shards
      */
     public int getStartedShards() {
         return startedShards;
@@ -117,6 +131,8 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     /**
      * Number of shards with the snapshot in the finalizing stage
+     *
+     * @return the finalizing shards
      */
     public int getFinalizingShards() {
         return finalizingShards;
@@ -124,6 +140,8 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     /**
      * Number of shards with completed snapshot
+     *
+     * @return the done shards
      */
     public int getDoneShards() {
         return doneShards;
@@ -131,6 +149,8 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     /**
      * Number of shards with failed snapshot
+     *
+     * @return the failed shards
      */
     public int getFailedShards() {
         return failedShards;
@@ -138,6 +158,8 @@ public class SnapshotShardsStats implements ToXContentObject {
 
     /**
      * Total number of shards
+     *
+     * @return the total shards
      */
     public int getTotalShards() {
         return totalShards;

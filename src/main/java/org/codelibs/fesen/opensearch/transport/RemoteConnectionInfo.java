@@ -57,6 +57,12 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
     final String clusterAlias;
     final boolean skipUnavailable;
 
+    /**
+     * Creates a new RemoteConnectionInfo by reading it from the given input.
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
+     */
     public RemoteConnectionInfo(StreamInput input) throws IOException {
         modeInfo = null;
         initialConnectionTimeout = input.readTimeValue();
@@ -110,8 +116,18 @@ public final class RemoteConnectionInfo implements ToXContentFragment, Writeable
     @PublicApi(since = "1.0.0")
     public interface ModeInfo extends ToXContentFragment, Writeable {
 
+        /**
+         * Returns the connected flag.
+         *
+         * @return the connected flag
+         */
         boolean isConnected();
 
+        /**
+         * Returns the mode name.
+         *
+         * @return the mode name
+         */
         String modeName();
 
     }

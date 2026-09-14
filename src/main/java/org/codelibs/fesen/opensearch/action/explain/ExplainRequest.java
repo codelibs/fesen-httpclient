@@ -73,34 +73,75 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
 
     long nowInMillis;
 
+    /**
+     * Creates a new ExplainRequest.
+     */
     public ExplainRequest() {}
 
+    /**
+     * Creates a new ExplainRequest.
+     *
+     * @param index the index
+     * @param id the identifier
+     */
     public ExplainRequest(String index, String id) {
         this.index = index;
         this.id = id;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @param id the identifier
+     * @return the identifier
+     */
     public ExplainRequest id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @return the routing
+     */
     public String routing() {
         return routing;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String preference() {
         return preference;
     }
 
+    /**
+     * Queries this instance.
+     *
+     * @return this instance
+     */
     public QueryBuilder query() {
         return query;
     }
 
+    /**
+     * Queries this instance.
+     *
+     * @param query the query
+     * @return this instance
+     */
     public ExplainRequest query(QueryBuilder query) {
         this.query = query;
         return this;
@@ -108,16 +149,29 @@ public class ExplainRequest extends SingleShardRequest<ExplainRequest> implement
 
     /**
      * Allows setting the {@link FetchSourceContext} for this request, controlling if and how _source should be returned.
+     *
+     * @param context the context
+     * @return this instance
      */
     public ExplainRequest fetchSourceContext(FetchSourceContext context) {
         this.fetchSourceContext = context;
         return this;
     }
 
+    /**
+     * Fetches the source context.
+     *
+     * @return this instance
+     */
     public FetchSourceContext fetchSourceContext() {
         return fetchSourceContext;
     }
 
+    /**
+     * Returns the stored fields.
+     *
+     * @return the stored fields
+     */
     public String[] storedFields() {
         return storedFields;
     }

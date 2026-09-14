@@ -52,10 +52,21 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
     private final long size;
     private final SizeUnit sizeUnit;
 
+    /**
+     * Creates a new SizeValue.
+     *
+     * @param singles the singles
+     */
     public SizeValue(long singles) {
         this(singles, SizeUnit.SINGLE);
     }
 
+    /**
+     * Creates a new SizeValue.
+     *
+     * @param size the size
+     * @param sizeUnit the size unit
+     */
     public SizeValue(long size, SizeUnit sizeUnit) {
         if (size < 0) {
             throw new IllegalArgumentException("size in SizeValue may not be negative");
@@ -64,6 +75,12 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         this.sizeUnit = sizeUnit;
     }
 
+    /**
+     * Creates a new SizeValue by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SizeValue(StreamInput in) throws IOException {
         size = in.readVLong();
         sizeUnit = SizeUnit.SINGLE;
@@ -74,26 +91,56 @@ public class SizeValue implements Writeable, Comparable<SizeValue> {
         out.writeVLong(singles());
     }
 
+    /**
+     * Returns the singles.
+     *
+     * @return the singles
+     */
     public long singles() {
         return sizeUnit.toSingles(size);
     }
 
+    /**
+     * Returns the kilo frac.
+     *
+     * @return the kilo frac
+     */
     public double kiloFrac() {
         return ((double) singles()) / SizeUnit.C1;
     }
 
+    /**
+     * Returns the mega frac.
+     *
+     * @return the mega frac
+     */
     public double megaFrac() {
         return ((double) singles()) / SizeUnit.C2;
     }
 
+    /**
+     * Returns the giga frac.
+     *
+     * @return the giga frac
+     */
     public double gigaFrac() {
         return ((double) singles()) / SizeUnit.C3;
     }
 
+    /**
+     * Returns the tera frac.
+     *
+     * @return the tera frac
+     */
     public double teraFrac() {
         return ((double) singles()) / SizeUnit.C4;
     }
 
+    /**
+     * Returns the peta frac.
+     *
+     * @return the peta frac
+     */
     public double petaFrac() {
         return ((double) singles()) / SizeUnit.C5;
     }

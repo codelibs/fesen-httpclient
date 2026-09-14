@@ -60,9 +60,18 @@ import java.util.stream.Stream;
  */
 public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Response> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DataStreamsStatsAction INSTANCE = new DataStreamsStatsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/data_stream/stats";
 
+    /**
+     * Creates a new DataStreamsStatsAction.
+     */
     public DataStreamsStatsAction() {
         super(NAME, DataStreamsStatsAction.Response::new);
     }
@@ -73,6 +82,9 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
      * @opensearch.internal
      */
     public static class Request extends BroadcastRequest<Request> {
+        /**
+         * Creates a new Request.
+         */
         public Request() {
             super((String[]) null);
         }
@@ -89,6 +101,18 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
         private final ByteSizeValue totalStoreSize;
         private final DataStreamStats[] dataStreams;
 
+        /**
+         * Creates a new Response.
+         *
+         * @param totalShards the total shards
+         * @param successfulShards the successful shards
+         * @param failedShards the failed shards
+         * @param shardFailures the shard failures
+         * @param dataStreamCount the data stream count
+         * @param backingIndices the backing indices
+         * @param totalStoreSize the total store size
+         * @param dataStreams the data streams
+         */
         public Response(
             int totalShards,
             int successfulShards,
@@ -106,6 +130,12 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
             this.dataStreams = dataStreams;
         }
 
+        /**
+         * Creates a new Response by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Response(StreamInput in) throws IOException {
             super(in);
             this.dataStreamCount = in.readVInt();
@@ -131,14 +161,29 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
             builder.array("data_streams", (Object[]) dataStreams);
         }
 
+        /**
+         * Returns the data stream count.
+         *
+         * @return the data stream count
+         */
         public int getDataStreamCount() {
             return dataStreamCount;
         }
 
+        /**
+         * Returns the backing indices.
+         *
+         * @return the backing indices
+         */
         public int getBackingIndices() {
             return backingIndices;
         }
 
+        /**
+         * Returns the total store size.
+         *
+         * @return the total store size
+         */
         public ByteSizeValue getTotalStoreSize() {
             return totalStoreSize;
         }
@@ -191,6 +236,14 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
         private final ByteSizeValue storeSize;
         private final long maximumTimestamp;
 
+        /**
+         * Creates a new DataStreamStats.
+         *
+         * @param dataStream the data stream
+         * @param backingIndices the backing indices
+         * @param storeSize the store size
+         * @param maximumTimestamp the maximum timestamp
+         */
         public DataStreamStats(String dataStream, int backingIndices, ByteSizeValue storeSize, long maximumTimestamp) {
             this.dataStream = dataStream;
             this.backingIndices = backingIndices;
@@ -198,6 +251,12 @@ public class DataStreamsStatsAction extends ActionType<DataStreamsStatsAction.Re
             this.maximumTimestamp = maximumTimestamp;
         }
 
+        /**
+         * Creates a new DataStreamStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public DataStreamStats(StreamInput in) throws IOException {
             this.dataStream = in.readString();
             this.backingIndices = in.readVInt();

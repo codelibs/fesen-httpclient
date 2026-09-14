@@ -44,12 +44,23 @@ import java.util.function.BiConsumer;
  * This class provides helpers for {@link ObjectParser} that allow dealing with
  * classes outside of the xcontent dependencies.
  *
+ * @param <Value> the value type
+ * @param <Context> the context type
  * @opensearch.internal
  */
 public final class ObjectParserHelper<Value, Context> {
+    /**
+     * Creates a new ObjectParserHelper.
+     */
+    public ObjectParserHelper() {
+    }
 
     /**
      * Helper to declare an object that will be parsed into a {@link BytesReference}
+     *
+     * @param parser the parser
+     * @param consumer the consumer
+     * @param field the field
      */
     public void declareRawObject(
         final AbstractObjectParser<Value, Context> parser,

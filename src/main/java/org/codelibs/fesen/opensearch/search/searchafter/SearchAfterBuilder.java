@@ -61,15 +61,24 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class SearchAfterBuilder implements ToXContentObject, Writeable {
+    /**
+     * The SEARCH_AFTER constant.
+     */
     public static final ParseField SEARCH_AFTER = new ParseField("search_after");
     private static final Object[] EMPTY_SORT_VALUES = new Object[0];
 
     private Object[] sortValues = EMPTY_SORT_VALUES;
 
+    /**
+     * Creates a new SearchAfterBuilder.
+     */
     public SearchAfterBuilder() {}
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SearchAfterBuilder(StreamInput in) throws IOException {
         int size = in.readVInt();
@@ -87,6 +96,12 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
         }
     }
 
+    /**
+     * Sets the sort values.
+     *
+     * @param values the values
+     * @return this instance
+     */
     public SearchAfterBuilder setSortValues(Object[] values) {
         if (values == null) {
             throw new NullPointerException("Values cannot be null.");
@@ -113,6 +128,11 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
         return this;
     }
 
+    /**
+     * Returns the sort values.
+     *
+     * @return the sort values
+     */
     public Object[] getSortValues() {
         return Arrays.copyOf(sortValues, sortValues.length);
     }
@@ -129,6 +149,13 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
         builder.array(SEARCH_AFTER.getPreferredName(), sortValues);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SearchAfterBuilder fromXContent(XContentParser parser) throws IOException {
         SearchAfterBuilder builder = new SearchAfterBuilder();
         XContentParser.Token token = parser.currentToken();

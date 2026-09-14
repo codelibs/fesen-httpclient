@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class CancelTasksAction extends ActionType<CancelTasksResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final CancelTasksAction INSTANCE = new CancelTasksAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/tasks/cancel";
 
     private CancelTasksAction() {

@@ -136,10 +136,27 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     private Map<String, SearchHits> innerHits;
 
+    /**
+     * Creates a new SearchHit.
+     *
+     * @param docId the document identifier
+     * @param id the identifier
+     * @param documentFields the document fields
+     * @param metaFields the meta fields
+     */
     public SearchHit(int docId, String id, Map<String, DocumentField> documentFields, Map<String, DocumentField> metaFields) {
         this(docId, id, null, documentFields, metaFields);
     }
 
+    /**
+     * Creates a new SearchHit.
+     *
+     * @param nestedTopDocId the nested top doc identifier
+     * @param id the identifier
+     * @param nestedIdentity the nested identity
+     * @param documentFields the document fields
+     * @param metaFields the meta fields
+     */
     public SearchHit(
         int nestedTopDocId,
         String id,
@@ -158,6 +175,12 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         this.metaFields = metaFields == null ? emptyMap() : metaFields;
     }
 
+    /**
+     * Creates a new SearchHit by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchHit(StreamInput in) throws IOException {
         docId = -1;
         score = in.readFloat();
@@ -282,32 +305,56 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         }
     }
 
+    /**
+     * Scores this instance.
+     *
+     * @param score the score
+     */
     public void score(float score) {
         this.score = score;
     }
 
     /**
      * The score.
+     *
+     * @return the score
      */
     public float getScore() {
         return this.score;
     }
 
+    /**
+     * Performs the version step.
+     *
+     * @param version the version
+     */
     public void version(long version) {
         this.version = version;
     }
 
     /**
      * The version of the hit.
+     *
+     * @return the version
      */
     public long getVersion() {
         return this.version;
     }
 
+    /**
+     * Sets the seq no.
+     *
+     * @param seqNo the seq no
+     */
     public void setSeqNo(long seqNo) {
         this.seqNo = seqNo;
     }
 
+    /**
+     * Sets the primary term.
+     *
+     * @param primaryTerm the primary term
+     */
     public void setPrimaryTerm(long primaryTerm) {
         this.primaryTerm = primaryTerm;
     }
@@ -315,20 +362,27 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     /**
      * returns the sequence number of the last modification to the document, or {@link SequenceNumbers#UNASSIGNED_SEQ_NO}
      * if not requested.
-     **/
+     *
+     * @return the seq no
+      */
     public long getSeqNo() {
         return this.seqNo;
     }
 
     /**
      * returns the primary term of the last modification to the document, or {@link SequenceNumbers#UNASSIGNED_PRIMARY_TERM}
-     * if not requested. */
+      * if not requested.
+     *
+     * @return the primary term
+      */
     public long getPrimaryTerm() {
         return this.primaryTerm;
     }
 
     /**
      * The index of the hit.
+     *
+     * @return the index
      */
     public String getIndex() {
         return this.index;
@@ -336,6 +390,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * The id of the document.
+     *
+     * @return the identifier
      */
     public String getId() {
         return id != null ? id.string() : null;
@@ -343,6 +399,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * Returns bytes reference, also uncompress the source if needed.
+     *
+     * @return the source ref
      */
     public BytesReference getSourceRef() {
         if (this.source == null) {
@@ -359,6 +417,9 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * Sets representation, might be compressed....
+     *
+     * @param source the source
+     * @return the source ref
      */
     public SearchHit sourceRef(BytesReference source) {
         this.source = source;
@@ -368,6 +429,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * The source of the document as string (can be {@code null}).
+     *
+     * @return the source as string
      */
     public String getSourceAsString() {
         if (source == null) {
@@ -382,6 +445,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * The source of the document as a map (can be {@code null}).
+     *
+     * @return the source as map
      */
     public Map<String, Object> getSourceAsMap() {
         if (source == null) {
@@ -404,6 +469,9 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * The hit field matching the given field name.
+     *
+     * @param fieldName the field name
+     * @return the field
      */
     public DocumentField field(String fieldName) {
         DocumentField result = documentFields.get(fieldName);
@@ -417,6 +485,8 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     /**
      * A map of hit fields (from field name to hit fields) if additional fields
      * were required to be loaded.
+     *
+     * @return the fields
      */
     public Map<String, DocumentField> getFields() {
         if (!metaFields.isEmpty() || !documentFields.isEmpty()) {
@@ -431,21 +501,35 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * A map of highlighted fields.
+     *
+     * @return the highlight fields
      */
     public Map<String, HighlightField> getHighlightFields() {
         return highlightFields == null ? emptyMap() : highlightFields;
     }
 
+    /**
+     * Highlights the fields.
+     *
+     * @param highlightFields the highlight fields
+     */
     public void highlightFields(Map<String, HighlightField> highlightFields) {
         this.highlightFields = highlightFields;
     }
 
+    /**
+     * Sorts the values.
+     *
+     * @param sortValues the sort values
+     */
     public void sortValues(SearchSortValues sortValues) {
         this.sortValues = sortValues;
     }
 
     /**
      * An array of the (formatted) sort values used.
+     *
+     * @return the sort values
      */
     public Object[] getSortValues() {
         return sortValues.getFormattedSortValues();
@@ -453,15 +537,27 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * If enabled, the explanation of the search hit.
+     *
+     * @return the explanation
      */
     public Explanation getExplanation() {
         return explanation;
     }
 
+    /**
+     * Performs the explanation step.
+     *
+     * @param explanation the explanation
+     */
     public void explanation(Explanation explanation) {
         this.explanation = explanation;
     }
 
+    /**
+     * Performs the shard step.
+     *
+     * @param target the target
+     */
     public void shard(SearchShardTarget target) {
         if (innerHits != null) {
             for (SearchHits innerHits : innerHits.values()) {
@@ -478,6 +574,11 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         }
     }
 
+    /**
+     * Performs the matched queries with scores step.
+     *
+     * @param matchedQueries the matched queries
+     */
     public void matchedQueriesWithScores(Map<String, Float> matchedQueries) {
         if (matchedQueries != null) {
             this.matchedQueries = matchedQueries;
@@ -486,12 +587,16 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     /**
      * The set of query and filter names the query matched with. Mainly makes sense for compound filters and queries.
+     *
+     * @return the matched queries
      */
     public String[] getMatchedQueries() {
         return matchedQueries == null ? new String[0] : matchedQueries.keySet().toArray(new String[0]);
     }
 
     /**
+     * Returns the matched queries and scores.
+     *
      * @return The map of the named queries that matched and their associated score.
      */
     public Map<String, Float> getMatchedQueriesAndScores() {
@@ -499,12 +604,19 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     }
 
     /**
+     * Returns the inner hits.
+     *
      * @return Inner hits or <code>null</code> if there are none
      */
     public Map<String, SearchHits> getInnerHits() {
         return innerHits;
     }
 
+    /**
+     * Sets the inner hits.
+     *
+     * @param innerHits the inner hits
+     */
     public void setInnerHits(Map<String, SearchHits> innerHits) {
         this.innerHits = innerHits;
     }
@@ -515,6 +627,12 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
      * @opensearch.internal
      */
     public static class Fields {
+        /**
+         * Creates a new Fields.
+         */
+        public Fields() {
+        }
+
         static final String _INDEX = "_index";
         static final String _ID = "_id";
         static final String _VERSION = "_version";
@@ -549,6 +667,14 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
     }
 
     // public because we render hit as part of completion suggestion option
+    /**
+     * Returns this instance as inner XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner XContent
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder toInnerXContent(XContentBuilder builder, Params params) throws IOException {
         // For inner_hit hits shard is null and that is ok, because the parent search hit has all this information.
         // Even if this was included in the inner_hit hits this would be the same, so better leave it out.
@@ -649,6 +775,9 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
 
     // All fields on the root level of the parsed SearhHit are interpreted as metadata fields
     // public because we use it in a completion suggestion option
+    /**
+     * The unknown meta field consumer.
+     */
     public static final ObjectParser.UnknownFieldConsumer<Map<String, Object>> unknownMetaFieldConsumer = (map, fieldName, fieldValue) -> {
         Map<String, DocumentField> fieldMap = (Map<String, DocumentField>) map.computeIfAbsent(
             METADATA_FIELDS,
@@ -681,10 +810,21 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         declareInnerHitsParseFields(MAP_PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static SearchHit fromXContent(XContentParser parser) {
         return createFromMap(MAP_PARSER.apply(parser, null));
     }
 
+    /**
+     * Performs the declare inner hits parse fields step.
+     *
+     * @param parser the parser
+     */
     public static void declareInnerHitsParseFields(ObjectParser<Map<String, Object>, Void> parser) {
         parser.declareString((map, value) -> map.put(Fields._INDEX, value), new ParseField(Fields._INDEX));
         parser.declareString((map, value) -> map.put(Fields._ID, value), new ParseField(Fields._ID));
@@ -763,6 +903,12 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         );
     }
 
+    /**
+     * Creates a new from map.
+     *
+     * @param values the values
+     * @return the new from map
+     */
     public static SearchHit createFromMap(Map<String, Object> values) {
         String id = get(Fields._ID, values, null);
         NestedIdentity nestedIdentity = get(NestedIdentity._NESTED, values, null);
@@ -964,6 +1110,13 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
         private final int offset;
         private final NestedIdentity child;
 
+        /**
+         * Creates a new NestedIdentity.
+         *
+         * @param field the field
+         * @param offset the offset
+         * @param child the child
+         */
         public NestedIdentity(String field, int offset, NestedIdentity child) {
             this.field = new Text(field);
             this.offset = offset;
@@ -1023,6 +1176,12 @@ public final class SearchHit implements Writeable, ToXContentObject, Iterable<Do
             return fromXContent(parser);
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         */
         public static NestedIdentity fromXContent(XContentParser parser) {
             return PARSER.apply(parser, null);
         }

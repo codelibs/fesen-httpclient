@@ -54,6 +54,9 @@ public class FlushStats implements Writeable, ToXContentFragment {
     private long periodic;
     private long totalTimeInMillis;
 
+    /**
+     * Creates a new FlushStats.
+     */
     public FlushStats() {
 
     }
@@ -69,6 +72,12 @@ public class FlushStats implements Writeable, ToXContentFragment {
         this.totalTimeInMillis = builder.totalTimeInMillis;
     }
 
+    /**
+     * Creates a new FlushStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public FlushStats(StreamInput in) throws IOException {
         total = in.readVLong();
         totalTimeInMillis = in.readVLong();
@@ -78,6 +87,10 @@ public class FlushStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param total the total
+     * @param periodic the periodic
+     * @param totalTimeInMillis the total time in milliseconds
      */
     @Deprecated
     public FlushStats(long total, long periodic, long totalTimeInMillis) {
@@ -86,10 +99,20 @@ public class FlushStats implements Writeable, ToXContentFragment {
         this.totalTimeInMillis = totalTimeInMillis;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param flushStats the flush stats
+     */
     public void add(FlushStats flushStats) {
         addTotals(flushStats);
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param flushStats the flush stats
+     */
     public void addTotals(FlushStats flushStats) {
         if (flushStats == null) {
             return;
@@ -101,6 +124,8 @@ public class FlushStats implements Writeable, ToXContentFragment {
 
     /**
      * The total time merges have been executed.
+     *
+     * @return the total time
      */
     public TimeValue getTotalTime() {
         return new TimeValue(totalTimeInMillis);
@@ -115,18 +140,39 @@ public class FlushStats implements Writeable, ToXContentFragment {
         private long periodic = 0;
         private long totalTimeInMillis = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the total.
+         *
+         * @param total the total
+         * @return the total
+         */
         public Builder total(long total) {
             this.total = total;
             return this;
         }
 
+        /**
+         * Returns the periodic.
+         *
+         * @param periodic the periodic
+         * @return the periodic
+         */
         public Builder periodic(long periodic) {
             this.periodic = periodic;
             return this;
         }
 
+        /**
+         * Returns the total time in milliseconds.
+         *
+         * @param time the time
+         * @return the total time in milliseconds
+         */
         public Builder totalTimeInMillis(long time) {
             this.totalTimeInMillis = time;
             return this;

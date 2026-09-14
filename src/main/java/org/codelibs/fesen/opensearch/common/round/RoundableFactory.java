@@ -28,6 +28,10 @@ public final class RoundableFactory {
 
     /**
      * Creates and returns the fastest implementation of {@link Roundable}.
+     *
+     * @param values the values
+     * @param size the size
+     * @return the new instance
      */
     public static Roundable create(long[] values, int size) {
         if (size <= LINEAR_SEARCH_MAX_SIZE) {

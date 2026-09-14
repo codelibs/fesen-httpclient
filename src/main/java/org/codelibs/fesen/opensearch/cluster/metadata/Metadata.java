@@ -104,8 +104,17 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
     private static final Logger logger = LogManager.getLogger(Metadata.class);
 
+    /**
+     * The ALL constant.
+     */
     public static final String ALL = "_all";
+    /**
+     * The UNKNOWN_CLUSTER_UUID constant.
+     */
     public static final String UNKNOWN_CLUSTER_UUID = Strings.UNKNOWN_UUID_VALUE;
+    /**
+     * The NUMBER_PATTERN constant.
+     */
     public static final Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+$");
 
     /**
@@ -116,12 +125,21 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     @PublicApi(since = "1.0.0")
     public enum XContentContext {
         /* Custom metadata should be returns as part of API call */
+        /**
+         * The API value.
+         */
         API,
 
         /* Custom metadata should be stored as part of the persistent cluster state */
+        /**
+         * The GATEWAY value.
+         */
         GATEWAY,
 
         /* Custom metadata should be stored as part of a snapshot */
+        /**
+         * The snapshot.
+         */
         SNAPSHOT
     }
 
@@ -156,9 +174,17 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     @PublicApi(since = "1.0.0")
     public interface Custom extends NamedDiffable<Custom>, ToXContentFragment, ClusterState.FeatureAware {
 
+        /**
+         * Returns the context.
+         *
+         * @return the context
+         */
         EnumSet<XContentContext> context();
     }
 
+    /**
+     * The DEFAULT_REPLICA_COUNT_SETTING constant.
+     */
     public static final Setting<Integer> DEFAULT_REPLICA_COUNT_SETTING = Setting.intSetting(
         "cluster.default_number_of_replicas",
         1,
@@ -166,6 +192,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         Property.NodeScope
     );
 
+    /**
+     * The SETTING_READ_ONLY_SETTING constant.
+     */
     public static final Setting<Boolean> SETTING_READ_ONLY_SETTING = Setting.boolSetting(
         "cluster.blocks.read_only",
         false,
@@ -173,6 +202,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         Property.NodeScope
     );
 
+    /**
+     * The CLUSTER_READ_ONLY_BLOCK constant.
+     */
     public static final ClusterBlock CLUSTER_READ_ONLY_BLOCK = new ClusterBlock(
         6,
         "cluster read-only (api)",
@@ -183,6 +215,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         EnumSet.of(ClusterBlockLevel.WRITE, ClusterBlockLevel.METADATA_WRITE)
     );
 
+    /**
+     * The CLUSTER_CREATE_INDEX_BLOCK constant.
+     */
     public static final ClusterBlock CLUSTER_CREATE_INDEX_BLOCK = new ClusterBlock(
         10,
         "cluster create-index blocked (api)",
@@ -193,6 +228,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         EnumSet.of(ClusterBlockLevel.CREATE_INDEX)
     );
 
+    /**
+     * The SETTING_READ_ONLY_ALLOW_DELETE_SETTING constant.
+     */
     public static final Setting<Boolean> SETTING_READ_ONLY_ALLOW_DELETE_SETTING = Setting.boolSetting(
         "cluster.blocks.read_only_allow_delete",
         false,
@@ -200,6 +238,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         Property.NodeScope
     );
 
+    /**
+     * The SETTING_CREATE_INDEX_BLOCK_SETTING constant.
+     */
     public static final Setting<Boolean> SETTING_CREATE_INDEX_BLOCK_SETTING = Setting.boolSetting(
         "cluster.blocks.create_index",
         false,
@@ -207,6 +248,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         Property.NodeScope
     );
 
+    /**
+     * The CLUSTER_READ_ONLY_ALLOW_DELETE_BLOCK constant.
+     */
     public static final ClusterBlock CLUSTER_READ_ONLY_ALLOW_DELETE_BLOCK = new ClusterBlock(
         13,
         "cluster read-only / allow delete (api)",
@@ -217,16 +261,34 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         EnumSet.of(ClusterBlockLevel.WRITE, ClusterBlockLevel.METADATA_WRITE)
     );
 
+    /**
+     * The EMPTY_METADATA constant.
+     */
     public static final Metadata EMPTY_METADATA = builder().build();
 
+    /**
+     * The CONTEXT_MODE_PARAM constant.
+     */
     public static final String CONTEXT_MODE_PARAM = "context_mode";
 
+    /**
+     * The CONTEXT_MODE_SNAPSHOT constant.
+     */
     public static final String CONTEXT_MODE_SNAPSHOT = XContentContext.SNAPSHOT.toString();
 
+    /**
+     * The CONTEXT_MODE_GATEWAY constant.
+     */
     public static final String CONTEXT_MODE_GATEWAY = XContentContext.GATEWAY.toString();
 
+    /**
+     * The CONTEXT_MODE_API constant.
+     */
     public static final String CONTEXT_MODE_API = XContentContext.API.toString();
 
+    /**
+     * The CUSTOM_VALUE_SERIALIZER constant.
+     */
     public static final NamedDiffableValueSerializer<Custom> CUSTOM_VALUE_SERIALIZER = new NamedDiffableValueSerializer<>(Custom.class);
 
     private final String clusterUUID;
@@ -316,10 +378,20 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         this.systemTemplatesLookup = systemTemplatesLookup;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long version() {
         return this.version;
     }
 
+    /**
+     * Returns the cluster UUID.
+     *
+     * @return the cluster UUID
+     */
     public String clusterUUID() {
         return this.clusterUUID;
     }
@@ -327,21 +399,35 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
     /**
      * Whether the current node with the given cluster state is locked into the cluster with the UUID returned by {@link #clusterUUID()},
      * meaning that it will not accept any cluster state with a different clusterUUID.
+     *
+     * @return the cluster UUID committed
      */
     public boolean clusterUUIDCommitted() {
         return this.clusterUUIDCommitted;
     }
 
+    /**
+     * Returns the persistent settings.
+     *
+     * @return the persistent settings
+     */
     public Settings persistentSettings() {
         return this.persistentSettings;
     }
 
+    /**
+     * Returns the coordination metadata.
+     *
+     * @return the coordination metadata
+     */
     public CoordinationMetadata coordinationMetadata() {
         return this.coordinationMetadata;
     }
 
     /**
      * Returns all the concrete indices.
+     *
+     * @return the concrete all indices
      */
     public String[] getConcreteAllIndices() {
         return allIndices;
@@ -352,10 +438,22 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
      */
     // TODO: This can be moved to IndexNameExpressionResolver too, but this means that we will support wildcards and other expressions
 
+    /**
+     * Indexes this instance.
+     *
+     * @param index the index
+     * @return this instance
+     */
     public IndexMetadata index(String index) {
         return indices.get(index);
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @param index the index
+     * @return this instance
+     */
     public IndexMetadata index(Index index) {
         IndexMetadata metadata = index(index.getName());
         if (metadata != null && metadata.getIndexUUID().equals(index.getUUID())) {
@@ -364,10 +462,20 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return null;
     }
 
+    /**
+     * Returns the templates metadata.
+     *
+     * @return the templates metadata
+     */
     public TemplatesMetadata templatesMetadata() {
         return this.templates;
     }
 
+    /**
+     * Returns the customs.
+     *
+     * @return the customs
+     */
     public Map<String, Custom> customs() {
         return this.customs;
     }
@@ -380,6 +488,13 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return custom(WeightedRoutingMetadata.TYPE);
     }
 
+    /**
+     * Returns the custom.
+     *
+     * @param <T> the element type
+     * @param type the type
+     * @return the custom
+     */
     public <T extends Custom> T custom(String type) {
         return (T) customs.get(type);
     }
@@ -403,6 +518,13 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         return new MetadataDiff(previousState, this);
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<Metadata> readDiffFrom(StreamInput in) throws IOException {
         return new MetadataDiff(in);
     }
@@ -497,6 +619,13 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         }
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static Metadata readFrom(StreamInput in) throws IOException {
         Builder builder = new Builder();
         builder.version = in.readLong();
@@ -551,6 +680,11 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
         }
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -579,6 +713,9 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
 
         private Map<String, SortedMap<Long, String>> systemTemplatesLookup;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {
             clusterUUID = UNKNOWN_CLUSTER_UUID;
             indices = new HashMap<>();
@@ -588,6 +725,12 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             indexGraveyard(IndexGraveyard.builder().build()); // create new empty index graveyard to initialize
         }
 
+        /**
+         * Puts this instance.
+         *
+         * @param indexMetadataBuilder the index metadata builder
+         * @return this instance
+         */
         public Builder put(IndexMetadata.Builder indexMetadataBuilder) {
             // we know its a new one, increment the version and store
             indexMetadataBuilder.version(indexMetadataBuilder.version() + 1);
@@ -596,6 +739,13 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
+        /**
+         * Puts this instance.
+         *
+         * @param indexMetadata the index metadata
+         * @param incrementVersion the increment version
+         * @return this instance
+         */
         public Builder put(IndexMetadata indexMetadata, boolean incrementVersion) {
             if (indices.get(indexMetadata.getIndex().getName()) == indexMetadata) {
                 return this;
@@ -608,30 +758,67 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
+        /**
+         * Returns the indices.
+         *
+         * @param indices the indices
+         * @return the indices
+         */
         public Builder indices(final Map<String, IndexMetadata> indices) {
             this.indices.putAll(indices);
             return this;
         }
 
+        /**
+         * Puts this instance.
+         *
+         * @param template the template
+         * @return this instance
+         */
         public Builder put(IndexTemplateMetadata.Builder template) {
             return put(template.build());
         }
 
+        /**
+         * Puts this instance.
+         *
+         * @param template the template
+         * @return this instance
+         */
         public Builder put(IndexTemplateMetadata template) {
             templates.put(template.name(), template);
             return this;
         }
 
+        /**
+         * Returns the templates.
+         *
+         * @param templates the templates
+         * @return the templates
+         */
         public Builder templates(Map<String, IndexTemplateMetadata> templates) {
             this.templates.putAll(templates);
             return this;
         }
 
+        /**
+         * Puts the custom.
+         *
+         * @param type the type
+         * @param custom the custom
+         * @return this instance
+         */
         public Builder putCustom(String type, Custom custom) {
             customs.put(type, Objects.requireNonNull(custom, type));
             return this;
         }
 
+        /**
+         * Returns the customs.
+         *
+         * @param customs the customs
+         * @return the customs
+         */
         public Builder customs(Map<String, Custom> customs) {
             StreamSupport.stream(Spliterators.spliterator(customs.entrySet(), 0), false)
                 .forEach(cursor -> Objects.requireNonNull(cursor.getValue(), cursor.getKey()));
@@ -639,46 +826,99 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             return this;
         }
 
+        /**
+         * Indexes the graveyard.
+         *
+         * @param indexGraveyard the index graveyard
+         * @return this instance
+         */
         public Builder indexGraveyard(final IndexGraveyard indexGraveyard) {
             putCustom(IndexGraveyard.TYPE, indexGraveyard);
             return this;
         }
 
+        /**
+         * Returns the coordination metadata.
+         *
+         * @param coordinationMetadata the coordination metadata
+         * @return the coordination metadata
+         */
         public Builder coordinationMetadata(CoordinationMetadata coordinationMetadata) {
             this.coordinationMetadata = coordinationMetadata;
             return this;
         }
 
+        /**
+         * Returns the transient settings.
+         *
+         * @param settings the settings
+         * @return the transient settings
+         */
         public Builder transientSettings(Settings settings) {
             this.transientSettings = settings;
             return this;
         }
 
+        /**
+         * Returns the persistent settings.
+         *
+         * @param settings the settings
+         * @return the persistent settings
+         */
         public Builder persistentSettings(Settings settings) {
             this.persistentSettings = settings;
             return this;
         }
 
+        /**
+         * Returns the hashes of consistent settings.
+         *
+         * @param hashesOfConsistentSettings the hashes of consistent settings
+         * @return the hashes of consistent settings
+         */
         public Builder hashesOfConsistentSettings(DiffableStringMap hashesOfConsistentSettings) {
             this.hashesOfConsistentSettings = hashesOfConsistentSettings;
             return this;
         }
 
+        /**
+         * Returns the version.
+         *
+         * @param version the version
+         * @return the version
+         */
         public Builder version(long version) {
             this.version = version;
             return this;
         }
 
+        /**
+         * Returns the cluster UUID.
+         *
+         * @param clusterUUID the cluster UUID
+         * @return the cluster UUID
+         */
         public Builder clusterUUID(String clusterUUID) {
             this.clusterUUID = clusterUUID;
             return this;
         }
 
+        /**
+         * Returns the cluster UUID committed.
+         *
+         * @param clusterUUIDCommitted the cluster UUID committed
+         * @return the cluster UUID committed
+         */
         public Builder clusterUUIDCommitted(boolean clusterUUIDCommitted) {
             this.clusterUUIDCommitted = clusterUUIDCommitted;
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public Metadata build() {
             DataStreamMetadata dataStreamMetadata = (DataStreamMetadata) this.customs.get(DataStreamMetadata.TYPE);
             DataStreamMetadata previousDataStreamMetadata = (previousMetadata != null)
@@ -724,6 +964,11 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             }
         }
 
+        /**
+         * Builds the metadata with previous indices lookups.
+         *
+         * @return the new metadata with previous indices lookups
+         */
         protected Metadata buildMetadataWithPreviousIndicesLookups() {
             return new Metadata(
                 clusterUUID,
@@ -747,6 +992,11 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             );
         }
 
+        /**
+         * Builds the metadata with recomputed indices lookups.
+         *
+         * @return the new metadata with recomputed indices lookups
+         */
         protected Metadata buildMetadataWithRecomputedIndicesLookups() {
             // TODO: We should move these datastructures to IndexNameExpressionResolver, this will give the following benefits:
             // 1) The datastructures will be rebuilt only when needed. Now during serializing we rebuild these datastructures
@@ -967,6 +1217,14 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             }
         }
 
+        /**
+         * Writes this instance to the given content builder.
+         *
+         * @param metadata the metadata
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @throws IOException if an I/O error occurs
+         */
         public static void toXContent(Metadata metadata, XContentBuilder builder, ToXContent.Params params) throws IOException {
             XContentContext context = XContentContext.valueOf(params.param(CONTEXT_MODE_PARAM, CONTEXT_MODE_API));
 

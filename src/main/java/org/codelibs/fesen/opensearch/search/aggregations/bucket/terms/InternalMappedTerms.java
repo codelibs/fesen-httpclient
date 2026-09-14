@@ -48,18 +48,56 @@ import java.util.stream.Collectors;
 /**
  * Common superclass for results of the terms aggregation on mapped fields.
  *
+ * @param <A> the aggregation type
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public abstract class InternalMappedTerms<A extends InternalTerms<A, B>, B extends InternalTerms.Bucket<B>> extends InternalTerms<A, B> {
+    /**
+     * The format.
+     */
     protected final DocValueFormat format;
+    /**
+     * The shard size.
+     */
     protected final int shardSize;
+    /**
+     * The show term doc count error.
+     */
     protected final boolean showTermDocCountError;
+    /**
+     * The other doc count.
+     */
     protected final long otherDocCount;
+    /**
+     * The buckets.
+     */
     protected final List<B> buckets;
+    /**
+     * The bucket map.
+     */
     protected Map<String, B> bucketMap;
 
+    /**
+     * The doc count error.
+     */
     protected long docCountError;
 
+    /**
+     * Creates a new InternalMappedTerms.
+     *
+     * @param name the name
+     * @param reduceOrder the reduce order
+     * @param order the order
+     * @param metadata the metadata
+     * @param format the format
+     * @param shardSize the shard size
+     * @param showTermDocCountError the show term doc count error
+     * @param otherDocCount the other doc count
+     * @param buckets the buckets
+     * @param docCountError the doc count error
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     protected InternalMappedTerms(
         String name,
         BucketOrder reduceOrder,
@@ -84,6 +122,10 @@ public abstract class InternalMappedTerms<A extends InternalTerms<A, B>, B exten
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @param bucketReader the bucket reader
+     * @throws IOException if an I/O error occurs
      */
     protected InternalMappedTerms(StreamInput in, Bucket.Reader<B> bucketReader) throws IOException {
         super(in);

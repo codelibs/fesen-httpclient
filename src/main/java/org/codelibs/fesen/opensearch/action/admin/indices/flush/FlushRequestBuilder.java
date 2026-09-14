@@ -44,10 +44,22 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class FlushRequestBuilder extends BroadcastOperationRequestBuilder<FlushRequest, FlushResponse, FlushRequestBuilder> {
 
+    /**
+     * Creates a new FlushRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public FlushRequestBuilder(OpenSearchClient client, FlushAction action) {
         super(client, action, new FlushRequest());
     }
 
+    /**
+     * Sets the force.
+     *
+     * @param force the force
+     * @return this instance
+     */
     public FlushRequestBuilder setForce(boolean force) {
         request.force(force);
         return this;

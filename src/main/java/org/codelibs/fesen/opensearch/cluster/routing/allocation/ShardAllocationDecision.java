@@ -58,6 +58,9 @@ import java.io.IOException;
  */
 @PublicApi(since = "1.0.0")
 public final class ShardAllocationDecision implements ToXContentFragment, Writeable {
+    /**
+     * The NOT_TAKEN constant.
+     */
     public static final ShardAllocationDecision NOT_TAKEN = new ShardAllocationDecision(
         AllocateUnassignedDecision.NOT_TAKEN,
         MoveDecision.NOT_TAKEN
@@ -66,11 +69,23 @@ public final class ShardAllocationDecision implements ToXContentFragment, Writea
     private final AllocateUnassignedDecision allocateDecision;
     private final MoveDecision moveDecision;
 
+    /**
+     * Creates a new ShardAllocationDecision.
+     *
+     * @param allocateDecision the allocate decision
+     * @param moveDecision the move decision
+     */
     public ShardAllocationDecision(AllocateUnassignedDecision allocateDecision, MoveDecision moveDecision) {
         this.allocateDecision = allocateDecision;
         this.moveDecision = moveDecision;
     }
 
+    /**
+     * Creates a new ShardAllocationDecision by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardAllocationDecision(StreamInput in) throws IOException {
         allocateDecision = new AllocateUnassignedDecision(in);
         moveDecision = new MoveDecision(in);
@@ -86,6 +101,8 @@ public final class ShardAllocationDecision implements ToXContentFragment, Writea
      * Returns {@code true} if either an allocation decision or a move decision was taken
      * for the shard.  If no decision was taken, as in the case of initializing or relocating
      * shards, then this method returns {@code false}.
+     *
+     * @return the decision taken flag
      */
     public boolean isDecisionTaken() {
         return allocateDecision.isDecisionTaken() || moveDecision.isDecisionTaken();
@@ -95,6 +112,8 @@ public final class ShardAllocationDecision implements ToXContentFragment, Writea
      * Gets the move decision for the shard.  If the shard was not in the started state,
      * the instance of {@link MoveDecision} that is returned will have {@link MoveDecision#isDecisionTaken()}
      * return {@code false}.
+     *
+     * @return the move decision
      */
     public MoveDecision getMoveDecision() {
         return moveDecision;

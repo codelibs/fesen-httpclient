@@ -44,6 +44,11 @@ public enum Comparators {
 
     /**
      * Compare <code>d1</code> against <code>d2</code>, pushing {@value Double#NaN} at the bottom.
+     *
+     * @param d1 the d1
+     * @param d2 the d2
+     * @param asc the asc
+     * @return this instance
      */
     public static int compareDiscardNaN(double d1, double d2, boolean asc) {
         if (Double.isNaN(d1)) {

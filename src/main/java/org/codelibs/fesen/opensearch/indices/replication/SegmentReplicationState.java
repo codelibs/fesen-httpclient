@@ -42,12 +42,33 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
      */
     @PublicApi(since = "2.2.0")
     public enum Stage {
+        /**
+         * The DONE value.
+         */
         DONE((byte) 0),
+        /**
+         * The INIT value.
+         */
         INIT((byte) 1),
+        /**
+         * The REPLICATING value.
+         */
         REPLICATING((byte) 2),
+        /**
+         * The GET_CHECKPOINT_INFO value.
+         */
         GET_CHECKPOINT_INFO((byte) 3),
+        /**
+         * The FILE_DIFF value.
+         */
         FILE_DIFF((byte) 4),
+        /**
+         * The GET_FILES value.
+         */
         GET_FILES((byte) 5),
+        /**
+         * The FINALIZE_REPLICATION value.
+         */
         FINALIZE_REPLICATION((byte) 6);
 
         private static final Stage[] STAGES = new Stage[Stage.values().length];
@@ -65,6 +86,11 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
             this.id = id;
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public byte id() {
             return id;
         }
@@ -91,40 +117,84 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
         return overallTimer;
     }
 
+    /**
+     * Returns the stage.
+     *
+     * @return the stage
+     */
     public Stage getStage() {
         return this.stage;
     }
 
+    /**
+     * Returns the source description.
+     *
+     * @return the source description
+     */
     public String getSourceDescription() {
 
         return sourceDescription;
     }
 
+    /**
+     * Returns the replicating stage time.
+     *
+     * @return the replicating stage time
+     */
     public TimeValue getReplicatingStageTime() {
         long time = timingData.getOrDefault(Stage.REPLICATING.toString(), 0L);
         return new TimeValue(time);
     }
 
+    /**
+     * Returns the get checkpoint info stage time.
+     *
+     * @return the get checkpoint info stage time
+     */
     public TimeValue getGetCheckpointInfoStageTime() {
         long time = timingData.getOrDefault(Stage.GET_CHECKPOINT_INFO.toString(), 0L);
         return new TimeValue(time);
     }
 
+    /**
+     * Returns the file diff stage time.
+     *
+     * @return the file diff stage time
+     */
     public TimeValue getFileDiffStageTime() {
         long time = timingData.getOrDefault(Stage.FILE_DIFF.toString(), 0L);
         return new TimeValue(time);
     }
 
+    /**
+     * Returns the get file stage time.
+     *
+     * @return the get file stage time
+     */
     public TimeValue getGetFileStageTime() {
         long time = timingData.getOrDefault(Stage.GET_FILES.toString(), 0L);
         return new TimeValue(time);
     }
 
+    /**
+     * Returns the finalize replication stage time.
+     *
+     * @return the finalize replication stage time
+     */
     public TimeValue getFinalizeReplicationStageTime() {
         long time = timingData.getOrDefault(Stage.FINALIZE_REPLICATION.toString(), 0L);
         return new TimeValue(time);
     }
 
+    /**
+     * Creates a new SegmentReplicationState.
+     *
+     * @param shardRouting the shard routing
+     * @param index the index
+     * @param replicationId the replication identifier
+     * @param sourceDescription the source description
+     * @param targetNode the target node
+     */
     public SegmentReplicationState(
         ShardRouting shardRouting,
         ReplicationLuceneIndex index,
@@ -164,6 +234,12 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
         targetNode.writeTo(out);
     }
 
+    /**
+     * Validates the and set stage.
+     *
+     * @param expected the expected
+     * @param next the next
+     */
     protected void validateAndSetStage(Stage expected, Stage next) {
         if (stage != expected) {
             assert false : "can't move replication to stage [" + next + "]. current stage: [" + stage + "] (expected [" + expected + "])";
@@ -184,6 +260,11 @@ public class SegmentReplicationState implements ReplicationState, ToXContentFrag
         stage = next;
     }
 
+    /**
+     * Sets the stage.
+     *
+     * @param stage the stage
+     */
     public void setStage(Stage stage) {
         switch (stage) {
             case INIT:

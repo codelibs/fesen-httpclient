@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class PendingClusterTasksAction extends ActionType<PendingClusterTasksResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PendingClusterTasksAction INSTANCE = new PendingClusterTasksAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/task";
 
     private PendingClusterTasksAction() {

@@ -63,6 +63,9 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
     @Nullable
     private FieldMemoryStats fields;
 
+    /**
+     * Creates a new FieldDataStats.
+     */
     public FieldDataStats() {
 
     }
@@ -78,6 +81,12 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
         this.fields = builder.fields;
     }
 
+    /**
+     * Creates a new FieldDataStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public FieldDataStats(StreamInput in) throws IOException {
         memorySize = in.readVLong();
         evictions = in.readVLong();
@@ -87,6 +96,10 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link FieldDataStats.Builder} instead.
+     *
+     * @param memorySize the memory size
+     * @param evictions the evictions
+     * @param fields the fields
      */
     @Deprecated
     public FieldDataStats(long memorySize, long evictions, @Nullable FieldMemoryStats fields) {
@@ -95,6 +108,11 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
         this.fields = fields;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param stats the stats
+     */
     public void add(FieldDataStats stats) {
         if (stats == null) {
             return;
@@ -110,10 +128,20 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Returns the memory size.
+     *
+     * @return the memory size
+     */
     public ByteSizeValue getMemorySize() {
         return new ByteSizeValue(memorySize);
     }
 
+    /**
+     * Returns the evictions.
+     *
+     * @return the evictions
+     */
     public long getEvictions() {
         return this.evictions;
     }
@@ -127,18 +155,39 @@ public class FieldDataStats implements Writeable, ToXContentFragment {
         private long evictions = 0;
         private FieldMemoryStats fields = null;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the memory size.
+         *
+         * @param memorySize the memory size
+         * @return the memory size
+         */
         public Builder memorySize(long memorySize) {
             this.memorySize = memorySize;
             return this;
         }
 
+        /**
+         * Returns the evictions.
+         *
+         * @param evictions the evictions
+         * @return the evictions
+         */
         public Builder evictions(long evictions) {
             this.evictions = evictions;
             return this;
         }
 
+        /**
+         * Returns the field memory stats.
+         *
+         * @param fields the fields
+         * @return the field memory stats
+         */
         public Builder fieldMemoryStats(@Nullable FieldMemoryStats fields) {
             this.fields = fields;
             return this;

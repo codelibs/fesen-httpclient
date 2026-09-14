@@ -41,6 +41,8 @@ package org.codelibs.fesen.opensearch.index.reindex;
 public interface SuccessfullyProcessed {
     /**
      * Total number of successfully processed documents.
+     *
+     * @return the successfully processed
      */
     default long getSuccessfullyProcessed() {
         return getUpdated() + getCreated() + getDeleted();
@@ -48,16 +50,22 @@ public interface SuccessfullyProcessed {
 
     /**
      * Count of documents updated.
+     *
+     * @return the updated
      */
     long getUpdated();
 
     /**
      * Count of documents created.
+     *
+     * @return the created
      */
     long getCreated();
 
     /**
      * Count of successful delete operations.
+     *
+     * @return the deleted
      */
     long getDeleted();
 }

@@ -57,6 +57,12 @@ public class GetIndexTemplatesResponse extends ActionResponse implements ToXCont
 
     private final List<IndexTemplateMetadata> indexTemplates;
 
+    /**
+     * Creates a new GetIndexTemplatesResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetIndexTemplatesResponse(StreamInput in) throws IOException {
         super(in);
         int size = in.readVInt();
@@ -66,10 +72,20 @@ public class GetIndexTemplatesResponse extends ActionResponse implements ToXCont
         }
     }
 
+    /**
+     * Creates a new GetIndexTemplatesResponse.
+     *
+     * @param indexTemplates the index templates
+     */
     public GetIndexTemplatesResponse(List<IndexTemplateMetadata> indexTemplates) {
         this.indexTemplates = indexTemplates;
     }
 
+    /**
+     * Returns the index templates.
+     *
+     * @return the index templates
+     */
     public List<IndexTemplateMetadata> getIndexTemplates() {
         return indexTemplates;
     }

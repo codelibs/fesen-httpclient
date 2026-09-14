@@ -76,6 +76,9 @@ public final class Aggregator {
          */
         BREADTH_FIRST(new ParseField("breadth_first"));
 
+        /**
+         * The KEY constant.
+         */
         public static final ParseField KEY = new ParseField("collect_mode");
 
         private final ParseField parseField;
@@ -84,10 +87,22 @@ public final class Aggregator {
             this.parseField = parseField;
         }
 
+        /**
+         * Parses the field.
+         *
+         * @return this instance
+         */
         public ParseField parseField() {
             return parseField;
         }
 
+        /**
+         * Parses this instance.
+         *
+         * @param value the value
+         * @param deprecationHandler the deprecation handler
+         * @return this instance
+         */
         public static SubAggCollectionMode parse(String value, DeprecationHandler deprecationHandler) {
             SubAggCollectionMode[] modes = SubAggCollectionMode.values();
             for (SubAggCollectionMode mode : modes) {
@@ -98,6 +113,13 @@ public final class Aggregator {
             throw new OpenSearchParseException("no [{}] found for value [{}]", KEY.getPreferredName(), value);
         }
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static SubAggCollectionMode readFromStream(StreamInput in) throws IOException {
             return in.readEnum(SubAggCollectionMode.class);
         }

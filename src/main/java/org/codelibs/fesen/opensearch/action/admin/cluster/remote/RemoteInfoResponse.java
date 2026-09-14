@@ -59,10 +59,20 @@ public final class RemoteInfoResponse extends ActionResponse implements ToXConte
         infos = in.readList(RemoteConnectionInfo::new);
     }
 
+    /**
+     * Creates a new RemoteInfoResponse.
+     *
+     * @param infos the infos
+     */
     public RemoteInfoResponse(Collection<RemoteConnectionInfo> infos) {
         this.infos = Collections.unmodifiableList(new ArrayList<>(infos));
     }
 
+    /**
+     * Returns the infos.
+     *
+     * @return the infos
+     */
     public List<RemoteConnectionInfo> getInfos() {
         return infos;
     }

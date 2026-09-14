@@ -47,6 +47,7 @@ import java.util.function.Consumer;
 /**
  * A listener for action responses or failures.
  *
+ * @param <Response> the response type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -54,11 +55,15 @@ public interface ActionListener<Response> {
     /**
      * Handle action response. This response may constitute a failure or a
      * success but it is up to the listener to make that decision.
+     *
+     * @param response the response
      */
     void onResponse(Response response);
 
     /**
      * A failure caused by an exception at some phase of the task.
+     *
+     * @param e the exception
      */
     void onFailure(Exception e);
 

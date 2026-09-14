@@ -70,6 +70,9 @@ import java.util.stream.StreamSupport;
 @PublicApi(since = "1.0.0")
 public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements Iterable<DiscoveryNode>, VerifiableWriteable {
 
+    /**
+     * The EMPTY_NODES constant.
+     */
     public static final DiscoveryNodes EMPTY_NODES = builder().build();
 
     private final Map<String, DiscoveryNode> nodes;
@@ -182,6 +185,8 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
 
     /**
      * Returns the cluster-manager node, or {@code null} if there is no cluster-manager node
+     *
+     * @return the cluster manager node
      */
     @Nullable
     public DiscoveryNode getClusterManagerNode() {
@@ -213,10 +218,23 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         writeToUtil((output, value) -> value.writeTo(output), out);
     }
 
+    /**
+     * Writes the to with attribute.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeToWithAttribute(StreamOutput out) throws IOException {
         writeToUtil((output, value) -> value.writeToWithAttribute(output), out);
     }
 
+    /**
+     * Writes the to util.
+     *
+     * @param writer the writer
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeToUtil(final Writer<DiscoveryNode> writer, StreamOutput out) throws IOException {
         writeClusterManager(out);
         out.writeVInt(nodes.size());
@@ -273,6 +291,14 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         );
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @param localNode the local node
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static DiscoveryNodes readFrom(StreamInput in, DiscoveryNode localNode) throws IOException {
         Builder builder = new Builder();
         if (in.readBoolean()) {
@@ -296,10 +322,23 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         return builder.build();
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @param localNode the local node
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<DiscoveryNodes> readDiffFrom(StreamInput in, DiscoveryNode localNode) throws IOException {
         return AbstractDiffable.readDiffFrom(in1 -> readFrom(in1, localNode), in);
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -316,6 +355,9 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
         private String clusterManagerNodeId;
         private String localNodeId;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {
             nodes = new HashMap<>();
         }
@@ -324,11 +366,23 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
             nodes.put(node.getId(), node);
         }
 
+        /**
+         * Returns the cluster manager node identifier.
+         *
+         * @param clusterManagerNodeId the cluster manager node identifier
+         * @return the cluster manager node identifier
+         */
         public Builder clusterManagerNodeId(String clusterManagerNodeId) {
             this.clusterManagerNodeId = clusterManagerNodeId;
             return this;
         }
 
+        /**
+         * Returns the local node identifier.
+         *
+         * @param localNodeId the local node identifier
+         * @return the local node identifier
+         */
         public Builder localNodeId(String localNodeId) {
             this.localNodeId = localNodeId;
             return this;
@@ -358,6 +412,11 @@ public class DiscoveryNodes extends AbstractDiffable<DiscoveryNodes> implements 
             return null;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public DiscoveryNodes build() {
             final Map<String, DiscoveryNode> dataNodesBuilder = new HashMap<>();
             final Map<String, DiscoveryNode> warmNodesBuilder = new HashMap<>();

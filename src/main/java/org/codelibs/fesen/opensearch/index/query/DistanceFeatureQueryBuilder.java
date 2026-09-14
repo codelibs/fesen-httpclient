@@ -55,6 +55,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  * @opensearch.internal
  */
 public class DistanceFeatureQueryBuilder extends AbstractQueryBuilder<DistanceFeatureQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "distance_feature";
 
     private static final ParseField FIELD_FIELD = new ParseField("field");
@@ -84,12 +87,25 @@ public class DistanceFeatureQueryBuilder extends AbstractQueryBuilder<DistanceFe
         declareStandardFields(PARSER);
     }
 
+    /**
+     * Creates a new DistanceFeatureQueryBuilder.
+     *
+     * @param field the field
+     * @param origin the origin
+     * @param pivot the pivot
+     */
     public DistanceFeatureQueryBuilder(String field, Origin origin, String pivot) {
         this.field = Objects.requireNonNull(field);
         this.origin = Objects.requireNonNull(origin);
         this.pivot = Objects.requireNonNull(pivot);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static DistanceFeatureQueryBuilder fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }
@@ -104,6 +120,12 @@ public class DistanceFeatureQueryBuilder extends AbstractQueryBuilder<DistanceFe
         builder.endObject();
     }
 
+    /**
+     * Creates a new DistanceFeatureQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DistanceFeatureQueryBuilder(StreamInput in) throws IOException {
         super(in);
         field = in.readString();
@@ -154,14 +176,29 @@ public class DistanceFeatureQueryBuilder extends AbstractQueryBuilder<DistanceFe
     public static class Origin {
         private final Object origin;
 
+        /**
+         * Creates a new Origin.
+         *
+         * @param origin the origin
+         */
         public Origin(Long origin) {
             this.origin = Objects.requireNonNull(origin);
         }
 
+        /**
+         * Creates a new Origin.
+         *
+         * @param origin the origin
+         */
         public Origin(String origin) {
             this.origin = Objects.requireNonNull(origin);
         }
 
+        /**
+         * Creates a new Origin.
+         *
+         * @param origin the origin
+         */
         public Origin(GeoPoint origin) {
             this.origin = Objects.requireNonNull(origin);
         }

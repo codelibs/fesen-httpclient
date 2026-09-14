@@ -52,10 +52,25 @@ public interface BlobStore extends Closeable {
      * Metrics for BlobStore interactions
      */
     enum Metric {
+        /**
+         * The GENERIC_STATS value.
+         */
         GENERIC_STATS("generic_stats"),
+        /**
+         * The REQUEST_SUCCESS value.
+         */
         REQUEST_SUCCESS("request_success_total"),
+        /**
+         * The REQUEST_FAILURE value.
+         */
         REQUEST_FAILURE("request_failures_total"),
+        /**
+         * The REQUEST_LATENCY value.
+         */
         REQUEST_LATENCY("request_time_in_millis"),
+        /**
+         * The RETRY_COUNT value.
+         */
         RETRY_COUNT("request_retry_count_total");
 
         private String metricName;
@@ -64,6 +79,11 @@ public interface BlobStore extends Closeable {
             this.metricName = name;
         }
 
+        /**
+         * Returns the metric name.
+         *
+         * @return the metric name
+         */
         public String metricName() {
             return this.metricName;
         }

@@ -44,18 +44,44 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ShardNotFoundException extends ResourceNotFoundException {
+    /**
+     * Creates a new ShardNotFoundException.
+     *
+     * @param shardId the shard identifier
+     */
     public ShardNotFoundException(ShardId shardId) {
         this(shardId, null);
     }
 
+    /**
+     * Creates a new ShardNotFoundException.
+     *
+     * @param shardId the shard identifier
+     * @param ex the ex
+     */
     public ShardNotFoundException(ShardId shardId, Throwable ex) {
         this(shardId, "no such shard", ex);
     }
 
+    /**
+     * Creates a new ShardNotFoundException.
+     *
+     * @param shardId the shard identifier
+     * @param msg the msg
+     * @param args the args
+     */
     public ShardNotFoundException(ShardId shardId, String msg, Object... args) {
         this(shardId, msg, null, args);
     }
 
+    /**
+     * Creates a new ShardNotFoundException.
+     *
+     * @param shardId the shard identifier
+     * @param msg the msg
+     * @param ex the ex
+     * @param args the args
+     */
     public ShardNotFoundException(ShardId shardId, String msg, Throwable ex, Object... args) {
         super(msg, ex, args);
         setShard(shardId);

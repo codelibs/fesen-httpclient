@@ -38,10 +38,18 @@ import java.util.List;
  * Collection of polygons
  */
 public class MultiPolygon extends GeometryCollection<Polygon> {
+    /**
+     * The EMPTY constant.
+     */
     public static final MultiPolygon EMPTY = new MultiPolygon();
 
     private MultiPolygon() {}
 
+    /**
+     * Creates a new MultiPolygon.
+     *
+     * @param polygons the polygons
+     */
     public MultiPolygon(List<Polygon> polygons) {
         super(polygons);
     }

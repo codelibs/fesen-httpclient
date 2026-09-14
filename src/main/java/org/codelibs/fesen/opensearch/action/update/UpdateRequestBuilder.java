@@ -57,12 +57,23 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     implements
         WriteRequestBuilder<UpdateRequestBuilder> {
 
+    /**
+     * Creates a new UpdateRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     * @param id the identifier
+     */
     public UpdateRequestBuilder(OpenSearchClient client, UpdateAction action, String index, String id) {
         super(client, action, new UpdateRequest(index, id));
     }
 
     /**
      * Sets the id of the indexed document.
+     *
+     * @param id the identifier
+     * @return this instance
      */
     public UpdateRequestBuilder setId(String id) {
         request.id(id);
@@ -76,6 +87,9 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
      * The script works with the variable <code>ctx</code>, which is bound to the entry,
      * e.g. <code>ctx._source.mycounter += 1</code>.
      *
+     * @param script the script
+     *
+     * @return this instance
      */
     public UpdateRequestBuilder setScript(Script script) {
         request.script(script);
@@ -85,6 +99,9 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     /**
      * Sets the number of retries of a version conflict occurs because the document was updated between
      * getting it and updating it. Defaults to 0.
+     *
+     * @param retryOnConflict the retry on conflict
+     * @return this instance
      */
     public UpdateRequestBuilder setRetryOnConflict(int retryOnConflict) {
         request.retryOnConflict(retryOnConflict);
@@ -93,6 +110,9 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
 
     /**
      * Sets the doc to use for updates when a script is not specified.
+     *
+     * @param source the source
+     * @return this instance
      */
     public UpdateRequestBuilder setDoc(XContentBuilder source) {
         request.doc(source);
@@ -102,6 +122,9 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
     /**
      * Sets the doc to use for updates when a script is not specified, the doc provided
      * is a field and value pairs.
+     *
+     * @param source the source
+     * @return this instance
      */
     public UpdateRequestBuilder setDoc(Object... source) {
         request.doc(source);
@@ -110,6 +133,9 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
 
     /**
      * Sets the doc source of the update request to be used when the document does not exists.
+     *
+     * @param source the source
+     * @return this instance
      */
     public UpdateRequestBuilder setUpsert(Map<String, Object> source) {
         request.upsert(source);
@@ -118,6 +144,9 @@ public class UpdateRequestBuilder extends InstanceShardOperationRequestBuilder<U
 
     /**
      * Sets whether the specified doc parameter should be used as upsert document.
+     *
+     * @param shouldUpsertDoc the should upsert doc
+     * @return this instance
      */
     public UpdateRequestBuilder setDocAsUpsert(boolean shouldUpsertDoc) {
         request.docAsUpsert(shouldUpsertDoc);

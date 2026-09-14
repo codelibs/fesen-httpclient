@@ -38,6 +38,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Base request builder for cluster-manager node operations that support acknowledgements
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class AcknowledgedRequestBuilder<
@@ -48,12 +51,22 @@ public abstract class AcknowledgedRequestBuilder<
         Response,
         RequestBuilder> {
 
+    /**
+     * Creates a new AcknowledgedRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected AcknowledgedRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
     /**
      * Sets the maximum wait for acknowledgement from other nodes
+     *
+     * @param timeout the timeout
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public RequestBuilder setTimeout(TimeValue timeout) {
@@ -64,6 +77,9 @@ public abstract class AcknowledgedRequestBuilder<
     /**
      * Timeout to wait for the operation to be acknowledged by current cluster nodes. Defaults
      * to {@code 10s}.
+     *
+     * @param timeout the timeout
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public RequestBuilder setTimeout(String timeout) {

@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ListTasksAction extends ActionType<ListTasksResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ListTasksAction INSTANCE = new ListTasksAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/tasks/lists";
 
     private ListTasksAction() {

@@ -72,6 +72,9 @@ public class RemoteInfo implements Writeable, ToXContentObject {
      */
     public static final TimeValue DEFAULT_CONNECT_TIMEOUT = timeValueSeconds(30);
 
+    /**
+     * The QUERY_CONTENT_TYPE constant.
+     */
     public static final XContent QUERY_CONTENT_TYPE = JsonXContent.jsonXContent;
 
     private final String scheme;
@@ -91,6 +94,20 @@ public class RemoteInfo implements Writeable, ToXContentObject {
      */
     private final TimeValue connectTimeout;
 
+    /**
+     * Creates a new RemoteInfo.
+     *
+     * @param scheme the scheme
+     * @param host the host
+     * @param port the port
+     * @param pathPrefix the path prefix
+     * @param query the query
+     * @param username the username
+     * @param password the password
+     * @param headers the headers
+     * @param socketTimeout the socket timeout
+     * @param connectTimeout the connect timeout
+     */
     public RemoteInfo(
         String scheme,
         String host,
@@ -134,6 +151,11 @@ public class RemoteInfo implements Writeable, ToXContentObject {
         out.writeOptionalString(pathPrefix);
     }
 
+    /**
+     * Returns the query.
+     *
+     * @return the query
+     */
     public BytesReference getQuery() {
         return query;
     }

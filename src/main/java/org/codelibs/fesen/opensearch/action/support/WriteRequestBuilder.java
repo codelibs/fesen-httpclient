@@ -37,14 +37,23 @@ import org.codelibs.fesen.opensearch.action.support.WriteRequest.RefreshPolicy;
 /**
  * Builder for a write request operations
  *
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public interface WriteRequestBuilder<B extends WriteRequestBuilder<B>> {
+    /**
+     * Returns the request.
+     *
+     * @return the request
+     */
     WriteRequest<?> request();
 
     /**
      * Should this request trigger a refresh ({@linkplain RefreshPolicy#IMMEDIATE}), wait for a refresh (
      * {@linkplain RefreshPolicy#WAIT_UNTIL}), or proceed ignore refreshes entirely ({@linkplain RefreshPolicy#NONE}, the default).
+     *
+     * @param refreshPolicy the refresh policy
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     default B setRefreshPolicy(RefreshPolicy refreshPolicy) {
@@ -54,6 +63,9 @@ public interface WriteRequestBuilder<B extends WriteRequestBuilder<B>> {
 
     /**
      * Parse the refresh policy from a string, only modifying it if the string is non null. Convenient to use with request parsing.
+     *
+     * @param refreshPolicy the refresh policy
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     default B setRefreshPolicy(String refreshPolicy) {

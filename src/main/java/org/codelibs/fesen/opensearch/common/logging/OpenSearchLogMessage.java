@@ -46,11 +46,18 @@ import java.util.stream.Stream;
  */
 @SuppressLoggerChecks(reason = "Safe as this is abstract class")
 public abstract class OpenSearchLogMessage extends ParameterizedMessage {
+    /**
+     * The fields.
+     */
     private final Map<String, Object> fields;
 
     /**
      * This is an abstract class, so this is safe. The check is done on DeprecationMessage.
      * Other subclasses are not allowing varargs
+     *
+     * @param fields the fields
+     * @param messagePattern the message pattern
+     * @param args the args
      */
     public OpenSearchLogMessage(Map<String, Object> fields, String messagePattern, Object... args) {
         super(messagePattern, args);

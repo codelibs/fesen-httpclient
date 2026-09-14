@@ -69,6 +69,11 @@ public class IndicesSegmentResponse extends BroadcastResponse {
         shards = in.readArray(ShardSegments::new, ShardSegments[]::new);
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public Map<String, IndexSegments> getIndices() {
         if (indicesSegments != null) {
             return indicesSegments;

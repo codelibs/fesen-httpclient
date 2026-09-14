@@ -61,19 +61,55 @@ public class Segment implements Writeable {
 
     private String name;
     private long generation;
+    /**
+     * The committed.
+     */
     public boolean committed;
+    /**
+     * The search.
+     */
     public boolean search;
+    /**
+     * The size in bytes.
+     */
     public long sizeInBytes = -1;
+    /**
+     * The doc count.
+     */
     public int docCount = -1;
+    /**
+     * The del doc count.
+     */
     public int delDocCount = -1;
+    /**
+     * The version.
+     */
     public org.apache.lucene.util.Version version = null;
+    /**
+     * The compound.
+     */
     public Boolean compound = null;
+    /**
+     * The merge identifier.
+     */
     public String mergeId;
+    /**
+     * The segment sort.
+     */
     public Sort segmentSort;
+    /**
+     * The attributes.
+     */
     public Map<String, String> attributes;
 
     private static final ByteSizeValue ZERO_BYTE_SIZE_VALUE = new ByteSizeValue(0L);
 
+    /**
+     * Creates a new Segment by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public Segment(StreamInput in) throws IOException {
         name = in.readString();
         generation = Long.parseLong(name.substring(1), Character.MAX_RADIX);
@@ -100,38 +136,83 @@ public class Segment implements Writeable {
         }
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Returns the generation.
+     *
+     * @return the generation
+     */
     public long getGeneration() {
         return this.generation;
     }
 
+    /**
+     * Returns the committed flag.
+     *
+     * @return the committed flag
+     */
     public boolean isCommitted() {
         return this.committed;
     }
 
+    /**
+     * Returns the search flag.
+     *
+     * @return the search flag
+     */
     public boolean isSearch() {
         return this.search;
     }
 
+    /**
+     * Returns the num docs.
+     *
+     * @return the num docs
+     */
     public int getNumDocs() {
         return this.docCount;
     }
 
+    /**
+     * Returns the deleted docs.
+     *
+     * @return the deleted docs
+     */
     public int getDeletedDocs() {
         return this.delDocCount;
     }
 
+    /**
+     * Returns the size.
+     *
+     * @return the size
+     */
     public ByteSizeValue getSize() {
         return new ByteSizeValue(sizeInBytes);
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public org.apache.lucene.util.Version getVersion() {
         return version;
     }
 
+    /**
+     * Returns the compound flag.
+     *
+     * @return the compound flag
+     */
     @Nullable
     public Boolean isCompound() {
         return compound;
@@ -140,6 +221,8 @@ public class Segment implements Writeable {
     /**
      * If set, a string representing that the segment is part of a merge, with the value representing the
      * group of segments that represent this merge.
+     *
+     * @return the merge identifier
      */
     @Nullable
     public String getMergeId() {
@@ -149,6 +232,7 @@ public class Segment implements Writeable {
     /**
      * Estimation of the memory usage was removed in Lucene 9 (https://issues.apache.org/jira/browse/LUCENE-9387)
      * retain for bwc only (todo: remove in OpenSearch 3).
+     * @return the zero memory
      * @deprecated
      */
     @Deprecated
@@ -158,6 +242,8 @@ public class Segment implements Writeable {
 
     /**
      * Return the sort order of this segment, or null if the segment has no sort.
+     *
+     * @return the segment sort
      */
     public Sort getSegmentSort() {
         return segmentSort;

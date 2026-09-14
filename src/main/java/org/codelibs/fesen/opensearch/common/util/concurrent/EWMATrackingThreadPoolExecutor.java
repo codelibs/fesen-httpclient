@@ -21,11 +21,15 @@ public interface EWMATrackingThreadPoolExecutor {
 
     /**
      * Returns the exponentially weighted moving average of the task execution time
+     *
+     * @return the task execution ewma
      */
     double getTaskExecutionEWMA();
 
     /**
      * Returns the current queue size (operations that are queued)
+     *
+     * @return the current queue size
      */
     int getCurrentQueueSize();
 }

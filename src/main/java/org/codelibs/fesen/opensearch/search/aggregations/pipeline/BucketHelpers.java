@@ -58,6 +58,11 @@ import java.util.List;
  * @opensearch.internal
  */
 public class BucketHelpers {
+    /**
+     * Creates a new BucketHelpers.
+     */
+    public BucketHelpers() {
+    }
 
     /**
      * A gap policy determines how "holes" in a set of buckets should be handled.  For example,
@@ -71,7 +76,13 @@ public class BucketHelpers {
      * @opensearch.internal
      */
     public enum GapPolicy implements Writeable {
+        /**
+         * The INSERT_ZEROS value.
+         */
         INSERT_ZEROS((byte) 0, "insert_zeros"),
+        /**
+         * The SKIP value.
+         */
         SKIP((byte) 1, "skip");
 
         /**
@@ -79,6 +90,7 @@ public class BucketHelpers {
          *
          * @param text
          *            GapPolicy in string format (e.g. "ignore")
+         * @param tokenLocation the token location
          * @return GapPolicy enum
          */
         public static GapPolicy parse(String text, XContentLocation tokenLocation) {
@@ -127,7 +139,9 @@ public class BucketHelpers {
         /**
          * Deserialize the GapPolicy from the input stream
          *
+         * @param in the input to read from
          * @return    GapPolicy Enum
+         * @throws IOException if an I/O error occurs
          */
         public static GapPolicy readFrom(StreamInput in) throws IOException {
             byte id = in.readByte();

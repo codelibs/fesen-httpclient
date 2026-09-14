@@ -41,10 +41,22 @@ public class OpenSearchSloppyMath {
 
     private OpenSearchSloppyMath() {}
 
+    /**
+     * Returns the sinh.
+     *
+     * @param value the value
+     * @return the sinh
+     */
     public static double sinh(double value) {
         return FastMath.sinh(value);
     }
 
+    /**
+     * Returns the atan.
+     *
+     * @param value the value
+     * @return the atan
+     */
     public static double atan(double value) {
         return FastMath.atan(value);
     }

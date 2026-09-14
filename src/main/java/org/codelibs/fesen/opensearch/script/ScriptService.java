@@ -47,6 +47,11 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public class ScriptService {
+    /**
+     * Creates a new ScriptService.
+     */
+    public ScriptService() {
+    }
 
     /**
      * Always refuses: a client has no script engine.

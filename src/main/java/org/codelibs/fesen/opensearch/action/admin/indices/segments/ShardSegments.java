@@ -65,10 +65,20 @@ public class ShardSegments implements Writeable, Iterable<Segment> {
         return segments.iterator();
     }
 
+    /**
+     * Returns the shard routing.
+     *
+     * @return the shard routing
+     */
     public ShardRouting getShardRouting() {
         return this.shardRouting;
     }
 
+    /**
+     * Returns the number of committed.
+     *
+     * @return the number of committed
+     */
     public int getNumberOfCommitted() {
         int count = 0;
         for (Segment segment : segments) {
@@ -79,6 +89,11 @@ public class ShardSegments implements Writeable, Iterable<Segment> {
         return count;
     }
 
+    /**
+     * Returns the number of search.
+     *
+     * @return the number of search
+     */
     public int getNumberOfSearch() {
         int count = 0;
         for (Segment segment : segments) {

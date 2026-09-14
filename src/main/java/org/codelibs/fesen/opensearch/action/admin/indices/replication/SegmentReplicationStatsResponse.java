@@ -31,6 +31,12 @@ import java.util.Map;
 public class SegmentReplicationStatsResponse extends BroadcastResponse {
     private final Map<String, List<SegmentReplicationPerGroupStats>> replicationStats;
 
+    /**
+     * Creates a new SegmentReplicationStatsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SegmentReplicationStatsResponse(StreamInput in) throws IOException {
         super(in);
         replicationStats = in.readMapOfLists(StreamInput::readString, SegmentReplicationPerGroupStats::new);

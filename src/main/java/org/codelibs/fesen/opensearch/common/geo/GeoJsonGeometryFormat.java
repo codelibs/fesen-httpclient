@@ -45,10 +45,18 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class GeoJsonGeometryFormat implements GeometryFormat<Geometry> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geojson";
 
     private final GeoJson geoJsonParser;
 
+    /**
+     * Creates a new GeoJsonGeometryFormat.
+     *
+     * @param geoJsonParser the geo JSON parser
+     */
     public GeoJsonGeometryFormat(GeoJson geoJsonParser) {
         this.geoJsonParser = geoJsonParser;
     }

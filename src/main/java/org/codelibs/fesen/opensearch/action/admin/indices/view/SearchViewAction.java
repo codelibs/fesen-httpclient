@@ -27,7 +27,13 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @ExperimentalApi
 public class SearchViewAction extends ActionType<SearchResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final SearchViewAction INSTANCE = new SearchViewAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "views:data/read/search";
 
     private SearchViewAction() {
@@ -43,11 +49,22 @@ public class SearchViewAction extends ActionType<SearchResponse> {
 
         private final String view;
 
+        /**
+         * Creates a new Request.
+         *
+         * @param view the view
+         * @param searchRequest the search request
+         */
         public Request(final String view, final SearchRequest searchRequest) {
             super(searchRequest);
             this.view = view;
         }
 
+        /**
+         * Returns the view.
+         *
+         * @return the view
+         */
         public String getView() {
             return view;
         }

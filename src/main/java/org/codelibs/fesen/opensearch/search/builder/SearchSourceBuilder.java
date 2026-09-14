@@ -99,42 +99,153 @@ import static org.codelibs.fesen.opensearch.search.internal.SearchContext.TRACK_
 public final class SearchSourceBuilder implements Writeable, ToXContentObject, Rewriteable<SearchSourceBuilder> {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(SearchSourceBuilder.class);
 
+    /**
+     * The FROM_FIELD constant.
+     */
     public static final ParseField FROM_FIELD = new ParseField("from");
+    /**
+     * The SIZE_FIELD constant.
+     */
     public static final ParseField SIZE_FIELD = new ParseField("size");
+    /**
+     * The TIMEOUT_FIELD constant.
+     */
     public static final ParseField TIMEOUT_FIELD = new ParseField("timeout");
+    /**
+     * The TERMINATE_AFTER_FIELD constant.
+     */
     public static final ParseField TERMINATE_AFTER_FIELD = new ParseField("terminate_after");
+    /**
+     * The QUERY_FIELD constant.
+     */
     public static final ParseField QUERY_FIELD = new ParseField("query");
+    /**
+     * The POST_FILTER_FIELD constant.
+     */
     public static final ParseField POST_FILTER_FIELD = new ParseField("post_filter");
+    /**
+     * The MIN_SCORE_FIELD constant.
+     */
     public static final ParseField MIN_SCORE_FIELD = new ParseField("min_score");
+    /**
+     * The VERSION_FIELD constant.
+     */
     public static final ParseField VERSION_FIELD = new ParseField("version");
+    /**
+     * The SEQ_NO_PRIMARY_TERM_FIELD constant.
+     */
     public static final ParseField SEQ_NO_PRIMARY_TERM_FIELD = new ParseField("seq_no_primary_term");
+    /**
+     * The EXPLAIN_FIELD constant.
+     */
     public static final ParseField EXPLAIN_FIELD = new ParseField("explain");
+    /**
+     * The _SOURCE_FIELD constant.
+     */
     public static final ParseField _SOURCE_FIELD = new ParseField("_source");
+    /**
+     * The STORED_FIELDS_FIELD constant.
+     */
     public static final ParseField STORED_FIELDS_FIELD = new ParseField("stored_fields");
+    /**
+     * The DOCVALUE_FIELDS_FIELD constant.
+     */
     public static final ParseField DOCVALUE_FIELDS_FIELD = new ParseField("docvalue_fields");
+    /**
+     * The FETCH_FIELDS_FIELD constant.
+     */
     public static final ParseField FETCH_FIELDS_FIELD = new ParseField("fields");
+    /**
+     * The SCRIPT_FIELDS_FIELD constant.
+     */
     public static final ParseField SCRIPT_FIELDS_FIELD = new ParseField("script_fields");
+    /**
+     * The DERIVED_FIELDS_FIELD constant.
+     */
     public static final ParseField DERIVED_FIELDS_FIELD = new ParseField("derived");
+    /**
+     * The SCRIPT_FIELD constant.
+     */
     public static final ParseField SCRIPT_FIELD = new ParseField("script");
+    /**
+     * The IGNORE_FAILURE_FIELD constant.
+     */
     public static final ParseField IGNORE_FAILURE_FIELD = new ParseField("ignore_failure");
+    /**
+     * The SORT_FIELD constant.
+     */
     public static final ParseField SORT_FIELD = new ParseField("sort");
+    /**
+     * The TRACK_SCORES_FIELD constant.
+     */
     public static final ParseField TRACK_SCORES_FIELD = new ParseField("track_scores");
+    /**
+     * The INCLUDE_NAMED_QUERIES_SCORE constant.
+     */
     public static final ParseField INCLUDE_NAMED_QUERIES_SCORE = new ParseField("include_named_queries_score");
+    /**
+     * The TRACK_TOTAL_HITS_FIELD constant.
+     */
     public static final ParseField TRACK_TOTAL_HITS_FIELD = new ParseField("track_total_hits");
+    /**
+     * The INDICES_BOOST_FIELD constant.
+     */
     public static final ParseField INDICES_BOOST_FIELD = new ParseField("indices_boost");
+    /**
+     * The AGGREGATIONS_FIELD constant.
+     */
     public static final ParseField AGGREGATIONS_FIELD = new ParseField("aggregations");
+    /**
+     * The AGGS_FIELD constant.
+     */
     public static final ParseField AGGS_FIELD = new ParseField("aggs");
+    /**
+     * The HIGHLIGHT_FIELD constant.
+     */
     public static final ParseField HIGHLIGHT_FIELD = new ParseField("highlight");
+    /**
+     * The SUGGEST_FIELD constant.
+     */
     public static final ParseField SUGGEST_FIELD = new ParseField("suggest");
+    /**
+     * The RESCORE_FIELD constant.
+     */
     public static final ParseField RESCORE_FIELD = new ParseField("rescore");
+    /**
+     * The STATS_FIELD constant.
+     */
     public static final ParseField STATS_FIELD = new ParseField("stats");
+    /**
+     * The EXT_FIELD constant.
+     */
     public static final ParseField EXT_FIELD = new ParseField("ext");
+    /**
+     * The PROFILE_FIELD constant.
+     */
     public static final ParseField PROFILE_FIELD = new ParseField("profile");
+    /**
+     * The SEARCH_AFTER constant.
+     */
     public static final ParseField SEARCH_AFTER = new ParseField("search_after");
+    /**
+     * The COLLAPSE constant.
+     */
     public static final ParseField COLLAPSE = new ParseField("collapse");
+    /**
+     * The SLICE constant.
+     */
     public static final ParseField SLICE = new ParseField("slice");
+    /**
+     * The POINT_IN_TIME constant.
+     */
     public static final ParseField POINT_IN_TIME = new ParseField("pit");
+    /**
+     * The SEARCH_PIPELINE constant.
+     */
     public static final ParseField SEARCH_PIPELINE = new ParseField("search_pipeline");
+    /**
+     * The VERBOSE_SEARCH_PIPELINE constant.
+     */
     public static final ParseField VERBOSE_SEARCH_PIPELINE = new ParseField("verbose_pipeline");
 
     private QueryBuilder queryBuilder;
@@ -211,6 +322,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SearchSourceBuilder(StreamInput in) throws IOException {
         aggregations = in.readOptionalWriteable(AggregatorFactories.Builder::new);
@@ -374,6 +488,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Sets the search query for this request.
      *
+     * @param query the query
+     * @return this instance
      * @see org.codelibs.fesen.opensearch.index.query.QueryBuilders
      */
     public SearchSourceBuilder query(QueryBuilder query) {
@@ -383,6 +499,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the query for this request
+     *
+     * @return this instance
      */
     public QueryBuilder query() {
         return queryBuilder;
@@ -390,6 +508,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * From index to start the search from. Defaults to {@code 0}.
+     *
+     * @param from the offset
+     * @return the new instance
      */
     public SearchSourceBuilder from(int from) {
         if (from < 0) {
@@ -401,13 +522,18 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the from index to start the search from.
-     **/
+     *
+     * @return the new instance
+      */
     public int from() {
         return from;
     }
 
     /**
      * The number of search hits to return. Defaults to {@code 10}.
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public SearchSourceBuilder size(int size) {
         if (size < 0) {
@@ -419,6 +545,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the number of search hits to return.
+     *
+     * @return the number of elements
      */
     public int size() {
         return size;
@@ -426,6 +554,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Sets the minimum score below which docs will be filtered out.
+     *
+     * @param minScore the min score
+     * @return the min score
      */
     public SearchSourceBuilder minScore(float minScore) {
         this.minScore = minScore;
@@ -434,6 +565,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the minimum score below which docs will be filtered out.
+     *
+     * @return the min score
      */
     public Float minScore() {
         return minScore;
@@ -442,6 +575,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with
      * an explanation of the hit (ranking).
+     *
+     * @param explain the explain
+     * @return the explain
      */
     public SearchSourceBuilder explain(Boolean explain) {
         this.explain = explain;
@@ -451,6 +587,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with a
      * version associated with it.
+     *
+     * @param version the version
+     * @return the version
      */
     public SearchSourceBuilder version(Boolean version) {
         this.version = version;
@@ -460,6 +599,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with the
      * sequence number and primary term of the last modification of the document.
+     *
+     * @param seqNoAndPrimaryTerm the seq no and primary term
+     * @return the seq no and primary term
      */
     public SearchSourceBuilder seqNoAndPrimaryTerm(Boolean seqNoAndPrimaryTerm) {
         this.seqNoAndPrimaryTerm = seqNoAndPrimaryTerm;
@@ -469,6 +611,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Indicates whether {@link org.codelibs.fesen.opensearch.search.SearchHit}s should be returned with the
      * sequence number and primary term of the last modification of the document.
+     *
+     * @return the seq no and primary term
      */
     public Boolean seqNoAndPrimaryTerm() {
         return seqNoAndPrimaryTerm;
@@ -476,6 +620,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * An optional timeout to control how long search is allowed to take.
+     *
+     * @param timeout the timeout
+     * @return the timeout
      */
     public SearchSourceBuilder timeout(TimeValue timeout) {
         this.timeout = timeout;
@@ -485,6 +632,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * An optional terminate_after to terminate the search after collecting
      * <code>terminateAfter</code> documents
+     *
+     * @param terminateAfter the terminate after
+     * @return the terminate after
      */
     public SearchSourceBuilder terminateAfter(int terminateAfter) {
         if (terminateAfter < 0) {
@@ -501,6 +651,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      *            The name of the field
      * @param order
      *            The sort ordering
+     * @return this instance
      */
     public SearchSourceBuilder sort(String name, SortOrder order) {
         if (name.equals(ScoreSortBuilder.NAME)) {
@@ -514,6 +665,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      *
      * @param name
      *            The name of the field to sort by
+     * @return this instance
      */
     public SearchSourceBuilder sort(String name) {
         if (name.equals(ScoreSortBuilder.NAME)) {
@@ -524,6 +676,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Adds a sort builder.
+     *
+     * @param sort the sort
+     * @return this instance
      */
     public SearchSourceBuilder sort(SortBuilder<?> sort) {
         if (sorts == null) {
@@ -535,6 +690,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the bytes representing the sort builders for this request.
+     *
+     * @return the sorts
      */
     public List<SortBuilder<?>> sorts() {
         return sorts;
@@ -542,6 +699,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Indicates if the total hit count for the query should be tracked.
+     *
+     * @param trackTotalHits the track total hits
+     * @return this instance
      */
     public SearchSourceBuilder trackTotalHits(boolean trackTotalHits) {
         this.trackTotalHitsUpTo = trackTotalHits ? TRACK_TOTAL_HITS_ACCURATE : TRACK_TOTAL_HITS_DISABLED;
@@ -551,12 +711,20 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Returns the total hit count that should be tracked or null if the value is unset.
      * Defaults to null.
+     *
+     * @return this instance
      */
     @Nullable
     public Integer trackTotalHitsUpTo() {
         return trackTotalHitsUpTo;
     }
 
+    /**
+     * Tracks the total hits up to.
+     *
+     * @param trackTotalHitsUpTo the track total hits up to
+     * @return this instance
+     */
     public SearchSourceBuilder trackTotalHitsUpTo(int trackTotalHitsUpTo) {
         if (trackTotalHitsUpTo < TRACK_TOTAL_HITS_DISABLED) {
             throw new IllegalArgumentException(
@@ -572,6 +740,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      * The sort values of the search_after must be equal to the number of sort fields in the query and they should be
      * of the same type (or parsable as such).
      * Defaults to {@code null}.
+     *
+     * @return this instance
      */
     public Object[] searchAfter() {
         if (searchAfterBuilder == null) {
@@ -582,6 +752,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Set the sort values that indicates which docs this request should "search after".
+     *
+     * @param values the values
+     * @return this instance
      */
     public SearchSourceBuilder searchAfter(Object[] values) {
         this.searchAfterBuilder = new SearchAfterBuilder().setSortValues(values);
@@ -590,11 +763,19 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the slice used to filter the search hits, the top hits and the aggregations.
+     *
+     * @return the slice
      */
     public SliceBuilder slice() {
         return sliceBuilder;
     }
 
+    /**
+     * Collapses this instance.
+     *
+     * @param collapse the collapse
+     * @return this instance
+     */
     public SearchSourceBuilder collapse(CollapseBuilder collapse) {
         this.collapse = collapse;
         return this;
@@ -602,6 +783,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Add an aggregation to perform as part of the search.
+     *
+     * @param aggregation the aggregation
+     * @return the aggregation
      */
     public SearchSourceBuilder aggregation(AggregationBuilder aggregation) {
         if (aggregations == null) {
@@ -613,6 +797,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the bytes representing the aggregation builders for this request.
+     *
+     * @return the aggregations
      */
     public AggregatorFactories.Builder aggregations() {
         return aggregations;
@@ -620,12 +806,21 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Adds highlight to perform as part of the search.
+     *
+     * @param highlightBuilder the highlight builder
+     * @return the highlighter
      */
     public SearchSourceBuilder highlighter(HighlightBuilder highlightBuilder) {
         this.highlightBuilder = highlightBuilder;
         return this;
     }
 
+    /**
+     * Adds the rescorer.
+     *
+     * @param rescoreBuilder the rescore builder
+     * @return this instance
+     */
     public SearchSourceBuilder addRescorer(RescorerBuilder<?> rescoreBuilder) {
         if (rescoreBuilders == null) {
             rescoreBuilders = new ArrayList<>();
@@ -634,6 +829,11 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         return this;
     }
 
+    /**
+     * Clears the rescorers.
+     *
+     * @return this instance
+     */
     public SearchSourceBuilder clearRescorers() {
         rescoreBuilders = null;
         return this;
@@ -641,6 +841,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the bytes representing the rescore builders for this request.
+     *
+     * @return the rescores
      */
     public List<RescorerBuilder> rescores() {
         return rescoreBuilders;
@@ -649,6 +851,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Indicates whether the response should contain the stored _source for
      * every hit
+     *
+     * @param fetch the fetch
+     * @return this instance
      */
     public SearchSourceBuilder fetchSource(boolean fetch) {
         FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext : FetchSourceContext.FETCH_SOURCE;
@@ -667,6 +872,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      * @param exclude
      *            An optional exclude (optionally wildcarded) pattern to filter
      *            the returned _source
+     * @return this instance
      */
     public SearchSourceBuilder fetchSource(@Nullable String include, @Nullable String exclude) {
         return fetchSource(
@@ -686,6 +892,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      * @param excludes
      *            An optional list of exclude (optionally wildcarded) pattern to
      *            filter the returned _source
+     * @return this instance
      */
     public SearchSourceBuilder fetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
         FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext : FetchSourceContext.FETCH_SOURCE;
@@ -696,6 +903,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Gets the {@link FetchSourceContext} which defines how the _source should
      * be fetched.
+     *
+     * @return this instance
      */
     public FetchSourceContext fetchSource() {
         return fetchSourceContext;
@@ -705,6 +914,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      * Adds a stored field to load and return as part of the
      * search request. If none are specified, the source of the document will be
      * return.
+     *
+     * @param name the name
+     * @return the stored field
      */
     public SearchSourceBuilder storedField(String name) {
         return storedFields(Collections.singletonList(name));
@@ -713,6 +925,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     /**
      * Sets the stored fields to load and return as part of the search request. If none
      * are specified, the source of the document will be returned.
+     *
+     * @param fields the fields
+     * @return the stored fields
      */
     public SearchSourceBuilder storedFields(List<String> fields) {
         if (storedFieldsContext == null) {
@@ -725,6 +940,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Gets the stored fields context.
+     *
+     * @return the stored fields
      */
     public StoredFieldsContext storedFields() {
         return storedFieldsContext;
@@ -732,6 +949,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Returns the point in time that is configured with this query
+     *
+     * @return the point in time builder
      */
     public PointInTimeBuilder pointInTimeBuilder() {
         return pointInTimeBuilder;
@@ -739,6 +958,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Specify a point in time that this query should execute against.
+     *
+     * @param builder the content builder
+     * @return the point in time builder
      */
     public SearchSourceBuilder pointInTimeBuilder(PointInTimeBuilder builder) {
         this.pointInTimeBuilder = builder;
@@ -746,6 +968,8 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
     }
 
     /**
+     * Searches the pipeline source.
+     *
      * @return a search pipeline defined within the search source (see {@code org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService})
      */
     public Map<String, Object> searchPipelineSource() {
@@ -754,6 +978,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
     /**
      * Define a search pipeline to process this search request and/or its response. See {@code org.codelibs.fesen.opensearch.search.pipeline.SearchPipelineService}.
+     *
+     * @param searchPipelineSource the search pipeline source
+     * @return this instance
      */
     public SearchSourceBuilder searchPipelineSource(Map<String, Object> searchPipelineSource) {
         this.searchPipelineSource = searchPipelineSource;
@@ -862,6 +1089,7 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
      *
      * @param parser The xContent parser.
      * @param checkTrailingTokens If true throws a parsing exception when extra tokens are found after the main object.
+     * @throws IOException if an I/O error occurs
      */
     public void parseXContent(XContentParser parser, boolean checkTrailingTokens) throws IOException {
         XContentParser.Token token = parser.currentToken();
@@ -1078,6 +1306,14 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         }
     }
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         if (from != -1) {
             builder.field(FROM_FIELD.getPreferredName(), from);
@@ -1373,6 +1609,13 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         private final String fieldName;
         private final Script script;
 
+        /**
+         * Creates a new ScriptField.
+         *
+         * @param fieldName the field name
+         * @param script the script
+         * @param ignoreFailure the ignore failure
+         */
         public ScriptField(String fieldName, Script script, boolean ignoreFailure) {
             this.fieldName = fieldName;
             this.script = script;
@@ -1381,6 +1624,9 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public ScriptField(StreamInput in) throws IOException {
             fieldName = in.readString();
@@ -1395,6 +1641,12 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
             out.writeBoolean(ignoreFailure);
         }
 
+        /**
+         * Creates a new ScriptField.
+         *
+         * @param parser the parser
+         * @throws IOException if an I/O error occurs
+         */
         public ScriptField(XContentParser parser) throws IOException {
             boolean ignoreFailure = false;
             String scriptFieldName = parser.currentName();
@@ -1449,6 +1701,11 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
             }
         }
 
+        /**
+         * Returns the field name.
+         *
+         * @return the field name
+         */
         public String fieldName() {
             return fieldName;
         }
@@ -1574,6 +1831,12 @@ public final class SearchSourceBuilder implements Writeable, ToXContentObject, R
         return toString(EMPTY_PARAMS);
     }
 
+    /**
+     * Returns a string representation of this instance.
+     *
+     * @param params the serialization parameters
+     * @return a string representation of this instance
+     */
     public String toString(Params params) {
         try {
             return XContentHelper.toXContent(this, MediaTypeRegistry.JSON, params, true).utf8ToString();

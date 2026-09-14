@@ -55,16 +55,37 @@ import java.util.Map;
  */
 @PublicApi(since = "3.2.0")
 public class Timer extends ProfileMetric {
+    /**
+     * The TIMING_TYPE_COUNT_SUFFIX constant.
+     */
     public static final String TIMING_TYPE_COUNT_SUFFIX = "_count";
+    /**
+     * The TIMING_TYPE_START_TIME_SUFFIX constant.
+     */
     public static final String TIMING_TYPE_START_TIME_SUFFIX = "_start_time";
 
     private boolean doTiming;
     private long timing, count, lastCount, start, earliestTimerStartTime;
 
+    /**
+     * Creates a new Timer.
+     *
+     * @param name the name
+     */
     public Timer(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new Timer.
+     *
+     * @param timing the timing
+     * @param count the count
+     * @param lastCount the last count
+     * @param start the start position
+     * @param earliestTimerStartTime the earliest timer start time
+     * @param name the name
+     */
     public Timer(long timing, long count, long lastCount, long start, long earliestTimerStartTime, String name) {
         super(name);
         this.timing = timing;
@@ -108,7 +129,11 @@ public class Timer extends ProfileMetric {
         }
     }
 
-    /** Return the number of times that {@link #start()} has been called. */
+    /**
+     * Return the number of times that {@link #start()} has been called.
+     *
+     * @return the count
+     */
     public final long getCount() {
         if (start != 0) {
             throw new IllegalStateException("#start call misses a matching #stop call");
@@ -116,7 +141,11 @@ public class Timer extends ProfileMetric {
         return count;
     }
 
-    /** Return the timer start time in nanoseconds.*/
+    /**
+     * Return the timer start time in nanoseconds.
+     *
+     * @return the earliest timer start time
+     */
     public final long getEarliestTimerStartTime() {
         if (start != 0) {
             throw new IllegalStateException("#start call misses a matching #stop call");
@@ -124,7 +153,11 @@ public class Timer extends ProfileMetric {
         return earliestTimerStartTime;
     }
 
-    /** Return an approximation of the total time spent between consecutive calls of #start and #stop. */
+    /**
+     * Return an approximation of the total time spent between consecutive calls of #start and #stop.
+     *
+     * @return the approximate timing
+     */
     public final long getApproximateTiming() {
         if (start != 0) {
             throw new IllegalStateException("#start call misses a matching #stop call");

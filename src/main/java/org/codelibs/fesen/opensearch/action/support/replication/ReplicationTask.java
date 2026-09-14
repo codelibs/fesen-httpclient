@@ -53,6 +53,16 @@ import static java.util.Objects.requireNonNull;
 public class ReplicationTask extends Task {
     private volatile String phase = "starting";
 
+    /**
+     * Creates a new ReplicationTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     */
     public ReplicationTask(long id, String type, String action, String description, TaskId parentTaskId, Map<String, String> headers) {
         super(id, type, action, description, parentTaskId, headers);
     }
@@ -68,10 +78,18 @@ public class ReplicationTask extends Task {
      * @opensearch.internal
      */
     public static class Status implements Task.Status {
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "replication";
 
         private final String phase;
 
+        /**
+         * Creates a new Status.
+         *
+         * @param phase the phase
+         */
         public Status(String phase) {
             this.phase = requireNonNull(phase, "Phase cannot be null");
         }

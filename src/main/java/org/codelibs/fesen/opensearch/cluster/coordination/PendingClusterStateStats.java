@@ -51,12 +51,25 @@ public class PendingClusterStateStats implements Writeable, ToXContentFragment {
     private final int pending;
     private final int committed;
 
+    /**
+     * Creates a new PendingClusterStateStats.
+     *
+     * @param total the total
+     * @param pending the pending
+     * @param committed the committed
+     */
     public PendingClusterStateStats(int total, int pending, int committed) {
         this.total = total;
         this.pending = pending;
         this.committed = committed;
     }
 
+    /**
+     * Creates a new PendingClusterStateStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PendingClusterStateStats(StreamInput in) throws IOException {
         total = in.readVInt();
         pending = in.readVInt();

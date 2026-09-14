@@ -45,7 +45,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class IndicesShardStoresAction extends ActionType<IndicesShardStoresResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final IndicesShardStoresAction INSTANCE = new IndicesShardStoresAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/shard_stores";
 
     private IndicesShardStoresAction() {

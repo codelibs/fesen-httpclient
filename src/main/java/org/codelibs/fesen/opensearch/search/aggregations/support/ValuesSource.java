@@ -42,12 +42,29 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  */
 @PublicApi(since = "1.0.0")
 public abstract class ValuesSource {
+    /**
+     * Creates a new ValuesSource.
+     */
+    public ValuesSource() {
+    }
 
     /** A source of numeric values. */
     public abstract static class Numeric extends ValuesSource {
+        /**
+         * Creates a new Numeric.
+         */
+        public Numeric() {
+        }
+
     }
 
     /** A source of geo-point values. */
     public abstract static class GeoPoint extends ValuesSource {
+        /**
+         * Creates a new GeoPoint.
+         */
+        public GeoPoint() {
+        }
+
     }
 }

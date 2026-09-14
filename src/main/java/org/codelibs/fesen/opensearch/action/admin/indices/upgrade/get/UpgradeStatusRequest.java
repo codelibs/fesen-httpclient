@@ -47,10 +47,18 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class UpgradeStatusRequest extends BroadcastRequest<UpgradeStatusRequest> {
 
+    /**
+     * Creates a new UpgradeStatusRequest.
+     */
     public UpgradeStatusRequest() {
         this(Strings.EMPTY_ARRAY);
     }
 
+    /**
+     * Creates a new UpgradeStatusRequest.
+     *
+     * @param indices the indices
+     */
     public UpgradeStatusRequest(String... indices) {
         super(indices);
     }

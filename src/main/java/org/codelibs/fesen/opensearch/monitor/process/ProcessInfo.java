@@ -51,6 +51,12 @@ public class ProcessInfo implements ReportingService.Info {
     private final long id;
     private final boolean mlockall;
 
+    /**
+     * Creates a new ProcessInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ProcessInfo(StreamInput in) throws IOException {
         refreshInterval = in.readLong();
         id = in.readLong();

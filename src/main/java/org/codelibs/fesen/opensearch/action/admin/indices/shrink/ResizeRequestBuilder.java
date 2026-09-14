@@ -47,15 +47,33 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
  */
 @PublicApi(since = "1.0.0")
 public class ResizeRequestBuilder extends AcknowledgedRequestBuilder<ResizeRequest, ResizeResponse, ResizeRequestBuilder> {
+    /**
+     * Creates a new ResizeRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ResizeRequestBuilder(OpenSearchClient client, ActionType<ResizeResponse> action) {
         super(client, action, new ResizeRequest());
     }
 
+    /**
+     * Sets the target index.
+     *
+     * @param request the request
+     * @return this instance
+     */
     public ResizeRequestBuilder setTargetIndex(CreateIndexRequest request) {
         this.request.setTargetIndex(request);
         return this;
     }
 
+    /**
+     * Sets the source index.
+     *
+     * @param index the index
+     * @return this instance
+     */
     public ResizeRequestBuilder setSourceIndex(String index) {
         this.request.setSourceIndex(index);
         return this;

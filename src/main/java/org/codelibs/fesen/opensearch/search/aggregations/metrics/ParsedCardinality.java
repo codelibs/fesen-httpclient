@@ -45,6 +45,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedCardinality extends ParsedAggregation implements Cardinality {
+    /**
+     * Creates a new ParsedCardinality.
+     */
+    public ParsedCardinality() {
+    }
 
     private long cardinalityValue;
 
@@ -79,6 +84,13 @@ public class ParsedCardinality extends ParsedAggregation implements Cardinality 
         PARSER.declareLong((agg, value) -> agg.cardinalityValue = value, CommonFields.VALUE);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedCardinality fromXContent(XContentParser parser, final String name) {
         ParsedCardinality cardinality = PARSER.apply(parser, null);
         cardinality.setName(name);

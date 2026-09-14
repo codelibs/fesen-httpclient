@@ -79,11 +79,17 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
 
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpenAndForbidClosedIgnoreThrottled();
 
+    /**
+     * Creates a new MultiSearchRequest.
+     */
     public MultiSearchRequest() {}
 
     /**
      * Add a search request to execute. Note, the order is important, the search response will be returned in the
      * same order as the search requests.
+     *
+     * @param request the request
+     * @return this instance
      */
     public MultiSearchRequest add(SearchRequestBuilder request) {
         requests.add(request.request());
@@ -92,11 +98,18 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
 
     /**
      * Returns the amount of search requests specified in this multi search requests are allowed to be ran concurrently.
+     *
+     * @return the max concurrent search requests
      */
     public int maxConcurrentSearchRequests() {
         return maxConcurrentSearchRequests;
     }
 
+    /**
+     * Returns the requests.
+     *
+     * @return the requests
+     */
     public List<SearchRequest> requests() {
         return this.requests;
     }
@@ -120,6 +133,11 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
         return validationException;
     }
 
+    /**
+     * Returns the indices options.
+     *
+     * @return the indices options
+     */
     public IndicesOptions indicesOptions() {
         return indicesOptions;
     }
@@ -149,6 +167,13 @@ public class MultiSearchRequest extends ActionRequest implements CompositeIndice
         return Objects.hash(maxConcurrentSearchRequests, requests, indicesOptions);
     }
 
+    /**
+     * Writes the search request params.
+     *
+     * @param request the request
+     * @param xContentBuilder the XContent builder
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeSearchRequestParams(SearchRequest request, XContentBuilder xContentBuilder) throws IOException {
         xContentBuilder.startObject();
         if (request.indices() != null) {

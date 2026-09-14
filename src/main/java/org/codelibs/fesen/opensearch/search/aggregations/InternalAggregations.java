@@ -59,6 +59,9 @@ import java.util.stream.Collectors;
 @PublicApi(since = "1.0.0")
 public final class InternalAggregations extends Aggregations implements Writeable {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final InternalAggregations EMPTY = new InternalAggregations(Collections.emptyList());
 
     private static final Comparator<InternalAggregation> INTERNAL_AGG_COMPARATOR = (agg1, agg2) -> {
@@ -73,11 +76,19 @@ public final class InternalAggregations extends Aggregations implements Writeabl
 
     /**
      * Constructs a new aggregation.
+     *
+     * @param aggregations the aggregations
      */
     public InternalAggregations(List<InternalAggregation> aggregations) {
         super(aggregations);
     }
 
+    /**
+     * Creates an instance from the given input.
+     *
+     * @param aggregations the aggregations
+     * @return the new instance
+     */
     public static InternalAggregations from(List<InternalAggregation> aggregations) {
         if (aggregations.isEmpty()) {
             return EMPTY;
@@ -85,6 +96,13 @@ public final class InternalAggregations extends Aggregations implements Writeabl
         return new InternalAggregations(aggregations);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static InternalAggregations readFrom(StreamInput in) throws IOException {
         final InternalAggregations res = from(in.readList(stream -> in.readNamedWriteable(InternalAggregation.class)));
         return res;
@@ -99,6 +117,8 @@ public final class InternalAggregations extends Aggregations implements Writeabl
      * Make a mutable copy of the aggregation results.
      * <p>
      * IMPORTANT: The copy doesn't include any pipeline aggregations, if there are any.
+     *
+     * @return this instance
      */
     public List<InternalAggregation> copyResults() {
         return new ArrayList<>(getInternalAggregations());
@@ -111,6 +131,10 @@ public final class InternalAggregations extends Aggregations implements Writeabl
 
     /**
      * Get value to use when sorting by a descendant of the aggregation containing this.
+     *
+     * @param head the head
+     * @param tail the tail
+     * @return this instance
      */
     public double sortValue(AggregationPath.PathElement head, Iterator<AggregationPath.PathElement> tail) {
         InternalAggregation aggregation = get(head.name);
@@ -128,6 +152,10 @@ public final class InternalAggregations extends Aggregations implements Writeabl
      * {@link InternalAggregations} object found in the list.
      * Note that pipeline aggregations _are not_ reduced by this method.  Pipelines are handled
      * separately by {@code InternalAggregations#topLevelReduce(List, ReduceContext)}
+     *
+     * @param aggregationsList the aggregations list
+     * @param context the context
+     * @return this instance
      */
     public static InternalAggregations reduce(List<InternalAggregations> aggregationsList, ReduceContext context) {
         if (aggregationsList.isEmpty()) {

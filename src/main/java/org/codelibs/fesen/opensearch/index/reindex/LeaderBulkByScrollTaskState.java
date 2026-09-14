@@ -61,6 +61,12 @@ public class LeaderBulkByScrollTaskState {
      */
     private final AtomicInteger runningSubtasks;
 
+    /**
+     * Creates a new LeaderBulkByScrollTaskState.
+     *
+     * @param task the task
+     * @param slices the slices
+     */
     public LeaderBulkByScrollTaskState(BulkByScrollTask task, int slices) {
         this.task = task;
         this.slices = slices;
@@ -70,6 +76,8 @@ public class LeaderBulkByScrollTaskState {
 
     /**
      * Returns the number of slices this BulkByScrollRequest will use
+     *
+     * @return the slices
      */
     public int getSlices() {
         return slices;
@@ -77,6 +85,9 @@ public class LeaderBulkByScrollTaskState {
 
     /**
      * Get the combined statuses of slice subtasks, merged with the given list of statuses
+     *
+     * @param statuses the statuses
+     * @return the status
      */
     public BulkByScrollTask.Status getStatus(List<BulkByScrollTask.StatusOrException> statuses) {
         // We only have access to the statuses of requests that have finished so we return them
@@ -89,6 +100,8 @@ public class LeaderBulkByScrollTaskState {
 
     /**
      * Get the combined statuses of sliced subtasks
+     *
+     * @return the status
      */
     public BulkByScrollTask.Status getStatus() {
         return getStatus(Arrays.asList(new BulkByScrollTask.StatusOrException[results.length()]));
@@ -96,6 +109,8 @@ public class LeaderBulkByScrollTaskState {
 
     /**
      * The number of sliced subtasks that are still running
+     *
+     * @return the running slice sub tasks
      */
     public int runningSliceSubTasks() {
         return runningSubtasks.get();
@@ -113,6 +128,10 @@ public class LeaderBulkByScrollTaskState {
 
     /**
      * Record a response from a slice and respond to the listener if the request is finished.
+     *
+     * @param listener the listener
+     * @param sliceId the slice identifier
+     * @param response the response
      */
     public void onSliceResponse(ActionListener<BulkByScrollResponse> listener, int sliceId, BulkByScrollResponse response) {
         results.setOnce(sliceId, new Result(sliceId, response));
@@ -123,6 +142,10 @@ public class LeaderBulkByScrollTaskState {
 
     /**
      * Record a failure from a slice and respond to the listener if the request is finished.
+     *
+     * @param listener the listener
+     * @param sliceId the slice identifier
+     * @param e the exception
      */
     public void onSliceFailure(ActionListener<BulkByScrollResponse> listener, int sliceId, Exception e) {
         results.setOnce(sliceId, new Result(sliceId, e));

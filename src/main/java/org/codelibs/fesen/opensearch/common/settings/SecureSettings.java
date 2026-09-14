@@ -49,18 +49,45 @@ import java.util.Set;
 @PublicApi(since = "1.0.0")
 public interface SecureSettings extends Closeable {
 
-    /** Returns true iff the settings are loaded and retrievable. */
+    /**
+     * Returns true iff the settings are loaded and retrievable.
+     *
+     * @return the loaded flag
+     */
     boolean isLoaded();
 
-    /** Returns the names of all secure settings available. */
+    /**
+     * Returns the names of all secure settings available.
+     *
+     * @return the setting names
+     */
     Set<String> getSettingNames();
 
-    /** Return a string setting. The {@link SecureString} should be closed once it is used. */
+    /**
+     * Return a string setting. The {@link SecureString} should be closed once it is used.
+     *
+     * @param setting the setting
+     * @return the string
+     * @throws GeneralSecurityException if a general security failure occurs
+     */
     SecureString getString(String setting) throws GeneralSecurityException;
 
-    /** Return a file setting. The {@link InputStream} should be closed once it is used. */
+    /**
+     * Return a file setting. The {@link InputStream} should be closed once it is used.
+     *
+     * @param setting the setting
+     * @return the file
+     * @throws GeneralSecurityException if a general security failure occurs
+     */
     InputStream getFile(String setting) throws GeneralSecurityException;
 
+    /**
+     * Returns the SHA 256 digest.
+     *
+     * @param setting the setting
+     * @return the SHA 256 digest
+     * @throws GeneralSecurityException if a general security failure occurs
+     */
     byte[] getSHA256Digest(String setting) throws GeneralSecurityException;
 
     @Override

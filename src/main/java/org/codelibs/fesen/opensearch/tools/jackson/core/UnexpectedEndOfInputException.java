@@ -15,6 +15,12 @@ import java.io.IOException;
  */
 public class UnexpectedEndOfInputException extends JsonParseException {
 
+    /**
+     * Creates a new UnexpectedEndOfInputException.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public UnexpectedEndOfInputException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -60,8 +60,14 @@ import java.util.stream.Stream;
  * @opensearch.internal
  */
 public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "bool";
 
+    /**
+     * The ADJUST_PURE_NEGATIVE_DEFAULT constant.
+     */
     public static final boolean ADJUST_PURE_NEGATIVE_DEFAULT = true;
 
     private static final ParseField MUST_NOT = new ParseField("must_not").withDeprecation("mustNot");
@@ -90,6 +96,9 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public BoolQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -114,6 +123,9 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     /**
      * Adds a query that <b>must</b> appear in the matching documents and will
      * contribute to scoring. No {@code null} value allowed.
+     *
+     * @param queryBuilder the query builder
+     * @return the flag flag
      */
     public BoolQueryBuilder must(QueryBuilder queryBuilder) {
         if (queryBuilder == null) {
@@ -125,6 +137,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
 
     /**
      * Gets the queries that <b>must</b> appear in the matching documents.
+     *
+     * @return the flag flag
      */
     public List<QueryBuilder> must() {
         return this.mustClauses;
@@ -146,6 +160,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
 
     /**
      * Gets the queries that <b>must</b> appear in the matching documents but don't contribute to scoring
+     *
+     * @return this instance
      */
     public List<QueryBuilder> filter() {
         return this.filterClauses;
@@ -154,6 +170,9 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     /**
      * Adds a query that <b>must not</b> appear in the matching documents.
      * No {@code null} value allowed.
+     *
+     * @param queryBuilder the query builder
+     * @return the not flag
      */
     public BoolQueryBuilder mustNot(QueryBuilder queryBuilder) {
         if (queryBuilder == null) {
@@ -165,6 +184,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
 
     /**
      * Gets the queries that <b>must not</b> appear in the matching documents.
+     *
+     * @return the not flag
      */
     public List<QueryBuilder> mustNot() {
         return this.mustNotClauses;
@@ -175,6 +196,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
      * {@code MUST} clauses one or more <code>SHOULD</code> clauses must match a document
      * for the BooleanQuery to match. No {@code null} value allowed.
      *
+     * @param queryBuilder the query builder
+     * @return the flag flag
      * @see #minimumShouldMatch(int)
      */
     public BoolQueryBuilder should(QueryBuilder queryBuilder) {
@@ -188,6 +211,7 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     /**
      * Gets the list of clauses that <b>should</b> be matched by the returned documents.
      *
+     * @return the flag flag
      * @see #should(QueryBuilder)
      *  @see #minimumShouldMatch(int)
      */
@@ -196,6 +220,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     }
 
     /**
+     * Returns the minimum should match.
+     *
      * @return the string representation of the minimumShouldMatch settings for this query
      */
     public String minimumShouldMatch() {
@@ -204,6 +230,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
 
     /**
      * Sets the minimum should match parameter using the special syntax (for example, supporting percentage).
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
      * @see BoolQueryBuilder#minimumShouldMatch(int)
      */
     public BoolQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
@@ -223,6 +251,7 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
      * only be compared against the number of matching optional clauses.
      *
      * @param minimumShouldMatch the number of optional clauses that must match
+     * @return the minimum should match
      */
     public BoolQueryBuilder minimumShouldMatch(int minimumShouldMatch) {
         this.minimumShouldMatch = Integer.toString(minimumShouldMatch);
@@ -232,6 +261,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     /**
      * Returns <code>true</code> iff this query builder has at least one should, must, must not or filter clause.
      * Otherwise <code>false</code>.
+     *
+     * @return the clauses flag
      */
     public boolean hasClauses() {
         return !(mustClauses.isEmpty() && shouldClauses.isEmpty() && mustNotClauses.isEmpty() && filterClauses.isEmpty());
@@ -241,6 +272,9 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
      * If a boolean query contains only negative ("must not") clauses should the
      * BooleanQuery be enhanced with a {@link MatchAllDocsQuery} in order to act
      * as a pure exclude. The default is <code>true</code>.
+     *
+     * @param adjustPureNegative the adjust pure negative
+     * @return this instance
      */
     public BoolQueryBuilder adjustPureNegative(boolean adjustPureNegative) {
         this.adjustPureNegative = adjustPureNegative;
@@ -248,6 +282,8 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
     }
 
     /**
+     * Adjusts the pure negative.
+     *
      * @return the setting for the adjust_pure_negative setting in this query
      */
     public boolean adjustPureNegative() {
@@ -310,6 +346,13 @@ public class BoolQueryBuilder extends AbstractQueryBuilder<BoolQueryBuilder> {
         PARSER.declareFloat(BoolQueryBuilder::boost, BOOST_FIELD);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static BoolQueryBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {
         return PARSER.parse(parser, null);
     }

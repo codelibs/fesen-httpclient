@@ -47,10 +47,25 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class EngineException extends OpenSearchException {
 
+    /**
+     * Creates a new EngineException.
+     *
+     * @param shardId the shard identifier
+     * @param msg the msg
+     * @param params the serialization parameters
+     */
     public EngineException(ShardId shardId, String msg, Object... params) {
         this(shardId, msg, null, params);
     }
 
+    /**
+     * Creates a new EngineException.
+     *
+     * @param shardId the shard identifier
+     * @param msg the msg
+     * @param cause the cause
+     * @param params the serialization parameters
+     */
     public EngineException(ShardId shardId, String msg, Throwable cause, Object... params) {
         super(msg, cause, params);
         setShard(shardId);

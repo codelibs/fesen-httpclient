@@ -47,6 +47,19 @@ public class FileCacheStats implements Writeable, ToXContentFragment {
     private final long misses;
     private final FileCacheStatsType statsType;
 
+    /**
+     * Creates a new FileCacheStats.
+     *
+     * @param active the active
+     * @param total the total
+     * @param used the used
+     * @param pinned the pinned
+     * @param evicted the evicted
+     * @param removed the removed
+     * @param hits the hits
+     * @param misses the misses
+     * @param statsType the stats type
+     */
     @InternalApi
     public FileCacheStats(
         final long active,
@@ -70,6 +83,12 @@ public class FileCacheStats implements Writeable, ToXContentFragment {
         this.statsType = statsType;
     }
 
+    /**
+     * Creates a new FileCacheStats.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     @InternalApi
     public FileCacheStats(final StreamInput in) throws IOException {
         this.statsType = FileCacheStatsType.fromString(in.readString());
@@ -105,42 +124,92 @@ public class FileCacheStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Returns the active.
+     *
+     * @return the active
+     */
     public long getActive() {
         return active;
     }
 
+    /**
+     * Returns the used.
+     *
+     * @return the used
+     */
     public long getUsed() {
         return used;
     }
 
+    /**
+     * Returns the evicted.
+     *
+     * @return the evicted
+     */
     public long getEvicted() {
         return evicted;
     }
 
+    /**
+     * Returns the removed.
+     *
+     * @return the removed
+     */
     public long getRemoved() {
         return removed;
     }
 
+    /**
+     * Returns the hits.
+     *
+     * @return the hits
+     */
     public long getHits() {
         return hits;
     }
 
+    /**
+     * Returns the active percent.
+     *
+     * @return the active percent
+     */
     public short getActivePercent() {
         return calculatePercentage(active, used);
     }
 
+    /**
+     * Returns the total.
+     *
+     * @return the total
+     */
     public long getTotal() {
         return total;
     }
 
+    /**
+     * Returns the pinned usage.
+     *
+     * @return the pinned usage
+     */
     public long getPinnedUsage() {
         return pinned;
     }
 
+    /**
+     * Returns the cache hits.
+     *
+     * @return the cache hits
+     */
     public long getCacheHits() {
         return hits;
     }
 
+    /**
+     * Returns the cache misses.
+     *
+     * @return the cache misses
+     */
     public long getCacheMisses() {
         return misses;
     }

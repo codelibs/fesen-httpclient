@@ -50,9 +50,21 @@ import java.util.Locale;
 @PublicApi(since = "1.0.0")
 public enum ShapeRelation implements Writeable {
 
+    /**
+     * The INTERSECTS value.
+     */
     INTERSECTS("intersects"),
+    /**
+     * The DISJOINT value.
+     */
     DISJOINT("disjoint"),
+    /**
+     * The WITHIN value.
+     */
     WITHIN("within"),
+    /**
+     * The CONTAINS value.
+     */
     CONTAINS("contains");
 
     private final String relationName;
@@ -61,6 +73,13 @@ public enum ShapeRelation implements Writeable {
         this.relationName = relationName;
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static ShapeRelation readFromStream(StreamInput in) throws IOException {
         return in.readEnum(ShapeRelation.class);
     }
@@ -70,6 +89,12 @@ public enum ShapeRelation implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Returns the relation by name.
+     *
+     * @param name the name
+     * @return the relation by name
+     */
     public static ShapeRelation getRelationByName(String name) {
         name = name.toLowerCase(Locale.ENGLISH);
         for (ShapeRelation relation : ShapeRelation.values()) {
@@ -80,6 +105,11 @@ public enum ShapeRelation implements Writeable {
         return null;
     }
 
+    /**
+     * Returns the relation name.
+     *
+     * @return the relation name
+     */
     public String getRelationName() {
         return relationName;
     }

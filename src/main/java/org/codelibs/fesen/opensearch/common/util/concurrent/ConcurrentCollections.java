@@ -56,18 +56,43 @@ public abstract class ConcurrentCollections {
         aggressiveConcurrencyLevel = Math.max(Runtime.getRuntime().availableProcessors() * 2, 16);
     }
 
+    /**
+     * Creates a new concurrent map.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     * @return the new concurrent map
+     */
     public static <K, V> ConcurrentMap<K, V> newConcurrentMap() {
         return new ConcurrentHashMap<>();
     }
 
+    /**
+     * Creates a new concurrent set.
+     *
+     * @param <V> the value type
+     * @return the new concurrent set
+     */
     public static <V> Set<V> newConcurrentSet() {
         return Collections.newSetFromMap(ConcurrentCollections.<V, Boolean>newConcurrentMap());
     }
 
+    /**
+     * Creates a new deque.
+     *
+     * @param <T> the element type
+     * @return the new deque
+     */
     public static <T> Deque<T> newDeque() {
         return new ConcurrentLinkedDeque<>();
     }
 
+    /**
+     * Creates a new blocking queue.
+     *
+     * @param <T> the element type
+     * @return the new blocking queue
+     */
     public static <T> BlockingQueue<T> newBlockingQueue() {
         return new LinkedTransferQueue<>();
     }

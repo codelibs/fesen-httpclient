@@ -47,6 +47,8 @@ import java.util.function.Consumer;
  * <code>onReset</code> {@code Consumer} and the next {@code #getOrCompute()}
  * will regenerate the value.
  *
+ * @param <T> the element type
+ * @param <E> the element type
  * @opensearch.internal
  */
 public final class LazyInitializable<T, E extends Exception> {
@@ -90,6 +92,9 @@ public final class LazyInitializable<T, E extends Exception> {
      * Returns a value that was created by <code>supplier</code>. The value might
      * have been previously created, if not it will be created now, thread safe of
      * course.
+     *
+     * @return the or compute
+     * @throws E if an e failure occurs
      */
     public T getOrCompute() throws E {
         final T readOnce = value; // Read volatile just once...

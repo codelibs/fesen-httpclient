@@ -52,9 +52,18 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilder<DiversifiedAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "diversified_sampler";
+    /**
+     * The MAX_DOCS_PER_VALUE_DEFAULT constant.
+     */
     public static final int MAX_DOCS_PER_VALUE_DEFAULT = 1;
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<DiversifiedAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         DiversifiedAggregationBuilder::new
@@ -70,10 +79,22 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
     private int maxDocsPerValue = MAX_DOCS_PER_VALUE_DEFAULT;
     private String executionHint = null;
 
+    /**
+     * Creates a new DiversifiedAggregationBuilder.
+     *
+     * @param name the name
+     */
     public DiversifiedAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new DiversifiedAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected DiversifiedAggregationBuilder(DiversifiedAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.shardSize = clone.shardSize;
@@ -100,6 +121,9 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Set the max num docs to be returned from each shard.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     public DiversifiedAggregationBuilder shardSize(int shardSize) {
         if (shardSize < 0) {
@@ -113,6 +137,8 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Get the max num docs to be returned from each shard.
+     *
+     * @return the shard size
      */
     public int shardSize() {
         return shardSize;
@@ -120,6 +146,9 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Set the max num docs to be returned per value.
+     *
+     * @param maxDocsPerValue the max docs per value
+     * @return the max docs per value
      */
     public DiversifiedAggregationBuilder maxDocsPerValue(int maxDocsPerValue) {
         if (maxDocsPerValue < 0) {
@@ -133,6 +162,8 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Get the max num docs to be returned per value.
+     *
+     * @return the max docs per value
      */
     public int maxDocsPerValue() {
         return maxDocsPerValue;
@@ -140,6 +171,9 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Set the execution hint.
+     *
+     * @param executionHint the execution hint
+     * @return the execution hint
      */
     public DiversifiedAggregationBuilder executionHint(String executionHint) {
         this.executionHint = executionHint;
@@ -148,6 +182,8 @@ public class DiversifiedAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Get the execution hint.
+     *
+     * @return the execution hint
      */
     public String executionHint() {
         return executionHint;

@@ -43,6 +43,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedTDigestPercentiles extends ParsedPercentiles implements Percentiles {
+    /**
+     * Creates a new ParsedTDigestPercentiles.
+     */
+    public ParsedTDigestPercentiles() {
+    }
 
     @Override
     public String getType() {
@@ -68,6 +73,14 @@ public class ParsedTDigestPercentiles extends ParsedPercentiles implements Perce
         ParsedPercentiles.declarePercentilesFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedTDigestPercentiles fromXContent(XContentParser parser, String name) throws IOException {
         ParsedTDigestPercentiles aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);

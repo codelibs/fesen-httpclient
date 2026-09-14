@@ -41,6 +41,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Request builder for a shard operation
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class InstanceShardOperationRequestBuilder<
@@ -50,10 +53,23 @@ public abstract class InstanceShardOperationRequestBuilder<
         Request,
         Response> {
 
+    /**
+     * Creates a new InstanceShardOperationRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected InstanceShardOperationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
+    /**
+     * Sets the index.
+     *
+     * @param index the index
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setIndex(String index) {
         request.index(index);

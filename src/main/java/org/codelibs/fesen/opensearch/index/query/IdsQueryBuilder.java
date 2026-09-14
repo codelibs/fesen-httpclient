@@ -58,6 +58,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ObjectParser.fromList;
  * @opensearch.internal
  */
 public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "ids";
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(IdsQueryBuilder.class);
     static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Types are deprecated in [ids] queries.";
@@ -76,6 +79,9 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public IdsQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -100,6 +106,9 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
 
     /**
      * Adds ids to the query.
+     *
+     * @param ids the identifiers
+     * @return this instance
      */
     public IdsQueryBuilder addIds(String... ids) {
         if (ids == null) {
@@ -111,6 +120,8 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
 
     /**
      * Returns the ids for the query.
+     *
+     * @return the identifiers
      */
     public Set<String> ids() {
         return this.ids;
@@ -135,6 +146,12 @@ public class IdsQueryBuilder extends AbstractQueryBuilder<IdsQueryBuilder> {
         declareStandardFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static IdsQueryBuilder fromXContent(XContentParser parser) {
         try {
             return PARSER.apply(parser, null);

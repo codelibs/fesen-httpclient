@@ -23,6 +23,12 @@ import java.io.OutputStream;
  */
 public class NoneCompressor implements Compressor {
     /**
+     * Creates a new NoneCompressor.
+     */
+    public NoneCompressor() {
+    }
+
+    /**
      * The name to register the compressor by
      *
      * @opensearch.api - requires BWC support

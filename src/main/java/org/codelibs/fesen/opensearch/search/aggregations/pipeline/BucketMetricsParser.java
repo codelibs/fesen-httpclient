@@ -50,8 +50,14 @@ import java.util.Map;
  */
 public abstract class BucketMetricsParser implements PipelineAggregator.Parser {
 
+    /**
+     * The FORMAT constant.
+     */
     public static final ParseField FORMAT = new ParseField("format");
 
+    /**
+     * Creates a new BucketMetricsParser.
+     */
     public BucketMetricsParser() {
         super();
     }
@@ -114,12 +120,30 @@ public abstract class BucketMetricsParser implements PipelineAggregator.Parser {
         return factory;
     }
 
+    /**
+     * Builds the factory.
+     *
+     * @param pipelineAggregatorName the pipeline aggregator name
+     * @param bucketsPaths the buckets paths
+     * @param params the serialization parameters
+     * @return the new factory
+     */
     protected abstract BucketMetricsPipelineAggregationBuilder<?> buildFactory(
         String pipelineAggregatorName,
         String bucketsPaths,
         Map<String, Object> params
     );
 
+    /**
+     * Returns the token.
+     *
+     * @param parser the parser
+     * @param field the field
+     * @param token the token
+     * @param params the serialization parameters
+     * @return the token
+     * @throws IOException if an I/O error occurs
+     */
     protected boolean token(XContentParser parser, String field, XContentParser.Token token, Map<String, Object> params)
         throws IOException {
         return false;

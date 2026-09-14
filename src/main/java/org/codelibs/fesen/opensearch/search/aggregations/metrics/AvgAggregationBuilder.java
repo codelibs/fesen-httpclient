@@ -52,16 +52,34 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public class AvgAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, AvgAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "avg";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<AvgAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, AvgAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new AvgAggregationBuilder.
+     *
+     * @param name the name
+     */
     public AvgAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new AvgAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     public AvgAggregationBuilder(AvgAggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }

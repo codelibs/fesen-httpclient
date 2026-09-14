@@ -76,6 +76,11 @@ public class JvmStats implements Writeable, ToXContentFragment {
         classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
     }
 
+    /**
+     * Returns the JVM stats.
+     *
+     * @return the JVM stats
+     */
     public static JvmStats jvmStats() {
         MemoryUsage memUsage = memoryMXBean.getHeapMemoryUsage();
         long heapUsed = memUsage.getUsed() < 0 ? 0 : memUsage.getUsed();
@@ -169,6 +174,17 @@ public class JvmStats implements Writeable, ToXContentFragment {
     private final List<BufferPool> bufferPools;
     private final Classes classes;
 
+    /**
+     * Creates a new JvmStats.
+     *
+     * @param timestamp the timestamp
+     * @param uptime the uptime
+     * @param mem the mem
+     * @param threads the threads
+     * @param gc the GC
+     * @param bufferPools the buffer pools
+     * @param classes the classes
+     */
     public JvmStats(
         long timestamp,
         long uptime,
@@ -187,6 +203,12 @@ public class JvmStats implements Writeable, ToXContentFragment {
         this.classes = classes;
     }
 
+    /**
+     * Creates a new JvmStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public JvmStats(StreamInput in) throws IOException {
         timestamp = in.readVLong();
         uptime = in.readVLong();
@@ -208,26 +230,56 @@ public class JvmStats implements Writeable, ToXContentFragment {
         classes.writeTo(out);
     }
 
+    /**
+     * Returns the uptime.
+     *
+     * @return the uptime
+     */
     public TimeValue getUptime() {
         return new TimeValue(uptime);
     }
 
+    /**
+     * Returns the mem.
+     *
+     * @return the mem
+     */
     public Mem getMem() {
         return this.mem;
     }
 
+    /**
+     * Returns the threads.
+     *
+     * @return the threads
+     */
     public Threads getThreads() {
         return threads;
     }
 
+    /**
+     * Returns the GC.
+     *
+     * @return the GC
+     */
     public GarbageCollectors getGc() {
         return gc;
     }
 
+    /**
+     * Returns the buffer pools.
+     *
+     * @return the buffer pools
+     */
     public List<BufferPool> getBufferPools() {
         return bufferPools;
     }
 
+    /**
+     * Returns the classes.
+     *
+     * @return the classes
+     */
     public Classes getClasses() {
         return classes;
     }
@@ -375,10 +427,21 @@ public class JvmStats implements Writeable, ToXContentFragment {
 
         private final GarbageCollector[] collectors;
 
+        /**
+         * Creates a new GarbageCollectors.
+         *
+         * @param collectors the collectors
+         */
         public GarbageCollectors(GarbageCollector[] collectors) {
             this.collectors = collectors;
         }
 
+        /**
+         * Creates a new GarbageCollectors by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public GarbageCollectors(StreamInput in) throws IOException {
             collectors = in.readArray(GarbageCollector::new, GarbageCollector[]::new);
         }
@@ -388,6 +451,11 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeArray(collectors);
         }
 
+        /**
+         * Returns the collectors.
+         *
+         * @return the collectors
+         */
         public GarbageCollector[] getCollectors() {
             return this.collectors;
         }
@@ -409,12 +477,25 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final long collectionCount;
         private final long collectionTime;
 
+        /**
+         * Creates a new GarbageCollector.
+         *
+         * @param name the name
+         * @param collectionCount the collection count
+         * @param collectionTime the collection time
+         */
         public GarbageCollector(String name, long collectionCount, long collectionTime) {
             this.name = name;
             this.collectionCount = collectionCount;
             this.collectionTime = collectionTime;
         }
 
+        /**
+         * Creates a new GarbageCollector by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public GarbageCollector(StreamInput in) throws IOException {
             name = in.readString();
             collectionCount = in.readVLong();
@@ -428,14 +509,29 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeVLong(collectionTime);
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return this.name;
         }
 
+        /**
+         * Returns the collection count.
+         *
+         * @return the collection count
+         */
         public long getCollectionCount() {
             return this.collectionCount;
         }
 
+        /**
+         * Returns the collection time.
+         *
+         * @return the collection time
+         */
         public TimeValue getCollectionTime() {
             return new TimeValue(collectionTime, TimeUnit.MILLISECONDS);
         }
@@ -451,11 +547,23 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final int count;
         private final int peakCount;
 
+        /**
+         * Creates a new Threads.
+         *
+         * @param count the count
+         * @param peakCount the peak count
+         */
         public Threads(int count, int peakCount) {
             this.count = count;
             this.peakCount = peakCount;
         }
 
+        /**
+         * Creates a new Threads by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Threads(StreamInput in) throws IOException {
             count = in.readVInt();
             peakCount = in.readVInt();
@@ -467,10 +575,20 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeVInt(peakCount);
         }
 
+        /**
+         * Returns the count.
+         *
+         * @return the count
+         */
         public int getCount() {
             return count;
         }
 
+        /**
+         * Returns the peak count.
+         *
+         * @return the peak count
+         */
         public int getPeakCount() {
             return peakCount;
         }
@@ -488,11 +606,23 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final long used;
         private final long max;
 
+        /**
+         * Creates a new MemoryPoolGcStats.
+         *
+         * @param used the used
+         * @param max the max
+         */
         public MemoryPoolGcStats(long used, long max) {
             this.used = used;
             this.max = max;
         }
 
+        /**
+         * Creates a new MemoryPoolGcStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public MemoryPoolGcStats(StreamInput in) throws IOException {
             used = in.readVLong();
             max = in.readVLong();
@@ -504,6 +634,11 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeVLong(max);
         }
 
+        /**
+         * Returns the usage percent.
+         *
+         * @return the usage percent
+         */
         public short getUsagePercent() {
             if (max == 0) {
                 return -1;
@@ -526,6 +661,16 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final long peakMax;
         private final MemoryPoolGcStats lastGcStats;
 
+        /**
+         * Creates a new MemoryPool.
+         *
+         * @param name the name
+         * @param used the used
+         * @param max the max
+         * @param peakUsed the peak used
+         * @param peakMax the peak max
+         * @param lastGcStats the last GC stats
+         */
         public MemoryPool(String name, long used, long max, long peakUsed, long peakMax, MemoryPoolGcStats lastGcStats) {
             this.name = name;
             this.used = used;
@@ -535,6 +680,12 @@ public class JvmStats implements Writeable, ToXContentFragment {
             this.lastGcStats = lastGcStats;
         }
 
+        /**
+         * Creates a new MemoryPool by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public MemoryPool(StreamInput in) throws IOException {
             name = in.readString();
             used = in.readVLong();
@@ -554,12 +705,19 @@ public class JvmStats implements Writeable, ToXContentFragment {
             lastGcStats.writeTo(out);
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return this.name;
         }
 
         /**
          * Returns the heap usage after last garbage collection cycle
+         *
+         * @return the last GC stats
          */
         public MemoryPoolGcStats getLastGcStats() {
             return lastGcStats;
@@ -580,6 +738,16 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final long nonHeapUsed;
         private final List<MemoryPool> pools;
 
+        /**
+         * Creates a new Mem.
+         *
+         * @param heapCommitted the heap committed
+         * @param heapUsed the heap used
+         * @param heapMax the heap max
+         * @param nonHeapCommitted the non heap committed
+         * @param nonHeapUsed the non heap used
+         * @param pools the pools
+         */
         public Mem(long heapCommitted, long heapUsed, long heapMax, long nonHeapCommitted, long nonHeapUsed, List<MemoryPool> pools) {
             this.heapCommitted = heapCommitted;
             this.heapUsed = heapUsed;
@@ -589,6 +757,12 @@ public class JvmStats implements Writeable, ToXContentFragment {
             this.pools = pools;
         }
 
+        /**
+         * Creates a new Mem by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Mem(StreamInput in) throws IOException {
             heapCommitted = in.readVLong();
             heapUsed = in.readVLong();
@@ -613,16 +787,28 @@ public class JvmStats implements Writeable, ToXContentFragment {
             return pools.iterator();
         }
 
+        /**
+         * Returns the heap committed.
+         *
+         * @return the heap committed
+         */
         public ByteSizeValue getHeapCommitted() {
             return new ByteSizeValue(heapCommitted);
         }
 
+        /**
+         * Returns the heap used.
+         *
+         * @return the heap used
+         */
         public ByteSizeValue getHeapUsed() {
             return new ByteSizeValue(heapUsed);
         }
 
         /**
          * returns the maximum heap size. 0 bytes signals unknown.
+         *
+         * @return the heap max
          */
         public ByteSizeValue getHeapMax() {
             return new ByteSizeValue(heapMax);
@@ -630,6 +816,8 @@ public class JvmStats implements Writeable, ToXContentFragment {
 
         /**
          * returns the heap usage in percent. -1 signals unknown.
+         *
+         * @return the heap used percent
          */
         public short getHeapUsedPercent() {
             if (heapMax == 0) {
@@ -638,10 +826,20 @@ public class JvmStats implements Writeable, ToXContentFragment {
             return (short) (heapUsed * 100 / heapMax);
         }
 
+        /**
+         * Returns the non heap committed.
+         *
+         * @return the non heap committed
+         */
         public ByteSizeValue getNonHeapCommitted() {
             return new ByteSizeValue(nonHeapCommitted);
         }
 
+        /**
+         * Returns the non heap used.
+         *
+         * @return the non heap used
+         */
         public ByteSizeValue getNonHeapUsed() {
             return new ByteSizeValue(nonHeapUsed);
         }
@@ -659,6 +857,14 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final long totalCapacity;
         private final long used;
 
+        /**
+         * Creates a new BufferPool.
+         *
+         * @param name the name
+         * @param count the count
+         * @param totalCapacity the total capacity
+         * @param used the used
+         */
         public BufferPool(String name, long count, long totalCapacity, long used) {
             this.name = name;
             this.count = count;
@@ -666,6 +872,12 @@ public class JvmStats implements Writeable, ToXContentFragment {
             this.used = used;
         }
 
+        /**
+         * Creates a new BufferPool by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public BufferPool(StreamInput in) throws IOException {
             name = in.readString();
             count = in.readLong();
@@ -681,18 +893,38 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeLong(used);
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return this.name;
         }
 
+        /**
+         * Returns the count.
+         *
+         * @return the count
+         */
         public long getCount() {
             return this.count;
         }
 
+        /**
+         * Returns the total capacity.
+         *
+         * @return the total capacity
+         */
         public ByteSizeValue getTotalCapacity() {
             return new ByteSizeValue(totalCapacity);
         }
 
+        /**
+         * Returns the used.
+         *
+         * @return the used
+         */
         public ByteSizeValue getUsed() {
             return new ByteSizeValue(used);
         }
@@ -709,12 +941,25 @@ public class JvmStats implements Writeable, ToXContentFragment {
         private final long totalLoadedClassCount;
         private final long unloadedClassCount;
 
+        /**
+         * Creates a new Classes.
+         *
+         * @param loadedClassCount the loaded class count
+         * @param totalLoadedClassCount the total loaded class count
+         * @param unloadedClassCount the unloaded class count
+         */
         public Classes(long loadedClassCount, long totalLoadedClassCount, long unloadedClassCount) {
             this.loadedClassCount = loadedClassCount;
             this.totalLoadedClassCount = totalLoadedClassCount;
             this.unloadedClassCount = unloadedClassCount;
         }
 
+        /**
+         * Creates a new Classes by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Classes(StreamInput in) throws IOException {
             loadedClassCount = in.readLong();
             totalLoadedClassCount = in.readLong();
@@ -728,14 +973,29 @@ public class JvmStats implements Writeable, ToXContentFragment {
             out.writeLong(unloadedClassCount);
         }
 
+        /**
+         * Returns the loaded class count.
+         *
+         * @return the loaded class count
+         */
         public long getLoadedClassCount() {
             return loadedClassCount;
         }
 
+        /**
+         * Returns the total loaded class count.
+         *
+         * @return the total loaded class count
+         */
         public long getTotalLoadedClassCount() {
             return totalLoadedClassCount;
         }
 
+        /**
+         * Returns the unloaded class count.
+         *
+         * @return the unloaded class count
+         */
         public long getUnloadedClassCount() {
             return unloadedClassCount;
         }

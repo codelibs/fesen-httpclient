@@ -49,9 +49,20 @@ import java.io.IOException;
  */
 public final class NotSerializableExceptionWrapper extends OpenSearchException {
 
+    /**
+     * The name.
+     */
     private final String name;
+    /**
+     * The status.
+     */
     private final RestStatus status;
 
+    /**
+     * Creates a new NotSerializableExceptionWrapper.
+     *
+     * @param other the other instance
+     */
     public NotSerializableExceptionWrapper(Throwable other) {
         super(OpenSearchException.getExceptionName(other) + ": " + other.getMessage(), other.getCause());
         this.name = OpenSearchException.getExceptionName(other);
@@ -70,6 +81,12 @@ public final class NotSerializableExceptionWrapper extends OpenSearchException {
         }
     }
 
+    /**
+     * Creates a new NotSerializableExceptionWrapper by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NotSerializableExceptionWrapper(StreamInput in) throws IOException {
         super(in);
         name = in.readString();

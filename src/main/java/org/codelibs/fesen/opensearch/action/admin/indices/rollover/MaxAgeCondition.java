@@ -47,8 +47,16 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class MaxAgeCondition extends Condition<TimeValue> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "max_age";
 
+    /**
+     * Creates a new MaxAgeCondition.
+     *
+     * @param value the value
+     */
     public MaxAgeCondition(TimeValue value) {
         super(NAME);
         this.value = value;

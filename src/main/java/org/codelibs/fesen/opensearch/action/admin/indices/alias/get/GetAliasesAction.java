@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetAliasesAction extends ActionType<GetAliasesResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetAliasesAction INSTANCE = new GetAliasesAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/aliases/get";
 
     private GetAliasesAction() {

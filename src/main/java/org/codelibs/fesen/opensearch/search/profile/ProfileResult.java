@@ -93,6 +93,19 @@ public final class ProfileResult implements Writeable, ToXContentObject {
     private Long avgSliceNodeTime;
     private final List<ProfileResult> children;
 
+    /**
+     * Creates a new ProfileResult.
+     *
+     * @param type the type
+     * @param description the description
+     * @param breakdown the breakdown
+     * @param debug the debug
+     * @param nodeTime the node time
+     * @param children the children
+     * @param maxSliceNodeTime the max slice node time
+     * @param minSliceNodeTime the min slice node time
+     * @param avgSliceNodeTime the avg slice node time
+     */
     public ProfileResult(
         String type,
         String description,
@@ -117,6 +130,9 @@ public final class ProfileResult implements Writeable, ToXContentObject {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public ProfileResult(StreamInput in) throws IOException {
         this.type = in.readString();
@@ -160,14 +176,29 @@ public final class ProfileResult implements Writeable, ToXContentObject {
         return nodeTime;
     }
 
+    /**
+     * Returns the max slice time.
+     *
+     * @return the max slice time
+     */
     public Long getMaxSliceTime() {
         return maxSliceNodeTime;
     }
 
+    /**
+     * Returns the min slice time.
+     *
+     * @return the min slice time
+     */
     public Long getMinSliceTime() {
         return minSliceNodeTime;
     }
 
+    /**
+     * Returns the avg slice time.
+     *
+     * @return the avg slice time
+     */
     public Long getAvgSliceTime() {
         return avgSliceNodeTime;
     }
@@ -250,6 +281,13 @@ public final class ProfileResult implements Writeable, ToXContentObject {
         PARSER = parser.build();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param p the p
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ProfileResult fromXContent(XContentParser p) throws IOException {
         return PARSER.parse(p, null);
     }

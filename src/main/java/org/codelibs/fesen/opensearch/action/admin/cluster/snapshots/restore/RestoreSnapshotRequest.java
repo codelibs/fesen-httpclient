@@ -83,7 +83,13 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
      */
     @PublicApi(since = "1.0.0")
     public enum StorageType {
+        /**
+         * The LOCAL value.
+         */
         LOCAL("local"),
+        /**
+         * The REMOTE_SNAPSHOT value.
+         */
         REMOTE_SNAPSHOT("remote_snapshot");
 
         private final String text;
@@ -132,7 +138,13 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
      */
     @PublicApi(since = "3.3.0")
     public enum AliasWriteIndexPolicy {
+        /**
+         * The PRESERVE value.
+         */
         PRESERVE,
+        /**
+         * The STRIP_WRITE_INDEX value.
+         */
         STRIP_WRITE_INDEX;
     }
 
@@ -140,6 +152,9 @@ public class RestoreSnapshotRequest extends ClusterManagerNodeRequest<RestoreSna
 
     private boolean attachToDataStream = false;
 
+    /**
+     * Creates a new RestoreSnapshotRequest.
+     */
     public RestoreSnapshotRequest() {}
 
     /**

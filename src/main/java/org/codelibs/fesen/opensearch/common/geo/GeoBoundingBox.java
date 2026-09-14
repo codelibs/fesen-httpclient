@@ -65,29 +65,66 @@ public class GeoBoundingBox implements ToXContentObject, Writeable {
     static final ParseField LEFT_FIELD = new ParseField("left");
     static final ParseField RIGHT_FIELD = new ParseField("right");
     static final ParseField WKT_FIELD = new ParseField("wkt");
+    /**
+     * The BOUNDS_FIELD constant.
+     */
     public static final ParseField BOUNDS_FIELD = new ParseField("bounds");
+    /**
+     * The LAT_FIELD constant.
+     */
     public static final ParseField LAT_FIELD = new ParseField("lat");
+    /**
+     * The LON_FIELD constant.
+     */
     public static final ParseField LON_FIELD = new ParseField("lon");
+    /**
+     * The TOP_LEFT_FIELD constant.
+     */
     public static final ParseField TOP_LEFT_FIELD = new ParseField("top_left");
+    /**
+     * The BOTTOM_RIGHT_FIELD constant.
+     */
     public static final ParseField BOTTOM_RIGHT_FIELD = new ParseField("bottom_right");
 
     private final GeoPoint topLeft;
     private final GeoPoint bottomRight;
 
+    /**
+     * Creates a new GeoBoundingBox.
+     *
+     * @param topLeft the top left
+     * @param bottomRight the bottom right
+     */
     public GeoBoundingBox(GeoPoint topLeft, GeoPoint bottomRight) {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }
 
+    /**
+     * Creates a new GeoBoundingBox by reading it from the given input.
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
+     */
     public GeoBoundingBox(StreamInput input) throws IOException {
         this.topLeft = new GeoPoint(input);
         this.bottomRight = new GeoPoint(input);
     }
 
+    /**
+     * Returns the top left.
+     *
+     * @return the top left
+     */
     public GeoPoint topLeft() {
         return topLeft;
     }
 
+    /**
+     * Returns the bottom right.
+     *
+     * @return the bottom right
+     */
     public GeoPoint bottomRight() {
         return bottomRight;
     }
@@ -100,6 +137,14 @@ public class GeoBoundingBox implements ToXContentObject, Writeable {
         return builder;
     }
 
+    /**
+     * Returns this instance as XContent fragment.
+     *
+     * @param builder the content builder
+     * @param buildLatLonFields the build lat lon fields
+     * @return the XContent fragment
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder toXContentFragment(XContentBuilder builder, boolean buildLatLonFields) throws IOException {
         if (buildLatLonFields) {
             builder.startObject(TOP_LEFT_FIELD.getPreferredName());
@@ -146,6 +191,10 @@ public class GeoBoundingBox implements ToXContentObject, Writeable {
 
     /**
      * Parses the bounding box and returns bottom, top, left, right coordinates
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static GeoBoundingBox parseBoundingBox(XContentParser parser) throws IOException, OpenSearchParseException {
         XContentParser.Token token = parser.currentToken();

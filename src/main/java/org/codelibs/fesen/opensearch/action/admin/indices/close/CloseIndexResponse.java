@@ -67,11 +67,23 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
         indices = unmodifiableList(in.readList(IndexResult::new));
     }
 
+    /**
+     * Creates a new CloseIndexResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     * @param indices the indices
+     */
     public CloseIndexResponse(final boolean acknowledged, final boolean shardsAcknowledged, final List<IndexResult> indices) {
         super(acknowledged, shardsAcknowledged);
         this.indices = unmodifiableList(Objects.requireNonNull(indices));
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public List<IndexResult> getIndices() {
         return indices;
     }
@@ -110,14 +122,31 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
         private final @Nullable Exception exception;
         private final @Nullable ShardResult[] shards;
 
+        /**
+         * Creates a new IndexResult.
+         *
+         * @param index the index
+         */
         public IndexResult(final Index index) {
             this(index, null, null);
         }
 
+        /**
+         * Creates a new IndexResult.
+         *
+         * @param index the index
+         * @param failure the failure
+         */
         public IndexResult(final Index index, final Exception failure) {
             this(index, Objects.requireNonNull(failure), null);
         }
 
+        /**
+         * Creates a new IndexResult.
+         *
+         * @param index the index
+         * @param shards the shards
+         */
         public IndexResult(final Index index, final ShardResult[] shards) {
             this(index, null, Objects.requireNonNull(shards));
         }
@@ -141,6 +170,11 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             out.writeOptionalArray(shards);
         }
 
+        /**
+         * Returns the failures flag.
+         *
+         * @return the failures flag
+         */
         public boolean hasFailures() {
             if (exception != null) {
                 return true;
@@ -198,6 +232,12 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
         private final int id;
         private final Failure[] failures;
 
+        /**
+         * Creates a new ShardResult.
+         *
+         * @param id the identifier
+         * @param failures the failures
+         */
         public ShardResult(final int id, final Failure[] failures) {
             this.id = id;
             this.failures = failures;
@@ -214,6 +254,11 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
             out.writeOptionalArray(failures);
         }
 
+        /**
+         * Returns the failures flag.
+         *
+         * @return the failures flag
+         */
         public boolean hasFailures() {
             return CollectionUtils.isEmpty(failures) == false;
         }
@@ -253,6 +298,14 @@ public class CloseIndexResponse extends ShardsAcknowledgedResponse {
                 nodeId = in.readOptionalString();
             }
 
+            /**
+             * Creates a new Failure.
+             *
+             * @param index the index
+             * @param shardId the shard identifier
+             * @param reason the reason
+             * @param nodeId the node identifier
+             */
             public Failure(final String index, final int shardId, final Throwable reason, final String nodeId) {
                 super(index, shardId, reason);
                 this.nodeId = nodeId;

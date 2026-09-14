@@ -67,6 +67,11 @@ public class UpgradeStatusResponse extends BroadcastResponse {
         }
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public Map<String, IndexUpgradeStatus> getIndices() {
         if (indicesUpgradeStatus != null) {
             return indicesUpgradeStatus;
@@ -100,6 +105,11 @@ public class UpgradeStatusResponse extends BroadcastResponse {
         }
     }
 
+    /**
+     * Returns the total bytes.
+     *
+     * @return the total bytes
+     */
     public long getTotalBytes() {
         long totalBytes = 0;
         for (IndexUpgradeStatus indexShardUpgradeStatus : getIndices().values()) {
@@ -108,6 +118,11 @@ public class UpgradeStatusResponse extends BroadcastResponse {
         return totalBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes.
+     *
+     * @return the to upgrade bytes
+     */
     public long getToUpgradeBytes() {
         long upgradeBytes = 0;
         for (IndexUpgradeStatus indexShardUpgradeStatus : getIndices().values()) {
@@ -116,6 +131,11 @@ public class UpgradeStatusResponse extends BroadcastResponse {
         return upgradeBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes ancient.
+     *
+     * @return the to upgrade bytes ancient
+     */
     public long getToUpgradeBytesAncient() {
         long upgradeBytesAncient = 0;
         for (IndexUpgradeStatus indexShardUpgradeStatus : getIndices().values()) {

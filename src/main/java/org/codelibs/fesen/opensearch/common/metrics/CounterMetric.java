@@ -40,17 +40,35 @@ import java.util.concurrent.atomic.LongAdder;
  * @opensearch.internal
  */
 public class CounterMetric implements Metric {
+    /**
+     * Creates a new CounterMetric.
+     */
+    public CounterMetric() {
+    }
 
     private final LongAdder counter = new LongAdder();
 
+    /**
+     * Performs the inc step.
+     */
     public void inc() {
         counter.increment();
     }
 
+    /**
+     * Performs the inc step.
+     *
+     * @param n the n
+     */
     public void inc(long n) {
         counter.add(n);
     }
 
+    /**
+     * Counts this instance.
+     *
+     * @return this instance
+     */
     public long count() {
         return counter.sum();
     }

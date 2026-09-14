@@ -16,9 +16,21 @@ package org.codelibs.fesen.opensearch.indices.replication.common;
  */
 public enum ReplicationType {
 
+    /**
+     * The DOCUMENT value.
+     */
     DOCUMENT,
+    /**
+     * The SEGMENT value.
+     */
     SEGMENT;
 
+    /**
+     * Parses the string.
+     *
+     * @param replicationType the replication type
+     * @return this instance
+     */
     public static ReplicationType parseString(String replicationType) {
         try {
             return ReplicationType.valueOf(replicationType);

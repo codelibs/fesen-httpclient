@@ -51,6 +51,11 @@ public class GetPipelineRequest extends ClusterManagerNodeReadRequest<GetPipelin
 
     private String[] ids;
 
+    /**
+     * Creates a new GetPipelineRequest.
+     *
+     * @param ids the identifiers
+     */
     public GetPipelineRequest(String... ids) {
         if (ids == null) {
             throw new IllegalArgumentException("ids cannot be null");
@@ -68,6 +73,11 @@ public class GetPipelineRequest extends ClusterManagerNodeReadRequest<GetPipelin
         out.writeStringArray(ids);
     }
 
+    /**
+     * Returns the identifiers.
+     *
+     * @return the identifiers
+     */
     public String[] getIds() {
         return ids;
     }

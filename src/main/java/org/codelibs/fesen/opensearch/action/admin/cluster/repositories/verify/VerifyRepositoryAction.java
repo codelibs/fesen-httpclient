@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class VerifyRepositoryAction extends ActionType<VerifyRepositoryResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final VerifyRepositoryAction INSTANCE = new VerifyRepositoryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/repository/verify";
 
     private VerifyRepositoryAction() {

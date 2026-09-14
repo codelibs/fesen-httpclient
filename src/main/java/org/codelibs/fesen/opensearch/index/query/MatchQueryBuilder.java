@@ -58,6 +58,9 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
     private static final String CUTOFF_FREQUENCY_DEPRECATION_MSG = "you can omit this option, "
         + "the [match] query can skip block of documents efficiently if the total number of hits is not tracked";
 
+    /**
+     * The ZERO_TERMS_QUERY_FIELD constant.
+     */
     public static final ParseField ZERO_TERMS_QUERY_FIELD = new ParseField("zero_terms_query");
     /**
      * @deprecated Since max_optimization optimization landed in 7.0, normal MatchQuery
@@ -67,15 +70,45 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
     public static final ParseField CUTOFF_FREQUENCY_FIELD = new ParseField("cutoff_frequency").withAllDeprecated(
         CUTOFF_FREQUENCY_DEPRECATION_MSG
     );
+    /**
+     * The LENIENT_FIELD constant.
+     */
     public static final ParseField LENIENT_FIELD = new ParseField("lenient");
+    /**
+     * The FUZZY_TRANSPOSITIONS_FIELD constant.
+     */
     public static final ParseField FUZZY_TRANSPOSITIONS_FIELD = new ParseField("fuzzy_transpositions");
+    /**
+     * The FUZZY_REWRITE_FIELD constant.
+     */
     public static final ParseField FUZZY_REWRITE_FIELD = new ParseField("fuzzy_rewrite");
+    /**
+     * The MINIMUM_SHOULD_MATCH_FIELD constant.
+     */
     public static final ParseField MINIMUM_SHOULD_MATCH_FIELD = new ParseField("minimum_should_match");
+    /**
+     * The OPERATOR_FIELD constant.
+     */
     public static final ParseField OPERATOR_FIELD = new ParseField("operator");
+    /**
+     * The MAX_EXPANSIONS_FIELD constant.
+     */
     public static final ParseField MAX_EXPANSIONS_FIELD = new ParseField("max_expansions");
+    /**
+     * The PREFIX_LENGTH_FIELD constant.
+     */
     public static final ParseField PREFIX_LENGTH_FIELD = new ParseField("prefix_length");
+    /**
+     * The ANALYZER_FIELD constant.
+     */
     public static final ParseField ANALYZER_FIELD = new ParseField("analyzer");
+    /**
+     * The QUERY_FIELD constant.
+     */
     public static final ParseField QUERY_FIELD = new ParseField("query");
+    /**
+     * The GENERATE_SYNONYMS_PHRASE_QUERY constant.
+     */
     public static final ParseField GENERATE_SYNONYMS_PHRASE_QUERY = new ParseField("auto_generate_synonyms_phrase_query");
 
     /** The name for the match query */
@@ -114,6 +147,9 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Constructs a new match query.
+     *
+     * @param fieldName the field name
+     * @param value the value
      */
     public MatchQueryBuilder(String fieldName, Object value) {
         if (fieldName == null) {
@@ -128,6 +164,9 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MatchQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -173,12 +212,21 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
         return this.fieldName;
     }
 
-    /** Returns the value used in this query. */
+    /**
+     * Returns the value used in this query.
+     *
+     * @return the value
+     */
     public Object value() {
         return this.value;
     }
 
-    /** Sets the operator to use when using a boolean query. Defaults to {@code OR}. */
+    /**
+     * Sets the operator to use when using a boolean query. Defaults to {@code OR}.
+     *
+     * @param operator the operator
+     * @return the operator
+     */
     public MatchQueryBuilder operator(Operator operator) {
         if (operator == null) {
             throw new IllegalArgumentException("[" + NAME + "] requires operator to be non-null");
@@ -187,7 +235,11 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
         return this;
     }
 
-    /** Returns the operator to use in a boolean query.*/
+    /**
+     * Returns the operator to use in a boolean query.
+     *
+     * @return the operator
+     */
     public Operator operator() {
         return this.operator;
     }
@@ -195,17 +247,30 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
     /**
      * Explicitly set the analyzer to use. Defaults to use explicit mapping config for the field, or, if not
      * set, the default search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public MatchQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
-    /** Get the analyzer to use, if previously set, otherwise {@code null} */
+    /**
+     * Get the analyzer to use, if previously set, otherwise {@code null}
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return this.analyzer;
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
+     */
     @Deprecated
     /* Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO". */
     public MatchQueryBuilder fuzziness(Object fuzziness) {
@@ -213,13 +278,22 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
         return this;
     }
 
-    /** Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO". */
+    /**
+     * Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO".
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
+     */
     public MatchQueryBuilder fuzziness(Fuzziness fuzziness) {
         this.fuzziness = fuzziness;
         return this;
     }
 
-    /**  Gets the fuzziness used when evaluated to a fuzzy query type. */
+    /**
+     * Gets the fuzziness used when evaluated to a fuzzy query type.
+     *
+     * @return the fuzziness
+     */
     public Fuzziness fuzziness() {
         return this.fuzziness;
     }
@@ -227,6 +301,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
     /**
      * Sets the length of a length of common (non-fuzzy) prefix for fuzzy match queries
      * @param prefixLength non-negative length of prefix
+     * @return the prefix length
      * @throws IllegalArgumentException in case the prefix is negative
      */
     public MatchQueryBuilder prefixLength(int prefixLength) {
@@ -239,6 +314,8 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Gets the length of a length of common (non-fuzzy) prefix for fuzzy match queries
+     *
+     * @return the prefix length
      */
     public int prefixLength() {
         return this.prefixLength;
@@ -246,6 +323,9 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * When using fuzzy or prefix type query, the number of term expansions to use.
+     *
+     * @param maxExpansions the max expansions
+     * @return the max expansions
      */
     public MatchQueryBuilder maxExpansions(int maxExpansions) {
         if (maxExpansions <= 0) {
@@ -257,6 +337,8 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Get the (optional) number of term expansions when using fuzzy or prefix type query.
+     *
+     * @return the max expansions
      */
     public int maxExpansions() {
         return this.maxExpansions;
@@ -267,6 +349,8 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
      * maximum threshold of a terms document frequency to be considered a low
      * frequency term.
      *
+     * @param cutoff the cutoff
+     * @return the cutoff frequency
      * @deprecated see {@link MatchQueryBuilder#CUTOFF_FREQUENCY_FIELD} for more details
      */
     @Deprecated
@@ -275,23 +359,41 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
         return this;
     }
 
-    /** Gets the optional cutoff value, can be {@code null} if not set previously */
+    /**
+     * Gets the optional cutoff value, can be {@code null} if not set previously
+     *
+     * @return the cutoff frequency
+     */
     public Float cutoffFrequency() {
         return this.cutoffFrequency;
     }
 
-    /** Sets optional minimumShouldMatch value to apply to the query */
+    /**
+     * Sets optional minimumShouldMatch value to apply to the query
+     *
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
+     */
     public MatchQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
         this.minimumShouldMatch = minimumShouldMatch;
         return this;
     }
 
-    /** Gets the minimumShouldMatch value */
+    /**
+     * Gets the minimumShouldMatch value
+     *
+     * @return the minimum should match
+     */
     public String minimumShouldMatch() {
         return this.minimumShouldMatch;
     }
 
-    /** Sets the fuzzy_rewrite parameter controlling how the fuzzy query will get rewritten */
+    /**
+     * Sets the fuzzy_rewrite parameter controlling how the fuzzy query will get rewritten
+     *
+     * @param fuzzyRewrite the fuzzy rewrite
+     * @return the fuzzy rewrite
+     */
     public MatchQueryBuilder fuzzyRewrite(String fuzzyRewrite) {
         this.fuzzyRewrite = fuzzyRewrite;
         return this;
@@ -299,6 +401,7 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Get the fuzzy_rewrite parameter
+     * @return the fuzzy rewrite
      * @see #fuzzyRewrite(String)
      */
     public String fuzzyRewrite() {
@@ -311,19 +414,29 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
      * distance formula which supports transpositions. Setting transposition to false will
      * switch to classic Levenshtein distance.<br>
      * If not set, Damerau-Levenshtein distance metric will be used.
+     *
+     * @param fuzzyTranspositions the fuzzy transpositions
+     * @return the fuzzy transpositions
      */
     public MatchQueryBuilder fuzzyTranspositions(boolean fuzzyTranspositions) {
         this.fuzzyTranspositions = fuzzyTranspositions;
         return this;
     }
 
-    /** Gets the fuzzy query transposition setting. */
+    /**
+     * Gets the fuzzy query transposition setting.
+     *
+     * @return the fuzzy transpositions
+     */
     public boolean fuzzyTranspositions() {
         return this.fuzzyTranspositions;
     }
 
     /**
      * Sets whether format based failures will be ignored.
+     *
+     * @param lenient the lenient
+     * @return the lenient
      */
     public MatchQueryBuilder lenient(boolean lenient) {
         this.lenient = lenient;
@@ -332,6 +445,8 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Gets leniency setting that controls if format based failures will be ignored.
+     *
+     * @return the lenient
      */
     public boolean lenient() {
         return this.lenient;
@@ -341,6 +456,9 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
      * Sets query to use in case no query terms are available, e.g. after analysis removed them.
      * Defaults to {@link MatchQuery.ZeroTermsQuery#NONE}, but can be set to
      * {@link MatchQuery.ZeroTermsQuery#ALL} instead.
+     *
+     * @param zeroTermsQuery the zero terms query
+     * @return the zero terms query
      */
     public MatchQueryBuilder zeroTermsQuery(MatchQuery.ZeroTermsQuery zeroTermsQuery) {
         if (zeroTermsQuery == null) {
@@ -352,11 +470,19 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
 
     /**
      * Returns the setting for handling zero terms queries.
+     *
+     * @return the zero terms query
      */
     public MatchQuery.ZeroTermsQuery zeroTermsQuery() {
         return this.zeroTermsQuery;
     }
 
+    /**
+     * Returns the auto generate synonyms phrase query.
+     *
+     * @param enable the enable
+     * @return the auto generate synonyms phrase query
+     */
     public MatchQueryBuilder autoGenerateSynonymsPhraseQuery(boolean enable) {
         this.autoGenerateSynonymsPhraseQuery = enable;
         return this;
@@ -365,6 +491,8 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
     /**
      * Whether phrase queries should be automatically generated for multi terms synonyms.
      * Defaults to {@code true}.
+     *
+     * @return the auto generate synonyms phrase query
      */
     public boolean autoGenerateSynonymsPhraseQuery() {
         return autoGenerateSynonymsPhraseQuery;
@@ -447,6 +575,13 @@ public class MatchQueryBuilder extends AbstractQueryBuilder<MatchQueryBuilder> i
         return NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MatchQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object value = null;

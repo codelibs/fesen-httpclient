@@ -86,6 +86,9 @@ public final class DateFieldMapper {
      */
     @PublicApi(since = "1.0.0")
     public enum Resolution {
+        /**
+         * The MILLISECONDS value.
+         */
         MILLISECONDS(CONTENT_TYPE) {
             @Override
             public long convert(Instant instant) {
@@ -102,6 +105,9 @@ public final class DateFieldMapper {
                 return DateUtils.clampToMillisRange(instant);
             }
         },
+        /**
+         * The NANOSECONDS value.
+         */
         NANOSECONDS(DATE_NANOS_CONTENT_TYPE) {
             @Override
             public long convert(Instant instant) {

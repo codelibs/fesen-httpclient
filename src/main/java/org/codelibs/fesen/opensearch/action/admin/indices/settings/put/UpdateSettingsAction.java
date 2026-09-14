@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class UpdateSettingsAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final UpdateSettingsAction INSTANCE = new UpdateSettingsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/settings/update";
 
     private UpdateSettingsAction() {

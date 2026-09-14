@@ -86,6 +86,8 @@ import java.util.function.Function;
  * Note: if optional constructor arguments aren't specified then the number of allocations is always the worst case.
  * </p>
  *
+ * @param <Value> the value type
+ * @param <Context> the context type
  * @opensearch.internal
  */
 public final class ConstructingObjectParser<Value, Context> extends AbstractObjectParser<Value, Context>
@@ -193,6 +195,10 @@ public final class ConstructingObjectParser<Value, Context> extends AbstractObje
      * javadoc for an example. The order in which these are declared matters: it is the order that they come in the array passed to
      * {@link #builder} and the order that missing arguments are reported to the user if any are missing. When all of these parameters are
      * parsed from the {@linkplain XContentParser} the target object is immediately built.
+     *
+     * @param <Value> the value type
+     * @param <FieldT> the field t type
+     * @return the constructor arg
      */
     @SuppressWarnings("unchecked") // Safe because we never call the method. This is just trickery to make the interface pretty.
     public static <Value, FieldT> BiConsumer<Value, FieldT> constructorArg() {
@@ -204,6 +210,10 @@ public final class ConstructingObjectParser<Value, Context> extends AbstractObje
      * javadoc for an example. The order in which these are declared matters: it is the order that they come in the array passed to
      * {@link #builder} and the order that missing arguments are reported to the user if any are missing. When all of these parameters are
      * parsed from the {@linkplain XContentParser} the target object is immediately built.
+     *
+     * @param <Value> the value type
+     * @param <FieldT> the field t type
+     * @return the optional constructor arg
      */
     @SuppressWarnings("unchecked") // Safe because we never call the method. This is just trickery to make the interface pretty.
     public static <Value, FieldT> BiConsumer<Value, FieldT> optionalConstructorArg() {

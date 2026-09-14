@@ -63,20 +63,65 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
 
     private static final String TYPE = "direct_generator";
 
+    /**
+     * The DIRECT_GENERATOR_FIELD constant.
+     */
     public static final ParseField DIRECT_GENERATOR_FIELD = new ParseField(TYPE);
+    /**
+     * The FIELDNAME_FIELD constant.
+     */
     public static final ParseField FIELDNAME_FIELD = new ParseField("field");
+    /**
+     * The PREFILTER_FIELD constant.
+     */
     public static final ParseField PREFILTER_FIELD = new ParseField("pre_filter");
+    /**
+     * The POSTFILTER_FIELD constant.
+     */
     public static final ParseField POSTFILTER_FIELD = new ParseField("post_filter");
+    /**
+     * The SUGGESTMODE_FIELD constant.
+     */
     public static final ParseField SUGGESTMODE_FIELD = new ParseField("suggest_mode");
+    /**
+     * The MIN_DOC_FREQ_FIELD constant.
+     */
     public static final ParseField MIN_DOC_FREQ_FIELD = new ParseField("min_doc_freq");
+    /**
+     * The ACCURACY_FIELD constant.
+     */
     public static final ParseField ACCURACY_FIELD = new ParseField("accuracy");
+    /**
+     * The SIZE_FIELD constant.
+     */
     public static final ParseField SIZE_FIELD = new ParseField("size");
+    /**
+     * The SORT_FIELD constant.
+     */
     public static final ParseField SORT_FIELD = new ParseField("sort");
+    /**
+     * The STRING_DISTANCE_FIELD constant.
+     */
     public static final ParseField STRING_DISTANCE_FIELD = new ParseField("string_distance");
+    /**
+     * The MAX_EDITS_FIELD constant.
+     */
     public static final ParseField MAX_EDITS_FIELD = new ParseField("max_edits");
+    /**
+     * The MAX_INSPECTIONS_FIELD constant.
+     */
     public static final ParseField MAX_INSPECTIONS_FIELD = new ParseField("max_inspections");
+    /**
+     * The MAX_TERM_FREQ_FIELD constant.
+     */
     public static final ParseField MAX_TERM_FREQ_FIELD = new ParseField("max_term_freq");
+    /**
+     * The PREFIX_LENGTH_FIELD constant.
+     */
     public static final ParseField PREFIX_LENGTH_FIELD = new ParseField("prefix_length");
+    /**
+     * The MIN_WORD_LENGTH_FIELD constant.
+     */
     public static final ParseField MIN_WORD_LENGTH_FIELD = new ParseField("min_word_length");
 
     private final String field;
@@ -95,6 +140,8 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
     private Float minDocFreq;
 
     /**
+     * Creates a new DirectCandidateGeneratorBuilder.
+     *
      * @param field Sets from what field to fetch the candidate suggestions from.
      */
     public DirectCandidateGeneratorBuilder(String field) {
@@ -131,6 +178,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * <li><code>always</code> - Suggest any matching suggest terms based on
      * tokens in the suggest text.
      * </ol>
+     *
+     * @param suggestMode the suggest mode
+     * @return this instance
      */
     public DirectCandidateGeneratorBuilder suggestMode(String suggestMode) {
         this.suggestMode = suggestMode;
@@ -144,6 +194,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * of each candidate spelling correction.
      * <p>
      * Default is {@code 0.5}
+     *
+     * @param accuracy the accuracy
+     * @return the accuracy
      */
     public DirectCandidateGeneratorBuilder accuracy(float accuracy) {
         this.accuracy = accuracy;
@@ -152,6 +205,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
 
     /**
      * Sets the maximum suggestions to be returned per suggest text term.
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public DirectCandidateGeneratorBuilder size(int size) {
         if (size <= 0) {
@@ -172,6 +228,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * </ol>
      * <p>
      * What the score is depends on the suggester being used.
+     *
+     * @param sort the sort
+     * @return this instance
      */
     public DirectCandidateGeneratorBuilder sort(String sort) {
         this.sort = sort;
@@ -194,6 +253,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * <li><code>ngram</code> - String distance algorithm based on character
      * n-grams.
      * </ol>
+     *
+     * @param stringDistance the string distance
+     * @return the string distance
      */
     public DirectCandidateGeneratorBuilder stringDistance(String stringDistance) {
         this.stringDistance = stringDistance;
@@ -205,6 +267,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * order to be considered as a suggestion. Can only be a value between 1
      * and 2. Any other value result in an bad request error being thrown.
      * Defaults to {@code 2}.
+     *
+     * @param maxEdits the max edits
+     * @return the max edits
      */
     public DirectCandidateGeneratorBuilder maxEdits(Integer maxEdits) {
         if (maxEdits < 1 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE) {
@@ -218,6 +283,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * A factor that is used to multiply with the size in order to inspect
      * more candidate suggestions. Can improve accuracy at the cost of
      * performance. Defaults to {@code 5}.
+     *
+     * @param maxInspections the max inspections
+     * @return the max inspections
      */
     public DirectCandidateGeneratorBuilder maxInspections(Integer maxInspections) {
         this.maxInspections = maxInspections;
@@ -234,6 +302,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * This can be used to exclude high frequency terms from being
      * suggested. High frequency terms are usually spelled correctly on top
      * of this. This also improves the suggest performance.
+     *
+     * @param maxTermFreq the max term freq
+     * @return the max term freq
      */
     public DirectCandidateGeneratorBuilder maxTermFreq(float maxTermFreq) {
         this.maxTermFreq = maxTermFreq;
@@ -245,6 +316,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * be a candidate suggestion. Defaults to 1. Increasing this number
      * improves suggest performance. Usually misspellings don't occur in the
      * beginning of terms.
+     *
+     * @param prefixLength the prefix length
+     * @return the prefix length
      */
     public DirectCandidateGeneratorBuilder prefixLength(int prefixLength) {
         this.prefixLength = prefixLength;
@@ -254,6 +328,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
     /**
      * The minimum length a suggest text term must have in order to be
      * corrected. Defaults to {@code 4}.
+     *
+     * @param minWordLength the min word length
+     * @return the min word length
      */
     public DirectCandidateGeneratorBuilder minWordLength(int minWordLength) {
         this.minWordLength = minWordLength;
@@ -267,6 +344,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
      * by only suggesting high frequency terms. Defaults to 0f and is not
      * enabled. If a value higher than 1 is specified then the number cannot
      * be fractional.
+     *
+     * @param minDocFreq the min doc freq
+     * @return the min doc freq
      */
     public DirectCandidateGeneratorBuilder minDocFreq(float minDocFreq) {
         this.minDocFreq = minDocFreq;
@@ -276,6 +356,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
     /**
      * Sets a filter (analyzer) that is applied to each of the tokens passed to this candidate generator.
      * This filter is applied to the original token before candidates are generated.
+     *
+     * @param preFilter the pre filter
+     * @return the pre filter
      */
     public DirectCandidateGeneratorBuilder preFilter(String preFilter) {
         this.preFilter = preFilter;
@@ -285,6 +368,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
     /**
      * Sets a filter (analyzer) that is applied to each of the generated tokens
      * before they are passed to the actual phrase scorer.
+     *
+     * @param postFilter the post filter
+     * @return the post filter
      */
     public DirectCandidateGeneratorBuilder postFilter(String postFilter) {
         this.postFilter = postFilter;
@@ -326,6 +412,9 @@ public final class DirectCandidateGeneratorBuilder implements CandidateGenerator
         }
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<DirectCandidateGeneratorBuilder, Void> PARSER = new ConstructingObjectParser<>(
         TYPE,
         args -> new DirectCandidateGeneratorBuilder((String) args[0])

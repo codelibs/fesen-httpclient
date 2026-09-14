@@ -108,10 +108,15 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
 
     private Integer version;
 
+    /**
+     * Creates a new PutIndexTemplateRequest.
+     */
     public PutIndexTemplateRequest() {}
 
     /**
      * Constructs a new put index template request with the provided name.
+     *
+     * @param name the name
      */
     public PutIndexTemplateRequest(String name) {
         this.name = name;
@@ -131,32 +136,58 @@ public class PutIndexTemplateRequest extends ClusterManagerNodeRequest<PutIndexT
 
     /**
      * The name of the index template.
+     *
+     * @return the name
      */
     public String name() {
         return this.name;
     }
 
+    /**
+     * Returns the patterns.
+     *
+     * @param indexPatterns the index patterns
+     * @return the patterns
+     */
     public PutIndexTemplateRequest patterns(List<String> indexPatterns) {
         this.indexPatterns = indexPatterns;
         return this;
     }
 
+    /**
+     * Returns the order.
+     *
+     * @return the order
+     */
     public int order() {
         return this.order;
     }
 
+    /**
+     * Creates this instance.
+     *
+     * @return the new instance
+     */
     public boolean create() {
         return create;
     }
 
     /**
      * The settings to create the index template with.
+     *
+     * @param settings the settings
+     * @return the settings
      */
     public PutIndexTemplateRequest settings(Settings.Builder settings) {
         this.settings = settings.build();
         return this;
     }
 
+    /**
+     * Returns the cause.
+     *
+     * @return the cause
+     */
     public String cause() {
         return this.cause;
     }

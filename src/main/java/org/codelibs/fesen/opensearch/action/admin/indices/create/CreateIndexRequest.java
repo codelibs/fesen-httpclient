@@ -87,9 +87,21 @@ import static org.codelibs.fesen.opensearch.common.settings.Settings.writeSettin
 @PublicApi(since = "1.0.0")
 public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> implements IndicesRequest {
 
+    /**
+     * The MAPPINGS constant.
+     */
     public static final ParseField MAPPINGS = new ParseField("mappings");
+    /**
+     * The SETTINGS constant.
+     */
     public static final ParseField SETTINGS = new ParseField("settings");
+    /**
+     * The ALIASES constant.
+     */
     public static final ParseField ALIASES = new ParseField("aliases");
+    /**
+     * The CONTEXT constant.
+     */
     public static final ParseField CONTEXT = new ParseField("context");
 
     private String cause = "";
@@ -106,10 +118,15 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     private ActiveShardCount waitForActiveShards = ActiveShardCount.DEFAULT;
 
+    /**
+     * Creates a new CreateIndexRequest.
+     */
     public CreateIndexRequest() {}
 
     /**
      * Constructs a new request to create an index with the specified name.
+     *
+     * @param index the index
      */
     public CreateIndexRequest(String index) {
         this(index, EMPTY_SETTINGS);
@@ -117,6 +134,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Constructs a new request to create an index with the specified name and settings.
+     *
+     * @param index the index
+     * @param settings the settings
      */
     public CreateIndexRequest(String index, Settings settings) {
         this.index = index;
@@ -144,11 +164,19 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The index name to create.
+     *
+     * @return this instance
      */
     public String index() {
         return index;
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @param index the index
+     * @return this instance
+     */
     public CreateIndexRequest index(String index) {
         this.index = index;
         return this;
@@ -156,6 +184,8 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The settings to create the index with.
+     *
+     * @return the settings
      */
     public Settings settings() {
         return settings;
@@ -163,6 +193,8 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The cause for this index creation.
+     *
+     * @return the cause
      */
     public String cause() {
         return cause;
@@ -170,6 +202,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The settings to create the index with.
+     *
+     * @param settings the settings
+     * @return the settings
      */
     public CreateIndexRequest settings(Settings.Builder settings) {
         this.settings = settings.build();
@@ -178,6 +213,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The settings to create the index with.
+     *
+     * @param settings the settings
+     * @return the settings
      */
     public CreateIndexRequest settings(Settings settings) {
         this.settings = settings;
@@ -187,6 +225,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
     /**
      * The settings to create the index with (either json or yaml format)
      *
+     * @param source the source
+     * @param xContentType the content type
+     * @return the settings
      * @deprecated use {@link #settings(String source, MediaType mediaType)} instead
      */
     @Deprecated
@@ -197,6 +238,10 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The settings to create the index with (using a generic MediaType)
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return the settings
      */
     public CreateIndexRequest settings(String source, MediaType mediaType) {
         this.settings = Settings.builder().loadFromSource(source, mediaType).build();
@@ -205,6 +250,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Allows to set the settings using a json builder.
+     *
+     * @param builder the content builder
+     * @return the settings
      */
     public CreateIndexRequest settings(XContentBuilder builder) {
         settings(builder.toString(), builder.contentType());
@@ -213,6 +261,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The settings to create the index with (either json/yaml/properties format)
+     *
+     * @param source the source
+     * @return the settings
      */
     public CreateIndexRequest settings(Map<String, ?> source) {
         this.settings = Settings.builder().loadFromMap(source).build();
@@ -226,6 +277,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * <pre>
      *     .mapping("{\"_doc\":{\"properties\": ... }}")
      * </pre>
+     *
+     * @param mapping the mapping
+     * @return the mapping
      */
     public CreateIndexRequest mapping(String mapping) {
         this.mappings = mapping;
@@ -238,6 +292,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * @param source The mapping source
      * @param xContentType The content type of the source
      *
+     * @return the mapping
      * @deprecated use {@link #mapping(String source, MediaType mediaType)} instead
      */
     @Deprecated
@@ -252,6 +307,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      *
      * @param source The mapping source
      * @param mediaType The media type of the source
+     * @return the mapping
      */
     public CreateIndexRequest mapping(String source, MediaType mediaType) {
         return mapping(new BytesArray(source), mediaType);
@@ -279,6 +335,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      *
      * @param source The mapping source
      * @param mediaType The media type of the source
+     * @return the mapping
      */
     public CreateIndexRequest mapping(BytesReference source, MediaType mediaType) {
         Objects.requireNonNull(mediaType);
@@ -290,6 +347,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * Adds mapping that will be added when the index gets created.
      *
      * @param source The mapping source
+     * @return the mapping
      */
     public CreateIndexRequest mapping(XContentBuilder source) {
         return mapping(BytesReference.bytes(source), source.contentType());
@@ -299,6 +357,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * Set the mapping for this index
      *
      * @param source The mapping source
+     * @return the mapping
      */
     public CreateIndexRequest mapping(Map<String, ?> source) {
         return mapping(MapperService.SINGLE_MAPPING_NAME, source);
@@ -332,6 +391,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
     /**
      * A specialized simplified mapping source method, takes the form of simple properties definition:
      * ("field1", "type=string,store=true").
+     *
+     * @param source the source
+     * @return the simple mapping
      */
     public CreateIndexRequest simpleMapping(String... source) {
         mapping(PutMappingRequest.simpleMapping(source));
@@ -340,6 +402,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * The cause for this index creation.
+     *
+     * @param cause the cause
+     * @return the cause
      */
     public CreateIndexRequest cause(String cause) {
         this.cause = cause;
@@ -348,6 +413,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return the aliases
      */
     public CreateIndexRequest aliases(Map<String, ?> source) {
         try {
@@ -361,6 +429,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return the aliases
      */
     public CreateIndexRequest aliases(XContentBuilder source) {
         return aliases(BytesReference.bytes(source));
@@ -368,6 +439,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return the aliases
      */
     public CreateIndexRequest aliases(String source) {
         return aliases(new BytesArray(source));
@@ -375,6 +449,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return the aliases
      */
     public CreateIndexRequest aliases(BytesReference source) {
         // EMPTY is safe here because we never call namedObject
@@ -392,6 +469,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Adds an alias that will be associated with the index when it gets created
+     *
+     * @param alias the alias
+     * @return the alias
      */
     public CreateIndexRequest alias(Alias alias) {
         this.aliases.add(alias);
@@ -401,6 +481,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
     /**
      * Sets the settings and mappings as a single source.
      *
+     * @param source the source
+     * @param xContentType the content type
+     * @return the source
      * @deprecated use {@link #source(String, MediaType)} instead
      */
     @Deprecated
@@ -412,6 +495,10 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * Sets the settings and mappings as a single source.
      * <p>
      * Note that the mapping definition should *not* be nested under a type name.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return the source
      */
     public CreateIndexRequest source(String source, MediaType mediaType) {
         return source(new BytesArray(source), mediaType);
@@ -419,6 +506,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @return the source
      */
     public CreateIndexRequest source(XContentBuilder source) {
         return source(BytesReference.bytes(source), source.contentType());
@@ -427,6 +517,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
     /**
      * Sets the settings and mappings as a single source.
      *
+     * @param source the source
+     * @param xContentType the content type
+     * @return the source
      * @deprecated use {@link #source(byte[], MediaType mediaType)} instead
      */
     @Deprecated
@@ -438,6 +531,10 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * Sets the settings and mappings as a single source.
      * <p>
      * Note that the mapping definition should *not* be nested under a type name.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return the source
      */
     public CreateIndexRequest source(byte[] source, MediaType mediaType) {
         return source(source, 0, source.length, mediaType);
@@ -446,6 +543,11 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
     /**
      * Sets the settings and mappings as a single source.
      *
+     * @param source the source
+     * @param offset the offset
+     * @param length the length
+     * @param xContentType the content type
+     * @return the source
      * @deprecated use {@link #source(byte[], int, int, MediaType)} instead
      */
     @Deprecated
@@ -455,6 +557,12 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param offset the offset
+     * @param length the length
+     * @param mediaType the media type
+     * @return the source
      */
     public CreateIndexRequest source(byte[] source, int offset, int length, MediaType mediaType) {
         return source(new BytesArray(source, offset, length), mediaType);
@@ -463,6 +571,9 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
     /**
      * Sets the settings and mappings as a single source.
      *
+     * @param source the source
+     * @param xContentType the content type
+     * @return the source
      * @deprecated use {@link #source(BytesReference, MediaType)} instead
      */
     @Deprecated
@@ -474,6 +585,10 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return the source
      */
     public CreateIndexRequest source(BytesReference source, MediaType mediaType) {
         Objects.requireNonNull(mediaType);
@@ -483,6 +598,10 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param deprecationHandler the deprecation handler
+     * @return the source
      */
     @SuppressWarnings("unchecked")
     public CreateIndexRequest source(Map<String, ?> source, DeprecationHandler deprecationHandler) {
@@ -512,14 +631,29 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         return this;
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public String mappings() {
         return this.mappings;
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @return the aliases
+     */
     public Set<Alias> aliases() {
         return this.aliases;
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return waitForActiveShards;
     }
@@ -537,6 +671,7 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * determine if the requisite shard copies were all started before returning or timing out.
      *
      * @param waitForActiveShards number of active shard copies to wait on
+     * @return this instance
      */
     public CreateIndexRequest waitForActiveShards(ActiveShardCount waitForActiveShards) {
         this.waitForActiveShards = waitForActiveShards;
@@ -547,11 +682,20 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
      * A shortcut for {@link #waitForActiveShards(ActiveShardCount)} where the numerical
      * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
      * to get the ActiveShardCount.
+     *
+     * @param waitForActiveShards the wait for active shards
+     * @return this instance
      */
     public CreateIndexRequest waitForActiveShards(final int waitForActiveShards) {
         return waitForActiveShards(ActiveShardCount.from(waitForActiveShards));
     }
 
+    /**
+     * Returns the context.
+     *
+     * @param source the source
+     * @return the context
+     */
     public CreateIndexRequest context(Map<String, ?> source) {
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -562,6 +706,12 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         }
     }
 
+    /**
+     * Returns the context.
+     *
+     * @param source the source
+     * @return the context
+     */
     public CreateIndexRequest context(BytesReference source) {
         // EMPTY is safe here because we never call namedObject
         try (XContentParser parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, source)) {
@@ -573,11 +723,22 @@ public class CreateIndexRequest extends AcknowledgedRequest<CreateIndexRequest> 
         }
     }
 
+    /**
+     * Returns the context.
+     *
+     * @param context the context
+     * @return the context
+     */
     public CreateIndexRequest context(Context context) {
         this.context = context;
         return this;
     }
 
+    /**
+     * Returns the context.
+     *
+     * @return the context
+     */
     public Context context() {
         return context;
     }

@@ -47,6 +47,13 @@ public class GetPipelineRequestBuilder extends ClusterManagerNodeReadOperationRe
     GetPipelineResponse,
     GetPipelineRequestBuilder> {
 
+    /**
+     * Creates a new GetPipelineRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param ids the identifiers
+     */
     public GetPipelineRequestBuilder(OpenSearchClient client, GetPipelineAction action, String[] ids) {
         super(client, action, new GetPipelineRequest(ids));
     }

@@ -24,12 +24,21 @@ public class RemoteStoreStatsRequestBuilder extends BroadcastOperationRequestBui
     RemoteStoreStatsResponse,
     RemoteStoreStatsRequestBuilder> {
 
+    /**
+     * Creates a new RemoteStoreStatsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public RemoteStoreStatsRequestBuilder(OpenSearchClient client, RemoteStoreStatsAction action) {
         super(client, action, new RemoteStoreStatsRequest());
     }
 
     /**
      * Sets shards preference of request.
+     *
+     * @param shards the shards
+     * @return this instance
      */
     public final RemoteStoreStatsRequestBuilder setShards(String... shards) {
         request.shards(shards);

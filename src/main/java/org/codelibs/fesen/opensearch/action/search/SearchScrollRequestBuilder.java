@@ -46,12 +46,22 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class SearchScrollRequestBuilder extends ActionRequestBuilder<SearchScrollRequest, SearchResponse> {
 
+    /**
+     * Creates a new SearchScrollRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param scrollId the scroll identifier
+     */
     public SearchScrollRequestBuilder(OpenSearchClient client, SearchScrollAction action, String scrollId) {
         super(client, action, new SearchScrollRequest(scrollId));
     }
 
     /**
      * If set, will enable scrolling of the search request for the specified timeout.
+     *
+     * @param keepAlive the keep alive
+     * @return this instance
      */
     public SearchScrollRequestBuilder setScroll(TimeValue keepAlive) {
         request.scroll(keepAlive);

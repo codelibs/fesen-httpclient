@@ -77,6 +77,8 @@ public interface OpenSearchClient {
 
     /**
      * Returns the threadpool used to execute requests on this client
+     *
+     * @return the thread pool
      */
     ThreadPool threadPool();
 

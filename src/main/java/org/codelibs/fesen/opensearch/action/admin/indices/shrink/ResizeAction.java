@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ResizeAction extends ActionType<ResizeResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ResizeAction INSTANCE = new ResizeAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/resize";
 
     private ResizeAction() {

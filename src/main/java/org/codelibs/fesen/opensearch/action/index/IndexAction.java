@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class IndexAction extends ActionType<IndexResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final IndexAction INSTANCE = new IndexAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/write/index";
 
     private IndexAction() {

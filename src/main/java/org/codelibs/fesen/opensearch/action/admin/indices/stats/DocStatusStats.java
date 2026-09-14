@@ -25,10 +25,19 @@ import java.util.concurrent.atomic.LongAdder;
 @PublicApi(since = "3.4.0")
 public class DocStatusStats extends AbstractStatusStats {
 
+    /**
+     * Creates a new DocStatusStats.
+     */
     public DocStatusStats() {
         super();
     }
 
+    /**
+     * Creates a new DocStatusStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DocStatusStats(StreamInput in) throws IOException {
         super(in);
     }
@@ -83,6 +92,8 @@ public class DocStatusStats extends AbstractStatusStats {
 
     /**
      * For this function, I just want to retrieve a point in time snapshot of the DocStatusStats.
+     *
+     * @return the snapshot
      */
     public DocStatusStats getSnapshot() {
         DocStatusStats curSnapshot = new DocStatusStats();

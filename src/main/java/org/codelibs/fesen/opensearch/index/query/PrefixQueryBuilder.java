@@ -52,6 +52,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder> implements MultiTermQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "prefix";
 
     private static final ParseField PREFIX_FIELD = new ParseField("value");
@@ -61,6 +64,9 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
 
     private final String value;
 
+    /**
+     * The DEFAULT_CASE_INSENSITIVITY constant.
+     */
     public static final boolean DEFAULT_CASE_INSENSITIVITY = false;
     private static final ParseField CASE_INSENSITIVE_FIELD = new ParseField("case_insensitive");
     private boolean caseInsensitive = DEFAULT_CASE_INSENSITIVITY;
@@ -86,6 +92,9 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public PrefixQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -108,24 +117,51 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
         return this.fieldName;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public String value() {
         return this.value;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @param caseInsensitive the case insensitive
+     * @return the case insensitive
+     */
     public PrefixQueryBuilder caseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
         return this;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @return the case insensitive
+     */
     public boolean caseInsensitive() {
         return this.caseInsensitive;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param rewrite the rewrite
+     * @return this instance
+     */
     public PrefixQueryBuilder rewrite(String rewrite) {
         this.rewrite = rewrite;
         return this;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @return this instance
+     */
     public String rewrite() {
         return this.rewrite;
     }
@@ -146,6 +182,13 @@ public class PrefixQueryBuilder extends AbstractQueryBuilder<PrefixQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static PrefixQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         String value = null;

@@ -54,6 +54,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  * @opensearch.internal
  */
 public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder<ScriptedMetricAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "scripted_metric";
 
     private static final ParseField INIT_SCRIPT_FIELD = new ParseField("init_script");
@@ -62,6 +65,9 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
     private static final ParseField REDUCE_SCRIPT_FIELD = new ParseField("reduce_script");
     private static final ParseField PARAMS_FIELD = new ParseField("params");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<ScriptedMetricAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
         NAME,
         false,
@@ -85,10 +91,22 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
     private Script reduceScript;
     private Map<String, Object> params;
 
+    /**
+     * Creates a new ScriptedMetricAggregationBuilder.
+     *
+     * @param name the name
+     */
     public ScriptedMetricAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new ScriptedMetricAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected ScriptedMetricAggregationBuilder(
         ScriptedMetricAggregationBuilder clone,
         Builder factoriesBuilder,
@@ -122,6 +140,9 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Set the {@code init} script.
+     *
+     * @param initScript the init script
+     * @return this instance
      */
     public ScriptedMetricAggregationBuilder initScript(Script initScript) {
         if (initScript == null) {
@@ -133,6 +154,8 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Get the {@code init} script.
+     *
+     * @return this instance
      */
     public Script initScript() {
         return initScript;
@@ -140,6 +163,9 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Set the {@code map} script.
+     *
+     * @param mapScript the map script
+     * @return the map script
      */
     public ScriptedMetricAggregationBuilder mapScript(Script mapScript) {
         if (mapScript == null) {
@@ -151,6 +177,8 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Get the {@code map} script.
+     *
+     * @return the map script
      */
     public Script mapScript() {
         return mapScript;
@@ -158,6 +186,9 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Set the {@code combine} script.
+     *
+     * @param combineScript the combine script
+     * @return this instance
      */
     public ScriptedMetricAggregationBuilder combineScript(Script combineScript) {
         if (combineScript == null) {
@@ -169,6 +200,8 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Get the {@code combine} script.
+     *
+     * @return this instance
      */
     public Script combineScript() {
         return combineScript;
@@ -176,6 +209,9 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Set the {@code reduce} script.
+     *
+     * @param reduceScript the reduce script
+     * @return this instance
      */
     public ScriptedMetricAggregationBuilder reduceScript(Script reduceScript) {
         if (reduceScript == null) {
@@ -187,6 +223,8 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
 
     /**
      * Get the {@code reduce} script.
+     *
+     * @return this instance
      */
     public Script reduceScript() {
         return reduceScript;
@@ -195,6 +233,9 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
     /**
      * Set parameters that will be available in the {@code init},
      * {@code map} and {@code combine} phases.
+     *
+     * @param params the serialization parameters
+     * @return the params
      */
     public ScriptedMetricAggregationBuilder params(Map<String, Object> params) {
         if (params == null) {
@@ -207,6 +248,8 @@ public class ScriptedMetricAggregationBuilder extends AbstractAggregationBuilder
     /**
      * Get parameters that will be available in the {@code init},
      * {@code map} and {@code combine} phases.
+     *
+     * @return the params
      */
     public Map<String, Object> params() {
         return params;

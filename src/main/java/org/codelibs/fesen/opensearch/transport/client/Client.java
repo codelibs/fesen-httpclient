@@ -108,6 +108,9 @@ import java.util.concurrent.CompletionStage;
 @PublicApi(since = "1.0.0")
 public interface Client extends OpenSearchClient, Releasable {
 
+    /**
+     * The client type setting s.
+     */
     Setting<String> CLIENT_TYPE_SETTING_S = new Setting<>("client.type", "node", (s) -> {
         switch (s) {
             case "node":
@@ -120,6 +123,8 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * The admin client that can be used to perform administrative operations.
+     *
+     * @return the admin
      */
     AdminClient admin();
 
@@ -147,6 +152,8 @@ public interface Client extends OpenSearchClient, Releasable {
      * Index a document associated with a given index.
      * <p>
      * The id is optional, if it is not provided, one will be generated automatically.
+     *
+     * @return the prepare index
      */
     IndexRequestBuilder prepareIndex();
 
@@ -156,6 +163,7 @@ public interface Client extends OpenSearchClient, Releasable {
      * The id is optional, if it is not provided, one will be generated automatically.
      *
      * @param index The index to index the document to
+     * @return the prepare index
      */
     IndexRequestBuilder prepareIndex(String index);
 
@@ -177,11 +185,17 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Updates a document based on a script.
+     *
+     * @return the prepare update
      */
     UpdateRequestBuilder prepareUpdate();
 
     /**
      * Updates a document based on a script.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @return the prepare update
      */
     UpdateRequestBuilder prepareUpdate(String index, String id);
 
@@ -203,6 +217,8 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Deletes a document from the index based on the index, and id.
+     *
+     * @return the prepare delete
      */
     DeleteRequestBuilder prepareDelete();
 
@@ -211,6 +227,7 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param index The index to delete the document from
      * @param id    The id of the document to delete
+     * @return the prepare delete
      */
     DeleteRequestBuilder prepareDelete(String index, String id);
 
@@ -232,11 +249,16 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Executes a bulk of index / delete operations.
+     *
+     * @return the prepare bulk
      */
     BulkRequestBuilder prepareBulk();
 
     /**
      * Executes a bulk of index / delete operations with default index
+     *
+     * @param globalIndex the global index
+     * @return the prepare bulk
      */
     BulkRequestBuilder prepareBulk(@Nullable String globalIndex);
 
@@ -258,26 +280,40 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Gets the document that was indexed from an index with an id.
+     *
+     * @return the prepare get
      */
     GetRequestBuilder prepareGet();
 
     /**
      * Gets the document that was indexed from an index with an id.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @return the prepare get
      */
     GetRequestBuilder prepareGet(String index, String id);
 
     /**
      * Multi get documents.
+     *
+     * @param request the request
+     * @return the multi get
      */
     ActionFuture<MultiGetResponse> multiGet(MultiGetRequest request);
 
     /**
      * Multi get documents.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void multiGet(MultiGetRequest request, ActionListener<MultiGetResponse> listener);
 
     /**
      * Multi get documents.
+     *
+     * @return the prepare multi get
      */
     MultiGetRequestBuilder prepareMultiGet();
 
@@ -299,11 +335,17 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Search across one or more indices with a query.
+     *
+     * @param indices the indices
+     * @return the prepare search
      */
     SearchRequestBuilder prepareSearch(String... indices);
 
     /**
      * Search across one or more indices with a query.
+     *
+     * @param indices the indices
+     * @return the prepare stream search
      */
     SearchRequestBuilder prepareStreamSearch(String... indices);
 
@@ -325,36 +367,56 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * A search scroll request to continue searching a previous scrollable search request.
+     *
+     * @param scrollId the scroll identifier
+     * @return the prepare search scroll
      */
     SearchScrollRequestBuilder prepareSearchScroll(String scrollId);
 
     /**
      * Create point in time for one or more indices
+     *
+     * @param createPITRequest the create pit request
+     * @param listener the listener
      */
     void createPit(CreatePitRequest createPITRequest, ActionListener<CreatePitResponse> listener);
 
     /**
      * Delete one or more point in time contexts
+     *
+     * @param deletePITRequest the delete pit request
+     * @param listener the listener
      */
     void deletePits(DeletePitRequest deletePITRequest, ActionListener<DeletePitResponse> listener);
 
     /**
      * Get all active point in time searches
+     *
+     * @param getAllPitNodesRequest the get all pit nodes request
+     * @param listener the listener
      */
     void getAllPits(GetAllPitNodesRequest getAllPitNodesRequest, ActionListener<GetAllPitNodesResponse> listener);
 
     /**
      * Performs multiple search requests.
+     *
+     * @param request the request
+     * @return the multi search
      */
     ActionFuture<MultiSearchResponse> multiSearch(MultiSearchRequest request);
 
     /**
      * Performs multiple search requests.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void multiSearch(MultiSearchRequest request, ActionListener<MultiSearchResponse> listener);
 
     /**
      * Performs multiple search requests.
+     *
+     * @return the prepare multi search
      */
     MultiSearchRequestBuilder prepareMultiSearch();
 
@@ -370,11 +432,14 @@ public interface Client extends OpenSearchClient, Releasable {
      * An action that returns the term vectors for a specific document.
      *
      * @param request The term vector request
+     * @param listener the listener
      */
     void termVectors(TermVectorsRequest request, ActionListener<TermVectorsResponse> listener);
 
     /**
      * Builder for the term vector request.
+     *
+     * @return the prepare term vectors
      */
     TermVectorsRequestBuilder prepareTermVectors();
 
@@ -383,21 +448,30 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param index The index to load the document from
      * @param id    The id of the document
+     * @return the prepare term vectors
      */
     TermVectorsRequestBuilder prepareTermVectors(String index, String id);
 
     /**
      * Multi get term vectors.
+     *
+     * @param request the request
+     * @return the multi term vectors
      */
     ActionFuture<MultiTermVectorsResponse> multiTermVectors(MultiTermVectorsRequest request);
 
     /**
      * Multi get term vectors.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void multiTermVectors(MultiTermVectorsRequest request, ActionListener<MultiTermVectorsResponse> listener);
 
     /**
      * Multi get term vectors.
+     *
+     * @return the prepare multi term vectors
      */
     MultiTermVectorsRequestBuilder prepareMultiTermVectors();
 
@@ -406,6 +480,7 @@ public interface Client extends OpenSearchClient, Releasable {
      *
      * @param index The index this explain is targeted for
      * @param id    The document identifier this explain is targeted for
+     * @return the prepare explain
      */
     ExplainRequestBuilder prepareExplain(String index, String id);
 
@@ -413,6 +488,7 @@ public interface Client extends OpenSearchClient, Releasable {
      * Computes a score explanation for the specified request.
      *
      * @param request The request encapsulating the query and document identifier to compute a score explanation for
+     * @return the explain
      */
     ActionFuture<ExplainResponse> explain(ExplainRequest request);
 
@@ -426,60 +502,104 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Clears the search contexts associated with specified scroll ids.
+     *
+     * @return the prepare clear scroll
      */
     ClearScrollRequestBuilder prepareClearScroll();
 
     /**
      * Clears the search contexts associated with specified scroll ids.
+     *
+     * @param request the request
+     * @return this instance
      */
     ActionFuture<ClearScrollResponse> clearScroll(ClearScrollRequest request);
 
     /**
      * Clears the search contexts associated with specified scroll ids.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void clearScroll(ClearScrollRequest request, ActionListener<ClearScrollResponse> listener);
 
     /**
      * Builder for the field capabilities request.
+     *
+     * @param indices the indices
+     * @return the prepare field caps
      */
     FieldCapabilitiesRequestBuilder prepareFieldCaps(String... indices);
 
     /**
      * An action that returns the field capabilities from the provided request
+     *
+     * @param request the request
+     * @return the field caps
      */
     ActionFuture<FieldCapabilitiesResponse> fieldCaps(FieldCapabilitiesRequest request);
 
     /**
      * An action that returns the field capabilities from the provided request
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void fieldCaps(FieldCapabilitiesRequest request, ActionListener<FieldCapabilitiesResponse> listener);
 
-    /** Search a view */
+    /**
+     * Search a view
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void searchView(final SearchViewAction.Request request, final ActionListener<SearchResponse> listener);
 
-    /** Search a view */
+    /**
+     * Search a view
+     *
+     * @param request the request
+     * @return this instance
+     */
     ActionFuture<SearchResponse> searchView(final SearchViewAction.Request request);
 
-    /** List all view names */
+    /**
+     * List all view names
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void listViewNames(final ListViewNamesAction.Request request, ActionListener<ListViewNamesAction.Response> listener);
 
-    /** List all view names */
+    /**
+     * List all view names
+     *
+     * @param request the request
+     * @return this instance
+     */
     ActionFuture<ListViewNamesAction.Response> listViewNames(final ListViewNamesAction.Request request);
 
     /**
      * Returns this clients settings
+     *
+     * @return the settings
      */
     Settings settings();
 
     /**
      * Returns a new lightweight Client that applies all given headers to each of the requests
      * issued from it.
+     *
+     * @param headers the headers
+     * @return this instance
      */
     Client filterWithHeader(Map<String, String> headers);
 
     /**
      * Returns a client to a remote cluster with the given cluster alias.
      *
+     * @param clusterAlias the cluster alias
+     * @return the remote cluster client
      * @throws IllegalArgumentException if the given clusterAlias doesn't exist
      * @throws UnsupportedOperationException if this functionality is not available on this client.
      */
@@ -489,6 +609,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Index a document - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<IndexResponse> indexAsync(IndexRequest request) {
         CompletableFuture<IndexResponse> future = new CompletableFuture<>();
@@ -498,6 +621,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Update a document - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<UpdateResponse> updateAsync(UpdateRequest request) {
         CompletableFuture<UpdateResponse> future = new CompletableFuture<>();
@@ -507,6 +633,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Delete a document - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<DeleteResponse> deleteAsync(DeleteRequest request) {
         CompletableFuture<DeleteResponse> future = new CompletableFuture<>();
@@ -516,6 +645,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Bulk operations - CompletionStage version
+     *
+     * @param request the request
+     * @return the bulk async
      */
     default CompletionStage<BulkResponse> bulkAsync(BulkRequest request) {
         CompletableFuture<BulkResponse> future = new CompletableFuture<>();
@@ -525,6 +657,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Get document - CompletionStage version
+     *
+     * @param request the request
+     * @return the async
      */
     default CompletionStage<GetResponse> getAsync(GetRequest request) {
         CompletableFuture<GetResponse> future = new CompletableFuture<>();
@@ -534,6 +669,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Multi get - CompletionStage version
+     *
+     * @param request the request
+     * @return the multi get async
      */
     default CompletionStage<MultiGetResponse> multiGetAsync(MultiGetRequest request) {
         CompletableFuture<MultiGetResponse> future = new CompletableFuture<>();
@@ -543,6 +681,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Search - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<SearchResponse> searchAsync(SearchRequest request) {
         CompletableFuture<SearchResponse> future = new CompletableFuture<>();
@@ -552,6 +693,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Search scroll - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<SearchResponse> searchScrollAsync(SearchScrollRequest request) {
         CompletableFuture<SearchResponse> future = new CompletableFuture<>();
@@ -561,6 +705,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Multi search - CompletionStage version
+     *
+     * @param request the request
+     * @return the multi search async
      */
     default CompletionStage<MultiSearchResponse> multiSearchAsync(MultiSearchRequest request) {
         CompletableFuture<MultiSearchResponse> future = new CompletableFuture<>();
@@ -570,6 +717,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Term vectors - CompletionStage version
+     *
+     * @param request the request
+     * @return the term vectors async
      */
     default CompletionStage<TermVectorsResponse> termVectorsAsync(TermVectorsRequest request) {
         CompletableFuture<TermVectorsResponse> future = new CompletableFuture<>();
@@ -579,6 +729,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Multi term vectors - CompletionStage version
+     *
+     * @param request the request
+     * @return the multi term vectors async
      */
     default CompletionStage<MultiTermVectorsResponse> multiTermVectorsAsync(MultiTermVectorsRequest request) {
         CompletableFuture<MultiTermVectorsResponse> future = new CompletableFuture<>();
@@ -588,6 +741,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Explain - CompletionStage version
+     *
+     * @param request the request
+     * @return the explain async
      */
     default CompletionStage<ExplainResponse> explainAsync(ExplainRequest request) {
         CompletableFuture<ExplainResponse> future = new CompletableFuture<>();
@@ -597,6 +753,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Clear scroll - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<ClearScrollResponse> clearScrollAsync(ClearScrollRequest request) {
         CompletableFuture<ClearScrollResponse> future = new CompletableFuture<>();
@@ -606,6 +765,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Field capabilities - CompletionStage version
+     *
+     * @param request the request
+     * @return the field caps async
      */
     default CompletionStage<FieldCapabilitiesResponse> fieldCapsAsync(FieldCapabilitiesRequest request) {
         CompletableFuture<FieldCapabilitiesResponse> future = new CompletableFuture<>();
@@ -615,6 +777,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * Search view - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<SearchResponse> searchViewAsync(SearchViewAction.Request request) {
         CompletableFuture<SearchResponse> future = new CompletableFuture<>();
@@ -624,6 +789,9 @@ public interface Client extends OpenSearchClient, Releasable {
 
     /**
      * List view names - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
      */
     default CompletionStage<ListViewNamesAction.Response> listViewNamesAsync(ListViewNamesAction.Request request) {
         CompletableFuture<ListViewNamesAction.Response> future = new CompletableFuture<>();

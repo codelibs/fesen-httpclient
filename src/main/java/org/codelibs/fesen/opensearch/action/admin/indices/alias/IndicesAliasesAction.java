@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class IndicesAliasesAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final IndicesAliasesAction INSTANCE = new IndicesAliasesAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/aliases";
 
     private IndicesAliasesAction() {

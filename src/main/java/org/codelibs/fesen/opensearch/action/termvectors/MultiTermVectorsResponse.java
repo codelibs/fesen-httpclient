@@ -65,6 +65,12 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
         private final String id;
         private final Exception cause;
 
+        /**
+         * Creates a new Failure by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Failure(StreamInput in) throws IOException {
             index = in.readString();
             if (in.getVersion().before(Version.V_2_0_0)) {
@@ -77,6 +83,8 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
 
         /**
          * The index name of the action.
+         *
+         * @return the index
          */
         public String getIndex() {
             return this.index;
@@ -84,6 +92,8 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
 
         /**
          * The id of the action.
+         *
+         * @return the identifier
          */
         public String getId() {
             return id;
@@ -91,6 +101,8 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
 
         /**
          * The failure cause.
+         *
+         * @return the cause
          */
         public Exception getCause() {
             return this.cause;
@@ -110,15 +122,31 @@ public class MultiTermVectorsResponse extends ActionResponse implements Iterable
 
     private final MultiTermVectorsItemResponse[] responses;
 
+    /**
+     * Creates a new MultiTermVectorsResponse.
+     *
+     * @param responses the responses
+     */
     public MultiTermVectorsResponse(MultiTermVectorsItemResponse[] responses) {
         this.responses = responses;
     }
 
+    /**
+     * Creates a new MultiTermVectorsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MultiTermVectorsResponse(StreamInput in) throws IOException {
         super(in);
         responses = in.readArray(MultiTermVectorsItemResponse::new, MultiTermVectorsItemResponse[]::new);
     }
 
+    /**
+     * Returns the responses.
+     *
+     * @return the responses
+     */
     public MultiTermVectorsItemResponse[] getResponses() {
         return this.responses;
     }

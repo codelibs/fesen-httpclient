@@ -38,12 +38,19 @@ import java.util.Comparator;
 /**
  * Internal priority queue for computing terms aggs
  *
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public class BucketPriorityQueue<B extends Terms.Bucket> extends PriorityQueue<B> {
 
     private final Comparator<? super B> comparator;
 
+    /**
+     * Creates a new BucketPriorityQueue.
+     *
+     * @param size the size
+     * @param comparator the comparator
+     */
     public BucketPriorityQueue(int size, Comparator<? super B> comparator) {
         super(size);
         this.comparator = comparator;

@@ -78,6 +78,12 @@ public enum ShardRoutingState {
         return this.value;
     }
 
+    /**
+     * Creates an instance from value.
+     *
+     * @param value the value
+     * @return the new value
+     */
     public static ShardRoutingState fromValue(byte value) {
         switch (value) {
             case 1:

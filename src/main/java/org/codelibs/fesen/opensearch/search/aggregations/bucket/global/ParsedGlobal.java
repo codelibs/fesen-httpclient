@@ -42,12 +42,25 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedGlobal extends ParsedSingleBucketAggregation implements Global {
+    /**
+     * Creates a new ParsedGlobal.
+     */
+    public ParsedGlobal() {
+    }
 
     @Override
     public String getType() {
         return GlobalAggregationBuilder.NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedGlobal fromXContent(XContentParser parser, final String name) throws IOException {
         return parseXContent(parser, new ParsedGlobal(), name);
     }

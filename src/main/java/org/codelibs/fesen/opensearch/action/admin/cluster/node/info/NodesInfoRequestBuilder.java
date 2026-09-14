@@ -44,6 +44,12 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class NodesInfoRequestBuilder extends NodesOperationRequestBuilder<NodesInfoRequest, NodesInfoResponse, NodesInfoRequestBuilder> {
 
+    /**
+     * Creates a new NodesInfoRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public NodesInfoRequestBuilder(OpenSearchClient client, NodesInfoAction action) {
         super(client, action, new NodesInfoRequest());
     }

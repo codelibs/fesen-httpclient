@@ -51,6 +51,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class ConstantScoreQueryBuilder extends AbstractQueryBuilder<ConstantScoreQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "constant_score";
 
     private static final ParseField INNER_QUERY_FIELD = new ParseField("filter");
@@ -72,6 +75,9 @@ public class ConstantScoreQueryBuilder extends AbstractQueryBuilder<ConstantScor
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public ConstantScoreQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -84,6 +90,8 @@ public class ConstantScoreQueryBuilder extends AbstractQueryBuilder<ConstantScor
     }
 
     /**
+     * Returns the inner query.
+     *
      * @return the query that was wrapped in this constant score query
      */
     public QueryBuilder innerQuery() {
@@ -115,6 +123,13 @@ public class ConstantScoreQueryBuilder extends AbstractQueryBuilder<ConstantScor
         return this;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ConstantScoreQueryBuilder fromXContent(XContentParser parser) throws IOException {
         QueryBuilder query = null;
         boolean queryFound = false;

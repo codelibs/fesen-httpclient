@@ -56,10 +56,19 @@ import java.util.Arrays;
 @PublicApi(since = "1.0.0")
 public class BigArrays {
 
+    /**
+     * The NON_RECYCLING_INSTANCE constant.
+     */
     public static final BigArrays NON_RECYCLING_INSTANCE = new BigArrays(null, null, CircuitBreaker.REQUEST);
 
     /** Return the next size to grow to that is &gt;= <code>minTargetSize</code>.
-     *  Inspired from {@link ArrayUtil#oversize(int, int)} and adapted to play nicely with paging. */
+      * Inspired from {@link ArrayUtil#oversize(int, int)} and adapted to play nicely with paging.
+     *
+     * @param minTargetSize the min target size
+     * @param pageSize the page size
+     * @param bytesPerElement the bytes per element
+     * @return the over size
+      */
     public static long overSize(long minTargetSize, int pageSize, int bytesPerElement) {
         if (minTargetSize < 0) {
             throw new IllegalArgumentException("minTargetSize must be >= 0");
@@ -188,11 +197,26 @@ public class BigArrays {
     private final BigArrays circuitBreakingInstance;
     private final String breakerName;
 
+    /**
+     * Creates a new BigArrays.
+     *
+     * @param recycler the recycler
+     * @param breakerService the breaker service
+     * @param breakerName the breaker name
+     */
     public BigArrays(PageCacheRecycler recycler, @Nullable final CircuitBreakerService breakerService, String breakerName) {
         // Checking the breaker is disabled if not specified
         this(recycler, breakerService, breakerName, false);
     }
 
+    /**
+     * Creates a new BigArrays.
+     *
+     * @param recycler the recycler
+     * @param breakerService the breaker service
+     * @param breakerName the breaker name
+     * @param checkBreaker the check breaker
+     */
     protected BigArrays(
         PageCacheRecycler recycler,
         @Nullable final CircuitBreakerService breakerService,
@@ -278,6 +302,7 @@ public class BigArrays {
      * Allocate a new {@link ByteArray}.
      * @param size          the initial length of the array
      * @param clearOnResize whether values should be set to 0 on initialization and resize
+     * @return the new byte array
      */
     public ByteArray newByteArray(long size, boolean clearOnResize) {
         if (size > PageCacheRecycler.BYTE_PAGE_SIZE) {
@@ -293,7 +318,13 @@ public class BigArrays {
         }
     }
 
-    /** Resize the array to the exact provided size. */
+    /**
+     * Resize the array to the exact provided size.
+     *
+     * @param array the array
+     * @param size the size
+     * @return this instance
+     */
     public ByteArray resize(ByteArray array, long size) {
         if (array instanceof BigByteArray) {
             return resizeInPlace((BigByteArray) array, size);
@@ -308,7 +339,12 @@ public class BigArrays {
     }
 
     /** Grow an array to a size that is larger than <code>minSize</code>,
-     * preserving content, and potentially reusing part of the provided array. */
+      * preserving content, and potentially reusing part of the provided array.
+     *
+     * @param array the array
+     * @param minSize the min size
+     * @return this instance
+      */
     public ByteArray grow(ByteArray array, long minSize) {
         if (minSize <= array.size()) {
             return array;

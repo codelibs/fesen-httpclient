@@ -57,15 +57,26 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public final class AggregationProfileShardResult implements Writeable, ToXContentFragment {
 
+    /**
+     * The AGGREGATIONS constant.
+     */
     public static final String AGGREGATIONS = "aggregations";
     private final List<ProfileResult> aggProfileResults;
 
+    /**
+     * Creates a new AggregationProfileShardResult.
+     *
+     * @param aggProfileResults the agg profile results
+     */
     public AggregationProfileShardResult(List<ProfileResult> aggProfileResults) {
         this.aggProfileResults = aggProfileResults;
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public AggregationProfileShardResult(StreamInput in) throws IOException {
         int profileSize = in.readVInt();
@@ -93,6 +104,13 @@ public final class AggregationProfileShardResult implements Writeable, ToXConten
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static AggregationProfileShardResult fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_ARRAY, token, parser);

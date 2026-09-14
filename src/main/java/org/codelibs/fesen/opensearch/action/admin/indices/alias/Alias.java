@@ -84,12 +84,20 @@ public class Alias implements Writeable, ToXContentFragment {
     @Nullable
     private Boolean isHidden;
 
+    /**
+     * Creates a new Alias.
+     *
+     * @param name the name
+     */
     public Alias(String name) {
         this.name = name;
     }
 
     /**
      * Associates a filter to the alias
+     *
+     * @param filter the filter
+     * @return this instance
      */
     public Alias filter(Map<String, Object> filter) {
         if (filter == null || filter.isEmpty()) {
@@ -108,6 +116,9 @@ public class Alias implements Writeable, ToXContentFragment {
 
     /**
      * Associates a routing value to the alias
+     *
+     * @param routing the routing value
+     * @return the routing
      */
     public Alias routing(String routing) {
         this.indexRouting = routing;
@@ -117,6 +128,9 @@ public class Alias implements Writeable, ToXContentFragment {
 
     /**
      * Associates an index routing value to the alias
+     *
+     * @param indexRouting the index routing
+     * @return this instance
      */
     public Alias indexRouting(String indexRouting) {
         this.indexRouting = indexRouting;
@@ -125,6 +139,9 @@ public class Alias implements Writeable, ToXContentFragment {
 
     /**
      * Associates a search routing value to the alias
+     *
+     * @param searchRouting the search routing
+     * @return this instance
      */
     public Alias searchRouting(String searchRouting) {
         this.searchRouting = searchRouting;
@@ -133,6 +150,9 @@ public class Alias implements Writeable, ToXContentFragment {
 
     /**
      *  Sets whether an alias is pointing to a write-index
+     *
+     * @param writeIndex the write index
+     * @return this instance
      */
     public Alias writeIndex(@Nullable Boolean writeIndex) {
         this.writeIndex = writeIndex;
@@ -141,6 +161,9 @@ public class Alias implements Writeable, ToXContentFragment {
 
     /**
      * Sets whether this alias is hidden
+     *
+     * @param isHidden the is hidden
+     * @return the hidden flag
      */
     public Alias isHidden(@Nullable Boolean isHidden) {
         this.isHidden = isHidden;
@@ -159,6 +182,10 @@ public class Alias implements Writeable, ToXContentFragment {
 
     /**
      * Parses an alias and returns its parsed representation
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static Alias fromXContent(XContentParser parser) throws IOException {
         Alias alias = new Alias(parser.currentName());

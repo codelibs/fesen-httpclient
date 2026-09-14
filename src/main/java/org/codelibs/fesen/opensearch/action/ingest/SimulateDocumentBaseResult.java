@@ -53,6 +53,9 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
     private final WriteableIngestDocument ingestDocument;
     private final Exception failure;
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<SimulateDocumentBaseResult, Void> PARSER = new ConstructingObjectParser<>(
         "simulate_document_base_result",
         true,
@@ -75,6 +78,11 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
         PARSER.declareObject(optionalConstructorArg(), (p, c) -> OpenSearchException.fromXContent(p), new ParseField("error"));
     }
 
+    /**
+     * Creates a new SimulateDocumentBaseResult.
+     *
+     * @param ingestDocument the ingest document
+     */
     public SimulateDocumentBaseResult(IngestDocument ingestDocument) {
         if (ingestDocument != null) {
             this.ingestDocument = new WriteableIngestDocument(ingestDocument);
@@ -84,6 +92,11 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
         this.failure = null;
     }
 
+    /**
+     * Creates a new SimulateDocumentBaseResult.
+     *
+     * @param failure the failure
+     */
     public SimulateDocumentBaseResult(Exception failure) {
         this.ingestDocument = null;
         this.failure = failure;
@@ -91,6 +104,9 @@ public final class SimulateDocumentBaseResult implements SimulateDocumentResult 
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SimulateDocumentBaseResult(StreamInput in) throws IOException {
         failure = in.readException();

@@ -40,6 +40,8 @@ public interface Avg extends NumericMetricsAggregation.SingleValue {
 
     /**
      * The average value.
+     *
+     * @return the value
      */
     double getValue();
 }

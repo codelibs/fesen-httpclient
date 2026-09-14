@@ -63,7 +63,15 @@ import java.util.function.Consumer;
  * @opensearch.internal
  */
 public abstract class Streams {
+    /**
+     * Creates a new Streams.
+     */
+    public Streams() {
+    }
 
+    /**
+     * The BUFFER_SIZE constant.
+     */
     public static final int BUFFER_SIZE = 1024 * 8;
 
     /**

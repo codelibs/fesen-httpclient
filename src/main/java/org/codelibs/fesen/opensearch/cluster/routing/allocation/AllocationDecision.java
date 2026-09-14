@@ -100,6 +100,13 @@ public enum AllocationDecision implements Writeable {
         out.writeByte(id);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static AllocationDecision readFrom(StreamInput in) throws IOException {
         byte id = in.readByte();
         switch (id) {
@@ -126,6 +133,9 @@ public enum AllocationDecision implements Writeable {
 
     /**
      * Gets an {@link AllocationDecision} from a {@link AllocationStatus}.
+     *
+     * @param allocationStatus the allocation status
+     * @return the new allocation status
      */
     public static AllocationDecision fromAllocationStatus(AllocationStatus allocationStatus) {
         if (allocationStatus == null) {
@@ -151,6 +161,9 @@ public enum AllocationDecision implements Writeable {
 
     /**
      * Gets an {@link AllocationDecision} from a {@link Decision.Type}
+     *
+     * @param type the type
+     * @return the new decision type
      */
     public static AllocationDecision fromDecisionType(Decision.Type type) {
         switch (type) {

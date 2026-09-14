@@ -52,20 +52,44 @@ import java.util.function.Function;
 /**
  * Base Aggregation Builder for range aggs
  *
+ * @param <AB> the aggregation builder type
+ * @param <R> the result type
  * @opensearch.internal
  */
 public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R>, R extends Range> extends ValuesSourceAggregationBuilder<
     AB> {
 
+    /**
+     * The range factory.
+     */
     protected final InternalRange.Factory<?, ?> rangeFactory;
+    /**
+     * The ranges.
+     */
     protected List<R> ranges = new ArrayList<>();
+    /**
+     * The keyed.
+     */
     protected boolean keyed = false;
 
+    /**
+     * Creates a new AbstractRangeBuilder.
+     *
+     * @param name the name
+     * @param rangeFactory the range factory
+     */
     protected AbstractRangeBuilder(String name, InternalRange.Factory<?, ?> rangeFactory) {
         super(name);
         this.rangeFactory = rangeFactory;
     }
 
+    /**
+     * Creates a new AbstractRangeBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected AbstractRangeBuilder(
         AbstractRangeBuilder<AB, R> clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -79,6 +103,11 @@ public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @param rangeFactory the range factory
+     * @param rangeReader the range reader
+     * @throws IOException if an I/O error occurs
      */
     protected AbstractRangeBuilder(StreamInput in, InternalRange.Factory<?, ?> rangeFactory, Writeable.Reader<R> rangeReader)
         throws IOException {
@@ -97,6 +126,9 @@ public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R
     /**
      * Resolve any strings in the ranges so we have a number value for the from
      * and to of each range. The ranges are also sorted before being returned.
+     *
+     * @param rangeProcessor the range processor
+     * @return this instance
      */
     protected Range[] processRanges(Function<Range, Range> rangeProcessor) {
         Range[] ranges = new Range[this.ranges.size()];
@@ -137,6 +169,12 @@ public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R
         out.writeBoolean(keyed);
     }
 
+    /**
+     * Adds the range.
+     *
+     * @param range the range
+     * @return this instance
+     */
     public AB addRange(R range) {
         if (range == null) {
             throw new IllegalArgumentException("[range] must not be null: [" + name + "]");
@@ -145,15 +183,31 @@ public abstract class AbstractRangeBuilder<AB extends AbstractRangeBuilder<AB, R
         return (AB) this;
     }
 
+    /**
+     * Returns the ranges.
+     *
+     * @return the ranges
+     */
     public List<R> ranges() {
         return ranges;
     }
 
+    /**
+     * Returns the keyed.
+     *
+     * @param keyed the keyed
+     * @return the keyed
+     */
     public AB keyed(boolean keyed) {
         this.keyed = keyed;
         return (AB) this;
     }
 
+    /**
+     * Returns the keyed.
+     *
+     * @return the keyed
+     */
     public boolean keyed() {
         return keyed;
     }

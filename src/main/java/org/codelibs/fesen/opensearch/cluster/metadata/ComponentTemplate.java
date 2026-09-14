@@ -64,6 +64,9 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
     private static final ParseField VERSION = new ParseField("version");
     private static final ParseField METADATA = new ParseField("_meta");
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<ComponentTemplate, Void> PARSER = new ConstructingObjectParser<>(
         "component_template",
@@ -87,16 +90,35 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
         return AbstractDiffable.readDiffFrom(ComponentTemplate::new, in);
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param parser the parser
+     * @return this instance
+     */
     public static ComponentTemplate parse(XContentParser parser) {
         return PARSER.apply(parser, null);
     }
 
+    /**
+     * Creates a new ComponentTemplate.
+     *
+     * @param template the template
+     * @param version the version
+     * @param metadata the metadata
+     */
     public ComponentTemplate(Template template, @Nullable Long version, @Nullable Map<String, Object> metadata) {
         this.template = template;
         this.version = version;
         this.metadata = metadata;
     }
 
+    /**
+     * Creates a new ComponentTemplate by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ComponentTemplate(StreamInput in) throws IOException {
         this.template = new Template(in);
         this.version = in.readOptionalVLong();
@@ -107,6 +129,11 @@ public class ComponentTemplate extends AbstractDiffable<ComponentTemplate> imple
         }
     }
 
+    /**
+     * Returns the metadata.
+     *
+     * @return the metadata
+     */
     @Nullable
     public Map<String, Object> metadata() {
         return metadata;

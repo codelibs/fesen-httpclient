@@ -51,11 +51,20 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public final class TaskId implements Writeable {
 
+    /**
+     * The EMPTY_TASK_ID constant.
+     */
     public static final TaskId EMPTY_TASK_ID = new TaskId();
 
     private final String nodeId;
     private final long id;
 
+    /**
+     * Creates a new TaskId.
+     *
+     * @param nodeId the node identifier
+     * @param id the identifier
+     */
     public TaskId(String nodeId, long id) {
         if (nodeId.isEmpty()) {
             throw new IllegalArgumentException("0 length nodeIds are reserved for EMPTY_TASK_ID and are otherwise invalid.");
@@ -72,6 +81,11 @@ public final class TaskId implements Writeable {
         id = -1;
     }
 
+    /**
+     * Creates a new TaskId.
+     *
+     * @param taskId the task identifier
+     */
     public TaskId(String taskId) {
         if (Strings.hasLength(taskId) && "unset".equals(taskId) == false) {
             String[] s = Strings.split(taskId, ":");
@@ -93,6 +107,10 @@ public final class TaskId implements Writeable {
     /**
      * Read a {@linkplain TaskId} from a stream. {@linkplain TaskId} has this rather than the usual constructor that takes a
      * {@linkplain StreamInput} so we can return the {@link #EMPTY_TASK_ID} without allocating.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
      */
     public static TaskId readFromStream(StreamInput in) throws IOException {
         String nodeId = in.readString();
@@ -116,14 +134,29 @@ public final class TaskId implements Writeable {
         out.writeLong(id);
     }
 
+    /**
+     * Returns the node identifier.
+     *
+     * @return the node identifier
+     */
     public String getNodeId() {
         return nodeId;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * Returns the set flag.
+     *
+     * @return the set flag
+     */
     public boolean isSet() {
         return id != -1L;
     }

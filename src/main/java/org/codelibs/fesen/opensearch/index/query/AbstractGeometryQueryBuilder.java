@@ -63,40 +63,101 @@ import java.util.function.Supplier;
 /**
  * Base {@link QueryBuilder} that builds a Geometry Query
  *
+ * @param <QB> the query builder type
  * @opensearch.internal
  */
 public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQueryBuilder<QB>> extends AbstractQueryBuilder<QB>
     implements
         WithFieldName {
 
+    /**
+     * The DEFAULT_SHAPE_INDEX_NAME constant.
+     */
     public static final String DEFAULT_SHAPE_INDEX_NAME = "shapes";
+    /**
+     * The DEFAULT_SHAPE_FIELD_NAME constant.
+     */
     public static final String DEFAULT_SHAPE_FIELD_NAME = "shape";
+    /**
+     * The DEFAULT_SHAPE_RELATION constant.
+     */
     public static final ShapeRelation DEFAULT_SHAPE_RELATION = ShapeRelation.INTERSECTS;
 
     /** The default value for ignore_unmapped. */
     public static final boolean DEFAULT_IGNORE_UNMAPPED = false;
 
+    /**
+     * The SHAPE_FIELD constant.
+     */
     protected static final ParseField SHAPE_FIELD = new ParseField("shape");
+    /**
+     * The RELATION_FIELD constant.
+     */
     protected static final ParseField RELATION_FIELD = new ParseField("relation");
+    /**
+     * The INDEXED_SHAPE_FIELD constant.
+     */
     protected static final ParseField INDEXED_SHAPE_FIELD = new ParseField("indexed_shape");
+    /**
+     * The SHAPE_ID_FIELD constant.
+     */
     protected static final ParseField SHAPE_ID_FIELD = new ParseField("id");
+    /**
+     * The SHAPE_INDEX_FIELD constant.
+     */
     protected static final ParseField SHAPE_INDEX_FIELD = new ParseField("index");
+    /**
+     * The SHAPE_PATH_FIELD constant.
+     */
     protected static final ParseField SHAPE_PATH_FIELD = new ParseField("path");
+    /**
+     * The SHAPE_ROUTING_FIELD constant.
+     */
     protected static final ParseField SHAPE_ROUTING_FIELD = new ParseField("routing");
+    /**
+     * The IGNORE_UNMAPPED_FIELD constant.
+     */
     protected static final ParseField IGNORE_UNMAPPED_FIELD = new ParseField("ignore_unmapped");
 
+    /**
+     * The field name.
+     */
     protected final String fieldName;
+    /**
+     * The supplier.
+     */
     protected final Supplier<Geometry> supplier;
 
+    /**
+     * The indexed shape identifier.
+     */
     protected final String indexedShapeId;
 
+    /**
+     * The shape.
+     */
     protected Geometry shape;
+    /**
+     * The indexed shape index.
+     */
     protected String indexedShapeIndex = DEFAULT_SHAPE_INDEX_NAME;
+    /**
+     * The indexed shape path.
+     */
     protected String indexedShapePath = DEFAULT_SHAPE_FIELD_NAME;
+    /**
+     * The indexed shape routing.
+     */
     protected String indexedShapeRouting;
 
+    /**
+     * The relation.
+     */
     protected ShapeRelation relation = DEFAULT_SHAPE_RELATION;
 
+    /**
+     * The ignore unmapped.
+     */
     protected boolean ignoreUnmapped = DEFAULT_IGNORE_UNMAPPED;
 
     /**
@@ -125,6 +186,13 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
         this(fieldName, (Geometry) null, indexedShapeId);
     }
 
+    /**
+     * Creates a new AbstractGeometryQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param shape the shape
+     * @param indexedShapeId the indexed shape identifier
+     */
     protected AbstractGeometryQueryBuilder(String fieldName, Geometry shape, String indexedShapeId) {
         if (fieldName == null) {
             throw new IllegalArgumentException("fieldName is required");
@@ -138,6 +206,13 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
         this.supplier = null;
     }
 
+    /**
+     * Creates a new AbstractGeometryQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param supplier the supplier
+     * @param indexedShapeId the indexed shape identifier
+     */
     protected AbstractGeometryQueryBuilder(String fieldName, Supplier<Geometry> supplier, String indexedShapeId) {
         if (fieldName == null) {
             throw new IllegalArgumentException("fieldName is required");
@@ -154,6 +229,9 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected AbstractGeometryQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -223,6 +301,8 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     }
 
     /**
+     * Returns the shape.
+     *
      * @return the shape used in the Query
      */
     public Geometry shape() {
@@ -230,6 +310,8 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     }
 
     /**
+     * Returns the indexed shape identifier.
+     *
      * @return the ID of the indexed Shape that will be used in the Query
      */
     public String indexedShapeId() {
@@ -248,6 +330,8 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     }
 
     /**
+     * Returns the indexed shape index.
+     *
      * @return the index name for the indexed Shape that will be used in the
      *         Query
      */
@@ -267,6 +351,8 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     }
 
     /**
+     * Returns the indexed shape path.
+     *
      * @return the path of the indexed Shape that will be used in the Query
      */
     public String indexedShapePath() {
@@ -285,6 +371,8 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     }
 
     /**
+     * Returns the indexed shape routing.
+     *
      * @return the optional routing to the indexed Shape that will be used in the
      *         Query
      */
@@ -307,6 +395,8 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
     }
 
     /**
+     * Returns the relation.
+     *
      * @return the relation of query shape and indexed shape to use in the Query
      */
     public ShapeRelation relation() {
@@ -317,6 +407,9 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
      * Sets whether the query builder should ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @param ignoreUnmapped the ignore unmapped
+     * @return the ignore unmapped
      */
     public AbstractGeometryQueryBuilder<QB> ignoreUnmapped(boolean ignoreUnmapped) {
         this.ignoreUnmapped = ignoreUnmapped;
@@ -327,18 +420,39 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
      * Gets whether the query builder will ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @return the ignore unmapped
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
     }
 
-    /** writes the xcontent specific to this shape query */
+    /**
+     * writes the xcontent specific to this shape query
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doShapeQueryXContent(XContentBuilder builder, Params params) throws IOException;
 
-    /** creates a new ShapeQueryBuilder from the provided field name and shape builder */
+    /**
+     * creates a new ShapeQueryBuilder from the provided field name and shape builder
+     *
+     * @param fieldName the field name
+     * @param shape the shape
+     * @return the new shape query builder
+     */
     protected abstract AbstractGeometryQueryBuilder<QB> newShapeQueryBuilder(String fieldName, Geometry shape);
 
-    /** creates a new ShapeQueryBuilder from the provided field name, supplier, indexed shape id */
+    /**
+     * creates a new ShapeQueryBuilder from the provided field name, supplier, indexed shape id
+     *
+     * @param fieldName the field name
+     * @param shapeSupplier the shape supplier
+     * @param indexedShapeId the indexed shape identifier
+     * @return the new shape query builder
+     */
     protected abstract AbstractGeometryQueryBuilder<QB> newShapeQueryBuilder(
         String fieldName,
         Supplier<Geometry> shapeSupplier,
@@ -497,22 +611,73 @@ public abstract class AbstractGeometryQueryBuilder<QB extends AbstractGeometryQu
      * @opensearch.internal
      */
     protected abstract static class ParsedGeometryQueryParams {
+        /**
+         * Creates a new ParsedGeometryQueryParams.
+         */
+        protected ParsedGeometryQueryParams() {
+        }
+
+        /**
+         * The field name.
+         */
         public String fieldName;
+        /**
+         * The relation.
+         */
         public ShapeRelation relation;
+        /**
+         * The shape.
+         */
         public Geometry shape;
 
+        /**
+         * The identifier.
+         */
         public String id = null;
+        /**
+         * The index.
+         */
         public String index = null;
+        /**
+         * The shape path.
+         */
         public String shapePath = null;
+        /**
+         * The shape routing.
+         */
         public String shapeRouting = null;
 
+        /**
+         * The boost.
+         */
         public float boost;
+        /**
+         * The query name.
+         */
         public String queryName;
+        /**
+         * The ignore unmapped.
+         */
         public boolean ignoreUnmapped;
 
+        /**
+         * Parses the XContent field.
+         *
+         * @param parser the parser
+         * @return this instance
+         * @throws IOException if an I/O error occurs
+         */
         protected abstract boolean parseXContentField(XContentParser parser) throws IOException;
     }
 
+    /**
+     * Returns the parsed params from XContent.
+     *
+     * @param parser the parser
+     * @param params the serialization parameters
+     * @return the parsed params from XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedGeometryQueryParams parsedParamsFromXContent(XContentParser parser, ParsedGeometryQueryParams params)
         throws IOException {
         String fieldName = null;

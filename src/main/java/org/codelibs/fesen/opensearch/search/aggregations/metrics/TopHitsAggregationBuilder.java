@@ -70,6 +70,9 @@ import java.util.Set;
  * @opensearch.internal
  */
 public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHitsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "top_hits";
 
     private int from = 0;
@@ -86,10 +89,22 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     private Set<ScriptField> scriptFields;
     private FetchSourceContext fetchSourceContext;
 
+    /**
+     * Creates a new TopHitsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public TopHitsAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new TopHitsAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected TopHitsAggregationBuilder(TopHitsAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.from = clone.from;
@@ -154,6 +169,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * From index to start the search from. Defaults to {@code 0}.
+     *
+     * @param from the offset
+     * @return the new instance
      */
     public TopHitsAggregationBuilder from(int from) {
         if (from < 0) {
@@ -165,13 +183,18 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the from index to start the search from.
-     **/
+     *
+     * @return the new instance
+      */
     public int from() {
         return from;
     }
 
     /**
      * The number of search hits to return. Defaults to {@code 10}.
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public TopHitsAggregationBuilder size(int size) {
         if (size < 0) {
@@ -183,6 +206,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the number of search hits to return.
+     *
+     * @return the number of elements
      */
     public int size() {
         return size;
@@ -195,6 +220,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      *            The name of the field
      * @param order
      *            The sort ordering
+     * @return this instance
      */
     public TopHitsAggregationBuilder sort(String name, SortOrder order) {
         if (name == null) {
@@ -216,6 +242,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      *
      * @param name
      *            The name of the field to sort by
+     * @return this instance
      */
     public TopHitsAggregationBuilder sort(String name) {
         if (name == null) {
@@ -231,6 +258,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Adds a sort builder.
+     *
+     * @param sort the sort
+     * @return this instance
      */
     public TopHitsAggregationBuilder sort(SortBuilder<?> sort) {
         if (sort == null) {
@@ -245,6 +275,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Adds a sort builder.
+     *
+     * @param sorts the sorts
+     * @return the sorts
      */
     public TopHitsAggregationBuilder sorts(List<SortBuilder<?>> sorts) {
         if (sorts == null) {
@@ -261,6 +294,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the bytes representing the sort builders for this request.
+     *
+     * @return the sorts
      */
     public List<SortBuilder<?>> sorts() {
         return sorts;
@@ -268,6 +303,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Adds highlight to perform as part of the search.
+     *
+     * @param highlightBuilder the highlight builder
+     * @return the highlighter
      */
     public TopHitsAggregationBuilder highlighter(HighlightBuilder highlightBuilder) {
         if (highlightBuilder == null) {
@@ -279,6 +317,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the highlighter builder for this request.
+     *
+     * @return the highlighter
      */
     public HighlightBuilder highlighter() {
         return highlightBuilder;
@@ -287,6 +327,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Indicates whether the response should contain the stored _source for
      * every hit
+     *
+     * @param fetch the fetch
+     * @return this instance
      */
     public TopHitsAggregationBuilder fetchSource(boolean fetch) {
         FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext : FetchSourceContext.FETCH_SOURCE;
@@ -305,6 +348,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      * @param exclude
      *            An optional exclude (optionally wildcarded) pattern to
      *            filter the returned _source
+     * @return this instance
      */
     public TopHitsAggregationBuilder fetchSource(@Nullable String include, @Nullable String exclude) {
         fetchSource(
@@ -325,6 +369,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      * @param excludes
      *            An optional list of exclude (optionally wildcarded)
      *            pattern to filter the returned _source
+     * @return this instance
      */
     public TopHitsAggregationBuilder fetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
         FetchSourceContext fetchSourceContext = this.fetchSourceContext != null ? this.fetchSourceContext : FetchSourceContext.FETCH_SOURCE;
@@ -334,6 +379,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Indicate how the _source should be fetched.
+     *
+     * @param fetchSourceContext the fetch source context
+     * @return this instance
      */
     public TopHitsAggregationBuilder fetchSource(@Nullable FetchSourceContext fetchSourceContext) {
         if (fetchSourceContext == null) {
@@ -346,6 +394,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Gets the {@link FetchSourceContext} which defines how the _source
      * should be fetched.
+     *
+     * @return this instance
      */
     public FetchSourceContext fetchSource() {
         return fetchSourceContext;
@@ -354,6 +404,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Adds a stored field to load and return (note, it must be stored) as part of the search request.
      * To disable the stored fields entirely (source and metadata fields) use {@code storedField("_none_")}.
+     *
+     * @param field the field
+     * @return the stored field
      */
     public TopHitsAggregationBuilder storedField(String field) {
         return storedFields(Collections.singletonList(field));
@@ -362,6 +415,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Sets the stored fields to load and return as part of the search request.
      * To disable the stored fields entirely (source and metadata fields) use {@code storedField("_none_")}.
+     *
+     * @param fields the fields
+     * @return the stored fields
      */
     public TopHitsAggregationBuilder storedFields(List<String> fields) {
         if (fields == null) {
@@ -377,6 +433,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the stored fields context
+     *
+     * @return the stored fields
      */
     public StoredFieldsContext storedFields() {
         return storedFieldsContext;
@@ -385,6 +443,10 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Adds a field to load from doc values and return as part of
      * the search request.
+     *
+     * @param docValueField the doc value field
+     * @param format the format
+     * @return the doc value field
      */
     public TopHitsAggregationBuilder docValueField(String docValueField, String format) {
         if (docValueField == null) {
@@ -400,6 +462,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Adds a field to load from doc values and return as part of
      * the search request.
+     *
+     * @param docValueField the doc value field
+     * @return the doc value field
      */
     public TopHitsAggregationBuilder docValueField(String docValueField) {
         return docValueField(docValueField, null);
@@ -407,6 +472,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the field-data fields.
+     *
+     * @return the doc value fields
      */
     public List<FieldAndFormat> docValueFields() {
         return docValueFields;
@@ -414,6 +481,10 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Adds a field to load and return as part of the search request.
+     *
+     * @param field the field
+     * @param format the format
+     * @return this instance
      */
     public TopHitsAggregationBuilder fetchField(String field, String format) {
         if (field == null) {
@@ -428,6 +499,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Adds a field to load and return as part of the search request.
+     *
+     * @param field the field
+     * @return this instance
      */
     public TopHitsAggregationBuilder fetchField(String field) {
         return fetchField(field, null);
@@ -435,6 +509,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the fields to load and return as part of the search request.
+     *
+     * @return this instance
      */
     public List<FieldAndFormat> fetchFields() {
         return fetchFields;
@@ -447,6 +523,7 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      *            The name of the field
      * @param script
      *            The script
+     * @return the script field
      */
     public TopHitsAggregationBuilder scriptField(String name, Script script) {
         if (name == null) {
@@ -466,6 +543,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
      *            The name of the field
      * @param script
      *            The script
+     * @param ignoreFailure the ignore failure
+     * @return the script field
      */
     public TopHitsAggregationBuilder scriptField(String name, Script script, boolean ignoreFailure) {
         if (name == null) {
@@ -481,6 +560,12 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         return this;
     }
 
+    /**
+     * Returns the script fields.
+     *
+     * @param scriptFields the script fields
+     * @return the script fields
+     */
     public TopHitsAggregationBuilder scriptFields(List<ScriptField> scriptFields) {
         if (scriptFields == null) {
             throw new IllegalArgumentException("[scriptFields] must not be null: [" + name + "]");
@@ -494,6 +579,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Gets the script fields.
+     *
+     * @return the script fields
      */
     public Set<ScriptField> scriptFields() {
         return scriptFields;
@@ -502,6 +589,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned
      * with an explanation of the hit (ranking).
+     *
+     * @param explain the explain
+     * @return the explain
      */
     public TopHitsAggregationBuilder explain(boolean explain) {
         this.explain = explain;
@@ -511,6 +601,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Indicates whether each search hit will be returned with an
      * explanation of the hit (ranking)
+     *
+     * @return the explain
      */
     public boolean explain() {
         return explain;
@@ -519,6 +611,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned
      * with a version associated with it.
+     *
+     * @param version the version
+     * @return the version
      */
     public TopHitsAggregationBuilder version(boolean version) {
         this.version = version;
@@ -528,6 +623,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Indicates whether the document's version will be included in the
      * search hits.
+     *
+     * @return the version
      */
     public boolean version() {
         return version;
@@ -536,6 +633,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with the
      * sequence number and primary term of the last modification of the document.
+     *
+     * @param seqNoAndPrimaryTerm the seq no and primary term
+     * @return the seq no and primary term
      */
     public TopHitsAggregationBuilder seqNoAndPrimaryTerm(Boolean seqNoAndPrimaryTerm) {
         this.seqNoAndPrimaryTerm = seqNoAndPrimaryTerm;
@@ -545,6 +645,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Indicates whether {@link org.codelibs.fesen.opensearch.search.SearchHit}s should be returned with the
      * sequence number and primary term of the last modification of the document.
+     *
+     * @return the seq no and primary term
      */
     public Boolean seqNoAndPrimaryTerm() {
         return seqNoAndPrimaryTerm;
@@ -553,6 +655,9 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
     /**
      * Applies when sorting, and controls if scores will be tracked as well.
      * Defaults to {@code false}.
+     *
+     * @param trackScores the track scores
+     * @return this instance
      */
     public TopHitsAggregationBuilder trackScores(boolean trackScores) {
         this.trackScores = trackScores;
@@ -561,6 +666,8 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
 
     /**
      * Indicates whether scores will be tracked for this request.
+     *
+     * @return this instance
      */
     public boolean trackScores() {
         return trackScores;
@@ -633,6 +740,14 @@ public class TopHitsAggregationBuilder extends AbstractAggregationBuilder<TopHit
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static TopHitsAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         TopHitsAggregationBuilder factory = new TopHitsAggregationBuilder(aggregationName);
         XContentParser.Token token;

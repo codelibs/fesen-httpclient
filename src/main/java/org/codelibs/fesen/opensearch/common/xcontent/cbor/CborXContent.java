@@ -63,11 +63,20 @@ import tools.jackson.dataformat.cbor.CBORFactoryBuilder;
  * A CBOR based content implementation using Jackson.
  */
 public class CborXContent implements XContent, XContentConstraints {
+    /**
+     * Returns the content builder.
+     *
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
+     */
     public static XContentBuilder contentBuilder() throws IOException {
         return XContentBuilder.builder(cborXContent);
     }
 
     static final CBORFactory cborFactory;
+    /**
+     * The cbor XContent.
+     */
     public static final CborXContent cborXContent;
 
     static {

@@ -65,6 +65,8 @@ public class CompensatedSum {
 
     /**
      * The value of the sum.
+     *
+     * @return the value
      */
     public double value() {
         return value;
@@ -72,6 +74,8 @@ public class CompensatedSum {
 
     /**
      * The correction term.
+     *
+     * @return the delta
      */
     public double delta() {
         return delta;
@@ -79,6 +83,9 @@ public class CompensatedSum {
 
     /**
      * Increments the Kahan sum by adding a value without a correction term.
+     *
+     * @param value the value
+     * @return this instance
      */
     public CompensatedSum add(double value) {
         return add(value, NO_CORRECTION);
@@ -86,6 +93,9 @@ public class CompensatedSum {
 
     /**
      * Resets the internal state to use the new value and compensation delta
+     *
+     * @param value the value
+     * @param delta the delta
      */
     public void reset(double value, double delta) {
         this.value = value;
@@ -94,6 +104,10 @@ public class CompensatedSum {
 
     /**
      * Increments the Kahan sum by adding two sums, and updating the correction term for reducing numeric errors.
+     *
+     * @param value the value
+     * @param delta the delta
+     * @return this instance
      */
     public CompensatedSum add(double value, double delta) {
         // If the value is Inf or NaN, just add it to the running tally to "convert" to
@@ -114,6 +128,9 @@ public class CompensatedSum {
 
     /**
      * Increments the Kahan sum by adding two sums, and updating the correction term for reducing numeric errors.
+     *
+     * @param values the values
+     * @param count the count
      */
     public void add(double[] values, int count) {
         // If the value is Inf or NaN, just add it to the running tally to "convert" to

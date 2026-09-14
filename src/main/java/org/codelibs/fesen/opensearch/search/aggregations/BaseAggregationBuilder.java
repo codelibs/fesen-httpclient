@@ -46,16 +46,24 @@ import java.util.Map;
 public interface BaseAggregationBuilder {
     /**
      * The name of the type of aggregation built by this builder.
+     *
+     * @return the type
      */
     String getType();
 
     /**
      * Set the aggregation's metadata. Returns {@code this} for chaining.
+     *
+     * @param metadata the metadata
+     * @return this instance
      */
     BaseAggregationBuilder setMetadata(Map<String, Object> metadata);
 
     /**
      * Set the sub aggregations if this aggregation supports sub aggregations. Returns {@code this} for chaining.
+     *
+     * @param subFactories the sub factories
+     * @return the sub aggregations
      */
     BaseAggregationBuilder subAggregations(Builder subFactories);
 }

@@ -49,11 +49,20 @@ import java.util.Arrays;
 public final class OriginalIndices implements IndicesRequest {
 
     // constant to use when original indices are not applicable and will not be serialized across the wire
+    /**
+     * The NONE constant.
+     */
     public static final OriginalIndices NONE = new OriginalIndices(null, null);
 
     private final String[] indices;
     private final IndicesOptions indicesOptions;
 
+    /**
+     * Creates a new OriginalIndices.
+     *
+     * @param indices the indices
+     * @param indicesOptions the indices options
+     */
     public OriginalIndices(String[] indices, IndicesOptions indicesOptions) {
         this.indices = indices;
         this.indicesOptions = indicesOptions;

@@ -16,8 +16,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @opensearch.internal
  */
 public class Streak {
+    /**
+     * Creates a new Streak.
+     */
+    public Streak() {
+    }
+
     private final AtomicInteger successiveSuccessfulEvents = new AtomicInteger();
 
+    /**
+     * The boolean record.
+     *
+     * @param isSuccessful the is successful
+     * @return the boolean
+     */
     public int record(boolean isSuccessful) {
         if (isSuccessful) {
             return successiveSuccessfulEvents.incrementAndGet();
@@ -27,6 +39,11 @@ public class Streak {
         }
     }
 
+    /**
+     * Returns the length.
+     *
+     * @return the length
+     */
     public int length() {
         return successiveSuccessfulEvents.get();
     }

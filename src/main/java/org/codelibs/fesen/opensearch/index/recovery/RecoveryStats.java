@@ -56,14 +56,28 @@ public class RecoveryStats implements ToXContentFragment, Writeable {
     private final AtomicInteger currentAsTarget = new AtomicInteger();
     private final AtomicLong throttleTimeInNanos = new AtomicLong();
 
+    /**
+     * Creates a new RecoveryStats.
+     */
     public RecoveryStats() {}
 
+    /**
+     * Creates a new RecoveryStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RecoveryStats(StreamInput in) throws IOException {
         currentAsSource.set(in.readVInt());
         currentAsTarget.set(in.readVInt());
         throttleTimeInNanos.set(in.readLong());
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param recoveryStats the recovery stats
+     */
     public void add(RecoveryStats recoveryStats) {
         if (recoveryStats != null) {
             this.currentAsSource.addAndGet(recoveryStats.currentAsSource());
@@ -72,6 +86,11 @@ public class RecoveryStats implements ToXContentFragment, Writeable {
         addTotals(recoveryStats);
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param recoveryStats the recovery stats
+     */
     public void addTotals(RecoveryStats recoveryStats) {
         if (recoveryStats != null) {
             this.throttleTimeInNanos.addAndGet(recoveryStats.throttleTime().nanos());
@@ -80,6 +99,8 @@ public class RecoveryStats implements ToXContentFragment, Writeable {
 
     /**
      * Number of ongoing recoveries for which a shard serves as a source
+     *
+     * @return the current as source
      */
     public int currentAsSource() {
         return currentAsSource.get();
@@ -87,6 +108,8 @@ public class RecoveryStats implements ToXContentFragment, Writeable {
 
     /**
      * Number of ongoing recoveries for which a shard serves as a target
+     *
+     * @return the current as target
      */
     public int currentAsTarget() {
         return currentAsTarget.get();
@@ -94,6 +117,8 @@ public class RecoveryStats implements ToXContentFragment, Writeable {
 
     /**
      * Total time recoveries waited due to throttling
+     *
+     * @return this instance
      */
     public TimeValue throttleTime() {
         return TimeValue.timeValueNanos(throttleTimeInNanos.get());

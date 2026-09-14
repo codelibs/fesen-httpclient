@@ -42,9 +42,15 @@ import java.io.IOException;
  * Abstract diffable object with simple diffs implementation that sends the entire object if object has changed or
  * nothing if object remained the same.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public abstract class AbstractDiffable<T extends Diffable<T>> implements Diffable<T> {
+    /**
+     * Creates a new AbstractDiffable.
+     */
+    public AbstractDiffable() {
+    }
 
     private static final Diff<?> EMPTY = new CompleteDiff<>();
 
@@ -58,6 +64,15 @@ public abstract class AbstractDiffable<T extends Diffable<T>> implements Diffabl
         }
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param <T> the element type
+     * @param reader the reader
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Diffable<T>> Diff<T> readDiffFrom(Reader<T> reader, StreamInput in) throws IOException {
         if (in.readBoolean()) {

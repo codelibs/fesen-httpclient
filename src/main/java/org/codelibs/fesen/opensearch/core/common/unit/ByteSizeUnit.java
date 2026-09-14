@@ -57,6 +57,9 @@ import java.io.IOException;
  */
 @PublicApi(since = "1.0.0")
 public enum ByteSizeUnit implements Writeable {
+    /**
+     * The BYTES value.
+     */
     BYTES {
         @Override
         public long toBytes(long size) {
@@ -93,6 +96,9 @@ public enum ByteSizeUnit implements Writeable {
             return "b";
         }
     },
+    /**
+     * The KB value.
+     */
     KB {
         @Override
         public long toBytes(long size) {
@@ -129,6 +135,9 @@ public enum ByteSizeUnit implements Writeable {
             return "kb";
         }
     },
+    /**
+     * The MB value.
+     */
     MB {
         @Override
         public long toBytes(long size) {
@@ -165,6 +174,9 @@ public enum ByteSizeUnit implements Writeable {
             return "mb";
         }
     },
+    /**
+     * The GB value.
+     */
     GB {
         @Override
         public long toBytes(long size) {
@@ -201,6 +213,9 @@ public enum ByteSizeUnit implements Writeable {
             return "gb";
         }
     },
+    /**
+     * The TB value.
+     */
     TB {
         @Override
         public long toBytes(long size) {
@@ -237,6 +252,9 @@ public enum ByteSizeUnit implements Writeable {
             return "tb";
         }
     },
+    /**
+     * The PB value.
+     */
     PB {
         @Override
         public long toBytes(long size) {
@@ -283,6 +301,12 @@ public enum ByteSizeUnit implements Writeable {
 
     static final long MAX = Long.MAX_VALUE;
 
+    /**
+     * Creates an instance from identifier.
+     *
+     * @param id the identifier
+     * @return the new identifier
+     */
     public static ByteSizeUnit fromId(int id) {
         if (id < 0 || id >= values().length) {
             throw new IllegalArgumentException("No byte size unit found for id [" + id + "]");
@@ -300,18 +324,59 @@ public enum ByteSizeUnit implements Writeable {
         return d * m;
     }
 
+    /**
+     * Returns this instance as bytes.
+     *
+     * @param size the size
+     * @return the bytes
+     */
     public abstract long toBytes(long size);
 
+    /**
+     * Returns this instance as kb.
+     *
+     * @param size the size
+     * @return the kb
+     */
     public abstract long toKB(long size);
 
+    /**
+     * Returns this instance as mb.
+     *
+     * @param size the size
+     * @return the mb
+     */
     public abstract long toMB(long size);
 
+    /**
+     * Returns this instance as gb.
+     *
+     * @param size the size
+     * @return the gb
+     */
     public abstract long toGB(long size);
 
+    /**
+     * Returns this instance as tb.
+     *
+     * @param size the size
+     * @return the tb
+     */
     public abstract long toTB(long size);
 
+    /**
+     * Returns this instance as pb.
+     *
+     * @param size the size
+     * @return the pb
+     */
     public abstract long toPB(long size);
 
+    /**
+     * Returns the suffix.
+     *
+     * @return the suffix
+     */
     public abstract String getSuffix();
 
     @Override
@@ -321,6 +386,10 @@ public enum ByteSizeUnit implements Writeable {
 
     /**
      * Reads a {@link ByteSizeUnit} from a given {@link StreamInput}
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
      */
     public static ByteSizeUnit readFrom(StreamInput in) throws IOException {
         return ByteSizeUnit.fromId(in.readVInt());

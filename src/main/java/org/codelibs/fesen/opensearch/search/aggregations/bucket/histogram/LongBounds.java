@@ -62,6 +62,9 @@ public class LongBounds implements ToXContentFragment, Writeable {
     static final ParseField MIN_FIELD = new ParseField("min");
     static final ParseField MAX_FIELD = new ParseField("max");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<LongBounds, Void> PARSER = new ConstructingObjectParser<>("bounds", a -> {
         assert a.length == 2;
         Long min = null;

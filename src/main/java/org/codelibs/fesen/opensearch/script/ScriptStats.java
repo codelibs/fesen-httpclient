@@ -73,6 +73,10 @@ public class ScriptStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param compilations the compilations
+     * @param cacheEvictions the cache evictions
+     * @param compilationLimitTriggered the compilation limit triggered
      */
     @Deprecated
     public ScriptStats(long compilations, long cacheEvictions, long compilationLimitTriggered) {
@@ -82,6 +86,12 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         this.compilationLimitTriggered = compilationLimitTriggered;
     }
 
+    /**
+     * Creates a new ScriptStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ScriptStats(StreamInput in) throws IOException {
         compilations = in.readVLong();
         cacheEvictions = in.readVLong();
@@ -97,18 +107,38 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         out.writeList(contextStats);
     }
 
+    /**
+     * Returns the compilations.
+     *
+     * @return the compilations
+     */
     public long getCompilations() {
         return compilations;
     }
 
+    /**
+     * Returns the cache evictions.
+     *
+     * @return the cache evictions
+     */
     public long getCacheEvictions() {
         return cacheEvictions;
     }
 
+    /**
+     * Returns the compilation limit triggered.
+     *
+     * @return the compilation limit triggered
+     */
     public long getCompilationLimitTriggered() {
         return compilationLimitTriggered;
     }
 
+    /**
+     * Returns this instance as script cache stats.
+     *
+     * @return the script cache stats
+     */
     public ScriptCacheStats toScriptCacheStats() {
         if (contextStats.isEmpty()) {
             return new ScriptCacheStats(this);
@@ -137,18 +167,39 @@ public class ScriptStats implements Writeable, ToXContentFragment {
         private long cacheEvictions = 0;
         private long compilationLimitTriggered = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the compilations.
+         *
+         * @param compilations the compilations
+         * @return the compilations
+         */
         public Builder compilations(long compilations) {
             this.compilations = compilations;
             return this;
         }
 
+        /**
+         * Returns the cache evictions.
+         *
+         * @param cacheEvictions the cache evictions
+         * @return the cache evictions
+         */
         public Builder cacheEvictions(long cacheEvictions) {
             this.cacheEvictions = cacheEvictions;
             return this;
         }
 
+        /**
+         * Returns the compilation limit triggered.
+         *
+         * @param compilationLimitTriggered the compilation limit triggered
+         * @return the compilation limit triggered
+         */
         public Builder compilationLimitTriggered(long compilationLimitTriggered) {
             this.compilationLimitTriggered = compilationLimitTriggered;
             return this;

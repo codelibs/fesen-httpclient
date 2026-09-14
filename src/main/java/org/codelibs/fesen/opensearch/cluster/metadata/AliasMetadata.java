@@ -104,30 +104,65 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         this.isHidden = isHidden;
     }
 
+    /**
+     * Returns the alias.
+     *
+     * @return the alias
+     */
     public String alias() {
         return alias;
     }
 
+    /**
+     * Returns the alias.
+     *
+     * @return the alias
+     */
     public String getAlias() {
         return alias();
     }
 
+    /**
+     * Filters this instance.
+     *
+     * @return this instance
+     */
     public CompressedXContent filter() {
         return filter;
     }
 
+    /**
+     * Searches the routing.
+     *
+     * @return this instance
+     */
     public String searchRouting() {
         return searchRouting;
     }
 
+    /**
+     * Indexes the routing.
+     *
+     * @return this instance
+     */
     public String indexRouting() {
         return indexRouting;
     }
 
+    /**
+     * Writes the index.
+     *
+     * @return this instance
+     */
     public Boolean writeIndex() {
         return writeIndex;
     }
 
+    /**
+     * Returns the hidden flag.
+     *
+     * @return the hidden flag
+     */
     @Nullable
     public Boolean isHidden() {
         return isHidden;
@@ -186,6 +221,12 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         out.writeOptionalBoolean(isHidden());
     }
 
+    /**
+     * Creates a new AliasMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AliasMetadata(StreamInput in) throws IOException {
         alias = in.readString();
         if (in.readBoolean()) {
@@ -209,6 +250,13 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         isHidden = in.readOptionalBoolean();
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<AliasMetadata> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(AliasMetadata::new, in);
     }
@@ -246,15 +294,32 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
         @Nullable
         private Boolean isHidden;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param alias the alias
+         */
         public Builder(String alias) {
             this.alias = alias;
         }
 
+        /**
+         * Filters this instance.
+         *
+         * @param filter the filter
+         * @return this instance
+         */
         public Builder filter(CompressedXContent filter) {
             this.filter = filter;
             return this;
         }
 
+        /**
+         * Filters this instance.
+         *
+         * @param filter the filter
+         * @return this instance
+         */
         public Builder filter(Map<String, Object> filter) {
             if (filter == null || filter.isEmpty()) {
                 this.filter = null;
@@ -269,36 +334,79 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
             }
         }
 
+        /**
+         * Returns the routing.
+         *
+         * @param routing the routing value
+         * @return the routing
+         */
         public Builder routing(String routing) {
             this.indexRouting = routing;
             this.searchRouting = routing;
             return this;
         }
 
+        /**
+         * Indexes the routing.
+         *
+         * @param indexRouting the index routing
+         * @return this instance
+         */
         public Builder indexRouting(String indexRouting) {
             this.indexRouting = indexRouting;
             return this;
         }
 
+        /**
+         * Searches the routing.
+         *
+         * @param searchRouting the search routing
+         * @return this instance
+         */
         public Builder searchRouting(String searchRouting) {
             this.searchRouting = searchRouting;
             return this;
         }
 
+        /**
+         * Writes the index.
+         *
+         * @param writeIndex the write index
+         * @return this instance
+         */
         public Builder writeIndex(@Nullable Boolean writeIndex) {
             this.writeIndex = writeIndex;
             return this;
         }
 
+        /**
+         * Returns the hidden flag.
+         *
+         * @param isHidden the is hidden
+         * @return the hidden flag
+         */
         public Builder isHidden(@Nullable Boolean isHidden) {
             this.isHidden = isHidden;
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public AliasMetadata build() {
             return new AliasMetadata(alias, filter, indexRouting, searchRouting, writeIndex, isHidden);
         }
 
+        /**
+         * Writes this instance to the given content builder.
+         *
+         * @param aliasMetadata the alias metadata
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @throws IOException if an I/O error occurs
+         */
         public static void toXContent(AliasMetadata aliasMetadata, XContentBuilder builder, ToXContent.Params params) throws IOException {
             builder.startObject(aliasMetadata.alias());
 
@@ -329,6 +437,13 @@ public class AliasMetadata extends AbstractDiffable<AliasMetadata> implements To
             builder.endObject();
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static AliasMetadata fromXContent(XContentParser parser) throws IOException {
             Builder builder = new Builder(parser.currentName());
 

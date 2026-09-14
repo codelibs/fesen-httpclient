@@ -53,11 +53,22 @@ public class NodeHotThreads extends BaseNodeResponse {
         hotThreads = in.readString();
     }
 
+    /**
+     * Creates a new NodeHotThreads.
+     *
+     * @param node the node
+     * @param hotThreads the hot threads
+     */
     public NodeHotThreads(DiscoveryNode node, String hotThreads) {
         super(node);
         this.hotThreads = hotThreads;
     }
 
+    /**
+     * Returns the hot threads.
+     *
+     * @return the hot threads
+     */
     public String getHotThreads() {
         return this.hotThreads;
     }

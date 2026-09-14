@@ -43,8 +43,19 @@ import org.codelibs.fesen.opensearch.search.aggregations.ParsedAggregation;
 public abstract class ParsedSingleValueNumericMetricsAggregation extends ParsedAggregation
     implements
         NumericMetricsAggregation.SingleValue {
+            /**
+             * Creates a new ParsedSingleValueNumericMetricsAggregation.
+             */
+            public ParsedSingleValueNumericMetricsAggregation() {
+            }
 
+    /**
+     * The value.
+     */
     protected double value;
+    /**
+     * The value as string.
+     */
     protected String valueAsString;
 
     @Override
@@ -61,14 +72,30 @@ public abstract class ParsedSingleValueNumericMetricsAggregation extends ParsedA
         return value;
     }
 
+    /**
+     * Sets the value.
+     *
+     * @param value the value
+     */
     protected void setValue(double value) {
         this.value = value;
     }
 
+    /**
+     * Sets the value as string.
+     *
+     * @param valueAsString the value as string
+     */
     protected void setValueAsString(String valueAsString) {
         this.valueAsString = valueAsString;
     }
 
+    /**
+     * Performs the declare single value fields step.
+     *
+     * @param objectParser the object parser
+     * @param defaultNullValue the default null value
+     */
     protected static void declareSingleValueFields(
         ObjectParser<? extends ParsedSingleValueNumericMetricsAggregation, Void> objectParser,
         double defaultNullValue

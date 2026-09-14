@@ -52,8 +52,17 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhrasePrefixQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "match_phrase_prefix";
+    /**
+     * The MAX_EXPANSIONS_FIELD constant.
+     */
     public static final ParseField MAX_EXPANSIONS_FIELD = new ParseField("max_expansions");
+    /**
+     * The ZERO_TERMS_QUERY_FIELD constant.
+     */
     public static final ParseField ZERO_TERMS_QUERY_FIELD = new ParseField("zero_terms_query");
 
     private final String fieldName;
@@ -68,6 +77,12 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
 
     private ZeroTermsQuery zeroTermsQuery = MatchQuery.DEFAULT_ZERO_TERMS_QUERY;
 
+    /**
+     * Creates a new MatchPhrasePrefixQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     */
     public MatchPhrasePrefixQueryBuilder(String fieldName, Object value) {
         if (fieldName == null) {
             throw new IllegalArgumentException("[" + NAME + "] requires fieldName");
@@ -81,6 +96,9 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MatchPhrasePrefixQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -108,7 +126,11 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
         return this.fieldName;
     }
 
-    /** Returns the value used in this query. */
+    /**
+     * Returns the value used in this query.
+     *
+     * @return the value
+     */
     public Object value() {
         return this.value;
     }
@@ -116,18 +138,30 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
     /**
      * Explicitly set the analyzer to use. Defaults to use explicit mapping
      * config for the field, or, if not set, the default search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public MatchPhrasePrefixQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
-    /** Get the analyzer to use, if previously set, otherwise {@code null} */
+    /**
+     * Get the analyzer to use, if previously set, otherwise {@code null}
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return this.analyzer;
     }
 
-    /** Sets a slop factor for phrase queries */
+    /**
+     * Sets a slop factor for phrase queries
+     *
+     * @param slop the slop
+     * @return the slop
+     */
     public MatchPhrasePrefixQueryBuilder slop(int slop) {
         if (slop < 0) {
             throw new IllegalArgumentException("No negative slop allowed.");
@@ -136,13 +170,20 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
         return this;
     }
 
-    /** Get the slop factor for phrase queries. */
+    /**
+     * Get the slop factor for phrase queries.
+     *
+     * @return the slop
+     */
     public int slop() {
         return this.slop;
     }
 
     /**
      * The number of term expansions to use.
+     *
+     * @param maxExpansions the max expansions
+     * @return the max expansions
      */
     public MatchPhrasePrefixQueryBuilder maxExpansions(int maxExpansions) {
         if (maxExpansions < 0) {
@@ -155,6 +196,8 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
     /**
      * Get the (optional) number of term expansions when using fuzzy or prefix
      * type query.
+     *
+     * @return the max expansions
      */
     public int maxExpansions() {
         return this.maxExpansions;
@@ -164,6 +207,9 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
      * Sets query to use in case no query terms are available, e.g. after analysis removed them.
      * Defaults to {@link ZeroTermsQuery#NONE}, but can be set to
      * {@link ZeroTermsQuery#ALL} instead.
+     *
+     * @param zeroTermsQuery the zero terms query
+     * @return the zero terms query
      */
     public MatchPhrasePrefixQueryBuilder zeroTermsQuery(ZeroTermsQuery zeroTermsQuery) {
         if (zeroTermsQuery == null) {
@@ -173,6 +219,11 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
         return this;
     }
 
+    /**
+     * Returns the zero terms query.
+     *
+     * @return the zero terms query
+     */
     public ZeroTermsQuery zeroTermsQuery() {
         return this.zeroTermsQuery;
     }
@@ -214,6 +265,13 @@ public class MatchPhrasePrefixQueryBuilder extends AbstractQueryBuilder<MatchPhr
         return Objects.hash(fieldName, value, analyzer, slop, maxExpansions, zeroTermsQuery);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MatchPhrasePrefixQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object value = null;

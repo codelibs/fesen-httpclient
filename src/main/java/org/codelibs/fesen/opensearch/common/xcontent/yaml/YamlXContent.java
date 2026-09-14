@@ -71,11 +71,20 @@ import tools.jackson.dataformat.yaml.YAMLParser;
  * A YAML based content implementation using Jackson.
  */
 public class YamlXContent implements XContent, XContentConstraints {
+    /**
+     * Returns the content builder.
+     *
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
+     */
     public static XContentBuilder contentBuilder() throws IOException {
         return XContentBuilder.builder(yamlXContent);
     }
 
     static final YAMLFactory yamlFactory;
+    /**
+     * The YAML XContent.
+     */
     public static final YamlXContent yamlXContent;
 
     static {

@@ -24,6 +24,9 @@ import java.util.Objects;
  */
 public class ShardDocSortBuilder extends SortBuilder<ShardDocSortBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "_shard_doc";
 
     // parser for JSON: { "_shard_doc": { "order":"asc" } }
@@ -33,10 +36,18 @@ public class ShardDocSortBuilder extends SortBuilder<ShardDocSortBuilder> {
         PARSER.declareString((b, s) -> b.order(SortOrder.fromString(s)), ORDER_FIELD);
     }
 
+    /**
+     * Creates a new ShardDocSortBuilder.
+     */
     public ShardDocSortBuilder() {
         this.order = SortOrder.ASC; // default to ASC
     }
 
+    /**
+     * Creates a new ShardDocSortBuilder.
+     *
+     * @param other the other instance
+     */
     public ShardDocSortBuilder(ShardDocSortBuilder other) {
         this.order = other.order;
     }
@@ -46,6 +57,14 @@ public class ShardDocSortBuilder extends SortBuilder<ShardDocSortBuilder> {
         order.writeTo(out);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param fieldName the field name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ShardDocSortBuilder fromXContent(XContentParser parser, String fieldName) throws IOException {
         XContentParser.Token token = parser.currentToken();
         if (token == XContentParser.Token.FIELD_NAME) {

@@ -40,15 +40,25 @@ import java.io.IOException;
 /**
  * Base request for cluster-manager based read operations that allows to read the cluster state from the local node if needed
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public abstract class ClusterManagerNodeReadRequest<Request extends ClusterManagerNodeReadRequest<Request>> extends
     ClusterManagerNodeRequest<Request> {
 
+    /**
+     * The local.
+     */
     protected boolean local = false;
 
+    /**
+     * The should cancel on timeout.
+     */
     protected boolean shouldCancelOnTimeout = false;
 
+    /**
+     * Creates a new ClusterManagerNodeReadRequest.
+     */
     protected ClusterManagerNodeReadRequest() {}
 
     @Override

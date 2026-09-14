@@ -48,12 +48,20 @@ public class NodesStatsRequestBuilder extends NodesOperationRequestBuilder<
     NodesStatsResponse,
     NodesStatsRequestBuilder> {
 
+    /**
+     * Creates a new NodesStatsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public NodesStatsRequestBuilder(OpenSearchClient client, NodesStatsAction action) {
         super(client, action, new NodesStatsRequest());
     }
 
     /**
      * Sets all the request flags.
+     *
+     * @return the all
      */
     public NodesStatsRequestBuilder all() {
         request.all();

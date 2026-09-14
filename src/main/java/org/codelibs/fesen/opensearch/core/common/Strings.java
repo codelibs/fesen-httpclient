@@ -44,8 +44,17 @@ import static org.codelibs.fesen.opensearch.common.util.set.Sets.newHashSet;
  * @opensearch.internal
  */
 public class Strings {
+    /**
+     * The UNKNOWN_UUID_VALUE constant.
+     */
     public static final String UNKNOWN_UUID_VALUE = "_na_";
+    /**
+     * The EMPTY_ARRAY constant.
+     */
     public static final String[] EMPTY_ARRAY = new String[0];
+    /**
+     * The INVALID_FILENAME_CHARS constant.
+     */
     public static final Set<Character> INVALID_FILENAME_CHARS = unmodifiableSet(
         newHashSet('\\', '/', '*', '?', '"', '<', '>', '|', ' ', ',')
     );
@@ -155,6 +164,7 @@ public class Strings {
      * @param str       the original string (or StringBuilder)
      * @param index     the index in the original string to start matching against
      * @param substring the substring to match at the given index
+     * @return the substring match
      */
     public static boolean substringMatch(CharSequence str, int index, CharSequence substring) {
         for (int j = 0; j < substring.length(); j++) {
@@ -392,6 +402,15 @@ public class Strings {
         return sb.toString();
     }
 
+    /**
+     * Performs the collection to delimited string step.
+     *
+     * @param coll the coll
+     * @param delim the delim
+     * @param prefix the prefix
+     * @param suffix the suffix
+     * @param sb the sb
+     */
     public static void collectionToDelimitedString(Iterable<?> coll, String delim, String prefix, String suffix, StringBuilder sb) {
         Iterator<?> it = coll.iterator();
         while (it.hasNext()) {
@@ -439,6 +458,13 @@ public class Strings {
         return sb.toString();
     }
 
+    /**
+     * Performs the array to delimited string step.
+     *
+     * @param arr the arr
+     * @param delim the delim
+     * @param sb the sb
+     */
     public static void arrayToDelimitedString(Object[] arr, String delim, StringBuilder sb) {
         if (isEmpty(arr)) {
             return;
@@ -453,6 +479,10 @@ public class Strings {
 
     /**
      * Format the double value with a single decimal points, trimming trailing '.0'.
+     *
+     * @param value the value
+     * @param suffix the suffix
+     * @return the format1 decimals
      */
     public static String format1Decimals(double value, String suffix) {
         String p = String.valueOf(value);
@@ -488,6 +518,10 @@ public class Strings {
      * Return a {@link String} that is the json representation of the provided {@link ToXContent}.
      * Wraps the output into an anonymous object if needed. The content is not pretty-printed
      * nor human readable.
+     *
+     * @param mediaType the media type
+     * @param toXContent the to XContent
+     * @return a string representation of this instance
      */
     public static String toString(MediaType mediaType, ToXContent toXContent) {
         return toString(mediaType, toXContent, false, false);
@@ -498,6 +532,12 @@ public class Strings {
      * Wraps the output into an anonymous object if needed. Allows to control whether the outputted
      * json needs to be pretty printed and human readable.
      *
+     * @param mediaType the media type
+     *
+     * @param toXContent the to XContent
+     * @param pretty the pretty
+     * @param human the human
+     * @return a string representation of this instance
      */
     public static String toString(MediaType mediaType, ToXContent toXContent, boolean pretty, boolean human) {
         return toString(mediaType, toXContent, ToXContent.EMPTY_PARAMS, pretty, human);
@@ -545,10 +585,22 @@ public class Strings {
         return builder;
     }
 
+    /**
+     * Returns the null or empty flag.
+     *
+     * @param s the s
+     * @return the null or empty flag
+     */
     public static boolean isNullOrEmpty(@Nullable String s) {
         return s == null || s.isEmpty();
     }
 
+    /**
+     * Returns this instance as lowercase ASCII.
+     *
+     * @param in the input to read from
+     * @return the lowercase ASCII
+     */
     public static String toLowercaseAscii(String in) {
         StringBuilder out = new StringBuilder();
         Iterator<Integer> iter = in.codePoints().iterator();

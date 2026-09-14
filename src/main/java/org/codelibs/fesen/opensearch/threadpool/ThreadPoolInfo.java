@@ -53,10 +53,21 @@ public class ThreadPoolInfo implements ReportingService.Info, Iterable<ThreadPoo
 
     private final List<ThreadPool.Info> infos;
 
+    /**
+     * Creates a new ThreadPoolInfo.
+     *
+     * @param infos the infos
+     */
     public ThreadPoolInfo(List<ThreadPool.Info> infos) {
         this.infos = Collections.unmodifiableList(infos);
     }
 
+    /**
+     * Creates a new ThreadPoolInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ThreadPoolInfo(StreamInput in) throws IOException {
         this.infos = Collections.unmodifiableList(in.readList(ThreadPool.Info::new));
     }

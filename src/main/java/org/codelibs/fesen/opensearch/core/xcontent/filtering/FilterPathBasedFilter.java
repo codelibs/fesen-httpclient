@@ -63,6 +63,12 @@ public class FilterPathBasedFilter extends TokenFilter {
 
     private final boolean inclusive;
 
+    /**
+     * Creates a new FilterPathBasedFilter.
+     *
+     * @param filters the filters
+     * @param inclusive the inclusive
+     */
     public FilterPathBasedFilter(FilterPath[] filters, boolean inclusive) {
         if (filters == null || filters.length == 0) {
             throw new IllegalArgumentException("filters cannot be null or empty");
@@ -71,6 +77,12 @@ public class FilterPathBasedFilter extends TokenFilter {
         this.filters = filters;
     }
 
+    /**
+     * Creates a new FilterPathBasedFilter.
+     *
+     * @param filters the filters
+     * @param inclusive the inclusive
+     */
     public FilterPathBasedFilter(Set<String> filters, boolean inclusive) {
         this(FilterPath.compile(filters), inclusive);
     }

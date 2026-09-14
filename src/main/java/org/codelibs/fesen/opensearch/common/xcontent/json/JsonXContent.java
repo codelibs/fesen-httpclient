@@ -64,12 +64,21 @@ import tools.jackson.core.json.JsonWriteFeature;
  * A JSON based content implementation using Jackson.
  */
 public class JsonXContent implements XContent, XContentConstraints {
+    /**
+     * Returns the content builder.
+     *
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
+     */
     public static XContentBuilder contentBuilder() throws IOException {
         return XContentBuilder.builder(jsonXContent);
     }
 
     private static final JsonFactory jsonFactory;
 
+    /**
+     * The JSON XContent.
+     */
     public static final JsonXContent jsonXContent;
 
     static {

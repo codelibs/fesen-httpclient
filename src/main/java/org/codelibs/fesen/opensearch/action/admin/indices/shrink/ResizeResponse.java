@@ -62,10 +62,23 @@ public final class ResizeResponse extends CreateIndexResponse {
         super(in);
     }
 
+    /**
+     * Creates a new ResizeResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     * @param index the index
+     */
     public ResizeResponse(boolean acknowledged, boolean shardsAcknowledged, String index) {
         super(acknowledged, shardsAcknowledged, index);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ResizeResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

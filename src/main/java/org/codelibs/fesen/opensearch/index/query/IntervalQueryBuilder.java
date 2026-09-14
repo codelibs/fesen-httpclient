@@ -49,26 +49,51 @@ import java.util.Objects;
  */
 public class IntervalQueryBuilder extends AbstractQueryBuilder<IntervalQueryBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "intervals";
 
     private final String field;
     private final IntervalsSourceProvider sourceProvider;
 
+    /**
+     * Creates a new IntervalQueryBuilder.
+     *
+     * @param field the field
+     * @param sourceProvider the source provider
+     */
     public IntervalQueryBuilder(String field, IntervalsSourceProvider sourceProvider) {
         this.field = field;
         this.sourceProvider = sourceProvider;
     }
 
+    /**
+     * Creates a new IntervalQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IntervalQueryBuilder(StreamInput in) throws IOException {
         super(in);
         this.field = in.readString();
         this.sourceProvider = in.readNamedWriteable(IntervalsSourceProvider.class);
     }
 
+    /**
+     * Returns the field.
+     *
+     * @return the field
+     */
     public String getField() {
         return field;
     }
 
+    /**
+     * Returns the source provider.
+     *
+     * @return the source provider
+     */
     public IntervalsSourceProvider getSourceProvider() {
         return sourceProvider;
     }
@@ -90,6 +115,13 @@ public class IntervalQueryBuilder extends AbstractQueryBuilder<IntervalQueryBuil
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static IntervalQueryBuilder fromXContent(XContentParser parser) throws IOException {
         if (parser.nextToken() != XContentParser.Token.FIELD_NAME) {
             throw new ParsingException(parser.getTokenLocation(), "Expected [FIELD_NAME] but got [" + parser.currentToken() + "]");

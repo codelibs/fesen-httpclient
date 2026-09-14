@@ -40,81 +40,115 @@ public interface ExtendedStats extends Stats {
 
     /**
      * The sum of the squares of the collected values.
+     *
+     * @return the sum of squares
      */
     double getSumOfSquares();
 
     /**
      * The population variance of the collected values.
+     *
+     * @return the variance
      */
     double getVariance();
 
     /**
      * The population variance of the collected values.
+     *
+     * @return the variance population
      */
     double getVariancePopulation();
 
     /**
      * The sampling variance of the collected values.
+     *
+     * @return the variance sampling
      */
     double getVarianceSampling();
 
     /**
      * The population standard deviation of the collected values.
+     *
+     * @return the std deviation
      */
     double getStdDeviation();
 
     /**
      * The population standard deviation of the collected values.
+     *
+     * @return the std deviation population
      */
     double getStdDeviationPopulation();
 
     /**
      * The sampling standard deviation of the collected values.
+     *
+     * @return the std deviation sampling
      */
     double getStdDeviationSampling();
 
     /**
      * The upper or lower bounds of the stdDeviation
+     *
+     * @param bound the bound
+     * @return the std deviation bound
      */
     double getStdDeviationBound(Bounds bound);
 
     /**
      * The population standard deviation of the collected values as a String.
+     *
+     * @return the std deviation as string
      */
     String getStdDeviationAsString();
 
     /**
      * The population standard deviation of the collected values as a String.
+     *
+     * @return the std deviation population as string
      */
     String getStdDeviationPopulationAsString();
 
     /**
      * The sampling standard deviation of the collected values as a String.
+     *
+     * @return the std deviation sampling as string
      */
     String getStdDeviationSamplingAsString();
 
     /**
      * The upper or lower bounds of stdDev of the collected values as a String.
+     *
+     * @param bound the bound
+     * @return the std deviation bound as string
      */
     String getStdDeviationBoundAsString(Bounds bound);
 
     /**
      * The sum of the squares of the collected values as a String.
+     *
+     * @return the sum of squares as string
      */
     String getSumOfSquaresAsString();
 
     /**
      * The population variance of the collected values as a String.
+     *
+     * @return the variance as string
      */
     String getVarianceAsString();
 
     /**
      * The population variance of the collected values as a String.
+     *
+     * @return the variance population as string
      */
     String getVariancePopulationAsString();
 
     /**
      * The sampling variance of the collected values as a String.
+     *
+     * @return the variance sampling as string
      */
     String getVarianceSamplingAsString();
 
@@ -124,11 +158,29 @@ public interface ExtendedStats extends Stats {
      * @opensearch.internal
      */
     enum Bounds {
+        /**
+         * The UPPER value.
+         */
         UPPER,
+        /**
+         * The LOWER value.
+         */
         LOWER,
+        /**
+         * The UPPER_POPULATION value.
+         */
         UPPER_POPULATION,
+        /**
+         * The LOWER_POPULATION value.
+         */
         LOWER_POPULATION,
+        /**
+         * The UPPER_SAMPLING value.
+         */
         UPPER_SAMPLING,
+        /**
+         * The lower sampling.
+         */
         LOWER_SAMPLING
     }
 

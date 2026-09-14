@@ -55,6 +55,15 @@ public class ProcessStats implements Writeable, ToXContentFragment {
     private final Cpu cpu;
     private final Mem mem;
 
+    /**
+     * Creates a new ProcessStats.
+     *
+     * @param timestamp the timestamp
+     * @param openFileDescriptors the open file descriptors
+     * @param maxFileDescriptors the max file descriptors
+     * @param cpu the CPU
+     * @param mem the mem
+     */
     public ProcessStats(long timestamp, long openFileDescriptors, long maxFileDescriptors, Cpu cpu, Mem mem) {
         this.timestamp = timestamp;
         this.openFileDescriptors = openFileDescriptors;
@@ -63,6 +72,12 @@ public class ProcessStats implements Writeable, ToXContentFragment {
         this.mem = mem;
     }
 
+    /**
+     * Creates a new ProcessStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ProcessStats(StreamInput in) throws IOException {
         timestamp = in.readVLong();
         openFileDescriptors = in.readLong();
@@ -80,10 +95,20 @@ public class ProcessStats implements Writeable, ToXContentFragment {
         out.writeOptionalWriteable(mem);
     }
 
+    /**
+     * Returns the open file descriptors.
+     *
+     * @return the open file descriptors
+     */
     public long getOpenFileDescriptors() {
         return openFileDescriptors;
     }
 
+    /**
+     * Returns the CPU.
+     *
+     * @return the CPU
+     */
     public Cpu getCpu() {
         return cpu;
     }
@@ -134,10 +159,21 @@ public class ProcessStats implements Writeable, ToXContentFragment {
 
         private final long totalVirtual;
 
+        /**
+         * Creates a new Mem.
+         *
+         * @param totalVirtual the total virtual
+         */
         public Mem(long totalVirtual) {
             this.totalVirtual = totalVirtual;
         }
 
+        /**
+         * Creates a new Mem by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Mem(StreamInput in) throws IOException {
             totalVirtual = in.readLong();
         }
@@ -158,11 +194,23 @@ public class ProcessStats implements Writeable, ToXContentFragment {
         private final short percent;
         private final long total;
 
+        /**
+         * Creates a new Cpu.
+         *
+         * @param percent the percent
+         * @param total the total
+         */
         public Cpu(short percent, long total) {
             this.percent = percent;
             this.total = total;
         }
 
+        /**
+         * Creates a new Cpu by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Cpu(StreamInput in) throws IOException {
             percent = in.readShort();
             total = in.readLong();
@@ -178,6 +226,8 @@ public class ProcessStats implements Writeable, ToXContentFragment {
          * Get the Process cpu usage.
          * <p>
          * Supported Platforms: All.
+         *
+         * @return the percent
          */
         public short getPercent() {
             return percent;

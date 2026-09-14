@@ -60,9 +60,20 @@ public interface CompositeAggregation extends MultiBucketsAggregation {
     /**
      * Returns the last key in this aggregation. It can be used to retrieve the buckets that are after these values.
      * See {@link CompositeAggregationBuilder#aggregateAfter}.
+     *
+     * @return the after key
      */
     Map<String, Object> afterKey();
 
+    /**
+     * Buckets the to XContent.
+     *
+     * @param bucket the bucket
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     static XContentBuilder bucketToXContent(CompositeAggregation.Bucket bucket, XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         buildCompositeMap(CommonFields.KEY.getPreferredName(), bucket.getKey(), builder);
@@ -72,6 +83,15 @@ public interface CompositeAggregation extends MultiBucketsAggregation {
         return builder;
     }
 
+    /**
+     * Returns this instance as XContent fragment.
+     *
+     * @param aggregation the aggregation
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent fragment
+     * @throws IOException if an I/O error occurs
+     */
     static XContentBuilder toXContentFragment(CompositeAggregation aggregation, XContentBuilder builder, Params params) throws IOException {
         if (aggregation.afterKey() != null) {
             buildCompositeMap("after_key", aggregation.afterKey(), builder);
@@ -84,6 +104,14 @@ public interface CompositeAggregation extends MultiBucketsAggregation {
         return builder;
     }
 
+    /**
+     * Builds the composite map.
+     *
+     * @param fieldName the field name
+     * @param composite the composite
+     * @param builder the content builder
+     * @throws IOException if an I/O error occurs
+     */
     static void buildCompositeMap(String fieldName, Map<String, Object> composite, XContentBuilder builder) throws IOException {
         builder.startObject(fieldName);
         for (Map.Entry<String, Object> entry : composite.entrySet()) {

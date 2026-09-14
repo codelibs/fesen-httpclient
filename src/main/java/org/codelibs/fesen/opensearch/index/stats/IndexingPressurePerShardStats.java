@@ -72,6 +72,12 @@ public class IndexingPressurePerShardStats implements Writeable, ToXContentFragm
 
     private final boolean shardIndexingPressureEnforced;
 
+    /**
+     * Creates a new IndexingPressurePerShardStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexingPressurePerShardStats(StreamInput in) throws IOException {
         shardId = in.readString();
         shardIndexingPressureEnforced = in.readBoolean();

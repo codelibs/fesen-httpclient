@@ -27,6 +27,14 @@ public class ResumeIngestionResponse extends IngestionUpdateStateResponse {
         super(in);
     }
 
+    /**
+     * Creates a new ResumeIngestionResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     * @param shardFailuresList the shard failures list
+     * @param errorMessage the error message
+     */
     public ResumeIngestionResponse(
         final boolean acknowledged,
         final boolean shardsAcknowledged,

@@ -52,10 +52,16 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<CumulativeSumPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cumulative_sum";
 
     private String format;
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<CumulativeSumPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
         NAME,
@@ -68,6 +74,12 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
         PARSER.declareString(CumulativeSumPipelineAggregationBuilder::format, FORMAT);
     };
 
+    /**
+     * Creates a new CumulativeSumPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public CumulativeSumPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -83,6 +95,9 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
 
     /**
      * Sets the format to use on the output of this aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     public CumulativeSumPipelineAggregationBuilder format(String format) {
         if (format == null) {
@@ -94,11 +109,18 @@ public class CumulativeSumPipelineAggregationBuilder extends AbstractPipelineAgg
 
     /**
      * Gets the format to use on the output of this aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
     }
 
+    /**
+     * Returns the formatter.
+     *
+     * @return the formatter
+     */
     protected DocValueFormat formatter() {
         if (format != null) {
             return new DocValueFormat.Decimal(format);

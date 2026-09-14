@@ -29,6 +29,13 @@ public class SearchBackpressureStats implements ToXContentFragment, Writeable {
     @Nullable
     private final SearchTaskStats searchTaskStats;
 
+    /**
+     * Creates a new SearchBackpressureStats.
+     *
+     * @param searchTaskStats the search task stats
+     * @param searchShardTaskStats the search shard task stats
+     * @param mode the mode
+     */
     public SearchBackpressureStats(
         SearchTaskStats searchTaskStats,
         SearchShardTaskStats searchShardTaskStats,
@@ -39,6 +46,12 @@ public class SearchBackpressureStats implements ToXContentFragment, Writeable {
         this.searchTaskStats = searchTaskStats;
     }
 
+    /**
+     * Creates a new SearchBackpressureStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchBackpressureStats(StreamInput in) throws IOException {
         searchShardTaskStats = new SearchShardTaskStats(in);
         mode = SearchBackpressureMode.fromName(in.readString());

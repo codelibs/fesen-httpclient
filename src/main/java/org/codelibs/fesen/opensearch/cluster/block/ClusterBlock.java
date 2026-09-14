@@ -64,6 +64,12 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
     private final boolean allowReleaseResources;
     private final RestStatus status;
 
+    /**
+     * Creates a new ClusterBlock by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterBlock(StreamInput in) throws IOException {
         id = in.readVInt();
         uuid = in.readOptionalString();
@@ -75,6 +81,17 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
         allowReleaseResources = in.readBoolean();
     }
 
+    /**
+     * Creates a new ClusterBlock.
+     *
+     * @param id the identifier
+     * @param description the description
+     * @param retryable the retryable
+     * @param disableStatePersistence the disable state persistence
+     * @param allowReleaseResources the allow release resources
+     * @param status the status
+     * @param levels the levels
+     */
     public ClusterBlock(
         int id,
         String description,
@@ -87,6 +104,18 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
         this(id, null, description, retryable, disableStatePersistence, allowReleaseResources, status, levels);
     }
 
+    /**
+     * Creates a new ClusterBlock.
+     *
+     * @param id the identifier
+     * @param uuid the UUID
+     * @param description the description
+     * @param retryable the retryable
+     * @param disableStatePersistence the disable state persistence
+     * @param allowReleaseResources the allow release resources
+     * @param status the status
+     * @param levels the levels
+     */
     public ClusterBlock(
         int id,
         String uuid,
@@ -107,18 +136,39 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
         this.allowReleaseResources = allowReleaseResources;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public int id() {
         return this.id;
     }
 
+    /**
+     * Returns the description.
+     *
+     * @return the description
+     */
     public String description() {
         return this.description;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public RestStatus status() {
         return this.status;
     }
 
+    /**
+     * Returns the contains.
+     *
+     * @param level the level
+     * @return the contains
+     */
     public boolean contains(ClusterBlockLevel level) {
         for (ClusterBlockLevel testLevel : levels) {
             if (testLevel == level) {
@@ -130,6 +180,8 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
 
     /**
      * Should operations get into retry state if this block is present.
+     *
+     * @return the retryable
      */
     public boolean retryable() {
         return this.retryable;
@@ -205,6 +257,11 @@ public class ClusterBlock implements Writeable, ToXContentFragment, Comparable<C
         return Integer.compare(block.id(), this.id());
     }
 
+    /**
+     * Returns the allow release resources flag.
+     *
+     * @return the allow release resources flag
+     */
     public boolean isAllowReleaseResources() {
         return allowReleaseResources;
     }

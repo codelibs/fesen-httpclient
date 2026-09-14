@@ -42,6 +42,11 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContent;
  */
 public class NotXContentException extends RuntimeException {
 
+    /**
+     * Creates a new NotXContentException.
+     *
+     * @param message the message
+     */
     public NotXContentException(String message) {
         super(message);
     }

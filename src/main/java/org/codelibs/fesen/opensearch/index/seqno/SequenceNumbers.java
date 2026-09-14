@@ -42,8 +42,19 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class SequenceNumbers {
+    /**
+     * Creates a new SequenceNumbers.
+     */
+    public SequenceNumbers() {
+    }
 
+    /**
+     * The LOCAL_CHECKPOINT_KEY constant.
+     */
     public static final String LOCAL_CHECKPOINT_KEY = "local_checkpoint";
+    /**
+     * The MAX_SEQ_NO constant.
+     */
     public static final String MAX_SEQ_NO = "max_seq_no";
     /**
      * Represents an unassigned sequence number (e.g., can be used on primary operations before they are executed).
@@ -138,9 +149,21 @@ public class SequenceNumbers {
      */
     @PublicApi(since = "1.0.0")
     public static final class CommitInfo {
+        /**
+         * The max seq no.
+         */
         public final long maxSeqNo;
+        /**
+         * The local checkpoint.
+         */
         public final long localCheckpoint;
 
+        /**
+         * Creates a new CommitInfo.
+         *
+         * @param maxSeqNo the max seq no
+         * @param localCheckpoint the local checkpoint
+         */
         public CommitInfo(long maxSeqNo, long localCheckpoint) {
             this.maxSeqNo = maxSeqNo;
             this.localCheckpoint = localCheckpoint;

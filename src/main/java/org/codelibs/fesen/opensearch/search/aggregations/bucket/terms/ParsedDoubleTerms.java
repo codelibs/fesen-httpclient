@@ -44,6 +44,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedDoubleTerms extends ParsedTerms {
+    /**
+     * Creates a new ParsedDoubleTerms.
+     */
+    public ParsedDoubleTerms() {
+    }
 
     @Override
     public String getType() {
@@ -59,6 +64,14 @@ public class ParsedDoubleTerms extends ParsedTerms {
         declareParsedTermsFields(PARSER, ParsedBucket::fromXContent);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedDoubleTerms fromXContent(XContentParser parser, String name) throws IOException {
         ParsedDoubleTerms aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -71,6 +84,11 @@ public class ParsedDoubleTerms extends ParsedTerms {
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedTerms.ParsedBucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private Double key;
 

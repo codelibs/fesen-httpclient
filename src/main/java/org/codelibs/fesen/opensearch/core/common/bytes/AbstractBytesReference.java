@@ -48,6 +48,11 @@ import java.util.function.ToIntBiFunction;
  * @opensearch.internal
  */
 public abstract class AbstractBytesReference implements BytesReference {
+    /**
+     * Creates a new AbstractBytesReference.
+     */
+    public AbstractBytesReference() {
+    }
 
     /** we cache the hash of this reference since it can be quite costly to re-calculated it */
     private Integer hash = null;
@@ -78,6 +83,11 @@ public abstract class AbstractBytesReference implements BytesReference {
         }
     }
 
+    /**
+     * Returns the max UTF 16 length.
+     *
+     * @return the max UTF 16 length
+     */
     protected int getMaxUTF16Length() {
         return MAX_UTF16_LENGTH;
     }

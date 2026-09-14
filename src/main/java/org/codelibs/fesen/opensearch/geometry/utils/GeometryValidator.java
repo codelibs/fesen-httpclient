@@ -41,6 +41,8 @@ public interface GeometryValidator {
 
     /**
      * Validates the geometry and throws IllegalArgumentException if the geometry is not valid
+     *
+     * @param geometry the geometry
      */
     void validate(Geometry geometry);
 

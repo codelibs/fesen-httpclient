@@ -94,10 +94,21 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
     private DateIntervalWrapper dateHistogramInterval = new DateIntervalWrapper();
     private long offset = 0;
 
+    /**
+     * Creates a new DateHistogramValuesSourceBuilder.
+     *
+     * @param name the name
+     */
     public DateHistogramValuesSourceBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new DateHistogramValuesSourceBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected DateHistogramValuesSourceBuilder(StreamInput in) throws IOException {
         super(in);
         dateHistogramInterval = new DateIntervalWrapper(in);
@@ -207,7 +218,10 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
 
     /** Return the interval as a date time unit if applicable, regardless of how it was configured. If this returns
      *  {@code null} then it means that the interval is expressed as a fixed
-     *  {@link TimeValue} and may be accessed via {@link #getIntervalAsFixed()} ()}. */
+      * {@link TimeValue} and may be accessed via {@link #getIntervalAsFixed()} ()}.
+     *
+     * @return the interval as calendar
+      */
     public DateHistogramInterval getIntervalAsCalendar() {
         return dateHistogramInterval.getAsCalendarInterval();
     }
@@ -215,6 +229,8 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
     /**
      * Get the interval as a {@link TimeValue}, regardless of how it was configured. Returns null if
      * the interval cannot be parsed as a fixed time.
+     *
+     * @return the interval as fixed
      */
     public DateHistogramInterval getIntervalAsFixed() {
         return dateHistogramInterval.getAsFixedInterval();
@@ -222,6 +238,9 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
 
     /**
      * Sets the time zone to use for this aggregation
+     *
+     * @param timeZone the time zone
+     * @return the time zone
      */
     public DateHistogramValuesSourceBuilder timeZone(ZoneId timeZone) {
         if (timeZone == null) {
@@ -241,6 +260,8 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
 
     /**
      * Get the offset to use when rounding, which is a number of milliseconds.
+     *
+     * @return the offset
      */
     public long offset() {
         return offset;
@@ -248,6 +269,7 @@ public class DateHistogramValuesSourceBuilder extends CompositeValuesSourceBuild
 
     /**
      * Set the offset on this builder, which is a number of milliseconds.
+     * @param offset the offset
      * @return this for chaining
      */
     public DateHistogramValuesSourceBuilder offset(long offset) {

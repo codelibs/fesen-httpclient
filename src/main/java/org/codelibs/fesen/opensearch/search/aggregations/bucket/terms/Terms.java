@@ -50,8 +50,18 @@ public interface Terms extends MultiBucketsAggregation {
      */
     interface Bucket extends MultiBucketsAggregation.Bucket {
 
+        /**
+         * Returns the key as number.
+         *
+         * @return the key as number
+         */
         Number getKeyAsNumber();
 
+        /**
+         * Returns the doc count error.
+         *
+         * @return the doc count error
+         */
         long getDocCountError();
     }
 
@@ -63,17 +73,24 @@ public interface Terms extends MultiBucketsAggregation {
 
     /**
      * Get the bucket for the given term, or null if there is no such bucket.
+     *
+     * @param term the term
+     * @return the bucket by key
      */
     Bucket getBucketByKey(String term);
 
     /**
      * Get an upper bound of the error on document counts in this aggregation.
+     *
+     * @return the doc count error
      */
     long getDocCountError();
 
     /**
      * Return the sum of the document counts of all buckets that did not make
      * it to the top buckets.
+     *
+     * @return the sum of other doc counts
      */
     long getSumOfOtherDocCounts();
 }

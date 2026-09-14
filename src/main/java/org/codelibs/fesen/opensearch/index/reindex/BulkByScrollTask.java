@@ -91,6 +91,16 @@ public class BulkByScrollTask extends CancellableTask {
     private volatile LeaderBulkByScrollTaskState leaderState;
     private volatile WorkerBulkByScrollTaskState workerState;
 
+    /**
+     * Creates a new BulkByScrollTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     */
     public BulkByScrollTask(long id, String type, String action, String description, TaskId parentTaskId, Map<String, String> headers) {
         super(id, type, action, description, parentTaskId, headers);
     }
@@ -114,6 +124,8 @@ public class BulkByScrollTask extends CancellableTask {
 
     /**
      * Returns true if this task is a leader for other slice subtasks
+     *
+     * @return the leader flag
      */
     public boolean isLeader() {
         return leaderState != null;
@@ -121,6 +133,8 @@ public class BulkByScrollTask extends CancellableTask {
 
     /**
      * Returns true if this task is a worker task that performs search requests. False otherwise
+     *
+     * @return the worker flag
      */
     public boolean isWorker() {
         return workerState != null;
@@ -152,6 +166,12 @@ public class BulkByScrollTask extends CancellableTask {
      * @opensearch.internal
      */
     public static class StatusBuilder {
+        /**
+         * Creates a new StatusBuilder.
+         */
+        public StatusBuilder() {
+        }
+
         private Integer sliceId = null;
         private Long total = null;
         private long updated = 0; // Not present during deleteByQuery
@@ -168,38 +188,83 @@ public class BulkByScrollTask extends CancellableTask {
         private TimeValue throttledUntil = null;
         private List<StatusOrException> sliceStatuses = new ArrayList<>();
 
+        /**
+         * Sets the slice identifier.
+         *
+         * @param sliceId the slice identifier
+         */
         public void setSliceId(Integer sliceId) {
             this.sliceId = sliceId;
         }
 
+        /**
+         * Sets the total.
+         *
+         * @param total the total
+         */
         public void setTotal(Long total) {
             this.total = total;
         }
 
+        /**
+         * Sets the updated.
+         *
+         * @param updated the updated
+         */
         public void setUpdated(Long updated) {
             this.updated = updated;
         }
 
+        /**
+         * Sets the created.
+         *
+         * @param created the created
+         */
         public void setCreated(Long created) {
             this.created = created;
         }
 
+        /**
+         * Sets the deleted.
+         *
+         * @param deleted the deleted
+         */
         public void setDeleted(Long deleted) {
             this.deleted = deleted;
         }
 
+        /**
+         * Sets the batches.
+         *
+         * @param batches the batches
+         */
         public void setBatches(Integer batches) {
             this.batches = batches;
         }
 
+        /**
+         * Sets the version conflicts.
+         *
+         * @param versionConflicts the version conflicts
+         */
         public void setVersionConflicts(Long versionConflicts) {
             this.versionConflicts = versionConflicts;
         }
 
+        /**
+         * Sets the noops.
+         *
+         * @param noops the noops
+         */
         public void setNoops(Long noops) {
             this.noops = noops;
         }
 
+        /**
+         * Sets the retries.
+         *
+         * @param retries the retries
+         */
         public void setRetries(Tuple<Long, Long> retries) {
             if (retries != null) {
                 setBulkRetries(retries.v1());
@@ -207,20 +272,40 @@ public class BulkByScrollTask extends CancellableTask {
             }
         }
 
+        /**
+         * Sets the bulk retries.
+         *
+         * @param bulkRetries the bulk retries
+         */
         public void setBulkRetries(Long bulkRetries) {
             this.bulkRetries = bulkRetries;
         }
 
+        /**
+         * Sets the search retries.
+         *
+         * @param searchRetries the search retries
+         */
         public void setSearchRetries(Long searchRetries) {
             this.searchRetries = searchRetries;
         }
 
+        /**
+         * Sets the throttled.
+         *
+         * @param throttled the throttled
+         */
         public void setThrottled(Long throttled) {
             if (throttled != null) {
                 this.throttled = new TimeValue(throttled, TimeUnit.MILLISECONDS);
             }
         }
 
+        /**
+         * Sets the requests per second.
+         *
+         * @param requestsPerSecond the requests per second
+         */
         public void setRequestsPerSecond(Float requestsPerSecond) {
             if (requestsPerSecond != null) {
                 requestsPerSecond = requestsPerSecond == -1 ? Float.POSITIVE_INFINITY : requestsPerSecond;
@@ -228,26 +313,51 @@ public class BulkByScrollTask extends CancellableTask {
             }
         }
 
+        /**
+         * Sets the reason cancelled.
+         *
+         * @param reasonCancelled the reason cancelled
+         */
         public void setReasonCancelled(String reasonCancelled) {
             this.reasonCancelled = reasonCancelled;
         }
 
+        /**
+         * Sets the throttled until.
+         *
+         * @param throttledUntil the throttled until
+         */
         public void setThrottledUntil(Long throttledUntil) {
             if (throttledUntil != null) {
                 this.throttledUntil = new TimeValue(throttledUntil, TimeUnit.MILLISECONDS);
             }
         }
 
+        /**
+         * Sets the slice statuses.
+         *
+         * @param sliceStatuses the slice statuses
+         */
         public void setSliceStatuses(List<StatusOrException> sliceStatuses) {
             if (sliceStatuses != null) {
                 this.sliceStatuses.addAll(sliceStatuses);
             }
         }
 
+        /**
+         * Adds the to slice statuses.
+         *
+         * @param statusOrException the status or exception
+         */
         public void addToSliceStatuses(StatusOrException statusOrException) {
             this.sliceStatuses.add(statusOrException);
         }
 
+        /**
+         * Builds the status.
+         *
+         * @return the new status
+         */
         public Status buildStatus() {
             if (sliceStatuses.isEmpty()) {
                 try {
@@ -287,6 +397,9 @@ public class BulkByScrollTask extends CancellableTask {
      * @opensearch.internal
      */
     public static class Status implements Task.Status, SuccessfullyProcessed {
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "bulk-by-scroll";
 
         /**
@@ -301,25 +414,82 @@ public class BulkByScrollTask extends CancellableTask {
          */
         public static final String INCLUDE_UPDATED = "include_updated";
 
+        /**
+         * The SLICE_ID_FIELD constant.
+         */
         public static final String SLICE_ID_FIELD = "slice_id";
+        /**
+         * The TOTAL_FIELD constant.
+         */
         public static final String TOTAL_FIELD = "total";
+        /**
+         * The UPDATED_FIELD constant.
+         */
         public static final String UPDATED_FIELD = "updated";
+        /**
+         * The CREATED_FIELD constant.
+         */
         public static final String CREATED_FIELD = "created";
+        /**
+         * The DELETED_FIELD constant.
+         */
         public static final String DELETED_FIELD = "deleted";
+        /**
+         * The BATCHES_FIELD constant.
+         */
         public static final String BATCHES_FIELD = "batches";
+        /**
+         * The VERSION_CONFLICTS_FIELD constant.
+         */
         public static final String VERSION_CONFLICTS_FIELD = "version_conflicts";
+        /**
+         * The NOOPS_FIELD constant.
+         */
         public static final String NOOPS_FIELD = "noops";
+        /**
+         * The RETRIES_FIELD constant.
+         */
         public static final String RETRIES_FIELD = "retries";
+        /**
+         * The RETRIES_BULK_FIELD constant.
+         */
         public static final String RETRIES_BULK_FIELD = "bulk";
+        /**
+         * The RETRIES_SEARCH_FIELD constant.
+         */
         public static final String RETRIES_SEARCH_FIELD = "search";
+        /**
+         * The THROTTLED_RAW_FIELD constant.
+         */
         public static final String THROTTLED_RAW_FIELD = "throttled_millis";
+        /**
+         * The THROTTLED_HR_FIELD constant.
+         */
         public static final String THROTTLED_HR_FIELD = "throttled";
+        /**
+         * The REQUESTS_PER_SEC_FIELD constant.
+         */
         public static final String REQUESTS_PER_SEC_FIELD = "requests_per_second";
+        /**
+         * The CANCELED_FIELD constant.
+         */
         public static final String CANCELED_FIELD = "canceled";
+        /**
+         * The THROTTLED_UNTIL_RAW_FIELD constant.
+         */
         public static final String THROTTLED_UNTIL_RAW_FIELD = "throttled_until_millis";
+        /**
+         * The THROTTLED_UNTIL_HR_FIELD constant.
+         */
         public static final String THROTTLED_UNTIL_HR_FIELD = "throttled_until";
+        /**
+         * The SLICES_FIELD constant.
+         */
         public static final String SLICES_FIELD = "slices";
 
+        /**
+         * The FIELDS_SET constant.
+         */
         public static Set<String> FIELDS_SET = new HashSet<>();
         static {
             FIELDS_SET.add(SLICE_ID_FIELD);
@@ -352,6 +522,11 @@ public class BulkByScrollTask extends CancellableTask {
             RETRIES_PARSER.declareLong(constructorArg(), new ParseField(RETRIES_SEARCH_FIELD));
         }
 
+        /**
+         * Performs the declare fields step.
+         *
+         * @param parser the parser
+         */
         public static void declareFields(ObjectParser<? extends StatusBuilder, Void> parser) {
             parser.declareInt(StatusBuilder::setSliceId, new ParseField(SLICE_ID_FIELD));
             parser.declareLong(StatusBuilder::setTotal, new ParseField(TOTAL_FIELD));
@@ -389,6 +564,24 @@ public class BulkByScrollTask extends CancellableTask {
         private final TimeValue throttledUntil;
         private final List<StatusOrException> sliceStatuses;
 
+        /**
+         * Creates a new Status.
+         *
+         * @param sliceId the slice identifier
+         * @param total the total
+         * @param updated the updated
+         * @param created the created
+         * @param deleted the deleted
+         * @param batches the batches
+         * @param versionConflicts the version conflicts
+         * @param noops the noops
+         * @param bulkRetries the bulk retries
+         * @param searchRetries the search retries
+         * @param throttled the throttled
+         * @param requestsPerSecond the requests per second
+         * @param reasonCancelled the reason cancelled
+         * @param throttledUntil the throttled until
+         */
         public Status(
             Integer sliceId,
             long total,
@@ -484,6 +677,12 @@ public class BulkByScrollTask extends CancellableTask {
             this.sliceStatuses = sliceStatuses;
         }
 
+        /**
+         * Creates a new Status by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Status(StreamInput in) throws IOException {
             sliceId = in.readOptionalVInt();
             total = in.readVLong();
@@ -540,6 +739,11 @@ public class BulkByScrollTask extends CancellableTask {
          * We need to write a manual parser for this because of {@link StatusOrException}. Since
          * {@link StatusOrException#fromXContent(XContentParser)} tries to peek at a field first before deciding
          * what needs to be it cannot use an {@link ObjectParser}.
+         *
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @return the inner XContent
+         * @throws IOException if an I/O error occurs
          */
         public XContentBuilder innerXContent(XContentBuilder builder, Params params) throws IOException {
             if (sliceId != null) {
@@ -582,6 +786,13 @@ public class BulkByScrollTask extends CancellableTask {
             return builder;
         }
 
+        /**
+         * Returns the inner from XContent.
+         *
+         * @param parser the parser
+         * @return the inner from XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Status innerFromXContent(XContentParser parser) throws IOException {
             Token token = parser.currentToken();
             String fieldName = parser.currentName();
@@ -658,6 +869,11 @@ public class BulkByScrollTask extends CancellableTask {
             return builder.append(']').toString();
         }
 
+        /**
+         * Performs the inner to string step.
+         *
+         * @param builder the content builder
+         */
         public void innerToString(StringBuilder builder) {
             builder.append("sliceId=").append(sliceId);
             builder.append(",updated=").append(updated);
@@ -679,6 +895,8 @@ public class BulkByScrollTask extends CancellableTask {
         /**
          * The total number of documents this request will process. 0 means we don't yet know or, possibly, there are actually 0 documents
          * to process. Its ok that these have the same meaning because any request with 0 actual documents should be quite short lived.
+         *
+         * @return the total
          */
         public long getTotal() {
             return total;
@@ -701,6 +919,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Number of scan responses this request has processed.
+         *
+         * @return the batches
          */
         public int getBatches() {
             return batches;
@@ -708,6 +928,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Number of version conflicts this request has hit.
+         *
+         * @return the version conflicts
          */
         public long getVersionConflicts() {
             return versionConflicts;
@@ -715,6 +937,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Number of noops (skipped bulk items) as part of this request.
+         *
+         * @return the noops
          */
         public long getNoops() {
             return noops;
@@ -722,6 +946,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Number of retries that had to be attempted due to bulk actions being rejected.
+         *
+         * @return the bulk retries
          */
         public long getBulkRetries() {
             return bulkRetries;
@@ -729,6 +955,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Number of retries that had to be attempted due to search actions being rejected.
+         *
+         * @return the search retries
          */
         public long getSearchRetries() {
             return searchRetries;
@@ -736,6 +964,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * The total time this request has throttled itself not including the current throttle time if it is currently sleeping.
+         *
+         * @return the throttled
          */
         public TimeValue getThrottled() {
             return throttled;
@@ -743,6 +973,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * The number of requests per second to which to throttle the request. Float.POSITIVE_INFINITY means unlimited.
+         *
+         * @return the requests per second
          */
         public float getRequestsPerSecond() {
             return requestsPerSecond;
@@ -750,6 +982,8 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Remaining delay of any current throttle sleep or 0 if not sleeping.
+         *
+         * @return the throttled until
          */
         public TimeValue getThrottledUntil() {
             return throttledUntil;
@@ -776,6 +1010,14 @@ public class BulkByScrollTask extends CancellableTask {
             );
         }
 
+        /**
+         * Returns the equals without slice status.
+         *
+         * @param o the object to compare with
+         * @param includeUpdated the include updated
+         * @param includeCreated the include created
+         * @return the equals without slice status
+         */
         public boolean equalsWithoutSliceStatus(Object o, boolean includeUpdated, boolean includeCreated) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -830,6 +1072,9 @@ public class BulkByScrollTask extends CancellableTask {
         private final Status status;
         private final Exception exception;
 
+        /**
+         * The EXPECTED_EXCEPTION_FIELDS constant.
+         */
         public static Set<String> EXPECTED_EXCEPTION_FIELDS = new HashSet<>();
         static {
             EXPECTED_EXCEPTION_FIELDS.add("type");
@@ -842,11 +1087,21 @@ public class BulkByScrollTask extends CancellableTask {
             EXPECTED_EXCEPTION_FIELDS.add("root_cause");
         }
 
+        /**
+         * Creates a new StatusOrException.
+         *
+         * @param status the status
+         */
         public StatusOrException(Status status) {
             this.status = status;
             exception = null;
         }
 
+        /**
+         * Creates a new StatusOrException.
+         *
+         * @param exception the exception
+         */
         public StatusOrException(Exception exception) {
             status = null;
             this.exception = exception;
@@ -854,6 +1109,9 @@ public class BulkByScrollTask extends CancellableTask {
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public StatusOrException(StreamInput in) throws IOException {
             if (in.readBoolean()) {
@@ -894,6 +1152,10 @@ public class BulkByScrollTask extends CancellableTask {
          * The {@link #EXPECTED_EXCEPTION_FIELDS} contains the fields that are expected when the serialised object
          * was an instance of exception and the {@link Status#FIELDS_SET} is the set of fields expected when the
          * serialized object was an instance of Status.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
          */
         public static StatusOrException fromXContent(XContentParser parser) throws IOException {
             XContentParser.Token token = parser.currentToken();

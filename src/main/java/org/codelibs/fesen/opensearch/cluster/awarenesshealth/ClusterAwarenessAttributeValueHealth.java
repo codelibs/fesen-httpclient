@@ -57,12 +57,19 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
      * Creates Awareness AttributeValue Health information
      *
      * @param name name of awareness attribute
+     * @param nodeList the node list
      */
     public ClusterAwarenessAttributeValueHealth(String name, List<String> nodeList) {
         this.name = name;
         this.nodeList = nodeList;
     }
 
+    /**
+     * Creates a new ClusterAwarenessAttributeValueHealth.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterAwarenessAttributeValueHealth(final StreamInput in) throws IOException {
         name = in.readString();
         activeShards = in.readVInt();
@@ -73,38 +80,83 @@ public class ClusterAwarenessAttributeValueHealth implements Writeable, ToXConte
         weight = in.readDouble();
     }
 
+    /**
+     * Returns the active shards.
+     *
+     * @return the active shards
+     */
     public int getActiveShards() {
         return activeShards;
     }
 
+    /**
+     * Returns the unassigned shards.
+     *
+     * @return the unassigned shards
+     */
     public int getUnassignedShards() {
         return unassignedShards;
     }
 
+    /**
+     * Sets the unassigned shards.
+     *
+     * @param unassignedShards the unassigned shards
+     */
     public void setUnassignedShards(int unassignedShards) {
         this.unassignedShards = unassignedShards;
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public int getNodes() {
         return nodes;
     }
 
+    /**
+     * Returns the weight.
+     *
+     * @return the weight
+     */
     public double getWeight() {
         return weight;
     }
 
+    /**
+     * Sets the weight.
+     *
+     * @param weight the weight
+     */
     public void setWeight(double weight) {
         this.weight = weight;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the initializing shards.
+     *
+     * @return the initializing shards
+     */
     public int getInitializingShards() {
         return initializingShards;
     }
 
+    /**
+     * Returns the relocating shards.
+     *
+     * @return the relocating shards
+     */
     public int getRelocatingShards() {
         return relocatingShards;
     }

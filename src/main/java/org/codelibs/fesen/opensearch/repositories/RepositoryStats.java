@@ -55,20 +55,43 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class RepositoryStats implements Writeable, ToXContentFragment {
 
+    /**
+     * The EMPTY_STATS constant.
+     */
     public static final RepositoryStats EMPTY_STATS = new RepositoryStats(Collections.emptyMap());
 
+    /**
+     * The request counts.
+     */
     @Nullable
     public final Map<String, Long> requestCounts;
+    /**
+     * The extended stats.
+     */
     @Nullable
     public final Map<BlobStore.Metric, Map<String, Long>> extendedStats;
+    /**
+     * The detailed.
+     */
     public final boolean detailed;
 
+    /**
+     * Creates a new RepositoryStats.
+     *
+     * @param requestCounts the request counts
+     */
     public RepositoryStats(Map<String, Long> requestCounts) {
         this.requestCounts = Collections.unmodifiableMap(requestCounts);
         this.extendedStats = Collections.emptyMap();
         this.detailed = false;
     }
 
+    /**
+     * Creates a new RepositoryStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RepositoryStats(StreamInput in) throws IOException {
         this.requestCounts = in.readMap(StreamInput::readString, StreamInput::readLong);
         this.extendedStats = in.readMap(

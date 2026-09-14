@@ -50,6 +50,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class SignificantStringTerms extends InternalMappedSignificantTerms<SignificantStringTerms, SignificantStringTerms.Bucket> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "sigsterms";
 
     /**
@@ -61,6 +64,18 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
 
         BytesRef termBytes;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param term the term
+         * @param subsetDf the subset df
+         * @param subsetSize the subset size
+         * @param supersetDf the superset df
+         * @param supersetSize the superset size
+         * @param aggregations the aggregations
+         * @param format the format
+         * @param score the score
+         */
         public Bucket(
             BytesRef term,
             long subsetDf,
@@ -78,6 +93,12 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @param subsetSize the subset size
+         * @param supersetSize the superset size
+         * @param format the format
+         * @throws IOException if an I/O error occurs
          */
         public Bucket(StreamInput in, long subsetSize, long supersetSize, DocValueFormat format) throws IOException {
             super(in, subsetSize, supersetSize, format);
@@ -133,6 +154,18 @@ public class SignificantStringTerms extends InternalMappedSignificantTerms<Signi
         }
     }
 
+    /**
+     * Creates a new SignificantStringTerms.
+     *
+     * @param name the name
+     * @param metadata the metadata
+     * @param format the format
+     * @param subsetSize the subset size
+     * @param supersetSize the superset size
+     * @param significanceHeuristic the significance heuristic
+     * @param buckets the buckets
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     public SignificantStringTerms(
         String name,
         Map<String, Object> metadata,

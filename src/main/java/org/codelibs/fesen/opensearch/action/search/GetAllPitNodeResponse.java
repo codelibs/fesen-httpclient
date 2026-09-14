@@ -34,11 +34,22 @@ public class GetAllPitNodeResponse extends BaseNodeResponse implements ToXConten
      */
     private final List<ListPitInfo> pitInfos;
 
+    /**
+     * Creates a new GetAllPitNodeResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetAllPitNodeResponse(StreamInput in) throws IOException {
         super(in);
         this.pitInfos = Collections.unmodifiableList(in.readList(ListPitInfo::new));
     }
 
+    /**
+     * Returns the pit infos.
+     *
+     * @return the pit infos
+     */
     public List<ListPitInfo> getPitInfos() {
         return pitInfos;
     }

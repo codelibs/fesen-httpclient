@@ -40,21 +40,40 @@ import java.util.Arrays;
  * Represents a Line on the earth's surface in lat/lon decimal degrees and optional altitude in meters.
  */
 public class Line implements Geometry {
+    /**
+     * The EMPTY constant.
+     */
     public static final Line EMPTY = new Line();
     private final double[] y;
     private final double[] x;
     private final double[] z;
 
+    /**
+     * Creates a new Line.
+     */
     protected Line() {
         y = new double[0];
         x = new double[0];
         z = null;
     }
 
+    /**
+     * Creates a new Line.
+     *
+     * @param x the x
+     * @param y the y
+     */
     public Line(double[] x, double[] y) {
         this(x, y, null);
     }
 
+    /**
+     * Creates a new Line.
+     *
+     * @param x the x
+     * @param y the y
+     * @param z the z
+     */
     public Line(double[] x, double[] y, double[] z) {
         this.y = y;
         this.x = x;
@@ -76,18 +95,41 @@ public class Line implements Geometry {
         }
     }
 
+    /**
+     * Returns the length.
+     *
+     * @return the length
+     */
     public int length() {
         return y.length;
     }
 
+    /**
+     * Returns the y.
+     *
+     * @param i the i
+     * @return the y
+     */
     public double getY(int i) {
         return y[i];
     }
 
+    /**
+     * Returns the x.
+     *
+     * @param i the i
+     * @return the x
+     */
     public double getX(int i) {
         return x[i];
     }
 
+    /**
+     * Returns the z.
+     *
+     * @param i the i
+     * @return the z
+     */
     public double getZ(int i) {
         if (z != null) {
             return z[i];
@@ -96,14 +138,29 @@ public class Line implements Geometry {
         }
     }
 
+    /**
+     * Returns the y.
+     *
+     * @return the y
+     */
     public double[] getY() {
         return y.clone();
     }
 
+    /**
+     * Returns the x.
+     *
+     * @return the x
+     */
     public double[] getX() {
         return x.clone();
     }
 
+    /**
+     * Returns the z.
+     *
+     * @return the z
+     */
     public double[] getZ() {
         return z == null ? null : z.clone();
     }

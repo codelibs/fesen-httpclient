@@ -48,12 +48,21 @@ public class ClusterSearchShardsRequestBuilder extends ClusterManagerNodeReadOpe
     ClusterSearchShardsResponse,
     ClusterSearchShardsRequestBuilder> {
 
+    /**
+     * Creates a new ClusterSearchShardsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterSearchShardsRequestBuilder(OpenSearchClient client, ClusterSearchShardsAction action) {
         super(client, action, new ClusterSearchShardsRequest());
     }
 
     /**
      * Sets the indices the search will be executed on.
+     *
+     * @param indices the indices
+     * @return this instance
      */
     public ClusterSearchShardsRequestBuilder setIndices(String... indices) {
         request.indices(indices);

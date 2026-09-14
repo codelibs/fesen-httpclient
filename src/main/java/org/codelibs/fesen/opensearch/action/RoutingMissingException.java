@@ -48,14 +48,33 @@ import java.util.Objects;
  */
 public class RoutingMissingException extends OpenSearchException {
 
+    /**
+     * The type.
+     */
     private final String type;
 
+    /**
+     * The identifier.
+     */
     private final String id;
 
+    /**
+     * Creates a new RoutingMissingException.
+     *
+     * @param index the index
+     * @param id the identifier
+     */
     public RoutingMissingException(String index, String id) {
         this(index, MapperService.SINGLE_MAPPING_NAME, id);
     }
 
+    /**
+     * Creates a new RoutingMissingException.
+     *
+     * @param index the index
+     * @param type the type
+     * @param id the identifier
+     */
     public RoutingMissingException(String index, String type, String id) {
         super("routing is required for [" + index + "]/[" + id + "]");
         Objects.requireNonNull(index, "index must not be null");

@@ -68,10 +68,21 @@ public class HistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<H
 
     private double interval = 0;
 
+    /**
+     * Creates a new HistogramValuesSourceBuilder.
+     *
+     * @param name the name
+     */
     public HistogramValuesSourceBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new HistogramValuesSourceBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected HistogramValuesSourceBuilder(StreamInput in) throws IOException {
         super(in);
         this.interval = in.readDouble();
@@ -108,14 +119,19 @@ public class HistogramValuesSourceBuilder extends CompositeValuesSourceBuilder<H
 
     /**
      * Returns the interval that is set on this source
-     **/
+     *
+     * @return the interval
+      */
     public double interval() {
         return interval;
     }
 
     /**
      * Sets the interval on this source.
-     **/
+     *
+     * @param interval the interval
+     * @return the interval
+      */
     public HistogramValuesSourceBuilder interval(double interval) {
         if (interval <= 0) {
             throw new IllegalArgumentException("[interval] must be greater than 0 for [histogram] source");

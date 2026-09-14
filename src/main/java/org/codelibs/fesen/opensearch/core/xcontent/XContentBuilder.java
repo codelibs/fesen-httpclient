@@ -162,6 +162,13 @@ public final class XContentBuilder implements Closeable, Flushable {
      */
     @FunctionalInterface
     public interface Writer {
+        /**
+         * Writes this instance.
+         *
+         * @param builder the content builder
+         * @param value the value
+         * @throws IOException if an I/O error occurs
+         */
         void write(XContentBuilder builder, Object value) throws IOException;
     }
 
@@ -170,6 +177,13 @@ public final class XContentBuilder implements Closeable, Flushable {
      */
     @FunctionalInterface
     public interface HumanReadableTransformer {
+        /**
+         * Returns the raw value.
+         *
+         * @param value the value
+         * @return the raw value
+         * @throws IOException if an I/O error occurs
+         */
         Object rawValue(Object value) throws IOException;
     }
 
@@ -211,6 +225,10 @@ public final class XContentBuilder implements Closeable, Flushable {
     /**
      * Constructs a new builder using the provided XContent and an OutputStream. Make sure
      * to call {@link #close()} when the builder is done with.
+     *
+     * @param xContent the XContent
+     * @param bos the bos
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder(XContent xContent, OutputStream bos) throws IOException {
         this(xContent, bos, Collections.emptySet(), Collections.emptySet());
@@ -226,6 +244,8 @@ public final class XContentBuilder implements Closeable, Flushable {
      * @param os       the output stream
      * @param includes the inclusive filters: only fields and objects that match the inclusive filters will be written to the output.
      * @param excludes the exclusive filters: only fields and objects that don't match the exclusive filters will be written to the output.
+     * @param xContent the XContent
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder(XContent xContent, OutputStream os, Set<String> includes, Set<String> excludes) throws IOException {
         this(xContent, os, includes, excludes, null, false);
@@ -271,6 +291,11 @@ public final class XContentBuilder implements Closeable, Flushable {
         return generator;
     }
 
+    /**
+     * Returns the content type.
+     *
+     * @return the content type
+     */
     public MediaType contentType() {
         try {
             return generatorInstance().contentType();
@@ -280,12 +305,19 @@ public final class XContentBuilder implements Closeable, Flushable {
     }
 
     /**
+     * Returns the output stream.
+     *
      * @return the output stream to which the built object is being written. Note that is dangerous to modify the stream.
      */
     public OutputStream getOutputStream() {
         return bos;
     }
 
+    /**
+     * Returns the pretty print.
+     *
+     * @return the pretty print
+     */
     public XContentBuilder prettyPrint() {
         if (this.prettyPrint == false && generator != null) {
             throw new IllegalStateException("Cannot change the prettyPrint status, the generator has been initialized already");
@@ -298,6 +330,9 @@ public final class XContentBuilder implements Closeable, Flushable {
     /**
      * Set the "human readable" flag. Once set, some types of values are written in a
      * format easier to read for a human.
+     *
+     * @param humanReadable the human readable
+     * @return the human readable
      */
     public XContentBuilder humanReadable(boolean humanReadable) {
         this.humanReadable = humanReadable;
@@ -305,6 +340,8 @@ public final class XContentBuilder implements Closeable, Flushable {
     }
 
     /**
+     * Returns the human readable.
+     *
      * @return the value of the "human readable" flag. When the value is equal to true,
      * some types of values are written in a format easier to read for a human.
      */
@@ -316,46 +353,104 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Structure (object, array, field, null values...)
     // ------------------------------
 
+    /**
+     * Starts the object.
+     *
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder startObject() throws IOException {
         generatorInstance().writeStartObject();
         return this;
     }
 
+    /**
+     * Starts the object.
+     *
+     * @param name the name
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder startObject(String name) throws IOException {
         return field(name).startObject();
     }
 
+    /**
+     * Returns the end object.
+     *
+     * @return the end object
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder endObject() throws IOException {
         generatorInstance().writeEndObject();
         return this;
     }
 
+    /**
+     * Starts the array.
+     *
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder startArray() throws IOException {
         generatorInstance().writeStartArray();
         return this;
     }
 
+    /**
+     * Starts the array.
+     *
+     * @param name the name
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder startArray(String name) throws IOException {
         return field(name).startArray();
     }
 
+    /**
+     * Returns the end array.
+     *
+     * @return the end array
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder endArray() throws IOException {
         generatorInstance().writeEndArray();
         return this;
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeFieldName(name);
         return this;
     }
 
+    /**
+     * Returns the null field.
+     *
+     * @param name the name
+     * @return the null field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder nullField(String name) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeNullField(name);
         return this;
     }
 
+    /**
+     * Returns the null value.
+     *
+     * @return the null value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder nullValue() throws IOException {
         generatorInstance().writeNull();
         return this;
@@ -365,20 +460,50 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Boolean
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Boolean value) throws IOException {
         return (value == null) ? nullField(name) : field(name, value.booleanValue());
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, boolean value) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeBooleanField(name, value);
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Boolean value) throws IOException {
         return (value == null) ? nullValue() : value(value.booleanValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(boolean value) throws IOException {
         generatorInstance().writeBoolean(value);
         return this;
@@ -388,10 +513,24 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Byte
     // ------------------------------
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Byte value) throws IOException {
         return (value == null) ? nullValue() : value(value.byteValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(byte value) throws IOException {
         generatorInstance().writeNumber(value);
         return this;
@@ -401,16 +540,40 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Double
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Double value) throws IOException {
         return (value == null) ? nullField(name) : field(name, value.doubleValue());
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, double value) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeNumberField(name, value);
         return this;
     }
 
+    /**
+     * Returns the array.
+     *
+     * @param name the name
+     * @param values the values
+     * @return the array
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder array(String name, double[] values) throws IOException {
         return field(name).values(values);
     }
@@ -427,10 +590,24 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Double value) throws IOException {
         return (value == null) ? nullValue() : value(value.doubleValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(double value) throws IOException {
         generatorInstance().writeNumber(value);
         return this;
@@ -440,10 +617,26 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Float
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Float value) throws IOException {
         return (value == null) ? nullField(name) : field(name, value.floatValue());
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, float value) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeNumberField(name, value);
@@ -462,10 +655,24 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Float value) throws IOException {
         return (value == null) ? nullValue() : value(value.floatValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(float value) throws IOException {
         generatorInstance().writeNumber(value);
         return this;
@@ -475,10 +682,26 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Integer
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Integer value) throws IOException {
         return (value == null) ? nullField(name) : field(name, value.intValue());
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, int value) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeNumberField(name, value);
@@ -497,10 +720,24 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Integer value) throws IOException {
         return (value == null) ? nullValue() : value(value.intValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(int value) throws IOException {
         generatorInstance().writeNumber(value);
         return this;
@@ -510,10 +747,26 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Long
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Long value) throws IOException {
         return (value == null) ? nullField(name) : field(name, value.longValue());
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, long value) throws IOException {
         ensureNameNotNull(name);
         generatorInstance().writeNumberField(name, value);
@@ -532,10 +785,24 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Long value) throws IOException {
         return (value == null) ? nullValue() : value(value.longValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(long value) throws IOException {
         generatorInstance().writeNumber(value);
         return this;
@@ -545,6 +812,14 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Short
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, short value) throws IOException {
         return field(name).value(value);
     }
@@ -561,10 +836,24 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Short value) throws IOException {
         return (value == null) ? nullValue() : value(value.shortValue());
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(short value) throws IOException {
         generatorInstance().writeNumber(value);
         return this;
@@ -574,6 +863,14 @@ public final class XContentBuilder implements Closeable, Flushable {
     // BigInteger
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, BigInteger value) throws IOException {
         if (value == null) {
             return nullField(name);
@@ -583,6 +880,13 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(BigInteger value) throws IOException {
         if (value == null) {
             return nullValue();
@@ -595,6 +899,13 @@ public final class XContentBuilder implements Closeable, Flushable {
     // BigDecimal
     // ------------------------------
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(BigDecimal value) throws IOException {
         if (value == null) {
             return nullValue();
@@ -607,6 +918,14 @@ public final class XContentBuilder implements Closeable, Flushable {
     // String
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, String value) throws IOException {
         if (value == null) {
             return nullField(name);
@@ -616,6 +935,14 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the array.
+     *
+     * @param name the name
+     * @param values the values
+     * @return the array
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder array(String name, String... values) throws IOException {
         return field(name).values(values);
     }
@@ -632,6 +959,13 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(String value) throws IOException {
         if (value == null) {
             return nullValue();
@@ -644,6 +978,14 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Binary
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, byte[] value) throws IOException {
         if (value == null) {
             return nullField(name);
@@ -653,6 +995,13 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(byte[] value) throws IOException {
         if (value == null) {
             return nullValue();
@@ -661,10 +1010,29 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @param offset the offset
+     * @param length the length
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, byte[] value, int offset, int length) throws IOException {
         return field(name).value(value, offset, length);
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @param offset the offset
+     * @param length the length
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(byte[] value, int offset, int length) throws IOException {
         if (value == null) {
             return nullValue();
@@ -677,6 +1045,12 @@ public final class XContentBuilder implements Closeable, Flushable {
      * Writes the binary content of the given byte array as UTF-8 bytes.
      * <p>
      * Use {@link XContentParser#charBuffer()} to read the value back
+     *
+     * @param bytes the bytes
+     * @param offset the offset
+     * @param length the length
+     * @return the utf8 value
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder utf8Value(byte[] bytes, int offset, int length) throws IOException {
         generatorInstance().writeUTF8String(bytes, offset, length);
@@ -691,6 +1065,12 @@ public final class XContentBuilder implements Closeable, Flushable {
      * If the {@code humanReadable} flag is set, writes both a formatted and
      * unformatted version of the time value using the date transformer for the
      * {@link Long} class.
+     *
+     * @param name the name
+     * @param readableName the readable name
+     * @param value the value
+     * @return the time field
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder timeField(String name, String readableName, long value) throws IOException {
         assert name.equals(readableName) == false : "expected raw and readable field names to differ, but they were both: " + name;
@@ -709,7 +1089,10 @@ public final class XContentBuilder implements Closeable, Flushable {
      * Write a time-based value, if the value is null a null value is written,
      * otherwise a date transformers lookup is performed.
 
+     * @param timeValue the time value
+     * @return the time value
      * @throws IllegalArgumentException if there is no transformers for the type of object
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder timeValue(Object timeValue) throws IOException {
         if (timeValue == null) {
@@ -727,6 +1110,14 @@ public final class XContentBuilder implements Closeable, Flushable {
     // LatLon
     // ------------------------------
 
+    /**
+     * Returns the latlon.
+     *
+     * @param lat the lat
+     * @param lon the lon
+     * @return the latlon
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder latlon(double lat, double lon) throws IOException {
         return startObject().field("lat", lat).field("lon", lon).endObject();
     }
@@ -735,6 +1126,13 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Path
     // ------------------------------
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Path value) throws IOException {
         if (value == null) {
             return nullValue();
@@ -750,10 +1148,26 @@ public final class XContentBuilder implements Closeable, Flushable {
     // typed methods over this.
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Object value) throws IOException {
         return field(name).value(value);
     }
 
+    /**
+     * Returns the array.
+     *
+     * @param name the name
+     * @param values the values
+     * @return the array
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder array(String name, Object... values) throws IOException {
         return field(name).values(values, true);
     }
@@ -765,6 +1179,13 @@ public final class XContentBuilder implements Closeable, Flushable {
         return value(Arrays.asList(values), ensureNoSelfReferences);
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param value the value
+     * @return the value
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder value(Object value) throws IOException {
         unknownValue(value, true);
         return this;
@@ -803,10 +1224,27 @@ public final class XContentBuilder implements Closeable, Flushable {
     // ToXContent
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, ToXContent value) throws IOException {
         return field(name).value(value);
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param value the value
+     * @param params the serialization parameters
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, ToXContent value, ToXContent.Params params) throws IOException {
         return field(name).value(value, params);
     }
@@ -827,15 +1265,36 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Maps & Iterable
     // ------------------------------
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param values the values
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Map<String, Object> values) throws IOException {
         return field(name).map(values);
     }
 
+    /**
+     * Returns the map.
+     *
+     * @param values the values
+     * @return the map
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder map(Map<String, ?> values) throws IOException {
         return map(values, true, true);
     }
 
-    /** writes a map without the start object and end object headers */
+    /**
+     * writes a map without the start object and end object headers
+     *
+     * @param values the values
+     * @return the map contents
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder mapContents(Map<String, ?> values) throws IOException {
         return map(values, true, false);
     }
@@ -865,6 +1324,14 @@ public final class XContentBuilder implements Closeable, Flushable {
         return this;
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @param values the values
+     * @return the field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder field(String name, Iterable<?> values) throws IOException {
         return field(name).value(values);
     }
@@ -901,6 +1368,15 @@ public final class XContentBuilder implements Closeable, Flushable {
     // used if the humanReadable flag has been set
     // ------------------------------
 
+    /**
+     * Returns the human readable field.
+     *
+     * @param rawFieldName the raw field name
+     * @param readableFieldName the readable field name
+     * @param value the value
+     * @return the human readable field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder humanReadableField(String rawFieldName, String readableFieldName, Object value) throws IOException {
         assert rawFieldName.equals(readableFieldName) == false : "expected raw and readable field names to differ, but they were both: "
             + rawFieldName;
@@ -921,6 +1397,15 @@ public final class XContentBuilder implements Closeable, Flushable {
     // Misc.
     // ------------------------------
 
+    /**
+     * Returns the percentage field.
+     *
+     * @param rawFieldName the raw field name
+     * @param readableFieldName the readable field name
+     * @param percentage the percentage
+     * @return the percentage field
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder percentageField(String rawFieldName, String readableFieldName, double percentage) throws IOException {
         assert rawFieldName.equals(readableFieldName) == false : "expected raw and readable field names to differ, but they were both: "
             + rawFieldName;
@@ -937,6 +1422,10 @@ public final class XContentBuilder implements Closeable, Flushable {
 
     /**
      * Writes a raw field with the value taken from the bytes in the stream
+     * @param name the name
+     * @param value the value
+     * @return the raw field
+     * @throws IOException if an I/O error occurs
      * @deprecated use {@link #rawField(String, InputStream, MediaType)} to avoid content type auto-detection
      */
     @Deprecated
@@ -947,6 +1436,12 @@ public final class XContentBuilder implements Closeable, Flushable {
 
     /**
      * Writes a raw field with the value taken from the bytes in the stream
+     *
+     * @param name the name
+     * @param value the value
+     * @param mediaType the media type
+     * @return the raw field
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder rawField(String name, InputStream value, MediaType mediaType) throws IOException {
         generatorInstance().writeRawField(name, value, mediaType);
@@ -955,12 +1450,24 @@ public final class XContentBuilder implements Closeable, Flushable {
 
     /**
      * Writes a value with the source coming directly from the bytes in the stream
+     *
+     * @param stream the stream
+     * @param contentType the content type
+     * @return the raw value
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder rawValue(InputStream stream, MediaType contentType) throws IOException {
         generatorInstance().writeRawValue(stream, contentType);
         return this;
     }
 
+    /**
+     * Copies the current structure.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder copyCurrentStructure(XContentParser parser) throws IOException {
         generatorInstance().copyCurrentStructure(parser);
         return this;
@@ -980,6 +1487,11 @@ public final class XContentBuilder implements Closeable, Flushable {
         }
     }
 
+    /**
+     * Returns the generator.
+     *
+     * @return the generator
+     */
     public XContentGenerator generator() {
         try {
             return generatorInstance();
@@ -989,10 +1501,21 @@ public final class XContentBuilder implements Closeable, Flushable {
 
     }
 
+    /**
+     * Ensures the name not null.
+     *
+     * @param name the name
+     */
     public static void ensureNameNotNull(String name) {
         ensureNotNull(name, "Field name cannot be null");
     }
 
+    /**
+     * Ensures the not null.
+     *
+     * @param value the value
+     * @param message the message
+     */
     public static void ensureNotNull(Object value, String message) {
         if (value == null) {
             throw new IllegalArgumentException(message);

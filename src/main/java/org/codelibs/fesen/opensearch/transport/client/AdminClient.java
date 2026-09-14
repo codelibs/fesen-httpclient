@@ -46,11 +46,15 @@ public interface AdminClient {
 
     /**
      * A client allowing to perform actions/operations against the cluster.
+     *
+     * @return the cluster
      */
     ClusterAdminClient cluster();
 
     /**
      * A client allowing to perform actions/operations against the indices.
+     *
+     * @return the indices
      */
     IndicesAdminClient indices();
 }

@@ -43,10 +43,14 @@ import java.util.Objects;
 /**
  * Base implementation of a {@link AggregationBuilder}.
  *
+ * @param <AB> the aggregation builder type
  * @opensearch.internal
  */
 public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationBuilder<AB>> extends AggregationBuilder {
 
+    /**
+     * The metadata.
+     */
     protected Map<String, Object> metadata;
 
     /**
@@ -58,6 +62,13 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
         super(name);
     }
 
+    /**
+     * Creates a new AbstractAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected AbstractAggregationBuilder(
         AbstractAggregationBuilder<AB> clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -69,6 +80,9 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected AbstractAggregationBuilder(StreamInput in) throws IOException {
         super(in.readString());
@@ -84,6 +98,12 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
     @SuppressWarnings("unchecked")
@@ -166,6 +186,14 @@ public abstract class AbstractAggregationBuilder<AB extends AbstractAggregationB
         return builder.endObject();
     }
 
+    /**
+     * Returns the internal XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the internal XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException;
 
     @Override

@@ -55,9 +55,18 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RegexpQueryBuilder.class);
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "regexp";
 
+    /**
+     * The DEFAULT_FLAGS_VALUE constant.
+     */
     public static final int DEFAULT_FLAGS_VALUE = RegexpFlag.ALL.value();
+    /**
+     * The DEFAULT_DETERMINIZE_WORK_LIMIT constant.
+     */
     public static final int DEFAULT_DETERMINIZE_WORK_LIMIT = Operations.DEFAULT_DETERMINIZE_WORK_LIMIT;
     /**
      * Upper bound for {@code max_determinized_states}. The determinize work limit exists to cap the
@@ -68,6 +77,9 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
      * safeguard effective. See CVE-2026-63136.
      */
     public static final int MAX_DETERMINIZE_WORK_LIMIT = 1_000_000;
+    /**
+     * The DEFAULT_CASE_INSENSITIVITY constant.
+     */
     public static final boolean DEFAULT_CASE_INSENSITIVITY = false;
 
     private static final ParseField FLAGS_VALUE_FIELD = new ParseField("flags_value");
@@ -107,6 +119,9 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public RegexpQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -139,11 +154,19 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
 
     /**
      *  Returns the value used in this query.
+     *
+     * @return the value
      */
     public String value() {
         return this.value;
     }
 
+    /**
+     * Returns the flags.
+     *
+     * @param flags the flags
+     * @return the flags
+     */
     public RegexpQueryBuilder flags(RegexpFlag... flags) {
         if (flags == null) {
             this.syntaxFlagsValue = DEFAULT_FLAGS_VALUE;
@@ -161,26 +184,51 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
         return this;
     }
 
+    /**
+     * Returns the flags.
+     *
+     * @param flags the flags
+     * @return the flags
+     */
     public RegexpQueryBuilder flags(int flags) {
         this.syntaxFlagsValue = flags;
         return this;
     }
 
+    /**
+     * Returns the flags.
+     *
+     * @return the flags
+     */
     public int flags() {
         return this.syntaxFlagsValue;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @param caseInsensitive the case insensitive
+     * @return the case insensitive
+     */
     public RegexpQueryBuilder caseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
         return this;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @return the case insensitive
+     */
     public boolean caseInsensitive() {
         return this.caseInsensitive;
     }
 
     /**
      * Sets the regexp maxDeterminizedStates.
+     *
+     * @param value the value
+     * @return the max determinized states
      */
     public RegexpQueryBuilder maxDeterminizedStates(int value) {
         if (value < 0) {
@@ -195,15 +243,31 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
         return this;
     }
 
+    /**
+     * Returns the max determinized states.
+     *
+     * @return the max determinized states
+     */
     public int maxDeterminizedStates() {
         return this.maxDeterminizedStates;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param rewrite the rewrite
+     * @return this instance
+     */
     public RegexpQueryBuilder rewrite(String rewrite) {
         this.rewrite = rewrite;
         return this;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @return this instance
+     */
     public String rewrite() {
         return this.rewrite;
     }
@@ -226,6 +290,13 @@ public class RegexpQueryBuilder extends AbstractQueryBuilder<RegexpQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static RegexpQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         String rewrite = null;

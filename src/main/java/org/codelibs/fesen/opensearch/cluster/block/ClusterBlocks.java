@@ -83,7 +83,13 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         RestStatus.FORBIDDEN,
         ClusterBlockLevel.READ_WRITE
     );
+    /**
+     * The EMPTY_CLUSTER_BLOCK constant.
+     */
     public static final ClusterBlocks EMPTY_CLUSTER_BLOCK = new ClusterBlocks(emptySet(), Map.of());
+    /**
+     * The INDEX_DATA_READ_ONLY_BLOCK_SETTINGS constant.
+     */
     public static final Set<Setting<Boolean>> INDEX_DATA_READ_ONLY_BLOCK_SETTINGS = Set.of(
         IndexMetadata.INDEX_READ_ONLY_SETTING,
         IndexMetadata.INDEX_BLOCKS_METADATA_SETTING,
@@ -101,10 +107,20 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         levelHolders = generateLevelHolders(global, indicesBlocks);
     }
 
+    /**
+     * Returns the global.
+     *
+     * @return the global
+     */
     public Set<ClusterBlock> global() {
         return global;
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public Map<String, Set<ClusterBlock>> indices() {
         return indicesBlocks;
     }
@@ -130,6 +146,9 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
 
     /**
      * Is there a global block with the provided status?
+     *
+     * @param status the status
+     * @return the global block with status flag
      */
     public boolean hasGlobalBlockWithStatus(final RestStatus status) {
         for (ClusterBlock clusterBlock : global) {
@@ -178,6 +197,13 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         out.writeCollection(blocks);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static ClusterBlocks readFrom(StreamInput in) throws IOException {
         final Set<ClusterBlock> global = readBlockSet(in);
         final Map<String, Set<ClusterBlock>> indicesBlocks = in.readMap(i -> i.readString().intern(), ClusterBlocks::readBlockSet);
@@ -192,6 +218,13 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
         return blocks.isEmpty() ? blocks : unmodifiableSet(blocks);
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<ClusterBlocks> readDiffFrom(StreamInput in) throws IOException {
         return AbstractDiffable.readDiffFrom(ClusterBlocks::readFrom, in);
     }
@@ -224,8 +257,17 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
 
         private final Map<String, Set<ClusterBlock>> indices = new HashMap<>();
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the blocks.
+         *
+         * @param blocks the blocks
+         * @return the blocks
+         */
         public Builder blocks(ClusterBlocks blocks) {
             global.addAll(blocks.global());
             for (final Map.Entry<String, Set<ClusterBlock>> entry : blocks.indices().entrySet()) {
@@ -237,6 +279,12 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             return this;
         }
 
+        /**
+         * Adds the blocks.
+         *
+         * @param indexMetadata the index metadata
+         * @return this instance
+         */
         public Builder addBlocks(IndexMetadata indexMetadata) {
             String indexName = indexMetadata.getIndex().getName();
             if (indexMetadata.getState() == IndexMetadata.State.CLOSE) {
@@ -266,27 +314,58 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             return this;
         }
 
+        /**
+         * Updates the blocks.
+         *
+         * @param indexMetadata the index metadata
+         * @return this instance
+         */
         public Builder updateBlocks(IndexMetadata indexMetadata) {
             // let's remove all blocks for this index and add them back -- no need to remove all individual blocks....
             indices.remove(indexMetadata.getIndex().getName());
             return addBlocks(indexMetadata);
         }
 
+        /**
+         * Adds the global block.
+         *
+         * @param block the block
+         * @return this instance
+         */
         public Builder addGlobalBlock(ClusterBlock block) {
             global.add(block);
             return this;
         }
 
+        /**
+         * Removes the global block.
+         *
+         * @param block the block
+         * @return this instance
+         */
         public Builder removeGlobalBlock(ClusterBlock block) {
             global.remove(block);
             return this;
         }
 
+        /**
+         * Removes the global block.
+         *
+         * @param blockId the block identifier
+         * @return this instance
+         */
         public Builder removeGlobalBlock(int blockId) {
             global.removeIf(block -> block.id() == blockId);
             return this;
         }
 
+        /**
+         * Adds the index block.
+         *
+         * @param index the index
+         * @param block the block
+         * @return this instance
+         */
         public Builder addIndexBlock(String index, ClusterBlock block) {
             if (!indices.containsKey(index)) {
                 indices.put(index, new HashSet<>());
@@ -295,6 +374,12 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             return this;
         }
 
+        /**
+         * Removes the index blocks.
+         *
+         * @param index the index
+         * @return this instance
+         */
         public Builder removeIndexBlocks(String index) {
             if (!indices.containsKey(index)) {
                 return this;
@@ -303,10 +388,24 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             return this;
         }
 
+        /**
+         * Returns the index block flag.
+         *
+         * @param index the index
+         * @param block the block
+         * @return the index block flag
+         */
         public boolean hasIndexBlock(String index, ClusterBlock block) {
             return indices.getOrDefault(index, Collections.emptySet()).contains(block);
         }
 
+        /**
+         * Removes the index block.
+         *
+         * @param index the index
+         * @param block the block
+         * @return this instance
+         */
         public Builder removeIndexBlock(String index, ClusterBlock block) {
             if (!indices.containsKey(index)) {
                 return this;
@@ -318,6 +417,13 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             return this;
         }
 
+        /**
+         * Removes the index block with identifier.
+         *
+         * @param index the index
+         * @param blockId the block identifier
+         * @return this instance
+         */
         public Builder removeIndexBlockWithId(String index, int blockId) {
             final Set<ClusterBlock> indexBlocks = indices.get(index);
             if (indexBlocks == null) {
@@ -330,6 +436,11 @@ public class ClusterBlocks extends AbstractDiffable<ClusterBlocks> implements Ve
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public ClusterBlocks build() {
             if (indices.isEmpty() && global.isEmpty()) {
                 return EMPTY_CLUSTER_BLOCK;

@@ -49,6 +49,13 @@ public class DeleteIndexRequestBuilder extends AcknowledgedRequestBuilder<
     AcknowledgedResponse,
     DeleteIndexRequestBuilder> {
 
+    /**
+     * Creates a new DeleteIndexRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public DeleteIndexRequestBuilder(OpenSearchClient client, DeleteIndexAction action, String... indices) {
         super(client, action, new DeleteIndexRequest(indices));
     }

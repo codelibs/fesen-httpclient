@@ -47,6 +47,9 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class PendingClusterTasksRequest extends ClusterManagerNodeReadRequest<PendingClusterTasksRequest> {
 
+    /**
+     * Creates a new PendingClusterTasksRequest.
+     */
     public PendingClusterTasksRequest() {}
 
     @Override

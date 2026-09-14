@@ -70,10 +70,23 @@ public enum SortMode implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static SortMode readFromStream(StreamInput in) throws IOException {
         return in.readEnum(SortMode.class);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param str the str
+     * @return the new string
+     */
     public static SortMode fromString(final String str) {
         Objects.requireNonNull(str, "input string is null");
         switch (str.toLowerCase(Locale.ROOT)) {

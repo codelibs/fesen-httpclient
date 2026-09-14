@@ -50,10 +50,22 @@ public class PutStoredScriptRequestBuilder extends AcknowledgedRequestBuilder<
     AcknowledgedResponse,
     PutStoredScriptRequestBuilder> {
 
+    /**
+     * Creates a new PutStoredScriptRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public PutStoredScriptRequestBuilder(OpenSearchClient client, PutStoredScriptAction action) {
         super(client, action, new PutStoredScriptRequest());
     }
 
+    /**
+     * Sets the identifier.
+     *
+     * @param id the identifier
+     * @return this instance
+     */
     public PutStoredScriptRequestBuilder setId(String id) {
         request.id(id);
         return this;
@@ -61,6 +73,10 @@ public class PutStoredScriptRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Set the source of the script along with the content type of the source
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return this instance
      */
     public PutStoredScriptRequestBuilder setContent(BytesReference source, MediaType mediaType) {
         request.content(source, mediaType);

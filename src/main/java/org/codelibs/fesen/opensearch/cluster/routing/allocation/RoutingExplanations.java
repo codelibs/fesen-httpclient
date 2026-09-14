@@ -55,10 +55,19 @@ import java.util.stream.Collectors;
 public class RoutingExplanations implements ToXContentFragment {
     private final List<RerouteExplanation> explanations;
 
+    /**
+     * Creates a new RoutingExplanations.
+     */
     public RoutingExplanations() {
         this.explanations = new ArrayList<>();
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param explanation the explanation
+     * @return this instance
+     */
     public RoutingExplanations add(RerouteExplanation explanation) {
         this.explanations.add(explanation);
         return this;
@@ -66,6 +75,10 @@ public class RoutingExplanations implements ToXContentFragment {
 
     /**
      * Read in a RoutingExplanations object
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
      */
     public static RoutingExplanations readFrom(StreamInput in) throws IOException {
         int exCount = in.readVInt();
@@ -79,6 +92,10 @@ public class RoutingExplanations implements ToXContentFragment {
 
     /**
      * Write the RoutingExplanations object
+     *
+     * @param explanations the explanations
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     public static void writeTo(RoutingExplanations explanations, StreamOutput out) throws IOException {
         out.writeVInt(explanations.explanations.size());

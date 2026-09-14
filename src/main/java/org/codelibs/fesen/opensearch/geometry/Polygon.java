@@ -40,6 +40,9 @@ import java.util.Objects;
  * Represents a closed polygon on the earth's surface with optional holes
  */
 public final class Polygon implements Geometry {
+    /**
+     * The EMPTY constant.
+     */
     public static final Polygon EMPTY = new Polygon();
     private final LinearRing polygon;
     private final List<LinearRing> holes;
@@ -53,6 +56,9 @@ public final class Polygon implements Geometry {
 
     /**
      * Creates a new Polygon from the supplied latitude/longitude array, and optionally any holes.
+     *
+     * @param polygon the polygon
+     * @param holes the holes
      */
     public Polygon(LinearRing polygon, List<LinearRing> holes) {
         this.polygon = polygon;
@@ -73,6 +79,8 @@ public final class Polygon implements Geometry {
 
     /**
      * Creates a new Polygon from the supplied latitude/longitude array, and optionally any holes.
+     *
+     * @param polygon the polygon
      */
     public Polygon(LinearRing polygon) {
         this(polygon, Collections.emptyList());
@@ -89,14 +97,30 @@ public final class Polygon implements Geometry {
         }
     }
 
+    /**
+     * Returns the number of holes.
+     *
+     * @return the number of holes
+     */
     public int getNumberOfHoles() {
         return holes.size();
     }
 
+    /**
+     * Returns the polygon.
+     *
+     * @return the polygon
+     */
     public LinearRing getPolygon() {
         return polygon;
     }
 
+    /**
+     * Returns the hole.
+     *
+     * @param i the i
+     * @return the hole
+     */
     public LinearRing getHole(int i) {
         if (i >= holes.size()) {
             throw new IllegalArgumentException("Index " + i + " is outside the bounds of the " + holes.size() + " polygon holes");

@@ -45,10 +45,23 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class DeletePipelineRequestBuilder extends ActionRequestBuilder<DeletePipelineRequest, AcknowledgedResponse> {
 
+    /**
+     * Creates a new DeletePipelineRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public DeletePipelineRequestBuilder(OpenSearchClient client, DeletePipelineAction action) {
         super(client, action, new DeletePipelineRequest());
     }
 
+    /**
+     * Creates a new DeletePipelineRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param id the identifier
+     */
     public DeletePipelineRequestBuilder(OpenSearchClient client, DeletePipelineAction action, String id) {
         super(client, action, new DeletePipelineRequest(id));
     }

@@ -59,6 +59,8 @@ public class ParseField {
     private static final String[] EMPTY = new String[0];
 
     /**
+     * Creates a new ParseField.
+     *
      * @param name
      *            the primary name for this field. This will be returned by
      *            {@link #getPreferredName()}
@@ -82,6 +84,8 @@ public class ParseField {
     }
 
     /**
+     * Returns the preferred name.
+     *
      * @return the preferred name used for this field
      */
     public String getPreferredName() {
@@ -89,6 +93,8 @@ public class ParseField {
     }
 
     /**
+     * Returns the all names included deprecated.
+     *
      * @return All names for this field regardless of whether they are
      *         deprecated
      */
@@ -97,6 +103,8 @@ public class ParseField {
     }
 
     /**
+     * Returns the with deprecation.
+     *
      * @param deprecatedNames
      *            deprecated names to include with the returned
      *            {@link ParseField}
@@ -110,6 +118,9 @@ public class ParseField {
     /**
      * Return a new ParseField where all field names are deprecated and replaced
      * with {@code allReplacedWith}.
+     *
+     * @param allReplacedWith the all replaced with
+     * @return the with all deprecated
      */
     public ParseField withAllDeprecated(String allReplacedWith) {
         ParseField parseField = this.withDeprecation(getAllNamesIncludedDeprecated());
@@ -119,6 +130,8 @@ public class ParseField {
 
     /**
      * Return a new ParseField where all field names are deprecated with no replacement
+     *
+     * @return the with all deprecated
      */
     public ParseField withAllDeprecated() {
         ParseField parseField = this.withDeprecation(getAllNamesIncludedDeprecated());
@@ -181,6 +194,8 @@ public class ParseField {
     }
 
     /**
+     * Returns the all replaced with.
+     *
      * @return the message to use if this {@link ParseField} has been entirely
      *         deprecated in favor of something else. This method will return
      *         <code>null</code> if the ParseField has not been completely
@@ -191,6 +206,8 @@ public class ParseField {
     }
 
     /**
+     * Returns the deprecated names.
+     *
      * @return an array of the names for the {@link ParseField} which are
      *         deprecated.
      */
@@ -204,11 +221,35 @@ public class ParseField {
      * @opensearch.internal
      **/
     public static class CommonFields {
+        /**
+         * Creates a new CommonFields.
+         */
+        public CommonFields() {
+        }
+
+        /**
+         * The FIELD constant.
+         */
         public static final ParseField FIELD = new ParseField("field");
+        /**
+         * The FIELDS constant.
+         */
         public static final ParseField FIELDS = new ParseField("fields");
+        /**
+         * The FORMAT constant.
+         */
         public static final ParseField FORMAT = new ParseField("format");
+        /**
+         * The MISSING constant.
+         */
         public static final ParseField MISSING = new ParseField("missing");
+        /**
+         * The TIME_ZONE constant.
+         */
         public static final ParseField TIME_ZONE = new ParseField("time_zone");
+        /**
+         * The _META constant.
+         */
         public static final ParseField _META = new ParseField("_meta");
     }
 }

@@ -46,6 +46,10 @@ public enum Recyclers {
 
     /**
      * Return a {@link Recycler} that never recycles entries.
+     *
+     * @param <T> the element type
+     * @param c the c
+     * @return the none
      */
     public static <T> Recycler<T> none(Recycler.C<T> c) {
         return new NoneRecycler<>(c);
@@ -53,6 +57,11 @@ public enum Recyclers {
 
     /**
      * Return a concurrent recycler based on a deque.
+     *
+     * @param <T> the element type
+     * @param c the c
+     * @param limit the limit
+     * @return the concurrent deque
      */
     public static <T> Recycler<T> concurrentDeque(Recycler.C<T> c, int limit) {
         return new ConcurrentDequeRecycler<>(c, limit);
@@ -60,6 +69,11 @@ public enum Recyclers {
 
     /**
      * Return a recycler based on a deque.
+     *
+     * @param <T> the element type
+     * @param c the c
+     * @param limit the limit
+     * @return the deque
      */
     public static <T> Recycler<T> deque(Recycler.C<T> c, int limit) {
         return new DequeRecycler<>(c, new ArrayDeque<>(), limit);
@@ -67,6 +81,11 @@ public enum Recyclers {
 
     /**
      * Return a recycler based on a deque.
+     *
+     * @param <T> the element type
+     * @param c the c
+     * @param limit the limit
+     * @return the deque factory
      */
     public static <T> Recycler.Factory<T> dequeFactory(final Recycler.C<T> c, final int limit) {
         return () -> deque(c, limit);
@@ -76,6 +95,9 @@ public enum Recyclers {
      * Wrap the provided recycler so that calls to {@link Recycler#obtain()} and {@link Recycler.V#close()} are protected by
      * a lock.
      *
+     * @param <T> the element type
+     * @param recycler the recycler
+     * @return the locked
      * @opensearch.internal
      */
     public static <T> Recycler<T> locked(final Recycler<T> recycler) {
@@ -129,6 +151,11 @@ public enum Recyclers {
     /**
      * Create a concurrent implementation that can support concurrent access from
      * <code>concurrencyLevel</code> threads with little contention.
+     *
+     * @param <T> the element type
+     * @param factory the factory
+     * @param concurrencyLevel the concurrency level
+     * @return the concurrent
      */
     public static <T> Recycler<T> concurrent(final Recycler.Factory<T> factory, final int concurrencyLevel) {
         if (concurrencyLevel < 1) {

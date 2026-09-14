@@ -51,10 +51,18 @@ import java.util.Objects;
  */
 public class SpanMultiTermQueryBuilder extends AbstractQueryBuilder<SpanMultiTermQueryBuilder> implements SpanQueryBuilder {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_multi";
     private static final ParseField MATCH_FIELD = new ParseField("match");
     private final MultiTermQueryBuilder multiTermQueryBuilder;
 
+    /**
+     * Creates a new SpanMultiTermQueryBuilder.
+     *
+     * @param multiTermQueryBuilder the multi term query builder
+     */
     public SpanMultiTermQueryBuilder(MultiTermQueryBuilder multiTermQueryBuilder) {
         if (multiTermQueryBuilder == null) {
             throw new IllegalArgumentException("inner multi term query cannot be null");
@@ -64,6 +72,9 @@ public class SpanMultiTermQueryBuilder extends AbstractQueryBuilder<SpanMultiTer
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanMultiTermQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -75,6 +86,11 @@ public class SpanMultiTermQueryBuilder extends AbstractQueryBuilder<SpanMultiTer
         out.writeNamedWriteable(multiTermQueryBuilder);
     }
 
+    /**
+     * Returns the inner query.
+     *
+     * @return the inner query
+     */
     public MultiTermQueryBuilder innerQuery() {
         return this.multiTermQueryBuilder;
     }
@@ -88,6 +104,13 @@ public class SpanMultiTermQueryBuilder extends AbstractQueryBuilder<SpanMultiTer
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanMultiTermQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String currentFieldName = null;
         MultiTermQueryBuilder subQuery = null;

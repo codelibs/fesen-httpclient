@@ -20,6 +20,9 @@ import java.util.Set;
  */
 @ExperimentalApi
 public enum CacheType {
+    /**
+     * The INDICES_REQUEST_CACHE value.
+     */
     INDICES_REQUEST_CACHE("indices.requests.cache", "request_cache");
 
     private final String settingPrefix;
@@ -39,6 +42,11 @@ public enum CacheType {
         this.value = representation;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public String getValue() {
         return value;
     }

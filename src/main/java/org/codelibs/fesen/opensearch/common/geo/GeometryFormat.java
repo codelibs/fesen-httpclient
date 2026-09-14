@@ -42,22 +42,36 @@ import java.text.ParseException;
 /**
  * Geometry serializer/deserializer
  *
+ * @param <ParsedFormat> the parsed format type
  * @opensearch.internal
  */
 public interface GeometryFormat<ParsedFormat> {
 
     /**
      * The name of the format, for example 'wkt'.
+     *
+     * @return the name
      */
     String name();
 
     /**
      * Parser JSON representation of a geometry
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     * @throws ParseException if the input cannot be parsed
      */
     ParsedFormat fromXContent(XContentParser parser) throws IOException, ParseException;
 
     /**
      * Serializes the geometry into its JSON representation
+     *
+     * @param geometry the geometry
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent
+     * @throws IOException if an I/O error occurs
      */
     XContentBuilder toXContent(ParsedFormat geometry, XContentBuilder builder, ToXContent.Params params) throws IOException;
 
@@ -65,6 +79,9 @@ public interface GeometryFormat<ParsedFormat> {
      * Serializes the geometry into a standard Java object.
      * <p>
      * For example, the GeoJson format returns the geometry as a map, while WKT returns a string.
+     *
+     * @param geometry the geometry
+     * @return the XContent as object
      */
     Object toXContentAsObject(ParsedFormat geometry);
 }

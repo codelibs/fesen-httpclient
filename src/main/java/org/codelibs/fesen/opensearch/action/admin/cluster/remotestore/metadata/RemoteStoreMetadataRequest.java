@@ -24,6 +24,9 @@ import java.io.IOException;
 public class RemoteStoreMetadataRequest extends BroadcastRequest<RemoteStoreMetadataRequest> {
     private String[] shards;
 
+    /**
+     * Creates a new RemoteStoreMetadataRequest.
+     */
     public RemoteStoreMetadataRequest() {
         super((String[]) null);
         shards = new String[0];
@@ -35,6 +38,11 @@ public class RemoteStoreMetadataRequest extends BroadcastRequest<RemoteStoreMeta
         out.writeStringArray(shards);
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @return the shards
+     */
     public String[] shards() {
         return this.shards;
     }

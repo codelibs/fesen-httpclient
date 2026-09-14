@@ -59,7 +59,13 @@ import java.util.function.Supplier;
  * @opensearch.internal
  */
 public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geo_shape";
+    /**
+     * The STRATEGY_FIELD constant.
+     */
     protected static final ParseField STRATEGY_FIELD = new ParseField("strategy");
 
     private SpatialStrategy strategy;
@@ -77,6 +83,13 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
         super(fieldName, shape);
     }
 
+    /**
+     * Creates a new GeoShapeQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param shapeSupplier the shape supplier
+     * @param indexedShapeId the indexed shape identifier
+     */
     public GeoShapeQueryBuilder(String fieldName, Supplier<Geometry> shapeSupplier, String indexedShapeId) {
         super(fieldName, shapeSupplier, indexedShapeId);
     }
@@ -94,6 +107,12 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
         super(fieldName, indexedShapeId);
     }
 
+    /**
+     * Creates a new GeoShapeQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GeoShapeQueryBuilder(StreamInput in) throws IOException {
         super(in);
         strategy = in.readOptionalWriteable(SpatialStrategy::readFromStream);
@@ -161,6 +180,8 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
     }
 
     /**
+     * Returns the strategy.
+     *
      * @return The spatial strategy to use for building the geo shape Query
      */
     public SpatialStrategy strategy() {
@@ -236,6 +257,13 @@ public class GeoShapeQueryBuilder extends AbstractGeometryQueryBuilder<GeoShapeQ
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoShapeQueryBuilder fromXContent(XContentParser parser) throws IOException {
         ParsedGeoShapeQueryParams pgsqp = (ParsedGeoShapeQueryParams) AbstractGeometryQueryBuilder.parsedParamsFromXContent(
             parser,

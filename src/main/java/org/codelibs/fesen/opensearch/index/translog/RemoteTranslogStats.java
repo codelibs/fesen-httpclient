@@ -59,8 +59,17 @@ public class RemoteTranslogStats implements ToXContentFragment, Writeable {
 
     static final String REMOTE_STORE = "remote_store";
 
+    /**
+     * Creates a new RemoteTranslogStats.
+     */
     public RemoteTranslogStats() {}
 
+    /**
+     * Creates a new RemoteTranslogStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RemoteTranslogStats(StreamInput in) throws IOException {
         this.totalUploadsStarted = in.readVLong();
         this.totalUploadsFailed = in.readVLong();
@@ -119,6 +128,11 @@ public class RemoteTranslogStats implements ToXContentFragment, Writeable {
         return builder;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param other the other instance
+     */
     public void add(RemoteTranslogStats other) {
         if (other == null) {
             return;

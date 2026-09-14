@@ -82,6 +82,9 @@ public class Task {
      */
     public static final String X_REQUEST_ID = "X-Request-Id";
 
+    /**
+     * The REQUEST_HEADERS constant.
+     */
     public static final Set<String> REQUEST_HEADERS = Set.of(Task.X_OPAQUE_ID, Task.X_REQUEST_ID);
 
     private final long id;
@@ -117,6 +120,16 @@ public class Task {
      */
     private final long startTimeNanos;
 
+    /**
+     * Creates a new Task.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTask the parent task
+     * @param headers the headers
+     */
     public Task(long id, String type, String action, String description, TaskId parentTask, Map<String, String> headers) {
         this(
             id,
@@ -132,6 +145,20 @@ public class Task {
         );
     }
 
+    /**
+     * Creates a new Task.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTask the parent task
+     * @param startTime the start time
+     * @param startTimeNanos the start time nanoseconds
+     * @param headers the headers
+     * @param resourceStats the resource stats
+     * @param resourceTrackingCompletionListeners the resource tracking completion listeners
+     */
     public Task(
         long id,
         String type,
@@ -158,6 +185,8 @@ public class Task {
 
     /**
      * Returns task id
+     *
+     * @return the identifier
      */
     public long getId() {
         return id;
@@ -165,6 +194,8 @@ public class Task {
 
     /**
      * Returns task action
+     *
+     * @return the action
      */
     public String getAction() {
         return action;
@@ -172,6 +203,8 @@ public class Task {
 
     /**
      * Generates task description
+     *
+     * @return the description
      */
     public String getDescription() {
         return description;
@@ -179,6 +212,8 @@ public class Task {
 
     /**
      * Returns the task's start time in nanoseconds ({@link System#nanoTime()} style).
+     *
+     * @return the start time nanoseconds
      */
     public long getStartTimeNanos() {
         return startTimeNanos;
@@ -186,6 +221,8 @@ public class Task {
 
     /**
      * Returns id of the parent task or NO_PARENT_ID if the task doesn't have any parent tasks
+     *
+     * @return the parent task identifier
      */
     public TaskId getParentTaskId() {
         return parentTask;
@@ -196,6 +233,8 @@ public class Task {
      * Since most tasks don't have status this defaults to returning null. While
      * this can never perform IO it might be a costly operation, requiring
      * collating lists of results, etc. So only use it if you need the value.
+     *
+     * @return the status
      */
     public Status getStatus() {
         return null;
@@ -205,6 +244,8 @@ public class Task {
      * Returns current total resource usage of the task.
      * Currently, this method is only called on demand, during get and listing of tasks.
      * In the future, these values can be cached as an optimization.
+     *
+     * @return the total resource stats
      */
     public TaskResourceUsage getTotalResourceStats() {
         return new TaskResourceUsage(getTotalResourceUtilization(ResourceStats.CPU), getTotalResourceUtilization(ResourceStats.MEMORY));
@@ -212,6 +253,8 @@ public class Task {
 
     /**
      * Returns current average per-execution resource usage of the task.
+     *
+     * @return the average resource stats
      */
     public TaskResourceUsage getAverageResourceStats() {
         return new TaskResourceUsage(getAverageResourceUtilization(ResourceStats.CPU), getAverageResourceUtilization(ResourceStats.MEMORY));
@@ -219,6 +262,8 @@ public class Task {
 
     /**
      * Returns current min per-execution resource usage of the task.
+     *
+     * @return the min resource stats
      */
     public TaskResourceUsage getMinResourceStats() {
         return new TaskResourceUsage(getMinResourceUtilization(ResourceStats.CPU), getMinResourceUtilization(ResourceStats.MEMORY));
@@ -226,6 +271,8 @@ public class Task {
 
     /**
      * Returns current max per-execution resource usage of the task.
+     *
+     * @return the max resource stats
      */
     public TaskResourceUsage getMaxResourceStats() {
         return new TaskResourceUsage(getMaxResourceUtilization(ResourceStats.CPU), getMaxResourceUtilization(ResourceStats.MEMORY));
@@ -233,6 +280,9 @@ public class Task {
 
     /**
      * Returns total resource consumption for a specific task stat.
+     *
+     * @param stats the stats
+     * @return the total resource utilization
      */
     public long getTotalResourceUtilization(ResourceStats stats) {
         long totalResourceConsumption = 0L;

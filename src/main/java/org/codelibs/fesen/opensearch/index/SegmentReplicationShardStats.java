@@ -41,6 +41,12 @@ public class SegmentReplicationShardStats implements Writeable, ToXContentFragme
     @Nullable
     private SegmentReplicationState currentReplicationState;
 
+    /**
+     * Creates a new SegmentReplicationShardStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SegmentReplicationShardStats(StreamInput in) throws IOException {
         this.allocationId = in.readString();
         this.checkpointsBehindCount = in.readVLong();

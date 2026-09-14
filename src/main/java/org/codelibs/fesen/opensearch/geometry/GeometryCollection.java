@@ -40,18 +40,31 @@ import java.util.Objects;
 
 /**
  * Collection of arbitrary geometry classes
+ *
+ * @param <G> the g type
  */
 public class GeometryCollection<G extends Geometry> implements Geometry, Iterable<G> {
+    /**
+     * The EMPTY constant.
+     */
     public static final GeometryCollection<Geometry> EMPTY = new GeometryCollection<>();
 
     private final List<G> shapes;
 
     private boolean hasAlt;
 
+    /**
+     * Creates a new GeometryCollection.
+     */
     public GeometryCollection() {
         shapes = Collections.emptyList();
     }
 
+    /**
+     * Creates a new GeometryCollection.
+     *
+     * @param shapes the shapes
+     */
     public GeometryCollection(List<G> shapes) {
         if (shapes == null || shapes.isEmpty()) {
             throw new IllegalArgumentException("the list of shapes cannot be null or empty");
@@ -80,10 +93,21 @@ public class GeometryCollection<G extends Geometry> implements Geometry, Iterabl
         return shapes.isEmpty();
     }
 
+    /**
+     * Returns the number of elements.
+     *
+     * @return the number of elements
+     */
     public int size() {
         return shapes.size();
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param i the i
+     * @return the value
+     */
     public G get(int i) {
         return shapes.get(i);
     }

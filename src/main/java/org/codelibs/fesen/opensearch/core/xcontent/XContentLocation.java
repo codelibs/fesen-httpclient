@@ -42,11 +42,26 @@ package org.codelibs.fesen.opensearch.core.xcontent;
  */
 public final class XContentLocation {
 
+    /**
+     * The UNKNOWN constant.
+     */
     public static final XContentLocation UNKNOWN = new XContentLocation(-1, -1);
 
+    /**
+     * The line number.
+     */
     public final int lineNumber;
+    /**
+     * The column number.
+     */
     public final int columnNumber;
 
+    /**
+     * Creates a new XContentLocation.
+     *
+     * @param lineNumber the line number
+     * @param columnNumber the column number
+     */
     public XContentLocation(int lineNumber, int columnNumber) {
         super();
         this.lineNumber = lineNumber;

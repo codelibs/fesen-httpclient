@@ -32,6 +32,9 @@ public final class AutoExpandSearchReplicas {
 
     private static final AutoExpandSearchReplicas FALSE_INSTANCE = new AutoExpandSearchReplicas(0, 0, false);
 
+    /**
+     * The SETTING constant.
+     */
     public static final Setting<AutoExpandSearchReplicas> SETTING = new Setting<>(
         IndexMetadata.SETTING_AUTO_EXPAND_SEARCH_REPLICAS,
         "false",

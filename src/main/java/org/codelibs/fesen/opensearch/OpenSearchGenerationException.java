@@ -45,10 +45,21 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class OpenSearchGenerationException extends OpenSearchException {
 
+    /**
+     * Creates a new OpenSearchGenerationException.
+     *
+     * @param msg the msg
+     */
     public OpenSearchGenerationException(String msg) {
         super(msg);
     }
 
+    /**
+     * Creates a new OpenSearchGenerationException.
+     *
+     * @param msg the msg
+     * @param cause the cause
+     */
     public OpenSearchGenerationException(String msg, Throwable cause) {
         super(msg, cause);
     }

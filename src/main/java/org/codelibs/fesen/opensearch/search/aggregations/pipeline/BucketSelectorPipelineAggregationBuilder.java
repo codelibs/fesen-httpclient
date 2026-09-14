@@ -57,18 +57,35 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<BucketSelectorPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "bucket_selector";
 
     private final Map<String, String> bucketsPathsMap;
     private final Script script;
     private GapPolicy gapPolicy = GapPolicy.SKIP;
 
+    /**
+     * Creates a new BucketSelectorPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPathsMap the buckets paths map
+     * @param script the script
+     */
     public BucketSelectorPipelineAggregationBuilder(String name, Map<String, String> bucketsPathsMap, Script script) {
         super(name, NAME, new TreeMap<>(bucketsPathsMap).values().toArray(new String[bucketsPathsMap.size()]));
         this.bucketsPathsMap = bucketsPathsMap;
         this.script = script;
     }
 
+    /**
+     * Creates a new BucketSelectorPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param script the script
+     * @param bucketsPaths the buckets paths
+     */
     public BucketSelectorPipelineAggregationBuilder(String name, Script script, String... bucketsPaths) {
         this(name, convertToBucketsPathMap(bucketsPaths), script);
     }
@@ -90,6 +107,9 @@ public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAg
 
     /**
      * Sets the gap policy to use for this aggregation.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
      */
     public BucketSelectorPipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
@@ -101,6 +121,8 @@ public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAg
 
     /**
      * Gets the gap policy to use for this aggregation.
+     *
+     * @return the gap policy
      */
     public GapPolicy gapPolicy() {
         return gapPolicy;
@@ -114,6 +136,14 @@ public class BucketSelectorPipelineAggregationBuilder extends AbstractPipelineAg
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param reducerName the reducer name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static BucketSelectorPipelineAggregationBuilder parse(String reducerName, XContentParser parser) throws IOException {
         XContentParser.Token token;
         Script script = null;

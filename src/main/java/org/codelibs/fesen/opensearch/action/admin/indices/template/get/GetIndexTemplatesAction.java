@@ -40,9 +40,18 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetIndexTemplatesAction extends ActionType<GetIndexTemplatesResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetIndexTemplatesAction INSTANCE = new GetIndexTemplatesAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/template/get";
 
+    /**
+     * Creates a new GetIndexTemplatesAction.
+     */
     protected GetIndexTemplatesAction() {
         super(NAME, GetIndexTemplatesResponse::new);
     }

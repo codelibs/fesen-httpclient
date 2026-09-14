@@ -523,6 +523,11 @@ public enum RestStatus {
         this.status = (short) status;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public int getStatus() {
         return status;
     }
@@ -536,6 +541,11 @@ public enum RestStatus {
         return status / 100;
     }
 
+    /**
+     * Returns the status type.
+     *
+     * @return the status type
+     */
     public String getStatusType() {
         int family = getStatusFamilyCode();
         if (family <= 3) {
@@ -549,14 +559,36 @@ public enum RestStatus {
         }
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static RestStatus readFrom(StreamInput in) throws IOException {
         return RestStatus.valueOf(in.readString());
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @param status the status
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeTo(StreamOutput out, RestStatus status) throws IOException {
         out.writeString(status.name());
     }
 
+    /**
+     * Returns the status.
+     *
+     * @param successfulShards the successful shards
+     * @param totalShards the total shards
+     * @param failures the failures
+     * @return the status
+     */
     public static RestStatus status(int successfulShards, int totalShards, ShardOperationFailedException... failures) {
         if (failures.length == 0) {
             if (successfulShards == 0 && totalShards > 0) {
@@ -579,6 +611,9 @@ public enum RestStatus {
 
     /**
      * Turn a status code into a {@link RestStatus}, returning null if we don't know that status.
+     *
+     * @param code the code
+     * @return the new code
      */
     public static RestStatus fromCode(int code) {
         return CODE_TO_STATUS.get(code);

@@ -41,6 +41,11 @@ import java.util.NoSuchElementException;
  * @opensearch.internal
  */
 public class Iterators {
+    /**
+     * Creates a new Iterators.
+     */
+    public Iterators() {
+    }
 
     /**
      * Concat iterators

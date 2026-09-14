@@ -23,8 +23,17 @@ import java.io.IOException;
  */
 @PublicApi(since = "1.0.0")
 public enum IntervalMode implements Writeable {
+    /**
+     * The ORDERED value.
+     */
     ORDERED(0),
+    /**
+     * The UNORDERED value.
+     */
     UNORDERED(1),
+    /**
+     * The UNORDERED_NO_OVERLAP value.
+     */
     UNORDERED_NO_OVERLAP(2);
 
     private final int ordinal;
@@ -33,6 +42,13 @@ public enum IntervalMode implements Writeable {
         this.ordinal = ordinal;
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static IntervalMode readFromStream(StreamInput in) throws IOException {
         int ord = in.readVInt();
         switch (ord) {
@@ -51,6 +67,12 @@ public enum IntervalMode implements Writeable {
         out.writeVInt(this.ordinal);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param intervalMode the interval mode
+     * @return the new string
+     */
     public static IntervalMode fromString(String intervalMode) {
         if (intervalMode == null) {
             throw new IllegalArgumentException("cannot parse mode from null string");

@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class FlushAction extends ActionType<FlushResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final FlushAction INSTANCE = new FlushAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/flush";
 
     private FlushAction() {

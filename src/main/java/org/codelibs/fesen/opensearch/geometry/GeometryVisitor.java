@@ -57,28 +57,100 @@ import org.codelibs.fesen.opensearch.geometry.utils.WellKnownText;
  * <p>
  * See {@link WellKnownText#toWKT(Geometry, StringBuilder)} for an example of how this interface is used.
  *
+ * @param <T> the element type
+ * @param <E> the element type
  * @see <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>
  */
 public interface GeometryVisitor<T, E extends Exception> {
 
+    /**
+     * Visits this instance.
+     *
+     * @param circle the circle
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(Circle circle) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param collection the collection
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(GeometryCollection<?> collection) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param line the line
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(Line line) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param ring the ring
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(LinearRing ring) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param multiLine the multi line
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(MultiLine multiLine) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param multiPoint the multi point
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(MultiPoint multiPoint) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param multiPolygon the multi polygon
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(MultiPolygon multiPolygon) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param point the point
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(Point point) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param polygon the polygon
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(Polygon polygon) throws E;
 
+    /**
+     * Visits this instance.
+     *
+     * @param rectangle the rectangle
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     T visit(Rectangle rectangle) throws E;
 
 }

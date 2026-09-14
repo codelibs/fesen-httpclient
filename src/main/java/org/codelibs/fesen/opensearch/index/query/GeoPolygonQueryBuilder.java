@@ -56,6 +56,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geo_polygon";
 
     /**
@@ -74,6 +77,12 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
 
     private boolean ignoreUnmapped = DEFAULT_IGNORE_UNMAPPED;
 
+    /**
+     * Creates a new GeoPolygonQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param points the points
+     */
     public GeoPolygonQueryBuilder(String fieldName, List<GeoPoint> points) {
         if (Strings.isEmpty(fieldName)) {
             throw new IllegalArgumentException("fieldName must not be null");
@@ -101,6 +110,9 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public GeoPolygonQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -130,17 +142,31 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
         return fieldName;
     }
 
+    /**
+     * Returns the points.
+     *
+     * @return the points
+     */
     public List<GeoPoint> points() {
         return shell;
     }
 
-    /** Sets the validation method to use for geo coordinates. */
+    /**
+     * Sets the validation method to use for geo coordinates.
+     *
+     * @param method the method
+     * @return this instance
+     */
     public GeoPolygonQueryBuilder setValidationMethod(GeoValidationMethod method) {
         this.validationMethod = method;
         return this;
     }
 
-    /** Returns the validation method to use for geo coordinates. */
+    /**
+     * Returns the validation method to use for geo coordinates.
+     *
+     * @return the validation method
+     */
     public GeoValidationMethod getValidationMethod() {
         return this.validationMethod;
     }
@@ -149,6 +175,9 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
      * Sets whether the query builder should ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @param ignoreUnmapped the ignore unmapped
+     * @return the ignore unmapped
      */
     public GeoPolygonQueryBuilder ignoreUnmapped(boolean ignoreUnmapped) {
         this.ignoreUnmapped = ignoreUnmapped;
@@ -159,6 +188,8 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
      * Gets whether the query builder will ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @return the ignore unmapped
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
@@ -183,6 +214,13 @@ public class GeoPolygonQueryBuilder extends AbstractQueryBuilder<GeoPolygonQuery
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoPolygonQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
 

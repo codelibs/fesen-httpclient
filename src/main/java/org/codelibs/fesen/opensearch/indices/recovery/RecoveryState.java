@@ -66,6 +66,9 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
      */
     @PublicApi(since = "1.0.0")
     public enum Stage {
+        /**
+         * The INIT value.
+         */
         INIT((byte) 0),
 
         /**
@@ -88,6 +91,9 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
          */
         FINALIZE((byte) 4),
 
+        /**
+         * The DONE value.
+         */
         DONE((byte) 5);
 
         private static final Stage[] STAGES = new Stage[Stage.values().length];
@@ -105,10 +111,21 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             this.id = id;
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public byte id() {
             return id;
         }
 
+        /**
+         * Creates an instance from identifier.
+         *
+         * @param id the identifier
+         * @return the new identifier
+         */
         public static Stage fromId(byte id) {
             if (id < 0 || id >= STAGES.length) {
                 throw new IllegalArgumentException("No mapping for id [" + id + "]");
@@ -131,6 +148,14 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
     private DiscoveryNode targetNode;
     private boolean primary;
 
+    /**
+     * Creates a new RecoveryState.
+     *
+     * @param shardRouting the shard routing
+     * @param targetNode the target node
+     * @param sourceNode the source node
+     * @param index the index
+     */
     public RecoveryState(
         ShardRouting shardRouting,
         DiscoveryNode targetNode,
@@ -154,6 +179,12 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
         timer.start();
     }
 
+    /**
+     * Creates a new RecoveryState by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RecoveryState(StreamInput in) throws IOException {
         timer = new ReplicationTimer(in);
         stage = Stage.fromId(in.readByte());
@@ -282,8 +313,17 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
     public static class VerifyIndex extends ReplicationTimer implements ToXContentFragment, Writeable {
         private volatile long checkIndexTime;
 
+        /**
+         * Creates a new VerifyIndex.
+         */
         public VerifyIndex() {}
 
+        /**
+         * Creates a new VerifyIndex by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public VerifyIndex(StreamInput in) throws IOException {
             super(in);
             checkIndexTime = in.readVLong();
@@ -315,6 +355,9 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
      */
     @PublicApi(since = "1.0.0")
     public static class Translog extends ReplicationTimer implements ToXContentFragment, Writeable {
+        /**
+         * The UNKNOWN constant.
+         */
         public static final int UNKNOWN = -1;
 
         private int recovered;
@@ -322,8 +365,17 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
         private int totalOnStart = UNKNOWN;
         private int totalLocal = UNKNOWN;
 
+        /**
+         * Creates a new Translog.
+         */
         public Translog() {}
 
+        /**
+         * Creates a new Translog by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Translog(StreamInput in) throws IOException {
             super(in);
             recovered = in.readVInt();
@@ -349,6 +401,11 @@ public class RecoveryState implements ReplicationState, ToXContentFragment, Writ
             totalLocal = UNKNOWN;
         }
 
+        /**
+         * Returns the recovered percent.
+         *
+         * @return the recovered percent
+         */
         public synchronized float recoveredPercent() {
             if (total == UNKNOWN) {
                 return -1.f;

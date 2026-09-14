@@ -43,6 +43,12 @@ public class GetAllPitNodesResponse extends BaseNodesResponse<GetAllPitNodeRespo
      */
     private final Set<ListPitInfo> pitInfos = new HashSet<>();
 
+    /**
+     * Creates a new GetAllPitNodesResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetAllPitNodesResponse(StreamInput in) throws IOException {
         super(in);
         Set<String> uniquePitIds = new HashSet<>();
@@ -53,6 +59,14 @@ public class GetAllPitNodesResponse extends BaseNodesResponse<GetAllPitNodeRespo
         );
     }
 
+    /**
+     * Creates a new GetAllPitNodesResponse.
+     *
+     * @param listPitInfos the list pit infos
+     * @param clusterName the cluster name
+     * @param getAllPitNodeResponseList the get all pit node response list
+     * @param failures the failures
+     */
     public GetAllPitNodesResponse(
         List<ListPitInfo> listPitInfos,
         ClusterName clusterName,
@@ -91,6 +105,11 @@ public class GetAllPitNodesResponse extends BaseNodesResponse<GetAllPitNodeRespo
         out.writeList(nodes);
     }
 
+    /**
+     * Returns the pit infos.
+     *
+     * @return the pit infos
+     */
     public List<ListPitInfo> getPitInfos() {
         return Collections.unmodifiableList(new ArrayList<>(pitInfos));
     }
@@ -115,6 +134,13 @@ public class GetAllPitNodesResponse extends BaseNodesResponse<GetAllPitNodeRespo
         PARSER.declareObjectArray(constructorArg(), ListPitInfo.PARSER, new ParseField("pits"));
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GetAllPitNodesResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

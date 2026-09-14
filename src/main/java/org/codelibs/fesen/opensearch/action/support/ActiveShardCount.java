@@ -57,9 +57,21 @@ public final class ActiveShardCount implements Writeable {
     private static final int ACTIVE_SHARD_COUNT_DEFAULT = -2;
     private static final int ALL_ACTIVE_SHARDS = -1;
 
+    /**
+     * The DEFAULT constant.
+     */
     public static final ActiveShardCount DEFAULT = new ActiveShardCount(ACTIVE_SHARD_COUNT_DEFAULT);
+    /**
+     * The ALL constant.
+     */
     public static final ActiveShardCount ALL = new ActiveShardCount(ALL_ACTIVE_SHARDS);
+    /**
+     * The NONE constant.
+     */
     public static final ActiveShardCount NONE = new ActiveShardCount(0);
+    /**
+     * The ONE constant.
+     */
     public static final ActiveShardCount ONE = new ActiveShardCount(1);
 
     private final int value;
@@ -73,6 +85,9 @@ public final class ActiveShardCount implements Writeable {
      * it is a valid shard count and throws an IllegalArgumentException if validation fails.  Valid
      * values are any non-negative number.  Directly use {@link ActiveShardCount#DEFAULT} for the
      * default value (which is one shard copy) or {@link ActiveShardCount#ALL} to specify all the shards.
+     *
+     * @param value the value
+     * @return the new instance
      */
     public static ActiveShardCount from(final int value) {
         if (value < 0) {
@@ -83,6 +98,9 @@ public final class ActiveShardCount implements Writeable {
 
     /**
      * Validates that the instance is valid for the given number of replicas in an index.
+     *
+     * @param numberOfReplicas the number of replicas
+     * @return this instance
      */
     public boolean validate(final int numberOfReplicas) {
         assert numberOfReplicas >= 0;
@@ -110,6 +128,13 @@ public final class ActiveShardCount implements Writeable {
         out.writeInt(value);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static ActiveShardCount readFrom(final StreamInput in) throws IOException {
         return get(in.readInt());
     }
@@ -119,6 +144,9 @@ public final class ActiveShardCount implements Writeable {
      * all shard copies, null for the default value (which defaults to one shard copy),
      * or a numeric value greater than or equal to 0. Any other input will throw an
      * IllegalArgumentException.
+     *
+     * @param str the str
+     * @return this instance
      */
     public static ActiveShardCount parseString(final String str) {
         if (str == null) {

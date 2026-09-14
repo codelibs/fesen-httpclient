@@ -45,6 +45,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedSimpleValue extends ParsedSingleValueNumericMetricsAggregation implements SimpleValue {
+    /**
+     * Creates a new ParsedSimpleValue.
+     */
+    public ParsedSimpleValue() {
+    }
 
     @Override
     public String getType() {
@@ -61,6 +66,13 @@ public class ParsedSimpleValue extends ParsedSingleValueNumericMetricsAggregatio
         declareSingleValueFields(PARSER, Double.NaN);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedSimpleValue fromXContent(XContentParser parser, final String name) {
         ParsedSimpleValue simpleValue = PARSER.apply(parser, null);
         simpleValue.setName(name);

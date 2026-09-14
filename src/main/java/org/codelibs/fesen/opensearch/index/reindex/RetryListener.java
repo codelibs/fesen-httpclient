@@ -55,6 +55,15 @@ public class RetryListener implements RejectAwareActionListener<ScrollableHitSou
     private final ActionListener<ScrollableHitSource.Response> delegate;
     private int retryCount = 0;
 
+    /**
+     * Creates a new RetryListener.
+     *
+     * @param logger the logger
+     * @param threadPool the thread pool
+     * @param backoffPolicy the backoff policy
+     * @param retryScrollHandler the retry scroll handler
+     * @param delegate the delegate
+     */
     public RetryListener(
         Logger logger,
         ThreadPool threadPool,

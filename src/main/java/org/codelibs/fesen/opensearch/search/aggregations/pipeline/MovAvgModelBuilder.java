@@ -42,5 +42,10 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
  */
 public interface MovAvgModelBuilder extends ToXContentFragment {
 
+    /**
+     * Builds this instance.
+     *
+     * @return the new instance
+     */
     MovAvgModel build();
 }

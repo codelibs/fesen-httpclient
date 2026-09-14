@@ -17,7 +17,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ResumeIngestionAction extends ActionType<ResumeIngestionResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ResumeIngestionAction INSTANCE = new ResumeIngestionAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/ingestion/resume";
 
     private ResumeIngestionAction() {

@@ -62,6 +62,9 @@ import static org.codelibs.fesen.opensearch.common.xcontent.support.XContentMapV
  */
 @PublicApi(since = "1.0.0")
 public class MappingMetadata extends AbstractDiffable<MappingMetadata> implements VerifiableWriteable {
+    /**
+     * The EMPTY_MAPPINGS constant.
+     */
     public static final MappingMetadata EMPTY_MAPPINGS = new MappingMetadata(MapperService.SINGLE_MAPPING_NAME, Collections.emptyMap());
 
     private final String type;
@@ -70,6 +73,12 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
 
     private final boolean routingRequired;
 
+    /**
+     * Creates a new MappingMetadata.
+     *
+     * @param type the type
+     * @param mapping the mapping
+     */
     @SuppressWarnings("unchecked")
     public MappingMetadata(String type, Map<String, Object> mapping) {
         this.type = type;
@@ -109,16 +118,28 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
         return required;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public String type() {
         return this.type;
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public CompressedXContent source() {
         return this.source;
     }
 
     /**
      * Converts the serialized compressed form of the mappings into a parsed map.
+     *
+     * @return the source as map
      */
     public Map<String, Object> sourceAsMap() throws OpenSearchParseException {
         Map<String, Object> mapping = XContentHelper.convertToMap(source.compressedReference(), true).v2();
@@ -131,6 +152,8 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
 
     /**
      * Converts the serialized compressed form of the mappings into a parsed map.
+     *
+     * @return the source as map
      */
     public Map<String, Object> getSourceAsMap() throws OpenSearchParseException {
         return sourceAsMap();
@@ -170,6 +193,12 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
         return Objects.hash(type, source, routingRequired);
     }
 
+    /**
+     * Creates a new MappingMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MappingMetadata(StreamInput in) throws IOException {
         type = in.readString();
         source = CompressedXContent.readCompressedString(in);
@@ -177,6 +206,13 @@ public class MappingMetadata extends AbstractDiffable<MappingMetadata> implement
         routingRequired = in.readBoolean();
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<MappingMetadata> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(MappingMetadata::new, in);
     }

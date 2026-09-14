@@ -113,6 +113,11 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
                 }
             }
 
+            /**
+             * Returns the value.
+             *
+             * @return the value
+             */
             public String value() {
                 switch (id) {
                     case 0:
@@ -135,6 +140,12 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
             }
         }
 
+        /**
+         * Creates a new StoreStatus by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public StoreStatus(StreamInput in) throws IOException {
             node = new DiscoveryNode(in);
             allocationId = in.readOptionalString();
@@ -209,6 +220,11 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
             nodeId = in.readString();
         }
 
+        /**
+         * Returns the node identifier.
+         *
+         * @return the node identifier
+         */
         public String nodeId() {
             return nodeId;
         }
@@ -233,6 +249,12 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
     private final Map<String, Map<Integer, List<StoreStatus>>> storeStatuses;
     private final List<Failure> failures;
 
+    /**
+     * Creates a new IndicesShardStoresResponse.
+     *
+     * @param storeStatuses the store statuses
+     * @param failures the failures
+     */
     public IndicesShardStoresResponse(final Map<String, Map<Integer, List<StoreStatus>>> storeStatuses, List<Failure> failures) {
         this.storeStatuses = Collections.unmodifiableMap(storeStatuses);
         this.failures = failures;
@@ -242,6 +264,12 @@ public class IndicesShardStoresResponse extends ActionResponse implements ToXCon
         this(Map.of(), Collections.emptyList());
     }
 
+    /**
+     * Creates a new IndicesShardStoresResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndicesShardStoresResponse(StreamInput in) throws IOException {
         super(in);
         final Map<String, Map<Integer, List<StoreStatus>>> storeStatuses = in.readMap(

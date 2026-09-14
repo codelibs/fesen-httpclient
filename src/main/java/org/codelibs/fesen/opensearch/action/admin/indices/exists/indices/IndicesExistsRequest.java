@@ -57,10 +57,18 @@ public class IndicesExistsRequest extends ClusterManagerNodeReadRequest<IndicesE
     private IndicesOptions indicesOptions = IndicesOptions.fromOptions(false, false, true, true);
 
     // for serialization
+    /**
+     * Creates a new IndicesExistsRequest.
+     */
     public IndicesExistsRequest() {
 
     }
 
+    /**
+     * Creates a new IndicesExistsRequest.
+     *
+     * @param indices the indices
+     */
     public IndicesExistsRequest(String... indices) {
         this.indices = indices;
     }

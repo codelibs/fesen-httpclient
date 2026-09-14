@@ -48,6 +48,9 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class InternalGeoDistance extends InternalRange<InternalGeoDistance.Bucket, InternalGeoDistance> {
+    /**
+     * The FACTORY constant.
+     */
     public static final Factory FACTORY = new Factory();
 
     /**
@@ -77,6 +80,12 @@ public class InternalGeoDistance extends InternalRange<InternalGeoDistance.Bucke
      * @opensearch.internal
      */
     public static class Factory extends InternalRange.Factory<InternalGeoDistance.Bucket, InternalGeoDistance> {
+        /**
+         * Creates a new Factory.
+         */
+        public Factory() {
+        }
+
         @Override
         public ValuesSourceType getValueSourceType() {
             return CoreValuesSourceType.GEOPOINT;
@@ -129,6 +138,14 @@ public class InternalGeoDistance extends InternalRange<InternalGeoDistance.Bucke
         }
     }
 
+    /**
+     * Creates a new InternalGeoDistance.
+     *
+     * @param name the name
+     * @param ranges the ranges
+     * @param keyed the keyed
+     * @param metadata the metadata
+     */
     public InternalGeoDistance(String name, List<Bucket> ranges, boolean keyed, Map<String, Object> metadata) {
         super(name, ranges, DocValueFormat.RAW, keyed, metadata);
     }

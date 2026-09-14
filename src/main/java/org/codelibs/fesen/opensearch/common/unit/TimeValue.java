@@ -49,8 +49,17 @@ public class TimeValue implements Comparable<TimeValue> {
     /** How many nano-seconds in one milli-second */
     public static final long NSEC_PER_MSEC = TimeUnit.NANOSECONDS.convert(1, TimeUnit.MILLISECONDS);
 
+    /**
+     * The MINUS_ONE constant.
+     */
     public static final TimeValue MINUS_ONE = timeValueMillis(-1);
+    /**
+     * The ZERO constant.
+     */
     public static final TimeValue ZERO = timeValueMillis(0);
+    /**
+     * The MAX_VALUE constant.
+     */
     public static final TimeValue MAX_VALUE = TimeValue.timeValueNanos(Long.MAX_VALUE);
 
     private static final long C0 = 1L;
@@ -64,10 +73,21 @@ public class TimeValue implements Comparable<TimeValue> {
     private final long duration;
     private final TimeUnit timeUnit;
 
+    /**
+     * Creates a new TimeValue.
+     *
+     * @param millis the milliseconds
+     */
     public TimeValue(long millis) {
         this(millis, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Creates a new TimeValue.
+     *
+     * @param duration the duration
+     * @param timeUnit the time unit
+     */
     public TimeValue(long duration, TimeUnit timeUnit) {
         if (duration < -1) {
             throw new IllegalArgumentException("duration cannot be negative, was given [" + duration + "]");
@@ -76,27 +96,59 @@ public class TimeValue implements Comparable<TimeValue> {
         this.timeUnit = timeUnit;
     }
 
+    /**
+     * Returns the time value nanoseconds.
+     *
+     * @param nanos the nanoseconds
+     * @return the time value nanoseconds
+     */
     public static TimeValue timeValueNanos(long nanos) {
         return new TimeValue(nanos, TimeUnit.NANOSECONDS);
     }
 
+    /**
+     * Returns the time value milliseconds.
+     *
+     * @param millis the milliseconds
+     * @return the time value milliseconds
+     */
     public static TimeValue timeValueMillis(long millis) {
         return new TimeValue(millis, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Returns the time value seconds.
+     *
+     * @param seconds the seconds
+     * @return the time value seconds
+     */
     public static TimeValue timeValueSeconds(long seconds) {
         return new TimeValue(seconds, TimeUnit.SECONDS);
     }
 
+    /**
+     * Returns the time value minutes.
+     *
+     * @param minutes the minutes
+     * @return the time value minutes
+     */
     public static TimeValue timeValueMinutes(long minutes) {
         return new TimeValue(minutes, TimeUnit.MINUTES);
     }
 
+    /**
+     * Returns the time value hours.
+     *
+     * @param hours the hours
+     * @return the time value hours
+     */
     public static TimeValue timeValueHours(long hours) {
         return new TimeValue(hours, TimeUnit.HOURS);
     }
 
     /**
+     * Returns the time unit.
+     *
      * @return the unit used for the this time value, see {@link #duration()}
      */
     public TimeUnit timeUnit() {
@@ -104,44 +156,91 @@ public class TimeValue implements Comparable<TimeValue> {
     }
 
     /**
+     * Returns the duration.
+     *
      * @return the number of {@link #timeUnit()} units this value contains
      */
     public long duration() {
         return duration;
     }
 
+    /**
+     * Returns the nanoseconds.
+     *
+     * @return the nanoseconds
+     */
     public long nanos() {
         return timeUnit.toNanos(duration);
     }
 
+    /**
+     * Returns the milliseconds.
+     *
+     * @return the milliseconds
+     */
     public long millis() {
         return timeUnit.toMillis(duration);
     }
 
+    /**
+     * Returns the milliseconds.
+     *
+     * @return the milliseconds
+     */
     public long getMillis() {
         return millis();
     }
 
+    /**
+     * Returns the micros frac.
+     *
+     * @return the micros frac
+     */
     public double microsFrac() {
         return ((double) nanos()) / C1;
     }
 
+    /**
+     * Returns the milliseconds frac.
+     *
+     * @return the milliseconds frac
+     */
     public double millisFrac() {
         return ((double) nanos()) / C2;
     }
 
+    /**
+     * Returns the seconds frac.
+     *
+     * @return the seconds frac
+     */
     public double secondsFrac() {
         return ((double) nanos()) / C3;
     }
 
+    /**
+     * Returns the minutes frac.
+     *
+     * @return the minutes frac
+     */
     public double minutesFrac() {
         return ((double) nanos()) / C4;
     }
 
+    /**
+     * Returns the hours frac.
+     *
+     * @return the hours frac
+     */
     public double hoursFrac() {
         return ((double) nanos()) / C5;
     }
 
+    /**
+     * Returns the days frac.
+     *
+     * @return the days frac
+     */
     public double daysFrac() {
         return ((double) nanos()) / C6;
     }
@@ -174,6 +273,7 @@ public class TimeValue implements Comparable<TimeValue> {
      * to nanoseconds (106751.9 days is Long.MAX_VALUE nanoseconds)
      *
      * @param fractionPieces the number of decimal places to include
+     * @return the human readable string
      */
     public String toHumanReadableString(int fractionPieces) {
         if (duration < 0) {
@@ -270,6 +370,11 @@ public class TimeValue implements Comparable<TimeValue> {
         }
     }
 
+    /**
+     * Returns the string rep.
+     *
+     * @return the string rep
+     */
     public String getStringRep() {
         if (duration < 0) {
             return Long.toString(duration);
@@ -294,12 +399,27 @@ public class TimeValue implements Comparable<TimeValue> {
         }
     }
 
+    /**
+     * Parses the time value.
+     *
+     * @param sValue the s value
+     * @param settingName the setting name
+     * @return this instance
+     */
     public static TimeValue parseTimeValue(String sValue, String settingName) {
         Objects.requireNonNull(settingName);
         Objects.requireNonNull(sValue);
         return parseTimeValue(sValue, null, settingName);
     }
 
+    /**
+     * Parses the time value.
+     *
+     * @param sValue the s value
+     * @param defaultValue the default value
+     * @param settingName the setting name
+     * @return this instance
+     */
     public static TimeValue parseTimeValue(String sValue, TimeValue defaultValue, String settingName) {
         settingName = Objects.requireNonNull(settingName);
         if (sValue == null) {
@@ -372,6 +492,12 @@ public class TimeValue implements Comparable<TimeValue> {
         return Double.hashCode(((double) duration) * timeUnit.toNanos(1));
     }
 
+    /**
+     * Returns the nsec to m sec.
+     *
+     * @param ns the ns
+     * @return the nsec to m sec
+     */
     public static long nsecToMSec(long ns) {
         return ns / NSEC_PER_MSEC;
     }

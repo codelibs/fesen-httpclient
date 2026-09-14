@@ -54,6 +54,9 @@ import java.util.Objects;
  */
 public class ScoreSortBuilder extends SortBuilder<ScoreSortBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "_score";
     private static final SortFieldAndFormat SORT_SCORE = new SortFieldAndFormat(
         new SortField(null, SortField.Type.SCORE),
@@ -95,6 +98,7 @@ public class ScoreSortBuilder extends SortBuilder<ScoreSortBuilder> {
      *        method call
      * @param fieldName in some sort syntax variations the field name precedes the xContent object that specifies further parameters, e.g.
      *        in '{ "foo": { "order" : "asc"} }'. When parsing the inner object, the field name can be passed in via this argument
+     * @return the new XContent
      */
     public static ScoreSortBuilder fromXContent(XContentParser parser, String fieldName) {
         return PARSER.apply(parser, null);

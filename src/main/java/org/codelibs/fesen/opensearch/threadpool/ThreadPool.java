@@ -94,38 +94,134 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
      * @opensearch.internal
      */
     public static class Names {
+        /**
+         * Creates a new Names.
+         */
+        public Names() {
+        }
+
+        /**
+         * The SAME constant.
+         */
         public static final String SAME = "same";
+        /**
+         * The GENERIC constant.
+         */
         public static final String GENERIC = "generic";
+        /**
+         * The TRANSLOG_RECOVERY constant.
+         */
         public static final String TRANSLOG_RECOVERY = "translog_recovery";
+        /**
+         * The LISTENER constant.
+         */
         @Deprecated
         public static final String LISTENER = "listener";
+        /**
+         * The GET constant.
+         */
         public static final String GET = "get";
+        /**
+         * The ANALYZE constant.
+         */
         public static final String ANALYZE = "analyze";
+        /**
+         * The WRITE constant.
+         */
         public static final String WRITE = "write";
+        /**
+         * The SEARCH constant.
+         */
         public static final String SEARCH = "search";
+        /**
+         * The STREAM_SEARCH constant.
+         */
         public static final String STREAM_SEARCH = "stream_search";
+        /**
+         * The SEARCH_THROTTLED constant.
+         */
         public static final String SEARCH_THROTTLED = "search_throttled";
+        /**
+         * The MANAGEMENT constant.
+         */
         public static final String MANAGEMENT = "management";
+        /**
+         * The FLUSH constant.
+         */
         public static final String FLUSH = "flush";
+        /**
+         * The REFRESH constant.
+         */
         public static final String REFRESH = "refresh";
+        /**
+         * The WARMER constant.
+         */
         public static final String WARMER = "warmer";
+        /**
+         * The SNAPSHOT constant.
+         */
         public static final String SNAPSHOT = "snapshot";
+        /**
+         * The SNAPSHOT_DELETION constant.
+         */
         public static final String SNAPSHOT_DELETION = "snapshot_deletion";
+        /**
+         * The FORCE_MERGE constant.
+         */
         public static final String FORCE_MERGE = "force_merge";
+        /**
+         * The MERGE constant.
+         */
         public static final String MERGE = "merge";
+        /**
+         * The FETCH_SHARD_STARTED constant.
+         */
         public static final String FETCH_SHARD_STARTED = "fetch_shard_started";
+        /**
+         * The FETCH_SHARD_STORE constant.
+         */
         public static final String FETCH_SHARD_STORE = "fetch_shard_store";
+        /**
+         * The SYSTEM_READ constant.
+         */
         public static final String SYSTEM_READ = "system_read";
+        /**
+         * The SYSTEM_WRITE constant.
+         */
         public static final String SYSTEM_WRITE = "system_write";
+        /**
+         * The TRANSLOG_TRANSFER constant.
+         */
         public static final String TRANSLOG_TRANSFER = "translog_transfer";
+        /**
+         * The TRANSLOG_SYNC constant.
+         */
         public static final String TRANSLOG_SYNC = "translog_sync";
+        /**
+         * The REMOTE_PURGE constant.
+         */
         public static final String REMOTE_PURGE = "remote_purge";
+        /**
+         * The REMOTE_REFRESH_RETRY constant.
+         */
         public static final String REMOTE_REFRESH_RETRY = "remote_refresh_retry";
+        /**
+         * The REMOTE_RECOVERY constant.
+         */
         public static final String REMOTE_RECOVERY = "remote_recovery";
         /** Thread pool name for remote downloads in tiered storage. */
         public static final String REMOTE_DOWNLOAD = "remote_download";
+        /**
+         * The REMOTE_STATE_READ constant.
+         */
         public static final String REMOTE_STATE_READ = "remote_state_read";
+        /**
+         * The INDEX_SEARCHER constant.
+         */
         public static final String INDEX_SEARCHER = "index_searcher";
+        /**
+         * The REMOTE_STATE_CHECKSUM constant.
+         */
         public static final String REMOTE_STATE_CHECKSUM = "remote_state_checksum";
     }
 
@@ -139,14 +235,34 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
      */
     @PublicApi(since = "1.0.0")
     public enum ThreadPoolType {
+        /**
+         * The DIRECT value.
+         */
         DIRECT("direct"),
+        /**
+         * The FIXED value.
+         */
         FIXED("fixed"),
+        /**
+         * The RESIZABLE value.
+         */
         RESIZABLE("resizable"),
+        /**
+         * The SCALING value.
+         */
         SCALING("scaling"),
+        /**
+         * The FORK_JOIN value.
+         */
         FORK_JOIN("fork_join");
 
         private final String type;
 
+        /**
+         * Returns the type.
+         *
+         * @return the type
+         */
         public String getType() {
             return type;
         }
@@ -165,6 +281,12 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
             TYPE_MAP = Collections.unmodifiableMap(typeMap);
         }
 
+        /**
+         * Creates an instance from type.
+         *
+         * @param type the type
+         * @return the new type
+         */
         public static ThreadPoolType fromType(String type) {
             ThreadPoolType threadPoolType = TYPE_MAP.get(type);
             if (threadPoolType == null) {
@@ -174,6 +296,9 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         }
     }
 
+    /**
+     * The THREAD_POOL_TYPES constant.
+     */
     public static final Map<String, ThreadPoolType> THREAD_POOL_TYPES;
 
     static {
@@ -226,6 +351,9 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
     private final ScheduledThreadPoolExecutor scheduler;
 
+    /**
+     * The ESTIMATED_TIME_INTERVAL_SETTING constant.
+     */
     public static Setting<TimeValue> ESTIMATED_TIME_INTERVAL_SETTING = Setting.timeSetting(
         "thread_pool.estimated_time_interval",
         TimeValue.timeValueMillis(200),
@@ -233,12 +361,21 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         Setting.Property.NodeScope
     );
 
+    /**
+     * The CLUSTER_THREAD_POOL_SIZE_SETTING constant.
+     */
     public static final Setting<Settings> CLUSTER_THREAD_POOL_SIZE_SETTING = Setting.groupSetting(
         "cluster.thread_pool.",
         Setting.Property.Dynamic,
         Setting.Property.NodeScope
     );
 
+    /**
+     * Creates a new ThreadPool.
+     *
+     * @param settings the settings
+     * @param customBuilders the custom builders
+     */
     public ThreadPool(final Settings settings, final ExecutorBuilder<?>... customBuilders) {
         this(settings, null, customBuilders);
     }
@@ -246,6 +383,13 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
     /** The number of cluster-state components the remote-state checksum pool sizes itself for. */
     private static final int REMOTE_STATE_CHECKSUM_COMPONENT_SIZE = 11;
 
+    /**
+     * Creates a new ThreadPool.
+     *
+     * @param settings the settings
+     * @param runnableTaskListener the runnable task listener
+     * @param customBuilders the custom builders
+     */
     public ThreadPool(
         final Settings settings,
         final AtomicReference<RunnableTaskExecutionListener> runnableTaskListener,
@@ -405,6 +549,7 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
      * if you submit a task while it shutdown. It will instead silently queue it and not run it.
      *
      * @param name the name of the executor service to obtain
+     * @return the executor
      * @throws IllegalArgumentException if no executor service with the specified name exists
      */
     public ExecutorService executor(String name) {
@@ -485,6 +630,12 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         return boundedBy(2 * allocatedProcessors, 2, Integer.MAX_VALUE);
     }
 
+    /**
+     * Searches the thread pool size.
+     *
+     * @param allocatedProcessors the allocated processors
+     * @return this instance
+     */
     public static int searchThreadPoolSize(final int allocatedProcessors) {
         return ((allocatedProcessors * 3) / 2) + 1;
     }
@@ -631,14 +782,37 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         private final TimeValue keepAlive;
         private final SizeValue queueSize;
 
+        /**
+         * Creates a new Info.
+         *
+         * @param name the name
+         * @param type the type
+         */
         public Info(String name, ThreadPoolType type) {
             this(name, type, -1);
         }
 
+        /**
+         * Creates a new Info.
+         *
+         * @param name the name
+         * @param type the type
+         * @param size the size
+         */
         public Info(String name, ThreadPoolType type, int size) {
             this(name, type, size, size, null, null);
         }
 
+        /**
+         * Creates a new Info.
+         *
+         * @param name the name
+         * @param type the type
+         * @param min the min
+         * @param max the max
+         * @param keepAlive the keep alive
+         * @param queueSize the queue size
+         */
         public Info(String name, ThreadPoolType type, int min, int max, @Nullable TimeValue keepAlive, @Nullable SizeValue queueSize) {
             this.name = name;
             this.type = type;
@@ -648,6 +822,12 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
             this.queueSize = queueSize;
         }
 
+        /**
+         * Creates a new Info by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Info(StreamInput in) throws IOException {
             name = in.readString();
             final String typeStr = in.readString();
@@ -700,23 +880,48 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
             out.writeOptionalWriteable(queueSize);
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return this.name;
         }
 
+        /**
+         * Returns the min.
+         *
+         * @return the min
+         */
         public int getMin() {
             return this.min;
         }
 
+        /**
+         * Returns the max.
+         *
+         * @return the max
+         */
         public int getMax() {
             return this.max;
         }
 
+        /**
+         * Returns the keep alive.
+         *
+         * @return the keep alive
+         */
         @Nullable
         public TimeValue getKeepAlive() {
             return this.keepAlive;
         }
 
+        /**
+         * Returns the queue size.
+         *
+         * @return the queue size
+         */
         @Nullable
         public SizeValue getQueueSize() {
             return this.queueSize;
@@ -760,6 +965,11 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
 
     }
 
+    /**
+     * Returns the thread context.
+     *
+     * @return the thread context
+     */
     public ThreadContext getThreadContext() {
         return threadContext;
     }

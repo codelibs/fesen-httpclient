@@ -56,10 +56,21 @@ public class GetTaskResponse extends ActionResponse implements ToXContentObject 
 
     private final TaskResult task;
 
+    /**
+     * Creates a new GetTaskResponse.
+     *
+     * @param task the task
+     */
     public GetTaskResponse(TaskResult task) {
         this.task = requireNonNull(task, "task is required");
     }
 
+    /**
+     * Creates a new GetTaskResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetTaskResponse(StreamInput in) throws IOException {
         super(in);
         task = in.readOptionalWriteable(TaskResult::new);
@@ -72,6 +83,8 @@ public class GetTaskResponse extends ActionResponse implements ToXContentObject 
 
     /**
      * Get the actual result of the fetch.
+     *
+     * @return the task
      */
     public TaskResult getTask() {
         return task;

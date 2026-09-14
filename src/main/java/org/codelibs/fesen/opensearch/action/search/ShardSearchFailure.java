@@ -67,6 +67,9 @@ public class ShardSearchFailure extends ShardOperationFailedException {
     private static final String INDEX_FIELD = "index";
     private static final String SHARD_FIELD = "shard";
 
+    /**
+     * The EMPTY_ARRAY constant.
+     */
     public static final ShardSearchFailure[] EMPTY_ARRAY = new ShardSearchFailure[0];
 
     private SearchShardTarget shardTarget;
@@ -91,6 +94,12 @@ public class ShardSearchFailure extends ShardOperationFailedException {
         this(e, null);
     }
 
+    /**
+     * Creates a new ShardSearchFailure.
+     *
+     * @param e the exception
+     * @param shardTarget the shard target
+     */
     public ShardSearchFailure(Exception e, @Nullable SearchShardTarget shardTarget) {
         this(e, ExceptionsHelper.unwrapCause(e), shardTarget);
     }
@@ -113,6 +122,8 @@ public class ShardSearchFailure extends ShardOperationFailedException {
 
     /**
      * The search shard target the failure occurred on.
+     *
+     * @return the shard
      */
     @Nullable
     public SearchShardTarget shard() {
@@ -130,6 +141,13 @@ public class ShardSearchFailure extends ShardOperationFailedException {
             + "]";
     }
 
+    /**
+     * Reads the shard search failure.
+     *
+     * @param in the input to read from
+     * @return the shard search failure
+     * @throws IOException if an I/O error occurs
+     */
     public static ShardSearchFailure readShardSearchFailure(StreamInput in) throws IOException {
         return new ShardSearchFailure(in);
 
@@ -161,6 +179,13 @@ public class ShardSearchFailure extends ShardOperationFailedException {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ShardSearchFailure fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);

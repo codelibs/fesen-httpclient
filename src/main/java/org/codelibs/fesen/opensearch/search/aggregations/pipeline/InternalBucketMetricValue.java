@@ -52,12 +52,24 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class InternalBucketMetricValue extends InternalNumericMetricsAggregation.SingleValue implements BucketMetricValue {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "bucket_metric_value";
     static final ParseField KEYS_FIELD = new ParseField("keys");
 
     private double value;
     private String[] keys;
 
+    /**
+     * Creates a new InternalBucketMetricValue.
+     *
+     * @param name the name
+     * @param keys the keys
+     * @param value the value
+     * @param formatter the formatter
+     * @param metadata the metadata
+     */
     public InternalBucketMetricValue(String name, String[] keys, double value, DocValueFormat formatter, Map<String, Object> metadata) {
         super(name, metadata);
         this.keys = keys;

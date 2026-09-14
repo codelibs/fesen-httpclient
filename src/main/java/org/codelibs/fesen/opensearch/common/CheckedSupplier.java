@@ -37,9 +37,17 @@ import java.util.function.Supplier;
 /**
  * A {@link Supplier}-like interface which allows throwing checked exceptions.
  *
+ * @param <R> the result type
+ * @param <E> the element type
  * @opensearch.internal
  */
 @FunctionalInterface
 public interface CheckedSupplier<R, E extends Exception> {
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     * @throws E if an e failure occurs
+     */
     R get() throws E;
 }

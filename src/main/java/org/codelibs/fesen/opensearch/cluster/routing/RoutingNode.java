@@ -161,6 +161,13 @@ public class RoutingNode implements Iterable<ShardRouting> {
 
     private final HashMap<Index, LinkedHashSet<ShardRouting>> shardsByIndex;
 
+    /**
+     * Creates a new RoutingNode.
+     *
+     * @param nodeId the node identifier
+     * @param node the node
+     * @param shardRoutings the shard routings
+     */
     public RoutingNode(String nodeId, DiscoveryNode node, ShardRouting... shardRoutings) {
         this.nodeId = nodeId;
         this.node = node;
@@ -270,6 +277,11 @@ public class RoutingNode implements Iterable<ShardRouting> {
         return count;
     }
 
+    /**
+     * Returns the pretty print.
+     *
+     * @return the pretty print
+     */
     public String prettyPrint() {
         StringBuilder sb = new StringBuilder();
         sb.append("-----node_id[").append(nodeId).append("][").append(node == null ? "X" : "V").append("]\n");

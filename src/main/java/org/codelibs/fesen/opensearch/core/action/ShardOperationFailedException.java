@@ -46,16 +46,43 @@ import java.util.Objects;
  */
 public abstract class ShardOperationFailedException implements Writeable, ToXContentObject {
 
+    /**
+     * The index.
+     */
     protected String index;
+    /**
+     * The shard identifier.
+     */
     protected int shardId = -1;
+    /**
+     * The reason.
+     */
     protected String reason;
+    /**
+     * The status.
+     */
     protected RestStatus status;
+    /**
+     * The cause.
+     */
     protected Throwable cause;
 
+    /**
+     * Creates a new ShardOperationFailedException.
+     */
     protected ShardOperationFailedException() {
 
     }
 
+    /**
+     * Creates a new ShardOperationFailedException.
+     *
+     * @param index the index
+     * @param shardId the shard identifier
+     * @param reason the reason
+     * @param status the status
+     * @param cause the cause
+     */
     protected ShardOperationFailedException(@Nullable String index, int shardId, String reason, RestStatus status, Throwable cause) {
         this.index = index;
         this.shardId = shardId;
@@ -66,6 +93,8 @@ public abstract class ShardOperationFailedException implements Writeable, ToXCon
 
     /**
      * The index the operation failed on. Might return {@code null} if it can't be derived.
+     *
+     * @return this instance
      */
     @Nullable
     public final String index() {
@@ -74,6 +103,8 @@ public abstract class ShardOperationFailedException implements Writeable, ToXCon
 
     /**
      * The index the operation failed on. Might return {@code -1} if it can't be derived.
+     *
+     * @return the shard identifier
      */
     public final int shardId() {
         return shardId;
@@ -81,6 +112,8 @@ public abstract class ShardOperationFailedException implements Writeable, ToXCon
 
     /**
      * The reason of the failure.
+     *
+     * @return the reason
      */
     public final String reason() {
         return reason;
@@ -88,6 +121,8 @@ public abstract class ShardOperationFailedException implements Writeable, ToXCon
 
     /**
      * The status of the failure.
+     *
+     * @return the status
      */
     public final RestStatus status() {
         return status;
@@ -95,6 +130,8 @@ public abstract class ShardOperationFailedException implements Writeable, ToXCon
 
     /**
      * The cause of this failure
+     *
+     * @return the cause
      */
     public final Throwable getCause() {
         return cause;

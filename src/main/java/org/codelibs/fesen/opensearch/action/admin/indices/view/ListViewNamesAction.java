@@ -26,9 +26,18 @@ import java.util.Objects;
 @ExperimentalApi
 public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ListViewNamesAction INSTANCE = new ListViewNamesAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "views:data/read/list";
 
+    /**
+     * Creates a new ListViewNamesAction.
+     */
     public ListViewNamesAction() {
         super(NAME, ListViewNamesAction.Response::new);
     }
@@ -36,6 +45,9 @@ public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response
     /** Request for list view names */
     @ExperimentalApi
     public static class Request extends ActionRequest {
+        /**
+         * Creates a new Request.
+         */
         public Request() {}
 
         @Override
@@ -63,10 +75,21 @@ public class ListViewNamesAction extends ActionType<ListViewNamesAction.Response
 
         private final List<String> views;
 
+        /**
+         * Creates a new Response.
+         *
+         * @param views the views
+         */
         public Response(final List<String> views) {
             this.views = views;
         }
 
+        /**
+         * Creates a new Response.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Response(final StreamInput in) throws IOException {
             views = in.readStringList();
         }

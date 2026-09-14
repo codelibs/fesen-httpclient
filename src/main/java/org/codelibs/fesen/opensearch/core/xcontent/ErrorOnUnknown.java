@@ -57,6 +57,7 @@ public interface ErrorOnUnknown {
      * @param parserName the name of the thing we're parsing
      * @param unknownField the field that we couldn't recognize
      * @param candidates the possible fields
+     * @return the error message
      */
     String errorMessage(String parserName, String unknownField, Iterable<String> candidates);
 

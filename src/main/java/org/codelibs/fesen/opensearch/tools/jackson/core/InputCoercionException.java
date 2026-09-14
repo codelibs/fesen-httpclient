@@ -15,6 +15,12 @@ import java.io.IOException;
  */
 public class InputCoercionException extends JsonParseException {
 
+    /**
+     * Creates a new InputCoercionException.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public InputCoercionException(String message, Throwable cause) {
         super(message, cause);
     }

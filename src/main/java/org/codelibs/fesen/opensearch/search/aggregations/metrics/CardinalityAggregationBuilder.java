@@ -58,11 +58,23 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
     ValuesSource,
     CardinalityAggregationBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cardinality";
     private static final ParseField REHASH = new ParseField("rehash").withAllDeprecated("no replacement - values will always be rehashed");
+    /**
+     * The PRECISION_THRESHOLD_FIELD constant.
+     */
     public static final ParseField PRECISION_THRESHOLD_FIELD = new ParseField("precision_threshold");
+    /**
+     * The EXECUTION_HINT_FIELD constant.
+     */
     public static final ParseField EXECUTION_HINT_FIELD = new ParseField("execution_hint");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<CardinalityAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         CardinalityAggregationBuilder::new
@@ -78,10 +90,22 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
 
     private String executionHint = null;
 
+    /**
+     * Creates a new CardinalityAggregationBuilder.
+     *
+     * @param name the name
+     */
     public CardinalityAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new CardinalityAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     public CardinalityAggregationBuilder(
         CardinalityAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -122,6 +146,9 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
     /**
      * Set a precision threshold. Higher values improve accuracy but also
      * increase memory usage.
+     *
+     * @param precisionThreshold the precision threshold
+     * @return the precision threshold
      */
     public CardinalityAggregationBuilder precisionThreshold(long precisionThreshold) {
         if (precisionThreshold < 0) {
@@ -133,6 +160,12 @@ public final class CardinalityAggregationBuilder extends ValuesSourceAggregation
         return this;
     }
 
+    /**
+     * Returns the execution hint.
+     *
+     * @param executionHint the execution hint
+     * @return the execution hint
+     */
     public CardinalityAggregationBuilder executionHint(String executionHint) {
         this.executionHint = executionHint;
         return this;

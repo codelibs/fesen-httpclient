@@ -54,22 +54,44 @@ public class IndexStats implements Iterable<IndexShardStats> {
 
     private final ShardStats shards[];
 
+    /**
+     * Creates a new IndexStats.
+     *
+     * @param index the index
+     * @param uuid the UUID
+     * @param shards the shards
+     */
     public IndexStats(String index, String uuid, ShardStats[] shards) {
         this.index = index;
         this.uuid = uuid;
         this.shards = shards;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return this.index;
     }
 
+    /**
+     * Returns the UUID.
+     *
+     * @return the UUID
+     */
     public String getUuid() {
         return uuid;
     }
 
     private Map<Integer, IndexShardStats> indexShards;
 
+    /**
+     * Returns the index shards.
+     *
+     * @return the index shards
+     */
     public Map<Integer, IndexShardStats> getIndexShards() {
         if (indexShards != null) {
             return indexShards;
@@ -100,6 +122,11 @@ public class IndexStats implements Iterable<IndexShardStats> {
 
     private CommonStats total = null;
 
+    /**
+     * Returns the total.
+     *
+     * @return the total
+     */
     public CommonStats getTotal() {
         if (total != null) {
             return total;
@@ -114,6 +141,11 @@ public class IndexStats implements Iterable<IndexShardStats> {
 
     private CommonStats primary = null;
 
+    /**
+     * Returns the primaries.
+     *
+     * @return the primaries
+     */
     public CommonStats getPrimaries() {
         if (primary != null) {
             return primary;
@@ -138,16 +170,33 @@ public class IndexStats implements Iterable<IndexShardStats> {
         private final String uuid;
         private final List<ShardStats> shards = new ArrayList<>();
 
+        /**
+         * Creates a new IndexStatsBuilder.
+         *
+         * @param indexName the index name
+         * @param uuid the UUID
+         */
         public IndexStatsBuilder(String indexName, String uuid) {
             this.indexName = indexName;
             this.uuid = uuid;
         }
 
+        /**
+         * Adds this instance.
+         *
+         * @param shardStats the shard stats
+         * @return this instance
+         */
         public IndexStatsBuilder add(ShardStats shardStats) {
             shards.add(shardStats);
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IndexStats build() {
             return new IndexStats(indexName, uuid, shards.toArray(new ShardStats[0]));
         }

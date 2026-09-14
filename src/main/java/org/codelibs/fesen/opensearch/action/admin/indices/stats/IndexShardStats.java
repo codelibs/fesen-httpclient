@@ -54,20 +54,42 @@ public class IndexShardStats implements Iterable<ShardStats>, Writeable {
 
     private final ShardStats[] shards;
 
+    /**
+     * Creates a new IndexShardStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexShardStats(StreamInput in) throws IOException {
         shardId = new ShardId(in);
         shards = in.readArray(ShardStats::new, ShardStats[]::new);
     }
 
+    /**
+     * Creates a new IndexShardStats.
+     *
+     * @param shardId the shard identifier
+     * @param shards the shards
+     */
     public IndexShardStats(ShardId shardId, ShardStats[] shards) {
         this.shardId = shardId;
         this.shards = shards;
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         return this.shardId;
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @return the shards
+     */
     public ShardStats[] getShards() {
         return shards;
     }

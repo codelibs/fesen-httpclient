@@ -33,11 +33,20 @@ public class StatusCounterStats implements Writeable, ToXContentFragment {
     @Nullable
     private SearchResponseStatusStats searchResponseStatusStats;
 
+    /**
+     * Creates a new StatusCounterStats.
+     */
     public StatusCounterStats() {
         docStatusStats = new DocStatusStats();
         searchResponseStatusStats = new SearchResponseStatusStats();
     }
 
+    /**
+     * Creates a new StatusCounterStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public StatusCounterStats(StreamInput in) throws IOException {
         if (in.getVersion().onOrAfter(Version.V_3_4_0)) {
             docStatusStats = in.readOptionalWriteable(DocStatusStats::new);

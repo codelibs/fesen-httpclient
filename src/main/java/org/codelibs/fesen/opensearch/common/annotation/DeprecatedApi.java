@@ -32,11 +32,15 @@ import java.lang.annotation.Target;
 public @interface DeprecatedApi {
     /**
      * Version since this API is deprecated
+     *
+     * @return the since
      */
     String since();
 
     /**
      * Next major version when this API is scheduled for removal
+     *
+     * @return the for removal
      */
     String forRemoval() default "";
 }

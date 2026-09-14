@@ -39,12 +39,16 @@ import java.util.concurrent.atomic.AtomicReference;
  * This is borrowed from lucene's experimental API. It is not reused to eliminate the dependency
  * on lucene core for such a simple (standalone) utility class that may change beyond OpenSearch needs.
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 public final class SetOnce<T> implements Cloneable {
 
     /** Thrown when {@link SetOnce#set(Object)} is called more than once. */
     public static final class AlreadySetException extends IllegalStateException {
+        /**
+         * Creates a new AlreadySetException.
+         */
         public AlreadySetException() {
             super("The object cannot be set twice!");
         }
@@ -69,7 +73,11 @@ public final class SetOnce<T> implements Cloneable {
         set = new AtomicReference<>();
     }
 
-    /** Sets the given object. If the object has already been set, an exception is thrown. */
+    /**
+     * Sets the given object. If the object has already been set, an exception is thrown.
+     *
+     * @param obj the object to compare with
+     */
     public final void set(T obj) {
         if (!trySet(obj)) {
             throw new AlreadySetException();
@@ -79,13 +87,18 @@ public final class SetOnce<T> implements Cloneable {
     /**
      * Sets the given object if none was set before.
      *
+     * @param obj the object to compare with
      * @return true if object was set successfully, false otherwise
      */
     public final boolean trySet(T obj) {
         return set.compareAndSet(null, new Wrapper<>(obj));
     }
 
-    /** Returns the object set by {@link #set(Object)}. */
+    /**
+     * Returns the object set by {@link #set(Object)}.
+     *
+     * @return the value
+     */
     public final T get() {
         Wrapper<T> wrapper = set.get();
         return wrapper == null ? null : wrapper.object;

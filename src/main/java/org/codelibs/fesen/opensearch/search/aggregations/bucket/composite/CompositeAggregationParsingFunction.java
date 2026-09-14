@@ -18,5 +18,13 @@ import java.io.IOException;
  */
 @FunctionalInterface
 public interface CompositeAggregationParsingFunction {
+    /**
+     * Parses this instance.
+     *
+     * @param name the name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     CompositeValuesSourceBuilder<?> parse(final String name, final XContentParser parser) throws IOException;
 }

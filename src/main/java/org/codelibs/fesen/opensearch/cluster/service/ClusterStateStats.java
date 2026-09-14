@@ -34,16 +34,34 @@ public class ClusterStateStats implements Writeable, ToXContentObject {
     private AtomicLong updateFailed = new AtomicLong(0);
     private List<PersistedStateStats> persistenceStats = new ArrayList<>();
 
+    /**
+     * Creates a new ClusterStateStats.
+     */
     public ClusterStateStats() {}
 
+    /**
+     * Returns the update success.
+     *
+     * @return the update success
+     */
     public long getUpdateSuccess() {
         return updateSuccess.get();
     }
 
+    /**
+     * Returns the update total time in milliseconds.
+     *
+     * @return the update total time in milliseconds
+     */
     public long getUpdateTotalTimeInMillis() {
         return updateTotalTimeInMillis.get();
     }
 
+    /**
+     * Returns the update failed.
+     *
+     * @return the update failed
+     */
     public long getUpdateFailed() {
         return updateFailed.get();
     }
@@ -59,6 +77,12 @@ public class ClusterStateStats implements Writeable, ToXContentObject {
         }
     }
 
+    /**
+     * Creates a new ClusterStateStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterStateStats(StreamInput in) throws IOException {
         this.updateSuccess = new AtomicLong(in.readVLong());
         this.updateTotalTimeInMillis = new AtomicLong(in.readVLong());

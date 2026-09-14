@@ -67,12 +67,21 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
     private static final String TOOK = "took";
     private static final String INGEST_TOOK = "ingest_took";
 
+    /**
+     * The NO_INGEST_TOOK constant.
+     */
     public static final long NO_INGEST_TOOK = -1L;
 
     private final BulkItemResponse[] responses;
     private final long tookInMillis;
     private final long ingestTookInMillis;
 
+    /**
+     * Creates a new BulkResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BulkResponse(StreamInput in) throws IOException {
         super(in);
         responses = in.readArray(BulkItemResponse::new, BulkItemResponse[]::new);
@@ -80,10 +89,23 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
         ingestTookInMillis = in.readZLong();
     }
 
+    /**
+     * Creates a new BulkResponse.
+     *
+     * @param responses the responses
+     * @param tookInMillis the took in milliseconds
+     */
     public BulkResponse(BulkItemResponse[] responses, long tookInMillis) {
         this(responses, tookInMillis, NO_INGEST_TOOK);
     }
 
+    /**
+     * Creates a new BulkResponse.
+     *
+     * @param responses the responses
+     * @param tookInMillis the took in milliseconds
+     * @param ingestTookInMillis the ingest took in milliseconds
+     */
     public BulkResponse(BulkItemResponse[] responses, long tookInMillis, long ingestTookInMillis) {
         this.responses = responses;
         this.tookInMillis = tookInMillis;
@@ -92,6 +114,8 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
 
     /**
      * How long the bulk execution took. Excluding ingest preprocessing.
+     *
+     * @return the took
      */
     public TimeValue getTook() {
         return new TimeValue(tookInMillis);
@@ -99,6 +123,8 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
 
     /**
      * If ingest is enabled returns the bulk ingest preprocessing time. in milliseconds, otherwise -1 is returned.
+     *
+     * @return the ingest took in milliseconds
      */
     public long getIngestTookInMillis() {
         return ingestTookInMillis;
@@ -106,6 +132,8 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
 
     /**
      * Has anything failed with the execution.
+     *
+     * @return the failures flag
      */
     public boolean hasFailures() {
         for (BulkItemResponse response : responses) {
@@ -116,6 +144,11 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
         return false;
     }
 
+    /**
+     * Builds the failure message.
+     *
+     * @return the new failure message
+     */
     public String buildFailureMessage() {
         StringBuilder sb = new StringBuilder();
         sb.append("failure in bulk execution:");
@@ -138,6 +171,8 @@ public class BulkResponse extends ActionResponse implements Iterable<BulkItemRes
 
     /**
      * The items representing each action performed in the bulk operation (in the same order!).
+     *
+     * @return the items
      */
     public BulkItemResponse[] getItems() {
         return responses;

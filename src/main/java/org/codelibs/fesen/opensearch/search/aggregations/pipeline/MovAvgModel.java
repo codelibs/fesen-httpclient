@@ -49,9 +49,16 @@ import java.util.Map;
  * @opensearch.internal
  */
 public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment {
+    /**
+     * Creates a new MovAvgModel.
+     */
+    public MovAvgModel() {
+    }
 
     /**
      * Should this model be fit to the data via a cost minimizing algorithm by default?
+     *
+     * @return the minimize by default
      */
     public boolean minimizeByDefault() {
         return false;
@@ -60,12 +67,16 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
     /**
      * Returns if the model can be cost minimized.  Not all models have parameters
      * which can be tuned / optimized.
+     *
+     * @return the be minimized flag
      */
     public abstract boolean canBeMinimized();
 
     /**
      * Generates a "neighboring" model, where one of the tunable parameters has been
      * randomly mutated within the allowed range.  Used for minimization
+     *
+     * @return the neighboring model
      */
     public abstract MovAvgModel neighboringModel();
 
@@ -119,6 +130,9 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
 
     /**
      * This method allows models to validate the window size if required
+     *
+     * @param window the window
+     * @param aggregationName the aggregation name
      */
     protected void validate(long window, String aggregationName) {
         if (window <= 0) {
@@ -129,6 +143,7 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
     /**
      * Returns an empty set of predictions, filled with NaNs
      * @param numPredictions Number of empty predictions to generate
+     * @return the empty predictions
      */
     protected double[] emptyPredictions(int numPredictions) {
         double[] predictions = new double[numPredictions];
@@ -163,12 +178,19 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
      */
     public abstract static class AbstractModelParser {
         /**
+         * Creates a new AbstractModelParser.
+         */
+        public AbstractModelParser() {
+        }
+
+        /**
          * Parse a settings hash that is specific to this model
          *
          * @param settings           Map of settings, extracted from the request
          * @param pipelineName       Name of the parent pipeline agg
          * @param windowSize         Size of the window for this moving avg
          * @return                   A fully built moving average model
+         * @throws ParseException if the input cannot be parsed
          */
         public abstract MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize)
             throws ParseException;
@@ -180,6 +202,7 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
          * @param name          Name of parameter we are attempting to extract
          * @param defaultValue  Default value to be used if value does not exist in map
          * @return Double value extracted from settings map
+         * @throws ParseException if the input cannot be parsed
          */
         protected double parseDoubleParam(@Nullable Map<String, Object> settings, String name, double defaultValue) throws ParseException {
             if (settings == null) {
@@ -212,6 +235,7 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
          * @param name          Name of parameter we are attempting to extract
          * @param defaultValue  Default value to be used if value does not exist in map
          * @return Integer value extracted from settings map
+         * @throws ParseException if the input cannot be parsed
          */
         protected int parseIntegerParam(@Nullable Map<String, Object> settings, String name, int defaultValue) throws ParseException {
             if (settings == null) {
@@ -239,6 +263,7 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
          * @param name          Name of parameter we are attempting to extract
          * @param defaultValue  Default value to be used if value does not exist in map
          * @return Boolean value extracted from settings map
+         * @throws ParseException if the input cannot be parsed
          */
         protected boolean parseBoolParam(@Nullable Map<String, Object> settings, String name, boolean defaultValue) throws ParseException {
             if (settings == null) {
@@ -259,6 +284,12 @@ public abstract class MovAvgModel implements NamedWriteable, ToXContentFragment 
             );
         }
 
+        /**
+         * Checks the unrecognized params.
+         *
+         * @param settings the settings
+         * @throws ParseException if the input cannot be parsed
+         */
         protected void checkUnrecognizedParams(@Nullable Map<String, Object> settings) throws ParseException {
             if (settings != null && settings.size() > 0) {
                 throw new ParseException("Unrecognized parameter(s): [" + settings.keySet() + "]", 0);

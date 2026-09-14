@@ -41,30 +41,66 @@ import java.util.Optional;
  */
 public class XContentParseException extends IllegalArgumentException {
 
+    /**
+     * The location.
+     */
     private final Optional<XContentLocation> location;
 
+    /**
+     * Creates a new XContentParseException.
+     *
+     * @param message the message
+     */
     public XContentParseException(String message) {
         this(null, message);
     }
 
+    /**
+     * Creates a new XContentParseException.
+     *
+     * @param location the location
+     * @param message the message
+     */
     public XContentParseException(XContentLocation location, String message) {
         super(message);
         this.location = Optional.ofNullable(location);
     }
 
+    /**
+     * Creates a new XContentParseException.
+     *
+     * @param location the location
+     * @param message the message
+     * @param cause the cause
+     */
     public XContentParseException(XContentLocation location, String message, Exception cause) {
         super(message, cause);
         this.location = Optional.ofNullable(location);
     }
 
+    /**
+     * Returns the line number.
+     *
+     * @return the line number
+     */
     public int getLineNumber() {
         return location.map(l -> l.lineNumber).orElse(-1);
     }
 
+    /**
+     * Returns the column number.
+     *
+     * @return the column number
+     */
     public int getColumnNumber() {
         return location.map(l -> l.columnNumber).orElse(-1);
     }
 
+    /**
+     * Returns the location.
+     *
+     * @return the location
+     */
     @Nullable
     public XContentLocation getLocation() {
         return location.orElse(null);

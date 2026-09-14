@@ -70,9 +70,21 @@ import static org.codelibs.fesen.opensearch.search.sort.NestedSortBuilder.NESTED
 public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(ScriptSortBuilder.class);
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "_script";
+    /**
+     * The TYPE_FIELD constant.
+     */
     public static final ParseField TYPE_FIELD = new ParseField("type");
+    /**
+     * The SCRIPT_FIELD constant.
+     */
     public static final ParseField SCRIPT_FIELD = new ParseField("script");
+    /**
+     * The SORTMODE_FIELD constant.
+     */
     public static final ParseField SORTMODE_FIELD = new ParseField("mode");
 
     private final Script script;
@@ -126,6 +138,8 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
 
     /**
      * Get the script used in this sort.
+     *
+     * @return the script
      */
     public Script script() {
         return this.script;
@@ -133,6 +147,8 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
 
     /**
      * Get the type used in this sort.
+     *
+     * @return the type
      */
     public ScriptSortType type() {
         return this.type;
@@ -141,6 +157,9 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
     /**
      * Defines which distance to use for sorting in the case a document contains multiple values.<br>
      * For {@link ScriptSortType#STRING}, the set of possible values is restricted to {@link SortMode#MIN} and {@link SortMode#MAX}
+     *
+     * @param sortMode the sort mode
+     * @return this instance
      */
     public ScriptSortBuilder sortMode(SortMode sortMode) {
         Objects.requireNonNull(sortMode, "sort mode cannot be null.");
@@ -153,6 +172,8 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
 
     /**
      * Get the sort mode.
+     *
+     * @return this instance
      */
     public SortMode sortMode() {
         return this.sortMode;
@@ -162,6 +183,8 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
      * Sets the nested filter that the nested objects should match with in order to be taken into account
      * for sorting.
      *
+     * @param nestedFilter the nested filter
+     * @return this instance
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -176,6 +199,7 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
     /**
      * Gets the nested filter.
      *
+     * @return the nested filter
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -187,6 +211,8 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
      * Sets the nested path if sorting occurs on a field that is inside a nested object. For sorting by script this
      * needs to be specified.
      *
+     * @param nestedPath the nested path
+     * @return this instance
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -201,6 +227,7 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
     /**
      * Gets the nested path.
      *
+     * @return the nested path
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -210,6 +237,8 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
 
     /**
      * Returns the {@link NestedSortBuilder}
+     *
+     * @return the nested sort
      */
     public NestedSortBuilder getNestedSort() {
         return this.nestedSort;
@@ -220,6 +249,9 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
      * object. The {@link NestedSortBuilder} takes a `path` argument and an optional
      * nested filter that the nested objects should match with in
      * order to be taken into account for sorting.
+     *
+     * @param nestedSort the nested sort
+     * @return this instance
      */
     public ScriptSortBuilder setNestedSort(final NestedSortBuilder nestedSort) {
         if (this.nestedFilter != null || this.nestedPath != null) {
@@ -287,6 +319,7 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
      *        method call
      * @param elementName in some sort syntax variations the field name precedes the xContent object that specifies further parameters, e.g.
      *        in '{ "foo": { "order" : "asc"} }'. When parsing the inner object, the field name can be passed in via this argument
+     * @return the new XContent
      */
     public static ScriptSortBuilder fromXContent(XContentParser parser, String elementName) {
         return PARSER.apply(parser, null);
@@ -343,6 +376,12 @@ public class ScriptSortBuilder extends SortBuilder<ScriptSortBuilder> {
             return in.readEnum(ScriptSortType.class);
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param str the str
+         * @return the new string
+         */
         public static ScriptSortType fromString(final String str) {
             Objects.requireNonNull(str, "input string is null");
             switch (str.toLowerCase(Locale.ROOT)) {

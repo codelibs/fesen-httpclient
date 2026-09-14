@@ -59,6 +59,8 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
     /**
      * Get stats from nodes based on the nodes ids specified. If none are passed, stats
      * based on all nodes will be returned.
+     *
+     * @param nodesIds the nodes identifiers
      */
     public ClusterStatsRequest(String... nodesIds) {
         super(nodesIds);
@@ -91,15 +93,45 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
      */
     @PublicApi(since = "2.18.0")
     public enum Metric {
+        /**
+         * The OS value.
+         */
         OS("os", 0),
+        /**
+         * The JVM value.
+         */
         JVM("jvm", 1),
+        /**
+         * The FS value.
+         */
         FS("fs", 2),
+        /**
+         * The PROCESS value.
+         */
         PROCESS("process", 3),
+        /**
+         * The INGEST value.
+         */
         INGEST("ingest", 4),
+        /**
+         * The PLUGINS value.
+         */
         PLUGINS("plugins", 5),
+        /**
+         * The NETWORK_TYPES value.
+         */
         NETWORK_TYPES("network_types", 6),
+        /**
+         * The DISCOVERY_TYPES value.
+         */
         DISCOVERY_TYPES("discovery_types", 7),
+        /**
+         * The PACKAGING_TYPES value.
+         */
         PACKAGING_TYPES("packaging_types", 8),
+        /**
+         * The INDICES value.
+         */
         INDICES("indices", 9);
 
         private String metricName;
@@ -111,6 +143,11 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
             this.index = index;
         }
 
+        /**
+         * Returns the index.
+         *
+         * @return the index
+         */
         public int getIndex() {
             return index;
         }
@@ -126,15 +163,42 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
     @PublicApi(since = "2.18.0")
     public enum IndexMetric {
         // Metrics computed from ShardStats
+        /**
+         * The SHARDS value.
+         */
         SHARDS("shards", 0),
+        /**
+         * The DOCS value.
+         */
         DOCS("docs", 1),
+        /**
+         * The STORE value.
+         */
         STORE("store", 2),
+        /**
+         * The FIELDDATA value.
+         */
         FIELDDATA("fielddata", 3),
+        /**
+         * The QUERY_CACHE value.
+         */
         QUERY_CACHE("query_cache", 4),
+        /**
+         * The COMPLETION value.
+         */
         COMPLETION("completion", 5),
+        /**
+         * The SEGMENTS value.
+         */
         SEGMENTS("segments", 6),
         // Metrics computed from ClusterState
+        /**
+         * The ANALYSIS value.
+         */
         ANALYSIS("analysis", 7),
+        /**
+         * The MAPPINGS value.
+         */
         MAPPINGS("mappings", 8);
 
         private String metricName;
@@ -146,6 +210,11 @@ public class ClusterStatsRequest extends BaseNodesRequest<ClusterStatsRequest> {
             this.index = index;
         }
 
+        /**
+         * Returns the index.
+         *
+         * @return the index
+         */
         public int getIndex() {
             return this.index;
         }

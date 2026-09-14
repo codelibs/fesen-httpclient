@@ -49,12 +49,22 @@ public class DeleteRequestBuilder extends ReplicationRequestBuilder<DeleteReques
     implements
         WriteRequestBuilder<DeleteRequestBuilder> {
 
+    /**
+     * Creates a new DeleteRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     */
     public DeleteRequestBuilder(OpenSearchClient client, DeleteAction action, @Nullable String index) {
         super(client, action, new DeleteRequest(index));
     }
 
     /**
      * Sets the id of the document to delete.
+     *
+     * @param id the identifier
+     * @return this instance
      */
     public DeleteRequestBuilder setId(String id) {
         request.id(id);
@@ -67,6 +77,9 @@ public class DeleteRequestBuilder extends ReplicationRequestBuilder<DeleteReques
      *
      * If the document last modification was assigned a different sequence number a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @param seqNo the seq no
+     * @return this instance
      */
     public DeleteRequestBuilder setIfSeqNo(long seqNo) {
         request.setIfSeqNo(seqNo);
@@ -79,6 +92,9 @@ public class DeleteRequestBuilder extends ReplicationRequestBuilder<DeleteReques
      *
      * If the document last modification was assigned a different term a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @param term the term
+     * @return this instance
      */
     public DeleteRequestBuilder setIfPrimaryTerm(long term) {
         request.setIfPrimaryTerm(term);

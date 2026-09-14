@@ -52,15 +52,32 @@ public class ClusterHealthRequestBuilder extends ClusterManagerNodeReadOperation
     ClusterHealthResponse,
     ClusterHealthRequestBuilder> {
 
+    /**
+     * Creates a new ClusterHealthRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterHealthRequestBuilder(OpenSearchClient client, ClusterHealthAction action) {
         super(client, action, new ClusterHealthRequest());
     }
 
+    /**
+     * Sets the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     public ClusterHealthRequestBuilder setIndices(String... indices) {
         request.indices(indices);
         return this;
     }
 
+    /**
+     * Sets the wait for yellow status.
+     *
+     * @return this instance
+     */
     public ClusterHealthRequestBuilder setWaitForYellowStatus() {
         request.waitForYellowStatus();
         return this;

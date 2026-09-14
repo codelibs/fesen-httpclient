@@ -84,6 +84,9 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
     implements
         IndicesRequest.Replaceable,
         ToXContentObject {
+    /**
+     * The MAXIMUM_METADATA_BYTES constant.
+     */
     public static int MAXIMUM_METADATA_BYTES = 1024; // chosen arbitrarily
 
     private String snapshot;
@@ -103,6 +106,9 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
 
     private Map<String, Object> userMetadata;
 
+    /**
+     * Creates a new CreateSnapshotRequest.
+     */
     public CreateSnapshotRequest() {}
 
     /**
@@ -165,6 +171,12 @@ public class CreateSnapshotRequest extends ClusterManagerNodeRequest<CreateSnaps
         return validationException;
     }
 
+    /**
+     * Returns the metadata size.
+     *
+     * @param userMetadata the user metadata
+     * @return the metadata size
+     */
     public static int metadataSize(Map<String, Object> userMetadata) {
         if (userMetadata == null) {
             return 0;

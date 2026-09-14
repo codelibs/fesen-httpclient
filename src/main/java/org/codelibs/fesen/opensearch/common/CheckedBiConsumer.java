@@ -39,10 +39,20 @@ import java.util.function.BiConsumer;
 /**
  * A {@link BiConsumer}-like interface which allows throwing checked exceptions.
  *
+ * @param <T> the element type
+ * @param <U> the secondary type
+ * @param <E> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 @FunctionalInterface
 public interface CheckedBiConsumer<T, U, E extends Exception> {
+    /**
+     * Accepts the given input.
+     *
+     * @param t the t
+     * @param u the u
+     * @throws E if an e failure occurs
+     */
     void accept(T t, U u) throws E;
 }

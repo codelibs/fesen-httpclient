@@ -54,14 +54,30 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class NameOrDefinition implements Writeable, ToXContentFragment {
     // exactly one of these two members is not null
+    /**
+     * The name.
+     */
     public final String name;
+    /**
+     * The definition.
+     */
     public final Settings definition;
 
+    /**
+     * Creates a new NameOrDefinition.
+     *
+     * @param name the name
+     */
     public NameOrDefinition(String name) {
         this.name = Objects.requireNonNull(name);
         this.definition = null;
     }
 
+    /**
+     * Creates a new NameOrDefinition.
+     *
+     * @param definition the definition
+     */
     public NameOrDefinition(Map<String, ?> definition) {
         this.name = null;
         Objects.requireNonNull(definition);
@@ -82,6 +98,13 @@ public class NameOrDefinition implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static NameOrDefinition fromXContent(XContentParser parser) throws IOException {
         if (parser.currentToken() == XContentParser.Token.VALUE_STRING) {
             return new NameOrDefinition(parser.text());

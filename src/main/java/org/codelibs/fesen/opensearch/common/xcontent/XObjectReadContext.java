@@ -10,9 +10,17 @@ package org.codelibs.fesen.opensearch.common.xcontent;
 
 import tools.jackson.core.ObjectReadContext;
 
+/**
+ * The XObjectReadContext class.
+ */
 public class XObjectReadContext extends ObjectReadContext.Base {
     private static final XObjectReadContext DEFAULT_INSTANCE = new XObjectReadContext();
 
+    /**
+     * Creates this instance.
+     *
+     * @return the new instance
+     */
     public static XObjectReadContext create() {
         return DEFAULT_INSTANCE;
     }

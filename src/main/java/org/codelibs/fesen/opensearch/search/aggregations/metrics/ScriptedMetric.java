@@ -43,6 +43,8 @@ public interface ScriptedMetric extends Aggregation {
 
     /**
      * The result of the aggregation. The type of the object depends on the aggregation that was run.
+     *
+     * @return the aggregation
      */
     Object aggregation();
 }

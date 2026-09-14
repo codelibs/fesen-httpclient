@@ -32,7 +32,13 @@ public class MultiValueDocCountAggregationBuilder extends ValuesSourceAggregatio
     ValuesSource,
     MultiValueDocCountAggregationBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "multivalue_doc_count";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<MultiValueDocCountAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         MultiValueDocCountAggregationBuilder::new
@@ -42,10 +48,22 @@ public class MultiValueDocCountAggregationBuilder extends ValuesSourceAggregatio
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new MultiValueDocCountAggregationBuilder.
+     *
+     * @param name the name
+     */
     protected MultiValueDocCountAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MultiValueDocCountAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoryBuilder the factory builder
+     * @param metadata the metadata
+     */
     protected MultiValueDocCountAggregationBuilder(
         MultiValueDocCountAggregationBuilder clone,
         AggregatorFactories.Builder factoryBuilder,

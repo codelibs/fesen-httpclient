@@ -41,10 +41,22 @@ import java.math.BigInteger;
  * @opensearch.internal
  */
 public final class Numbers {
+    /**
+     * The MAX_UNSIGNED_LONG_VALUE constant.
+     */
     public static final BigInteger MAX_UNSIGNED_LONG_VALUE = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
+    /**
+     * The MIN_UNSIGNED_LONG_VALUE constant.
+     */
     public static final BigInteger MIN_UNSIGNED_LONG_VALUE = BigInteger.ZERO;
 
+    /**
+     * The MIN_UNSIGNED_LONG_VALUE_AS_LONG constant.
+     */
     public static final long MIN_UNSIGNED_LONG_VALUE_AS_LONG = MIN_UNSIGNED_LONG_VALUE.longValue();
+    /**
+     * The MAX_UNSIGNED_LONG_VALUE_AS_LONG constant.
+     */
     public static final long MAX_UNSIGNED_LONG_VALUE_AS_LONG = MAX_UNSIGNED_LONG_VALUE.longValue();
 
     private static final BigInteger MAX_LONG_VALUE = BigInteger.valueOf(Long.MAX_VALUE);
@@ -52,7 +64,12 @@ public final class Numbers {
 
     private Numbers() {}
 
-    /** Returns true if value is neither NaN nor infinite. */
+    /**
+     * Returns true if value is neither NaN nor infinite.
+     *
+     * @param value the value
+     * @return the valid double flag
+     */
     public static boolean isValidDouble(double value) {
         if (Double.isNaN(value) || Double.isInfinite(value)) {
             return false;
@@ -70,7 +87,12 @@ public final class Numbers {
 
     /** Return the long that {@code stringValue} stores or throws an exception if the
      *  stored value cannot be converted to a long that stores the exact same
-     *  value and {@code coerce} is false. */
+      * value and {@code coerce} is false.
+     *
+     * @param stringValue the string value
+     * @param coerce the coerce
+     * @return the long
+      */
     public static long toLong(String stringValue, boolean coerce) {
         try {
             return Long.parseLong(stringValue);
@@ -101,7 +123,12 @@ public final class Numbers {
 
     /** Return the long that {@code stringValue} stores or throws an exception if the
      *  stored value cannot be converted to a long that stores the exact same
-     *  value and {@code coerce} is false. */
+      * value and {@code coerce} is false.
+     *
+     * @param stringValue the string value
+     * @param coerce the coerce
+     * @return the unsigned long
+      */
     public static BigInteger toUnsignedLong(String stringValue, boolean coerce) {
         final BigInteger bigIntegerValue;
         try {
@@ -127,6 +154,9 @@ public final class Numbers {
     /**
      * Return a BigInteger equal to the unsigned value of the
      * argument.
+     *
+     * @param i the i
+     * @return the unsigned big integer
      */
     public static BigInteger toUnsignedBigInteger(long i) {
         if (i >= 0L) return BigInteger.valueOf(i);

@@ -16,7 +16,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * @opensearch.internal
  */
 public class RemoteStoreMetadataAction extends ActionType<RemoteStoreMetadataResponse> {
+    /**
+     * The INSTANCE constant.
+     */
     public static final RemoteStoreMetadataAction INSTANCE = new RemoteStoreMetadataAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/remote_store/metadata";
 
     private RemoteStoreMetadataAction() {

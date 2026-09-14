@@ -57,6 +57,12 @@ public class ClusterSearchShardsResponse extends ActionResponse implements ToXCo
     private final DiscoveryNode[] nodes;
     private final Map<String, AliasFilter> indicesAndFilters;
 
+    /**
+     * Creates a new ClusterSearchShardsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterSearchShardsResponse(StreamInput in) throws IOException {
         super(in);
         groups = in.readArray(ClusterSearchShardsGroup::new, ClusterSearchShardsGroup[]::new);
@@ -71,6 +77,13 @@ public class ClusterSearchShardsResponse extends ActionResponse implements ToXCo
         out.writeMap(indicesAndFilters, StreamOutput::writeString, (o, s) -> s.writeTo(o));
     }
 
+    /**
+     * Creates a new ClusterSearchShardsResponse.
+     *
+     * @param groups the groups
+     * @param nodes the nodes
+     * @param indicesAndFilters the indices and filters
+     */
     public ClusterSearchShardsResponse(
         ClusterSearchShardsGroup[] groups,
         DiscoveryNode[] nodes,
@@ -81,10 +94,20 @@ public class ClusterSearchShardsResponse extends ActionResponse implements ToXCo
         this.indicesAndFilters = indicesAndFilters;
     }
 
+    /**
+     * Returns the groups.
+     *
+     * @return the groups
+     */
     public ClusterSearchShardsGroup[] getGroups() {
         return groups;
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public DiscoveryNode[] getNodes() {
         return nodes;
     }

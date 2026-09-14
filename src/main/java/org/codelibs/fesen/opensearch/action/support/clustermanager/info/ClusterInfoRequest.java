@@ -45,6 +45,7 @@ import java.io.IOException;
 /**
  * Transport request for cluster information
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public abstract class ClusterInfoRequest<Request extends ClusterInfoRequest<Request>> extends ClusterManagerNodeReadRequest<Request>
@@ -55,6 +56,9 @@ public abstract class ClusterInfoRequest<Request extends ClusterInfoRequest<Requ
 
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
 
+    /**
+     * Creates a new ClusterInfoRequest.
+     */
     public ClusterInfoRequest() {}
 
     @Override
@@ -74,6 +78,12 @@ public abstract class ClusterInfoRequest<Request extends ClusterInfoRequest<Requ
         return (Request) this;
     }
 
+    /**
+     * Returns the indices options.
+     *
+     * @param indicesOptions the indices options
+     * @return the indices options
+     */
     @SuppressWarnings("unchecked")
     public Request indicesOptions(IndicesOptions indicesOptions) {
         this.indicesOptions = indicesOptions;

@@ -28,16 +28,43 @@ import java.util.function.Supplier;
 public class WorkloadGroupTask extends CancellableTask {
 
     private static final Logger logger = LogManager.getLogger(WorkloadGroupTask.class);
+    /**
+     * The WORKLOAD_GROUP_ID_HEADER constant.
+     */
     public static final String WORKLOAD_GROUP_ID_HEADER = "workloadGroupId";
+    /**
+     * The DEFAULT_WORKLOAD_GROUP_ID_SUPPLIER constant.
+     */
     public static final Supplier<String> DEFAULT_WORKLOAD_GROUP_ID_SUPPLIER = () -> "DEFAULT_WORKLOAD_GROUP";
     private final LongSupplier nanoTimeSupplier;
     private String workloadGroupId;
     private boolean isWorkloadGroupSet = false;
 
+    /**
+     * Creates a new WorkloadGroupTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     */
     public WorkloadGroupTask(long id, String type, String action, String description, TaskId parentTaskId, Map<String, String> headers) {
         this(id, type, action, description, parentTaskId, headers, TimeValue.MINUS_ONE, System::nanoTime);
     }
 
+    /**
+     * Creates a new WorkloadGroupTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     * @param cancelAfterTimeInterval the cancel after time interval
+     */
     public WorkloadGroupTask(
         long id,
         String type,
@@ -50,6 +77,18 @@ public class WorkloadGroupTask extends CancellableTask {
         this(id, type, action, description, parentTaskId, headers, cancelAfterTimeInterval, System::nanoTime);
     }
 
+    /**
+     * Creates a new WorkloadGroupTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     * @param cancelAfterTimeInterval the cancel after time interval
+     * @param nanoTimeSupplier the nano time supplier
+     */
     public WorkloadGroupTask(
         long id,
         String type,
@@ -89,10 +128,20 @@ public class WorkloadGroupTask extends CancellableTask {
         }
     }
 
+    /**
+     * Returns the elapsed time.
+     *
+     * @return the elapsed time
+     */
     public long getElapsedTime() {
         return nanoTimeSupplier.getAsLong() - getStartTimeNanos();
     }
 
+    /**
+     * Returns the workload group set flag.
+     *
+     * @return the workload group set flag
+     */
     public boolean isWorkloadGroupSet() {
         return isWorkloadGroupSet;
     }

@@ -59,10 +59,16 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  */
 public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregationBuilder<AutoDateHistogramAggregationBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "auto_date_histogram";
     private static final ParseField NUM_BUCKETS_FIELD = new ParseField("buckets");
     private static final ParseField MINIMUM_INTERVAL_FIELD = new ParseField("minimum_interval");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<AutoDateHistogramAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         AutoDateHistogramAggregationBuilder::new
@@ -73,6 +79,9 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         PARSER.declareStringOrNull(AutoDateHistogramAggregationBuilder::setMinimumIntervalExpression, MINIMUM_INTERVAL_FIELD);
     }
 
+    /**
+     * The ALLOWED_INTERVALS constant.
+     */
     public static final Map<Rounding.DateTimeUnit, String> ALLOWED_INTERVALS = new HashMap<>();
     static {
         ALLOWED_INTERVALS.put(Rounding.DateTimeUnit.YEAR_OF_CENTURY, "year");
@@ -126,7 +135,11 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
 
     private String minimumIntervalExpression;
 
-    /** Create a new builder with the given name. */
+    /**
+     * Create a new builder with the given name.
+     *
+     * @param name the name
+     */
     public AutoDateHistogramAggregationBuilder(String name) {
         super(name);
     }
@@ -137,6 +150,13 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         out.writeOptionalString(minimumIntervalExpression);
     }
 
+    /**
+     * Creates a new AutoDateHistogramAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected AutoDateHistogramAggregationBuilder(
         AutoDateHistogramAggregationBuilder clone,
         Builder factoriesBuilder,
@@ -162,10 +182,21 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         return NAME;
     }
 
+    /**
+     * Returns the minimum interval expression.
+     *
+     * @return the minimum interval expression
+     */
     public String getMinimumIntervalExpression() {
         return minimumIntervalExpression;
     }
 
+    /**
+     * Sets the minimum interval expression.
+     *
+     * @param minimumIntervalExpression the minimum interval expression
+     * @return this instance
+     */
     public AutoDateHistogramAggregationBuilder setMinimumIntervalExpression(String minimumIntervalExpression) {
         if (minimumIntervalExpression != null && !ALLOWED_INTERVALS.containsValue(minimumIntervalExpression)) {
             throw new IllegalArgumentException(
@@ -176,6 +207,12 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         return this;
     }
 
+    /**
+     * Sets the num buckets.
+     *
+     * @param numBuckets the num buckets
+     * @return this instance
+     */
     public AutoDateHistogramAggregationBuilder setNumBuckets(int numBuckets) {
         if (numBuckets <= 0) {
             throw new IllegalArgumentException(NUM_BUCKETS_FIELD.getPreferredName() + " must be greater than 0 for [" + name + "]");
@@ -184,6 +221,11 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         return this;
     }
 
+    /**
+     * Returns the num buckets.
+     *
+     * @return the num buckets
+     */
     public int getNumBuckets() {
         return numBuckets;
     }
@@ -235,6 +277,15 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
         final String unitAbbreviation;
         final String dateTimeUnit;
 
+        /**
+         * Creates a new RoundingInfo.
+         *
+         * @param dateTimeUnit the date time unit
+         * @param timeZone the time zone
+         * @param roughEstimateDurationMillis the rough estimate duration milliseconds
+         * @param unitAbbreviation the unit abbreviation
+         * @param innerIntervals the inner intervals
+         */
         public RoundingInfo(
             Rounding.DateTimeUnit dateTimeUnit,
             ZoneId timeZone,
@@ -262,6 +313,11 @@ public class AutoDateHistogramAggregationBuilder extends ValuesSourceAggregation
             out.writeString(dateTimeUnit);
         }
 
+        /**
+         * Returns the date time unit.
+         *
+         * @return the date time unit
+         */
         public String getDateTimeUnit() {
             return this.dateTimeUnit;
         }

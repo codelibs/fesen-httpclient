@@ -51,9 +51,15 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  * @opensearch.internal
  */
 public final class SimulateDocumentVerboseResult implements SimulateDocumentResult {
+    /**
+     * The PROCESSOR_RESULT_FIELD constant.
+     */
     public static final String PROCESSOR_RESULT_FIELD = "processor_results";
     private final List<SimulateProcessorResult> processorResults;
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<SimulateDocumentVerboseResult, Void> PARSER = new ConstructingObjectParser<>(
         "simulate_document_verbose_result",
@@ -64,12 +70,20 @@ public final class SimulateDocumentVerboseResult implements SimulateDocumentResu
         PARSER.declareObjectArray(constructorArg(), SimulateProcessorResult.PARSER, new ParseField(PROCESSOR_RESULT_FIELD));
     }
 
+    /**
+     * Creates a new SimulateDocumentVerboseResult.
+     *
+     * @param processorResults the processor results
+     */
     public SimulateDocumentVerboseResult(List<SimulateProcessorResult> processorResults) {
         this.processorResults = processorResults;
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SimulateDocumentVerboseResult(StreamInput in) throws IOException {
         int size = in.readVInt();

@@ -38,6 +38,15 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
     private final long modifiedAt;
     private final SortedSet<Target> targets;
 
+    /**
+     * Creates a new View.
+     *
+     * @param name the name
+     * @param description the description
+     * @param createdAt the created at
+     * @param modifiedAt the modified at
+     * @param targets the targets
+     */
     public View(final String name, final String description, final Long createdAt, final Long modifiedAt, final Set<Target> targets) {
         this.name = Objects.requireNonNull(name, "Name must be provided");
         this.description = description;
@@ -46,14 +55,32 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
         this.targets = new TreeSet<>(Objects.requireNonNull(targets, "Targets are required on a view"));
     }
 
+    /**
+     * Creates a new View.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public View(final StreamInput in) throws IOException {
         this(in.readString(), in.readOptionalString(), in.readZLong(), in.readZLong(), new TreeSet<>(in.readList(Target::new)));
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<View> readDiffFrom(final StreamInput in) throws IOException {
         return readDiffFrom(View::new, in);
     }
@@ -81,10 +108,21 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
 
         private final String indexPattern;
 
+        /**
+         * Creates a new Target.
+         *
+         * @param indexPattern the index pattern
+         */
         public Target(final String indexPattern) {
             this.indexPattern = Objects.requireNonNull(indexPattern, "IndexPattern is required");
         }
 
+        /**
+         * Creates a new Target.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Target(final StreamInput in) throws IOException {
             this(in.readString());
         }
@@ -102,6 +140,9 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
             return Objects.hash(indexPattern);
         }
 
+        /**
+         * The INDEX_PATTERN_FIELD constant.
+         */
         public static final ParseField INDEX_PATTERN_FIELD = new ParseField("indexPattern");
 
         @Override
@@ -120,6 +161,13 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), INDEX_PATTERN_FIELD);
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Target fromXContent(final XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
@@ -138,12 +186,30 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
         }
     }
 
+    /**
+     * The NAME_FIELD constant.
+     */
     public static final ParseField NAME_FIELD = new ParseField("name");
+    /**
+     * The DESCRIPTION_FIELD constant.
+     */
     public static final ParseField DESCRIPTION_FIELD = new ParseField("description");
+    /**
+     * The CREATED_AT_FIELD constant.
+     */
     public static final ParseField CREATED_AT_FIELD = new ParseField("createdAt");
+    /**
+     * The MODIFIED_AT_FIELD constant.
+     */
     public static final ParseField MODIFIED_AT_FIELD = new ParseField("modifiedAt");
+    /**
+     * The TARGETS_FIELD constant.
+     */
     public static final ParseField TARGETS_FIELD = new ParseField("targets");
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<View, Void> PARSER = new ConstructingObjectParser<>(
         "view",
@@ -158,6 +224,13 @@ public class View extends AbstractDiffable<View> implements ToXContentObject {
         PARSER.declareObjectArray(ConstructingObjectParser.constructorArg(), (p, c) -> Target.fromXContent(p), TARGETS_FIELD);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static View fromXContent(final XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

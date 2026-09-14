@@ -27,6 +27,7 @@ public class IoUsageStats implements Writeable, ToXContentFragment {
     private double ioUtilisationPercent;
 
     /**
+     * Creates a new IoUsageStats by reading it from the given input.
      *
      * @param in the stream to read from
      * @throws IOException if an error occurs while reading from the StreamOutput

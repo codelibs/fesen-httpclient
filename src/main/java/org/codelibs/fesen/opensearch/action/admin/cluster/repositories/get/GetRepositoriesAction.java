@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetRepositoriesAction extends ActionType<GetRepositoriesResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetRepositoriesAction INSTANCE = new GetRepositoriesAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/repository/get";
 
     private GetRepositoriesAction() {

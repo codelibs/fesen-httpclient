@@ -35,10 +35,21 @@ public enum SearchBackpressureMode {
         this.name = name;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Creates an instance from name.
+     *
+     * @param name the name
+     * @return the new name
+     */
     public static SearchBackpressureMode fromName(String name) {
         switch (name.toLowerCase(Locale.ROOT)) {
             case "disabled":

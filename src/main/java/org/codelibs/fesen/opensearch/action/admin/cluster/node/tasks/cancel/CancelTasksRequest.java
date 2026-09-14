@@ -50,12 +50,21 @@ import java.util.Arrays;
 @PublicApi(since = "1.0.0")
 public class CancelTasksRequest extends BaseTasksRequest<CancelTasksRequest> {
 
+    /**
+     * The DEFAULT_REASON constant.
+     */
     public static final String DEFAULT_REASON = "by user request";
+    /**
+     * The DEFAULT_WAIT_FOR_COMPLETION constant.
+     */
     public static final boolean DEFAULT_WAIT_FOR_COMPLETION = false;
 
     private String reason = DEFAULT_REASON;
     private boolean waitForCompletion = DEFAULT_WAIT_FOR_COMPLETION;
 
+    /**
+     * Creates a new CancelTasksRequest.
+     */
     public CancelTasksRequest() {}
 
     @Override

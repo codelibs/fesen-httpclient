@@ -55,6 +55,9 @@ public final class AutoExpandReplicas {
 
     private static final AutoExpandReplicas FALSE_INSTANCE = new AutoExpandReplicas(0, 0, false);
 
+    /**
+     * The SETTING constant.
+     */
     public static final Setting<AutoExpandReplicas> SETTING = new Setting<>(
         IndexMetadata.SETTING_AUTO_EXPAND_REPLICAS,
         "false",

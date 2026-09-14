@@ -42,6 +42,11 @@ import java.util.Enumeration;
  * @opensearch.internal
  */
 public class MacAddressProvider {
+    /**
+     * Creates a new MacAddressProvider.
+     */
+    public MacAddressProvider() {
+    }
 
     private static byte[] getMacAddress() throws SocketException {
         Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
@@ -73,6 +78,11 @@ public class MacAddressProvider {
         return false;
     }
 
+    /**
+     * Returns the secure munged address.
+     *
+     * @return the secure munged address
+     */
     public static byte[] getSecureMungedAddress() {
         byte[] address = null;
         try {

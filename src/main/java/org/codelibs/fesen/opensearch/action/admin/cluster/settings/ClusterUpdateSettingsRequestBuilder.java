@@ -51,12 +51,21 @@ public class ClusterUpdateSettingsRequestBuilder extends AcknowledgedRequestBuil
     ClusterUpdateSettingsResponse,
     ClusterUpdateSettingsRequestBuilder> {
 
+    /**
+     * Creates a new ClusterUpdateSettingsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterUpdateSettingsRequestBuilder(OpenSearchClient client, ClusterUpdateSettingsAction action) {
         super(client, action, new ClusterUpdateSettingsRequest());
     }
 
     /**
      * Sets the transient settings to be updated. They will not survive a full cluster restart
+     *
+     * @param settings the settings
+     * @return this instance
      */
     public ClusterUpdateSettingsRequestBuilder setTransientSettings(Settings settings) {
         request.transientSettings(settings);

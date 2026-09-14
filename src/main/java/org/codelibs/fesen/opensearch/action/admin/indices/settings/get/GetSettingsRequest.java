@@ -66,6 +66,9 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
         return this;
     }
 
+    /**
+     * Creates a new GetSettingsRequest.
+     */
     public GetSettingsRequest() {}
 
     @Override
@@ -93,14 +96,29 @@ public class GetSettingsRequest extends ClusterManagerNodeReadRequest<GetSetting
         return true;
     }
 
+    /**
+     * Returns the names.
+     *
+     * @return the names
+     */
     public String[] names() {
         return names;
     }
 
+    /**
+     * Returns the human readable.
+     *
+     * @return the human readable
+     */
     public boolean humanReadable() {
         return humanReadable;
     }
 
+    /**
+     * Includes the defaults.
+     *
+     * @return this instance
+     */
     public boolean includeDefaults() {
         return includeDefaults;
     }

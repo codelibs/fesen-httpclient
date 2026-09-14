@@ -74,6 +74,9 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param clientConnections the client connections
+     * @param nodeComputedStats the node computed stats
      */
     @Deprecated
     public AdaptiveSelectionStats(
@@ -84,6 +87,12 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
         this.nodeComputedStats = nodeComputedStats;
     }
 
+    /**
+     * Creates a new AdaptiveSelectionStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AdaptiveSelectionStats(StreamInput in) throws IOException {
         this.clientOutgoingConnections = in.readMap(StreamInput::readString, StreamInput::readLong);
         this.nodeComputedStats = in.readMap(StreamInput::readString, ResponseCollectorService.ComputedNodeStats::new);
@@ -124,6 +133,8 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
 
     /**
      * Returns a map of node id to the outgoing search requests to that node
+     *
+     * @return the outgoing connections
      */
     public Map<String, Long> getOutgoingConnections() {
         return clientOutgoingConnections;
@@ -131,6 +142,8 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
 
     /**
      * Returns a map of node id to the computed stats
+     *
+     * @return the computed stats
      */
     public Map<String, ResponseCollectorService.ComputedNodeStats> getComputedStats() {
         return nodeComputedStats;
@@ -144,13 +157,28 @@ public class AdaptiveSelectionStats implements Writeable, ToXContentFragment {
         private Map<String, Long> clientOutgoingConnections;
         private Map<String, ResponseCollectorService.ComputedNodeStats> nodeComputedStats;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the client outgoing connections.
+         *
+         * @param clientOutgoingConnections the client outgoing connections
+         * @return the client outgoing connections
+         */
         public Builder clientOutgoingConnections(Map<String, Long> clientOutgoingConnections) {
             this.clientOutgoingConnections = clientOutgoingConnections;
             return this;
         }
 
+        /**
+         * Returns the node computed stats.
+         *
+         * @param nodeComputedStats the node computed stats
+         * @return the node computed stats
+         */
         public Builder nodeComputedStats(Map<String, ResponseCollectorService.ComputedNodeStats> nodeComputedStats) {
             this.nodeComputedStats = nodeComputedStats;
             return this;

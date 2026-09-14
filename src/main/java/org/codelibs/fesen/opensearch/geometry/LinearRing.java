@@ -40,14 +40,30 @@ import java.util.Arrays;
  * Cannot be serialized by WKT directly but used as a part of polygon
  */
 public class LinearRing extends Line {
+    /**
+     * The EMPTY constant.
+     */
     public static final LinearRing EMPTY = new LinearRing();
 
     private LinearRing() {}
 
+    /**
+     * Creates a new LinearRing.
+     *
+     * @param x the x
+     * @param y the y
+     */
     public LinearRing(double[] x, double[] y) {
         this(x, y, null);
     }
 
+    /**
+     * Creates a new LinearRing.
+     *
+     * @param x the x
+     * @param y the y
+     * @param z the z
+     */
     public LinearRing(double[] x, double[] y, double[] z) {
         super(x, y, z);
         if (x.length < 2) {

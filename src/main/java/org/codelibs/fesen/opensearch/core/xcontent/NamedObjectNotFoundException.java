@@ -37,8 +37,18 @@ package org.codelibs.fesen.opensearch.core.xcontent;
  * parse for a particular name
  */
 public class NamedObjectNotFoundException extends XContentParseException {
+    /**
+     * The candidates.
+     */
     private final Iterable<String> candidates;
 
+    /**
+     * Creates a new NamedObjectNotFoundException.
+     *
+     * @param location the location
+     * @param message the message
+     * @param candidates the candidates
+     */
     public NamedObjectNotFoundException(XContentLocation location, String message, Iterable<String> candidates) {
         super(location, message);
         this.candidates = candidates;
@@ -46,6 +56,8 @@ public class NamedObjectNotFoundException extends XContentParseException {
 
     /**
      * The possible matches.
+     *
+     * @return the candidates
      */
     public Iterable<String> getCandidates() {
         return candidates;

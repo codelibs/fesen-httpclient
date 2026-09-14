@@ -37,12 +37,28 @@ public class GetIngestionStateResponse extends BroadcastResponse {
     @Nullable
     private String nextPageToken;
 
+    /**
+     * Creates a new GetIngestionStateResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetIngestionStateResponse(StreamInput in) throws IOException {
         super(in);
         shardStates = in.readArray(ShardIngestionState::new, ShardIngestionState[]::new);
         nextPageToken = in.readOptionalString();
     }
 
+    /**
+     * Creates a new GetIngestionStateResponse.
+     *
+     * @param shardStates the shard states
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param failedShards the failed shards
+     * @param nextPageToken the next page token
+     * @param shardFailures the shard failures
+     */
     public GetIngestionStateResponse(
         ShardIngestionState[] shardStates,
         int totalShards,
@@ -85,6 +101,11 @@ public class GetIngestionStateResponse extends BroadcastResponse {
         builder.endObject();
     }
 
+    /**
+     * Returns the shard states.
+     *
+     * @return the shard states
+     */
     public ShardIngestionState[] getShardStates() {
         return shardStates;
     }
@@ -94,6 +115,11 @@ public class GetIngestionStateResponse extends BroadcastResponse {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, false);
     }
 
+    /**
+     * Returns the next page token.
+     *
+     * @return the next page token
+     */
     public String getNextPageToken() {
         return nextPageToken;
     }

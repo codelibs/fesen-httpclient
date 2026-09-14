@@ -60,6 +60,9 @@ import java.util.Objects;
  * @opensearch.internal
  * */
 public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBoundingBoxQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geo_bounding_box";
 
     /** Default type for executing this query (memory as of this writing). */
@@ -97,6 +100,9 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public GeoBoundingBoxQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -122,6 +128,7 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      * @param left The left longitude
      * @param bottom The bottom latitude
      * @param right The right longitude
+     * @return this instance
      */
     public GeoBoundingBoxQueryBuilder setCorners(double top, double left, double bottom, double right) {
         if (GeoValidationMethod.isIgnoreMalformed(validationMethod) == false) {
@@ -159,7 +166,8 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      * Adds points.
      * @param topLeft topLeft point to add.
      * @param bottomRight bottomRight point to add.
-     * */
+     * @return this instance
+      */
     public GeoBoundingBoxQueryBuilder setCorners(GeoPoint topLeft, GeoPoint bottomRight) {
         return setCorners(topLeft.getLat(), topLeft.getLon(), bottomRight.getLat(), bottomRight.getLon());
     }
@@ -167,6 +175,7 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
     /**
      * Adds points from a single geohash.
      * @param geohash The geohash for computing the bounding box.
+     * @return this instance
      */
     public GeoBoundingBoxQueryBuilder setCorners(final String geohash) {
         // get the bounding box of the geohash and set topLeft and bottomRight
@@ -178,17 +187,26 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      * Adds points.
      * @param topLeft topLeft point to add as geohash.
      * @param bottomRight bottomRight point to add as geohash.
-     * */
+     * @return this instance
+      */
     public GeoBoundingBoxQueryBuilder setCorners(String topLeft, String bottomRight) {
         return setCorners(GeoPoint.fromGeohash(topLeft), GeoPoint.fromGeohash(bottomRight));
     }
 
-    /** Returns the top left corner of the bounding box. */
+    /**
+     * Returns the top left corner of the bounding box.
+     *
+     * @return the top left
+     */
     public GeoPoint topLeft() {
         return geoBoundingBox.topLeft();
     }
 
-    /** Returns the bottom right corner of the bounding box. */
+    /**
+     * Returns the bottom right corner of the bounding box.
+     *
+     * @return the bottom right
+     */
     public GeoPoint bottomRight() {
         return geoBoundingBox.bottomRight();
     }
@@ -198,6 +216,7 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      *
      * @param bottomLeft bottom left corner of bounding box.
      * @param topRight top right corner of bounding box.
+     * @return this instance
      */
     public GeoBoundingBoxQueryBuilder setCornersOGC(GeoPoint bottomLeft, GeoPoint topRight) {
         return setCorners(topRight.getLat(), bottomLeft.getLon(), bottomLeft.getLat(), topRight.getLon());
@@ -208,6 +227,7 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      *
      * @param bottomLeft bottom left corner geohash.
      * @param topRight top right corner geohash.
+     * @return this instance
      */
     public GeoBoundingBoxQueryBuilder setCornersOGC(String bottomLeft, String topRight) {
         return setCornersOGC(GeoPoint.fromGeohash(bottomLeft), GeoPoint.fromGeohash(topRight));
@@ -217,7 +237,10 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      * Specify whether or not to ignore validation errors of bounding boxes.
      * Can only be set if coerce set to false, otherwise calling this
      * method has no effect.
-     **/
+     *
+     * @param method the method
+     * @return this instance
+      */
     public GeoBoundingBoxQueryBuilder setValidationMethod(GeoValidationMethod method) {
         this.validationMethod = method;
         return this;
@@ -225,7 +248,9 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
 
     /**
      * Returns geo coordinate validation method to use.
-     * */
+     *
+     * @return the validation method
+      */
     public GeoValidationMethod getValidationMethod() {
         return this.validationMethod;
     }
@@ -233,6 +258,9 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
     /**
      * Sets the type of executing of the geo bounding box. Can be either `memory` or `indexed`. Defaults
      * to `memory`.
+     *
+     * @param type the type
+     * @return the type
      */
     public GeoBoundingBoxQueryBuilder type(GeoExecType type) {
         if (type == null) {
@@ -244,13 +272,20 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
 
     /**
      * For BWC: Parse type from type name.
-     * */
+     *
+     * @param type the type
+     * @return the type
+      */
     public GeoBoundingBoxQueryBuilder type(String type) {
         this.type = GeoExecType.fromString(type);
         return this;
     }
 
-    /** Returns the execution type of the geo bounding box.*/
+    /**
+     * Returns the execution type of the geo bounding box.
+     *
+     * @return the type
+     */
     public GeoExecType type() {
         return type;
     }
@@ -265,6 +300,9 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      * Sets whether the query builder should ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @param ignoreUnmapped the ignore unmapped
+     * @return the ignore unmapped
      */
     public GeoBoundingBoxQueryBuilder ignoreUnmapped(boolean ignoreUnmapped) {
         this.ignoreUnmapped = ignoreUnmapped;
@@ -275,6 +313,8 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
      * Gets whether the query builder will ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the field is unmapped.
+     *
+     * @return the ignore unmapped
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
@@ -321,6 +361,13 @@ public class GeoBoundingBoxQueryBuilder extends AbstractQueryBuilder<GeoBounding
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoBoundingBoxQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
 

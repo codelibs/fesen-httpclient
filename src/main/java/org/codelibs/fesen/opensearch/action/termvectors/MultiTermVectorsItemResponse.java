@@ -50,6 +50,12 @@ public class MultiTermVectorsItemResponse implements Writeable {
     private final TermVectorsResponse response;
     private final MultiTermVectorsResponse.Failure failure;
 
+    /**
+     * Creates a new MultiTermVectorsItemResponse.
+     *
+     * @param response the response
+     * @param failure the failure
+     */
     public MultiTermVectorsItemResponse(TermVectorsResponse response, MultiTermVectorsResponse.Failure failure) {
         assert (((response == null) && (failure != null)) || ((response != null) && (failure == null)));
         this.response = response;
@@ -68,6 +74,8 @@ public class MultiTermVectorsItemResponse implements Writeable {
 
     /**
      * Is this a failed execution?
+     *
+     * @return the failed flag
      */
     public boolean isFailed() {
         return failure != null;
@@ -75,6 +83,8 @@ public class MultiTermVectorsItemResponse implements Writeable {
 
     /**
      * The actual get response, {@code null} if its a failure.
+     *
+     * @return the response
      */
     public TermVectorsResponse getResponse() {
         return this.response;
@@ -82,6 +92,8 @@ public class MultiTermVectorsItemResponse implements Writeable {
 
     /**
      * The failure if relevant.
+     *
+     * @return the failure
      */
     public MultiTermVectorsResponse.Failure getFailure() {
         return this.failure;

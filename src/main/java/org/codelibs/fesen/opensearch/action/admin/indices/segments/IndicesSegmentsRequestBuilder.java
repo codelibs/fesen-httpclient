@@ -47,6 +47,12 @@ public class IndicesSegmentsRequestBuilder extends BroadcastOperationRequestBuil
     IndicesSegmentResponse,
     IndicesSegmentsRequestBuilder> {
 
+    /**
+     * Creates a new IndicesSegmentsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public IndicesSegmentsRequestBuilder(OpenSearchClient client, IndicesSegmentsAction action) {
         super(client, action, new IndicesSegmentsRequest());
     }

@@ -38,6 +38,9 @@ import org.codelibs.fesen.opensearch.geometry.utils.WellKnownText;
  * Represents a Point on the earth's surface in decimal degrees and optional altitude in meters.
  */
 public class Point implements Geometry {
+    /**
+     * The EMPTY constant.
+     */
     public static final Point EMPTY = new Point();
 
     private final double y;
@@ -52,10 +55,23 @@ public class Point implements Geometry {
         empty = true;
     }
 
+    /**
+     * Creates a new Point.
+     *
+     * @param x the x
+     * @param y the y
+     */
     public Point(double x, double y) {
         this(x, y, Double.NaN);
     }
 
+    /**
+     * Creates a new Point.
+     *
+     * @param x the x
+     * @param y the y
+     * @param z the z
+     */
     public Point(double x, double y, double z) {
         this.y = y;
         this.x = x;
@@ -68,14 +84,29 @@ public class Point implements Geometry {
         return ShapeType.POINT;
     }
 
+    /**
+     * Returns the y.
+     *
+     * @return the y
+     */
     public double getY() {
         return y;
     }
 
+    /**
+     * Returns the x.
+     *
+     * @return the x
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * Returns the z.
+     *
+     * @return the z
+     */
     public double getZ() {
         return z;
     }

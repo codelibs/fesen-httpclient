@@ -29,10 +29,21 @@ public class SegmentReplicationRejectionStats implements Writeable, ToXContentFr
      */
     private long totalRejectionCount;
 
+    /**
+     * Creates a new SegmentReplicationRejectionStats.
+     *
+     * @param totalRejectionCount the total rejection count
+     */
     public SegmentReplicationRejectionStats(final long totalRejectionCount) {
         this.totalRejectionCount = totalRejectionCount;
     }
 
+    /**
+     * Creates a new SegmentReplicationRejectionStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SegmentReplicationRejectionStats(StreamInput in) throws IOException {
         if (in.getVersion().onOrAfter(Version.V_2_12_0)) {
             this.totalRejectionCount = in.readVLong();

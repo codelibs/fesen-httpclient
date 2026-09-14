@@ -29,6 +29,9 @@ import java.util.stream.Collectors;
 public class TaskResourceUsageTrackers {
     private final EnumMap<TaskResourceUsageTrackerType, TaskResourceUsageTracker> all;
 
+    /**
+     * Creates a new TaskResourceUsageTrackers.
+     */
     public TaskResourceUsageTrackers() {
         all = new EnumMap<>(TaskResourceUsageTrackerType.class);
     }
@@ -39,26 +42,50 @@ public class TaskResourceUsageTrackers {
      */
     public static abstract class TaskResourceUsageTracker {
         /**
+         * Creates a new TaskResourceUsageTracker.
+         */
+        public TaskResourceUsageTracker() {
+        }
+
+        /**
          * Counts the number of cancellations made due to this tracker.
          */
         private final AtomicLong cancellations = new AtomicLong();
+        /**
+         * The resource usage breach evaluator.
+         */
         protected ResourceUsageBreachEvaluator resourceUsageBreachEvaluator;
 
+        /**
+         * Increments the cancellations.
+         *
+         * @return this instance
+         */
         public long incrementCancellations() {
             return cancellations.incrementAndGet();
         }
 
+        /**
+         * Returns the cancellations.
+         *
+         * @return the cancellations
+         */
         public long getCancellations() {
             return cancellations.get();
         }
 
         /**
          * Returns a unique name for this tracker.
+         *
+         * @return the name
          */
         public abstract String name();
 
         /**
          * Returns the cancellation reason for the given task, if it's eligible for cancellation.
+         *
+         * @param task the task
+         * @return this instance
          */
         public Optional<TaskCancellation.Reason> checkAndMaybeGetCancellationReason(Task task) {
             return resourceUsageBreachEvaluator.evaluate(task);
@@ -66,6 +93,9 @@ public class TaskResourceUsageTrackers {
 
         /**
          * Returns the tracker's state for tasks as seen in the stats API.
+         *
+         * @param activeTasks the active tasks
+         * @return the stats
          */
         public abstract Stats stats(List<? extends Task> activeTasks);
 

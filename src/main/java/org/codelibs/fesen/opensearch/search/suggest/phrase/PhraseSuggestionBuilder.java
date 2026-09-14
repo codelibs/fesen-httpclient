@@ -63,22 +63,70 @@ import java.util.Set;
  */
 public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionBuilder> {
 
+    /**
+     * The SUGGESTION_NAME constant.
+     */
     public static final String SUGGESTION_NAME = "phrase";
 
+    /**
+     * The MAXERRORS_FIELD constant.
+     */
     protected static final ParseField MAXERRORS_FIELD = new ParseField("max_errors");
+    /**
+     * The RWE_LIKELIHOOD_FIELD constant.
+     */
     protected static final ParseField RWE_LIKELIHOOD_FIELD = new ParseField("real_word_error_likelihood");
+    /**
+     * The SEPARATOR_FIELD constant.
+     */
     protected static final ParseField SEPARATOR_FIELD = new ParseField("separator");
+    /**
+     * The CONFIDENCE_FIELD constant.
+     */
     protected static final ParseField CONFIDENCE_FIELD = new ParseField("confidence");
+    /**
+     * The GRAMSIZE_FIELD constant.
+     */
     protected static final ParseField GRAMSIZE_FIELD = new ParseField("gram_size");
+    /**
+     * The SMOOTHING_MODEL_FIELD constant.
+     */
     protected static final ParseField SMOOTHING_MODEL_FIELD = new ParseField("smoothing");
+    /**
+     * The FORCE_UNIGRAM_FIELD constant.
+     */
     protected static final ParseField FORCE_UNIGRAM_FIELD = new ParseField("force_unigrams");
+    /**
+     * The TOKEN_LIMIT_FIELD constant.
+     */
     protected static final ParseField TOKEN_LIMIT_FIELD = new ParseField("token_limit");
+    /**
+     * The HIGHLIGHT_FIELD constant.
+     */
     protected static final ParseField HIGHLIGHT_FIELD = new ParseField("highlight");
+    /**
+     * The PRE_TAG_FIELD constant.
+     */
     protected static final ParseField PRE_TAG_FIELD = new ParseField("pre_tag");
+    /**
+     * The POST_TAG_FIELD constant.
+     */
     protected static final ParseField POST_TAG_FIELD = new ParseField("post_tag");
+    /**
+     * The COLLATE_FIELD constant.
+     */
     protected static final ParseField COLLATE_FIELD = new ParseField("collate");
+    /**
+     * The COLLATE_QUERY_FIELD constant.
+     */
     protected static final ParseField COLLATE_QUERY_FIELD = new ParseField("query");
+    /**
+     * The COLLATE_QUERY_PARAMS constant.
+     */
     protected static final ParseField COLLATE_QUERY_PARAMS = new ParseField("params");
+    /**
+     * The COLLATE_QUERY_PRUNE constant.
+     */
     protected static final ParseField COLLATE_QUERY_PRUNE = new ParseField("prune");
 
     private float maxErrors = 0.5f;
@@ -101,6 +149,11 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     private SmoothingModel model;
     private final Map<String, List<CandidateGenerator>> generators = new HashMap<>();
 
+    /**
+     * Creates a new PhraseSuggestionBuilder.
+     *
+     * @param field the field
+     */
     public PhraseSuggestionBuilder(String field) {
         super(field);
     }
@@ -162,6 +215,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
      * Sets the gram size for the n-gram model used for this suggester. The
      * default value is {@code 1} corresponding to {@code unigrams}. Use
      * {@code 2} for {@code bigrams} and {@code 3} for {@code trigrams}.
+     *
+     * @param gramSize the gram size
+     * @return the gram size
      */
     public PhraseSuggestionBuilder gramSize(int gramSize) {
         if (gramSize < 1) {
@@ -173,6 +229,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the {@link #gramSize(int)} parameter
+     *
+     * @return the gram size
      */
     public Integer gramSize() {
         return this.gramSize;
@@ -186,6 +244,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
      * <p>
      * The default is set to {@code 1.0} which corresponds to that only
      * corrections with at most 1 misspelled term are returned.
+     *
+     * @param maxErrors the max errors
+     * @return the max errors
      */
     public PhraseSuggestionBuilder maxErrors(float maxErrors) {
         if (maxErrors <= 0.0) {
@@ -197,6 +258,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the maxErrors setting
+     *
+     * @return the max errors
      */
     public Float maxErrors() {
         return this.maxErrors;
@@ -205,6 +268,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     /**
      * Sets the separator that is used to separate terms in the bigram field. If
      * not set the whitespace character is used as a separator.
+     *
+     * @param separator the separator
+     * @return the separator
      */
     public PhraseSuggestionBuilder separator(String separator) {
         Objects.requireNonNull(separator, "separator cannot be set to null");
@@ -214,6 +280,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the separator that is used to separate terms in the bigram field.
+     *
+     * @return the separator
      */
     public String separator() {
         return this.separator;
@@ -223,6 +291,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
      * Sets the likelihood of a term being a misspelled even if the term exists
      * in the dictionary. The default it {@code 0.95} corresponding to 5% or
      * the real words are misspelled.
+     *
+     * @param realWordErrorLikelihood the real word error likelihood
+     * @return the real word error likelihood
      */
     public PhraseSuggestionBuilder realWordErrorLikelihood(float realWordErrorLikelihood) {
         if (realWordErrorLikelihood <= 0.0) {
@@ -234,6 +305,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the {@link #realWordErrorLikelihood(float)} parameter
+     *
+     * @return the real word error likelihood
      */
     public Float realWordErrorLikelihood() {
         return this.realWordErrorLikelihood;
@@ -247,6 +320,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
      * confidence level of {@code 1.0} will only return suggestions that score
      * higher than the input phrase. If set to {@code 0.0} the top N candidates
      * are returned. The default is {@code 1.0}
+     *
+     * @param confidence the confidence
+     * @return the confidence
      */
     public PhraseSuggestionBuilder confidence(float confidence) {
         if (confidence < 0.0) {
@@ -258,6 +334,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the {@link #confidence()} parameter
+     *
+     * @return the confidence
      */
     public Float confidence() {
         return this.confidence;
@@ -267,6 +345,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
      * Adds a {@link CandidateGenerator} to this suggester. The
      * {@link CandidateGenerator} is used to draw candidates for each individual
      * phrase term before the candidates are scored.
+     *
+     * @param generator the generator
+     * @return this instance
      */
     public PhraseSuggestionBuilder addCandidateGenerator(CandidateGenerator generator) {
         List<CandidateGenerator> list = this.generators.get(generator.getType());
@@ -280,6 +361,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * Clear the candidate generators.
+     *
+     * @return this instance
      */
     public PhraseSuggestionBuilder clearCandidateGenerators() {
         this.generators.clear();
@@ -296,6 +379,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     /**
      * If set to <code>true</code> the phrase suggester will fail if the analyzer only
      * produces ngrams. the default it <code>true</code>.
+     *
+     * @param forceUnigrams the force unigrams
+     * @return this instance
      */
     public PhraseSuggestionBuilder forceUnigrams(boolean forceUnigrams) {
         this.forceUnigrams = forceUnigrams;
@@ -304,6 +390,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the setting for {@link #forceUnigrams()}
+     *
+     * @return this instance
      */
     public Boolean forceUnigrams() {
         return this.forceUnigrams;
@@ -312,6 +400,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     /**
      * Sets an explicit smoothing model used for this suggester. The default is
      * {@link StupidBackoff}.
+     *
+     * @param model the model
+     * @return the smoothing model
      */
     public PhraseSuggestionBuilder smoothingModel(SmoothingModel model) {
         this.model = model;
@@ -320,11 +411,19 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * Gets the {@link SmoothingModel}
+     *
+     * @return the smoothing model
      */
     public SmoothingModel smoothingModel() {
         return this.model;
     }
 
+    /**
+     * Returns the token limit.
+     *
+     * @param tokenLimit the token limit
+     * @return the token limit
+     */
     public PhraseSuggestionBuilder tokenLimit(int tokenLimit) {
         if (tokenLimit <= 0) {
             throw new IllegalArgumentException("token_limit must be >= 1");
@@ -335,6 +434,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the {@link #tokenLimit(int)} parameter
+     *
+     * @return the token limit
      */
     public Integer tokenLimit() {
         return this.tokenLimit;
@@ -343,6 +444,10 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     /**
      * Setup highlighting for suggestions.  If this is called a highlight field
      * is returned with suggestions wrapping changed tokens with preTag and postTag.
+     *
+     * @param preTag the pre tag
+     * @param postTag the post tag
+     * @return this instance
      */
     public PhraseSuggestionBuilder highlight(String preTag, String postTag) {
         if ((preTag == null) != (postTag == null)) {
@@ -355,6 +460,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the pre-tag for the highlighter set with {@link #highlight(String, String)}
+     *
+     * @return the pre tag
      */
     public String preTag() {
         return this.preTag;
@@ -362,6 +469,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * get the post-tag for the highlighter set with {@link #highlight(String, String)}
+     *
+     * @return the post tag
      */
     public String postTag() {
         return this.postTag;
@@ -369,6 +478,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * Sets a query used for filtering out suggested phrases (collation).
+     *
+     * @param collateQuery the collate query
+     * @return the collate query
      */
     public PhraseSuggestionBuilder collateQuery(String collateQuery) {
         this.collateQuery = new Script(ScriptType.INLINE, "mustache", collateQuery, Collections.emptyMap());
@@ -377,6 +489,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * Sets a query used for filtering out suggested phrases (collation).
+     *
+     * @param collateQueryTemplate the collate query template
+     * @return the collate query
      */
     public PhraseSuggestionBuilder collateQuery(Script collateQueryTemplate) {
         this.collateQuery = collateQueryTemplate;
@@ -385,6 +500,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * gets the query used for filtering out suggested phrases (collation).
+     *
+     * @return the collate query
      */
     public Script collateQuery() {
         return this.collateQuery;
@@ -393,6 +510,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
     /**
      * Adds additional parameters for collate scripts. Previously added parameters on the
      * same builder will be overwritten.
+     *
+     * @param collateParams the collate params
+     * @return the collate params
      */
     public PhraseSuggestionBuilder collateParams(Map<String, Object> collateParams) {
         Objects.requireNonNull(collateParams, "collate parameters cannot be null.");
@@ -402,6 +522,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * gets additional params for collate script
+     *
+     * @return the collate params
      */
     public Map<String, Object> collateParams() {
         return this.collateParams;
@@ -409,6 +531,9 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * Sets whether to prune suggestions after collation
+     *
+     * @param collatePrune the collate prune
+     * @return the collate prune
      */
     public PhraseSuggestionBuilder collatePrune(boolean collatePrune) {
         this.collatePrune = collatePrune;
@@ -417,6 +542,8 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
 
     /**
      * Gets whether to prune suggestions after collation
+     *
+     * @return the collate prune
      */
     public Boolean collatePrune() {
         return this.collatePrune;
@@ -466,6 +593,13 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static PhraseSuggestionBuilder fromXContent(XContentParser parser) throws IOException {
         PhraseSuggestionBuilder tmpSuggestion = new PhraseSuggestionBuilder("_na_");
         XContentParser.Token token;
@@ -643,6 +777,11 @@ public class PhraseSuggestionBuilder extends SuggestionBuilder<PhraseSuggestionB
      * @opensearch.internal
      */
     public interface CandidateGenerator extends Writeable, ToXContentObject {
+        /**
+         * Returns the type.
+         *
+         * @return the type
+         */
         String getType();
 
     }

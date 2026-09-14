@@ -58,6 +58,9 @@ public class StoreStats implements Writeable, ToXContentFragment {
     private long sizeInBytes;
     private long reservedSize;
 
+    /**
+     * Creates a new StoreStats.
+     */
     public StoreStats() {
 
     }
@@ -72,6 +75,12 @@ public class StoreStats implements Writeable, ToXContentFragment {
         this.reservedSize = builder.reservedSize;
     }
 
+    /**
+     * Creates a new StoreStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public StoreStats(StreamInput in) throws IOException {
         sizeInBytes = in.readVLong();
         reservedSize = in.readZLong();
@@ -80,6 +89,9 @@ public class StoreStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param sizeInBytes the size in bytes
+     * @param reservedSize the reserved size
       */
     @Deprecated
     public StoreStats(long sizeInBytes, long reservedSize) {
@@ -88,6 +100,11 @@ public class StoreStats implements Writeable, ToXContentFragment {
         this.reservedSize = reservedSize;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param stats the stats
+     */
     public void add(StoreStats stats) {
         if (stats == null) {
             return;
@@ -100,6 +117,11 @@ public class StoreStats implements Writeable, ToXContentFragment {
         return reservedSize == UNKNOWN_RESERVED_BYTES ? 0L : reservedSize;
     }
 
+    /**
+     * Returns the number of elements.
+     *
+     * @return the number of elements
+     */
     public ByteSizeValue size() {
         return new ByteSizeValue(sizeInBytes);
     }
@@ -108,6 +130,8 @@ public class StoreStats implements Writeable, ToXContentFragment {
      * A prediction of how much larger this store will eventually grow. For instance, if we are currently doing a peer recovery or restoring
      * a snapshot into this store then we can account for the rest of the recovery using this field. A value of {@code -1B} indicates that
      * the reserved size is unknown.
+     *
+     * @return the reserved size
      */
     public ByteSizeValue getReservedSize() {
         return new ByteSizeValue(reservedSize);
@@ -121,10 +145,16 @@ public class StoreStats implements Writeable, ToXContentFragment {
         private long sizeInBytes = 0;
         private long reservedSize = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
         /**
+         * Returns the size in bytes.
+         *
          * @param bytes the size of the store in bytes
+         * @return the size in bytes
          */
         public Builder sizeInBytes(long bytes) {
             this.sizeInBytes = bytes;
@@ -132,7 +162,10 @@ public class StoreStats implements Writeable, ToXContentFragment {
         }
 
         /**
+         * Returns the reserved size.
+         *
          * @param size a prediction of how much larger the store is expected to grow, or {@link StoreStats#UNKNOWN_RESERVED_BYTES}.
+         * @return the reserved size
          */
         public Builder reservedSize(long size) {
             assert size == UNKNOWN_RESERVED_BYTES || size >= 0 : size;

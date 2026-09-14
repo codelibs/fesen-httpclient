@@ -67,6 +67,13 @@ public class TransportInfo implements ReportingService.Info {
     private Map<String, BoundTransportAddress> profileAddresses;
     private final boolean cnameInPublishAddress;
 
+    /**
+     * Creates a new TransportInfo.
+     *
+     * @param address the address
+     * @param profileAddresses the profile addresses
+     * @param cnameInPublishAddress the cname in publish address
+     */
     public TransportInfo(
         BoundTransportAddress address,
         @Nullable Map<String, BoundTransportAddress> profileAddresses,
@@ -77,6 +84,12 @@ public class TransportInfo implements ReportingService.Info {
         this.cnameInPublishAddress = cnameInPublishAddress;
     }
 
+    /**
+     * Creates a new TransportInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TransportInfo(StreamInput in) throws IOException {
         address = new BoundTransportAddress(in);
         int size = in.readVInt();
@@ -153,6 +166,11 @@ public class TransportInfo implements ReportingService.Info {
         return builder;
     }
 
+    /**
+     * Returns the address.
+     *
+     * @return the address
+     */
     public BoundTransportAddress address() {
         return address;
     }

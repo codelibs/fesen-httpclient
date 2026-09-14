@@ -73,10 +73,15 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
 
     private CryptoSettings cryptoSettings;
 
+    /**
+     * Creates a new PutRepositoryRequest.
+     */
     public PutRepositoryRequest() {}
 
     /**
      * Constructs a new put repository request with the provided name.
+     *
+     * @param name the name
      */
     public PutRepositoryRequest(String name) {
         this.name = name;
@@ -133,6 +138,8 @@ public class PutRepositoryRequest extends AcknowledgedRequest<PutRepositoryReque
 
     /**
      * Returns true if repository should be verified after creation
+     *
+     * @return this instance
      */
     public boolean verify() {
         return this.verify;

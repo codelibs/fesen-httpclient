@@ -71,6 +71,9 @@ import java.util.function.Predicate;
 @PublicApi(since = "1.0.0")
 public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<RoutingTable>, VerifiableWriteable {
 
+    /**
+     * The EMPTY_ROUTING_TABLE constant.
+     */
     public static final RoutingTable EMPTY_ROUTING_TABLE = builder().build();
 
     private final long version;
@@ -78,6 +81,12 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
     // index to IndexRoutingTable map
     private final Map<String, IndexRoutingTable> indicesRouting;
 
+    /**
+     * Creates a new RoutingTable.
+     *
+     * @param version the version
+     * @param indicesRouting the indices routing
+     */
     public RoutingTable(long version, final Map<String, IndexRoutingTable> indicesRouting) {
         this.version = version;
         this.indicesRouting = Collections.unmodifiableMap(indicesRouting);
@@ -88,10 +97,21 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         return indicesRouting.values().iterator();
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @param index the index
+     * @return this instance
+     */
     public IndexRoutingTable index(String index) {
         return indicesRouting.get(index);
     }
 
+    /**
+     * Returns the indices routing.
+     *
+     * @return the indices routing
+     */
     public Map<String, IndexRoutingTable> indicesRouting() {
         return indicesRouting;
     }
@@ -140,10 +160,24 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         return new RoutingTableDiff(previousState, this);
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<RoutingTable> readDiffFrom(StreamInput in) throws IOException {
         return new RoutingTableDiff(in);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static RoutingTable readFrom(StreamInput in) throws IOException {
         Builder builder = new Builder();
         builder.version = in.readLong();
@@ -212,6 +246,11 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         }
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -227,10 +266,19 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
         private long version;
         private Map<String, IndexRoutingTable> indicesRouting = new HashMap<>();
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {
 
         }
 
+        /**
+         * Adds this instance.
+         *
+         * @param indexRoutingTable the index routing table
+         * @return this instance
+         */
         public Builder add(IndexRoutingTable indexRoutingTable) {
             if (indicesRouting == null) {
                 throw new IllegalStateException("once build is called the builder cannot be reused");
@@ -243,6 +291,8 @@ public class RoutingTable implements Iterable<IndexRoutingTable>, Diffable<Routi
          * Builds the routing table. Note that once this is called the builder
          * must be thrown away. If you need to build a new RoutingTable as a
          * copy of this one you'll need to build a new RoutingTable.Builder.
+         *
+         * @return the new instance
          */
         public RoutingTable build() {
             if (indicesRouting == null) {

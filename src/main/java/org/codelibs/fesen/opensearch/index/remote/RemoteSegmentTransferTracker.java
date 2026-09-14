@@ -100,6 +100,13 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
      */
     private final DirectoryFileTransferTracker directoryFileTransferTracker;
 
+    /**
+     * Creates a new RemoteSegmentTransferTracker.
+     *
+     * @param shardId the shard identifier
+     * @param directoryFileTransferTracker the directory file transfer tracker
+     * @param movingAverageWindowSize the moving average window size
+     */
     public RemoteSegmentTransferTracker(
         ShardId shardId,
         DirectoryFileTransferTracker directoryFileTransferTracker,
@@ -119,6 +126,11 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
         this.directoryFileTransferTracker = directoryFileTransferTracker;
     }
 
+    /**
+     * Returns the current time milliseconds using system nanoseconds.
+     *
+     * @return the current time milliseconds using system nanoseconds
+     */
     public static long currentTimeMsUsingSystemNanos() {
         return TimeUnit.NANOSECONDS.toMillis(System.nanoTime());
     }
@@ -143,26 +155,89 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
     @PublicApi(since = "2.10.0")
     public static class Stats implements Writeable {
 
+        /**
+         * The shard identifier.
+         */
         public final ShardId shardId;
+        /**
+         * The local refresh clock time milliseconds.
+         */
         public final long localRefreshClockTimeMs;
+        /**
+         * The remote refresh clock time milliseconds.
+         */
         public final long remoteRefreshClockTimeMs;
+        /**
+         * The refresh time lag milliseconds.
+         */
         public final long refreshTimeLagMs;
+        /**
+         * The local refresh number.
+         */
         public final long localRefreshNumber;
+        /**
+         * The remote refresh number.
+         */
         public final long remoteRefreshNumber;
+        /**
+         * The upload bytes started.
+         */
         public final long uploadBytesStarted;
+        /**
+         * The upload bytes failed.
+         */
         public final long uploadBytesFailed;
+        /**
+         * The upload bytes succeeded.
+         */
         public final long uploadBytesSucceeded;
+        /**
+         * The total uploads started.
+         */
         public final long totalUploadsStarted;
+        /**
+         * The total uploads failed.
+         */
         public final long totalUploadsFailed;
+        /**
+         * The total uploads succeeded.
+         */
         public final long totalUploadsSucceeded;
+        /**
+         * The rejection count.
+         */
         public final long rejectionCount;
+        /**
+         * The consecutive failures count.
+         */
         public final long consecutiveFailuresCount;
+        /**
+         * The last successful remote refresh bytes.
+         */
         public final long lastSuccessfulRemoteRefreshBytes;
+        /**
+         * The upload bytes moving average.
+         */
         public final double uploadBytesMovingAverage;
+        /**
+         * The upload bytes per sec moving average.
+         */
         public final double uploadBytesPerSecMovingAverage;
+        /**
+         * The total upload time in milliseconds.
+         */
         public final long totalUploadTimeInMs;
+        /**
+         * The upload time moving average.
+         */
         public final double uploadTimeMovingAverage;
+        /**
+         * The bytes lag.
+         */
         public final long bytesLag;
+        /**
+         * The directory file transfer tracker stats.
+         */
         public final DirectoryFileTransferTracker.Stats directoryFileTransferTrackerStats;
 
         private Stats(Builder builder) {
@@ -189,6 +264,12 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
             this.directoryFileTransferTrackerStats = builder.directoryFileTransferTrackerStats;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             try {
                 this.shardId = new ShardId(in);
@@ -244,108 +325,237 @@ public class RemoteSegmentTransferTracker extends RemoteTransferTracker {
             private long bytesLag = 0;
             private DirectoryFileTransferTracker.Stats directoryFileTransferTrackerStats = null;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Returns the shard identifier.
+             *
+             * @param shardId the shard identifier
+             * @return the shard identifier
+             */
             public Builder shardId(ShardId shardId) {
                 this.shardId = shardId;
                 return this;
             }
 
+            /**
+             * Returns the local refresh clock time milliseconds.
+             *
+             * @param time the time
+             * @return the local refresh clock time milliseconds
+             */
             public Builder localRefreshClockTimeMs(long time) {
                 this.localRefreshClockTimeMs = time;
                 return this;
             }
 
+            /**
+             * Returns the remote refresh clock time milliseconds.
+             *
+             * @param time the time
+             * @return the remote refresh clock time milliseconds
+             */
             public Builder remoteRefreshClockTimeMs(long time) {
                 this.remoteRefreshClockTimeMs = time;
                 return this;
             }
 
+            /**
+             * Refreshes the time lag milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder refreshTimeLagMs(long time) {
                 this.refreshTimeLagMs = time;
                 return this;
             }
 
+            /**
+             * Returns the local refresh number.
+             *
+             * @param number the number
+             * @return the local refresh number
+             */
             public Builder localRefreshNumber(long number) {
                 this.localRefreshNumber = number;
                 return this;
             }
 
+            /**
+             * Returns the remote refresh number.
+             *
+             * @param number the number
+             * @return the remote refresh number
+             */
             public Builder remoteRefreshNumber(long number) {
                 this.remoteRefreshNumber = number;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes started.
+             *
+             * @param started the started
+             * @return the upload bytes started
+             */
             public Builder uploadBytesStarted(long started) {
                 this.uploadBytesStarted = started;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes failed.
+             *
+             * @param failed the failed
+             * @return the upload bytes failed
+             */
             public Builder uploadBytesFailed(long failed) {
                 this.uploadBytesFailed = failed;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the upload bytes succeeded
+             */
             public Builder uploadBytesSucceeded(long succeeded) {
                 this.uploadBytesSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the total uploads started.
+             *
+             * @param started the started
+             * @return the total uploads started
+             */
             public Builder totalUploadsStarted(long started) {
                 this.totalUploadsStarted = started;
                 return this;
             }
 
+            /**
+             * Returns the total uploads failed.
+             *
+             * @param failed the failed
+             * @return the total uploads failed
+             */
             public Builder totalUploadsFailed(long failed) {
                 this.totalUploadsFailed = failed;
                 return this;
             }
 
+            /**
+             * Returns the total uploads succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the total uploads succeeded
+             */
             public Builder totalUploadsSucceeded(long succeeded) {
                 this.totalUploadsSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the rejection count.
+             *
+             * @param count the count
+             * @return the rejection count
+             */
             public Builder rejectionCount(long count) {
                 this.rejectionCount = count;
                 return this;
             }
 
+            /**
+             * Returns the consecutive failures count.
+             *
+             * @param count the count
+             * @return the consecutive failures count
+             */
             public Builder consecutiveFailuresCount(long count) {
                 this.consecutiveFailuresCount = count;
                 return this;
             }
 
+            /**
+             * Returns the last successful remote refresh bytes.
+             *
+             * @param bytes the bytes
+             * @return the last successful remote refresh bytes
+             */
             public Builder lastSuccessfulRemoteRefreshBytes(long bytes) {
                 this.lastSuccessfulRemoteRefreshBytes = bytes;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes moving average.
+             *
+             * @param average the average
+             * @return the upload bytes moving average
+             */
             public Builder uploadBytesMovingAverage(double average) {
                 this.uploadBytesMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes per sec moving average.
+             *
+             * @param average the average
+             * @return the upload bytes per sec moving average
+             */
             public Builder uploadBytesPerSecMovingAverage(double average) {
                 this.uploadBytesPerSecMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the total upload time in milliseconds.
+             *
+             * @param time the time
+             * @return the total upload time in milliseconds
+             */
             public Builder totalUploadTimeInMs(long time) {
                 this.totalUploadTimeInMs = time;
                 return this;
             }
 
+            /**
+             * Returns the upload time moving average.
+             *
+             * @param average the average
+             * @return the upload time moving average
+             */
             public Builder uploadTimeMovingAverage(double average) {
                 this.uploadTimeMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the bytes lag.
+             *
+             * @param lag the lag
+             * @return the bytes lag
+             */
             public Builder bytesLag(long lag) {
                 this.bytesLag = lag;
                 return this;
             }
 
+            /**
+             * Returns the directory file transfer tracker stats.
+             *
+             * @param stats the stats
+             * @return the directory file transfer tracker stats
+             */
             public Builder directoryFileTransferTrackerStats(DirectoryFileTransferTracker.Stats stats) {
                 this.directoryFileTransferTrackerStats = stats;
                 return this;

@@ -22,18 +22,40 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class AdmissionControllerStats implements Writeable, ToXContentFragment {
+    /**
+     * The rejection count.
+     */
     public Map<String, Long> rejectionCount;
+    /**
+     * The admission controller name.
+     */
     public String admissionControllerName;
 
+    /**
+     * Creates a new AdmissionControllerStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AdmissionControllerStats(StreamInput in) throws IOException {
         this.rejectionCount = in.readMap(StreamInput::readString, StreamInput::readLong);
         this.admissionControllerName = in.readString();
     }
 
+    /**
+     * Returns the admission controller name.
+     *
+     * @return the admission controller name
+     */
     public String getAdmissionControllerName() {
         return admissionControllerName;
     }
 
+    /**
+     * Returns the rejection count.
+     *
+     * @return the rejection count
+     */
     public Map<String, Long> getRejectionCount() {
         return rejectionCount;
     }

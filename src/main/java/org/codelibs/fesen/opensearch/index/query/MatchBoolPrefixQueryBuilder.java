@@ -58,6 +58,9 @@ import static org.codelibs.fesen.opensearch.index.query.MatchQueryBuilder.PREFIX
  */
 public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolPrefixQueryBuilder> implements WithFieldName {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "match_bool_prefix";
 
     private static final Operator DEFAULT_OPERATOR = Operator.OR;
@@ -82,6 +85,12 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
 
     private String fuzzyRewrite;
 
+    /**
+     * Creates a new MatchBoolPrefixQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     */
     public MatchBoolPrefixQueryBuilder(String fieldName, Object value) {
         if (Strings.isEmpty(fieldName)) {
             throw new IllegalArgumentException("[" + NAME + "] requires fieldName");
@@ -93,6 +102,12 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
         this.value = value;
     }
 
+    /**
+     * Creates a new MatchBoolPrefixQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MatchBoolPrefixQueryBuilder(StreamInput in) throws IOException {
         super(in);
         fieldName = in.readString();
@@ -127,12 +142,20 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
         return this.fieldName;
     }
 
-    /** Returns the value used in this query. */
+    /**
+     * Returns the value used in this query.
+     *
+     * @return the value
+     */
     public Object value() {
         return this.value;
     }
 
-    /** Get the analyzer to use, if previously set, otherwise {@code null} */
+    /**
+     * Get the analyzer to use, if previously set, otherwise {@code null}
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return this.analyzer;
     }
@@ -140,13 +163,21 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
     /**
      * Explicitly set the analyzer to use. Defaults to use explicit mapping
      * config for the field, or, if not set, the default search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public MatchBoolPrefixQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
-    /** Sets the operator to use when using a boolean query. Defaults to {@code OR}. */
+    /**
+     * Sets the operator to use when using a boolean query. Defaults to {@code OR}.
+     *
+     * @param operator the operator
+     * @return the operator
+     */
     public MatchBoolPrefixQueryBuilder operator(Operator operator) {
         if (operator == null) {
             throw new IllegalArgumentException("[" + NAME + "] requires operator to be non-null");
@@ -155,22 +186,41 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
         return this;
     }
 
-    /** Returns the operator to use in a boolean query.*/
+    /**
+     * Returns the operator to use in a boolean query.
+     *
+     * @return the operator
+     */
     public Operator operator() {
         return this.operator;
     }
 
-    /** Sets optional minimumShouldMatch value to apply to the query */
+    /**
+     * Sets optional minimumShouldMatch value to apply to the query
+     *
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
+     */
     public MatchBoolPrefixQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
         this.minimumShouldMatch = minimumShouldMatch;
         return this;
     }
 
-    /** Gets the minimumShouldMatch value */
+    /**
+     * Gets the minimumShouldMatch value
+     *
+     * @return the minimum should match
+     */
     public String minimumShouldMatch() {
         return this.minimumShouldMatch;
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
+     */
     @Deprecated
     /* Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO". */
     public MatchBoolPrefixQueryBuilder fuzziness(Object fuzziness) {
@@ -178,13 +228,22 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
         return this;
     }
 
-    /** Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO". */
+    /**
+     * Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO".
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
+     */
     public MatchBoolPrefixQueryBuilder fuzziness(Fuzziness fuzziness) {
         this.fuzziness = fuzziness;
         return this;
     }
 
-    /**  Gets the fuzziness used when evaluated to a fuzzy query type. */
+    /**
+     * Gets the fuzziness used when evaluated to a fuzzy query type.
+     *
+     * @return the fuzziness
+     */
     public Fuzziness fuzziness() {
         return this.fuzziness;
     }
@@ -192,6 +251,7 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
     /**
      * Sets the length of a length of common (non-fuzzy) prefix for fuzzy match queries
      * @param prefixLength non-negative length of prefix
+     * @return the prefix length
      * @throws IllegalArgumentException in case the prefix is negative
      */
     public MatchBoolPrefixQueryBuilder prefixLength(int prefixLength) {
@@ -204,6 +264,8 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
 
     /**
      * Gets the length of a length of common (non-fuzzy) prefix for fuzzy match queries
+     *
+     * @return the prefix length
      */
     public int prefixLength() {
         return this.prefixLength;
@@ -211,6 +273,9 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
 
     /**
      * When using fuzzy or prefix type query, the number of term expansions to use.
+     *
+     * @param maxExpansions the max expansions
+     * @return the max expansions
      */
     public MatchBoolPrefixQueryBuilder maxExpansions(int maxExpansions) {
         if (maxExpansions <= 0) {
@@ -222,6 +287,8 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
 
     /**
      * Get the (optional) number of term expansions when using fuzzy or prefix type query.
+     *
+     * @return the max expansions
      */
     public int maxExpansions() {
         return this.maxExpansions;
@@ -233,18 +300,30 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
      * distance formula which supports transpositions. Setting transposition to false will
      * switch to classic Levenshtein distance.<br>
      * If not set, Damerau-Levenshtein distance metric will be used.
+     *
+     * @param fuzzyTranspositions the fuzzy transpositions
+     * @return the fuzzy transpositions
      */
     public MatchBoolPrefixQueryBuilder fuzzyTranspositions(boolean fuzzyTranspositions) {
         this.fuzzyTranspositions = fuzzyTranspositions;
         return this;
     }
 
-    /** Gets the fuzzy query transposition setting. */
+    /**
+     * Gets the fuzzy query transposition setting.
+     *
+     * @return the fuzzy transpositions
+     */
     public boolean fuzzyTranspositions() {
         return this.fuzzyTranspositions;
     }
 
-    /** Sets the fuzzy_rewrite parameter controlling how the fuzzy query will get rewritten */
+    /**
+     * Sets the fuzzy_rewrite parameter controlling how the fuzzy query will get rewritten
+     *
+     * @param fuzzyRewrite the fuzzy rewrite
+     * @return the fuzzy rewrite
+     */
     public MatchBoolPrefixQueryBuilder fuzzyRewrite(String fuzzyRewrite) {
         this.fuzzyRewrite = fuzzyRewrite;
         return this;
@@ -252,6 +331,7 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
 
     /**
      * Get the fuzzy_rewrite parameter
+     * @return the fuzzy rewrite
      * @see #fuzzyRewrite(String)
      */
     public String fuzzyRewrite() {
@@ -284,6 +364,13 @@ public class MatchBoolPrefixQueryBuilder extends AbstractQueryBuilder<MatchBoolP
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MatchBoolPrefixQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object value = null;

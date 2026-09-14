@@ -43,6 +43,8 @@ public interface NamedWriteable extends Writeable {
 
     /**
      * Returns the name of the writeable object
+     *
+     * @return the name this instance is registered under for serialization
      */
     String getWriteableName();
 }

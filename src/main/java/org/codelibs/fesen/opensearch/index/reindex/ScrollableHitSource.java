@@ -73,13 +73,38 @@ import static java.util.Objects.requireNonNull;
 public abstract class ScrollableHitSource {
     private final AtomicReference<String> scrollId = new AtomicReference<>();
 
+    /**
+     * The logger.
+     */
     protected final Logger logger;
+    /**
+     * The backoff policy.
+     */
     protected final BackoffPolicy backoffPolicy;
+    /**
+     * The thread pool.
+     */
     protected final ThreadPool threadPool;
+    /**
+     * The count search retry.
+     */
     protected final Runnable countSearchRetry;
     private final Consumer<AsyncResponse> onResponse;
+    /**
+     * The fail.
+     */
     protected final Consumer<Exception> fail;
 
+    /**
+     * Creates a new ScrollableHitSource.
+     *
+     * @param logger the logger
+     * @param backoffPolicy the backoff policy
+     * @param threadPool the thread pool
+     * @param countSearchRetry the count search retry
+     * @param onResponse the on response
+     * @param fail the fail
+     */
     public ScrollableHitSource(
         Logger logger,
         BackoffPolicy backoffPolicy,
@@ -133,8 +158,20 @@ public abstract class ScrollableHitSource {
     }
 
     // following is the SPI to be implemented.
+    /**
+     * Starts this instance.
+     *
+     * @param searchListener the search listener
+     */
     protected abstract void doStart(RejectAwareActionListener<Response> searchListener);
 
+    /**
+     * Starts the next scroll.
+     *
+     * @param scrollId the scroll identifier
+     * @param extraKeepAlive the extra keep alive
+     * @param searchListener the search listener
+     */
     protected abstract void doStartNextScroll(
         String scrollId,
         TimeValue extraKeepAlive,
@@ -161,6 +198,8 @@ public abstract class ScrollableHitSource {
 
     /**
      * Set the id of the last scroll. Used for debugging.
+     *
+     * @param scrollId the scroll identifier
      */
     public final void setScroll(String scrollId) {
         this.scrollId.set(scrollId);
@@ -174,6 +213,8 @@ public abstract class ScrollableHitSource {
     public interface AsyncResponse {
         /**
          * The response data made available.
+         *
+         * @return the response
          */
         Response response();
 
@@ -196,6 +237,15 @@ public abstract class ScrollableHitSource {
         private final List<? extends Hit> hits;
         private final String scrollId;
 
+        /**
+         * Creates a new Response.
+         *
+         * @param timedOut the timed out
+         * @param failures the failures
+         * @param totalHits the total hits
+         * @param hits the hits
+         * @param scrollId the scroll identifier
+         */
         public Response(boolean timedOut, List<SearchFailure> failures, long totalHits, List<? extends Hit> hits, String scrollId) {
             this.timedOut = timedOut;
             this.failures = failures;
@@ -206,6 +256,8 @@ public abstract class ScrollableHitSource {
 
         /**
          * Did this batch time out?
+         *
+         * @return the timed out flag
          */
         public boolean isTimedOut() {
             return timedOut;
@@ -213,6 +265,8 @@ public abstract class ScrollableHitSource {
 
         /**
          * Where there any search failures?
+         *
+         * @return the failures
          */
         public final List<SearchFailure> getFailures() {
             return failures;
@@ -220,6 +274,8 @@ public abstract class ScrollableHitSource {
 
         /**
          * What were the total number of documents matching the search?
+         *
+         * @return the total hits
          */
         public long getTotalHits() {
             return totalHits;
@@ -227,6 +283,8 @@ public abstract class ScrollableHitSource {
 
         /**
          * The documents returned in this batch.
+         *
+         * @return the hits
          */
         public List<? extends Hit> getHits() {
             return hits;
@@ -234,6 +292,8 @@ public abstract class ScrollableHitSource {
 
         /**
          * The scroll id used to fetch the next set of documents.
+         *
+         * @return the scroll identifier
          */
         public String getScrollId() {
             return scrollId;
@@ -249,45 +309,61 @@ public abstract class ScrollableHitSource {
     public interface Hit {
         /**
          * The index in which the hit is stored.
+         *
+         * @return the index
          */
         String getIndex();
 
         /**
          * The document id of the hit.
+         *
+         * @return the identifier
          */
         String getId();
 
         /**
          * The version of the match or {@code -1} if the version wasn't requested. The {@code -1} keeps it inline with OpenSearch's
          * internal APIs.
+         *
+         * @return the version
          */
         long getVersion();
 
         /**
          * The sequence number of the match or {@link SequenceNumbers#UNASSIGNED_SEQ_NO} if sequence numbers weren't requested.
+         *
+         * @return the seq no
          */
         long getSeqNo();
 
         /**
          * The primary term of the match or {@link SequenceNumbers#UNASSIGNED_PRIMARY_TERM} if sequence numbers weren't requested.
+         *
+         * @return the primary term
          */
         long getPrimaryTerm();
 
         /**
          * The source of the hit. Returns null if the source didn't come back from the search, usually because it source wasn't stored at
          * all.
+         *
+         * @return the source
          */
         @Nullable
         BytesReference getSource();
 
         /**
          * The content type of the hit source. Returns null if the source didn't come back from the search.
+         *
+         * @return the media type
          */
         @Nullable
         MediaType getMediaType();
 
         /**
          * The routing on the hit if there is any or null if there isn't.
+         *
+         * @return the routing
          */
         @Nullable
         String getRouting();
@@ -308,16 +384,48 @@ public abstract class ScrollableHitSource {
         @Nullable
         private final String nodeId;
 
+        /**
+         * The INDEX_FIELD constant.
+         */
         public static final String INDEX_FIELD = "index";
+        /**
+         * The SHARD_FIELD constant.
+         */
         public static final String SHARD_FIELD = "shard";
+        /**
+         * The NODE_FIELD constant.
+         */
         public static final String NODE_FIELD = "node";
+        /**
+         * The REASON_FIELD constant.
+         */
         public static final String REASON_FIELD = "reason";
+        /**
+         * The STATUS_FIELD constant.
+         */
         public static final String STATUS_FIELD = BulkItemResponse.Failure.STATUS_FIELD;
 
+        /**
+         * Creates a new SearchFailure.
+         *
+         * @param reason the reason
+         * @param index the index
+         * @param shardId the shard identifier
+         * @param nodeId the node identifier
+         */
         public SearchFailure(Throwable reason, @Nullable String index, @Nullable Integer shardId, @Nullable String nodeId) {
             this(reason, index, shardId, nodeId, ExceptionsHelper.status(reason));
         }
 
+        /**
+         * Creates a new SearchFailure.
+         *
+         * @param reason the reason
+         * @param index the index
+         * @param shardId the shard identifier
+         * @param nodeId the node identifier
+         * @param status the status
+         */
         public SearchFailure(
             Throwable reason,
             @Nullable String index,
@@ -334,6 +442,9 @@ public abstract class ScrollableHitSource {
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public SearchFailure(StreamInput in) throws IOException {
             reason = in.readException();

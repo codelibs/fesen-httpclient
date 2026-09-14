@@ -43,13 +43,37 @@ import java.util.EnumSet;
  */
 @PublicApi(since = "1.0.0")
 public enum ClusterBlockLevel {
+    /**
+     * The READ value.
+     */
     READ,
+    /**
+     * The WRITE value.
+     */
     WRITE,
+    /**
+     * The METADATA_READ value.
+     */
     METADATA_READ,
+    /**
+     * The METADATA_WRITE value.
+     */
     METADATA_WRITE,
+    /**
+     * The CREATE_INDEX value.
+     */
     CREATE_INDEX;
 
+    /**
+     * The ALL constant.
+     */
     public static final EnumSet<ClusterBlockLevel> ALL = EnumSet.allOf(ClusterBlockLevel.class);
+    /**
+     * The READ_WRITE constant.
+     */
     public static final EnumSet<ClusterBlockLevel> READ_WRITE = EnumSet.of(READ, WRITE);
+    /**
+     * The WRITE_BLOCK constant.
+     */
     public static final EnumSet<ClusterBlockLevel> WRITE_BLOCK = EnumSet.of(WRITE);
 }

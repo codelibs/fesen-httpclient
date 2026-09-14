@@ -57,6 +57,9 @@ public class GetStats implements Writeable, ToXContentFragment {
     private long missingTimeInMillis;
     private long current;
 
+    /**
+     * Creates a new GetStats.
+     */
     public GetStats() {}
 
     /**
@@ -72,6 +75,12 @@ public class GetStats implements Writeable, ToXContentFragment {
         this.current = builder.current;
     }
 
+    /**
+     * Creates a new GetStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetStats(StreamInput in) throws IOException {
         existsCount = in.readVLong();
         existsTimeInMillis = in.readVLong();
@@ -83,6 +92,12 @@ public class GetStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param existsCount the exists count
+     * @param existsTimeInMillis the exists time in milliseconds
+     * @param missingCount the missing count
+     * @param missingTimeInMillis the missing time in milliseconds
+     * @param current the current
      */
     @Deprecated
     public GetStats(long existsCount, long existsTimeInMillis, long missingCount, long missingTimeInMillis, long current) {
@@ -93,6 +108,11 @@ public class GetStats implements Writeable, ToXContentFragment {
         this.current = current;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param stats the stats
+     */
     public void add(GetStats stats) {
         if (stats == null) {
             return;
@@ -101,6 +121,11 @@ public class GetStats implements Writeable, ToXContentFragment {
         addTotals(stats);
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param stats the stats
+     */
     public void addTotals(GetStats stats) {
         if (stats == null) {
             return;
@@ -112,22 +137,47 @@ public class GetStats implements Writeable, ToXContentFragment {
         current += stats.current;
     }
 
+    /**
+     * Returns the count.
+     *
+     * @return the count
+     */
     public long getCount() {
         return existsCount + missingCount;
     }
 
+    /**
+     * Returns the time in milliseconds.
+     *
+     * @return the time in milliseconds
+     */
     public long getTimeInMillis() {
         return existsTimeInMillis + missingTimeInMillis;
     }
 
+    /**
+     * Returns the time.
+     *
+     * @return the time
+     */
     public TimeValue getTime() {
         return new TimeValue(getTimeInMillis());
     }
 
+    /**
+     * Returns the exists time.
+     *
+     * @return the exists time
+     */
     public TimeValue getExistsTime() {
         return new TimeValue(existsTimeInMillis);
     }
 
+    /**
+     * Returns the missing time.
+     *
+     * @return the missing time
+     */
     public TimeValue getMissingTime() {
         return new TimeValue(missingTimeInMillis);
     }
@@ -143,28 +193,61 @@ public class GetStats implements Writeable, ToXContentFragment {
         private long missingTimeInMillis = 0;
         private long current = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the exists count.
+         *
+         * @param count the count
+         * @return the exists count
+         */
         public Builder existsCount(long count) {
             this.existsCount = count;
             return this;
         }
 
+        /**
+         * Returns the exists time in milliseconds.
+         *
+         * @param time the time
+         * @return the exists time in milliseconds
+         */
         public Builder existsTimeInMillis(long time) {
             this.existsTimeInMillis = time;
             return this;
         }
 
+        /**
+         * Returns the missing count.
+         *
+         * @param count the count
+         * @return the missing count
+         */
         public Builder missingCount(long count) {
             this.missingCount = count;
             return this;
         }
 
+        /**
+         * Returns the missing time in milliseconds.
+         *
+         * @param time the time
+         * @return the missing time in milliseconds
+         */
         public Builder missingTimeInMillis(long time) {
             this.missingTimeInMillis = time;
             return this;
         }
 
+        /**
+         * Returns the current.
+         *
+         * @param current the current
+         * @return the current
+         */
         public Builder current(long current) {
             this.current = current;
             return this;

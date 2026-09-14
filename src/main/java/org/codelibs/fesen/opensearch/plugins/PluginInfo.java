@@ -125,6 +125,19 @@ public class PluginInfo implements Writeable, ToXContentObject {
         );
     }
 
+    /**
+     * Creates a new PluginInfo.
+     *
+     * @param name the name
+     * @param description the description
+     * @param version the version
+     * @param opensearchVersionRanges the opensearch version ranges
+     * @param javaVersion the java version
+     * @param classname the classname
+     * @param customFolderName the custom folder name
+     * @param extendedPlugins the extended plugins
+     * @param hasNativeController the has native controller
+     */
     public PluginInfo(
         String name,
         String description,
@@ -286,6 +299,12 @@ public class PluginInfo implements Writeable, ToXContentObject {
         return toString("");
     }
 
+    /**
+     * Returns a string representation of this instance.
+     *
+     * @param prefix the prefix
+     * @return a string representation of this instance
+     */
     public String toString(String prefix) {
         final StringBuilder information = new StringBuilder().append(prefix)
             .append("- Plugin information:\n")

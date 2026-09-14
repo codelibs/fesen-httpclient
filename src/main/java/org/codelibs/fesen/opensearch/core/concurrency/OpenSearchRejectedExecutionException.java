@@ -41,13 +41,25 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class OpenSearchRejectedExecutionException extends RejectedExecutionException {
 
+    /**
+     * The is executor shutdown.
+     */
     private final boolean isExecutorShutdown;
 
+    /**
+     * Creates a new OpenSearchRejectedExecutionException.
+     *
+     * @param message the message
+     * @param isExecutorShutdown the is executor shutdown
+     */
     public OpenSearchRejectedExecutionException(String message, boolean isExecutorShutdown) {
         super(message);
         this.isExecutorShutdown = isExecutorShutdown;
     }
 
+    /**
+     * Creates a new OpenSearchRejectedExecutionException.
+     */
     public OpenSearchRejectedExecutionException() {
         this(null, false);
     }
@@ -59,6 +71,8 @@ public class OpenSearchRejectedExecutionException extends RejectedExecutionExcep
      * termination wasn't a factor in this rejection. Conversely if this returns
      * true the shutdown was probably a factor in this rejection but might have
      * been triggered just after the action rejection.
+     *
+     * @return the executor shutdown flag
      */
     public boolean isExecutorShutdown() {
         return isExecutorShutdown;

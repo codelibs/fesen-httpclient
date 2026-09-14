@@ -45,6 +45,9 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class WeightBuilder extends ScoreFunctionBuilder<WeightBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "weight";
 
     /**
@@ -54,6 +57,8 @@ public class WeightBuilder extends ScoreFunctionBuilder<WeightBuilder> {
 
     /**
      * Standard constructor.
+     *
+     * @param functionName the function name
      */
     public WeightBuilder(@Nullable String functionName) {
         setFunctionName(functionName);

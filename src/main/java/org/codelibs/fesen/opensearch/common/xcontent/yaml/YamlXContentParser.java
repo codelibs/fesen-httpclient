@@ -39,8 +39,18 @@ import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 
 import tools.jackson.core.JsonParser;
 
+/**
+ * The YamlXContentParser class.
+ */
 public class YamlXContentParser extends JsonXContentParser {
 
+    /**
+     * Creates a new YamlXContentParser.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param parser the parser
+     */
     public YamlXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, JsonParser parser) {
         super(xContentRegistry, deprecationHandler, parser);
     }

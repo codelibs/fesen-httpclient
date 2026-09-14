@@ -62,6 +62,9 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<BucketScriptPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "bucket_script";
 
     private final Script script;
@@ -69,6 +72,9 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
     private String format = null;
     private GapPolicy gapPolicy = GapPolicy.SKIP;
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<BucketScriptPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
         NAME,
         false,
@@ -96,12 +102,26 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
         }, GAP_POLICY, ObjectParser.ValueType.STRING);
     };
 
+    /**
+     * Creates a new BucketScriptPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPathsMap the buckets paths map
+     * @param script the script
+     */
     public BucketScriptPipelineAggregationBuilder(String name, Map<String, String> bucketsPathsMap, Script script) {
         super(name, NAME, new TreeMap<>(bucketsPathsMap).values().toArray(new String[bucketsPathsMap.size()]));
         this.bucketsPathsMap = bucketsPathsMap;
         this.script = script;
     }
 
+    /**
+     * Creates a new BucketScriptPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param script the script
+     * @param bucketsPaths the buckets paths
+     */
     public BucketScriptPipelineAggregationBuilder(String name, Script script, String... bucketsPaths) {
         this(name, convertToBucketsPathMap(bucketsPaths), script);
     }
@@ -149,6 +169,9 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
 
     /**
      * Sets the format to use on the output of this aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     public BucketScriptPipelineAggregationBuilder format(String format) {
         if (format == null) {
@@ -160,11 +183,18 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
 
     /**
      * Gets the format to use on the output of this aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
     }
 
+    /**
+     * Returns the formatter.
+     *
+     * @return the formatter
+     */
     protected DocValueFormat formatter() {
         if (format != null) {
             return new DocValueFormat.Decimal(format);
@@ -175,6 +205,9 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
 
     /**
      * Sets the gap policy to use for this aggregation.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
      */
     public BucketScriptPipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
@@ -186,6 +219,8 @@ public class BucketScriptPipelineAggregationBuilder extends AbstractPipelineAggr
 
     /**
      * Gets the gap policy to use for this aggregation.
+     *
+     * @return the gap policy
      */
     public GapPolicy gapPolicy() {
         return gapPolicy;

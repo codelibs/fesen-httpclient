@@ -49,8 +49,19 @@ import java.util.Map;
  * @opensearch.internal
  */
 public abstract class ParsedPercentiles extends ParsedAggregation implements Iterable<Percentile> {
+    /**
+     * Creates a new ParsedPercentiles.
+     */
+    public ParsedPercentiles() {
+    }
 
+    /**
+     * The percentiles.
+     */
     protected final Map<Double, Double> percentiles = new LinkedHashMap<>();
+    /**
+     * The percentiles as string.
+     */
     protected final Map<Double, String> percentilesAsString = new HashMap<>();
 
     private boolean keyed;
@@ -63,6 +74,12 @@ public abstract class ParsedPercentiles extends ParsedAggregation implements Ite
         percentilesAsString.put(key, valueAsString);
     }
 
+    /**
+     * Returns the percentile.
+     *
+     * @param percent the percent
+     * @return the percentile
+     */
     protected Double getPercentile(double percent) {
         if (percentiles.isEmpty()) {
             return Double.NaN;
@@ -70,6 +87,12 @@ public abstract class ParsedPercentiles extends ParsedAggregation implements Ite
         return percentiles.get(percent);
     }
 
+    /**
+     * Returns the percentile as string.
+     *
+     * @param percent the percent
+     * @return the percentile as string
+     */
     protected String getPercentileAsString(double percent) {
         String valueAsString = percentilesAsString.get(percent);
         if (valueAsString != null) {
@@ -138,6 +161,11 @@ public abstract class ParsedPercentiles extends ParsedAggregation implements Ite
         return builder;
     }
 
+    /**
+     * Performs the declare percentiles fields step.
+     *
+     * @param objectParser the object parser
+     */
     protected static void declarePercentilesFields(ObjectParser<? extends ParsedPercentiles, Void> objectParser) {
         ParsedAggregation.declareAggregationFields(objectParser);
 

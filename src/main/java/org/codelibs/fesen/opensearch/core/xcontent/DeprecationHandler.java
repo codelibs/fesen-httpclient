@@ -137,6 +137,8 @@ public interface DeprecationHandler {
      * Called when the provided field name matches a deprecated name for the field.
      * @param usedName the provided field name
      * @param modernName the modern name for the field
+     * @param parserName the parser name
+     * @param location the location
      */
     void usedDeprecatedName(String parserName, Supplier<XContentLocation> location, String usedName, String modernName);
 
@@ -145,6 +147,8 @@ public interface DeprecationHandler {
      * field has been marked as deprecated and another field should be used
      * @param usedName the provided field name
      * @param replacedWith the name of the field that replaced this field
+     * @param parserName the parser name
+     * @param location the location
      */
     void usedDeprecatedField(String parserName, Supplier<XContentLocation> location, String usedName, String replacedWith);
 
@@ -152,6 +156,8 @@ public interface DeprecationHandler {
      * Called when the provided field name matches the current field but the entire
      * field has been marked as deprecated with no replacement
      * @param usedName the provided field name
+     * @param parserName the parser name
+     * @param location the location
      */
     void usedDeprecatedField(String parserName, Supplier<XContentLocation> location, String usedName);
 

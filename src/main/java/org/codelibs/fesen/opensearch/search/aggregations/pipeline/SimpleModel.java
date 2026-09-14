@@ -49,8 +49,14 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class SimpleModel extends MovAvgModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "simple";
 
+    /**
+     * Creates a new SimpleModel.
+     */
     public SimpleModel() {}
 
     @Override
@@ -99,6 +105,9 @@ public class SimpleModel extends MovAvgModel {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final AbstractModelParser PARSER = new AbstractModelParser() {
         @Override
         public MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize) throws ParseException {
@@ -113,6 +122,12 @@ public class SimpleModel extends MovAvgModel {
      * @opensearch.internal
      */
     public static class SimpleModelBuilder implements MovAvgModelBuilder {
+        /**
+         * Creates a new SimpleModelBuilder.
+         */
+        public SimpleModelBuilder() {
+        }
+
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.field(MovAvgPipelineAggregationBuilder.MODEL.getPreferredName(), NAME);

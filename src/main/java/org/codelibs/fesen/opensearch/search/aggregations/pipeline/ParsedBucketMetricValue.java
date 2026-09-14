@@ -47,6 +47,11 @@ import java.util.List;
  * @opensearch.internal
  */
 public class ParsedBucketMetricValue extends ParsedSingleValueNumericMetricsAggregation implements BucketMetricValue {
+    /**
+     * Creates a new ParsedBucketMetricValue.
+     */
+    public ParsedBucketMetricValue() {
+    }
 
     private List<String> keys = Collections.emptyList();
 
@@ -86,6 +91,13 @@ public class ParsedBucketMetricValue extends ParsedSingleValueNumericMetricsAggr
         PARSER.declareStringArray((agg, value) -> agg.keys = value, InternalBucketMetricValue.KEYS_FIELD);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedBucketMetricValue fromXContent(XContentParser parser, final String name) {
         ParsedBucketMetricValue bucketMetricValue = PARSER.apply(parser, null);
         bucketMetricValue.setName(name);

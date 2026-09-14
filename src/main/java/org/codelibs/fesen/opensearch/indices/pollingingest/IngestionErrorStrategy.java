@@ -21,16 +21,25 @@ public interface IngestionErrorStrategy {
 
     /**
      * Process and record the error.
+     *
+     * @param e the exception
+     * @param stage the stage
      */
     void handleError(Throwable e, ErrorStage stage);
 
     /**
      * Indicates if the error should be ignored.
+     *
+     * @param e the exception
+     * @param stage the stage
+     * @return the ignore error flag
      */
     boolean shouldIgnoreError(Throwable e, ErrorStage stage);
 
     /**
      * Returns the name of the error policy.
+     *
+     * @return the name
      */
     String getName();
 
@@ -39,9 +48,21 @@ public interface IngestionErrorStrategy {
      */
     @PublicApi(since = "3.6.0")
     enum ErrorStrategy {
+        /**
+         * The DROP value.
+         */
         DROP,
+        /**
+         * The BLOCK value.
+         */
         BLOCK;
 
+        /**
+         * Parses the from string.
+         *
+         * @param errorStrategy the error strategy
+         * @return this instance
+         */
         public static ErrorStrategy parseFromString(String errorStrategy) {
             try {
                 return ErrorStrategy.valueOf(errorStrategy.toUpperCase(Locale.ROOT));
@@ -56,7 +77,13 @@ public interface IngestionErrorStrategy {
      */
     @PublicApi(since = "3.6.0")
     enum ErrorStage {
+        /**
+         * The POLLING value.
+         */
         POLLING,
+        /**
+         * The processing.
+         */
         PROCESSING
     }
 

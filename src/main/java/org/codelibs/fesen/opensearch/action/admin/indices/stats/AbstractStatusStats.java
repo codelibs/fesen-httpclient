@@ -27,8 +27,14 @@ import java.util.concurrent.atomic.LongAdder;
  * @opensearch.internal
  */
 public abstract class AbstractStatusStats implements Writeable, ToXContentFragment {
+    /**
+     * The status counter.
+     */
     final protected LongAdder[] statusCounter;
 
+    /**
+     * Creates a new AbstractStatusStats.
+     */
     public AbstractStatusStats() {
         statusCounter = new LongAdder[5];
         for (int i = 0; i < statusCounter.length; ++i) {
@@ -36,6 +42,12 @@ public abstract class AbstractStatusStats implements Writeable, ToXContentFragme
         }
     }
 
+    /**
+     * Creates a new AbstractStatusStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AbstractStatusStats(StreamInput in) throws IOException {
         statusCounter = in.readArray(i -> {
             LongAdder adder = new LongAdder();

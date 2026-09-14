@@ -43,6 +43,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedHDRPercentiles extends ParsedPercentiles implements Percentiles {
+    /**
+     * Creates a new ParsedHDRPercentiles.
+     */
+    public ParsedHDRPercentiles() {
+    }
 
     @Override
     public String getType() {
@@ -68,6 +73,14 @@ public class ParsedHDRPercentiles extends ParsedPercentiles implements Percentil
         ParsedPercentiles.declarePercentilesFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedHDRPercentiles fromXContent(XContentParser parser, String name) throws IOException {
         ParsedHDRPercentiles aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);

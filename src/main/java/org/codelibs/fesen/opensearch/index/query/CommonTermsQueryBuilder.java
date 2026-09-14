@@ -67,14 +67,32 @@ import java.util.Objects;
 @Deprecated
 public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQueryBuilder> implements WithFieldName {
 
+    /**
+     * The COMMON_TERMS_QUERY_DEPRECATION_MSG constant.
+     */
     public static final String COMMON_TERMS_QUERY_DEPRECATION_MSG = "[match] query which can efficiently "
         + "skip blocks of documents if the total number of hits is not tracked";
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "common";
 
+    /**
+     * The DEFAULT_CUTOFF_FREQ constant.
+     */
     public static final float DEFAULT_CUTOFF_FREQ = 0.01f;
+    /**
+     * The DEFAULT_HIGH_FREQ_OCCUR constant.
+     */
     public static final Operator DEFAULT_HIGH_FREQ_OCCUR = Operator.OR;
+    /**
+     * The DEFAULT_LOW_FREQ_OCCUR constant.
+     */
     public static final Operator DEFAULT_LOW_FREQ_OCCUR = Operator.OR;
+    /**
+     * The DEFAULT_DISABLE_COORD constant.
+     */
     public static final boolean DEFAULT_DISABLE_COORD = true;
 
     private static final ParseField CUTOFF_FREQUENCY_FIELD = new ParseField("cutoff_frequency");
@@ -107,6 +125,8 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
 
     /**
      * Constructs a new common terms query.
+     * @param fieldName the field name
+     * @param text the text
      * @deprecated See {@link CommonTermsQueryBuilder} for more details.
      */
     @Deprecated
@@ -123,6 +143,8 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
 
     /**
      * Read from a stream.
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      * @deprecated See {@link CommonTermsQueryBuilder} for more details.
      */
     @Deprecated
@@ -155,6 +177,11 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
         return this.fieldName;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public Object value() {
         return this.text;
     }
@@ -163,12 +190,20 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
      * Sets the operator to use for terms with a high document frequency
      * (greater than or equal to {@link #cutoffFrequency(float)}. Defaults to
      * {@code AND}.
+     *
+     * @param operator the operator
+     * @return the high freq operator
      */
     public CommonTermsQueryBuilder highFreqOperator(Operator operator) {
         this.highFreqOperator = (operator == null) ? DEFAULT_HIGH_FREQ_OCCUR : operator;
         return this;
     }
 
+    /**
+     * Returns the high freq operator.
+     *
+     * @return the high freq operator
+     */
     public Operator highFreqOperator() {
         return highFreqOperator;
     }
@@ -176,12 +211,20 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
     /**
      * Sets the operator to use for terms with a low document frequency (less
      * than {@link #cutoffFrequency(float)}. Defaults to {@code AND}.
+     *
+     * @param operator the operator
+     * @return the low freq operator
      */
     public CommonTermsQueryBuilder lowFreqOperator(Operator operator) {
         this.lowFreqOperator = (operator == null) ? DEFAULT_LOW_FREQ_OCCUR : operator;
         return this;
     }
 
+    /**
+     * Returns the low freq operator.
+     *
+     * @return the low freq operator
+     */
     public Operator lowFreqOperator() {
         return lowFreqOperator;
     }
@@ -189,12 +232,20 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
     /**
      * Explicitly set the analyzer to use. Defaults to use explicit mapping
      * config for the field, or, if not set, the default search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public CommonTermsQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
+    /**
+     * Returns the analyzer.
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return this.analyzer;
     }
@@ -205,12 +256,20 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
      * a terms document frequency to be considered a low frequency term.
      * Defaults to
      * {@code {@value #DEFAULT_CUTOFF_FREQ}}
+     *
+     * @param cutoffFrequency the cutoff frequency
+     * @return the cutoff frequency
      */
     public CommonTermsQueryBuilder cutoffFrequency(float cutoffFrequency) {
         this.cutoffFrequency = cutoffFrequency;
         return this;
     }
 
+    /**
+     * Returns the cutoff frequency.
+     *
+     * @return the cutoff frequency
+     */
     public float cutoffFrequency() {
         return this.cutoffFrequency;
     }
@@ -218,12 +277,20 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
     /**
      * Sets the minimum number of high frequent query terms that need to match in order to
      * produce a hit when there are no low frequent terms.
+     *
+     * @param highFreqMinimumShouldMatch the high freq minimum should match
+     * @return the high freq minimum should match
      */
     public CommonTermsQueryBuilder highFreqMinimumShouldMatch(String highFreqMinimumShouldMatch) {
         this.highFreqMinimumShouldMatch = highFreqMinimumShouldMatch;
         return this;
     }
 
+    /**
+     * Returns the high freq minimum should match.
+     *
+     * @return the high freq minimum should match
+     */
     public String highFreqMinimumShouldMatch() {
         return this.highFreqMinimumShouldMatch;
     }
@@ -231,12 +298,20 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
     /**
      * Sets the minimum number of low frequent query terms that need to match in order to
      * produce a hit.
+     *
+     * @param lowFreqMinimumShouldMatch the low freq minimum should match
+     * @return the low freq minimum should match
      */
     public CommonTermsQueryBuilder lowFreqMinimumShouldMatch(String lowFreqMinimumShouldMatch) {
         this.lowFreqMinimumShouldMatch = lowFreqMinimumShouldMatch;
         return this;
     }
 
+    /**
+     * Returns the low freq minimum should match.
+     *
+     * @return the low freq minimum should match
+     */
     public String lowFreqMinimumShouldMatch() {
         return this.lowFreqMinimumShouldMatch;
     }
@@ -267,6 +342,13 @@ public class CommonTermsQueryBuilder extends AbstractQueryBuilder<CommonTermsQue
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CommonTermsQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object text = null;

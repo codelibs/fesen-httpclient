@@ -56,12 +56,22 @@ public class PutIndexTemplateRequestBuilder extends ClusterManagerNodeOperationR
     AcknowledgedResponse,
     PutIndexTemplateRequestBuilder> {
 
+    /**
+     * Creates a new PutIndexTemplateRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param name the name
+     */
     public PutIndexTemplateRequestBuilder(OpenSearchClient client, PutIndexTemplateAction action, String name) {
         super(client, action, new PutIndexTemplateRequest(name));
     }
 
     /**
      * Sets the match expression that will be used to match on indices created.
+     *
+     * @param indexPatterns the index patterns
+     * @return this instance
      */
     public PutIndexTemplateRequestBuilder setPatterns(List<String> indexPatterns) {
         request.patterns(indexPatterns);
@@ -70,6 +80,9 @@ public class PutIndexTemplateRequestBuilder extends ClusterManagerNodeOperationR
 
     /**
      * The settings to created the index template with.
+     *
+     * @param settings the settings
+     * @return this instance
      */
     public PutIndexTemplateRequestBuilder setSettings(Settings.Builder settings) {
         request.settings(settings);

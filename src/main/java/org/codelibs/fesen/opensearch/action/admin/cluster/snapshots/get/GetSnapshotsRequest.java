@@ -51,6 +51,9 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @PublicApi(since = "1.0.0")
 public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsRequest> {
 
+    /**
+     * The DEFAULT_VERBOSE_MODE constant.
+     */
     public static final boolean DEFAULT_VERBOSE_MODE = true;
 
     private String repository;
@@ -61,6 +64,9 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
 
     private boolean verbose = DEFAULT_VERBOSE_MODE;
 
+    /**
+     * Creates a new GetSnapshotsRequest.
+     */
     public GetSnapshotsRequest() {}
 
     /**
@@ -109,6 +115,8 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
     }
 
     /**
+     * Returns the ignore unavailable.
+     *
      * @return Whether snapshots should be ignored when unavailable (corrupt or temporarily not fetchable)
      */
     public boolean ignoreUnavailable() {
@@ -117,6 +125,8 @@ public class GetSnapshotsRequest extends ClusterManagerNodeRequest<GetSnapshotsR
 
     /**
      * Returns whether the request will return a verbose response.
+     *
+     * @return the verbose
      */
     public boolean verbose() {
         return verbose;

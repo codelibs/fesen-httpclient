@@ -59,6 +59,9 @@ public class AggregationInfo implements ReportingService.Info {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public AggregationInfo(StreamInput in) throws IOException {
         aggs = new TreeMap<>();

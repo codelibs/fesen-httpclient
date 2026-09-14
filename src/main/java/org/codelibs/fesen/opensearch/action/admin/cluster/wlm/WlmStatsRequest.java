@@ -29,6 +29,10 @@ public class WlmStatsRequest extends BaseNodesRequest<WlmStatsRequest> {
     /**
      * Get WorkloadGroup stats from nodes based on the nodes ids specified. If none are passed, stats
      * for all nodes will be returned.
+     *
+     * @param nodesIds the nodes identifiers
+     * @param workloadGroupIds the workload group identifiers
+     * @param breach the breach
      */
     public WlmStatsRequest(String[] nodesIds, Set<String> workloadGroupIds, Boolean breach) {
         super(nodesIds);
@@ -36,6 +40,9 @@ public class WlmStatsRequest extends BaseNodesRequest<WlmStatsRequest> {
         this.breach = breach;
     }
 
+    /**
+     * Creates a new WlmStatsRequest.
+     */
     public WlmStatsRequest() {
         super((String[]) null);
         workloadGroupIds = new HashSet<>();
@@ -49,10 +56,20 @@ public class WlmStatsRequest extends BaseNodesRequest<WlmStatsRequest> {
         out.writeOptionalBoolean(breach);
     }
 
+    /**
+     * Returns the workload group identifiers.
+     *
+     * @return the workload group identifiers
+     */
     public Set<String> getWorkloadGroupIds() {
         return workloadGroupIds;
     }
 
+    /**
+     * Returns the breach flag.
+     *
+     * @return the breach flag
+     */
     public Boolean isBreach() {
         return breach;
     }

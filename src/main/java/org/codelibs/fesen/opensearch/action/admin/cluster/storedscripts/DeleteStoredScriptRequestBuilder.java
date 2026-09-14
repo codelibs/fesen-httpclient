@@ -48,10 +48,22 @@ public class DeleteStoredScriptRequestBuilder extends AcknowledgedRequestBuilder
     AcknowledgedResponse,
     DeleteStoredScriptRequestBuilder> {
 
+    /**
+     * Creates a new DeleteStoredScriptRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public DeleteStoredScriptRequestBuilder(OpenSearchClient client, DeleteStoredScriptAction action) {
         super(client, action, new DeleteStoredScriptRequest());
     }
 
+    /**
+     * Sets the identifier.
+     *
+     * @param id the identifier
+     * @return this instance
+     */
     public DeleteStoredScriptRequestBuilder setId(String id) {
         request.id(id);
 

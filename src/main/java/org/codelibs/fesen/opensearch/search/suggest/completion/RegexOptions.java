@@ -135,11 +135,17 @@ public class RegexOptions implements ToXContentFragment, Writeable {
         private int flagsValue = RegExp.ALL;
         private int maxDeterminizedStates = Operations.DEFAULT_DETERMINIZE_WORK_LIMIT;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
         /**
          * Sets the regular expression syntax flags
          * see {@link RegexpFlag}
+         *
+         * @param flags the flags
+         * @return this instance
          */
         public Builder setFlags(String flags) {
             this.flagsValue = RegexpFlag.resolveValue(flags);
@@ -153,6 +159,9 @@ public class RegexOptions implements ToXContentFragment, Writeable {
 
         /**
          * Sets the maximum automaton states allowed for the regular expression expansion
+         *
+         * @param maxDeterminizedStates the max determinized states
+         * @return this instance
          */
         public Builder setMaxDeterminizedStates(int maxDeterminizedStates) {
             if (maxDeterminizedStates < 0) {
@@ -162,6 +171,11 @@ public class RegexOptions implements ToXContentFragment, Writeable {
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public RegexOptions build() {
             return new RegexOptions(flagsValue, maxDeterminizedStates);
         }

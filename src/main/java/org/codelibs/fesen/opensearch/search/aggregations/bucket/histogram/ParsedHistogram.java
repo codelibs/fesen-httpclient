@@ -45,6 +45,11 @@ import java.util.List;
  * @opensearch.internal
  */
 public class ParsedHistogram extends ParsedMultiBucketAggregation<ParsedHistogram.ParsedBucket> implements Histogram {
+    /**
+     * Creates a new ParsedHistogram.
+     */
+    public ParsedHistogram() {
+    }
 
     @Override
     public String getType() {
@@ -69,6 +74,14 @@ public class ParsedHistogram extends ParsedMultiBucketAggregation<ParsedHistogra
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedHistogram fromXContent(XContentParser parser, String name) throws IOException {
         ParsedHistogram aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);

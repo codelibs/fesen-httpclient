@@ -54,10 +54,20 @@ public class IndicesExistsResponse extends ActionResponse {
         exists = in.readBoolean();
     }
 
+    /**
+     * Creates a new IndicesExistsResponse.
+     *
+     * @param exists the exists
+     */
     public IndicesExistsResponse(boolean exists) {
         this.exists = exists;
     }
 
+    /**
+     * Returns the exists flag.
+     *
+     * @return the exists flag
+     */
     public boolean isExists() {
         return this.exists;
     }

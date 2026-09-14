@@ -32,11 +32,26 @@ import java.util.Map;
 public class RemoteStoreMetadataResponse extends BroadcastResponse {
     private final RemoteStoreShardMetadata[] remoteStoreShardMetadata;
 
+    /**
+     * Creates a new RemoteStoreMetadataResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RemoteStoreMetadataResponse(StreamInput in) throws IOException {
         super(in);
         remoteStoreShardMetadata = in.readArray(RemoteStoreShardMetadata::new, RemoteStoreShardMetadata[]::new);
     }
 
+    /**
+     * Creates a new RemoteStoreMetadataResponse.
+     *
+     * @param remoteStoreShardMetadata the remote store shard metadata
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param failedShards the failed shards
+     * @param shardFailures the shard failures
+     */
     public RemoteStoreMetadataResponse(
         RemoteStoreShardMetadata[] remoteStoreShardMetadata,
         int totalShards,

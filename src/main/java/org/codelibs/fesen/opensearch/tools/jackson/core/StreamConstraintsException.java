@@ -15,6 +15,12 @@ import java.io.IOException;
  */
 public class StreamConstraintsException extends IOException {
 
+    /**
+     * Creates a new StreamConstraintsException.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public StreamConstraintsException(String message, Throwable cause) {
         super(message, cause);
     }

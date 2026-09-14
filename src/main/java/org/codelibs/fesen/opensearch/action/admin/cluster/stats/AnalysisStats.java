@@ -69,6 +69,9 @@ public final class AnalysisStats implements ToXContentFragment, Writeable {
 
     /**
      * Create {@link AnalysisStats} from the given cluster state.
+     *
+     * @param state the state
+     * @return the new instance
      */
     public static AnalysisStats of(ClusterState state) {
         final Map<String, IndexFeatureStats> usedCharFilterTypes = new HashMap<>();
@@ -215,6 +218,12 @@ public final class AnalysisStats implements ToXContentFragment, Writeable {
         this.usedBuiltInAnalyzers = sort(usedBuiltInAnalyzers);
     }
 
+    /**
+     * Creates a new AnalysisStats by reading it from the given input.
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
+     */
     public AnalysisStats(StreamInput input) throws IOException {
         usedCharFilters = Collections.unmodifiableSet(new LinkedHashSet<>(input.readList(IndexFeatureStats::new)));
         usedTokenizers = Collections.unmodifiableSet(new LinkedHashSet<>(input.readList(IndexFeatureStats::new)));

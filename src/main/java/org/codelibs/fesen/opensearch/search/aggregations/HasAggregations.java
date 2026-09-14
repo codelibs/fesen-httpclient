@@ -39,6 +39,11 @@ package org.codelibs.fesen.opensearch.search.aggregations;
  */
 public interface HasAggregations {
 
+    /**
+     * Returns the aggregations.
+     *
+     * @return the aggregations
+     */
     Aggregations getAggregations();
 
 }

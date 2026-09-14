@@ -119,6 +119,8 @@ public class SnapshotStatus implements ToXContentObject, Writeable {
 
     /**
      * Returns list of snapshot indices
+     *
+     * @return the indices
      */
     public Map<String, SnapshotIndexStatus> getIndices() {
         if (this.indicesStatus != null) {

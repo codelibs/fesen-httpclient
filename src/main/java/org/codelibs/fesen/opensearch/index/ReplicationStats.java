@@ -26,20 +26,43 @@ import java.io.IOException;
 @PublicApi(since = "2.10.0")
 public class ReplicationStats implements ToXContentFragment, Writeable {
 
+    /**
+     * The max bytes behind.
+     */
     public long maxBytesBehind;
+    /**
+     * The max replication lag.
+     */
     public long maxReplicationLag;
+    /**
+     * The total bytes behind.
+     */
     public long totalBytesBehind;
 
+    /**
+     * Creates a new ReplicationStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ReplicationStats(StreamInput in) throws IOException {
         this.maxBytesBehind = in.readVLong();
         this.totalBytesBehind = in.readVLong();
         this.maxReplicationLag = in.readVLong();
     }
 
+    /**
+     * Creates a new ReplicationStats.
+     */
     public ReplicationStats() {
 
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param other the other instance
+     */
     public void add(ReplicationStats other) {
         if (other != null) {
             maxBytesBehind = Math.max(other.maxBytesBehind, maxBytesBehind);

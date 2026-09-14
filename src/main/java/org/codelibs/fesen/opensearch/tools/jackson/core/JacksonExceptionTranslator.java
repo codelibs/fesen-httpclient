@@ -47,6 +47,7 @@ public final class JacksonExceptionTranslator {
     /**
      * Translates Jackson 3 exception hierarchy to Jackson 2 compatible one and throws it
      * @param ex exception to translate
+     * @throws IOException if an I/O error occurs
      */
     public static void translateToIOExceptionOrRethrow(JacksonException ex) throws IOException {
         throw translateToIOExceptionOrRethrowReturning(ex);

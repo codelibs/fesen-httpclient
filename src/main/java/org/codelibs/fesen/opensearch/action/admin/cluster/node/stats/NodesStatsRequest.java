@@ -59,12 +59,17 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
     private final Set<String> requestedMetrics = new HashSet<>();
     private boolean fileCacheDetailed = false;
 
+    /**
+     * Creates a new NodesStatsRequest.
+     */
     public NodesStatsRequest() {
         super((String[]) null);
     }
 
     /**
      * Sets all the request flags.
+     *
+     * @return the all
      */
     public NodesStatsRequest all() {
         this.indices.all();
@@ -84,6 +89,8 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
     /**
      * Get the names of requested metrics, excluding indices, which are
      * handled separately.
+     *
+     * @return the requested metrics
      */
     public Set<String> requestedMetrics() {
         return new HashSet<>(requestedMetrics);
@@ -91,6 +98,9 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
 
     /**
      * Add metric
+     *
+     * @param metric the metric
+     * @return this instance
      */
     public NodesStatsRequest addMetric(String metric) {
         if (Metric.allMetrics().contains(metric) == false) {
@@ -102,6 +112,9 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
 
     /**
      * Add an array of metric names
+     *
+     * @param metrics the metrics
+     * @return this instance
      */
     public NodesStatsRequest addMetrics(String... metrics) {
         // use sorted set for reliable ordering in error messages
@@ -125,10 +138,21 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
         }
     }
 
+    /**
+     * Returns the file cache detailed flag.
+     *
+     * @return the file cache detailed flag
+     */
     public boolean isFileCacheDetailed() {
         return fileCacheDetailed;
     }
 
+    /**
+     * Returns the file cache detailed.
+     *
+     * @param detailed the detailed
+     * @return the file cache detailed
+     */
     public NodesStatsRequest fileCacheDetailed(boolean detailed) {
         this.fileCacheDetailed = detailed;
         return this;
@@ -139,36 +163,120 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
      * from the nodes stats endpoint. Eventually this list will be pluggable.
      */
     public enum Metric {
+        /**
+         * The OS value.
+         */
         OS("os"),
+        /**
+         * The PROCESS value.
+         */
         PROCESS("process"),
+        /**
+         * The JVM value.
+         */
         JVM("jvm"),
+        /**
+         * The THREAD_POOL value.
+         */
         THREAD_POOL("thread_pool"),
+        /**
+         * The FS value.
+         */
         FS("fs"),
+        /**
+         * The TRANSPORT value.
+         */
         TRANSPORT("transport"),
+        /**
+         * The HTTP value.
+         */
         HTTP("http"),
+        /**
+         * The BREAKER value.
+         */
         BREAKER("breaker"),
+        /**
+         * The SCRIPT value.
+         */
         SCRIPT("script"),
+        /**
+         * The DISCOVERY value.
+         */
         DISCOVERY("discovery"),
+        /**
+         * The INGEST value.
+         */
         INGEST("ingest"),
+        /**
+         * The ADAPTIVE_SELECTION value.
+         */
         ADAPTIVE_SELECTION("adaptive_selection"),
+        /**
+         * The SCRIPT_CACHE value.
+         */
         SCRIPT_CACHE("script_cache"),
+        /**
+         * The INDEXING_PRESSURE value.
+         */
         INDEXING_PRESSURE("indexing_pressure"),
+        /**
+         * The SHARD_INDEXING_PRESSURE value.
+         */
         SHARD_INDEXING_PRESSURE("shard_indexing_pressure"),
+        /**
+         * The SEARCH_BACKPRESSURE value.
+         */
         SEARCH_BACKPRESSURE("search_backpressure"),
+        /**
+         * The CLUSTER_MANAGER_THROTTLING value.
+         */
         CLUSTER_MANAGER_THROTTLING("cluster_manager_throttling"),
+        /**
+         * The WEIGHTED_ROUTING_STATS value.
+         */
         WEIGHTED_ROUTING_STATS("weighted_routing"),
+        /**
+         * The FILE_CACHE_STATS value.
+         */
         FILE_CACHE_STATS("file_cache"),
+        /**
+         * The TASK_CANCELLATION value.
+         */
         TASK_CANCELLATION("task_cancellation"),
+        /**
+         * The SEARCH_PIPELINE value.
+         */
         SEARCH_PIPELINE("search_pipeline"),
+        /**
+         * The RESOURCE_USAGE_STATS value.
+         */
         RESOURCE_USAGE_STATS("resource_usage_stats"),
+        /**
+         * The SEGMENT_REPLICATION_BACKPRESSURE value.
+         */
         SEGMENT_REPLICATION_BACKPRESSURE("segment_replication_backpressure"),
+        /**
+         * The REPOSITORIES value.
+         */
         REPOSITORIES("repositories"),
+        /**
+         * The ADMISSION_CONTROL value.
+         */
         ADMISSION_CONTROL("admission_control"),
+        /**
+         * The CACHE_STATS value.
+         */
         CACHE_STATS("caches"),
+        /**
+         * The REMOTE_STORE value.
+         */
         REMOTE_STORE("remote_store"),
         /** @deprecated Use {@link #NATIVE_MEMORY} instead. */
         @Deprecated
         NATIVE_ALLOCATOR("native_allocator"),
+        /**
+         * The NATIVE_MEMORY value.
+         */
         NATIVE_MEMORY("native_memory");
 
         private String metricName;
@@ -177,6 +285,11 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
             this.metricName = name;
         }
 
+        /**
+         * Returns the metric name.
+         *
+         * @return the metric name
+         */
         public String metricName() {
             return this.metricName;
         }

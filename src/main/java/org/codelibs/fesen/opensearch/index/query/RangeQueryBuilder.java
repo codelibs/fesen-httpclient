@@ -61,18 +61,45 @@ import java.util.Objects;
 public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
     implements
         MultiTermQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "range";
 
+    /**
+     * The DEFAULT_INCLUDE_UPPER constant.
+     */
     public static final boolean DEFAULT_INCLUDE_UPPER = true;
+    /**
+     * The DEFAULT_INCLUDE_LOWER constant.
+     */
     public static final boolean DEFAULT_INCLUDE_LOWER = true;
 
+    /**
+     * The LTE_FIELD constant.
+     */
     public static final ParseField LTE_FIELD = new ParseField("lte");
+    /**
+     * The GTE_FIELD constant.
+     */
     public static final ParseField GTE_FIELD = new ParseField("gte");
+    /**
+     * The FROM_FIELD constant.
+     */
     public static final ParseField FROM_FIELD = new ParseField("from");
+    /**
+     * The TO_FIELD constant.
+     */
     public static final ParseField TO_FIELD = new ParseField("to");
     private static final ParseField INCLUDE_LOWER_FIELD = new ParseField("include_lower");
     private static final ParseField INCLUDE_UPPER_FIELD = new ParseField("include_upper");
+    /**
+     * The GT_FIELD constant.
+     */
     public static final ParseField GT_FIELD = new ParseField("gt");
+    /**
+     * The LT_FIELD constant.
+     */
     public static final ParseField LT_FIELD = new ParseField("lt");
     private static final ParseField TIME_ZONE_FIELD = new ParseField("time_zone");
     private static final ParseField FORMAT_FIELD = new ParseField("format");
@@ -104,6 +131,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public RangeQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -156,6 +186,10 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
      * In case lower bound is assigned to a string, we internally convert it to a {@link BytesRef} because
      * in {@link RangeQueryBuilder} field are later parsed as {@link BytesRef} and we need internal representation
      * of query to be equal regardless of whether it was created from XContent or via Java API.
+     *
+     * @param from the offset
+     * @param includeLower the include lower
+     * @return the new instance
      */
     public RangeQueryBuilder from(Object from, boolean includeLower) {
         this.from = maybeConvertToBytesRef(from);
@@ -165,6 +199,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The from part of the range query. Null indicates unbounded.
+     *
+     * @param from the offset
+     * @return the new instance
      */
     public RangeQueryBuilder from(Object from) {
         return from(from, this.includeLower);
@@ -172,6 +209,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Gets the lower range value for this query.
+     *
+     * @return the new instance
      */
     public Object from() {
         return maybeConvertToString(this.from);
@@ -179,6 +218,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The from part of the range query. Null indicates unbounded.
+     *
+     * @param from the offset
+     * @return the gt
      */
     public RangeQueryBuilder gt(Object from) {
         return from(from, false);
@@ -186,6 +228,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The from part of the range query. Null indicates unbounded.
+     *
+     * @param from the offset
+     * @return the gte
      */
     public RangeQueryBuilder gte(Object from) {
         return from(from, true);
@@ -193,6 +238,10 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The to part of the range query. Null indicates unbounded.
+     *
+     * @param to the target
+     * @param includeUpper the include upper
+     * @return the to
      */
     public RangeQueryBuilder to(Object to, boolean includeUpper) {
         this.to = maybeConvertToBytesRef(to);
@@ -202,6 +251,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The to part of the range query. Null indicates unbounded.
+     *
+     * @param to the target
+     * @return the to
      */
     public RangeQueryBuilder to(Object to) {
         return to(to, this.includeUpper);
@@ -212,6 +264,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
      * In case upper bound is assigned to a string, we internally convert it to a {@link BytesRef} because
      * in {@link RangeQueryBuilder} field are later parsed as {@link BytesRef} and we need internal representation
      * of query to be equal regardless of whether it was created from XContent or via Java API.
+     *
+     * @return the to
      */
     public Object to() {
         return maybeConvertToString(this.to);
@@ -219,6 +273,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The to part of the range query. Null indicates unbounded.
+     *
+     * @param to the target
+     * @return the lt
      */
     public RangeQueryBuilder lt(Object to) {
         return to(to, false);
@@ -226,6 +283,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * The to part of the range query. Null indicates unbounded.
+     *
+     * @param to the target
+     * @return the lte
      */
     public RangeQueryBuilder lte(Object to) {
         return to(to, true);
@@ -233,6 +293,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Should the lower bound be included or not. Defaults to {@code true}.
+     *
+     * @param includeLower the include lower
+     * @return this instance
      */
     public RangeQueryBuilder includeLower(boolean includeLower) {
         this.includeLower = includeLower;
@@ -241,6 +304,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Gets the includeLower flag for this query.
+     *
+     * @return this instance
      */
     public boolean includeLower() {
         return this.includeLower;
@@ -248,6 +313,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Should the upper bound be included or not. Defaults to {@code true}.
+     *
+     * @param includeUpper the include upper
+     * @return this instance
      */
     public RangeQueryBuilder includeUpper(boolean includeUpper) {
         this.includeUpper = includeUpper;
@@ -256,6 +324,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Gets the includeUpper flag for this query.
+     *
+     * @return this instance
      */
     public boolean includeUpper() {
         return this.includeUpper;
@@ -263,6 +333,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * In case of date field, we can adjust the from/to fields using a timezone
+     *
+     * @param timeZone the time zone
+     * @return the time zone
      */
     public RangeQueryBuilder timeZone(String timeZone) {
         if (timeZone == null) {
@@ -278,6 +351,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * In case of date field, gets the from/to fields timezone adjustment
+     *
+     * @return the time zone
      */
     public String timeZone() {
         return this.timeZone == null ? null : this.timeZone.getId();
@@ -289,6 +364,9 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * In case of format field, we can parse the from/to fields using this time format
+     *
+     * @param format the format
+     * @return this instance
      */
     public RangeQueryBuilder format(String format) {
         if (format == null) {
@@ -302,6 +380,8 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
 
     /**
      * Gets the format field to parse the from/to fields
+     *
+     * @return this instance
      */
     public String format() {
         return format;
@@ -314,10 +394,21 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
         return null;
     }
 
+    /**
+     * Returns the relation.
+     *
+     * @return the relation
+     */
     public ShapeRelation relation() {
         return this.relation;
     }
 
+    /**
+     * Returns the relation.
+     *
+     * @param relation the relation
+     * @return the relation
+     */
     public RangeQueryBuilder relation(String relation) {
         if (relation == null) {
             throw new IllegalArgumentException("relation cannot be null");
@@ -354,6 +445,13 @@ public class RangeQueryBuilder extends AbstractQueryBuilder<RangeQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static RangeQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object from = null;

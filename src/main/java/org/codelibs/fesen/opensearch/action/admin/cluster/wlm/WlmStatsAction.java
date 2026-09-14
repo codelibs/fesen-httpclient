@@ -16,7 +16,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * @opensearch.experimental
  */
 public class WlmStatsAction extends ActionType<WlmStatsResponse> {
+    /**
+     * The INSTANCE constant.
+     */
     public static final WlmStatsAction INSTANCE = new WlmStatsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/wlm/stats";
 
     private WlmStatsAction() {

@@ -70,6 +70,12 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     private String failure;
 
+    /**
+     * Creates a new SnapshotIndexShardStatus by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SnapshotIndexShardStatus(StreamInput in) throws IOException {
         super(in);
         stage = SnapshotIndexShardStage.fromValue(in.readByte());
@@ -123,6 +129,8 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     /**
      * Returns snapshot stage
+     *
+     * @return the stage
      */
     public SnapshotIndexShardStage getStage() {
         return stage;
@@ -130,6 +138,8 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     /**
      * Returns snapshot stats
+     *
+     * @return the stats
      */
     public SnapshotStats getStats() {
         return stats;
@@ -137,6 +147,8 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     /**
      * Returns node id of the node where snapshot is currently running
+     *
+     * @return the node identifier
      */
     public String getNodeId() {
         return nodeId;
@@ -144,6 +156,8 @@ public class SnapshotIndexShardStatus extends BroadcastShardResponse implements 
 
     /**
      * Returns reason for snapshot failure
+     *
+     * @return the failure
      */
     public String getFailure() {
         return failure;

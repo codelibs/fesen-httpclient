@@ -45,6 +45,9 @@ import java.util.Locale;
  * @opensearch.internal
  */
 public enum QueryRescoreMode implements Writeable {
+    /**
+     * The Avg value.
+     */
     Avg {
         @Override
         public float combine(float primary, float secondary) {
@@ -56,6 +59,9 @@ public enum QueryRescoreMode implements Writeable {
             return "avg";
         }
     },
+    /**
+     * The Max value.
+     */
     Max {
         @Override
         public float combine(float primary, float secondary) {
@@ -67,6 +73,9 @@ public enum QueryRescoreMode implements Writeable {
             return "max";
         }
     },
+    /**
+     * The Min value.
+     */
     Min {
         @Override
         public float combine(float primary, float secondary) {
@@ -78,6 +87,9 @@ public enum QueryRescoreMode implements Writeable {
             return "min";
         }
     },
+    /**
+     * The Total value.
+     */
     Total {
         @Override
         public float combine(float primary, float secondary) {
@@ -89,6 +101,9 @@ public enum QueryRescoreMode implements Writeable {
             return "sum";
         }
     },
+    /**
+     * The Multiply value.
+     */
     Multiply {
         @Override
         public float combine(float primary, float secondary) {
@@ -101,8 +116,22 @@ public enum QueryRescoreMode implements Writeable {
         }
     };
 
+    /**
+     * Combines this instance.
+     *
+     * @param primary the primary
+     * @param secondary the secondary
+     * @return this instance
+     */
     public abstract float combine(float primary, float secondary);
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static QueryRescoreMode readFromStream(StreamInput in) throws IOException {
         return in.readEnum(QueryRescoreMode.class);
     }
@@ -112,6 +141,12 @@ public enum QueryRescoreMode implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param scoreMode the score mode
+     * @return the new string
+     */
     public static QueryRescoreMode fromString(String scoreMode) {
         for (QueryRescoreMode mode : values()) {
             if (scoreMode.toLowerCase(Locale.ROOT).equals(mode.name().toLowerCase(Locale.ROOT))) {

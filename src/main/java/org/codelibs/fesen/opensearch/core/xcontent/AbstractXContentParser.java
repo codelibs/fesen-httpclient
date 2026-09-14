@@ -59,6 +59,9 @@ public abstract class AbstractXContentParser implements XContentParser {
     // The idea behind keeping it as a constant is that we can track
     // references to this policy decision throughout the codebase and find
     // and change any code that needs to apply an alternative policy.
+    /**
+     * The DEFAULT_NUMBER_COERCE_POLICY constant.
+     */
     public static final boolean DEFAULT_NUMBER_COERCE_POLICY = true;
 
     private static void checkCoerceString(boolean coerce, Class<? extends Number> clazz) {
@@ -72,6 +75,12 @@ public abstract class AbstractXContentParser implements XContentParser {
     private final NamedXContentRegistry xContentRegistry;
     private final DeprecationHandler deprecationHandler;
 
+    /**
+     * Creates a new AbstractXContentParser.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     */
     public AbstractXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler) {
         this.xContentRegistry = xContentRegistry;
         this.deprecationHandler = deprecationHandler;
@@ -126,6 +135,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return doBooleanValue();
     }
 
+    /**
+     * Returns the boolean value.
+     *
+     * @return the boolean value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract boolean doBooleanValue() throws IOException;
 
     @Override
@@ -152,6 +167,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return result;
     }
 
+    /**
+     * Returns the short value.
+     *
+     * @return the short value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract short doShortValue() throws IOException;
 
     @Override
@@ -177,6 +198,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return result;
     }
 
+    /**
+     * Returns the int value.
+     *
+     * @return the int value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract int doIntValue() throws IOException;
 
     @Override
@@ -196,6 +223,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return result;
     }
 
+    /**
+     * Returns the long value.
+     *
+     * @return the long value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract long doLongValue() throws IOException;
 
     @Override
@@ -213,6 +246,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return doFloatValue();
     }
 
+    /**
+     * Returns the float value.
+     *
+     * @return the float value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract float doFloatValue() throws IOException;
 
     @Override
@@ -230,6 +269,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return doDoubleValue();
     }
 
+    /**
+     * Returns the double value.
+     *
+     * @return the double value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract double doDoubleValue() throws IOException;
 
     @Override
@@ -249,6 +294,12 @@ public abstract class AbstractXContentParser implements XContentParser {
         return result;
     }
 
+    /**
+     * Returns the big integer value.
+     *
+     * @return the big integer value
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract BigInteger doBigIntegerValue() throws IOException;
 
     @Override

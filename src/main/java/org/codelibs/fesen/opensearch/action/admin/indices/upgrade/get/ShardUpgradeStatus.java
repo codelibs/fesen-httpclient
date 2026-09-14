@@ -56,6 +56,12 @@ public class ShardUpgradeStatus extends BroadcastShardResponse {
 
     private long toUpgradeBytesAncient;
 
+    /**
+     * Creates a new ShardUpgradeStatus by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardUpgradeStatus(StreamInput in) throws IOException {
         super(in);
         shardRouting = new ShardRouting(in);
@@ -64,18 +70,38 @@ public class ShardUpgradeStatus extends BroadcastShardResponse {
         toUpgradeBytesAncient = in.readLong();
     }
 
+    /**
+     * Returns the shard routing.
+     *
+     * @return the shard routing
+     */
     public ShardRouting getShardRouting() {
         return this.shardRouting;
     }
 
+    /**
+     * Returns the total bytes.
+     *
+     * @return the total bytes
+     */
     public long getTotalBytes() {
         return totalBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes.
+     *
+     * @return the to upgrade bytes
+     */
     public long getToUpgradeBytes() {
         return toUpgradeBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes ancient.
+     *
+     * @return the to upgrade bytes ancient
+     */
     public long getToUpgradeBytesAncient() {
         return toUpgradeBytesAncient;
     }

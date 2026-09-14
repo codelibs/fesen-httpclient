@@ -52,16 +52,34 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public class SumAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, SumAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "sum";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<SumAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, SumAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new SumAggregationBuilder.
+     *
+     * @param name the name
+     */
     public SumAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new SumAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected SumAggregationBuilder(
         SumAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

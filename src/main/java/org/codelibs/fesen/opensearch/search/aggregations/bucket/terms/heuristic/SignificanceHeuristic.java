@@ -44,6 +44,14 @@ import org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.Significan
  */
 public abstract class SignificanceHeuristic implements NamedWriteable, ToXContentFragment {
     /**
+     * Creates a new SignificanceHeuristic.
+     */
+    public SignificanceHeuristic() {
+    }
+
+    /**
+     * Returns the score.
+     *
      * @param subsetFreq   The frequency of the term in the selected sample
      * @param subsetSize   The size of the selected sample (typically number of docs)
      * @param supersetFreq The frequency of the term in the superset from which the sample was taken
@@ -52,6 +60,15 @@ public abstract class SignificanceHeuristic implements NamedWriteable, ToXConten
      */
     public abstract double getScore(long subsetFreq, long subsetSize, long supersetFreq, long supersetSize);
 
+    /**
+     * Checks the frequency validity.
+     *
+     * @param subsetFreq the subset freq
+     * @param subsetSize the subset size
+     * @param supersetFreq the superset freq
+     * @param supersetSize the superset size
+     * @param scoreFunctionName the score function name
+     */
     protected void checkFrequencyValidity(
         long subsetFreq,
         long subsetSize,

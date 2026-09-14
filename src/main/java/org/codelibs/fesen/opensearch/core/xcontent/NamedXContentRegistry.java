@@ -80,6 +80,11 @@ public class NamedXContentRegistry {
         /**
          * Creates a new entry which can be stored by the registry.
          * Prefer {@code Entry#Entry(Class, ParseField, CheckedFunction)} unless you need a context to carry around while parsing.
+         *
+         * @param <T> the element type
+         * @param categoryClass the category class
+         * @param name the name
+         * @param parser the parser
          */
         public <T> Entry(Class<T> categoryClass, ParseField name, ContextParser<Object, ? extends T> parser) {
             this.categoryClass = Objects.requireNonNull(categoryClass);
@@ -90,6 +95,11 @@ public class NamedXContentRegistry {
 
     private final Map<Class<?>, Map<String, Entry>> registry;
 
+    /**
+     * Creates a new NamedXContentRegistry.
+     *
+     * @param entries the entries
+     */
     public NamedXContentRegistry(List<Entry> entries) {
         if (entries.isEmpty()) {
             registry = emptyMap();
@@ -141,7 +151,15 @@ public class NamedXContentRegistry {
      * {@code categoryClass} isn't registered because this is almost always a bug. Throws an {@link NamedObjectNotFoundException} if the
      * {@code categoryClass} is registered but the {@code name} isn't.
      *
+     * @param <T> the element type
+     * @param <C> the context type
+     * @param categoryClass the category class
+     * @param name the name
+     * @param parser the parser
+     * @param context the context
+     * @return this instance
      * @throws NamedObjectNotFoundException if the categoryClass or name is not registered
+     * @throws IOException if an I/O error occurs
      */
     public <T, C> T parseNamedObject(Class<T> categoryClass, String name, XContentParser parser, C context) throws IOException {
         Map<String, Entry> parsers = registry.get(categoryClass);

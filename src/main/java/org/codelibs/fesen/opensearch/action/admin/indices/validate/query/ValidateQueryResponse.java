@@ -58,7 +58,13 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
 @PublicApi(since = "1.0.0")
 public class ValidateQueryResponse extends BroadcastResponse {
 
+    /**
+     * The VALID_FIELD constant.
+     */
     public static final String VALID_FIELD = "valid";
+    /**
+     * The EXPLANATIONS_FIELD constant.
+     */
     public static final String EXPLANATIONS_FIELD = "explanations";
 
     @SuppressWarnings("unchecked")
@@ -108,6 +114,8 @@ public class ValidateQueryResponse extends BroadcastResponse {
 
     /**
      * A boolean denoting whether the query is valid.
+     *
+     * @return the valid flag
      */
     public boolean isValid() {
         return valid;
@@ -115,6 +123,8 @@ public class ValidateQueryResponse extends BroadcastResponse {
 
     /**
      * The list of query explanations.
+     *
+     * @return the query explanation
      */
     public List<? extends QueryExplanation> getQueryExplanation() {
         return queryExplanations;
@@ -141,6 +151,12 @@ public class ValidateQueryResponse extends BroadcastResponse {
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ValidateQueryResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

@@ -66,6 +66,9 @@ public interface DateFormatter {
 
     /**
      * Parse the given input into millis-since-epoch.
+     *
+     * @param input the input
+     * @return this instance
      */
     default long parseMillis(String input) {
         return DateFormatters.from(parse(input)).toInstant().toEpochMilli();
@@ -73,6 +76,9 @@ public interface DateFormatter {
 
     /**
      * Parse the given input into a Joda {@link DateTime}.
+     *
+     * @param input the input
+     * @return this instance
      */
     default DateTime parseJoda(String input) {
         ZonedDateTime dateTime = ZonedDateTime.from(parse(input));
@@ -105,6 +111,9 @@ public interface DateFormatter {
 
     /**
      * Return the given millis-since-epoch formatted with this format.
+     *
+     * @param millis the milliseconds
+     * @return this instance
      */
     default String formatMillis(long millis) {
         ZoneId zone = zone() != null ? zone() : ZoneOffset.UTC;
@@ -113,6 +122,9 @@ public interface DateFormatter {
 
     /**
      * Return the given Joda {@link DateTime} formatted with this format.
+     *
+     * @param dateTime the date time
+     * @return this instance
      */
     default String formatJoda(DateTime dateTime) {
         return format(
@@ -157,6 +169,14 @@ public interface DateFormatter {
      */
     DateMathParser toDateMathParser();
 
+    /**
+     * Returns the for pattern.
+     *
+     * @param input the input
+     * @param printPattern the print pattern
+     * @param canCacheFormatter the can cache formatter
+     * @return the for pattern
+     */
     static DateFormatter forPattern(String input, String printPattern, Boolean canCacheFormatter) {
 
         if (Strings.hasLength(input) == false) {
@@ -180,14 +200,33 @@ public interface DateFormatter {
         return JavaDateFormatter.combined(input, formatters, printFormatter, canCacheFormatter);
     }
 
+    /**
+     * Returns the for pattern.
+     *
+     * @param input the input
+     * @return the for pattern
+     */
     static DateFormatter forPattern(String input) {
         return forPattern(input, null, false);
     }
 
+    /**
+     * Returns the for pattern.
+     *
+     * @param input the input
+     * @param printPattern the print pattern
+     * @return the for pattern
+     */
     static DateFormatter forPattern(String input, String printPattern) {
         return forPattern(input, printPattern, false);
     }
 
+    /**
+     * Returns the strip8 prefix.
+     *
+     * @param input the input
+     * @return the strip8 prefix
+     */
     static String strip8Prefix(String input) {
         if (input.startsWith("8")) {
             return input.substring(1);
@@ -195,6 +234,12 @@ public interface DateFormatter {
         return input;
     }
 
+    /**
+     * Splits the combined patterns.
+     *
+     * @param input the input
+     * @return this instance
+     */
     static List<String> splitCombinedPatterns(String input) {
         List<String> patterns = new ArrayList<>();
         for (String pattern : Strings.delimitedListToStringArray(input, "||")) {

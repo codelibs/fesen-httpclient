@@ -121,6 +121,9 @@ public class OpenSearchThreadPoolExecutor extends ThreadPoolExecutor {
      * @opensearch.internal
      */
     public interface ShutdownListener {
+        /**
+         * Handles the terminated event.
+         */
         void onTerminated();
     }
 
@@ -164,6 +167,8 @@ public class OpenSearchThreadPoolExecutor extends ThreadPoolExecutor {
     /**
      * Returns a stream of all pending tasks. This is similar to {@link #getQueue()} but will expose the originally submitted
      * {@link Runnable} instances rather than potentially wrapped ones.
+     *
+     * @return the tasks
      */
     public Stream<Runnable> getTasks() {
         return this.getQueue().stream().map(this::unwrap);
@@ -198,10 +203,22 @@ public class OpenSearchThreadPoolExecutor extends ThreadPoolExecutor {
 
     }
 
+    /**
+     * Wraps the runnable.
+     *
+     * @param command the command
+     * @return this instance
+     */
     protected Runnable wrapRunnable(Runnable command) {
         return contextHolder.preserveContext(command);
     }
 
+    /**
+     * Unwraps this instance.
+     *
+     * @param runnable the runnable
+     * @return this instance
+     */
     protected Runnable unwrap(Runnable runnable) {
         return contextHolder.unwrap(runnable);
     }
@@ -211,6 +228,8 @@ public class OpenSearchThreadPoolExecutor extends ThreadPoolExecutor {
      * then this should return -1 which will prevent the value from showing up in {@link org.codelibs.fesen.opensearch.threadpool.ThreadPoolStats}.
      * ThreadPools that do support this metric should override this method. For example, {@code QueueResizingOpenSearchThreadPoolExecutor}
      * does so using the {@link TimedRunnable} to get the difference between Runnable creation and execution.
+     *
+     * @return the pool wait time nanoseconds
      *
      */
     public long getPoolWaitTimeNanos() {

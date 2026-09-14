@@ -26,6 +26,7 @@ public class AdmissionControlStats implements ToXContentFragment, Writeable {
     private final List<AdmissionControllerStats> admissionControllerStatsList;
 
     /**
+     * Creates a new AdmissionControlStats by reading it from the given input.
      *
      * @param in the stream to read from
      * @throws IOException if an I/O error occurs
@@ -44,6 +45,11 @@ public class AdmissionControlStats implements ToXContentFragment, Writeable {
         out.writeList(this.admissionControllerStatsList);
     }
 
+    /**
+     * Returns the admission controller stats list.
+     *
+     * @return the admission controller stats list
+     */
     public List<AdmissionControllerStats> getAdmissionControllerStatsList() {
         return admissionControllerStatsList;
     }

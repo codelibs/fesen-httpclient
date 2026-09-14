@@ -74,10 +74,15 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
     private Settings settings = EMPTY_SETTINGS;
     private boolean preserveExisting = false;
 
+    /**
+     * Creates a new UpdateSettingsRequest.
+     */
     public UpdateSettingsRequest() {}
 
     /**
      * Constructs a new request to update settings for one or more indices
+     *
+     * @param indices the indices
      */
     public UpdateSettingsRequest(String... indices) {
         this.indices = indices;
@@ -118,6 +123,9 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
 
     /**
      * Sets the settings to be updated
+     *
+     * @param settings the settings
+     * @return the settings
      */
     public UpdateSettingsRequest settings(Settings.Builder settings) {
         this.settings = settings.build();
@@ -127,6 +135,8 @@ public class UpdateSettingsRequest extends AcknowledgedRequest<UpdateSettingsReq
     /**
      * Returns <code>true</code> iff the settings update should only add but not update settings. If the setting already exists
      * it should not be overwritten by this update. The default is <code>false</code>
+     *
+     * @return the preserve existing flag
      */
     public boolean isPreserveExisting() {
         return preserveExisting;

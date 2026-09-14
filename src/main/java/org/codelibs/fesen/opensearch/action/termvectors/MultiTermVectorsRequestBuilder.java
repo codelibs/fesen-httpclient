@@ -44,10 +44,22 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class MultiTermVectorsRequestBuilder extends ActionRequestBuilder<MultiTermVectorsRequest, MultiTermVectorsResponse> {
 
+    /**
+     * Creates a new MultiTermVectorsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public MultiTermVectorsRequestBuilder(OpenSearchClient client, MultiTermVectorsAction action) {
         super(client, action, new MultiTermVectorsRequest());
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param termVectorsRequest the term vectors request
+     * @return this instance
+     */
     public MultiTermVectorsRequestBuilder add(TermVectorsRequest termVectorsRequest) {
         request.add(termVectorsRequest);
         return this;

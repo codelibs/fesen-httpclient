@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class CloseIndexAction extends ActionType<CloseIndexResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final CloseIndexAction INSTANCE = new CloseIndexAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/close";
 
     private CloseIndexAction() {

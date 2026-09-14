@@ -81,6 +81,12 @@ import java.util.concurrent.TimeUnit;
  */
 @PublicApi(since = "1.0.0")
 public abstract class Rounding implements Writeable {
+    /**
+     * Creates a new Rounding.
+     */
+    public Rounding() {
+    }
+
     private static final Logger logger = LogManager.getLogger(Rounding.class);
 
     /**
@@ -90,6 +96,9 @@ public abstract class Rounding implements Writeable {
      */
     @PublicApi(since = "1.0.0")
     public enum DateTimeUnit {
+        /**
+         * The WEEK_OF_WEEKYEAR value.
+         */
         WEEK_OF_WEEKYEAR((byte) 1, "week", IsoFields.WEEK_OF_WEEK_BASED_YEAR, true, TimeUnit.DAYS.toMillis(7)) {
             private final long extraLocalOffsetLookup = TimeUnit.DAYS.toMillis(7);
 
@@ -102,6 +111,9 @@ public abstract class Rounding implements Writeable {
                 return extraLocalOffsetLookup;
             }
         },
+        /**
+         * The YEAR_OF_CENTURY value.
+         */
         YEAR_OF_CENTURY((byte) 2, "year", ChronoField.YEAR_OF_ERA, false, 12) {
             private final long extraLocalOffsetLookup = TimeUnit.DAYS.toMillis(366);
 
@@ -113,6 +125,9 @@ public abstract class Rounding implements Writeable {
                 return extraLocalOffsetLookup;
             }
         },
+        /**
+         * The QUARTER_OF_YEAR value.
+         */
         QUARTER_OF_YEAR((byte) 3, "quarter", IsoFields.QUARTER_OF_YEAR, false, 3) {
             private final long extraLocalOffsetLookup = TimeUnit.DAYS.toMillis(92);
 
@@ -124,6 +139,9 @@ public abstract class Rounding implements Writeable {
                 return extraLocalOffsetLookup;
             }
         },
+        /**
+         * The MONTH_OF_YEAR value.
+         */
         MONTH_OF_YEAR((byte) 4, "month", ChronoField.MONTH_OF_YEAR, false, 1) {
             private final long extraLocalOffsetLookup = TimeUnit.DAYS.toMillis(31);
 
@@ -135,6 +153,9 @@ public abstract class Rounding implements Writeable {
                 return extraLocalOffsetLookup;
             }
         },
+        /**
+         * The DAY_OF_MONTH value.
+         */
         DAY_OF_MONTH((byte) 5, "day", ChronoField.DAY_OF_MONTH, true, ChronoField.DAY_OF_MONTH.getBaseUnit().getDuration().toMillis()) {
             public long roundFloor(long utcMillis) {
                 return DateUtils.roundFloor(utcMillis, this.ratio);
@@ -144,6 +165,9 @@ public abstract class Rounding implements Writeable {
                 return ratio;
             }
         },
+        /**
+         * The HOUR_OF_DAY value.
+         */
         HOUR_OF_DAY((byte) 6, "hour", ChronoField.HOUR_OF_DAY, true, ChronoField.HOUR_OF_DAY.getBaseUnit().getDuration().toMillis()) {
             public long roundFloor(long utcMillis) {
                 return DateUtils.roundFloor(utcMillis, ratio);
@@ -153,6 +177,9 @@ public abstract class Rounding implements Writeable {
                 return ratio;
             }
         },
+        /**
+         * Creates a new MINUTES_OF_HOUR.
+         */
         MINUTES_OF_HOUR(
             (byte) 7,
             "minute",
@@ -168,6 +195,9 @@ public abstract class Rounding implements Writeable {
                 return ratio;
             }
         },
+        /**
+         * Creates a new SECOND_OF_MINUTE.
+         */
         SECOND_OF_MINUTE(
             (byte) 8,
             "second",
@@ -218,10 +248,21 @@ public abstract class Rounding implements Writeable {
          */
         abstract long extraLocalOffsetLookup();
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public byte getId() {
             return id;
         }
 
+        /**
+         * Resolves this instance.
+         *
+         * @param id the identifier
+         * @return this instance
+         */
         public static DateTimeUnit resolve(byte id) {
             return switch (id) {
                 case 1 -> WEEK_OF_WEEKYEAR;
@@ -237,6 +278,12 @@ public abstract class Rounding implements Writeable {
         }
     }
 
+    /**
+     * Performs the inner write to step.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public abstract void innerWriteTo(StreamOutput out) throws IOException;
 
     @Override
@@ -245,8 +292,18 @@ public abstract class Rounding implements Writeable {
         innerWriteTo(out);
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public abstract byte id();
 
+    /**
+     * Returns the unit.
+     *
+     * @return the unit
+     */
     public DateTimeUnit unit() {
         return null;
     }
@@ -260,6 +317,9 @@ public abstract class Rounding implements Writeable {
     public interface Prepared {
         /**
          * Rounds the given value.
+         *
+         * @param utcMillis the utc milliseconds
+         * @return this instance
          */
         long round(long utcMillis);
 
@@ -268,18 +328,29 @@ public abstract class Rounding implements Writeable {
          * {@link #round(long)}, returns the next rounding value. For
          * example, with interval based rounding, if the interval is
          * 3, {@code nextRoundValue(6) = 9}.
+         *
+         * @param utcMillis the utc milliseconds
+         * @return the next rounding value
          */
         long nextRoundingValue(long utcMillis);
 
         /**
          * Given the rounded value, returns the size between this value and the
          * next rounded value in specified units if possible.
+         *
+         * @param utcMillis the utc milliseconds
+         * @param timeUnit the time unit
+         * @return the rounding size
          */
         double roundingSize(long utcMillis, DateTimeUnit timeUnit);
     }
 
     /**
      * Prepare to round many times.
+     *
+     * @param minUtcMillis the min utc milliseconds
+     * @param maxUtcMillis the max utc milliseconds
+     * @return the prepare
      */
     public abstract Prepared prepare(long minUtcMillis, long maxUtcMillis);
 
@@ -287,6 +358,8 @@ public abstract class Rounding implements Writeable {
      * Prepare to round many dates over an unknown range. Prefer
      * {@link #prepare(long, long)} if you can find the range because
      * it'll be much more efficient.
+     *
+     * @return the prepare for unknown
      */
     public abstract Prepared prepareForUnknown();
 
@@ -297,6 +370,7 @@ public abstract class Rounding implements Writeable {
 
     /**
      * How "offset" this rounding is from the traditional "start" of the period.
+     * @return the offset
      * @deprecated We're in the process of abstracting offset *into* Rounding
      *             so keep any usage to migratory shims
      */
@@ -305,6 +379,8 @@ public abstract class Rounding implements Writeable {
 
     /**
      * Strip the {@code offset} from these bounds.
+     *
+     * @return the without offset
      */
     public abstract Rounding withoutOffset();
 
@@ -314,6 +390,12 @@ public abstract class Rounding implements Writeable {
     @Override
     public abstract int hashCode();
 
+    /**
+     * Returns the builder.
+     *
+     * @param unit the unit
+     * @return the builder
+     */
     public static Builder builder(DateTimeUnit unit) {
         return new Builder(unit);
     }
@@ -332,11 +414,22 @@ public abstract class Rounding implements Writeable {
         private ZoneId timeZone = ZoneOffset.UTC;
         private long offset = 0;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param unit the unit
+         */
         public Builder(DateTimeUnit unit) {
             this.unit = unit;
             this.interval = -1;
         }
 
+        /**
+         * Returns the time zone.
+         *
+         * @param timeZone the time zone
+         * @return the time zone
+         */
         public Builder timeZone(ZoneId timeZone) {
             if (timeZone == null) {
                 throw new IllegalArgumentException("Setting null as timezone is not supported");
@@ -345,6 +438,11 @@ public abstract class Rounding implements Writeable {
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public Rounding build() {
             Rounding rounding;
             if (unit != null) {
@@ -1289,6 +1387,13 @@ public abstract class Rounding implements Writeable {
         }
     }
 
+    /**
+     * Reads this instance.
+     *
+     * @param in the input to read from
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static Rounding read(StreamInput in) throws IOException {
         byte id = in.readByte();
         return switch (id) {
@@ -1302,6 +1407,8 @@ public abstract class Rounding implements Writeable {
     /**
      * Helper function for checking if the time zone requested for date histogram
      * aggregation is utc or not
+     *
+     * @return the utc flag
      */
     public abstract boolean isUTC();
 }

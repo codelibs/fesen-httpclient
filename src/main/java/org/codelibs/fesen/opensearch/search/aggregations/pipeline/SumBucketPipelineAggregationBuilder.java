@@ -45,8 +45,17 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class SumBucketPipelineAggregationBuilder extends BucketMetricsPipelineAggregationBuilder<SumBucketPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "sum_bucket";
 
+    /**
+     * Creates a new SumBucketPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public SumBucketPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -61,6 +70,9 @@ public class SumBucketPipelineAggregationBuilder extends BucketMetricsPipelineAg
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final PipelineAggregator.Parser PARSER = new BucketMetricsParser() {
         @Override
         protected SumBucketPipelineAggregationBuilder buildFactory(

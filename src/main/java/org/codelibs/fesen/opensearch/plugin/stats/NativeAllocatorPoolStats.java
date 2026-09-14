@@ -54,6 +54,9 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
 
     /**
      * Deserializes from stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public NativeAllocatorPoolStats(StreamInput in) throws IOException {
         this.nativeAllocatedBytes = in.readLong();
@@ -89,22 +92,38 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
         return builder;
     }
 
-    /** Returns process-wide native allocated bytes, or -1 if unavailable. */
+    /**
+     * Returns process-wide native allocated bytes, or -1 if unavailable.
+     *
+     * @return the native allocated bytes
+     */
     public long getNativeAllocatedBytes() {
         return nativeAllocatedBytes;
     }
 
-    /** Returns process-wide native resident bytes (RSS), or -1 if unavailable. */
+    /**
+     * Returns process-wide native resident bytes (RSS), or -1 if unavailable.
+     *
+     * @return the native resident bytes
+     */
     public long getNativeResidentBytes() {
         return nativeResidentBytes;
     }
 
-    /** Returns the per-pool statistics. */
+    /**
+     * Returns the per-pool statistics.
+     *
+     * @return the pools
+     */
     public List<PoolStats> getPools() {
         return pools;
     }
 
-    /** Returns stats grouped by pool group. Pools without a group use their name as the key. */
+    /**
+     * Returns stats grouped by pool group. Pools without a group use their name as the key.
+     *
+     * @return the grouped stats
+     */
     public Map<String, PoolStats> getGroupedStats() {
         // [allocated, peak, limit] — peak uses max (highest watermark) rather than sum
         // because individual pool peaks are not additive (they occur at different times).
@@ -127,6 +146,10 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
     /**
      * BWC: Reads and discards the V_3_7_0 format (3 VLongs + pools with 4 fields each).
      * Returns a dummy instance since the data is discarded.
+     *
+     * @param in the input to read from
+     * @return the and discard v 3 7
+     * @throws IOException if an I/O error occurs
      */
     public static NativeAllocatorPoolStats readAndDiscardV3_7(StreamInput in) throws IOException {
         in.readVLong(); // rootAllocatedBytes
@@ -145,6 +168,10 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
     /**
      * BWC: Writes old V_3_7_0 format for a given stats instance (or null).
      * Format: optional boolean + 3 VLongs + pool list with 4 fields each.
+     *
+     * @param out the output to write to
+     * @param stats the stats
+     * @throws IOException if an I/O error occurs
      */
     public static void writeV3_7(StreamOutput out, @Nullable NativeAllocatorPoolStats stats) throws IOException {
         if (stats == null) {
@@ -176,10 +203,28 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
         private final String group;
         private final long minBytes;
 
+        /**
+         * Creates a new PoolStats.
+         *
+         * @param name the name
+         * @param allocatedBytes the allocated bytes
+         * @param peakBytes the peak bytes
+         * @param limitBytes the limit bytes
+         */
         public PoolStats(String name, long allocatedBytes, long peakBytes, long limitBytes) {
             this(name, allocatedBytes, peakBytes, limitBytes, null, 0L);
         }
 
+        /**
+         * Creates a new PoolStats.
+         *
+         * @param name the name
+         * @param allocatedBytes the allocated bytes
+         * @param peakBytes the peak bytes
+         * @param limitBytes the limit bytes
+         * @param group the group
+         * @param minBytes the min bytes
+         */
         public PoolStats(String name, long allocatedBytes, long peakBytes, long limitBytes, String group, long minBytes) {
             this.name = name;
             this.allocatedBytes = allocatedBytes;
@@ -189,6 +234,12 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
             this.minBytes = minBytes;
         }
 
+        /**
+         * Creates a new PoolStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public PoolStats(StreamInput in) throws IOException {
             this.name = in.readString();
             this.allocatedBytes = in.readVLong();
@@ -221,26 +272,56 @@ public class NativeAllocatorPoolStats implements Writeable, ToXContentFragment {
             return builder;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Returns the allocated bytes.
+         *
+         * @return the allocated bytes
+         */
         public long getAllocatedBytes() {
             return allocatedBytes;
         }
 
+        /**
+         * Returns the peak bytes.
+         *
+         * @return the peak bytes
+         */
         public long getPeakBytes() {
             return peakBytes;
         }
 
+        /**
+         * Returns the limit bytes.
+         *
+         * @return the limit bytes
+         */
         public long getLimitBytes() {
             return limitBytes;
         }
 
+        /**
+         * Returns the group.
+         *
+         * @return the group
+         */
         public String getGroup() {
             return group;
         }
 
+        /**
+         * Returns the min bytes.
+         *
+         * @return the min bytes
+         */
         public long getMinBytes() {
             return minBytes;
         }

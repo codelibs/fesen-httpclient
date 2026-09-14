@@ -44,6 +44,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedMax extends ParsedSingleValueNumericMetricsAggregation implements Max {
+    /**
+     * Creates a new ParsedMax.
+     */
+    public ParsedMax() {
+    }
 
     @Override
     public double getValue() {
@@ -71,6 +76,13 @@ public class ParsedMax extends ParsedSingleValueNumericMetricsAggregation implem
         declareSingleValueFields(PARSER, Double.NEGATIVE_INFINITY);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedMax fromXContent(XContentParser parser, final String name) {
         ParsedMax max = PARSER.apply(parser, null);
         max.setName(name);

@@ -47,7 +47,13 @@ import java.io.IOException;
 @Deprecated
 public enum SpatialStrategy implements Writeable {
 
+    /**
+     * The TERM value.
+     */
     TERM("term"),
+    /**
+     * The RECURSIVE value.
+     */
     RECURSIVE("recursive");
 
     private final String strategyName;
@@ -56,10 +62,22 @@ public enum SpatialStrategy implements Writeable {
         this.strategyName = strategyName;
     }
 
+    /**
+     * Returns the strategy name.
+     *
+     * @return the strategy name
+     */
     public String getStrategyName() {
         return strategyName;
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static SpatialStrategy readFromStream(StreamInput in) throws IOException {
         return in.readEnum(SpatialStrategy.class);
     }
@@ -69,6 +87,12 @@ public enum SpatialStrategy implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param strategyName the strategy name
+     * @return the new string
+     */
     public static SpatialStrategy fromString(String strategyName) {
         for (SpatialStrategy strategy : values()) {
             if (strategy.strategyName.equals(strategyName)) {

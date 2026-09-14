@@ -44,6 +44,11 @@ import java.util.Iterator;
  * @opensearch.internal
  */
 public class ParsedHDRPercentileRanks extends ParsedPercentileRanks {
+    /**
+     * Creates a new ParsedHDRPercentileRanks.
+     */
+    public ParsedHDRPercentileRanks() {
+    }
 
     @Override
     public String getType() {
@@ -76,6 +81,14 @@ public class ParsedHDRPercentileRanks extends ParsedPercentileRanks {
         ParsedPercentiles.declarePercentilesFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedHDRPercentileRanks fromXContent(XContentParser parser, String name) throws IOException {
         ParsedHDRPercentileRanks aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);

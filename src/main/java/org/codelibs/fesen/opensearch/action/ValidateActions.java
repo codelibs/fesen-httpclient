@@ -38,7 +38,19 @@ package org.codelibs.fesen.opensearch.action;
  * @opensearch.internal
  */
 public class ValidateActions {
+    /**
+     * Creates a new ValidateActions.
+     */
+    public ValidateActions() {
+    }
 
+    /**
+     * Adds the validation error.
+     *
+     * @param error the error
+     * @param validationException the validation exception
+     * @return this instance
+     */
     public static ActionRequestValidationException addValidationError(String error, ActionRequestValidationException validationException) {
         if (validationException == null) {
             validationException = new ActionRequestValidationException();

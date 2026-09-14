@@ -253,6 +253,12 @@ public class HttpResolveIndexAction extends HttpAction {
      * Internal container holding the parsed fields of a resolved index entry.
      */
     protected static class ResolvedIndexData {
+        /**
+         * Creates a new ResolvedIndexData.
+         */
+        protected ResolvedIndexData() {
+        }
+
         String name;
         List<String> aliases = new ArrayList<>();
         List<String> attributes = new ArrayList<>();
@@ -263,6 +269,12 @@ public class HttpResolveIndexAction extends HttpAction {
      * Internal container holding the parsed fields of a resolved alias entry.
      */
     protected static class ResolvedAliasData {
+        /**
+         * Creates a new ResolvedAliasData.
+         */
+        protected ResolvedAliasData() {
+        }
+
         String name;
         List<String> indices = new ArrayList<>();
     }
@@ -271,6 +283,12 @@ public class HttpResolveIndexAction extends HttpAction {
      * Internal container holding the parsed fields of a resolved data stream entry.
      */
     protected static class ResolvedDataStreamData {
+        /**
+         * Creates a new ResolvedDataStreamData.
+         */
+        protected ResolvedDataStreamData() {
+        }
+
         String name;
         List<String> backingIndices = new ArrayList<>();
         String timestampField;

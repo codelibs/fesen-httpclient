@@ -57,10 +57,23 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public class IndexResponse extends DocWriteResponse {
 
+    /**
+     * Creates a new IndexResponse.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexResponse(ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
     }
 
+    /**
+     * Creates a new IndexResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexResponse(StreamInput in) throws IOException {
         super(in);
     }
@@ -95,6 +108,10 @@ public class IndexResponse extends DocWriteResponse {
 
     /**
      * Parse the current token and update the parsing context appropriately.
+     *
+     * @param parser the parser
+     * @param context the context
+     * @throws IOException if an I/O error occurs
      */
     public static void parseXContentFields(XContentParser parser, Builder context) throws IOException {
         DocWriteResponse.parseInnerToXContent(parser, context);
@@ -109,6 +126,12 @@ public class IndexResponse extends DocWriteResponse {
      */
     @PublicApi(since = "1.0.0")
     public static class Builder extends DocWriteResponse.Builder {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
+
         @Override
         public IndexResponse build() {
             IndexResponse indexResponse = new IndexResponse(shardId, id, seqNo, primaryTerm, version, result);

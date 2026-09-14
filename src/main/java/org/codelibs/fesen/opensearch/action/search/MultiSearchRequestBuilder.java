@@ -45,6 +45,12 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class MultiSearchRequestBuilder extends ActionRequestBuilder<MultiSearchRequest, MultiSearchResponse> {
 
+    /**
+     * Creates a new MultiSearchRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public MultiSearchRequestBuilder(OpenSearchClient client, MultiSearchAction action) {
         super(client, action, new MultiSearchRequest());
     }
@@ -52,6 +58,9 @@ public class MultiSearchRequestBuilder extends ActionRequestBuilder<MultiSearchR
     /**
      * Add a search request to execute. Note, the order is important, the search response will be returned in the
      * same order as the search requests.
+     *
+     * @param request the request
+     * @return this instance
      */
     public MultiSearchRequestBuilder add(SearchRequestBuilder request) {
         if (request.request().indicesOptions() == SearchRequest.DEFAULT_INDICES_OPTIONS

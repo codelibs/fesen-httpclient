@@ -45,8 +45,17 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class AvgBucketPipelineAggregationBuilder extends BucketMetricsPipelineAggregationBuilder<AvgBucketPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "avg_bucket";
 
+    /**
+     * Creates a new AvgBucketPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public AvgBucketPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -61,6 +70,9 @@ public class AvgBucketPipelineAggregationBuilder extends BucketMetricsPipelineAg
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final PipelineAggregator.Parser PARSER = new BucketMetricsParser() {
         @Override
         protected AvgBucketPipelineAggregationBuilder buildFactory(

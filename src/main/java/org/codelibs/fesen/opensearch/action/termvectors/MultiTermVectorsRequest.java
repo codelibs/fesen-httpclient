@@ -69,8 +69,17 @@ public class MultiTermVectorsRequest extends ActionRequest
 
     final Set<String> ids = new HashSet<>();
 
+    /**
+     * Creates a new MultiTermVectorsRequest.
+     */
     public MultiTermVectorsRequest() {}
 
+    /**
+     * Adds this instance.
+     *
+     * @param termVectorsRequest the term vectors request
+     * @return this instance
+     */
     public MultiTermVectorsRequest add(TermVectorsRequest termVectorsRequest) {
         requests.add(termVectorsRequest);
         return this;
@@ -101,6 +110,11 @@ public class MultiTermVectorsRequest extends ActionRequest
         return Collections.unmodifiableCollection(requests).iterator();
     }
 
+    /**
+     * Returns the requests.
+     *
+     * @return the requests
+     */
     public List<TermVectorsRequest> getRequests() {
         return requests;
     }

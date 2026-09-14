@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class PutRepositoryAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PutRepositoryAction INSTANCE = new PutRepositoryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/repository/put";
 
     private PutRepositoryAction() {

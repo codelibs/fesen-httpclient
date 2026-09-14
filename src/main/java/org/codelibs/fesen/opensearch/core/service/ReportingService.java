@@ -38,9 +38,15 @@ import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
 /**
  * Node reporting service
  *
+ * @param <I> the i type
  * @opensearch.internal
  */
 public interface ReportingService<I extends ReportingService.Info> {
+    /**
+     * Returns the info.
+     *
+     * @return the info
+     */
     I info();
 
     /**

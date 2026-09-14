@@ -103,6 +103,12 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
     private final long tookInMillis;
     private final PhaseTook phaseTook;
 
+    /**
+     * Creates a new SearchResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchResponse(StreamInput in) throws IOException {
         super(in);
         internalResponse = new InternalSearchResponse(in);
@@ -192,6 +198,20 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         );
     }
 
+    /**
+     * Creates a new SearchResponse.
+     *
+     * @param internalResponse the internal response
+     * @param scrollId the scroll identifier
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param skippedShards the skipped shards
+     * @param tookInMillis the took in milliseconds
+     * @param phaseTook the phase took
+     * @param shardFailures the shard failures
+     * @param clusters the clusters
+     * @param pointInTimeId the point in time identifier
+     */
     public SearchResponse(
         SearchResponseSections internalResponse,
         String scrollId,
@@ -229,17 +249,26 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * The search hits.
+     *
+     * @return the hits
      */
     public SearchHits getHits() {
         return internalResponse.hits();
     }
 
+    /**
+     * Returns the aggregations.
+     *
+     * @return the aggregations
+     */
     public Aggregations getAggregations() {
         return internalResponse.aggregations();
     }
 
     /**
      * Has the search operation timed out.
+     *
+     * @return the timed out flag
      */
     public boolean isTimedOut() {
         return internalResponse.timedOut();
@@ -248,6 +277,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
     /**
      * Has the search operation terminated early due to reaching
      * <code>terminateAfter</code>
+     *
+     * @return the terminated early flag
      */
     public Boolean isTerminatedEarly() {
         return internalResponse.terminatedEarly();
@@ -255,6 +286,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * Returns the number of reduce phases applied to obtain this search response
+     *
+     * @return the num reduce phases
      */
     public int getNumReducePhases() {
         return internalResponse.getNumReducePhases();
@@ -262,6 +295,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * How long the search took.
+     *
+     * @return the took
      */
     public TimeValue getTook() {
         return new TimeValue(tookInMillis);
@@ -269,6 +304,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * The total number of shards the search was executed on.
+     *
+     * @return the total shards
      */
     public int getTotalShards() {
         return totalShards;
@@ -276,6 +313,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * The successful number of shards the search was executed on.
+     *
+     * @return the successful shards
      */
     public int getSuccessfulShards() {
         return successfulShards;
@@ -283,6 +322,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * The number of shards skipped due to pre-filtering
+     *
+     * @return the skipped shards
      */
     public int getSkippedShards() {
         return skippedShards;
@@ -290,6 +331,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * The failed number of shards the search was executed on.
+     *
+     * @return the failed shards
      */
     public int getFailedShards() {
         // we don't return totalShards - successfulShards, we don't count "no shards available" as a failed shard, just don't
@@ -299,6 +342,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
 
     /**
      * The failures that occurred during the search.
+     *
+     * @return the shard failures
      */
     public ShardSearchFailure[] getShardFailures() {
         return this.shardFailures;
@@ -307,6 +352,8 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
     /**
      * If scrolling was enabled ({@link SearchRequest#scroll(org.codelibs.fesen.opensearch.search.Scroll)}, the
      * scroll id that can be used to continue scrolling.
+     *
+     * @return the scroll identifier
      */
     public String getScrollId() {
         return scrollId;
@@ -320,6 +367,14 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         return builder;
     }
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         if (scrollId != null) {
             builder.field(SCROLL_ID.getPreferredName(), scrollId);
@@ -353,12 +408,26 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SearchResponse fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(Token.START_OBJECT, parser.nextToken(), parser);
         parser.nextToken();
         return innerFromXContent(parser);
     }
 
+    /**
+     * Returns the inner from XContent.
+     *
+     * @param parser the parser
+     * @return the inner from XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SearchResponse innerFromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(Token.FIELD_NAME, parser.currentToken(), parser);
         String currentFieldName = parser.currentName();
@@ -572,6 +641,9 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
     @PublicApi(since = "1.0.0")
     public static class Clusters implements ToXContentFragment, Writeable {
 
+        /**
+         * The EMPTY constant.
+         */
         public static final Clusters EMPTY = new Clusters(0, 0, 0);
 
         static final ParseField _CLUSTERS_FIELD = new ParseField("_clusters");
@@ -583,6 +655,13 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         private final int successful;
         private final int skipped;
 
+        /**
+         * Creates a new Clusters.
+         *
+         * @param total the total
+         * @param successful the successful
+         * @param skipped the skipped
+         */
         public Clusters(int total, int successful, int skipped) {
             assert total >= 0 && successful >= 0 && skipped >= 0 : "total: "
                 + total
@@ -658,6 +737,11 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         static final ParseField PHASE_TOOK = new ParseField("phase_took");
         private final Map<String, Long> phaseTookMap;
 
+        /**
+         * Creates a new PhaseTook.
+         *
+         * @param phaseTookMap the phase took map
+         */
         public PhaseTook(Map<String, Long> phaseTookMap) {
             this.phaseTookMap = phaseTookMap;
         }

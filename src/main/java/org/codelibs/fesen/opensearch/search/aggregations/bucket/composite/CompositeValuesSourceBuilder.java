@@ -53,10 +53,14 @@ import static org.codelibs.fesen.opensearch.search.aggregations.bucket.missing.M
 /**
  * A {@link ValuesSource} builder for {@link CompositeAggregationBuilder}
  *
+ * @param <AB> the aggregation builder type
  * @opensearch.internal
  */
 public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSourceBuilder<AB>> implements Writeable, ToXContentFragment {
 
+    /**
+     * The name.
+     */
     protected final String name;
     private String field = null;
     private Script script = null;
@@ -66,10 +70,21 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
     private SortOrder order = SortOrder.ASC;
     private String format = null;
 
+    /**
+     * Creates a new CompositeValuesSourceBuilder.
+     *
+     * @param name the name
+     */
     public CompositeValuesSourceBuilder(String name) {
         this.name = name;
     }
 
+    /**
+     * Creates a new CompositeValuesSourceBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CompositeValuesSourceBuilder(StreamInput in) throws IOException {
         this.name = in.readString();
         this.field = in.readOptionalString();
@@ -106,8 +121,21 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
         innerWriteTo(out);
     }
 
+    /**
+     * Performs the inner write to step.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void innerWriteTo(StreamOutput out) throws IOException;
 
+    /**
+     * Performs the XContent body step.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doXContentBody(XContentBuilder builder, Params params) throws IOException;
 
     @Override
@@ -156,14 +184,27 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
             && Objects.equals(format, that.format());
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     protected abstract String type();
 
     /**
      * Sets the field to use for this source
+     *
+     * @param field the field
+     * @return the field
      */
     @SuppressWarnings("unchecked")
     public AB field(String field) {
@@ -176,6 +217,8 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Gets the field to use for this source
+     *
+     * @return the field
      */
     public String field() {
         return field;
@@ -183,6 +226,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Sets the script to use for this source
+     *
+     * @param script the script
+     * @return the script
      */
     @SuppressWarnings("unchecked")
     public AB script(Script script) {
@@ -195,6 +241,8 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Gets the script to use for this source
+     *
+     * @return the script
      */
     public Script script() {
         return script;
@@ -202,6 +250,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Sets the {@link ValueType} for the value produced by this source
+     *
+     * @param valueType the value type
+     * @return the user valuetype hint
      */
     @SuppressWarnings("unchecked")
     public AB userValuetypeHint(ValueType valueType) {
@@ -214,6 +265,8 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Gets the {@link ValueType} for the value produced by this source
+     *
+     * @return the user valuetype hint
      */
     public ValueType userValuetypeHint() {
         return userValueTypeHint;
@@ -221,6 +274,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * If <code>true</code> an explicit <code>null</code> bucket will represent documents with missing values.
+     *
+     * @param missingBucket the missing bucket
+     * @return the missing bucket
      */
     @SuppressWarnings("unchecked")
     public AB missingBucket(boolean missingBucket) {
@@ -231,6 +287,8 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
     /**
      * False if documents with missing values are ignored, otherwise missing values are
      * represented by an explicit `null` value.
+     *
+     * @return the missing bucket
      */
     public boolean missingBucket() {
         return missingBucket;
@@ -238,6 +296,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Sets the {@link MissingOrder} to use to order missing value.
+     *
+     * @param missingOrder the missing order
+     * @return the missing order
      */
     public AB missingOrder(MissingOrder missingOrder) {
         this.missingOrder = missingOrder;
@@ -247,6 +308,7 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
     /**
      * Sets the {@link MissingOrder} to use to order missing value.
      * @param missingOrder "first", "last" or "default".
+     * @return the missing order
      */
     public AB missingOrder(String missingOrder) {
         return missingOrder(fromString(missingOrder));
@@ -254,6 +316,8 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Missing value order. {@link MissingOrder}.
+     *
+     * @return the missing order
      */
     public MissingOrder missingOrder() {
         return missingOrder;
@@ -261,6 +325,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Sets the {@link SortOrder} to use to sort values produced this source
+     *
+     * @param order the order
+     * @return the order
      */
     @SuppressWarnings("unchecked")
     public AB order(String order) {
@@ -273,6 +340,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Sets the {@link SortOrder} to use to sort values produced this source
+     *
+     * @param order the order
+     * @return the order
      */
     @SuppressWarnings("unchecked")
     public AB order(SortOrder order) {
@@ -285,6 +355,8 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Gets the {@link SortOrder} to use to sort values produced this source
+     *
+     * @return the order
      */
     public SortOrder order() {
         return order;
@@ -292,6 +364,9 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Sets the format to use for the output of the aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     public AB format(String format) {
         if (format == null) {
@@ -303,16 +378,25 @@ public abstract class CompositeValuesSourceBuilder<AB extends CompositeValuesSou
 
     /**
      * Gets the format to use for the output of the aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
     }
 
+    /**
+     * Returns the default values source type.
+     *
+     * @return the default values source type
+     */
     protected abstract ValuesSourceType getDefaultValuesSourceType();
 
     /**
      * The time zone for this value source. Default implementation returns {@code null}
      * because most value source types don't support time zone.
+     *
+     * @return the time zone
      */
     protected ZoneId timeZone() {
         return null;

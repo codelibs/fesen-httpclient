@@ -53,22 +53,72 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  * @opensearch.internal
  */
 public class ParsedExtendedStats extends ParsedStats implements ExtendedStats {
+    /**
+     * Creates a new ParsedExtendedStats.
+     */
+    public ParsedExtendedStats() {
+    }
 
+    /**
+     * The sum of squares.
+     */
     protected double sumOfSquares;
+    /**
+     * The variance.
+     */
     protected double variance;
+    /**
+     * The variance population.
+     */
     protected double variancePopulation;
+    /**
+     * The variance sampling.
+     */
     protected double varianceSampling;
+    /**
+     * The std deviation.
+     */
     protected double stdDeviation;
+    /**
+     * The std deviation population.
+     */
     protected double stdDeviationPopulation;
+    /**
+     * The std deviation sampling.
+     */
     protected double stdDeviationSampling;
+    /**
+     * The std deviation bound upper.
+     */
     protected double stdDeviationBoundUpper;
+    /**
+     * The std deviation bound lower.
+     */
     protected double stdDeviationBoundLower;
+    /**
+     * The std deviation bound upper population.
+     */
     protected double stdDeviationBoundUpperPopulation;
+    /**
+     * The std deviation bound lower population.
+     */
     protected double stdDeviationBoundLowerPopulation;
+    /**
+     * The std deviation bound upper sampling.
+     */
     protected double stdDeviationBoundUpperSampling;
+    /**
+     * The std deviation bound lower sampling.
+     */
     protected double stdDeviationBoundLowerSampling;
 
+    /**
+     * The sum.
+     */
     protected double sum;
+    /**
+     * The avg.
+     */
     protected double avg;
 
     @Override
@@ -355,6 +405,11 @@ public class ParsedExtendedStats extends ParsedStats implements ExtendedStats {
         declareExtendedStatsFields(PARSER);
     }
 
+    /**
+     * Performs the declare extended stats fields step.
+     *
+     * @param objectParser the object parser
+     */
     protected static void declareExtendedStatsFields(ObjectParser<? extends ParsedExtendedStats, Void> objectParser) {
         declareAggregationFields(objectParser);
         declareStatsFields(objectParser);
@@ -440,6 +495,13 @@ public class ParsedExtendedStats extends ParsedStats implements ExtendedStats {
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedExtendedStats fromXContent(XContentParser parser, final String name) {
         ParsedExtendedStats parsedStats = PARSER.apply(parser, null);
         parsedStats.setName(name);

@@ -55,12 +55,22 @@ public interface Writeable {
      * @opensearch.internal
      */
     class WriteableRegistry {
+        /**
+         * Creates a new WriteableRegistry.
+         */
+        WriteableRegistry() {
+        }
+
         private static final Map<Class<?>, Writer<?>> WRITER_REGISTRY = new ConcurrentHashMap<>();
         private static final Map<Class<?>, Class<?>> WRITER_CUSTOM_CLASS_MAP = new ConcurrentHashMap<>();
         private static final Map<Byte, Reader<?>> READER_REGISTRY = new ConcurrentHashMap<>();
 
         /**
          * Returns the registered writer keyed by the class type
+         *
+         * @param <W> the w type
+         * @param clazz the class
+         * @return the writer
          */
         @SuppressWarnings("unchecked")
         public static <W extends Writer<?>> W getWriter(final Class<?> clazz) {
@@ -69,12 +79,22 @@ public interface Writeable {
 
         /**
          * Returns the registered reader keyed by the unique ordinal
+         *
+         * @param <R> the result type
+         * @param b the b
+         * @return the reader
          */
         @SuppressWarnings("unchecked")
         public static <R extends Reader<?>> R getReader(final byte b) {
             return (R) READER_REGISTRY.get(b);
         }
 
+        /**
+         * Returns the custom class from instance.
+         *
+         * @param value the value
+         * @return the custom class from instance
+         */
         public static Class<?> getCustomClassFromInstance(final Object value) {
             if (value == null) {
                 throw new IllegalArgumentException("Attempting to retrieve a class type from a null value");
@@ -93,6 +113,9 @@ public interface Writeable {
 
     /**
      * Write this into the {@linkplain StreamOutput}.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     void writeTo(StreamOutput out) throws IOException;
 
@@ -111,6 +134,7 @@ public interface Writeable {
      * }
      * </code></pre>
      *
+     * @param <V> the value type
      * @opensearch.api
      */
     @FunctionalInterface
@@ -122,6 +146,7 @@ public interface Writeable {
          *
          * @param out Output to write the {@code value} too
          * @param value The value to add
+         * @throws IOException if an I/O error occurs
          */
         void write(final StreamOutput out, V value) throws IOException;
     }
@@ -140,6 +165,7 @@ public interface Writeable {
      * }
      * </code></pre>
      *
+     * @param <V> the value type
      * @opensearch.api
      */
     @FunctionalInterface
@@ -150,6 +176,8 @@ public interface Writeable {
          * Read {@code V}-type value from a stream.
          *
          * @param in Input to read the value from
+         * @return this instance
+         * @throws IOException if an I/O error occurs
          */
         V read(final StreamInput in) throws IOException;
     }

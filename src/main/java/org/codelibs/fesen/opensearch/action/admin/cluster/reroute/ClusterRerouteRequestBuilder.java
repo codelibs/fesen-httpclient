@@ -47,6 +47,12 @@ public class ClusterRerouteRequestBuilder extends AcknowledgedRequestBuilder<
     ClusterRerouteRequest,
     ClusterRerouteResponse,
     ClusterRerouteRequestBuilder> {
+    /**
+     * Creates a new ClusterRerouteRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterRerouteRequestBuilder(OpenSearchClient client, ClusterRerouteAction action) {
         super(client, action, new ClusterRerouteRequest());
     }

@@ -35,13 +35,36 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public class WeightedRoutingMetadata extends AbstractNamedDiffable<Metadata.Custom> implements Metadata.Custom {
+    /**
+     * The TYPE constant.
+     */
     public static final String TYPE = "weighted_shard_routing";
+    /**
+     * The AWARENESS constant.
+     */
     public static final String AWARENESS = "awareness";
+    /**
+     * The VERSION constant.
+     */
     public static final String VERSION = "_version";
+    /**
+     * The INITIAL_VERSION constant.
+     */
     public static final long INITIAL_VERSION = -1;
+    /**
+     * The VERSION_UNSET_VALUE constant.
+     */
     public static final long VERSION_UNSET_VALUE = -2;
+    /**
+     * The WEIGHED_AWAY_WEIGHT constant.
+     */
     public static final int WEIGHED_AWAY_WEIGHT = 0;
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long getVersion() {
         return version;
     }
@@ -49,15 +72,32 @@ public class WeightedRoutingMetadata extends AbstractNamedDiffable<Metadata.Cust
     private long version;
     private WeightedRouting weightedRouting;
 
+    /**
+     * Returns the weighted routing.
+     *
+     * @return the weighted routing
+     */
     public WeightedRouting getWeightedRouting() {
         return weightedRouting;
     }
 
+    /**
+     * Sets the weighted routing.
+     *
+     * @param weightedRouting the weighted routing
+     * @return this instance
+     */
     public WeightedRoutingMetadata setWeightedRouting(WeightedRouting weightedRouting) {
         this.weightedRouting = weightedRouting;
         return this;
     }
 
+    /**
+     * Creates a new WeightedRoutingMetadata.
+     *
+     * @param weightedRouting the weighted routing
+     * @param version the version
+     */
     public WeightedRoutingMetadata(WeightedRouting weightedRouting, long version) {
         this.weightedRouting = weightedRouting;
         this.version = version;
@@ -86,10 +126,24 @@ public class WeightedRoutingMetadata extends AbstractNamedDiffable<Metadata.Cust
         }
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static NamedDiff<Metadata.Custom> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(Metadata.Custom.class, TYPE, in);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static WeightedRoutingMetadata fromXContent(XContentParser parser) throws IOException {
         String attrKey = null;
         Double attrValue;
@@ -170,6 +224,14 @@ public class WeightedRoutingMetadata extends AbstractNamedDiffable<Metadata.Cust
         return builder;
     }
 
+    /**
+     * Writes this instance to the given content builder.
+     *
+     * @param weightedRouting the weighted routing
+     * @param builder the content builder
+     * @param version the version
+     * @throws IOException if an I/O error occurs
+     */
     public static void toXContent(WeightedRouting weightedRouting, XContentBuilder builder, long version) throws IOException {
         builder.startObject(AWARENESS);
         if (weightedRouting.isSet()) {

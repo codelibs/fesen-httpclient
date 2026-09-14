@@ -37,10 +37,16 @@ import org.apache.lucene.util.PriorityQueue;
 /**
  * Priority queue for computing bucket significance
  *
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public class BucketSignificancePriorityQueue<B extends SignificantTerms.Bucket> extends PriorityQueue<B> {
 
+    /**
+     * Creates a new BucketSignificancePriorityQueue.
+     *
+     * @param size the size
+     */
     public BucketSignificancePriorityQueue(int size) {
         super(size);
     }

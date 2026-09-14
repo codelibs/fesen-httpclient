@@ -65,7 +65,13 @@ public abstract class PipelineAggregationBuilder
         ToXContentFragment,
         Rewriteable<PipelineAggregationBuilder> {
 
+    /**
+     * The name.
+     */
     protected final String name;
+    /**
+     * The buckets paths.
+     */
     protected final String[] bucketsPaths;
 
     /**
@@ -73,6 +79,7 @@ public abstract class PipelineAggregationBuilder
      *
      * @param name
      *            The aggregation name
+     * @param bucketsPaths the buckets paths
      */
     protected PipelineAggregationBuilder(String name, String[] bucketsPaths) {
         if (name == null) {
@@ -85,18 +92,28 @@ public abstract class PipelineAggregationBuilder
         this.bucketsPaths = bucketsPaths;
     }
 
-    /** Return this aggregation's name. */
+    /**
+     * Return this aggregation's name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
-    /** Return the consumed buckets paths. */
+    /**
+     * Return the consumed buckets paths.
+     *
+     * @return the buckets paths
+     */
     public final String[] getBucketsPaths() {
         return bucketsPaths;
     }
 
     /**
      * Makes sure this builder is properly configured.
+     *
+     * @param context the context
      */
     protected abstract void validate(ValidationContext context);
 
@@ -108,6 +125,11 @@ public abstract class PipelineAggregationBuilder
     public abstract static class ValidationContext {
         /**
          * Build the context for the root of the aggregation tree.
+         *
+         * @param siblingAggregations the sibling aggregations
+         * @param siblingPipelineAggregations the sibling pipeline aggregations
+         * @param validationFailuresSoFar the validation failures so far
+         * @return the for tree root
          */
         public static ValidationContext forTreeRoot(
             Collection<AggregationBuilder> siblingAggregations,
@@ -119,6 +141,10 @@ public abstract class PipelineAggregationBuilder
 
         /**
          * Build the context for a node inside the aggregation tree.
+         *
+         * @param parent the parent
+         * @param validationFailuresSoFar the validation failures so far
+         * @return the for inside tree
          */
         public static ValidationContext forInsideTree(AggregationBuilder parent, ActionRequestValidationException validationFailuresSoFar) {
             return new ForInsideTree(parent, validationFailuresSoFar);
@@ -225,11 +251,15 @@ public abstract class PipelineAggregationBuilder
 
         /**
          * Aggregations that are siblings to the aggregation being validated.
+         *
+         * @return the sibling aggregations
          */
         public abstract Collection<AggregationBuilder> getSiblingAggregations();
 
         /**
          * Pipeline aggregations that are siblings to the aggregation being validated.
+         *
+         * @return the sibling pipeline aggregations
          */
         public abstract Collection<PipelineAggregationBuilder> getSiblingPipelineAggregations();
 
@@ -238,6 +268,8 @@ public abstract class PipelineAggregationBuilder
          * are accumulated in a list and, if there are any, the request
          * is not executed and the entire list is returned as the error
          * response.
+         *
+         * @param error the error
          */
         public void addValidationError(String error) {
             e = ValidateActions.addValidationError(error, e);
@@ -245,6 +277,8 @@ public abstract class PipelineAggregationBuilder
 
         /**
          * Add a validation error about the {@code buckets_path}.
+         *
+         * @param error the error
          */
         public void addBucketPathValidationError(String error) {
             addValidationError(PipelineAggregator.Parser.BUCKETS_PATH.getPreferredName() + ' ' + error);
@@ -252,11 +286,17 @@ public abstract class PipelineAggregationBuilder
 
         /**
          * Validates that there <strong>is</strong> a parent aggregation.
+         *
+         * @param type the type
+         * @param name the name
          */
         public abstract void validateHasParent(String type, String name);
 
         /**
          * Validates that the parent is sequentially ordered.
+         *
+         * @param type the type
+         * @param name the name
          */
         public abstract void validateParentAggSequentiallyOrdered(String type, String name);
 
@@ -264,6 +304,8 @@ public abstract class PipelineAggregationBuilder
          * The validation exception, if there is one. It'll be {@code null}
          * if the context wasn't provided with any exception on creation
          * and none were added.
+         *
+         * @return the validation exception
          */
         public ActionRequestValidationException getValidationException() {
             return e;

@@ -118,6 +118,9 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
         }
     );
 
+    /**
+     * The SHARD_PARSER constant.
+     */
     public static final ObjectParser.NamedObjectParser<ClusterShardHealth, String> SHARD_PARSER = (
         XContentParser p,
         String indexIgnored,
@@ -148,6 +151,12 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
     private final ClusterHealthStatus status;
     private final Map<Integer, ClusterShardHealth> shards;
 
+    /**
+     * Creates a new ClusterIndexHealth.
+     *
+     * @param indexMetadata the index metadata
+     * @param indexRoutingTable the index routing table
+     */
     public ClusterIndexHealth(final IndexMetadata indexMetadata, final IndexRoutingTable indexRoutingTable) {
         this.index = indexMetadata.getIndex().getName();
         this.numberOfShards = indexMetadata.getNumberOfShards();
@@ -192,6 +201,13 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
         this.delayedUnassignedShards = computeDelayedUnassignedShards;
     }
 
+    /**
+     * Creates a new ClusterIndexHealth.
+     *
+     * @param indexMetadata the index metadata
+     * @param indexRoutingTable the index routing table
+     * @param healthLevel the health level
+     */
     public ClusterIndexHealth(
         final IndexMetadata indexMetadata,
         final IndexRoutingTable indexRoutingTable,
@@ -291,6 +307,13 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
 
     }
 
+    /**
+     * Returns the index health status.
+     *
+     * @param shardHealth the shard health
+     * @param computeStatus the compute status
+     * @return the index health status
+     */
     public static ClusterHealthStatus getIndexHealthStatus(ClusterHealthStatus shardHealth, ClusterHealthStatus computeStatus) {
         switch (shardHealth) {
             case RED:
@@ -307,6 +330,12 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
         }
     }
 
+    /**
+     * Creates a new ClusterIndexHealth.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterIndexHealth(final StreamInput in) throws IOException {
         index = in.readString();
         numberOfShards = in.readVInt();
@@ -353,42 +382,92 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
         this.shards = shards;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return index;
     }
 
+    /**
+     * Returns the number of shards.
+     *
+     * @return the number of shards
+     */
     public int getNumberOfShards() {
         return numberOfShards;
     }
 
+    /**
+     * Returns the number of replicas.
+     *
+     * @return the number of replicas
+     */
     public int getNumberOfReplicas() {
         return numberOfReplicas;
     }
 
+    /**
+     * Returns the active shards.
+     *
+     * @return the active shards
+     */
     public int getActiveShards() {
         return activeShards;
     }
 
+    /**
+     * Returns the relocating shards.
+     *
+     * @return the relocating shards
+     */
     public int getRelocatingShards() {
         return relocatingShards;
     }
 
+    /**
+     * Returns the active primary shards.
+     *
+     * @return the active primary shards
+     */
     public int getActivePrimaryShards() {
         return activePrimaryShards;
     }
 
+    /**
+     * Returns the initializing shards.
+     *
+     * @return the initializing shards
+     */
     public int getInitializingShards() {
         return initializingShards;
     }
 
+    /**
+     * Returns the unassigned shards.
+     *
+     * @return the unassigned shards
+     */
     public int getUnassignedShards() {
         return unassignedShards;
     }
 
+    /**
+     * Returns the delayed unassigned shards.
+     *
+     * @return the delayed unassigned shards
+     */
     public int getDelayedUnassignedShards() {
         return delayedUnassignedShards;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public ClusterHealthStatus getStatus() {
         return status;
     }
@@ -435,6 +514,13 @@ public final class ClusterIndexHealth implements Iterable<ClusterShardHealth>, W
         return builder;
     }
 
+    /**
+     * Returns the inner from XContent.
+     *
+     * @param parser the parser
+     * @param index the index
+     * @return the inner from XContent
+     */
     public static ClusterIndexHealth innerFromXContent(XContentParser parser, String index) {
         return PARSER.apply(parser, index);
     }

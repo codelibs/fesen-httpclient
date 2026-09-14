@@ -58,6 +58,13 @@ public class UpdateResponse extends DocWriteResponse {
 
     private GetResult getResult;
 
+    /**
+     * Creates a new UpdateResponse.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public UpdateResponse(ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         if (in.readBoolean()) {
@@ -65,6 +72,12 @@ public class UpdateResponse extends DocWriteResponse {
         }
     }
 
+    /**
+     * Creates a new UpdateResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public UpdateResponse(StreamInput in) throws IOException {
         super(in);
         if (in.readBoolean()) {
@@ -75,20 +88,48 @@ public class UpdateResponse extends DocWriteResponse {
     /**
      * Constructor to be used when a update didn't translate in a write.
      * For example: update script with operation set to none
+     *
+     * @param shardId the shard identifier
+     * @param id the identifier
+     * @param seqNo the seq no
+     * @param primaryTerm the primary term
+     * @param version the version
+     * @param result the result
      */
     public UpdateResponse(ShardId shardId, String id, long seqNo, long primaryTerm, long version, Result result) {
         this(new ShardInfo(0, 0), shardId, id, seqNo, primaryTerm, version, result);
     }
 
+    /**
+     * Creates a new UpdateResponse.
+     *
+     * @param shardInfo the shard info
+     * @param shardId the shard identifier
+     * @param id the identifier
+     * @param seqNo the seq no
+     * @param primaryTerm the primary term
+     * @param version the version
+     * @param result the result
+     */
     public UpdateResponse(ShardInfo shardInfo, ShardId shardId, String id, long seqNo, long primaryTerm, long version, Result result) {
         super(shardId, id, seqNo, primaryTerm, version, result);
         setShardInfo(shardInfo);
     }
 
+    /**
+     * Sets the get result.
+     *
+     * @param getResult the get result
+     */
     public void setGetResult(GetResult getResult) {
         this.getResult = getResult;
     }
 
+    /**
+     * Returns the get result.
+     *
+     * @return the get result
+     */
     public GetResult getGetResult() {
         return this.getResult;
     }
@@ -146,6 +187,10 @@ public class UpdateResponse extends DocWriteResponse {
 
     /**
      * Parse the current token and update the parsing context appropriately.
+     *
+     * @param parser the parser
+     * @param context the context
+     * @throws IOException if an I/O error occurs
      */
     public static void parseXContentFields(XContentParser parser, Builder context) throws IOException {
         XContentParser.Token token = parser.currentToken();
@@ -169,9 +214,19 @@ public class UpdateResponse extends DocWriteResponse {
      */
     @PublicApi(since = "1.0.0")
     public static class Builder extends DocWriteResponse.Builder {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
 
         private GetResult getResult = null;
 
+        /**
+         * Sets the get result.
+         *
+         * @param getResult the get result
+         */
         public void setGetResult(GetResult getResult) {
             this.getResult = getResult;
         }

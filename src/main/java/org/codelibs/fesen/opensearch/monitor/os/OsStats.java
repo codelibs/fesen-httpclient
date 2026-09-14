@@ -76,6 +76,12 @@ public class OsStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param timestamp the timestamp
+     * @param cpu the CPU
+     * @param mem the mem
+     * @param swap the swap
+     * @param cgroup the cgroup
      */
     @Deprecated
     public OsStats(final long timestamp, final Cpu cpu, final Mem mem, final Swap swap, final Cgroup cgroup) {
@@ -86,6 +92,12 @@ public class OsStats implements Writeable, ToXContentFragment {
         this.cgroup = cgroup;
     }
 
+    /**
+     * Creates a new OsStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public OsStats(StreamInput in) throws IOException {
         this.timestamp = in.readVLong();
         this.cpu = new Cpu(in);
@@ -103,14 +115,29 @@ public class OsStats implements Writeable, ToXContentFragment {
         out.writeOptionalWriteable(cgroup);
     }
 
+    /**
+     * Returns the timestamp.
+     *
+     * @return the timestamp
+     */
     public long getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Returns the CPU.
+     *
+     * @return the CPU
+     */
     public Cpu getCpu() {
         return cpu;
     }
 
+    /**
+     * Returns the mem.
+     *
+     * @return the mem
+     */
     public Mem getMem() {
         return mem;
     }
@@ -149,28 +176,61 @@ public class OsStats implements Writeable, ToXContentFragment {
         private Swap swap = null;
         private Cgroup cgroup = null;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the timestamp.
+         *
+         * @param timestamp the timestamp
+         * @return the timestamp
+         */
         public Builder timestamp(long timestamp) {
             this.timestamp = timestamp;
             return this;
         }
 
+        /**
+         * Returns the CPU.
+         *
+         * @param cpu the CPU
+         * @return the CPU
+         */
         public Builder cpu(Cpu cpu) {
             this.cpu = cpu;
             return this;
         }
 
+        /**
+         * Returns the mem.
+         *
+         * @param mem the mem
+         * @return the mem
+         */
         public Builder mem(Mem mem) {
             this.mem = mem;
             return this;
         }
 
+        /**
+         * Swaps this instance.
+         *
+         * @param swap the swap
+         * @return this instance
+         */
         public Builder swap(Swap swap) {
             this.swap = swap;
             return this;
         }
 
+        /**
+         * Returns the cgroup.
+         *
+         * @param cgroup the cgroup
+         * @return the cgroup
+         */
         public Builder cgroup(Cgroup cgroup) {
             this.cgroup = cgroup;
             return this;
@@ -210,11 +270,23 @@ public class OsStats implements Writeable, ToXContentFragment {
         private final short percent;
         private final double[] loadAverage;
 
+        /**
+         * Creates a new Cpu.
+         *
+         * @param systemCpuPercent the system CPU percent
+         * @param systemLoadAverage the system load average
+         */
         public Cpu(short systemCpuPercent, double[] systemLoadAverage) {
             this.percent = systemCpuPercent;
             this.loadAverage = systemLoadAverage;
         }
 
+        /**
+         * Creates a new Cpu by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Cpu(StreamInput in) throws IOException {
             this.percent = in.readShort();
             if (in.readBoolean()) {
@@ -235,10 +307,20 @@ public class OsStats implements Writeable, ToXContentFragment {
             }
         }
 
+        /**
+         * Returns the percent.
+         *
+         * @return the percent
+         */
         public short getPercent() {
             return percent;
         }
 
+        /**
+         * Returns the load average.
+         *
+         * @return the load average
+         */
         public double[] getLoadAverage() {
             return loadAverage;
         }
@@ -278,6 +360,12 @@ public class OsStats implements Writeable, ToXContentFragment {
         private final long total;
         private final long free;
 
+        /**
+         * Creates a new Swap.
+         *
+         * @param total the total
+         * @param free the free
+         */
         public Swap(long total, long free) {
             assert total >= 0 : "expected total swap to be positive, got: " + total;
             assert free >= 0 : "expected free swap to be positive, got: " + total;
@@ -285,6 +373,12 @@ public class OsStats implements Writeable, ToXContentFragment {
             this.free = free;
         }
 
+        /**
+         * Creates a new Swap by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Swap(StreamInput in) throws IOException {
             this.total = in.readLong();
             assert total >= 0 : "expected total swap to be positive, got: " + total;
@@ -298,10 +392,20 @@ public class OsStats implements Writeable, ToXContentFragment {
             out.writeLong(free);
         }
 
+        /**
+         * Returns the free.
+         *
+         * @return the free
+         */
         public ByteSizeValue getFree() {
             return new ByteSizeValue(free);
         }
 
+        /**
+         * Returns the used.
+         *
+         * @return the used
+         */
         public ByteSizeValue getUsed() {
             if (total == 0) {
                 // The work in https://github.com/elastic/elasticsearch/pull/42725 established that total memory
@@ -319,6 +423,11 @@ public class OsStats implements Writeable, ToXContentFragment {
             return new ByteSizeValue(total - free);
         }
 
+        /**
+         * Returns the total.
+         *
+         * @return the total
+         */
         public ByteSizeValue getTotal() {
             return new ByteSizeValue(total);
         }
@@ -347,6 +456,12 @@ public class OsStats implements Writeable, ToXContentFragment {
         private final long total;
         private final long free;
 
+        /**
+         * Creates a new Mem.
+         *
+         * @param total the total
+         * @param free the free
+         */
         public Mem(long total, long free) {
             assert total >= 0 : "expected total memory to be positive, got: " + total;
             assert free >= 0 : "expected free memory to be positive, got: " + total;
@@ -354,6 +469,12 @@ public class OsStats implements Writeable, ToXContentFragment {
             this.free = free;
         }
 
+        /**
+         * Creates a new Mem by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Mem(StreamInput in) throws IOException {
             this.total = in.readLong();
             assert total >= 0 : "expected total memory to be positive, got: " + total;
@@ -367,10 +488,20 @@ public class OsStats implements Writeable, ToXContentFragment {
             out.writeLong(free);
         }
 
+        /**
+         * Returns the total.
+         *
+         * @return the total
+         */
         public ByteSizeValue getTotal() {
             return new ByteSizeValue(total);
         }
 
+        /**
+         * Returns the used.
+         *
+         * @return the used
+         */
         public ByteSizeValue getUsed() {
             if (total == 0) {
                 // The work in https://github.com/elastic/elasticsearch/pull/42725 established that total memory
@@ -387,14 +518,29 @@ public class OsStats implements Writeable, ToXContentFragment {
             return new ByteSizeValue(total - free);
         }
 
+        /**
+         * Returns the used percent.
+         *
+         * @return the used percent
+         */
         public short getUsedPercent() {
             return calculatePercentage(getUsed().getBytes(), total);
         }
 
+        /**
+         * Returns the free.
+         *
+         * @return the free
+         */
         public ByteSizeValue getFree() {
             return new ByteSizeValue(free);
         }
 
+        /**
+         * Returns the free percent.
+         *
+         * @return the free percent
+         */
         public short getFreePercent() {
             return calculatePercentage(free, total);
         }
@@ -431,6 +577,19 @@ public class OsStats implements Writeable, ToXContentFragment {
         private final String memoryLimitInBytes;
         private final String memoryUsageInBytes;
 
+        /**
+         * Creates a new Cgroup.
+         *
+         * @param cpuAcctControlGroup the CPU acct control group
+         * @param cpuAcctUsageNanos the CPU acct usage nanoseconds
+         * @param cpuControlGroup the CPU control group
+         * @param cpuCfsPeriodMicros the CPU cfs period micros
+         * @param cpuCfsQuotaMicros the CPU cfs quota micros
+         * @param cpuStat the CPU stat
+         * @param memoryControlGroup the memory control group
+         * @param memoryLimitInBytes the memory limit in bytes
+         * @param memoryUsageInBytes the memory usage in bytes
+         */
         public Cgroup(
             final String cpuAcctControlGroup,
             final long cpuAcctUsageNanos,
@@ -526,6 +685,13 @@ public class OsStats implements Writeable, ToXContentFragment {
             private final long numberOfTimesThrottled;
             private final long timeThrottledNanos;
 
+            /**
+             * Creates a new CpuStat.
+             *
+             * @param numberOfElapsedPeriods the number of elapsed periods
+             * @param numberOfTimesThrottled the number of times throttled
+             * @param timeThrottledNanos the time throttled nanoseconds
+             */
             public CpuStat(final long numberOfElapsedPeriods, final long numberOfTimesThrottled, final long timeThrottledNanos) {
                 this.numberOfElapsedPeriods = numberOfElapsedPeriods;
                 this.numberOfTimesThrottled = numberOfTimesThrottled;
@@ -561,6 +727,13 @@ public class OsStats implements Writeable, ToXContentFragment {
 
     }
 
+    /**
+     * Calculates the percentage.
+     *
+     * @param used the used
+     * @param max the max
+     * @return the percentage
+     */
     public static short calculatePercentage(long used, long max) {
         return max <= 0 ? 0 : (short) (Math.round((100d * used) / max));
     }

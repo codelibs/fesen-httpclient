@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClusterStateAction extends ActionType<ClusterStateResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClusterStateAction INSTANCE = new ClusterStateAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/state";
 
     private ClusterStateAction() {

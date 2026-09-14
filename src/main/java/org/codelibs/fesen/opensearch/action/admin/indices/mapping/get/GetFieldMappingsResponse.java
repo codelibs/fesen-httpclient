@@ -136,7 +136,11 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
         mappings = unmodifiableMap(indexMapBuilder);
     }
 
-    /** returns the retrieved field mapping. The return map keys are index, type, field (as specified in the request). */
+    /**
+     * returns the retrieved field mapping. The return map keys are index, type, field (as specified in the request).
+     *
+     * @return the mappings
+     */
     public Map<String, Map<String, FieldMappingMetadata>> mappings() {
         return mappings;
     }
@@ -197,20 +201,42 @@ public class GetFieldMappingsResponse extends ActionResponse implements ToXConte
         private final String fullName;
         private final BytesReference source;
 
+        /**
+         * Creates a new FieldMappingMetadata.
+         *
+         * @param fullName the full name
+         * @param source the source
+         */
         public FieldMappingMetadata(String fullName, BytesReference source) {
             this.fullName = fullName;
             this.source = source;
         }
 
+        /**
+         * Returns the full name.
+         *
+         * @return the full name
+         */
         public String fullName() {
             return fullName;
         }
 
-        /** Returns the mappings as a map. Note that the returned map has a single key which is always the field's name. */
+        /**
+         * Returns the mappings as a map. Note that the returned map has a single key which is always the field's name.
+         *
+         * @return the source as map
+         */
         public Map<String, Object> sourceAsMap() {
             return XContentHelper.convertToMap(source, true, MediaTypeRegistry.JSON).v2();
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static FieldMappingMetadata fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }

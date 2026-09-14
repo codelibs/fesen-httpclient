@@ -21,6 +21,8 @@ public final class RequestUtils {
 
     /**
      * Generates a new ID field for new documents.
+     *
+     * @return the generate identifier
      */
     public static String generateID() {
         return UUIDs.base64UUID();
@@ -29,6 +31,9 @@ public final class RequestUtils {
     /**
      * Validate whether X-Request-Id is valid or not.
      * The request ID must be non-empty and not exceed the configured maximum length.
+     *
+     * @param requestId the request identifier
+     * @param maxLength the max length
      */
     public static void validateRequestId(String requestId, int maxLength) {
         if (requestId == null || requestId.isBlank()) {

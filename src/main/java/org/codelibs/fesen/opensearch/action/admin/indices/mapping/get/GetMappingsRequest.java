@@ -47,6 +47,9 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class GetMappingsRequest extends ClusterInfoRequest<GetMappingsRequest> {
 
+    /**
+     * Creates a new GetMappingsRequest.
+     */
     public GetMappingsRequest() {}
 
     @Override

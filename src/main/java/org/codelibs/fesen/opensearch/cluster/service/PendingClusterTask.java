@@ -59,6 +59,12 @@ public class PendingClusterTask implements Writeable {
     private boolean executing;
     private long timeInExecution;
 
+    /**
+     * Creates a new PendingClusterTask by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     @InternalApi
     public PendingClusterTask(StreamInput in) throws IOException {
         insertOrder = in.readVLong();
@@ -71,6 +77,16 @@ public class PendingClusterTask implements Writeable {
         }
     }
 
+    /**
+     * Creates a new PendingClusterTask.
+     *
+     * @param insertOrder the insert order
+     * @param priority the priority
+     * @param source the source
+     * @param timeInQueue the time in queue
+     * @param executing the executing
+     * @param timeInExecution the time in execution
+     */
     @InternalApi
     public PendingClusterTask(long insertOrder, Priority priority, Text source, long timeInQueue, boolean executing, long timeInExecution) {
         assert timeInQueue >= 0 : "got a negative timeInQueue [" + timeInQueue + "]";
@@ -84,34 +100,74 @@ public class PendingClusterTask implements Writeable {
         this.timeInExecution = timeInExecution;
     }
 
+    /**
+     * Returns the insert order.
+     *
+     * @return the insert order
+     */
     public long getInsertOrder() {
         return insertOrder;
     }
 
+    /**
+     * Returns the priority.
+     *
+     * @return the priority
+     */
     public Priority getPriority() {
         return priority;
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public Text getSource() {
         return source;
     }
 
+    /**
+     * Returns the time in queue in milliseconds.
+     *
+     * @return the time in queue in milliseconds
+     */
     public long getTimeInQueueInMillis() {
         return timeInQueue;
     }
 
+    /**
+     * Returns the time in execution in milliseconds.
+     *
+     * @return the time in execution in milliseconds
+     */
     public long getTimeInExecutionInMillis() {
         return timeInExecution;
     }
 
+    /**
+     * Returns the time in queue.
+     *
+     * @return the time in queue
+     */
     public TimeValue getTimeInQueue() {
         return new TimeValue(getTimeInQueueInMillis());
     }
 
+    /**
+     * Returns the time in execution.
+     *
+     * @return the time in execution
+     */
     public TimeValue getTimeInExecution() {
         return new TimeValue(getTimeInExecutionInMillis());
     }
 
+    /**
+     * Returns the executing flag.
+     *
+     * @return the executing flag
+     */
     public boolean isExecuting() {
         return executing;
     }

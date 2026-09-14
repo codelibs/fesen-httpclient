@@ -43,6 +43,12 @@ import java.io.IOException;
  */
 public class TaskCancelledException extends OpenSearchException {
 
+    /**
+     * Creates a new TaskCancelledException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TaskCancelledException(StreamInput in) throws IOException {
         super(in);
     }

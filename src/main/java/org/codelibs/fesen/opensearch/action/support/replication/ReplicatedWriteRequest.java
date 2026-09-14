@@ -46,6 +46,7 @@ import java.io.IOException;
  * Requests that are both {@linkplain ReplicationRequest}s (run on a shard's primary first, then the replica) and {@linkplain WriteRequest}
  * (modify documents on a shard), for example {@code BulkShardRequest}, {@link IndexRequest}, and {@link DeleteRequest}.
  *
+ * @param <R> the result type
  * @opensearch.internal
  */
 public abstract class ReplicatedWriteRequest<R extends ReplicatedWriteRequest<R>> extends ReplicationRequest<R> implements WriteRequest<R> {
@@ -53,12 +54,21 @@ public abstract class ReplicatedWriteRequest<R extends ReplicatedWriteRequest<R>
 
     /**
      * Constructor for thin deserialization.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public ReplicatedWriteRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         refreshPolicy = RefreshPolicy.readFrom(in);
     }
 
+    /**
+     * Creates a new ReplicatedWriteRequest.
+     *
+     * @param shardId the shard identifier
+     */
     public ReplicatedWriteRequest(@Nullable ShardId shardId) {
         super(shardId);
     }

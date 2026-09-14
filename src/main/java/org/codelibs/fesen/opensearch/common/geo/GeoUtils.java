@@ -66,15 +66,33 @@ public class GeoUtils {
     /** Minimum valid longitude in degrees. */
     public static final double MIN_LON = -180.0;
 
+    /**
+     * The LATITUDE constant.
+     */
     public static final String LATITUDE = "lat";
+    /**
+     * The LONGITUDE constant.
+     */
     public static final String LONGITUDE = "lon";
+    /**
+     * The GEOHASH constant.
+     */
     public static final String GEOHASH = "geohash";
 
+    /**
+     * The GEOJSON_TYPE constant.
+     */
     public static final String GEOJSON_TYPE = "type";
+    /**
+     * The GEOJSON_COORDS constant.
+     */
     public static final String GEOJSON_COORDS = "coordinates";
 
     /**  Error messages for WKT parsing */
     public static final String WKT_BOUNDING_BOX_PARSE_ERROR = "failed to parse WKT bounding box";
+    /**
+     * The WKT_BOUNDING_BOX_TYPE_ERROR constant.
+     */
     public static final String WKT_BOUNDING_BOX_TYPE_ERROR = "failed to parse WKT bounding box. [%s] found. expected [%s]";
     /** Earth ellipsoid major axis defined by WGS 84 in meters */
 
@@ -82,7 +100,12 @@ public class GeoUtils {
 
     /** Earth mean radius defined by WGS 84 in meters */
 
-    /** Returns true if latitude is actually a valid latitude value.*/
+    /**
+     * Returns true if latitude is actually a valid latitude value.
+     *
+     * @param latitude the latitude
+     * @return the valid latitude flag
+     */
     public static boolean isValidLatitude(double latitude) {
         if (Double.isNaN(latitude) || Double.isInfinite(latitude) || latitude < GeoUtils.MIN_LAT || latitude > GeoUtils.MAX_LAT) {
             return false;
@@ -90,7 +113,12 @@ public class GeoUtils {
         return true;
     }
 
-    /** Returns true if longitude is actually a valid longitude value. */
+    /**
+     * Returns true if longitude is actually a valid longitude value.
+     *
+     * @param longitude the longitude
+     * @return the valid longitude flag
+     */
     public static boolean isValidLongitude(double longitude) {
         if (Double.isNaN(longitude) || Double.isInfinite(longitude) || longitude < GeoUtils.MIN_LON || longitude > GeoUtils.MAX_LON) {
             return false;
@@ -135,6 +163,13 @@ public class GeoUtils {
         point.reset(pt[1], pt[0]);
     }
 
+    /**
+     * Normalizes the point.
+     *
+     * @param lonLat the lon lat
+     * @param normLon the norm lon
+     * @param normLat the norm lat
+     */
     public static void normalizePoint(double[] lonLat, boolean normLon, boolean normLat) {
         assert lonLat != null && lonLat.length == 2;
 
@@ -168,6 +203,13 @@ public class GeoUtils {
         }
     }
 
+    /**
+     * Returns the centered modulus.
+     *
+     * @param dividend the dividend
+     * @param divisor the divisor
+     * @return the centered modulus
+     */
     public static double centeredModulus(double dividend, double divisor) {
         double rtn = dividend % divisor;
         if (rtn <= 0) {
@@ -184,11 +226,20 @@ public class GeoUtils {
      *
      * @param parser {@link XContentParser} to parse the value from
      * @return new {@link GeoPoint} parsed from the parse
+     * @throws IOException if an I/O error occurs
      */
     public static GeoPoint parseGeoPoint(XContentParser parser) throws IOException, OpenSearchParseException {
         return parseGeoPoint(parser, new GeoPoint());
     }
 
+    /**
+     * Parses the geo point.
+     *
+     * @param parser the parser
+     * @param point the point
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point) throws IOException, OpenSearchParseException {
         return parseGeoPoint(parser, point, false);
     }
@@ -199,15 +250,33 @@ public class GeoUtils {
      * @opensearch.internal
      */
     public enum EffectivePoint {
+        /**
+         * The TOP_LEFT value.
+         */
         TOP_LEFT,
+        /**
+         * The TOP_RIGHT value.
+         */
         TOP_RIGHT,
+        /**
+         * The BOTTOM_LEFT value.
+         */
         BOTTOM_LEFT,
+        /**
+         * The bottom right.
+         */
         BOTTOM_RIGHT
     }
 
     /**
      * Parse a geopoint represented as an object, string or an array. If the geopoint is represented as a geohash,
      * the left bottom corner of the geohash cell is used as the geopoint coordinates.GeoBoundingBoxQueryBuilder.java
+     *
+     * @param parser the parser
+     * @param point the point
+     * @param ignoreZValue the ignore z value
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static GeoPoint parseGeoPoint(XContentParser parser, GeoPoint point, final boolean ignoreZValue) throws IOException,
         OpenSearchParseException {
@@ -232,6 +301,7 @@ public class GeoUtils {
      * @param ignoreZValue tells to ignore z value or throw exception when there is a z value
      * @param effectivePoint tells which point to use for GeoHash form
      * @return new {@link GeoPoint} parsed from the parse
+     * @throws IOException if an I/O error occurs
      */
     public static GeoPoint parseGeoPoint(
         final XContentParser parser,

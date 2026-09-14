@@ -48,6 +48,12 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class ParsedComposite extends ParsedMultiBucketAggregation<ParsedComposite.ParsedBucket> implements CompositeAggregation {
+    /**
+     * Creates a new ParsedComposite.
+     */
+    public ParsedComposite() {
+    }
+
     private static final ObjectParser<ParsedComposite, Void> PARSER = new ObjectParser<>(
         ParsedComposite.class.getSimpleName(),
         true,
@@ -66,6 +72,14 @@ public class ParsedComposite extends ParsedMultiBucketAggregation<ParsedComposit
 
     private Map<String, Object> afterKey;
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedComposite fromXContent(XContentParser parser, String name) throws IOException {
         ParsedComposite aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -112,6 +126,12 @@ public class ParsedComposite extends ParsedMultiBucketAggregation<ParsedComposit
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements CompositeAggregation.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
+
         private Map<String, Object> key;
 
         @Override

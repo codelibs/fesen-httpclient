@@ -70,6 +70,15 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
     private final ClusterInfo clusterInfo;
     private final ShardAllocationDecision shardAllocationDecision;
 
+    /**
+     * Creates a new ClusterAllocationExplanation.
+     *
+     * @param shardRouting the shard routing
+     * @param currentNode the current node
+     * @param relocationTargetNode the relocation target node
+     * @param clusterInfo the cluster info
+     * @param shardAllocationDecision the shard allocation decision
+     */
     public ClusterAllocationExplanation(
         ShardRouting shardRouting,
         @Nullable DiscoveryNode currentNode,
@@ -84,6 +93,12 @@ public final class ClusterAllocationExplanation implements ToXContentObject, Wri
         this.shardAllocationDecision = shardAllocationDecision;
     }
 
+    /**
+     * Creates a new ClusterAllocationExplanation by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterAllocationExplanation(StreamInput in) throws IOException {
         this.shardRouting = new ShardRouting(in);
         this.currentNode = in.readOptionalWriteable(DiscoveryNode::new);

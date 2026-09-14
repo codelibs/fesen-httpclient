@@ -53,6 +53,9 @@ import static org.codelibs.fesen.opensearch.index.query.SpanQueryBuilder.SpanQue
  * @opensearch.internal
  */
 public class SpanWithinQueryBuilder extends AbstractQueryBuilder<SpanWithinQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_within";
 
     private static final ParseField BIG_FIELD = new ParseField("big");
@@ -79,6 +82,9 @@ public class SpanWithinQueryBuilder extends AbstractQueryBuilder<SpanWithinQuery
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanWithinQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -93,6 +99,8 @@ public class SpanWithinQueryBuilder extends AbstractQueryBuilder<SpanWithinQuery
     }
 
     /**
+     * Returns the little query.
+     *
      * @return the little clause, contained within {@code big} for a match.
      */
     public SpanQueryBuilder littleQuery() {
@@ -100,6 +108,8 @@ public class SpanWithinQueryBuilder extends AbstractQueryBuilder<SpanWithinQuery
     }
 
     /**
+     * Returns the big query.
+     *
      * @return the big clause that must enclose {@code little} for a match.
      */
     public SpanQueryBuilder bigQuery() {
@@ -121,6 +131,13 @@ public class SpanWithinQueryBuilder extends AbstractQueryBuilder<SpanWithinQuery
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanWithinQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
         String queryName = null;

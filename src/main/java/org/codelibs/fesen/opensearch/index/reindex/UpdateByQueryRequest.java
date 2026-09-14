@@ -61,10 +61,18 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
      */
     private String pipeline;
 
+    /**
+     * Creates a new UpdateByQueryRequest.
+     */
     public UpdateByQueryRequest() {
         this(new SearchRequest());
     }
 
+    /**
+     * Creates a new UpdateByQueryRequest.
+     *
+     * @param indices the indices
+     */
     public UpdateByQueryRequest(String... indices) {
         this(new SearchRequest(indices));
     }
@@ -79,6 +87,9 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
 
     /**
      * Set the ingest pipeline to set on index requests made by this action.
+     *
+     * @param pipeline the pipeline
+     * @return this instance
      */
     public UpdateByQueryRequest setPipeline(String pipeline) {
         this.pipeline = pipeline;
@@ -87,6 +98,9 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
 
     /**
      * Set the query for selective update
+     *
+     * @param query the query
+     * @return this instance
      */
     public UpdateByQueryRequest setQuery(QueryBuilder query) {
         if (query != null) {
@@ -97,6 +111,9 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
 
     /**
      * Set routing limiting the process to the shards that match that routing value
+     *
+     * @param routing the routing value
+     * @return this instance
      */
     public UpdateByQueryRequest setRouting(String routing) {
         if (routing != null) {
@@ -107,6 +124,8 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
 
     /**
      * Gets the routing value used for this request
+     *
+     * @return the routing
      */
     public String getRouting() {
         return getSearchRequest().routing();
@@ -114,6 +133,8 @@ public class UpdateByQueryRequest extends AbstractBulkIndexByScrollRequest<Updat
 
     /**
      * Ingest pipeline to set on index requests made by this action.
+     *
+     * @return the pipeline
      */
     public String getPipeline() {
         return pipeline;

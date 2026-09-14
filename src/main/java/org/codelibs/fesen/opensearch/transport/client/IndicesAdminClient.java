@@ -166,51 +166,81 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Indices exists.
+     *
+     * @param indices the indices
+     * @return the prepare exists
      */
     IndicesExistsRequestBuilder prepareExists(String... indices);
 
     /**
      * Indices stats.
+     *
+     * @param request the request
+     * @return the stats
      */
     ActionFuture<IndicesStatsResponse> stats(IndicesStatsRequest request);
 
     /**
      * Indices stats.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void stats(IndicesStatsRequest request, ActionListener<IndicesStatsResponse> listener);
 
     /**
      * Indices stats.
+     *
+     * @param indices the indices
+     * @return the prepare stats
      */
     IndicesStatsRequestBuilder prepareStats(String... indices);
 
     /**
      * Indices recoveries
+     *
+     * @param request the request
+     * @return the recoveries
      */
     ActionFuture<RecoveryResponse> recoveries(RecoveryRequest request);
 
     /**
      *Indices recoveries
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void recoveries(RecoveryRequest request, ActionListener<RecoveryResponse> listener);
 
     /**
      *Indices segment replication
+     *
+     * @param request the request
+     * @return the segment replication stats
      */
     ActionFuture<SegmentReplicationStatsResponse> segmentReplicationStats(SegmentReplicationStatsRequest request);
 
     /**
      *Indices segment replication
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void segmentReplicationStats(SegmentReplicationStatsRequest request, ActionListener<SegmentReplicationStatsResponse> listener);
 
     /**
      * Indices recoveries
+     *
+     * @param indices the indices
+     * @return the prepare recoveries
      */
     RecoveryRequestBuilder prepareRecoveries(String... indices);
 
     /**
      * Indices segment replication
+     *
+     * @param indices the indices
+     * @return the prepare segment replication stats
      */
     SegmentReplicationStatsRequestBuilder prepareSegmentReplicationStats(String... indices);
 
@@ -232,6 +262,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * The segments of one or more indices.
+     *
+     * @param indices the indices
+     * @return the prepare segments
      */
     IndicesSegmentsRequestBuilder prepareSegments(String... indices);
 
@@ -253,6 +286,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * The shard stores info of one or more indices.
+     *
+     * @param indices the indices
+     * @return the prepare shard stores
      */
     IndicesShardStoreRequestBuilder prepareShardStores(String... indices);
 
@@ -276,6 +312,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Creates an index using an explicit request allowing to specify the settings of the index.
      *
      * @param index The index name to create
+     * @return the prepare create
      */
     CreateIndexRequestBuilder prepareCreate(String index);
 
@@ -299,6 +336,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Deletes an index based on the index name.
      *
      * @param indices The indices to delete. Use "_all" to delete all indices.
+     * @return the prepare delete
      */
     DeleteIndexRequestBuilder prepareDelete(String... indices);
 
@@ -322,6 +360,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Closes one or more indices based on their index name.
      *
      * @param indices The name of the indices to close
+     * @return the prepare close
      */
     CloseIndexRequestBuilder prepareClose(String... indices);
 
@@ -345,6 +384,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Opens one or more indices based on their index name.
      *
      * @param indices The name of the indices to close
+     * @return the prepare open
      */
     OpenIndexRequestBuilder prepareOpen(String... indices);
 
@@ -366,6 +406,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Explicitly refresh one or more indices (making the content indexed since the last refresh searchable).
+     *
+     * @param indices the indices
+     * @return the prepare refresh
      */
     RefreshRequestBuilder prepareRefresh(String... indices);
 
@@ -387,6 +430,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Explicitly flush one or more indices (releasing memory from the node).
+     *
+     * @param indices the indices
+     * @return the prepare flush
      */
     FlushRequestBuilder prepareFlush(String... indices);
 
@@ -408,6 +454,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Explicitly force merge one or more indices into a the number of segments.
+     *
+     * @param indices the indices
+     * @return the prepare force merge
      */
     ForceMergeRequestBuilder prepareForceMerge(String... indices);
 
@@ -429,6 +478,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      *  Explicitly upgrade one or more indices
+     *
+     * @param indices the indices
+     * @return the prepare upgrade status
      */
     UpgradeStatusRequestBuilder prepareUpgradeStatus(String... indices);
 
@@ -450,36 +502,57 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Check upgrade status of one or more indices
+     *
+     * @param indices the indices
+     * @return the prepare upgrade
      */
     UpgradeRequestBuilder prepareUpgrade(String... indices);
 
     /**
      * Get the complete mappings of one or more types
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void getMappings(GetMappingsRequest request, ActionListener<GetMappingsResponse> listener);
 
     /**
      * Get the complete mappings of one or more types
+     *
+     * @param request the request
+     * @return the mappings
      */
     ActionFuture<GetMappingsResponse> getMappings(GetMappingsRequest request);
 
     /**
      * Get the complete mappings of one or more types
+     *
+     * @param indices the indices
+     * @return the prepare get mappings
      */
     GetMappingsRequestBuilder prepareGetMappings(String... indices);
 
     /**
      * Get the mappings of specific fields
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void getFieldMappings(GetFieldMappingsRequest request, ActionListener<GetFieldMappingsResponse> listener);
 
     /**
      * Get the mappings of specific fields
+     *
+     * @param indices the indices
+     * @return the prepare get field mappings
      */
     GetFieldMappingsRequestBuilder prepareGetFieldMappings(String... indices);
 
     /**
      * Get the mappings of specific fields
+     *
+     * @param request the request
+     * @return the field mappings
      */
     ActionFuture<GetFieldMappingsResponse> getFieldMappings(GetFieldMappingsRequest request);
 
@@ -501,6 +574,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Add mapping definition for a type into one or more indices.
+     *
+     * @param indices the indices
+     * @return the prepare put mapping
      */
     PutMappingRequestBuilder preparePutMapping(String... indices);
 
@@ -522,6 +598,8 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Allows to add/remove aliases from indices.
+     *
+     * @return the prepare aliases
      */
     IndicesAliasesRequestBuilder prepareAliases();
 
@@ -529,6 +607,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Get specific index aliases that exists in particular indices and / or by name.
      *
      * @param request The result future
+     * @return the aliases
      */
     ActionFuture<GetAliasesResponse> getAliases(GetAliasesRequest request);
 
@@ -542,6 +621,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Get specific index aliases that exists in particular indices and / or by name.
+     *
+     * @param aliases the aliases
+     * @return the prepare get aliases
      */
     GetAliasesRequestBuilder prepareGetAliases(String... aliases);
 
@@ -549,6 +631,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Get index metadata for particular indices.
      *
      * @param request The result future
+     * @return the index
      */
     ActionFuture<GetIndexResponse> getIndex(GetIndexRequest request);
 
@@ -562,6 +645,8 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Get index metadata for particular indices.
+     *
+     * @return the prepare get index
      */
     GetIndexRequestBuilder prepareGetIndex();
 
@@ -583,6 +668,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Clear indices cache.
+     *
+     * @param indices the indices
+     * @return the prepare clear cache
      */
     ClearIndicesCacheRequestBuilder prepareClearCache(String... indices);
 
@@ -604,16 +692,25 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Update indices settings.
+     *
+     * @param indices the indices
+     * @return the prepare update settings
      */
     UpdateSettingsRequestBuilder prepareUpdateSettings(String... indices);
 
     /**
      * Analyze text under the provided index.
+     *
+     * @param request the request
+     * @return this instance
      */
     ActionFuture<AnalyzeAction.Response> analyze(AnalyzeAction.Request request);
 
     /**
      * Analyze text under the provided index.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void analyze(AnalyzeAction.Request request, ActionListener<AnalyzeAction.Response> listener);
 
@@ -622,6 +719,7 @@ public interface IndicesAdminClient extends OpenSearchClient {
      *
      * @param index The index name
      * @param text  The text to analyze
+     * @return the prepare analyze
      */
     AnalyzeRequestBuilder prepareAnalyze(@Nullable String index, String text);
 
@@ -629,22 +727,31 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Analyze text.
      *
      * @param text The text to analyze
+     * @return the prepare analyze
      */
     AnalyzeRequestBuilder prepareAnalyze(String text);
 
     /**
      * Analyze text/texts.
      *
+     * @return the prepare analyze
+     *
      */
     AnalyzeRequestBuilder prepareAnalyze();
 
     /**
      * Puts an index template.
+     *
+     * @param request the request
+     * @return this instance
      */
     ActionFuture<AcknowledgedResponse> putTemplate(PutIndexTemplateRequest request);
 
     /**
      * Puts an index template.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void putTemplate(PutIndexTemplateRequest request, ActionListener<AcknowledgedResponse> listener);
 
@@ -652,16 +759,23 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Puts an index template.
      *
      * @param name The name of the template.
+     * @return the prepare put template
      */
     PutIndexTemplateRequestBuilder preparePutTemplate(String name);
 
     /**
      * Deletes index template.
+     *
+     * @param request the request
+     * @return this instance
      */
     ActionFuture<AcknowledgedResponse> deleteTemplate(DeleteIndexTemplateRequest request);
 
     /**
      * Deletes an index template.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void deleteTemplate(DeleteIndexTemplateRequest request, ActionListener<AcknowledgedResponse> listener);
 
@@ -669,21 +783,31 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Deletes an index template.
      *
      * @param name The name of the template.
+     * @return the prepare delete template
      */
     DeleteIndexTemplateRequestBuilder prepareDeleteTemplate(String name);
 
     /**
      * Gets index template.
+     *
+     * @param request the request
+     * @return the templates
      */
     ActionFuture<GetIndexTemplatesResponse> getTemplates(GetIndexTemplatesRequest request);
 
     /**
      * Gets an index template.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void getTemplates(GetIndexTemplatesRequest request, ActionListener<GetIndexTemplatesResponse> listener);
 
     /**
      * Gets an index template (optional).
+     *
+     * @param name the name
+     * @return the prepare get templates
      */
     GetIndexTemplatesRequestBuilder prepareGetTemplates(String... name);
 
@@ -705,6 +829,9 @@ public interface IndicesAdminClient extends OpenSearchClient {
 
     /**
      * Validate a query for correctness.
+     *
+     * @param indices the indices
+     * @return the prepare validate query
      */
     ValidateQueryRequestBuilder prepareValidateQuery(String... indices);
 
@@ -712,11 +839,16 @@ public interface IndicesAdminClient extends OpenSearchClient {
      * Executed a per index settings get request and returns the settings for the indices specified.
      * Note: this is a per index request and will not include settings that are set on the cluster
      * level. This request is not exhaustive, it will not return default values for setting.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void getSettings(GetSettingsRequest request, ActionListener<GetSettingsResponse> listener);
 
     /**
      * Executed a per index settings get request.
+     * @param request the request
+     * @return the settings
      * @see #getSettings(GetSettingsRequest)
      */
     ActionFuture<GetSettingsResponse> getSettings(GetSettingsRequest request);
@@ -724,90 +856,186 @@ public interface IndicesAdminClient extends OpenSearchClient {
     /**
      * Returns a builder for a per index settings get request.
      * @param indices the indices to fetch the setting for.
+     * @return the prepare get settings
      * @see #getSettings(GetSettingsRequest)
      */
     GetSettingsRequestBuilder prepareGetSettings(String... indices);
 
     /**
      * Resize an index using an explicit request allowing to specify the settings, mappings and aliases of the target index of the index.
+     *
+     * @param sourceIndex the source index
+     * @param targetIndex the target index
+     * @return the prepare resize index
      */
     ResizeRequestBuilder prepareResizeIndex(String sourceIndex, String targetIndex);
 
     /**
      * Resize an index using an explicit request allowing to specify the settings, mappings and aliases of the target index of the index.
+     *
+     * @param request the request
+     * @return this instance
      */
     ActionFuture<ResizeResponse> resizeIndex(ResizeRequest request);
 
     /**
      * Shrinks an index using an explicit request allowing to specify the settings, mappings and aliases of the target index of the index.
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void resizeIndex(ResizeRequest request, ActionListener<ResizeResponse> listener);
 
     /**
      * Swaps the index pointed to by an alias given all provided conditions are satisfied
+     *
+     * @param sourceAlias the source alias
+     * @return the prepare rollover index
      */
     RolloverRequestBuilder prepareRolloverIndex(String sourceAlias);
 
     /**
      * Swaps the index pointed to by an alias given all provided conditions are satisfied
+     *
+     * @param request the request
+     * @return this instance
      */
     ActionFuture<RolloverResponse> rolloverIndex(RolloverRequest request);
 
     /**
      * Swaps the index pointed to by an alias given all provided conditions are satisfied
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void rolloverIndex(RolloverRequest request, ActionListener<RolloverResponse> listener);
 
     /**
      * Resolves names and wildcard expressions to indices, aliases, and data streams
+     *
+     * @param request the request
+     * @param listener the listener
      */
     void resolveIndex(ResolveIndexAction.Request request, ActionListener<ResolveIndexAction.Response> listener);
 
     /**
      * Resolves names and wildcard expressions to indices, aliases, and data streams
+     *
+     * @param request the request
+     * @return the index
      */
     ActionFuture<ResolveIndexAction.Response> resolveIndex(ResolveIndexAction.Request request);
 
-    /** Create a view */
+    /**
+     * Create a view
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void createView(CreateViewAction.Request request, ActionListener<GetViewAction.Response> listener);
 
-    /** Create a view */
+    /**
+     * Create a view
+     *
+     * @param request the request
+     * @return the new view
+     */
     ActionFuture<GetViewAction.Response> createView(CreateViewAction.Request request);
 
-    /** Get the details of a view */
+    /**
+     * Get the details of a view
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void getView(GetViewAction.Request request, ActionListener<GetViewAction.Response> listener);
 
-    /** Get the details of a view */
+    /**
+     * Get the details of a view
+     *
+     * @param request the request
+     * @return the view
+     */
     ActionFuture<GetViewAction.Response> getView(GetViewAction.Request request);
 
-    /** Delete a view */
+    /**
+     * Delete a view
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void deleteView(DeleteViewAction.Request request, ActionListener<AcknowledgedResponse> listener);
 
-    /** Delete a view */
+    /**
+     * Delete a view
+     *
+     * @param request the request
+     * @return this instance
+     */
     ActionFuture<AcknowledgedResponse> deleteView(DeleteViewAction.Request request);
 
-    /** Update a view */
+    /**
+     * Update a view
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void updateView(CreateViewAction.Request request, ActionListener<GetViewAction.Response> listener);
 
-    /** Update a view */
+    /**
+     * Update a view
+     *
+     * @param request the request
+     * @return this instance
+     */
     ActionFuture<GetViewAction.Response> updateView(CreateViewAction.Request request);
 
-    /** Pause ingestion */
+    /**
+     * Pause ingestion
+     *
+     * @param request the request
+     * @return the pause ingestion
+     */
     ActionFuture<PauseIngestionResponse> pauseIngestion(PauseIngestionRequest request);
 
-    /** Pause ingestion */
+    /**
+     * Pause ingestion
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void pauseIngestion(PauseIngestionRequest request, ActionListener<PauseIngestionResponse> listener);
 
-    /** Resume ingestion */
+    /**
+     * Resume ingestion
+     *
+     * @param request the request
+     * @return the resume ingestion
+     */
     ActionFuture<ResumeIngestionResponse> resumeIngestion(ResumeIngestionRequest request);
 
-    /** Resume ingestion */
+    /**
+     * Resume ingestion
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void resumeIngestion(ResumeIngestionRequest request, ActionListener<ResumeIngestionResponse> listener);
 
-    /** Get ingestion state */
+    /**
+     * Get ingestion state
+     *
+     * @param request the request
+     * @return the ingestion state
+     */
     ActionFuture<GetIngestionStateResponse> getIngestionState(GetIngestionStateRequest request);
 
-    /** Get ingestion state */
+    /**
+     * Get ingestion state
+     *
+     * @param request the request
+     * @param listener the listener
+     */
     void getIngestionState(GetIngestionStateRequest request, ActionListener<GetIngestionStateResponse> listener);
 
     /**
@@ -819,273 +1047,468 @@ public interface IndicesAdminClient extends OpenSearchClient {
      */
     ScaleIndexRequestBuilder prepareScaleSearchOnly(String index, boolean searchOnly);
 
-    /** Indices Exists - CompletionStage version */
+    /**
+     * Indices Exists - CompletionStage version
+     *
+     * @param request the request
+     * @return the exists async
+     */
     default CompletionStage<IndicesExistsResponse> existsAsync(IndicesExistsRequest request) {
         CompletableFuture<IndicesExistsResponse> future = new CompletableFuture<>();
         exists(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Indices stats - CompletionStage version */
+    /**
+     * Indices stats - CompletionStage version
+     *
+     * @param request the request
+     * @return the stats async
+     */
     default CompletionStage<IndicesStatsResponse> statsAsync(IndicesStatsRequest request) {
         CompletableFuture<IndicesStatsResponse> future = new CompletableFuture<>();
         stats(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Recoveries - CompletionStage version */
+    /**
+     * Recoveries - CompletionStage version
+     *
+     * @param request the request
+     * @return the recoveries async
+     */
     default CompletionStage<RecoveryResponse> recoveriesAsync(RecoveryRequest request) {
         CompletableFuture<RecoveryResponse> future = new CompletableFuture<>();
         recoveries(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Segment replication stats - CompletionStage version */
+    /**
+     * Segment replication stats - CompletionStage version
+     *
+     * @param request the request
+     * @return the segment replication stats async
+     */
     default CompletionStage<SegmentReplicationStatsResponse> segmentReplicationStatsAsync(SegmentReplicationStatsRequest request) {
         CompletableFuture<SegmentReplicationStatsResponse> future = new CompletableFuture<>();
         segmentReplicationStats(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Segments - CompletionStage version */
+    /**
+     * Segments - CompletionStage version
+     *
+     * @param request the request
+     * @return the segments async
+     */
     default CompletionStage<IndicesSegmentResponse> segmentsAsync(IndicesSegmentsRequest request) {
         CompletableFuture<IndicesSegmentResponse> future = new CompletableFuture<>();
         segments(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Shard stores - CompletionStage version */
+    /**
+     * Shard stores - CompletionStage version
+     *
+     * @param request the request
+     * @return the shard stores async
+     */
     default CompletionStage<IndicesShardStoresResponse> shardStoresAsync(IndicesShardStoresRequest request) {
         CompletableFuture<IndicesShardStoresResponse> future = new CompletableFuture<>();
         shardStores(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Create index - CompletionStage version */
+    /**
+     * Create index - CompletionStage version
+     *
+     * @param request the request
+     * @return the new async
+     */
     default CompletionStage<CreateIndexResponse> createAsync(CreateIndexRequest request) {
         CompletableFuture<CreateIndexResponse> future = new CompletableFuture<>();
         create(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Delete index - CompletionStage version */
+    /**
+     * Delete index - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AcknowledgedResponse> deleteAsync(DeleteIndexRequest request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         delete(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Close index - CompletionStage version */
+    /**
+     * Close index - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<CloseIndexResponse> closeAsync(CloseIndexRequest request) {
         CompletableFuture<CloseIndexResponse> future = new CompletableFuture<>();
         close(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Open index - CompletionStage version */
+    /**
+     * Open index - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<OpenIndexResponse> openAsync(OpenIndexRequest request) {
         CompletableFuture<OpenIndexResponse> future = new CompletableFuture<>();
         open(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Refresh - CompletionStage version */
+    /**
+     * Refresh - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<RefreshResponse> refreshAsync(RefreshRequest request) {
         CompletableFuture<RefreshResponse> future = new CompletableFuture<>();
         refresh(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Flush - CompletionStage version */
+    /**
+     * Flush - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<FlushResponse> flushAsync(FlushRequest request) {
         CompletableFuture<FlushResponse> future = new CompletableFuture<>();
         flush(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Force-merge - CompletionStage version */
+    /**
+     * Force-merge - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<ForceMergeResponse> forceMergeAsync(ForceMergeRequest request) {
         CompletableFuture<ForceMergeResponse> future = new CompletableFuture<>();
         forceMerge(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Upgrade - CompletionStage version */
+    /**
+     * Upgrade - CompletionStage version
+     *
+     * @param request the request
+     * @return the upgrade async
+     */
     default CompletionStage<UpgradeResponse> upgradeAsync(UpgradeRequest request) {
         CompletableFuture<UpgradeResponse> future = new CompletableFuture<>();
         upgrade(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Upgrade status - CompletionStage version */
+    /**
+     * Upgrade status - CompletionStage version
+     *
+     * @param request the request
+     * @return the upgrade status async
+     */
     default CompletionStage<UpgradeStatusResponse> upgradeStatusAsync(UpgradeStatusRequest request) {
         CompletableFuture<UpgradeStatusResponse> future = new CompletableFuture<>();
         upgradeStatus(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get mappings - CompletionStage version */
+    /**
+     * Get mappings - CompletionStage version
+     *
+     * @param request the request
+     * @return the mappings async
+     */
     default CompletionStage<GetMappingsResponse> getMappingsAsync(GetMappingsRequest request) {
         CompletableFuture<GetMappingsResponse> future = new CompletableFuture<>();
         getMappings(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get field mappings - CompletionStage version */
+    /**
+     * Get field mappings - CompletionStage version
+     *
+     * @param request the request
+     * @return the field mappings async
+     */
     default CompletionStage<GetFieldMappingsResponse> getFieldMappingsAsync(GetFieldMappingsRequest request) {
         CompletableFuture<GetFieldMappingsResponse> future = new CompletableFuture<>();
         getFieldMappings(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Put mapping - CompletionStage version */
+    /**
+     * Put mapping - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AcknowledgedResponse> putMappingAsync(PutMappingRequest request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         putMapping(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Aliases - CompletionStage version */
+    /**
+     * Aliases - CompletionStage version
+     *
+     * @param request the request
+     * @return the aliases async
+     */
     default CompletionStage<AcknowledgedResponse> aliasesAsync(IndicesAliasesRequest request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         aliases(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get aliases - CompletionStage version */
+    /**
+     * Get aliases - CompletionStage version
+     *
+     * @param request the request
+     * @return the aliases async
+     */
     default CompletionStage<GetAliasesResponse> getAliasesAsync(GetAliasesRequest request) {
         CompletableFuture<GetAliasesResponse> future = new CompletableFuture<>();
         getAliases(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get index - CompletionStage version */
+    /**
+     * Get index - CompletionStage version
+     *
+     * @param request the request
+     * @return the index async
+     */
     default CompletionStage<GetIndexResponse> getIndexAsync(GetIndexRequest request) {
         CompletableFuture<GetIndexResponse> future = new CompletableFuture<>();
         getIndex(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Clear cache - CompletionStage version */
+    /**
+     * Clear cache - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<ClearIndicesCacheResponse> clearCacheAsync(ClearIndicesCacheRequest request) {
         CompletableFuture<ClearIndicesCacheResponse> future = new CompletableFuture<>();
         clearCache(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Update settings - CompletionStage version */
+    /**
+     * Update settings - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AcknowledgedResponse> updateSettingsAsync(UpdateSettingsRequest request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         updateSettings(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get settings - CompletionStage version */
+    /**
+     * Get settings - CompletionStage version
+     *
+     * @param request the request
+     * @return the settings async
+     */
     default CompletionStage<GetSettingsResponse> getSettingsAsync(GetSettingsRequest request) {
         CompletableFuture<GetSettingsResponse> future = new CompletableFuture<>();
         getSettings(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Analyze - CompletionStage version */
+    /**
+     * Analyze - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AnalyzeAction.Response> analyzeAsync(AnalyzeAction.Request request) {
         CompletableFuture<AnalyzeAction.Response> future = new CompletableFuture<>();
         analyze(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Put template - CompletionStage version */
+    /**
+     * Put template - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AcknowledgedResponse> putTemplateAsync(PutIndexTemplateRequest request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         putTemplate(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Delete template - CompletionStage version */
+    /**
+     * Delete template - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AcknowledgedResponse> deleteTemplateAsync(DeleteIndexTemplateRequest request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         deleteTemplate(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get templates - CompletionStage version */
+    /**
+     * Get templates - CompletionStage version
+     *
+     * @param request the request
+     * @return the templates async
+     */
     default CompletionStage<GetIndexTemplatesResponse> getTemplatesAsync(GetIndexTemplatesRequest request) {
         CompletableFuture<GetIndexTemplatesResponse> future = new CompletableFuture<>();
         getTemplates(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Validate query - CompletionStage version */
+    /**
+     * Validate query - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<ValidateQueryResponse> validateQueryAsync(ValidateQueryRequest request) {
         CompletableFuture<ValidateQueryResponse> future = new CompletableFuture<>();
         validateQuery(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Resize index - CompletionStage version */
+    /**
+     * Resize index - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<ResizeResponse> resizeIndexAsync(ResizeRequest request) {
         CompletableFuture<ResizeResponse> future = new CompletableFuture<>();
         resizeIndex(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Rollover index - CompletionStage version */
+    /**
+     * Rollover index - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<RolloverResponse> rolloverIndexAsync(RolloverRequest request) {
         CompletableFuture<RolloverResponse> future = new CompletableFuture<>();
         rolloverIndex(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Resolve index - CompletionStage version */
+    /**
+     * Resolve index - CompletionStage version
+     *
+     * @param request the request
+     * @return the index async
+     */
     default CompletionStage<ResolveIndexAction.Response> resolveIndexAsync(ResolveIndexAction.Request request) {
         CompletableFuture<ResolveIndexAction.Response> future = new CompletableFuture<>();
         resolveIndex(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Create view - CompletionStage version */
+    /**
+     * Create view - CompletionStage version
+     *
+     * @param request the request
+     * @return the new view async
+     */
     default CompletionStage<GetViewAction.Response> createViewAsync(CreateViewAction.Request request) {
         CompletableFuture<GetViewAction.Response> future = new CompletableFuture<>();
         createView(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get view - CompletionStage version */
+    /**
+     * Get view - CompletionStage version
+     *
+     * @param request the request
+     * @return the view async
+     */
     default CompletionStage<GetViewAction.Response> getViewAsync(GetViewAction.Request request) {
         CompletableFuture<GetViewAction.Response> future = new CompletableFuture<>();
         getView(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Delete view - CompletionStage version */
+    /**
+     * Delete view - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<AcknowledgedResponse> deleteViewAsync(DeleteViewAction.Request request) {
         CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
         deleteView(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Update view - CompletionStage version */
+    /**
+     * Update view - CompletionStage version
+     *
+     * @param request the request
+     * @return this instance
+     */
     default CompletionStage<GetViewAction.Response> updateViewAsync(CreateViewAction.Request request) {
         CompletableFuture<GetViewAction.Response> future = new CompletableFuture<>();
         updateView(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Pause ingestion - CompletionStage version */
+    /**
+     * Pause ingestion - CompletionStage version
+     *
+     * @param request the request
+     * @return the pause ingestion async
+     */
     default CompletionStage<PauseIngestionResponse> pauseIngestionAsync(PauseIngestionRequest request) {
         CompletableFuture<PauseIngestionResponse> future = new CompletableFuture<>();
         pauseIngestion(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Resume ingestion - CompletionStage version */
+    /**
+     * Resume ingestion - CompletionStage version
+     *
+     * @param request the request
+     * @return the resume ingestion async
+     */
     default CompletionStage<ResumeIngestionResponse> resumeIngestionAsync(ResumeIngestionRequest request) {
         CompletableFuture<ResumeIngestionResponse> future = new CompletableFuture<>();
         resumeIngestion(request, ActionListener.wrap(future::complete, future::completeExceptionally));
         return future;
     }
 
-    /** Get ingestion state - CompletionStage version */
+    /**
+     * Get ingestion state - CompletionStage version
+     *
+     * @param request the request
+     * @return the ingestion state async
+     */
     default CompletionStage<GetIngestionStateResponse> getIngestionStateAsync(GetIngestionStateRequest request) {
         CompletableFuture<GetIngestionStateResponse> future = new CompletableFuture<>();
         getIngestionState(request, ActionListener.wrap(future::complete, future::completeExceptionally));

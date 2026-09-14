@@ -43,9 +43,21 @@ import java.util.Objects;
  */
 public final class SortFieldAndFormat {
 
+    /**
+     * The field.
+     */
     public final SortField field;
+    /**
+     * The format.
+     */
     public final DocValueFormat format;
 
+    /**
+     * Creates a new SortFieldAndFormat.
+     *
+     * @param field the field
+     * @param format the format
+     */
     public SortFieldAndFormat(SortField field, DocValueFormat format) {
         this.field = Objects.requireNonNull(field);
         this.format = Objects.requireNonNull(format);

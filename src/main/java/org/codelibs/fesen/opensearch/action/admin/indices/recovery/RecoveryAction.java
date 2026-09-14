@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class RecoveryAction extends ActionType<RecoveryResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final RecoveryAction INSTANCE = new RecoveryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/recovery";
 
     private RecoveryAction() {

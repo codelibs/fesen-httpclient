@@ -61,11 +61,29 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<TermsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "terms";
+    /**
+     * The EXECUTION_HINT_FIELD_NAME constant.
+     */
     public static final ParseField EXECUTION_HINT_FIELD_NAME = new ParseField("execution_hint");
+    /**
+     * The SHARD_SIZE_FIELD_NAME constant.
+     */
     public static final ParseField SHARD_SIZE_FIELD_NAME = new ParseField("shard_size");
+    /**
+     * The MIN_DOC_COUNT_FIELD_NAME constant.
+     */
     public static final ParseField MIN_DOC_COUNT_FIELD_NAME = new ParseField("min_doc_count");
+    /**
+     * The SHARD_MIN_DOC_COUNT_FIELD_NAME constant.
+     */
     public static final ParseField SHARD_MIN_DOC_COUNT_FIELD_NAME = new ParseField("shard_min_doc_count");
+    /**
+     * The REQUIRED_SIZE_FIELD_NAME constant.
+     */
     public static final ParseField REQUIRED_SIZE_FIELD_NAME = new ParseField("size");
 
     static final TermsAggregator.BucketCountThresholds DEFAULT_BUCKET_COUNT_THRESHOLDS = new TermsAggregator.BucketCountThresholds(
@@ -74,9 +92,18 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
         10,
         -1
     );
+    /**
+     * The SHOW_TERM_DOC_COUNT_ERROR constant.
+     */
     public static final ParseField SHOW_TERM_DOC_COUNT_ERROR = new ParseField("show_term_doc_count_error");
+    /**
+     * The ORDER_FIELD constant.
+     */
     public static final ParseField ORDER_FIELD = new ParseField("order");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<TermsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, TermsAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
@@ -130,10 +157,22 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     );
     private boolean showTermDocCountError = false;
 
+    /**
+     * Creates a new TermsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public TermsAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new TermsAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected TermsAggregationBuilder(
         TermsAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -176,6 +215,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     /**
      * Sets the size - indicating how many term buckets should be returned
      * (defaults to 10)
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public TermsAggregationBuilder size(int size) {
         if (size <= 0) {
@@ -187,6 +229,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Returns the number of term buckets currently configured
+     *
+     * @return the number of elements
      */
     public int size() {
         return bucketCountThresholds.getRequiredSize();
@@ -197,6 +241,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
      * will return to the coordinating node (the node that coordinates the
      * search execution). The higher the shard size is, the more accurate the
      * results are.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     public TermsAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
@@ -208,6 +255,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Returns the number of term buckets per shard that are currently configured
+     *
+     * @return the shard size
      */
     public int shardSize() {
         return bucketCountThresholds.getShardSize();
@@ -216,6 +265,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     /**
      * Set the minimum document count terms should have in order to appear in
      * the response.
+     *
+     * @param minDocCount the min doc count
+     * @return the min doc count
      */
     public TermsAggregationBuilder minDocCount(long minDocCount) {
         if (minDocCount < 0) {
@@ -229,6 +281,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Returns the minimum document count required per term
+     *
+     * @return the min doc count
      */
     public long minDocCount() {
         return bucketCountThresholds.getMinDocCount();
@@ -237,6 +291,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     /**
      * Set the minimum document count terms should have on the shard in order to
      * appear in the response.
+     *
+     * @param shardMinDocCount the shard min doc count
+     * @return the shard min doc count
      */
     public TermsAggregationBuilder shardMinDocCount(long shardMinDocCount) {
         if (shardMinDocCount < 0) {
@@ -250,13 +307,19 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Returns the minimum document count required per term, per shard
+     *
+     * @return the shard min doc count
      */
     public long shardMinDocCount() {
         return bucketCountThresholds.getShardMinDocCount();
     }
 
     /** Set a new order on this builder and return the builder so that calls
-     *  can be chained. A tie-breaker may be added to avoid non-deterministic ordering. */
+      * can be chained. A tie-breaker may be added to avoid non-deterministic ordering.
+     *
+     * @param order the order
+     * @return the order
+      */
     public TermsAggregationBuilder order(BucketOrder order) {
         if (order == null) {
             throw new IllegalArgumentException("[order] must not be null: [" + name + "]");
@@ -272,6 +335,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
     /**
      * Sets the order in which the buckets will be returned. A tie-breaker may be added to avoid non-deterministic
      * ordering.
+     *
+     * @param orders the orders
+     * @return the order
      */
     public TermsAggregationBuilder order(List<BucketOrder> orders) {
         if (orders == null) {
@@ -284,6 +350,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Gets the order in which the buckets will be returned.
+     *
+     * @return the order
      */
     public BucketOrder order() {
         return order;
@@ -291,6 +359,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Expert: sets an execution hint to the aggregation.
+     *
+     * @param executionHint the execution hint
+     * @return the execution hint
      */
     public TermsAggregationBuilder executionHint(String executionHint) {
         this.executionHint = executionHint;
@@ -299,6 +370,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Expert: gets an execution hint to the aggregation.
+     *
+     * @return the execution hint
      */
     public String executionHint() {
         return executionHint;
@@ -306,6 +379,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Expert: set the collection mode.
+     *
+     * @param collectMode the collect mode
+     * @return this instance
      */
     public TermsAggregationBuilder collectMode(SubAggCollectionMode collectMode) {
         if (collectMode == null) {
@@ -317,6 +393,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Expert: get the collection mode.
+     *
+     * @return this instance
      */
     public SubAggCollectionMode collectMode() {
         return collectMode;
@@ -324,6 +402,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Set terms to include and exclude from the aggregation results
+     *
+     * @param includeExclude the include exclude
+     * @return this instance
      */
     public TermsAggregationBuilder includeExclude(IncludeExclude includeExclude) {
         this.includeExclude = includeExclude;
@@ -332,6 +413,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Get terms to include and exclude from the aggregation results
+     *
+     * @return this instance
      */
     public IncludeExclude includeExclude() {
         return includeExclude;
@@ -339,6 +422,8 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Get whether doc count error will be return for individual terms
+     *
+     * @return the show term doc count error
      */
     public boolean showTermDocCountError() {
         return showTermDocCountError;
@@ -346,6 +431,9 @@ public class TermsAggregationBuilder extends ValuesSourceAggregationBuilder<Term
 
     /**
      * Set whether doc count error will be return for individual terms
+     *
+     * @param showTermDocCountError the show term doc count error
+     * @return the show term doc count error
      */
     public TermsAggregationBuilder showTermDocCountError(boolean showTermDocCountError) {
         this.showTermDocCountError = showTermDocCountError;

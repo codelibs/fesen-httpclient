@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetSnapshotsAction extends ActionType<GetSnapshotsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetSnapshotsAction INSTANCE = new GetSnapshotsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/snapshot/get";
 
     private GetSnapshotsAction() {

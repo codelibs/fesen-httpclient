@@ -39,21 +39,37 @@ import java.util.Iterator;
 /**
  * Utility class for keeping track of a current item in an iterator
  *
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public class IteratorAndCurrent<B extends InternalMultiBucketAggregation.InternalBucket> implements Iterator<B> {
     private final Iterator<B> iterator;
     private B current;
 
+    /**
+     * Creates a new IteratorAndCurrent.
+     *
+     * @param iterator the iterator
+     */
     public IteratorAndCurrent(Iterator<B> iterator) {
         this.iterator = iterator;
         this.current = iterator.next();
     }
 
+    /**
+     * Returns the iterator.
+     *
+     * @return the iterator
+     */
     public Iterator<B> getIterator() {
         return iterator;
     }
 
+    /**
+     * Returns the current.
+     *
+     * @return the current
+     */
     public B current() {
         return current;
     }

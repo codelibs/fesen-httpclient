@@ -53,6 +53,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<DerivativePipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "derivative";
 
     private static final ParseField FORMAT_FIELD = new ParseField("format");
@@ -63,6 +66,12 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
     private GapPolicy gapPolicy = GapPolicy.SKIP;
     private String units;
 
+    /**
+     * Creates a new DerivativePipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public DerivativePipelineAggregationBuilder(String name, String bucketsPath) {
         this(name, new String[] { bucketsPath });
     }
@@ -82,6 +91,12 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         out.writeOptionalString(units);
     }
 
+    /**
+     * Formats this instance.
+     *
+     * @param format the format
+     * @return this instance
+     */
     public DerivativePipelineAggregationBuilder format(String format) {
         if (format == null) {
             throw new IllegalArgumentException("[format] must not be null: [" + name + "]");
@@ -90,10 +105,21 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         return this;
     }
 
+    /**
+     * Formats this instance.
+     *
+     * @return this instance
+     */
     public String format() {
         return format;
     }
 
+    /**
+     * Returns the gap policy.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
+     */
     public DerivativePipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
             throw new IllegalArgumentException("[gapPolicy] must not be null: [" + name + "]");
@@ -102,10 +128,21 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         return this;
     }
 
+    /**
+     * Returns the gap policy.
+     *
+     * @return the gap policy
+     */
     public GapPolicy gapPolicy() {
         return gapPolicy;
     }
 
+    /**
+     * Returns the unit.
+     *
+     * @param units the units
+     * @return the unit
+     */
     public DerivativePipelineAggregationBuilder unit(String units) {
         if (units == null) {
             throw new IllegalArgumentException("[units] must not be null: [" + name + "]");
@@ -114,6 +151,12 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         return this;
     }
 
+    /**
+     * Returns the unit.
+     *
+     * @param units the units
+     * @return the unit
+     */
     public DerivativePipelineAggregationBuilder unit(DateHistogramInterval units) {
         if (units == null) {
             throw new IllegalArgumentException("[units] must not be null: [" + name + "]");
@@ -122,6 +165,11 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         return this;
     }
 
+    /**
+     * Returns the unit.
+     *
+     * @return the unit
+     */
     public String unit() {
         return units;
     }
@@ -151,6 +199,14 @@ public class DerivativePipelineAggregationBuilder extends AbstractPipelineAggreg
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param pipelineAggregatorName the pipeline aggregator name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static DerivativePipelineAggregationBuilder parse(String pipelineAggregatorName, XContentParser parser) throws IOException {
         XContentParser.Token token;
         String currentFieldName = null;

@@ -64,11 +64,17 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<BucketSortPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "bucket_sort";
 
     private static final ParseField FROM = new ParseField("from");
     private static final ParseField SIZE = new ParseField("size");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<BucketSortPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
         NAME,
         false,
@@ -104,6 +110,12 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
     private Integer size;
     private GapPolicy gapPolicy = GapPolicy.SKIP;
 
+    /**
+     * Creates a new BucketSortPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param sorts the sorts
+     */
     public BucketSortPipelineAggregationBuilder(String name, List<FieldSortBuilder> sorts) {
         super(name, NAME, sorts == null ? new String[0] : sorts.stream().map(s -> s.getFieldName()).toArray(String[]::new));
         this.sorts = sorts == null ? Collections.emptyList() : sorts;
@@ -117,6 +129,12 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
         gapPolicy.writeTo(out);
     }
 
+    /**
+     * Creates an instance from the given input.
+     *
+     * @param from the offset
+     * @return the new instance
+     */
     public BucketSortPipelineAggregationBuilder from(int from) {
         if (from < 0) {
             throw new IllegalArgumentException("[" + FROM.getPreferredName() + "] must be a non-negative integer: [" + from + "]");
@@ -125,6 +143,12 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
         return this;
     }
 
+    /**
+     * Returns the number of elements.
+     *
+     * @param size the size
+     * @return the number of elements
+     */
     public BucketSortPipelineAggregationBuilder size(Integer size) {
         if (size != null && size <= 0) {
             throw new IllegalArgumentException("[" + SIZE.getPreferredName() + "] must be a positive integer: [" + size + "]");
@@ -133,6 +157,12 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
         return this;
     }
 
+    /**
+     * Returns the gap policy.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
+     */
     public BucketSortPipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
             throw new IllegalArgumentException("[" + GAP_POLICY.getPreferredName() + "] must not be null: [" + name + "]");
@@ -167,6 +197,14 @@ public class BucketSortPipelineAggregationBuilder extends AbstractPipelineAggreg
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param reducerName the reducer name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static BucketSortPipelineAggregationBuilder parse(String reducerName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, reducerName);
     }

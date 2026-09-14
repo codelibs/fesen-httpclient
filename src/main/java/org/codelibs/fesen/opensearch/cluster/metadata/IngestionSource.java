@@ -168,7 +168,13 @@ public class IngestionSource {
      */
     @PublicApi(since = "3.7.0")
     public enum SourcePartitionStrategy {
+        /**
+         * The SIMPLE value.
+         */
         SIMPLE("simple"),
+        /**
+         * The MODULO value.
+         */
         MODULO("modulo");
 
         private final String name;
@@ -177,10 +183,21 @@ public class IngestionSource {
             this.name = name;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param name the name
+         * @return the new string
+         */
         public static SourcePartitionStrategy fromString(String name) {
             for (SourcePartitionStrategy strategy : values()) {
                 if (strategy.getName().equalsIgnoreCase(name)) {
@@ -204,6 +221,12 @@ public class IngestionSource {
         private final StreamPoller.ResetState type;
         private final String value;
 
+        /**
+         * Creates a new PointerInitReset.
+         *
+         * @param type the type
+         * @param value the value
+         */
         public PointerInitReset(StreamPoller.ResetState type, String value) {
             this.type = type;
             this.value = value;
@@ -232,6 +255,9 @@ public class IngestionSource {
      * Record encapsulating the warmup configuration for pull-based ingestion.
      * When warmup is enabled (timeout >= 0), shards will wait for lag to catch up before serving queries
      * after node restart or shard relocation. A timeout of -1 means warmup is disabled.
+     *
+     * @param timeout the timeout
+     * @param lagThreshold the lag threshold
      */
     @PublicApi(since = "3.6.0")
     public record WarmupConfig(TimeValue timeout, long lagThreshold) {
@@ -262,11 +288,21 @@ public class IngestionSource {
         private TimeValue warmupTimeout = INGESTION_SOURCE_WARMUP_TIMEOUT_SETTING.getDefault(Settings.EMPTY);
         private long warmupLagThreshold = INGESTION_SOURCE_WARMUP_LAG_THRESHOLD_SETTING.getDefault(Settings.EMPTY);
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param type the type
+         */
         public Builder(String type) {
             this.type = type;
             this.params = new HashMap<>();
         }
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param ingestionSource the ingestion source
+         */
         public Builder(IngestionSource ingestionSource) {
             this.type = ingestionSource.type;
             this.pointerInitReset = ingestionSource.pointerInitReset;
@@ -284,87 +320,189 @@ public class IngestionSource {
             this.warmupLagThreshold = wc.lagThreshold();
         }
 
+        /**
+         * Sets the pointer init reset.
+         *
+         * @param pointerInitReset the pointer init reset
+         * @return this instance
+         */
         public Builder setPointerInitReset(PointerInitReset pointerInitReset) {
             this.pointerInitReset = pointerInitReset;
             return this;
         }
 
+        /**
+         * Sets the error strategy.
+         *
+         * @param errorStrategy the error strategy
+         * @return this instance
+         */
         public Builder setErrorStrategy(IngestionErrorStrategy.ErrorStrategy errorStrategy) {
             this.errorStrategy = errorStrategy;
             return this;
         }
 
+        /**
+         * Sets the params.
+         *
+         * @param params the serialization parameters
+         * @return this instance
+         */
         public Builder setParams(Map<String, Object> params) {
             this.params = params;
             return this;
         }
 
+        /**
+         * Sets the max poll size.
+         *
+         * @param maxPollSize the max poll size
+         * @return this instance
+         */
         public Builder setMaxPollSize(long maxPollSize) {
             this.maxPollSize = maxPollSize;
             return this;
         }
 
+        /**
+         * Adds the param.
+         *
+         * @param key the key
+         * @param value the value
+         * @return this instance
+         */
         public Builder addParam(String key, Object value) {
             this.params.put(key, value);
             return this;
         }
 
+        /**
+         * Sets the poll timeout.
+         *
+         * @param pollTimeout the poll timeout
+         * @return this instance
+         */
         public Builder setPollTimeout(int pollTimeout) {
             this.pollTimeout = pollTimeout;
             return this;
         }
 
+        /**
+         * Sets the num processor threads.
+         *
+         * @param numProcessorThreads the num processor threads
+         * @return this instance
+         */
         public Builder setNumProcessorThreads(int numProcessorThreads) {
             this.numProcessorThreads = numProcessorThreads;
             return this;
         }
 
+        /**
+         * Sets the blocking queue size.
+         *
+         * @param blockingQueueSize the blocking queue size
+         * @return this instance
+         */
         public Builder setBlockingQueueSize(int blockingQueueSize) {
             this.blockingQueueSize = blockingQueueSize;
             return this;
         }
 
+        /**
+         * Sets the all active ingestion.
+         *
+         * @param allActiveIngestion the all active ingestion
+         * @return this instance
+         */
         public Builder setAllActiveIngestion(boolean allActiveIngestion) {
             this.allActiveIngestion = allActiveIngestion;
             return this;
         }
 
+        /**
+         * Sets the pointer based lag update interval.
+         *
+         * @param pointerBasedLagUpdateInterval the pointer based lag update interval
+         * @return this instance
+         */
         public Builder setPointerBasedLagUpdateInterval(TimeValue pointerBasedLagUpdateInterval) {
             this.pointerBasedLagUpdateInterval = pointerBasedLagUpdateInterval;
             return this;
         }
 
+        /**
+         * Sets the mapper type.
+         *
+         * @param mapperType the mapper type
+         * @return this instance
+         */
         public Builder setMapperType(IngestionMessageMapper.MapperType mapperType) {
             this.mapperType = mapperType;
             return this;
         }
 
+        /**
+         * Sets the mapper settings.
+         *
+         * @param mapperSettings the mapper settings
+         * @return this instance
+         */
         public Builder setMapperSettings(Map<String, Object> mapperSettings) {
             this.mapperSettings = mapperSettings;
             return this;
         }
 
+        /**
+         * Sets the source partition strategy.
+         *
+         * @param sourcePartitionStrategy the source partition strategy
+         * @return this instance
+         */
         public Builder setSourcePartitionStrategy(SourcePartitionStrategy sourcePartitionStrategy) {
             this.sourcePartitionStrategy = sourcePartitionStrategy;
             return this;
         }
 
+        /**
+         * Sets the warmup timeout.
+         *
+         * @param warmupTimeout the warmup timeout
+         * @return this instance
+         */
         public Builder setWarmupTimeout(TimeValue warmupTimeout) {
             this.warmupTimeout = warmupTimeout;
             return this;
         }
 
+        /**
+         * Sets the warmup lag threshold.
+         *
+         * @param warmupLagThreshold the warmup lag threshold
+         * @return this instance
+         */
         public Builder setWarmupLagThreshold(long warmupLagThreshold) {
             this.warmupLagThreshold = warmupLagThreshold;
             return this;
         }
 
+        /**
+         * Sets the warmup config.
+         *
+         * @param warmupConfig the warmup config
+         * @return this instance
+         */
         public Builder setWarmupConfig(WarmupConfig warmupConfig) {
             this.warmupTimeout = warmupConfig.timeout();
             this.warmupLagThreshold = warmupConfig.lagThreshold();
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IngestionSource build() {
             WarmupConfig warmupConfig = new WarmupConfig(warmupTimeout, warmupLagThreshold);
             return new IngestionSource(

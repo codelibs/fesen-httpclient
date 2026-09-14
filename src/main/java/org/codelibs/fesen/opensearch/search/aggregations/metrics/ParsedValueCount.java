@@ -45,6 +45,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedValueCount extends ParsedAggregation implements ValueCount {
+    /**
+     * Creates a new ParsedValueCount.
+     */
+    public ParsedValueCount() {
+    }
 
     private long valueCount;
 
@@ -87,6 +92,13 @@ public class ParsedValueCount extends ParsedAggregation implements ValueCount {
         PARSER.declareLong((agg, value) -> agg.valueCount = value, CommonFields.VALUE);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedValueCount fromXContent(XContentParser parser, final String name) {
         ParsedValueCount sum = PARSER.apply(parser, null);
         sum.setName(name);

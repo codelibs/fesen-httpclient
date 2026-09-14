@@ -103,6 +103,12 @@ public class ClusterUpdateSettingsResponse extends AcknowledgedResponse {
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ClusterUpdateSettingsResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

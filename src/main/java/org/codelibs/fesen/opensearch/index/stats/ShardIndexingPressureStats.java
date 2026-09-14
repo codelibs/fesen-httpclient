@@ -50,6 +50,12 @@ public class ShardIndexingPressureStats implements Writeable, ToXContentFragment
         this.shardIndexingPressureEnforced = builder.shardIndexingPressureEnforced;
     }
 
+    /**
+     * Creates a new ShardIndexingPressureStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardIndexingPressureStats(StreamInput in) throws IOException {
         int shardEntries = in.readInt();
         shardIndexingPressureStore = new HashMap<>();
@@ -68,6 +74,13 @@ public class ShardIndexingPressureStats implements Writeable, ToXContentFragment
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param shardIndexingPressureStore the shard indexing pressure store
+     * @param totalNodeLimitsBreachedRejections the total node limits breached rejections
+     * @param totalLastSuccessfulRequestLimitsBreachedRejections the total last successful request limits breached rejections
+     * @param totalThroughputDegradationLimitsBreachedRejections the total throughput degradation limits breached rejections
+     * @param shardIndexingPressureEnabled the shard indexing pressure enabled
+     * @param shardIndexingPressureEnforced the shard indexing pressure enforced
      */
     @Deprecated
     public ShardIndexingPressureStats(
@@ -112,33 +125,72 @@ public class ShardIndexingPressureStats implements Writeable, ToXContentFragment
         private boolean shardIndexingPressureEnabled = false;
         private boolean shardIndexingPressureEnforced = false;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the shard indexing pressure store.
+         *
+         * @param shardIndexingPressureStore the shard indexing pressure store
+         * @return the shard indexing pressure store
+         */
         public Builder shardIndexingPressureStore(Map<ShardId, IndexingPressurePerShardStats> shardIndexingPressureStore) {
             this.shardIndexingPressureStore = shardIndexingPressureStore;
             return this;
         }
 
+        /**
+         * Returns the total node limits breached rejections.
+         *
+         * @param total the total
+         * @return the total node limits breached rejections
+         */
         public Builder totalNodeLimitsBreachedRejections(long total) {
             this.totalNodeLimitsBreachedRejections = total;
             return this;
         }
 
+        /**
+         * Returns the total last successful request limits breached rejections.
+         *
+         * @param total the total
+         * @return the total last successful request limits breached rejections
+         */
         public Builder totalLastSuccessfulRequestLimitsBreachedRejections(long total) {
             this.totalLastSuccessfulRequestLimitsBreachedRejections = total;
             return this;
         }
 
+        /**
+         * Returns the total throughput degradation limits breached rejections.
+         *
+         * @param total the total
+         * @return the total throughput degradation limits breached rejections
+         */
         public Builder totalThroughputDegradationLimitsBreachedRejections(long total) {
             this.totalThroughputDegradationLimitsBreachedRejections = total;
             return this;
         }
 
+        /**
+         * Returns the shard indexing pressure enabled.
+         *
+         * @param enabled the enabled
+         * @return the shard indexing pressure enabled
+         */
         public Builder shardIndexingPressureEnabled(boolean enabled) {
             this.shardIndexingPressureEnabled = enabled;
             return this;
         }
 
+        /**
+         * Returns the shard indexing pressure enforced.
+         *
+         * @param enforced the enforced
+         * @return the shard indexing pressure enforced
+         */
         public Builder shardIndexingPressureEnforced(boolean enforced) {
             this.shardIndexingPressureEnforced = enforced;
             return this;

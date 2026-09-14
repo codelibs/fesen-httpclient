@@ -59,6 +59,11 @@ import java.util.Set;
  * @opensearch.internal
  */
 public class CollectionUtils {
+    /**
+     * Creates a new CollectionUtils.
+     */
+    public CollectionUtils() {
+    }
 
     /**
      * Checks if the given array contains any elements.
@@ -81,6 +86,7 @@ public class CollectionUtils {
      * </ul>
      * @param list the list to rotate
      * @param distance the distance to rotate (positive rotates right, negative rotates left)
+     * @param <T> the element type
      * @return a rotated view of the given list with the given distance
      * @see RotatedList
      */
@@ -191,6 +197,13 @@ public class CollectionUtils {
         }
     }
 
+    /**
+     * Returns the array as array list.
+     *
+     * @param <E> the element type
+     * @param elements the elements
+     * @return the array as array list
+     */
     @SuppressWarnings("unchecked")
     public static <E> ArrayList<E> arrayAsArrayList(E... elements) {
         if (elements == null) {
@@ -199,6 +212,14 @@ public class CollectionUtils {
         return new ArrayList<>(Arrays.asList(elements));
     }
 
+    /**
+     * Returns this instance as array list.
+     *
+     * @param <E> the element type
+     * @param first the first
+     * @param other the other instance
+     * @return the array list
+     */
     @SuppressWarnings("unchecked")
     public static <E> ArrayList<E> asArrayList(E first, E... other) {
         if (other == null) {
@@ -210,6 +231,15 @@ public class CollectionUtils {
         return list;
     }
 
+    /**
+     * Returns this instance as array list.
+     *
+     * @param <E> the element type
+     * @param first the first
+     * @param second the second
+     * @param other the other instance
+     * @return the array list
+     */
     @SuppressWarnings("unchecked")
     public static <E> ArrayList<E> asArrayList(E first, E second, E... other) {
         if (other == null) {

@@ -43,10 +43,22 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class IndexShardSnapshotFailedException extends IndexShardSnapshotException {
+    /**
+     * Creates a new IndexShardSnapshotFailedException.
+     *
+     * @param shardId the shard identifier
+     * @param msg the msg
+     */
     public IndexShardSnapshotFailedException(ShardId shardId, String msg) {
         super(shardId, msg);
     }
 
+    /**
+     * Creates a new IndexShardSnapshotFailedException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexShardSnapshotFailedException(StreamInput in) throws IOException {
         super(in);
     }

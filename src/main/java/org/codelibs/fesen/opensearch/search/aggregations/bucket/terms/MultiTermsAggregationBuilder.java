@@ -114,18 +114,45 @@ import static org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.Ter
  * @opensearch.internal
  */
 public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<MultiTermsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "multi_terms";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<MultiTermsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         MultiTermsAggregationBuilder::new
     );
 
+    /**
+     * The TERMS_FIELD constant.
+     */
     public static final ParseField TERMS_FIELD = new ParseField("terms");
+    /**
+     * The SHARD_SIZE_FIELD_NAME constant.
+     */
     public static final ParseField SHARD_SIZE_FIELD_NAME = new ParseField("shard_size");
+    /**
+     * The MIN_DOC_COUNT_FIELD_NAME constant.
+     */
     public static final ParseField MIN_DOC_COUNT_FIELD_NAME = new ParseField("min_doc_count");
+    /**
+     * The SHARD_MIN_DOC_COUNT_FIELD_NAME constant.
+     */
     public static final ParseField SHARD_MIN_DOC_COUNT_FIELD_NAME = new ParseField("shard_min_doc_count");
+    /**
+     * The REQUIRED_SIZE_FIELD_NAME constant.
+     */
     public static final ParseField REQUIRED_SIZE_FIELD_NAME = new ParseField("size");
+    /**
+     * The SHOW_TERM_DOC_COUNT_ERROR constant.
+     */
     public static final ParseField SHOW_TERM_DOC_COUNT_ERROR = new ParseField("show_term_doc_count_error");
+    /**
+     * The ORDER_FIELD constant.
+     */
     public static final ParseField ORDER_FIELD = new ParseField("order");
 
     @Override
@@ -171,10 +198,22 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
     );
     private boolean showTermDocCountError = false;
 
+    /**
+     * Creates a new MultiTermsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public MultiTermsAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MultiTermsAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected MultiTermsAggregationBuilder(
         MultiTermsAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -221,6 +260,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Set the terms.
+     *
+     * @param terms the terms
+     * @return the terms
      */
     public MultiTermsAggregationBuilder terms(List<MultiTermsValuesSourceConfig> terms) {
         if (terms == null) {
@@ -244,6 +286,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
     /**
      * Sets the size - indicating how many term buckets should be returned
      * (defaults to 10)
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public MultiTermsAggregationBuilder size(int size) {
         if (size <= 0) {
@@ -255,6 +300,8 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Returns the number of term buckets currently configured
+     *
+     * @return the number of elements
      */
     public int size() {
         return bucketCountThresholds.getRequiredSize();
@@ -265,6 +312,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
      * will return to the coordinating node (the node that coordinates the
      * search execution). The higher the shard size is, the more accurate the
      * results are.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     public MultiTermsAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
@@ -276,6 +326,8 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Returns the number of term buckets per shard that are currently configured
+     *
+     * @return the shard size
      */
     public int shardSize() {
         return bucketCountThresholds.getShardSize();
@@ -284,6 +336,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
     /**
      * Set the minimum document count terms should have in order to appear in
      * the response.
+     *
+     * @param minDocCount the min doc count
+     * @return the min doc count
      */
     public MultiTermsAggregationBuilder minDocCount(long minDocCount) {
         if (minDocCount < 0) {
@@ -297,6 +352,8 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Returns the minimum document count required per term
+     *
+     * @return the min doc count
      */
     public long minDocCount() {
         return bucketCountThresholds.getMinDocCount();
@@ -305,6 +362,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
     /**
      * Set the minimum document count terms should have on the shard in order to
      * appear in the response.
+     *
+     * @param shardMinDocCount the shard min doc count
+     * @return the shard min doc count
      */
     public MultiTermsAggregationBuilder shardMinDocCount(long shardMinDocCount) {
         if (shardMinDocCount < 0) {
@@ -318,13 +378,19 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Returns the minimum document count required per term, per shard
+     *
+     * @return the shard min doc count
      */
     public long shardMinDocCount() {
         return bucketCountThresholds.getShardMinDocCount();
     }
 
     /** Set a new order on this builder and return the builder so that calls
-     *  can be chained. A tie-breaker may be added to avoid non-deterministic ordering. */
+      * can be chained. A tie-breaker may be added to avoid non-deterministic ordering.
+     *
+     * @param order the order
+     * @return the order
+      */
     public MultiTermsAggregationBuilder order(BucketOrder order) {
         if (order == null) {
             throw new IllegalArgumentException("[order] must not be null: [" + name + "]");
@@ -340,6 +406,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
     /**
      * Sets the order in which the buckets will be returned. A tie-breaker may be added to avoid non-deterministic
      * ordering.
+     *
+     * @param orders the orders
+     * @return the order
      */
     public MultiTermsAggregationBuilder order(List<BucketOrder> orders) {
         if (orders == null) {
@@ -352,6 +421,8 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Gets the order in which the buckets will be returned.
+     *
+     * @return the order
      */
     public BucketOrder order() {
         return order;
@@ -359,6 +430,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Expert: set the collection mode.
+     *
+     * @param collectMode the collect mode
+     * @return this instance
      */
     public MultiTermsAggregationBuilder collectMode(Aggregator.SubAggCollectionMode collectMode) {
         if (collectMode == null) {
@@ -370,6 +444,8 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Expert: get the collection mode.
+     *
+     * @return this instance
      */
     public Aggregator.SubAggCollectionMode collectMode() {
         return collectMode;
@@ -377,6 +453,8 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Get whether doc count error will be return for individual terms
+     *
+     * @return the show term doc count error
      */
     public boolean showTermDocCountError() {
         return showTermDocCountError;
@@ -384,6 +462,9 @@ public class MultiTermsAggregationBuilder extends AbstractAggregationBuilder<Mul
 
     /**
      * Set whether doc count error will be return for individual terms
+     *
+     * @param showTermDocCountError the show term doc count error
+     * @return the show term doc count error
      */
     public MultiTermsAggregationBuilder showTermDocCountError(boolean showTermDocCountError) {
         this.showTermDocCountError = showTermDocCountError;

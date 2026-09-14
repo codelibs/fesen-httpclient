@@ -56,16 +56,21 @@ import static org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers.UNASSIGN
  * Generic interface to group ActionRequest, which perform writes to a single document
  * Action requests implementing this can be part of {@link org.codelibs.fesen.opensearch.action.bulk.BulkRequest}
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accountable {
 
     // Flag set for disallowing index auto creation for an individual write request.
+    /**
+     * The require alias.
+     */
     String REQUIRE_ALIAS = "require_alias";
 
     /**
      * Set the index for this request
+     * @param index the index
      * @return the Request
      */
     T index(String index);
@@ -79,6 +84,7 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
 
     /**
      * Set the routing for this request
+     * @param routing the routing value
      * @return the Request
      */
     T routing(String routing);
@@ -98,6 +104,9 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
     /**
      * Sets the version, which will perform the operation only if a matching
      * version exists and no changes happened on the doc since then.
+     *
+     * @param version the version
+     * @return the version
      */
     T version(long version);
 
@@ -109,6 +118,9 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
 
     /**
      * Sets the versioning type. Defaults to {@link VersionType#INTERNAL}.
+     *
+     * @param versionType the version type
+     * @return the version type
      */
     T versionType(VersionType versionType);
 
@@ -118,6 +130,9 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
      *
      * If the document last modification was assigned a different sequence number a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @param seqNo the seq no
+     * @return this instance
      */
     T setIfSeqNo(long seqNo);
 
@@ -127,6 +142,9 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
      *
      * If the document last modification was assigned a different term a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @param term the term
+     * @return this instance
      */
     T setIfPrimaryTerm(long term);
 
@@ -134,6 +152,8 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
      * If set, only perform this request if the document was last modification was assigned this sequence number.
      * If the document last modification was assigned a different sequence number a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @return the if seq no
      */
     long ifSeqNo();
 
@@ -142,6 +162,8 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
      * <p>
      * If the document last modification was assigned a different term a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @return the if primary term
      */
     long ifPrimaryTerm();
 
@@ -187,14 +209,30 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
             this.lowercase = this.toString().toLowerCase(Locale.ROOT);
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public byte getId() {
             return op;
         }
 
+        /**
+         * Returns the lowercase.
+         *
+         * @return the lowercase
+         */
         public String getLowercase() {
             return lowercase;
         }
 
+        /**
+         * Creates an instance from identifier.
+         *
+         * @param id the identifier
+         * @return the new identifier
+         */
         public static OpType fromId(byte id) {
             switch (id) {
                 case 0:
@@ -210,6 +248,12 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
             }
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param sOpType the s op type
+         * @return the new string
+         */
         public static OpType fromString(String sOpType) {
             String lowerCase = sOpType.toLowerCase(Locale.ROOT);
             for (OpType opType : OpType.values()) {
@@ -226,6 +270,9 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
      *
      * @param shardId shard id of the request. {@code null} when reading as part of a {@link org.codelibs.fesen.opensearch.action.bulk.BulkRequest}
      *                that does not have a unique shard id
+     * @param in the input to read from
+     * @return the document request
+     * @throws IOException if an I/O error occurs
      */
     static DocWriteRequest<?> readDocumentRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         byte type = in.readByte();
@@ -261,7 +308,13 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
         return validationException;
     }
 
-    /** write a document write (index/delete/update) request*/
+    /**
+     * write a document write (index/delete/update) request
+     *
+     * @param out the output to write to
+     * @param request the request
+     * @throws IOException if an I/O error occurs
+     */
     static void writeDocumentRequest(StreamOutput out, DocWriteRequest<?> request) throws IOException {
         switch (request) {
             case IndexRequest indexRequest -> {
@@ -280,6 +333,13 @@ public interface DocWriteRequest<T> extends IndicesRequest, DocRequest, Accounta
         }
     }
 
+    /**
+     * Validates the seq no based cas params.
+     *
+     * @param request the request
+     * @param validationException the validation exception
+     * @return this instance
+     */
     static ActionRequestValidationException validateSeqNoBasedCASParams(
         DocWriteRequest request,
         ActionRequestValidationException validationException

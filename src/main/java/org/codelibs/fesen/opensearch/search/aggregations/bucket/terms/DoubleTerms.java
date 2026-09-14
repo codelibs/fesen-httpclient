@@ -51,6 +51,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class DoubleTerms extends InternalMappedTerms<DoubleTerms, DoubleTerms.Bucket> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "dterms";
 
     /**
@@ -61,6 +64,16 @@ public class DoubleTerms extends InternalMappedTerms<DoubleTerms, DoubleTerms.Bu
     public static class Bucket extends InternalTerms.Bucket<Bucket> {
         double term;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param term the term
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param showDocCountError the show doc count error
+         * @param docCountError the doc count error
+         * @param format the format
+         */
         public Bucket(
             double term,
             long docCount,
@@ -126,6 +139,21 @@ public class DoubleTerms extends InternalMappedTerms<DoubleTerms, DoubleTerms.Bu
         }
     }
 
+    /**
+     * Creates a new DoubleTerms.
+     *
+     * @param name the name
+     * @param reduceOrder the reduce order
+     * @param order the order
+     * @param metadata the metadata
+     * @param format the format
+     * @param shardSize the shard size
+     * @param showTermDocCountError the show term doc count error
+     * @param otherDocCount the other doc count
+     * @param buckets the buckets
+     * @param docCountError the doc count error
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     public DoubleTerms(
         String name,
         BucketOrder reduceOrder,

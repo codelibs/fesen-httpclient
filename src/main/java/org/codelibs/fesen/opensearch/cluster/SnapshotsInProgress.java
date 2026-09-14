@@ -69,8 +69,14 @@ import java.util.stream.Collectors;
  */
 public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implements Custom {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final SnapshotsInProgress EMPTY = new SnapshotsInProgress(Collections.emptyList());
 
+    /**
+     * The TYPE constant.
+     */
     public static final String TYPE = "snapshots";
 
     @Override
@@ -138,6 +144,24 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         @Nullable
         private final String failure;
 
+        /**
+         * Creates a new Entry.
+         *
+         * @param snapshot the snapshot
+         * @param includeGlobalState the include global state
+         * @param partial the partial
+         * @param state the state
+         * @param indices the indices
+         * @param dataStreams the data streams
+         * @param startTime the start time
+         * @param repositoryStateId the repository state identifier
+         * @param shards the shards
+         * @param failure the failure
+         * @param userMetadata the user metadata
+         * @param version the version
+         * @param remoteStoreIndexShallowCopy the remote store index shallow copy
+         * @param remoteStoreIndexShallowCopyV2 the remote store index shallow copy v 2
+         */
         public Entry(
             Snapshot snapshot,
             boolean includeGlobalState,
@@ -175,6 +199,23 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         }
 
         // visible for testing, use #startedEntry and copy constructors in production code
+        /**
+         * Creates a new Entry.
+         *
+         * @param snapshot the snapshot
+         * @param includeGlobalState the include global state
+         * @param partial the partial
+         * @param state the state
+         * @param indices the indices
+         * @param dataStreams the data streams
+         * @param startTime the start time
+         * @param repositoryStateId the repository state identifier
+         * @param shards the shards
+         * @param failure the failure
+         * @param userMetadata the user metadata
+         * @param version the version
+         * @param remoteStoreIndexShallowCopy the remote store index shallow copy
+         */
         public Entry(
             Snapshot snapshot,
             boolean includeGlobalState,
@@ -294,6 +335,22 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return true;
         }
 
+        /**
+         * Creates a new Entry.
+         *
+         * @param snapshot the snapshot
+         * @param includeGlobalState the include global state
+         * @param partial the partial
+         * @param state the state
+         * @param indices the indices
+         * @param dataStreams the data streams
+         * @param startTime the start time
+         * @param repositoryStateId the repository state identifier
+         * @param shards the shards
+         * @param userMetadata the user metadata
+         * @param version the version
+         * @param remoteStoreIndexShallowCopy the remote store index shallow copy
+         */
         public Entry(
             Snapshot snapshot,
             boolean includeGlobalState,
@@ -325,6 +382,17 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             );
         }
 
+        /**
+         * Creates a new Entry.
+         *
+         * @param entry the entry
+         * @param state the state
+         * @param indices the indices
+         * @param repositoryStateId the repository state identifier
+         * @param shards the shards
+         * @param version the version
+         * @param failure the failure
+         */
         public Entry(
             Entry entry,
             State state,
@@ -356,30 +424,65 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return snapshot.getRepository();
         }
 
+        /**
+         * Snapshots this instance.
+         *
+         * @return this instance
+         */
         public Snapshot snapshot() {
             return this.snapshot;
         }
 
+        /**
+         * Returns the indices.
+         *
+         * @return the indices
+         */
         public List<IndexId> indices() {
             return indices;
         }
 
+        /**
+         * Includes the global state.
+         *
+         * @return this instance
+         */
         public boolean includeGlobalState() {
             return includeGlobalState;
         }
 
+        /**
+         * Returns the remote store index shallow copy.
+         *
+         * @return the remote store index shallow copy
+         */
         public boolean remoteStoreIndexShallowCopy() {
             return remoteStoreIndexShallowCopy;
         }
 
+        /**
+         * Returns the user metadata.
+         *
+         * @return the user metadata
+         */
         public Map<String, Object> userMetadata() {
             return userMetadata;
         }
 
+        /**
+         * Starts the time.
+         *
+         * @return this instance
+         */
         public long startTime() {
             return startTime;
         }
 
+        /**
+         * Returns the data streams.
+         *
+         * @return the data streams
+         */
         public List<String> dataStreams() {
             return dataStreams;
         }
@@ -571,10 +674,25 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
         @Nullable
         private final String reason;
 
+        /**
+         * Creates a new ShardSnapshotStatus.
+         *
+         * @param nodeId the node identifier
+         * @param state the state
+         * @param generation the generation
+         */
         public ShardSnapshotStatus(@Nullable String nodeId, ShardState state, @Nullable String generation) {
             this(nodeId, state, null, generation);
         }
 
+        /**
+         * Creates a new ShardSnapshotStatus.
+         *
+         * @param nodeId the node identifier
+         * @param state the state
+         * @param reason the reason
+         * @param generation the generation
+         */
         public ShardSnapshotStatus(@Nullable String nodeId, ShardState state, String reason, @Nullable String generation) {
             this.nodeId = nodeId;
             this.state = state;
@@ -590,6 +708,13 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return true;
         }
 
+        /**
+         * Reads this instance from the given input.
+         *
+         * @param in the input to read from
+         * @return the from
+         * @throws IOException if an I/O error occurs
+         */
         public static ShardSnapshotStatus readFrom(StreamInput in) throws IOException {
             String nodeId = in.readOptionalString();
             final ShardState state = ShardState.fromValue(in.readByte());
@@ -601,10 +726,20 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             return new ShardSnapshotStatus(nodeId, state, reason, generation);
         }
 
+        /**
+         * Returns the state.
+         *
+         * @return the state
+         */
         public ShardState state() {
             return state;
         }
 
+        /**
+         * Returns the node identifier.
+         *
+         * @return the node identifier
+         */
         @Nullable
         public String nodeId() {
             return nodeId;
@@ -651,11 +786,29 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
      */
     @PublicApi(since = "1.0.0")
     public enum State {
+        /**
+         * The INIT value.
+         */
         INIT((byte) 0, false),
+        /**
+         * The STARTED value.
+         */
         STARTED((byte) 1, false),
+        /**
+         * The SUCCESS value.
+         */
         SUCCESS((byte) 2, true),
+        /**
+         * The FAILED value.
+         */
         FAILED((byte) 3, true),
+        /**
+         * The ABORTED value.
+         */
         ABORTED((byte) 4, false),
+        /**
+         * The PARTIAL value.
+         */
         PARTIAL((byte) 5, false);
 
         private final byte value;
@@ -667,14 +820,30 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             this.completed = completed;
         }
 
+        /**
+         * Returns the value.
+         *
+         * @return the value
+         */
         public byte value() {
             return value;
         }
 
+        /**
+         * Returns the completed.
+         *
+         * @return the completed
+         */
         public boolean completed() {
             return completed;
         }
 
+        /**
+         * Creates an instance from value.
+         *
+         * @param value the value
+         * @return the new value
+         */
         public static State fromValue(byte value) {
             switch (value) {
                 case 0:
@@ -749,10 +918,25 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
      * @opensearch.internal
      */
     public enum ShardState {
+        /**
+         * The INIT value.
+         */
         INIT((byte) 0, false, false),
+        /**
+         * The SUCCESS value.
+         */
         SUCCESS((byte) 2, true, false),
+        /**
+         * The FAILED value.
+         */
         FAILED((byte) 3, true, true),
+        /**
+         * The ABORTED value.
+         */
         ABORTED((byte) 4, false, true),
+        /**
+         * The MISSING value.
+         */
         MISSING((byte) 5, true, true),
         /**
          * Shard snapshot is waiting for the primary to snapshot to become available.
@@ -775,10 +959,21 @@ public class SnapshotsInProgress extends AbstractNamedDiffable<Custom> implement
             this.failed = failed;
         }
 
+        /**
+         * Returns the failed.
+         *
+         * @return the failed
+         */
         public boolean failed() {
             return failed;
         }
 
+        /**
+         * Creates an instance from value.
+         *
+         * @param value the value
+         * @return the new value
+         */
         public static ShardState fromValue(byte value) {
             switch (value) {
                 case 0:

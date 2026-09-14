@@ -62,6 +62,11 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public abstract class RecoverySource implements Writeable, ToXContentObject {
+    /**
+     * Creates a new RecoverySource.
+     */
+    public RecoverySource() {
+    }
 
     @Override
     public final XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
@@ -73,11 +78,22 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
 
     /**
      * to be overridden by subclasses
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
      */
     public void addAdditionalFields(XContentBuilder builder, ToXContent.Params params) throws IOException {
 
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static RecoverySource readFrom(StreamInput in) throws IOException {
         Type type = Type.values()[in.readByte()];
         switch (type) {
@@ -108,6 +124,9 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
 
     /**
      * to be overridden by subclasses
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     protected void writeAdditionalFields(StreamOutput out) throws IOException {
 
@@ -120,21 +139,57 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      */
     @PublicApi(since = "1.0.0")
     public enum Type {
+        /**
+         * The EMPTY_STORE value.
+         */
         EMPTY_STORE,
+        /**
+         * The EXISTING_STORE value.
+         */
         EXISTING_STORE,
+        /**
+         * The PEER value.
+         */
         PEER,
+        /**
+         * The SNAPSHOT value.
+         */
         SNAPSHOT,
+        /**
+         * The LOCAL_SHARDS value.
+         */
         LOCAL_SHARDS,
+        /**
+         * The REMOTE_STORE value.
+         */
         REMOTE_STORE,
+        /**
+         * The in place split shard.
+         */
         IN_PLACE_SPLIT_SHARD
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public abstract Type getType();
 
+    /**
+     * Returns the bootstrap new history UUID flag.
+     *
+     * @return the bootstrap new history UUID flag
+     */
     public boolean shouldBootstrapNewHistoryUUID() {
         return false;
     }
 
+    /**
+     * Returns the expect empty retention leases.
+     *
+     * @return the expect empty retention leases
+     */
     public boolean expectEmptyRetentionLeases() {
         return true;
     }
@@ -160,6 +215,15 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      * @opensearch.internal
      */
     public static final class EmptyStoreRecoverySource extends RecoverySource {
+        /**
+         * Creates a new EmptyStoreRecoverySource.
+         */
+        public EmptyStoreRecoverySource() {
+        }
+
+        /**
+         * The INSTANCE constant.
+         */
         public static final EmptyStoreRecoverySource INSTANCE = new EmptyStoreRecoverySource();
 
         @Override
@@ -180,7 +244,13 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      */
     public static final class ExistingStoreRecoverySource extends RecoverySource {
 
+        /**
+         * The INSTANCE constant.
+         */
         public static final ExistingStoreRecoverySource INSTANCE = new ExistingStoreRecoverySource(false);
+        /**
+         * The FORCE_STALE_PRIMARY_INSTANCE constant.
+         */
         public static final ExistingStoreRecoverySource FORCE_STALE_PRIMARY_INSTANCE = new ExistingStoreRecoverySource(true);
 
         private final boolean bootstrapNewHistoryUUID;
@@ -231,6 +301,9 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      */
     public static class LocalShardsRecoverySource extends RecoverySource {
 
+        /**
+         * The INSTANCE constant.
+         */
         public static final LocalShardsRecoverySource INSTANCE = new LocalShardsRecoverySource();
 
         private LocalShardsRecoverySource() {}
@@ -254,6 +327,9 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      */
     public static class InPlaceSplitShardRecoverySource extends RecoverySource {
 
+        /**
+         * The INSTANCE constant.
+         */
         public static final InPlaceSplitShardRecoverySource INSTANCE = new InPlaceSplitShardRecoverySource();
 
         private InPlaceSplitShardRecoverySource() {}
@@ -293,6 +369,17 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
 
         private final long pinnedTimestamp;
 
+        /**
+         * Creates a new SnapshotRecoverySource.
+         *
+         * @param restoreUUID the restore UUID
+         * @param snapshot the snapshot
+         * @param version the version
+         * @param indexId the index identifier
+         * @param isSearchableSnapshot the is searchable snapshot
+         * @param remoteStoreIndexShallowCopy the remote store index shallow copy
+         * @param sourceRemoteStoreRepository the source remote store repository
+         */
         public SnapshotRecoverySource(
             String restoreUUID,
             Snapshot snapshot,
@@ -315,6 +402,19 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
             );
         }
 
+        /**
+         * Creates a new SnapshotRecoverySource.
+         *
+         * @param restoreUUID the restore UUID
+         * @param snapshot the snapshot
+         * @param version the version
+         * @param indexId the index identifier
+         * @param isSearchableSnapshot the is searchable snapshot
+         * @param remoteStoreIndexShallowCopy the remote store index shallow copy
+         * @param sourceRemoteStoreRepository the source remote store repository
+         * @param sourceRemoteTranslogRepository the source remote translog repository
+         * @param pinnedTimestamp the pinned timestamp
+         */
         public SnapshotRecoverySource(
             String restoreUUID,
             Snapshot snapshot,
@@ -519,6 +619,9 @@ public abstract class RecoverySource implements Writeable, ToXContentObject {
      */
     public static class PeerRecoverySource extends RecoverySource {
 
+        /**
+         * The INSTANCE constant.
+         */
         public static final PeerRecoverySource INSTANCE = new PeerRecoverySource();
 
         private PeerRecoverySource() {}

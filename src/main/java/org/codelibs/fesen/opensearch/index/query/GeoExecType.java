@@ -46,7 +46,13 @@ import java.io.IOException;
  */
 public enum GeoExecType implements Writeable {
 
+    /**
+     * The MEMORY value.
+     */
     MEMORY(0),
+    /**
+     * The INDEXED value.
+     */
     INDEXED(1);
 
     private final int ordinal;
@@ -55,6 +61,13 @@ public enum GeoExecType implements Writeable {
         this.ordinal = ordinal;
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoExecType readFromStream(StreamInput in) throws IOException {
         int ord = in.readVInt();
         switch (ord) {
@@ -71,6 +84,12 @@ public enum GeoExecType implements Writeable {
         out.writeVInt(this.ordinal);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param typeName the type name
+     * @return the new string
+     */
     public static GeoExecType fromString(String typeName) {
         if (typeName == null) {
             throw new IllegalArgumentException("cannot parse type from null string");

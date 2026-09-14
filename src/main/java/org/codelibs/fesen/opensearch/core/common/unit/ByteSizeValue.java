@@ -53,11 +53,20 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXContentFragment {
 
+    /**
+     * The ZERO constant.
+     */
     public static final ByteSizeValue ZERO = new ByteSizeValue(0, ByteSizeUnit.BYTES);
 
     private final long size;
     private final ByteSizeUnit unit;
 
+    /**
+     * Creates a new ByteSizeValue by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ByteSizeValue(StreamInput in) throws IOException {
         size = in.readZLong();
         unit = ByteSizeUnit.readFrom(in);
@@ -69,10 +78,21 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
         unit.writeTo(out);
     }
 
+    /**
+     * Creates a new ByteSizeValue.
+     *
+     * @param bytes the bytes
+     */
     public ByteSizeValue(long bytes) {
         this(bytes, ByteSizeUnit.BYTES);
     }
 
+    /**
+     * Creates a new ByteSizeValue.
+     *
+     * @param size the size
+     * @param unit the unit
+     */
     public ByteSizeValue(long size, ByteSizeUnit unit) {
         if (size < -1 || (size == -1 && unit != ByteSizeUnit.BYTES)) {
             throw new IllegalArgumentException("Values less than -1 bytes are not supported: " + size + unit.getSuffix());
@@ -86,31 +106,63 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
         this.unit = unit;
     }
 
+    /**
+     * Returns the bytes.
+     *
+     * @return the bytes
+     */
     public long getBytes() {
         return unit.toBytes(size);
     }
 
+    /**
+     * Returns the kb frac.
+     *
+     * @return the kb frac
+     */
     public double getKbFrac() {
         return ((double) getBytes()) / ByteSizeUnit.C1;
     }
 
+    /**
+     * Returns the mb frac.
+     *
+     * @return the mb frac
+     */
     public double getMbFrac() {
         return ((double) getBytes()) / ByteSizeUnit.C2;
     }
 
+    /**
+     * Returns the gb frac.
+     *
+     * @return the gb frac
+     */
     public double getGbFrac() {
         return ((double) getBytes()) / ByteSizeUnit.C3;
     }
 
+    /**
+     * Returns the tb frac.
+     *
+     * @return the tb frac
+     */
     public double getTbFrac() {
         return ((double) getBytes()) / ByteSizeUnit.C4;
     }
 
+    /**
+     * Returns the pb frac.
+     *
+     * @return the pb frac
+     */
     public double getPbFrac() {
         return ((double) getBytes()) / ByteSizeUnit.C5;
     }
 
     /**
+     * Returns the string rep.
+     *
      * @return a string representation of this value which is guaranteed to be
      *         able to be parsed using
      *         {@link #parseBytesSizeValue(String, ByteSizeValue, String)}.
@@ -149,10 +201,25 @@ public class ByteSizeValue implements Writeable, Comparable<ByteSizeValue>, ToXC
         return Strings.format1Decimals(value, suffix);
     }
 
+    /**
+     * Parses the bytes size value.
+     *
+     * @param sValue the s value
+     * @param settingName the setting name
+     * @return this instance
+     */
     public static ByteSizeValue parseBytesSizeValue(String sValue, String settingName) throws OpenSearchParseException {
         return parseBytesSizeValue(sValue, null, settingName);
     }
 
+    /**
+     * Parses the bytes size value.
+     *
+     * @param sValue the s value
+     * @param defaultValue the default value
+     * @param settingName the setting name
+     * @return this instance
+     */
     public static ByteSizeValue parseBytesSizeValue(String sValue, ByteSizeValue defaultValue, String settingName)
         throws OpenSearchParseException {
         settingName = Objects.requireNonNull(settingName);

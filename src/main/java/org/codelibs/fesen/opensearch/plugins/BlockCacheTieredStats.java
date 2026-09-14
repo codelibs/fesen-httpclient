@@ -32,6 +32,28 @@ import java.io.IOException;
  * {@link BlockCacheStats} reader; the inner field set defined here was finalized
  * before the V_3_8_0 release and does not require a separate gate.
  *
+ * @param dataHits the data hits
+ * @param dataMisses the data misses
+ * @param dataHitBytes the data hit bytes
+ * @param dataMissBytes the data miss bytes
+ * @param dataEvictions the data evictions
+ * @param dataEvictionBytes the data eviction bytes
+ * @param dataRemoved the data removed
+ * @param dataRemovedBytes the data removed bytes
+ * @param dataUsedBytes the data used bytes
+ * @param dataCapacityBytes the data capacity bytes
+ * @param dataActiveInBytes the data active in bytes
+ * @param metadataHits the metadata hits
+ * @param metadataMisses the metadata misses
+ * @param metadataHitBytes the metadata hit bytes
+ * @param metadataMissBytes the metadata miss bytes
+ * @param metadataEvictions the metadata evictions
+ * @param metadataEvictionBytes the metadata eviction bytes
+ * @param metadataRemoved the metadata removed
+ * @param metadataRemovedBytes the metadata removed bytes
+ * @param metadataUsedBytes the metadata used bytes
+ * @param metadataCapacityBytes the metadata capacity bytes
+ * @param metadataActiveInBytes the metadata active in bytes
  * @opensearch.experimental
  */
 @ExperimentalApi
@@ -41,6 +63,12 @@ public record BlockCacheTieredStats(long dataHits, long dataMisses, long dataHit
     long metadataEvictionBytes, long metadataRemoved, long metadataRemovedBytes, long metadataUsedBytes, long metadataCapacityBytes,
     long metadataActiveInBytes) implements Writeable, ToXContentFragment {
 
+    /**
+     * Creates a new BlockCacheTieredStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BlockCacheTieredStats(StreamInput in) throws IOException {
         this(
             in.readLong(),

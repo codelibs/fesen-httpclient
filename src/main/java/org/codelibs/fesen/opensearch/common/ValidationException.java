@@ -41,8 +41,14 @@ import java.util.List;
  * @opensearch.internal
  */
 public class ValidationException extends IllegalArgumentException {
+    /**
+     * The validation errors.
+     */
     private final List<String> validationErrors = new ArrayList<>();
 
+    /**
+     * Creates a new ValidationException.
+     */
     public ValidationException() {
         super("validation failed");
     }
@@ -67,6 +73,8 @@ public class ValidationException extends IllegalArgumentException {
 
     /**
      * Returns the validation errors accumulated
+     *
+     * @return the validation errors
      */
     public final List<String> validationErrors() {
         return validationErrors;

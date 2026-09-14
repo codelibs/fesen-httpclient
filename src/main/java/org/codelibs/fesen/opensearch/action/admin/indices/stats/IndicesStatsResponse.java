@@ -63,11 +63,26 @@ public class IndicesStatsResponse extends BroadcastResponse {
 
     private ShardStats[] shards;
 
+    /**
+     * Creates a new IndicesStatsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndicesStatsResponse(StreamInput in) throws IOException {
         super(in);
         shards = in.readArray(ShardStats::new, (size) -> new ShardStats[size]);
     }
 
+    /**
+     * Creates a new IndicesStatsResponse.
+     *
+     * @param shards the shards
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param failedShards the failed shards
+     * @param shardFailures the shard failures
+     */
     public IndicesStatsResponse(
         ShardStats[] shards,
         int totalShards,
@@ -81,6 +96,11 @@ public class IndicesStatsResponse extends BroadcastResponse {
 
     private Map<String, IndexStats> indicesStats;
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public Map<String, IndexStats> getIndices() {
         if (indicesStats != null) {
             return indicesStats;
@@ -104,6 +124,11 @@ public class IndicesStatsResponse extends BroadcastResponse {
 
     private CommonStats total = null;
 
+    /**
+     * Returns the total.
+     *
+     * @return the total
+     */
     public CommonStats getTotal() {
         if (total != null) {
             return total;
@@ -118,6 +143,11 @@ public class IndicesStatsResponse extends BroadcastResponse {
 
     private CommonStats primary = null;
 
+    /**
+     * Returns the primaries.
+     *
+     * @return the primaries
+     */
     public CommonStats getPrimaries() {
         if (primary != null) {
             return primary;

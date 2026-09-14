@@ -53,7 +53,13 @@ import java.util.Set;
 @PublicApi(since = "1.0.0")
 public class CommonStatsFlags implements Writeable, Cloneable {
 
+    /**
+     * The ALL constant.
+     */
     public static final CommonStatsFlags ALL = new CommonStatsFlags().all();
+    /**
+     * The NONE constant.
+     */
     public static final CommonStatsFlags NONE = new CommonStatsFlags().clear();
 
     private EnumSet<Flag> flags = EnumSet.allOf(Flag.class);
@@ -70,6 +76,8 @@ public class CommonStatsFlags implements Writeable, Cloneable {
     private boolean includeIndicesStatsByLevel = false;
 
     /**
+     * Creates a new CommonStatsFlags.
+     *
      * @param flags flags to set. If no flags are supplied, default flags will be set.
      */
     public CommonStatsFlags(Flag... flags) {
@@ -79,6 +87,12 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         }
     }
 
+    /**
+     * Creates a new CommonStatsFlags by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CommonStatsFlags(StreamInput in) throws IOException {
         final long longFlags = in.readLong();
         flags.clear();
@@ -135,6 +149,8 @@ public class CommonStatsFlags implements Writeable, Cloneable {
 
     /**
      * Sets all flags to return all stats.
+     *
+     * @return the all
      */
     public CommonStatsFlags all() {
         flags = EnumSet.allOf(Flag.class);
@@ -152,6 +168,8 @@ public class CommonStatsFlags implements Writeable, Cloneable {
 
     /**
      * Clears all stats.
+     *
+     * @return this instance
      */
     public CommonStatsFlags clear() {
         flags = EnumSet.noneOf(Flag.class);
@@ -167,38 +185,84 @@ public class CommonStatsFlags implements Writeable, Cloneable {
         return this;
     }
 
+    /**
+     * Returns the any set.
+     *
+     * @return the any set
+     */
     public boolean anySet() {
         return !flags.isEmpty();
     }
 
+    /**
+     * Returns the flags.
+     *
+     * @return the flags
+     */
     public Flag[] getFlags() {
         return flags.toArray(new Flag[0]);
     }
 
+    /**
+     * Returns the include caches.
+     *
+     * @return the include caches
+     */
     public Set<CacheType> getIncludeCaches() {
         return includeCaches;
     }
 
+    /**
+     * Returns the groups.
+     *
+     * @return the groups
+     */
     public String[] groups() {
         return this.groups;
     }
 
+    /**
+     * Returns the field data fields.
+     *
+     * @return the field data fields
+     */
     public String[] fieldDataFields() {
         return this.fieldDataFields;
     }
 
+    /**
+     * Returns the completion data fields.
+     *
+     * @return the completion data fields
+     */
     public String[] completionDataFields() {
         return this.completionDataFields;
     }
 
+    /**
+     * Includes the unloaded segments.
+     *
+     * @return this instance
+     */
     public boolean includeUnloadedSegments() {
         return this.includeUnloadedSegments;
     }
 
+    /**
+     * Includes the segment file sizes.
+     *
+     * @return this instance
+     */
     public boolean includeSegmentFileSizes() {
         return this.includeSegmentFileSizes;
     }
 
+    /**
+     * Returns the set flag.
+     *
+     * @param flag the flag
+     * @return the set flag
+     */
     public boolean isSet(Flag flag) {
         return flags.contains(flag);
     }
@@ -221,22 +285,70 @@ public class CommonStatsFlags implements Writeable, Cloneable {
      */
     @PublicApi(since = "1.0.0")
     public enum Flag {
+        /**
+         * The Store value.
+         */
         Store("store", 0),
+        /**
+         * The Indexing value.
+         */
         Indexing("indexing", 1),
+        /**
+         * The Get value.
+         */
         Get("get", 2),
+        /**
+         * The Search value.
+         */
         Search("search", 3),
+        /**
+         * The Merge value.
+         */
         Merge("merge", 4),
+        /**
+         * The Flush value.
+         */
         Flush("flush", 5),
+        /**
+         * The Refresh value.
+         */
         Refresh("refresh", 6),
+        /**
+         * The QueryCache value.
+         */
         QueryCache("query_cache", 7),
+        /**
+         * The FieldData value.
+         */
         FieldData("fielddata", 8),
+        /**
+         * The Docs value.
+         */
         Docs("docs", 9),
+        /**
+         * The Warmer value.
+         */
         Warmer("warmer", 10),
+        /**
+         * The Completion value.
+         */
         Completion("completion", 11),
+        /**
+         * The Segments value.
+         */
         Segments("segments", 12),
+        /**
+         * The Translog value.
+         */
         Translog("translog", 13),
         // 14 was previously used for Suggest
+        /**
+         * The RequestCache value.
+         */
         RequestCache("request_cache", 15),
+        /**
+         * The Recovery value.
+         */
         Recovery("recovery", 16);
 
         private final String restName;
@@ -247,6 +359,11 @@ public class CommonStatsFlags implements Writeable, Cloneable {
             this.index = index;
         }
 
+        /**
+         * Returns the rest name.
+         *
+         * @return the rest name
+         */
         public String getRestName() {
             return restName;
         }

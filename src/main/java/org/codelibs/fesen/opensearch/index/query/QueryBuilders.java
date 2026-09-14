@@ -62,6 +62,8 @@ public final class QueryBuilders {
 
     /**
      * A query that matches on all documents.
+     *
+     * @return this instance
      */
     public static MatchAllQueryBuilder matchAllQuery() {
         return new MatchAllQueryBuilder();
@@ -72,6 +74,7 @@ public final class QueryBuilders {
      *
      * @param name The field name.
      * @param text The query text (to be analyzed).
+     * @return this instance
      */
     public static MatchQueryBuilder matchQuery(String name, Object text) {
         return new MatchQueryBuilder(name, text);
@@ -83,6 +86,7 @@ public final class QueryBuilders {
      * @param fieldName The field name.
      * @param text The query text (to be analyzed).
      *
+     * @return the common terms query
      * @deprecated See {@link CommonTermsQueryBuilder}
      */
     @Deprecated
@@ -95,6 +99,7 @@ public final class QueryBuilders {
      *
      * @param name The field name.
      * @param text The query text (to be analyzed).
+     * @return this instance
      */
     public static MatchPhraseQueryBuilder matchPhraseQuery(String name, Object text) {
         return new MatchPhraseQueryBuilder(name, text);
@@ -105,6 +110,7 @@ public final class QueryBuilders {
      *
      * @param name The field name.
      * @param text The query text (to be analyzed).
+     * @return this instance
      */
     public static MatchPhrasePrefixQueryBuilder matchPhrasePrefixQuery(String name, Object text) {
         return new MatchPhrasePrefixQueryBuilder(name, text);
@@ -114,6 +120,8 @@ public final class QueryBuilders {
      * A query that generates the union of documents produced by its sub-queries, and that scores each document
      * with the maximum score for that document as produced by any sub-query, plus a tie breaking increment for any
      * additional matching sub-queries.
+     *
+     * @return the dis max query
      */
     public static DisMaxQueryBuilder disMaxQuery() {
         return new DisMaxQueryBuilder();
@@ -121,6 +129,8 @@ public final class QueryBuilders {
 
     /**
      * Constructs a query that will match only specific ids within all types.
+     *
+     * @return the identifiers query
      */
     public static IdsQueryBuilder idsQuery() {
         return new IdsQueryBuilder();
@@ -131,6 +141,7 @@ public final class QueryBuilders {
      *
      * @param name  The name of the field
      * @param value The value of the term
+     * @return the term query
      */
     public static TermQueryBuilder termQuery(String name, String value) {
         return new TermQueryBuilder(name, value);
@@ -141,6 +152,7 @@ public final class QueryBuilders {
      *
      * @param name  The name of the field
      * @param value The value of the term
+     * @return the term query
      */
     public static TermQueryBuilder termQuery(String name, int value) {
         return new TermQueryBuilder(name, value);
@@ -151,6 +163,7 @@ public final class QueryBuilders {
      *
      * @param name  The name of the field
      * @param value The value of the term
+     * @return the term query
      */
     public static TermQueryBuilder termQuery(String name, boolean value) {
         return new TermQueryBuilder(name, value);
@@ -161,6 +174,7 @@ public final class QueryBuilders {
      *
      * @param name  The name of the field
      * @param value The value of the term
+     * @return the term query
      */
     public static TermQueryBuilder termQuery(String name, Object value) {
         return new TermQueryBuilder(name, value);
@@ -172,6 +186,7 @@ public final class QueryBuilders {
      * @param name  The name of the field
      * @param value The value of the term
      *
+     * @return the fuzzy query
      * @see #matchQuery(String, Object)
      * @see #rangeQuery(String)
      */
@@ -184,6 +199,7 @@ public final class QueryBuilders {
      *
      * @param name   The name of the field
      * @param prefix The prefix query
+     * @return the prefix query
      */
     public static PrefixQueryBuilder prefixQuery(String name, String prefix) {
         return new PrefixQueryBuilder(name, prefix);
@@ -193,6 +209,7 @@ public final class QueryBuilders {
      * A Query that matches documents within an range of terms.
      *
      * @param name The field name
+     * @return the range query
      */
     public static RangeQueryBuilder rangeQuery(String name) {
         return new RangeQueryBuilder(name);
@@ -208,6 +225,7 @@ public final class QueryBuilders {
      *
      * @param name  The field name
      * @param query The wildcard query string
+     * @return the wildcard query
      */
     public static WildcardQueryBuilder wildcardQuery(String name, String query) {
         return new WildcardQueryBuilder(name, query);
@@ -218,6 +236,7 @@ public final class QueryBuilders {
      *
      * @param name   The name of the field
      * @param regexp The regular expression
+     * @return the regexp query
      */
     public static RegexpQueryBuilder regexpQuery(String name, String regexp) {
         return new RegexpQueryBuilder(name, regexp);
@@ -231,6 +250,7 @@ public final class QueryBuilders {
      * them either using Dismax.
      *
      * @param queryString The query string to run
+     * @return this instance
      */
     public static QueryStringQueryBuilder queryStringQuery(String queryString) {
         return new QueryStringQueryBuilder(queryString);
@@ -238,11 +258,20 @@ public final class QueryBuilders {
 
     /**
      * A Query that matches documents matching boolean combinations of other queries.
+     *
+     * @return the bool query
      */
     public static BoolQueryBuilder boolQuery() {
         return new BoolQueryBuilder();
     }
 
+    /**
+     * Returns the span term query.
+     *
+     * @param name the name
+     * @param value the value
+     * @return the span term query
+     */
     public static SpanTermQueryBuilder spanTermQuery(String name, String value) {
         return new SpanTermQueryBuilder(name, value);
     }
@@ -284,6 +313,7 @@ public final class QueryBuilders {
      * A query that allows to define a custom scoring function.
      *
      * @param function The function builder used to custom score
+     * @return the function score query
      */
     public static FunctionScoreQueryBuilder functionScoreQuery(ScoreFunctionBuilder function) {
         return functionScoreQuery(function, null);
@@ -294,6 +324,7 @@ public final class QueryBuilders {
      *
      * @param function The function builder used to custom score
      * @param queryName The query name
+     * @return the function score query
      */
     public static FunctionScoreQueryBuilder functionScoreQuery(ScoreFunctionBuilder function, @Nullable String queryName) {
         return new FunctionScoreQueryBuilder(function, queryName);
@@ -304,6 +335,7 @@ public final class QueryBuilders {
      *
      * @param queryBuilder The query to custom score
      * @param function     The function builder used to custom score
+     * @return the function score query
      */
     public static FunctionScoreQueryBuilder functionScoreQuery(QueryBuilder queryBuilder, ScoreFunctionBuilder function) {
         return (new FunctionScoreQueryBuilder(queryBuilder, function));
@@ -314,6 +346,7 @@ public final class QueryBuilders {
      *
      * @param queryBuilder The query to custom score
      * @param script       The script used to score the query
+     * @return the script score query
      */
     public static ScriptScoreQueryBuilder scriptScoreQuery(QueryBuilder queryBuilder, Script script) {
         return new ScriptScoreQueryBuilder(queryBuilder, script);
@@ -326,11 +359,20 @@ public final class QueryBuilders {
      * @param fields the field names that will be used when generating the 'More Like This' query.
      * @param likeTexts the text to use when generating the 'More Like This' query.
      * @param likeItems the documents to use when generating the 'More Like This' query.
+     * @return the more like this query
      */
     public static MoreLikeThisQueryBuilder moreLikeThisQuery(String[] fields, String[] likeTexts, Item[] likeItems) {
         return new MoreLikeThisQueryBuilder(fields, likeTexts, likeItems);
     }
 
+    /**
+     * Returns the nested query.
+     *
+     * @param path the path
+     * @param query the query
+     * @param scoreMode the score mode
+     * @return the nested query
+     */
     public static NestedQueryBuilder nestedQuery(String path, QueryBuilder query, ScoreMode scoreMode) {
         return new NestedQueryBuilder(path, query, scoreMode);
     }
@@ -340,6 +382,7 @@ public final class QueryBuilders {
      *
      * @param name   The field name
      * @param values The terms
+     * @return the terms query
      */
     public static TermsQueryBuilder termsQuery(String name, String... values) {
         return new TermsQueryBuilder(name, values);
@@ -350,6 +393,7 @@ public final class QueryBuilders {
      *
      * @param name   The field name
      * @param values The terms
+     * @return the terms query
      */
     public static TermsQueryBuilder termsQuery(String name, Collection<?> values) {
         return new TermsQueryBuilder(name, values);
@@ -359,6 +403,7 @@ public final class QueryBuilders {
      * A filter to filter based on a specific distance from a specific geo location / point.
      *
      * @param name The location field name.
+     * @return the geo distance query
      */
     public static GeoDistanceQueryBuilder geoDistanceQuery(String name) {
         return new GeoDistanceQueryBuilder(name);
@@ -368,6 +413,7 @@ public final class QueryBuilders {
      * A filter to filter only documents where a field exists in them.
      *
      * @param name The name of the field
+     * @return the exists query
      */
     public static ExistsQueryBuilder existsQuery(String name) {
         return new ExistsQueryBuilder(name);

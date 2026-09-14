@@ -72,12 +72,19 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
         getResult = new GetResult(in);
     }
 
+    /**
+     * Creates a new GetResponse.
+     *
+     * @param getResult the get result
+     */
     public GetResponse(GetResult getResult) {
         this.getResult = getResult;
     }
 
     /**
      * Does the document exists.
+     *
+     * @return the exists flag
      */
     public boolean isExists() {
         return getResult.isExists();
@@ -85,6 +92,8 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
 
     /**
      * Returns bytes reference, also un compress the source if needed.
+     *
+     * @return the source as bytes ref
      */
     public BytesReference getSourceAsBytesRef() {
         return getResult.sourceRef();
@@ -92,6 +101,8 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
 
     /**
      * Is the source empty (not available) or not.
+     *
+     * @return the source empty flag
      */
     public boolean isSourceEmpty() {
         return getResult.isSourceEmpty();
@@ -99,15 +110,28 @@ public class GetResponse extends ActionResponse implements Iterable<DocumentFiel
 
     /**
      * The source of the document (As a map).
+     *
+     * @return the source as map
      */
     public Map<String, Object> getSourceAsMap() throws OpenSearchParseException {
         return getResult.sourceAsMap();
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public Map<String, Object> getSource() {
         return getResult.getSource();
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @return the field
+     */
     public DocumentField getField(String name) {
         return getResult.field(name);
     }

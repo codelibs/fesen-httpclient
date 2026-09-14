@@ -44,6 +44,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedMin extends ParsedSingleValueNumericMetricsAggregation implements Min {
+    /**
+     * Creates a new ParsedMin.
+     */
+    public ParsedMin() {
+    }
 
     @Override
     public double getValue() {
@@ -71,6 +76,13 @@ public class ParsedMin extends ParsedSingleValueNumericMetricsAggregation implem
         declareSingleValueFields(PARSER, Double.POSITIVE_INFINITY);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedMin fromXContent(XContentParser parser, final String name) {
         ParsedMin min = PARSER.apply(parser, null);
         min.setName(name);

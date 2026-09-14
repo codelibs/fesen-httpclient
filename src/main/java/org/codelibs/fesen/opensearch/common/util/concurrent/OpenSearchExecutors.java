@@ -119,6 +119,18 @@ public class OpenSearchExecutors {
         return NODE_PROCESSORS_SETTING.get(settings);
     }
 
+    /**
+     * Creates a new scaling.
+     *
+     * @param name the name
+     * @param min the min
+     * @param max the max
+     * @param keepAliveTime the keep alive time
+     * @param unit the unit
+     * @param threadFactory the thread factory
+     * @param contextHolder the context holder
+     * @return the new scaling
+     */
     public static OpenSearchThreadPoolExecutor newScaling(
         String name,
         int min,
@@ -144,6 +156,16 @@ public class OpenSearchExecutors {
         return executor;
     }
 
+    /**
+     * Creates a new fixed.
+     *
+     * @param name the name
+     * @param size the size
+     * @param queueCapacity the queue capacity
+     * @param threadFactory the thread factory
+     * @param contextHolder the context holder
+     * @return the new fixed
+     */
     public static OpenSearchThreadPoolExecutor newFixed(
         String name,
         int size,
@@ -170,6 +192,17 @@ public class OpenSearchExecutors {
         );
     }
 
+    /**
+     * Creates a new resizable.
+     *
+     * @param name the name
+     * @param size the size
+     * @param queueCapacity the queue capacity
+     * @param threadFactory the thread factory
+     * @param contextHolder the context holder
+     * @param runnableTaskListener the runnable task listener
+     * @return the new resizable
+     */
     public static OpenSearchThreadPoolExecutor newResizable(
         String name,
         int size,
@@ -298,6 +331,13 @@ public class OpenSearchExecutors {
         return DIRECT_EXECUTOR_SERVICE;
     }
 
+    /**
+     * Returns the thread name.
+     *
+     * @param settings the settings
+     * @param namePrefix the name prefix
+     * @return the thread name
+     */
     public static String threadName(Settings settings, String namePrefix) {
         if (Node.NODE_NAME_SETTING.exists(settings)) {
             return threadName(Node.NODE_NAME_SETTING.get(settings), namePrefix);
@@ -307,15 +347,35 @@ public class OpenSearchExecutors {
         }
     }
 
+    /**
+     * Returns the thread name.
+     *
+     * @param nodeName the node name
+     * @param namePrefix the name prefix
+     * @return the thread name
+     */
     public static String threadName(final String nodeName, final String namePrefix) {
         // TODO missing node names should only be allowed in tests
         return "opensearch" + (nodeName.isEmpty() ? "" : "[") + nodeName + (nodeName.isEmpty() ? "" : "]") + "[" + namePrefix + "]";
     }
 
+    /**
+     * Returns the daemon thread factory.
+     *
+     * @param settings the settings
+     * @param namePrefix the name prefix
+     * @return the daemon thread factory
+     */
     public static ThreadFactory daemonThreadFactory(Settings settings, String namePrefix) {
         return daemonThreadFactory(threadName(settings, namePrefix));
     }
 
+    /**
+     * Returns the daemon thread factory.
+     *
+     * @param namePrefix the name prefix
+     * @return the daemon thread factory
+     */
     public static ThreadFactory daemonThreadFactory(String namePrefix) {
         return new OpenSearchThreadFactory(namePrefix);
     }
@@ -355,6 +415,7 @@ public class OpenSearchExecutors {
     /**
      * A scaling queue for executors
      *
+     * @param <E> the element type
      * @opensearch.internal
      */
     static class ExecutorScalingQueue<E> extends LinkedTransferQueue<E> {

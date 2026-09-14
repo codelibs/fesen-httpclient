@@ -48,10 +48,24 @@ public class AnalyzeRequestBuilder extends SingleShardOperationRequestBuilder<
     AnalyzeAction.Response,
     AnalyzeRequestBuilder> {
 
+    /**
+     * Creates a new AnalyzeRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public AnalyzeRequestBuilder(OpenSearchClient client, AnalyzeAction action) {
         super(client, action, new AnalyzeAction.Request());
     }
 
+    /**
+     * Creates a new AnalyzeRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     * @param text the text
+     */
     public AnalyzeRequestBuilder(OpenSearchClient client, AnalyzeAction action, String index, String... text) {
         super(client, action, new AnalyzeAction.Request(index).text(text));
     }
@@ -60,6 +74,7 @@ public class AnalyzeRequestBuilder extends SingleShardOperationRequestBuilder<
      * Sets the analyzer name to use in order to analyze the text.
      *
      * @param analyzer The analyzer name.
+     * @return this instance
      */
     public AnalyzeRequestBuilder setAnalyzer(String analyzer) {
         request.analyzer(analyzer);

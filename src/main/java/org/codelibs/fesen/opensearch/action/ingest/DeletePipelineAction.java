@@ -42,9 +42,18 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class DeletePipelineAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeletePipelineAction INSTANCE = new DeletePipelineAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/ingest/pipeline/delete";
 
+    /**
+     * Creates a new DeletePipelineAction.
+     */
     public DeletePipelineAction() {
         super(NAME, AcknowledgedResponse::new);
     }

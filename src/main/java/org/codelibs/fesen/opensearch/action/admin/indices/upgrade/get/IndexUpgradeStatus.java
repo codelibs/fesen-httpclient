@@ -76,6 +76,11 @@ public class IndexUpgradeStatus implements Iterable<IndexShardUpgradeStatus> {
         }
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return this.index;
     }
@@ -85,6 +90,11 @@ public class IndexUpgradeStatus implements Iterable<IndexShardUpgradeStatus> {
         return indexShards.values().iterator();
     }
 
+    /**
+     * Returns the total bytes.
+     *
+     * @return the total bytes
+     */
     public long getTotalBytes() {
         long totalBytes = 0;
         for (IndexShardUpgradeStatus indexShardUpgradeStatus : indexShards.values()) {
@@ -93,6 +103,11 @@ public class IndexUpgradeStatus implements Iterable<IndexShardUpgradeStatus> {
         return totalBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes.
+     *
+     * @return the to upgrade bytes
+     */
     public long getToUpgradeBytes() {
         long upgradeBytes = 0;
         for (IndexShardUpgradeStatus indexShardUpgradeStatus : indexShards.values()) {
@@ -101,6 +116,11 @@ public class IndexUpgradeStatus implements Iterable<IndexShardUpgradeStatus> {
         return upgradeBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes ancient.
+     *
+     * @return the to upgrade bytes ancient
+     */
     public long getToUpgradeBytesAncient() {
         long upgradeBytesAncient = 0;
         for (IndexShardUpgradeStatus indexShardUpgradeStatus : indexShards.values()) {

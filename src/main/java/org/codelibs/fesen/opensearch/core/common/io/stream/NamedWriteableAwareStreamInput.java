@@ -43,6 +43,12 @@ public class NamedWriteableAwareStreamInput extends FilterStreamInput {
 
     private final NamedWriteableRegistry namedWriteableRegistry;
 
+    /**
+     * Creates a new NamedWriteableAwareStreamInput by reading it from the given input.
+     *
+     * @param delegate the delegate
+     * @param namedWriteableRegistry the named writeable registry
+     */
     public NamedWriteableAwareStreamInput(StreamInput delegate, NamedWriteableRegistry namedWriteableRegistry) {
         super(delegate);
         this.namedWriteableRegistry = namedWriteableRegistry;

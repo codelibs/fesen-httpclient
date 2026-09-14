@@ -79,12 +79,25 @@ import static java.util.stream.Collectors.toMap;
  */
 @PublicApi(since = "1.0.0")
 public class AggregatorFactories {
+    /**
+     * Creates a new AggregatorFactories.
+     */
+    public AggregatorFactories() {
+    }
+
     private static final Logger logger = LogManager.getLogger(AggregatorFactories.class);
+    /**
+     * The VALID_AGG_NAME constant.
+     */
     public static final Pattern VALID_AGG_NAME = Pattern.compile("[^\\[\\]>]+");
 
     /**
      * Parses the aggregation request recursively generating aggregator
      * factories in turn.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static AggregatorFactories.Builder parseAggregators(XContentParser parser) throws IOException {
         return parseAggregators(parser, 0);
@@ -228,6 +241,11 @@ public class AggregatorFactories {
         return factories.count() > 0 ? factories : null;
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -254,6 +272,9 @@ public class AggregatorFactories {
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public Builder(StreamInput in) throws IOException {
             int factoriesSize = in.readVInt();
@@ -278,6 +299,12 @@ public class AggregatorFactories {
             }
         }
 
+        /**
+         * Adds the aggregator.
+         *
+         * @param factory the factory
+         * @return this instance
+         */
         public Builder addAggregator(AggregationBuilder factory) {
             if (!names.add(factory.name)) {
                 throw new IllegalArgumentException("Two sibling aggregations cannot have the same name: [" + factory.name + "]");
@@ -286,6 +313,12 @@ public class AggregatorFactories {
             return this;
         }
 
+        /**
+         * Adds the pipeline aggregator.
+         *
+         * @param pipelineAggregatorFactory the pipeline aggregator factory
+         * @return this instance
+         */
         public Builder addPipelineAggregator(PipelineAggregationBuilder pipelineAggregatorFactory) {
             this.pipelineAggregatorBuilders.add(pipelineAggregatorFactory);
             return this;
@@ -293,6 +326,9 @@ public class AggregatorFactories {
 
         /**
          * Validate the root of the aggregation tree.
+         *
+         * @param e the exception
+         * @return this instance
          */
         public ActionRequestValidationException validate(ActionRequestValidationException e) {
             PipelineAggregationBuilder.ValidationContext context = PipelineAggregationBuilder.ValidationContext.forTreeRoot(
@@ -439,14 +475,29 @@ public class AggregatorFactories {
             }
         }
 
+        /**
+         * Returns the aggregator factories.
+         *
+         * @return the aggregator factories
+         */
         public Collection<AggregationBuilder> getAggregatorFactories() {
             return Collections.unmodifiableCollection(aggregationBuilders);
         }
 
+        /**
+         * Returns the pipeline aggregator factories.
+         *
+         * @return the pipeline aggregator factories
+         */
         public Collection<PipelineAggregationBuilder> getPipelineAggregatorFactories() {
             return Collections.unmodifiableCollection(pipelineAggregatorBuilders);
         }
 
+        /**
+         * Counts this instance.
+         *
+         * @return this instance
+         */
         public int count() {
             return aggregationBuilders.size() + pipelineAggregatorBuilders.size();
         }
@@ -493,6 +544,10 @@ public class AggregatorFactories {
          * Rewrites the underlying aggregation builders into their primitive
          * form. If the builder did not change the identity reference must be
          * returned otherwise the builder will be rewritten infinitely.
+         *
+         * @param context the context
+         * @return this instance
+         * @throws IOException if an I/O error occurs
          */
         public Builder rewrite(QueryRewriteContext context) throws IOException {
             boolean changed = false;

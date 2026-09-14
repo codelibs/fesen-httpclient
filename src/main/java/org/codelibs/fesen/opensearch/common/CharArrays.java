@@ -51,6 +51,9 @@ public final class CharArrays {
      * Encodes the provided char[] to a UTF-8 byte[]. This is done while avoiding
      * conversions to String. The provided char[] is not modified by this method, so
      * the caller needs to take care of clearing the value if it is sensitive.
+     *
+     * @param chars the chars
+     * @return the utf8 bytes
      */
     public static byte[] toUtf8Bytes(char[] chars) {
         final CharBuffer charBuffer = CharBuffer.wrap(chars);

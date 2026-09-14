@@ -60,15 +60,36 @@ import java.util.stream.Collectors;
 public abstract class ParsedSignificantTerms extends ParsedMultiBucketAggregation<ParsedSignificantTerms.ParsedBucket>
     implements
         SignificantTerms {
+            /**
+             * Creates a new ParsedSignificantTerms.
+             */
+            public ParsedSignificantTerms() {
+            }
 
     private Map<String, ParsedBucket> bucketMap;
+    /**
+     * The subset size.
+     */
     protected long subsetSize;
+    /**
+     * The superset size.
+     */
     protected long supersetSize;
 
+    /**
+     * Returns the subset size.
+     *
+     * @return the subset size
+     */
     protected long getSubsetSize() {
         return subsetSize;
     }
 
+    /**
+     * Returns the superset size.
+     *
+     * @return the superset size
+     */
     protected long getSupersetSize() {
         return supersetSize;
     }
@@ -134,11 +155,31 @@ public abstract class ParsedSignificantTerms extends ParsedMultiBucketAggregatio
      * @opensearch.internal
      */
     public abstract static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements SignificantTerms.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
+        /**
+         * The subset df.
+         */
         protected long subsetDf;
+        /**
+         * The subset size.
+         */
         protected long subsetSize;
+        /**
+         * The superset df.
+         */
         protected long supersetDf;
+        /**
+         * The superset size.
+         */
         protected long supersetSize;
+        /**
+         * The score.
+         */
         protected double score;
 
         @Override

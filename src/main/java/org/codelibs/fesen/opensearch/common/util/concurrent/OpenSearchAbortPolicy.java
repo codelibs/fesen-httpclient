@@ -44,6 +44,12 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @opensearch.internal
  */
 public class OpenSearchAbortPolicy implements XRejectedExecutionHandler {
+    /**
+     * Creates a new OpenSearchAbortPolicy.
+     */
+    public OpenSearchAbortPolicy() {
+    }
+
     private final CounterMetric rejected = new CounterMetric();
 
     @Override

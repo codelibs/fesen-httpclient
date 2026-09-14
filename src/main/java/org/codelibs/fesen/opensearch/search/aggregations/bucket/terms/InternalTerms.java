@@ -65,6 +65,8 @@ import static org.codelibs.fesen.opensearch.search.aggregations.InternalOrder.is
 /**
  * Implementation of terms
  *
+ * @param <A> the aggregation type
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends InternalTerms.AbstractInternalBucket> extends
@@ -72,7 +74,13 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
     implements
         Terms {
 
+    /**
+     * The DOC_COUNT_ERROR_UPPER_BOUND_FIELD_NAME constant.
+     */
     public static final ParseField DOC_COUNT_ERROR_UPPER_BOUND_FIELD_NAME = new ParseField("doc_count_error_upper_bound");
+    /**
+     * The SUM_OF_OTHER_DOC_COUNTS constant.
+     */
     public static final ParseField SUM_OF_OTHER_DOC_COUNTS = new ParseField("sum_other_doc_count");
 
     /**
@@ -81,6 +89,12 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
      * @opensearch.internal
      */
     public abstract static class AbstractInternalBucket extends InternalMultiBucketAggregation.InternalBucket implements Terms.Bucket {
+        /**
+         * Creates a new AbstractInternalBucket.
+         */
+        public AbstractInternalBucket() {
+        }
+
         abstract void setDocCountError(long docCountError);
 
         abstract void setDocCountError(Function<Long, Long> updater);
@@ -91,27 +105,56 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
     /**
      * Base bucket class
      *
+     * @param <B> the builder type
      * @opensearch.internal
      */
     public abstract static class Bucket<B extends Bucket<B>> extends AbstractInternalBucket implements KeyComparable<B> {
         /**
          * Reads a bucket. Should be a constructor reference.
          *
+         * @param <B> the builder type
          * @opensearch.internal
          */
         @FunctionalInterface
         public interface Reader<B extends Bucket<B>> {
+            /**
+             * Reads this instance.
+             *
+             * @param in the input to read from
+             * @param format the format
+             * @param showDocCountError the show doc count error
+             * @return this instance
+             * @throws IOException if an I/O error occurs
+             */
             B read(StreamInput in, DocValueFormat format, boolean showDocCountError) throws IOException;
         }
 
         long bucketOrd;
 
         long docCount;
+        /**
+         * The doc count error.
+         */
         protected long docCountError;
         InternalAggregations aggregations;
+        /**
+         * The show doc count error.
+         */
         protected final boolean showDocCountError;
+        /**
+         * The format.
+         */
         protected final DocValueFormat format;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param showDocCountError the show doc count error
+         * @param docCountError the doc count error
+         * @param formatter the formatter
+         */
         protected Bucket(
             long docCount,
             InternalAggregations aggregations,
@@ -128,6 +171,11 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @param formatter the formatter
+         * @param showDocCountError the show doc count error
+         * @throws IOException if an I/O error occurs
          */
         protected Bucket(StreamInput in, DocValueFormat formatter, boolean showDocCountError) throws IOException {
             this.showDocCountError = showDocCountError;
@@ -150,6 +198,12 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
             writeTermTo(out);
         }
 
+        /**
+         * Writes the term to.
+         *
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
+         */
         protected abstract void writeTermTo(StreamOutput out) throws IOException;
 
         @Override
@@ -198,6 +252,13 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
             return builder;
         }
 
+        /**
+         * Returns the key to XContent.
+         *
+         * @param builder the content builder
+         * @return the key to XContent
+         * @throws IOException if an I/O error occurs
+         */
         protected abstract XContentBuilder keyToXContent(XContentBuilder builder) throws IOException;
 
         @Override
@@ -219,15 +280,35 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
             return Objects.hash(getClass(), docCount, docCountError, aggregations);
         }
 
+        /**
+         * Returns the format.
+         *
+         * @return the format
+         */
         public DocValueFormat getFormat() {
             return format;
         }
     }
 
+    /**
+     * The reduce order.
+     */
     protected final BucketOrder reduceOrder;
+    /**
+     * The order.
+     */
     protected final BucketOrder order;
+    /**
+     * The required size.
+     */
     protected final int requiredSize;
+    /**
+     * The min doc count.
+     */
     protected final long minDocCount;
+    /**
+     * The bucket count thresholds.
+     */
     protected final TermsAggregator.BucketCountThresholds bucketCountThresholds;
     private boolean hasSliceLevelDocCountError = false;
 
@@ -256,6 +337,9 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected InternalTerms(StreamInput in) throws IOException {
         super(in);
@@ -277,6 +361,12 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
         writeTermTypeInfoTo(out);
     }
 
+    /**
+     * Writes the term type info to.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void writeTermTypeInfoTo(StreamOutput out) throws IOException;
 
     @Override
@@ -563,14 +653,37 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
         return createBucket(docCount, subAggs, docCountError, buckets.get(0));
     }
 
+    /**
+     * Sets the doc count error.
+     *
+     * @param docCountError the doc count error
+     */
     protected abstract void setDocCountError(long docCountError);
 
+    /**
+     * Returns the shard size.
+     *
+     * @return the shard size
+     */
     protected abstract int getShardSize();
 
+    /**
+     * Creates this instance.
+     *
+     * @param name the name
+     * @param buckets the buckets
+     * @param reduceOrder the reduce order
+     * @param docCountError the doc count error
+     * @param otherDocCount the other doc count
+     * @return the new instance
+     */
     protected abstract A create(String name, List<B> buckets, BucketOrder reduceOrder, long docCountError, long otherDocCount);
 
     /**
      * Create an array to hold some buckets. Used in collecting the results.
+     *
+     * @param size the size
+     * @return the new buckets array
      */
     protected abstract B[] createBucketsArray(int size);
 
@@ -594,6 +707,17 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
         return Objects.hash(super.hashCode(), minDocCount, reduceOrder, order, requiredSize);
     }
 
+    /**
+     * Returns the XContent common.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @param docCountError the doc count error
+     * @param otherDocCount the other doc count
+     * @param buckets the buckets
+     * @return the XContent common
+     * @throws IOException if an I/O error occurs
+     */
     protected static XContentBuilder doXContentCommon(
         XContentBuilder builder,
         Params params,

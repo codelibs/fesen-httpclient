@@ -79,6 +79,11 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  */
 @PublicApi(since = "1.0.0")
 public class Lifecycle {
+    /**
+     * Creates a new Lifecycle.
+     */
+    public Lifecycle() {
+    }
 
     /**
      * State in the lifecycle
@@ -87,20 +92,39 @@ public class Lifecycle {
      */
     @PublicApi(since = "1.0.0")
     public enum State {
+        /**
+         * The INITIALIZED value.
+         */
         INITIALIZED,
+        /**
+         * The STOPPED value.
+         */
         STOPPED,
+        /**
+         * The STARTED value.
+         */
         STARTED,
+        /**
+         * The closed.
+         */
         CLOSED
     }
 
     private volatile State state = State.INITIALIZED;
 
+    /**
+     * Returns the state.
+     *
+     * @return the state
+     */
     public State state() {
         return this.state;
     }
 
     /**
      * Returns {@code true} if the state is initialized.
+     *
+     * @return the initialized
      */
     public boolean initialized() {
         return state == State.INITIALIZED;
@@ -108,6 +132,8 @@ public class Lifecycle {
 
     /**
      * Returns {@code true} if the state is started.
+     *
+     * @return the started
      */
     public boolean started() {
         return state == State.STARTED;
@@ -115,6 +141,8 @@ public class Lifecycle {
 
     /**
      * Returns {@code true} if the state is stopped.
+     *
+     * @return the stopped
      */
     public boolean stopped() {
         return state == State.STOPPED;
@@ -122,16 +150,28 @@ public class Lifecycle {
 
     /**
      * Returns {@code true} if the state is closed.
+     *
+     * @return the closed
      */
     public boolean closed() {
         return state == State.CLOSED;
     }
 
+    /**
+     * Returns the stopped or closed.
+     *
+     * @return the stopped or closed
+     */
     public boolean stoppedOrClosed() {
         Lifecycle.State state = this.state;
         return state == State.STOPPED || state == State.CLOSED;
     }
 
+    /**
+     * Returns the move to started flag.
+     *
+     * @return the move to started flag
+     */
     public boolean canMoveToStarted() throws IllegalStateException {
         State localState = this.state;
         if (localState == State.INITIALIZED || localState == State.STOPPED) {
@@ -146,6 +186,11 @@ public class Lifecycle {
         throw new IllegalStateException("Can't move to started with unknown state");
     }
 
+    /**
+     * Moves the to started.
+     *
+     * @return this instance
+     */
     public synchronized boolean moveToStarted() throws IllegalStateException {
         State localState = this.state;
         if (localState == State.INITIALIZED || localState == State.STOPPED) {
@@ -161,6 +206,11 @@ public class Lifecycle {
         throw new IllegalStateException("Can't move to started with unknown state");
     }
 
+    /**
+     * Returns the move to stopped flag.
+     *
+     * @return the move to stopped flag
+     */
     public boolean canMoveToStopped() throws IllegalStateException {
         State localState = state;
         if (localState == State.STARTED) {
@@ -175,6 +225,11 @@ public class Lifecycle {
         throw new IllegalStateException("Can't move to stopped with unknown state");
     }
 
+    /**
+     * Moves the to stopped.
+     *
+     * @return this instance
+     */
     public synchronized boolean moveToStopped() throws IllegalStateException {
         State localState = state;
         if (localState == State.STARTED) {
@@ -190,6 +245,11 @@ public class Lifecycle {
         throw new IllegalStateException("Can't move to stopped with unknown state");
     }
 
+    /**
+     * Returns the move to closed flag.
+     *
+     * @return the move to closed flag
+     */
     public boolean canMoveToClosed() throws IllegalStateException {
         State localState = state;
         if (localState == State.CLOSED) {
@@ -201,6 +261,11 @@ public class Lifecycle {
         return true;
     }
 
+    /**
+     * Moves the to closed.
+     *
+     * @return this instance
+     */
     public synchronized boolean moveToClosed() throws IllegalStateException {
         State localState = state;
         if (localState == State.CLOSED) {

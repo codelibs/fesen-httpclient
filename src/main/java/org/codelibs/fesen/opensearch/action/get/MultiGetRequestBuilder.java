@@ -44,10 +44,22 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class MultiGetRequestBuilder extends ActionRequestBuilder<MultiGetRequest, MultiGetResponse> {
 
+    /**
+     * Creates a new MultiGetRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public MultiGetRequestBuilder(OpenSearchClient client, MultiGetAction action) {
         super(client, action, new MultiGetRequest());
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param item the item
+     * @return this instance
+     */
     public MultiGetRequestBuilder add(MultiGetRequest.Item item) {
         request.add(item);
         return this;

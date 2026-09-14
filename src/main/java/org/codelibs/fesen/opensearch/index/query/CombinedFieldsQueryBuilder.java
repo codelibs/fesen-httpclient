@@ -45,6 +45,9 @@ import java.util.Objects;
  */
 public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFieldsQueryBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "combined_fields";
 
     private static final ParseField QUERY_FIELD = new ParseField("query");
@@ -59,8 +62,8 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
 
     /**
      * Constructor for CombinedFieldsQueryBuilder.
-     * @param value
-     * @param fields
+     * @param value the value
+     * @param fields the fields
      */
     public CombinedFieldsQueryBuilder(Object value, String... fields) {
         if (value == null) {
@@ -85,6 +88,12 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
      * - minimumShouldMatch (string)
      * @param in
      * @throws IOException
+     */
+    /**
+     * Creates a new CombinedFieldsQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public CombinedFieldsQueryBuilder(StreamInput in) throws IOException {
         // First, read in the base query properties (boost, queryName, etc.)
@@ -137,6 +146,8 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
 
     /**
      * Returns the query value to be analyzed and matched.
+     *
+     * @return this instance
      */
     public Object queryValue() {
         return this.queryValue;
@@ -144,6 +155,8 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
 
     /**
      * Returns the map of field names to their boost values.
+     *
+     * @return the field to weight
      */
     public Map<String, Float> fieldToWeight() {
         return this.fieldToWeight;
@@ -151,6 +164,8 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
 
     /**
      * Returns the operator used to combine terms.
+     *
+     * @return the operator
      */
     public Operator operator() {
         return this.operator;
@@ -167,11 +182,22 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
         return this;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
+     */
     public CombinedFieldsQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
         this.minimumShouldMatch = minimumShouldMatch;
         return this;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @return the minimum should match
+     */
     public String minimumShouldMatch() {
         return this.minimumShouldMatch;
     }
@@ -226,6 +252,13 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CombinedFieldsQueryBuilder fromXContent(XContentParser parser) throws IOException {
         return XCONTENT_PARSER.parse(parser, null);
     }

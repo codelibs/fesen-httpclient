@@ -42,12 +42,25 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedFilter extends ParsedSingleBucketAggregation implements Filter {
+    /**
+     * Creates a new ParsedFilter.
+     */
+    public ParsedFilter() {
+    }
 
     @Override
     public String getType() {
         return FilterAggregationBuilder.NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedFilter fromXContent(XContentParser parser, final String name) throws IOException {
         return parseXContent(parser, new ParsedFilter(), name);
     }

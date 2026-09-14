@@ -42,9 +42,16 @@ import org.codelibs.fesen.opensearch.search.sort.ScriptSortBuilder.ScriptSortTyp
  * @opensearch.internal
  */
 public class SortBuilders {
+    /**
+     * Creates a new SortBuilders.
+     */
+    public SortBuilders() {
+    }
 
     /**
      * Constructs a new score sort.
+     *
+     * @return this instance
      */
     public static ScoreSortBuilder scoreSort() {
         return new ScoreSortBuilder();
@@ -54,6 +61,7 @@ public class SortBuilders {
      * Constructs a new field based sort.
      *
      * @param field The field name.
+     * @return the field sort
      */
     public static FieldSortBuilder fieldSort(String field) {
         return new FieldSortBuilder(field);
@@ -61,6 +69,8 @@ public class SortBuilders {
 
     /**
      * Constructs a new shard‐doc tiebreaker sort.
+     *
+     * @return the shard doc sort
      */
     public static ShardDocSortBuilder shardDocSort() {
         return new ShardDocSortBuilder();

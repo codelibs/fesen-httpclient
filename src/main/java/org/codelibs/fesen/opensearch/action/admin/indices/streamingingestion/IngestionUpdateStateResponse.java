@@ -27,14 +27,38 @@ import java.util.Map;
  */
 @PublicApi(since = "3.6.0")
 public class IngestionUpdateStateResponse extends AcknowledgedResponse {
+    /**
+     * The SHARD_ACK constant.
+     */
     protected static final String SHARD_ACK = "shards_acknowledged";
+    /**
+     * The ERROR constant.
+     */
     protected static final String ERROR = "error";
+    /**
+     * The FAILURES constant.
+     */
     protected static final String FAILURES = "failures";
 
+    /**
+     * The shards acknowledged.
+     */
     protected boolean shardsAcknowledged;
+    /**
+     * The shard failures list.
+     */
     protected IngestionStateShardFailure[] shardFailuresList;
+    /**
+     * The error message.
+     */
     protected String errorMessage;
 
+    /**
+     * Creates a new IngestionUpdateStateResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IngestionUpdateStateResponse(StreamInput in) throws IOException {
         super(in);
         shardFailuresList = in.readArray(IngestionStateShardFailure::new, IngestionStateShardFailure[]::new);
@@ -42,6 +66,14 @@ public class IngestionUpdateStateResponse extends AcknowledgedResponse {
         shardsAcknowledged = in.readBoolean();
     }
 
+    /**
+     * Creates a new IngestionUpdateStateResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     * @param shardFailuresList the shard failures list
+     * @param errorMessage the error message
+     */
     public IngestionUpdateStateResponse(
         final boolean acknowledged,
         final boolean shardsAcknowledged,
@@ -92,6 +124,11 @@ public class IngestionUpdateStateResponse extends AcknowledgedResponse {
         return Strings.toString(MediaTypeRegistry.JSON, this);
     }
 
+    /**
+     * Returns the shards acknowledged flag.
+     *
+     * @return the shards acknowledged flag
+     */
     public boolean isShardsAcknowledged() {
         return shardsAcknowledged;
     }

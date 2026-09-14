@@ -56,6 +56,9 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class Index implements Writeable, ToXContentObject {
 
+    /**
+     * The EMPTY_ARRAY constant.
+     */
     public static final Index[] EMPTY_ARRAY = new Index[0];
     private static final String INDEX_UUID_KEY = "index_uuid";
     private static final String INDEX_NAME_KEY = "index_name";
@@ -174,6 +177,13 @@ public class Index implements Writeable, ToXContentObject {
         return builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static Index fromXContent(final XContentParser parser) throws IOException {
         return INDEX_PARSER.parse(parser, null).build();
     }

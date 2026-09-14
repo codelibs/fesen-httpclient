@@ -52,6 +52,12 @@ public class ClusterStatsRequestBuilder extends NodesOperationRequestBuilder<
     ClusterStatsResponse,
     ClusterStatsRequestBuilder> {
 
+    /**
+     * Creates a new ClusterStatsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterStatsRequestBuilder(OpenSearchClient client, ClusterStatsAction action) {
         super(client, action, new ClusterStatsRequest());
     }

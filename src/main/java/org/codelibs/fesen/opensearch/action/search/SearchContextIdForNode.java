@@ -52,6 +52,13 @@ public final class SearchContextIdForNode implements Writeable {
     private final ShardSearchContextId searchContextId;
     private final String clusterAlias;
 
+    /**
+     * Creates a new SearchContextIdForNode.
+     *
+     * @param clusterAlias the cluster alias
+     * @param node the node
+     * @param searchContextId the search context identifier
+     */
     public SearchContextIdForNode(@Nullable String clusterAlias, String node, ShardSearchContextId searchContextId) {
         this.node = node;
         this.clusterAlias = clusterAlias;
@@ -65,6 +72,11 @@ public final class SearchContextIdForNode implements Writeable {
         searchContextId.writeTo(out);
     }
 
+    /**
+     * Returns the cluster alias.
+     *
+     * @return the cluster alias
+     */
     @Nullable
     public String getClusterAlias() {
         return clusterAlias;

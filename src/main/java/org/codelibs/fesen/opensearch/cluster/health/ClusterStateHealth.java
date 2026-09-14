@@ -152,6 +152,13 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
         }
     }
 
+    /**
+     * Creates a new ClusterStateHealth.
+     *
+     * @param clusterState the cluster state
+     * @param concreteIndices the concrete indices
+     * @param healthLevel the health level
+     */
     public ClusterStateHealth(
         final ClusterState clusterState,
         final String[] concreteIndices,
@@ -295,6 +302,12 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
         }
     }
 
+    /**
+     * Creates a new ClusterStateHealth.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterStateHealth(final StreamInput in) throws IOException {
         activePrimaryShards = in.readVInt();
         activeShards = in.readVInt();
@@ -316,6 +329,18 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
 
     /**
      * For ClusterHealthResponse's XContent Parser
+     *
+     * @param activePrimaryShards the active primary shards
+     * @param activeShards the active shards
+     * @param relocatingShards the relocating shards
+     * @param initializingShards the initializing shards
+     * @param unassignedShards the unassigned shards
+     * @param numberOfNodes the number of nodes
+     * @param numberOfDataNodes the number of data nodes
+     * @param hasDiscoveredClusterManager the has discovered cluster manager
+     * @param activeShardsPercent the active shards percent
+     * @param status the status
+     * @param indices the indices
      */
     public ClusterStateHealth(
         int activePrimaryShards,
@@ -343,50 +368,110 @@ public final class ClusterStateHealth implements Iterable<ClusterIndexHealth>, W
         this.indices = indices;
     }
 
+    /**
+     * Returns the active shards.
+     *
+     * @return the active shards
+     */
     public int getActiveShards() {
         return activeShards;
     }
 
+    /**
+     * Returns the relocating shards.
+     *
+     * @return the relocating shards
+     */
     public int getRelocatingShards() {
         return relocatingShards;
     }
 
+    /**
+     * Returns the active primary shards.
+     *
+     * @return the active primary shards
+     */
     public int getActivePrimaryShards() {
         return activePrimaryShards;
     }
 
+    /**
+     * Returns the initializing shards.
+     *
+     * @return the initializing shards
+     */
     public int getInitializingShards() {
         return initializingShards;
     }
 
+    /**
+     * Returns the unassigned shards.
+     *
+     * @return the unassigned shards
+     */
     public int getUnassignedShards() {
         return unassignedShards;
     }
 
+    /**
+     * Returns the delayed unassigned shards.
+     *
+     * @return the delayed unassigned shards
+     */
     public int getDelayedUnassignedShards() {
         return delayedUnassignedShards;
     }
 
+    /**
+     * Returns the number of nodes.
+     *
+     * @return the number of nodes
+     */
     public int getNumberOfNodes() {
         return this.numberOfNodes;
     }
 
+    /**
+     * Returns the number of data nodes.
+     *
+     * @return the number of data nodes
+     */
     public int getNumberOfDataNodes() {
         return this.numberOfDataNodes;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public ClusterHealthStatus getStatus() {
         return status;
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public Map<String, ClusterIndexHealth> getIndices() {
         return Collections.unmodifiableMap(indices);
     }
 
+    /**
+     * Returns the active shards percent.
+     *
+     * @return the active shards percent
+     */
     public double getActiveShardsPercent() {
         return activeShardsPercent;
     }
 
+    /**
+     * Returns the discovered cluster manager flag.
+     *
+     * @return the discovered cluster manager flag
+     */
     public boolean hasDiscoveredClusterManager() {
         return hasDiscoveredClusterManager;
     }

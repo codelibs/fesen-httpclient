@@ -60,10 +60,15 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
     private ActiveShardCount waitForActiveShards = ActiveShardCount.DEFAULT;
     private boolean shouldStoreResult;
 
+    /**
+     * Creates a new OpenIndexRequest.
+     */
     public OpenIndexRequest() {}
 
     /**
      * Constructs a new open index request for the specified index.
+     *
+     * @param indices the indices
      */
     public OpenIndexRequest(String... indices) {
         this.indices = indices;
@@ -114,6 +119,11 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
         return true;
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return waitForActiveShards;
     }
@@ -131,6 +141,7 @@ public class OpenIndexRequest extends AcknowledgedRequest<OpenIndexRequest> impl
      * determine if the requisite shard copies were all started before returning or timing out.
      *
      * @param waitForActiveShards number of active shard copies to wait on
+     * @return this instance
      */
     public OpenIndexRequest waitForActiveShards(ActiveShardCount waitForActiveShards) {
         this.waitForActiveShards = waitForActiveShards;

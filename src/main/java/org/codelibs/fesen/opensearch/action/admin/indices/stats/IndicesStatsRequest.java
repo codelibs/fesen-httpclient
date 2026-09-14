@@ -54,12 +54,17 @@ public class IndicesStatsRequest extends BroadcastRequest<IndicesStatsRequest> {
 
     private CommonStatsFlags flags = new CommonStatsFlags();
 
+    /**
+     * Creates a new IndicesStatsRequest.
+     */
     public IndicesStatsRequest() {
         super((String[]) null);
     }
 
     /**
      * Returns the underlying stats flags.
+     *
+     * @return the flags
      */
     public CommonStatsFlags flags() {
         return flags;

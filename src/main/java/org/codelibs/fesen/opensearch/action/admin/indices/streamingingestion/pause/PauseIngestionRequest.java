@@ -32,6 +32,11 @@ public class PauseIngestionRequest extends AcknowledgedRequest<PauseIngestionReq
     private String[] indices;
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
 
+    /**
+     * Creates a new PauseIngestionRequest.
+     *
+     * @param indices the indices
+     */
     public PauseIngestionRequest(String[] indices) {
         this.indices = indices;
     }

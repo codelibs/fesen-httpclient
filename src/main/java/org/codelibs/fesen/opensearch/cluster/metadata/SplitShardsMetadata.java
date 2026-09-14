@@ -73,6 +73,12 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
         this.activeShardIds = activeShardIds;
     }
 
+    /**
+     * Creates a new SplitShardsMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SplitShardsMetadata(StreamInput in) throws IOException {
         int numberOfRootShards = in.readVInt();
         this.rootShardsToAllChildren = new ShardRange[numberOfRootShards][];
@@ -120,6 +126,12 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
             + '}';
     }
 
+    /**
+     * Returns the child shards of parent.
+     *
+     * @param shardId the shard identifier
+     * @return the child shards of parent
+     */
     public ShardRange[] getChildShardsOfParent(int shardId) {
         if (parentToChildShards.containsKey(shardId) == false) {
             return null;
@@ -145,6 +157,11 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
         private final Set<Integer> inProgressSplitShardIds;
         private final Set<Integer> activeShardIds;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param numberOfShards the number of shards
+         */
         public Builder(int numberOfShards) {
             maxShardId = numberOfShards - 1;
             rootShardsToAllChildren = new ShardRange[numberOfShards][];
@@ -156,6 +173,11 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
             }
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public SplitShardsMetadata build() {
             return new SplitShardsMetadata(
                 this.rootShardsToAllChildren,
@@ -233,6 +255,13 @@ public class SplitShardsMetadata extends AbstractDiffable<SplitShardsMetadata> i
         return builder;
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<SplitShardsMetadata> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(SplitShardsMetadata::new, in);
     }

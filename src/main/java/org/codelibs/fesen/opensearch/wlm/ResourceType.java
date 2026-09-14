@@ -25,13 +25,22 @@ import java.util.List;
  */
 @PublicApi(since = "2.17.0")
 public enum ResourceType {
+    /**
+     * The CPU value.
+     */
     CPU("cpu", true, CpuUsageCalculator.INSTANCE),
+    /**
+     * The MEMORY value.
+     */
     MEMORY("memory", true, MemoryUsageCalculator.INSTANCE),
     // NATIVE_MEMORY is off-heap memory reported by native backends (e.g. DataFusion). It is
     // NOT tracked per workload group — {@code statsEnabled=false} keeps WorkloadGroupState
     // from allocating state slots for it, and its node-level WLM threshold is pinned at 1.0
     // so WLM cancellation never fires on this resource. The real consumer is search
     // backpressure, which pulls the duress signal via NodeDuressTrackers#isResourceInDuress.
+    /**
+     * The NATIVE_MEMORY value.
+     */
     NATIVE_MEMORY("native_memory", false, NativeMemoryUsageCalculator.INSTANCE);
 
     private final String name;
@@ -61,18 +70,40 @@ public enum ResourceType {
         throw new IllegalArgumentException("Unknown resource type: [" + s + "]");
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @param resourceType the resource type
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeTo(StreamOutput out, ResourceType resourceType) throws IOException {
         out.writeString(resourceType.getName());
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the stats enabled flag.
+     *
+     * @return the stats enabled flag
+     */
     public boolean hasStatsEnabled() {
         return statsEnabled;
     }
 
+    /**
+     * Returns the sorted values.
+     *
+     * @return the sorted values
+     */
     public static List<ResourceType> getSortedValues() {
         return sortedValues;
     }

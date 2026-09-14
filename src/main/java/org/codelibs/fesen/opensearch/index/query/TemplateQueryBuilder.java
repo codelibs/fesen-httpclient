@@ -26,7 +26,13 @@ import java.util.stream.Collectors;
  */
 
 public class TemplateQueryBuilder extends AbstractQueryBuilder<TemplateQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "template";
+    /**
+     * The query name.
+     */
     public static final String queryName = "template";
     private final Map<String, Object> content;
 

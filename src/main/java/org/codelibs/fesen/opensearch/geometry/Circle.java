@@ -85,6 +85,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the y.
+     *
      * @return The y (latitude) of the center of the circle in degrees
      */
     public double getY() {
@@ -92,6 +94,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the x.
+     *
      * @return The x (longitude) of the center of the circle in degrees
      */
     public double getX() {
@@ -99,6 +103,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the radius meters.
+     *
      * @return The radius of the circle in meters
      */
     public double getRadiusMeters() {
@@ -106,6 +112,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the z.
+     *
      * @return The altitude of the center of the circle in meters (NaN if irrelevant)
      */
     public double getZ() {
@@ -113,6 +121,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the lat.
+     *
      * @return The latitude (y) of the center of the circle in degrees
      */
     public double getLat() {
@@ -120,6 +130,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the lon.
+     *
      * @return The longitude (x) of the center of the circle in degrees
      */
     public double getLon() {
@@ -127,6 +139,8 @@ public class Circle implements Geometry {
     }
 
     /**
+     * Returns the alt.
+     *
      * @return The altitude (z) of the center of the circle in meters (NaN if irrelevant)
      */
     public double getAlt() {

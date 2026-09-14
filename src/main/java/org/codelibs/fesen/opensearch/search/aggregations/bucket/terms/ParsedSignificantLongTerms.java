@@ -44,6 +44,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedSignificantLongTerms extends ParsedSignificantTerms {
+    /**
+     * Creates a new ParsedSignificantLongTerms.
+     */
+    public ParsedSignificantLongTerms() {
+    }
 
     @Override
     public String getType() {
@@ -59,6 +64,14 @@ public class ParsedSignificantLongTerms extends ParsedSignificantTerms {
         declareParsedSignificantTermsFields(PARSER, ParsedBucket::fromXContent);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedSignificantLongTerms fromXContent(XContentParser parser, String name) throws IOException {
         return parseSignificantTermsXContent(() -> PARSER.parse(parser, null), name);
     }
@@ -69,6 +82,11 @@ public class ParsedSignificantLongTerms extends ParsedSignificantTerms {
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedSignificantTerms.ParsedBucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private Long key;
 

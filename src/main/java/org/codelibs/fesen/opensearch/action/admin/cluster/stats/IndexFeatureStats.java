@@ -73,6 +73,8 @@ public final class IndexFeatureStats implements ToXContent, Writeable {
 
     /**
      * Return the name of the field type.
+     *
+     * @return the name
      */
     public String getName() {
         return name;

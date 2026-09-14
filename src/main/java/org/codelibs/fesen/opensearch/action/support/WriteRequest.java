@@ -48,17 +48,24 @@ import java.io.IOException;
  * Interface implemented by requests that modify the documents in an index like {@link IndexRequest}, {@link UpdateRequest}, and
  * {@link BulkRequest}. Rather than implement this directly most implementers should extend {@link ReplicatedWriteRequest}.
  *
+ * @param <R> the result type
  * @opensearch.internal
  */
 public interface WriteRequest<R extends WriteRequest<R>> extends Writeable {
     /**
      * Should this request trigger a refresh ({@linkplain RefreshPolicy#IMMEDIATE}), wait for a refresh (
      * {@linkplain RefreshPolicy#WAIT_UNTIL}), or proceed ignore refreshes entirely ({@linkplain RefreshPolicy#NONE}, the default).
+     *
+     * @param refreshPolicy the refresh policy
+     * @return this instance
      */
     R setRefreshPolicy(RefreshPolicy refreshPolicy);
 
     /**
      * Parse the refresh policy from a string, only modifying it if the string is non null. Convenient to use with request parsing.
+     *
+     * @param refreshPolicy the refresh policy
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     default R setRefreshPolicy(String refreshPolicy) {
@@ -71,9 +78,16 @@ public interface WriteRequest<R extends WriteRequest<R>> extends Writeable {
     /**
      * Should this request trigger a refresh ({@linkplain RefreshPolicy#IMMEDIATE}), wait for a refresh (
      * {@linkplain RefreshPolicy#WAIT_UNTIL}), or proceed ignore refreshes entirely ({@linkplain RefreshPolicy#NONE}, the default).
+     *
+     * @return the refresh policy
      */
     RefreshPolicy getRefreshPolicy();
 
+    /**
+     * Validates this instance.
+     *
+     * @return this instance
+     */
     ActionRequestValidationException validate();
 
     /**
@@ -104,12 +118,20 @@ public interface WriteRequest<R extends WriteRequest<R>> extends Writeable {
             this.value = value;
         }
 
+        /**
+         * Returns the value.
+         *
+         * @return the value
+         */
         public String getValue() {
             return value;
         }
 
         /**
          * Parse the string representation of a refresh policy, usually from a request parameter.
+         *
+         * @param value the value
+         * @return this instance
          */
         public static RefreshPolicy parse(String value) {
             for (RefreshPolicy policy : values()) {
@@ -125,6 +147,13 @@ public interface WriteRequest<R extends WriteRequest<R>> extends Writeable {
             throw new IllegalArgumentException("Unknown value for refresh: [" + value + "].");
         }
 
+        /**
+         * Reads this instance from the given input.
+         *
+         * @param in the input to read from
+         * @return the from
+         * @throws IOException if an I/O error occurs
+         */
         public static RefreshPolicy readFrom(StreamInput in) throws IOException {
             return RefreshPolicy.values()[in.readByte()];
         }

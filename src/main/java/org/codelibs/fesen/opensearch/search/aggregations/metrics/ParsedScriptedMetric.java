@@ -50,6 +50,12 @@ import java.util.List;
  * @opensearch.internal
  */
 public class ParsedScriptedMetric extends ParsedAggregation implements ScriptedMetric {
+    /**
+     * Creates a new ParsedScriptedMetric.
+     */
+    public ParsedScriptedMetric() {
+    }
+
     private List<Object> aggregation;
 
     @Override
@@ -109,6 +115,13 @@ public class ParsedScriptedMetric extends ParsedAggregation implements ScriptedM
         return value;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedScriptedMetric fromXContent(XContentParser parser, final String name) {
         ParsedScriptedMetric aggregation = PARSER.apply(parser, null);
         aggregation.setName(name);

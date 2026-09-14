@@ -50,25 +50,68 @@ import java.util.Objects;
 /**
  * Base class for the different suggestion implementations.
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implements NamedWriteable, ToXContentFragment {
 
+    /**
+     * The field.
+     */
     protected final String field;
+    /**
+     * The text.
+     */
     protected String text;
+    /**
+     * The prefix.
+     */
     protected String prefix;
+    /**
+     * The regex.
+     */
     protected String regex;
+    /**
+     * The analyzer.
+     */
     protected String analyzer;
+    /**
+     * The size.
+     */
     protected Integer size;
+    /**
+     * The shard size.
+     */
     protected Integer shardSize;
 
+    /**
+     * The TEXT_FIELD constant.
+     */
     protected static final ParseField TEXT_FIELD = new ParseField("text");
+    /**
+     * The PREFIX_FIELD constant.
+     */
     protected static final ParseField PREFIX_FIELD = new ParseField("prefix");
+    /**
+     * The REGEX_FIELD constant.
+     */
     protected static final ParseField REGEX_FIELD = new ParseField("regex");
+    /**
+     * The FIELDNAME_FIELD constant.
+     */
     protected static final ParseField FIELDNAME_FIELD = new ParseField("field");
+    /**
+     * The ANALYZER_FIELD constant.
+     */
     protected static final ParseField ANALYZER_FIELD = new ParseField("analyzer");
+    /**
+     * The SIZE_FIELD constant.
+     */
     protected static final ParseField SIZE_FIELD = new ParseField("size");
+    /**
+     * The SHARDSIZE_FIELD constant.
+     */
     protected static final ParseField SHARDSIZE_FIELD = new ParseField("shard_size");
 
     /**
@@ -85,6 +128,9 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * internal copy constructor that copies over all class fields from second SuggestionBuilder except field name.
+     *
+     * @param field the field
+     * @param in the input to read from
      */
     protected SuggestionBuilder(String field, SuggestionBuilder<?> in) {
         this(field);
@@ -108,10 +154,19 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
     /**
      * Same as in {@link SuggestBuilder#setGlobalText(String)}, but in the suggestion scope.
+     *
+     * @param text the text
+     * @return the text
      */
     @SuppressWarnings("unchecked")
     public T text(String text) {
@@ -121,11 +176,19 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the text for this suggestion
+     *
+     * @return the text
      */
     public String text() {
         return this.text;
     }
 
+    /**
+     * Returns the prefix.
+     *
+     * @param prefix the prefix
+     * @return the prefix
+     */
     @SuppressWarnings("unchecked")
     protected T prefix(String prefix) {
         this.prefix = prefix;
@@ -134,11 +197,19 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the prefix for this suggestion
+     *
+     * @return the prefix
      */
     public String prefix() {
         return this.prefix;
     }
 
+    /**
+     * Returns the regex.
+     *
+     * @param regex the regex
+     * @return the regex
+     */
     @SuppressWarnings("unchecked")
     protected T regex(String regex) {
         this.regex = regex;
@@ -147,6 +218,8 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the regex for this suggestion
+     *
+     * @return the regex
      */
     public String regex() {
         return this.regex;
@@ -154,6 +227,8 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the {@link #field()} parameter
+     *
+     * @return the field
      */
     public String field() {
         return this.field;
@@ -162,6 +237,9 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
     /**
      * Sets the analyzer to analyse to suggest text with. Defaults to the search
      * analyzer of the suggest field.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     @SuppressWarnings("unchecked")
     public T analyzer(String analyzer) {
@@ -171,6 +249,8 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the {@link #analyzer()} parameter
+     *
+     * @return the analyzer
      */
     public String analyzer() {
         return this.analyzer;
@@ -178,6 +258,9 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * Sets the maximum suggestions to be returned per suggest text term.
+     *
+     * @param size the size
+     * @return the number of elements
      */
     @SuppressWarnings("unchecked")
     public T size(int size) {
@@ -190,6 +273,8 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the {@link #size()} parameter
+     *
+     * @return the number of elements
      */
     public Integer size() {
         return this.size;
@@ -206,6 +291,9 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
      * fact that terms are partitioned amongst shards, the shard level document
      * frequencies of suggestions may not be precise. Increasing this will make
      * these document frequencies more precise.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     @SuppressWarnings("unchecked")
     public T shardSize(Integer shardSize) {
@@ -215,6 +303,8 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * get the {@link #shardSize()} parameter
+     *
+     * @return the shard size
      */
     public Integer shardSize() {
         return this.shardSize;
@@ -248,6 +338,14 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
         return builder;
     }
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException;
 
     static SuggestionBuilder<?> fromXContent(XContentParser parser) throws IOException {
@@ -317,6 +415,9 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * Indicates whether some other {@link SuggestionBuilder} of the same type is "equal to" this one.
+     *
+     * @param other the other instance
+     * @return the equals
      */
     protected abstract boolean doEquals(T other);
 
@@ -327,6 +428,8 @@ public abstract class SuggestionBuilder<T extends SuggestionBuilder<T>> implemen
 
     /**
      * HashCode for the subclass of {@link SuggestionBuilder} to implement.
+     *
+     * @return the hash code of this instance
      */
     protected abstract int doHashCode();
 

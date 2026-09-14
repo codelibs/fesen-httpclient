@@ -98,12 +98,24 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
      */
     private final AtomicReference<DelayedPrepareBulkRequest> delayedPrepareBulkRequestReference = new AtomicReference<>();
 
+    /**
+     * Creates a new WorkerBulkByScrollTaskState.
+     *
+     * @param task the task
+     * @param sliceId the slice identifier
+     * @param requestsPerSecond the requests per second
+     */
     public WorkerBulkByScrollTaskState(BulkByScrollTask task, Integer sliceId, float requestsPerSecond) {
         this.task = task;
         this.sliceId = sliceId;
         setRequestsPerSecond(requestsPerSecond);
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public BulkByScrollTask.Status getStatus() {
         return new BulkByScrollTask.Status(
             sliceId,
@@ -123,19 +135,33 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
         );
     }
 
+    /**
+     * Handles the cancel.
+     */
     public void handleCancel() {
         // Drop the throttle to 0, immediately rescheduling any throttle operation so it will wake up and cancel itself.
         rethrottle(Float.POSITIVE_INFINITY);
     }
 
+    /**
+     * Sets the total.
+     *
+     * @param totalHits the total hits
+     */
     public void setTotal(long totalHits) {
         total.set(totalHits);
     }
 
+    /**
+     * Counts the batch.
+     */
     public void countBatch() {
         batch.incrementAndGet();
     }
 
+    /**
+     * Counts the noop.
+     */
     public void countNoop() {
         noops.incrementAndGet();
     }
@@ -145,6 +171,9 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
         return created.get();
     }
 
+    /**
+     * Counts the created.
+     */
     public void countCreated() {
         created.incrementAndGet();
     }
@@ -154,6 +183,9 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
         return updated.get();
     }
 
+    /**
+     * Counts the updated.
+     */
     public void countUpdated() {
         updated.incrementAndGet();
     }
@@ -163,18 +195,30 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
         return deleted.get();
     }
 
+    /**
+     * Counts the deleted.
+     */
     public void countDeleted() {
         deleted.incrementAndGet();
     }
 
+    /**
+     * Counts the version conflict.
+     */
     public void countVersionConflict() {
         versionConflicts.incrementAndGet();
     }
 
+    /**
+     * Counts the bulk retry.
+     */
     public void countBulkRetry() {
         bulkRetries.incrementAndGet();
     }
 
+    /**
+     * Counts the search retry.
+     */
     public void countSearchRetry() {
         searchRetries.incrementAndGet();
     }
@@ -197,6 +241,11 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
     /**
      * Schedule prepareBulkRequestRunnable to run after some delay. This is where throttling plugs into reindexing so the request can be
      * rescheduled over and over again.
+     *
+     * @param threadPool the thread pool
+     * @param lastBatchStartTimeNS the last batch start time ns
+     * @param lastBatchSize the last batch size
+     * @param prepareBulkRequestRunnable the prepare bulk request runnable
      */
     public void delayPrepareBulkRequest(
         ThreadPool threadPool,
@@ -218,6 +267,14 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
         }
     }
 
+    /**
+     * Throttles the wait time.
+     *
+     * @param lastBatchStartTimeNS the last batch start time ns
+     * @param nowNS the now ns
+     * @param lastBatchSize the last batch size
+     * @return this instance
+     */
     public TimeValue throttleWaitTime(long lastBatchStartTimeNS, long nowNS, int lastBatchSize) {
         long earliestNextBatchStartTime = nowNS + (long) perfectlyThrottledBatchTime(lastBatchSize);
         long waitTime = min(MAX_THROTTLE_WAIT_TIME.nanos(), max(0, earliestNextBatchStartTime - System.nanoTime()));
@@ -248,6 +305,8 @@ public class WorkerBulkByScrollTaskState implements SuccessfullyProcessed {
 
     /**
      * Apply {@code newRequestsPerSecond} as the new rate limit for this task's search requests
+     *
+     * @param newRequestsPerSecond the new requests per second
      */
     public void rethrottle(float newRequestsPerSecond) {
         synchronized (delayedPrepareBulkRequestReference) {

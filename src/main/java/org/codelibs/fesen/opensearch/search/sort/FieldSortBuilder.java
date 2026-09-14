@@ -64,16 +64,34 @@ import static org.codelibs.fesen.opensearch.search.sort.NestedSortBuilder.NESTED
 public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements WithFieldName {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(FieldSortBuilder.class);
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "field_sort";
+    /**
+     * The MISSING constant.
+     */
     public static final ParseField MISSING = new ParseField("missing");
+    /**
+     * The SORT_MODE constant.
+     */
     public static final ParseField SORT_MODE = new ParseField("mode");
+    /**
+     * The UNMAPPED_TYPE constant.
+     */
     public static final ParseField UNMAPPED_TYPE = new ParseField("unmapped_type");
+    /**
+     * The NUMERIC_TYPE constant.
+     */
     public static final ParseField NUMERIC_TYPE = new ParseField("numeric_type");
 
     /**
      * special field name to sort by index order
      */
     public static final String DOC_FIELD_NAME = "_doc";
+    /**
+     * The ID_FIELD_NAME constant.
+     */
     public static final String ID_FIELD_NAME = "_id";
     private static final SortFieldAndFormat SORT_DOC = new SortFieldAndFormat(new SortField(null, SortField.Type.DOC), DocValueFormat.RAW);
     private static final SortFieldAndFormat SORT_DOC_REVERSE = new SortFieldAndFormat(
@@ -97,7 +115,11 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
 
     private NestedSortBuilder nestedSort;
 
-    /** Copy constructor. */
+    /**
+     * Copy constructor.
+     *
+     * @param template the template
+     */
     public FieldSortBuilder(FieldSortBuilder template) {
         this(template.fieldName);
         this.order(template.order());
@@ -140,7 +162,11 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
         out.writeOptionalString(numericType);
     }
 
-    /** Returns the document field this sort should be based on. */
+    /**
+     * Returns the document field this sort should be based on.
+     *
+     * @return the field name
+     */
     public String getFieldName() {
         return this.fieldName;
     }
@@ -153,13 +179,20 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Sets the value when a field is missing in a doc. Can also be set to {@code _last} or
      * {@code _first} to sort missing last or first respectively.
+     *
+     * @param missing the missing
+     * @return the missing
      */
     public FieldSortBuilder missing(Object missing) {
         this.missing = missing;
         return this;
     }
 
-    /** Returns the value used when a field is missing in a doc. */
+    /**
+     * Returns the value used when a field is missing in a doc.
+     *
+     * @return the missing
+     */
     public Object missing() {
         return missing;
     }
@@ -171,6 +204,9 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      * that exist on some indices only. If the unmapped type is {@code null}
      * then query execution will fail if one or more indices don't have a
      * mapping for the current field.
+     *
+     * @param type the type
+     * @return the unmapped type
      */
     public FieldSortBuilder unmappedType(String type) {
         this.unmappedType = type;
@@ -180,6 +216,8 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Returns the type to use in case the current field is not mapped in an
      * index.
+     *
+     * @return the unmapped type
      */
     public String unmappedType() {
         return this.unmappedType;
@@ -192,6 +230,9 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      *
      * <p>
      * The last two values are only applicable for number based fields.
+     *
+     * @param sortMode the sort mode
+     * @return this instance
      */
     public FieldSortBuilder sortMode(SortMode sortMode) {
         Objects.requireNonNull(sortMode, "sort mode cannot be null");
@@ -202,6 +243,8 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Returns what values to pick in the case a document contains multiple
      * values for the targeted sort field.
+     *
+     * @return this instance
      */
     public SortMode sortMode() {
         return this.sortMode;
@@ -211,6 +254,8 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      * Sets the nested filter that the nested objects should match with in order
      * to be taken into account for sorting.
      *
+     * @param nestedFilter the nested filter
+     * @return this instance
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -226,6 +271,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      * Returns the nested filter that the nested objects should match with in
      * order to be taken into account for sorting.
      *
+     * @return the nested filter
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -238,6 +284,8 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      * object. By default when sorting on a field inside a nested object, the
      * nearest upper nested object is selected as nested path.
      *
+     * @param nestedPath the nested path
+     * @return this instance
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -252,6 +300,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Returns the nested path if sorting occurs in a field that is inside a
      * nested object.
+     * @return the nested path
      * @deprecated set nested sort with {@link #setNestedSort(NestedSortBuilder)} and retrieve with {@link #getNestedSort()}
      */
     @Deprecated
@@ -261,6 +310,8 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
 
     /**
      * Returns the {@link NestedSortBuilder}
+     *
+     * @return the nested sort
      */
     public NestedSortBuilder getNestedSort() {
         return this.nestedSort;
@@ -271,6 +322,9 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      * object. The {@link NestedSortBuilder} takes a `path` argument and an optional
      * nested filter that the nested objects should match with in
      * order to be taken into account for sorting.
+     *
+     * @param nestedSort the nested sort
+     * @return this instance
      */
     public FieldSortBuilder setNestedSort(final NestedSortBuilder nestedSort) {
         if (this.nestedFilter != null || this.nestedPath != null) {
@@ -283,6 +337,8 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Returns the numeric type that values should translated to or null
      * if the original numeric type should be preserved.
+     *
+     * @return the numeric type
      */
     public String getNumericType() {
         return numericType;
@@ -295,6 +351,9 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      * have, which is important for cross-index search, if a field does not have
      * the same type on all indices.
      * Allowed values are <code>long</code>, <code>double</code>, <code>date</code> and <code>date_nanos</code>.
+     *
+     * @param numericType the numeric type
+     * @return this instance
      */
     public FieldSortBuilder setNumericType(String numericType) {
         String lowerCase = numericType.toLowerCase(Locale.ENGLISH);
@@ -345,6 +404,11 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
         return builder;
     }
 
+    /**
+     * Returns the rewrite to match none flag.
+     *
+     * @return the rewrite to match none flag
+     */
     public boolean canRewriteToMatchNone() {
         return nestedSort == null && (missing == null || "_last".equals(missing));
     }
@@ -360,6 +424,9 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Return true if the primary sort in the provided <code>source</code>
      * is an instance of {@link FieldSortBuilder}.
+     *
+     * @param source the source
+     * @return the primary field sort flag
      */
     public static boolean hasPrimaryFieldSort(SearchSourceBuilder source) {
         return getPrimaryFieldSortOrNull(source) != null;
@@ -368,6 +435,9 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
     /**
      * Return the {@link FieldSortBuilder} if the primary sort in the provided <code>source</code>
      * is an instance of this class, null otherwise.
+     *
+     * @param source the source
+     * @return the primary field sort or null
      */
     public static FieldSortBuilder getPrimaryFieldSortOrNull(SearchSourceBuilder source) {
         if (source == null || source.sorts() == null || source.sorts().isEmpty()) {
@@ -425,11 +495,21 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> implements W
      *        method call
      * @param fieldName in some sort syntax variations the field name precedes the xContent object that specifies further parameters, e.g.
      *        in '{ "foo": { "order" : "asc"} }'. When parsing the inner object, the field name can be passed in via this argument
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static FieldSortBuilder fromXContent(XContentParser parser, String fieldName) throws IOException {
         return PARSER.parse(parser, new FieldSortBuilder(fieldName), null);
     }
 
+    /**
+     * Creates an instance from XContent object.
+     *
+     * @param parser the parser
+     * @param fieldName the field name
+     * @return the new XContent object
+     * @throws IOException if an I/O error occurs
+     */
     public static FieldSortBuilder fromXContentObject(XContentParser parser, String fieldName) throws IOException {
         FieldSortBuilder builder = null;
         String currentFieldName = null;

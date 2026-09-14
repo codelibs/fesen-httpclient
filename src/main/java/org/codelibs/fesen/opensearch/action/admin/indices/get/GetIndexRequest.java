@@ -55,9 +55,21 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
      */
     @PublicApi(since = "1.0.0")
     public enum Feature {
+        /**
+         * The ALIASES value.
+         */
         ALIASES((byte) 0),
+        /**
+         * The MAPPINGS value.
+         */
         MAPPINGS((byte) 1),
+        /**
+         * The SETTINGS value.
+         */
         SETTINGS((byte) 2),
+        /**
+         * The CONTEXT value.
+         */
         CONTEXT((byte) 3);
 
         private static final Feature[] FEATURES = new Feature[Feature.values().length];
@@ -75,10 +87,21 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
             this.id = id;
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public byte id() {
             return id;
         }
 
+        /**
+         * Creates an instance from identifier.
+         *
+         * @param id the identifier
+         * @return the new identifier
+         */
         public static Feature fromId(byte id) {
             if (id < 0 || id >= FEATURES.length) {
                 throw new IllegalArgumentException("No mapping for id [" + id + "]");
@@ -96,6 +119,9 @@ public class GetIndexRequest extends ClusterInfoRequest<GetIndexRequest> {
     private boolean humanReadable = false;
     private transient boolean includeDefaults = false;
 
+    /**
+     * Creates a new GetIndexRequest.
+     */
     public GetIndexRequest() {
 
     }

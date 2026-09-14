@@ -14,6 +14,11 @@ import org.codelibs.fesen.opensearch.Version;
  * Expression to evaluate equality of versions.
  */
 public class Equal implements Expression {
+    /**
+     * Creates a new Equal.
+     */
+    public Equal() {
+    }
 
     /**
      * Checks if a given version matches a certain range version.

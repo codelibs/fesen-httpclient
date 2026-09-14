@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class SearchScrollAction extends ActionType<SearchResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final SearchScrollAction INSTANCE = new SearchScrollAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/scroll";
 
     private SearchScrollAction() {

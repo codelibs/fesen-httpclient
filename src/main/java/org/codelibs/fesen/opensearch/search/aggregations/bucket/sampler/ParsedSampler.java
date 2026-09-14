@@ -42,12 +42,25 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedSampler extends ParsedSingleBucketAggregation implements Sampler {
+    /**
+     * Creates a new ParsedSampler.
+     */
+    public ParsedSampler() {
+    }
 
     @Override
     public String getType() {
         return InternalSampler.PARSER_NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedSampler fromXContent(XContentParser parser, final String name) throws IOException {
         return parseXContent(parser, new ParsedSampler(), name);
     }

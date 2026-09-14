@@ -171,11 +171,17 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         private boolean unicodeAware = FuzzyCompletionQuery.DEFAULT_UNICODE_AWARE;
         private int maxDeterminizedStates = Operations.DEFAULT_DETERMINIZE_WORK_LIMIT;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
         /**
          * Sets the level of fuzziness used to create suggestions using a {@link Fuzziness} instance.
          * The default value is {@link Fuzziness#ONE} which allows for an "edit distance" of one.
+         *
+         * @param editDistance the edit distance
+         * @return this instance
          */
         public Builder setFuzziness(int editDistance) {
             if (editDistance < 0 || editDistance > 2) {
@@ -188,6 +194,9 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         /**
          * Sets the level of fuzziness used to create suggestions using a {@link Fuzziness} instance.
          * The default value is {@link Fuzziness#ONE} which allows for an "edit distance" of one.
+         *
+         * @param fuzziness the fuzziness
+         * @return this instance
          */
         public Builder setFuzziness(Fuzziness fuzziness) {
             Objects.requireNonNull(fuzziness, "fuzziness must not be null");
@@ -199,6 +208,9 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
          * change or two.
          * Defaults to true, meaning it uses the fuzzier option of counting transpositions as
          * a single change.
+         *
+         * @param transpositions the transpositions
+         * @return this instance
          */
         public Builder setTranspositions(boolean transpositions) {
             this.transpositions = transpositions;
@@ -208,6 +220,9 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         /**
          * Sets the minimum length of input string before fuzzy suggestions are returned, defaulting
          * to 3.
+         *
+         * @param fuzzyMinLength the fuzzy min length
+         * @return this instance
          */
         public Builder setFuzzyMinLength(int fuzzyMinLength) {
             if (fuzzyMinLength < 0) {
@@ -219,6 +234,9 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
 
         /**
          * Sets the minimum length of the input, which is not checked for fuzzy alternatives, defaults to 1
+         *
+         * @param fuzzyPrefixLength the fuzzy prefix length
+         * @return this instance
          */
         public Builder setFuzzyPrefixLength(int fuzzyPrefixLength) {
             if (fuzzyPrefixLength < 0) {
@@ -230,6 +248,9 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
 
         /**
          * Sets the maximum automaton states allowed for the fuzzy expansion
+         *
+         * @param maxDeterminizedStates the max determinized states
+         * @return this instance
          */
         public Builder setMaxDeterminizedStates(int maxDeterminizedStates) {
             if (maxDeterminizedStates < 0) {
@@ -242,12 +263,20 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         /**
          * Set to true if all measurements (like edit distance, transpositions and lengths) are in unicode
          * code points (actual letters) instead of bytes. Default is false.
+         *
+         * @param unicodeAware the unicode aware
+         * @return this instance
          */
         public Builder setUnicodeAware(boolean unicodeAware) {
             this.unicodeAware = unicodeAware;
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public FuzzyOptions build() {
             return new FuzzyOptions(editDistance, transpositions, fuzzyMinLength, fuzzyPrefixLength, unicodeAware, maxDeterminizedStates);
         }

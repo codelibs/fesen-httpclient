@@ -60,6 +60,9 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<MovFnPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "moving_fn";
     private static final ParseField WINDOW = new ParseField("window");
     private static final ParseField SHIFT = new ParseField("shift");
@@ -71,6 +74,9 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
     private int window;
     private int shift;
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<MovFnPipelineAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
         NAME,
         false,
@@ -96,6 +102,14 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
         }, GAP_POLICY, ObjectParser.ValueType.STRING);
     };
 
+    /**
+     * Creates a new MovFnPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     * @param script the script
+     * @param window the window
+     */
     public MovFnPipelineAggregationBuilder(String name, String bucketsPath, Script script, int window) {
         super(name, NAME, new String[] { bucketsPath });
         this.bucketsPathString = bucketsPath;
@@ -118,6 +132,9 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     /**
      * Sets the format to use on the output of this aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     public MovFnPipelineAggregationBuilder format(String format) {
         if (Strings.isNullOrEmpty(format)) {
@@ -129,11 +146,18 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     /**
      * Gets the format to use on the output of this aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
     }
 
+    /**
+     * Returns the formatter.
+     *
+     * @return the formatter
+     */
     protected DocValueFormat formatter() {
         if (format != null) {
             return new DocValueFormat.Decimal(format);
@@ -143,6 +167,9 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     /**
      * Sets the gap policy to use for this aggregation.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
      */
     public MovFnPipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
@@ -154,6 +181,8 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     /**
      * Gets the gap policy to use for this aggregation.
+     *
+     * @return the gap policy
      */
     public GapPolicy gapPolicy() {
         return gapPolicy;
@@ -161,6 +190,8 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     /**
      * Returns the window size for this aggregation
+     *
+     * @return the window
      */
     public int getWindow() {
         return window;
@@ -168,6 +199,8 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
 
     /**
      * Sets the window size for this aggregation
+     *
+     * @param window the window
      */
     public void setWindow(int window) {
         if (window <= 0) {
@@ -176,6 +209,11 @@ public class MovFnPipelineAggregationBuilder extends AbstractPipelineAggregation
         this.window = window;
     }
 
+    /**
+     * Sets the shift.
+     *
+     * @param shift the shift
+     */
     public void setShift(int shift) {
         this.shift = shift;
     }

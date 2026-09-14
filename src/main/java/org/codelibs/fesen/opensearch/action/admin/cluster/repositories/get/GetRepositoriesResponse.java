@@ -94,6 +94,13 @@ public class GetRepositoriesResponse extends ActionResponse implements ToXConten
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GetRepositoriesResponse fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
         return new GetRepositoriesResponse(RepositoriesMetadata.fromXContent(parser));

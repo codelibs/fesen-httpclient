@@ -58,6 +58,9 @@ import java.util.Set;
  */
 @PublicApi(since = "1.0.0")
 public final class FieldCapabilitiesRequest extends ActionRequest implements IndicesRequest.Replaceable, ToXContentObject {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "field_caps_request";
 
     private String[] indices = Strings.EMPTY_ARRAY;
@@ -69,6 +72,9 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
     private QueryBuilder indexFilter;
     private Long nowInMillis;
 
+    /**
+     * Creates a new FieldCapabilitiesRequest.
+     */
     public FieldCapabilitiesRequest() {}
 
     @Override
@@ -95,6 +101,9 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
 
     /**
      * The list of field names to retrieve
+     *
+     * @param fields the fields
+     * @return the fields
      */
     public FieldCapabilitiesRequest fields(String... fields) {
         if (fields == null || fields.length == 0) {
@@ -105,6 +114,11 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
         return this;
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public String[] fields() {
         return fields;
     }
@@ -117,6 +131,12 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
         return this;
     }
 
+    /**
+     * Includes the unmapped.
+     *
+     * @param includeUnmapped the include unmapped
+     * @return this instance
+     */
     public FieldCapabilitiesRequest includeUnmapped(boolean includeUnmapped) {
         this.includeUnmapped = includeUnmapped;
         return this;
@@ -137,10 +157,20 @@ public final class FieldCapabilitiesRequest extends ActionRequest implements Ind
         return true;
     }
 
+    /**
+     * Includes the unmapped.
+     *
+     * @return this instance
+     */
     public boolean includeUnmapped() {
         return includeUnmapped;
     }
 
+    /**
+     * Indexes the filter.
+     *
+     * @return this instance
+     */
     public QueryBuilder indexFilter() {
         return indexFilter;
     }

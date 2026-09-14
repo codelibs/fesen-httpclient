@@ -39,6 +39,7 @@ import org.codelibs.fesen.opensearch.common.lease.Releasable;
  * A recycled object, note, implementations should support calling obtain and then recycle
  * on different threads.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 @ExperimentalApi
@@ -47,45 +48,78 @@ public interface Recycler<T> {
     /**
      * Base factory interface
      *
+     * @param <T> the element type
      * @opensearch.internal
      */
     interface Factory<T> {
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         Recycler<T> build();
     }
 
     /**
      * Generic for recycler
      *
+     * @param <T> the element type
      * @opensearch.internal
      */
     interface C<T> {
 
-        /** Create a new empty instance of the given size. */
+        /**
+         * Create a new empty instance of the given size.
+         *
+         * @return the new instance
+         */
         T newInstance();
 
-        /** Recycle the data. This operation is called when the data structure is released. */
+        /**
+         * Recycle the data. This operation is called when the data structure is released.
+         *
+         * @param value the value
+         */
         void recycle(T value);
 
-        /** Destroy the data. This operation allows the data structure to release any internal resources before GC. */
+        /**
+         * Destroy the data. This operation allows the data structure to release any internal resources before GC.
+         *
+         * @param value the value
+         */
         void destroy(T value);
     }
 
     /**
      * Generic releasable
      *
+     * @param <T> the element type
      * @opensearch.internal
      */
     @ExperimentalApi
     interface V<T> extends Releasable {
 
-        /** Reference to the value. */
+        /**
+         * Reference to the value.
+         *
+         * @return the v
+         */
         T v();
 
-        /** Whether this instance has been recycled (true) or newly allocated (false). */
+        /**
+         * Whether this instance has been recycled (true) or newly allocated (false).
+         *
+         * @return the recycled flag
+         */
         boolean isRecycled();
 
     }
 
+    /**
+     * Returns the obtain.
+     *
+     * @return the obtain
+     */
     V<T> obtain();
 
 }

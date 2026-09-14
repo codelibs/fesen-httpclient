@@ -58,12 +58,25 @@ public class ClearScrollRequest extends ActionRequest implements ToXContentObjec
 
     private List<String> scrollIds;
 
+    /**
+     * Creates a new ClearScrollRequest.
+     */
     public ClearScrollRequest() {}
 
+    /**
+     * Returns the scroll identifiers.
+     *
+     * @return the scroll identifiers
+     */
     public List<String> getScrollIds() {
         return scrollIds;
     }
 
+    /**
+     * Adds the scroll identifier.
+     *
+     * @param scrollId the scroll identifier
+     */
     public void addScrollId(String scrollId) {
         if (scrollIds == null) {
             scrollIds = new ArrayList<>();

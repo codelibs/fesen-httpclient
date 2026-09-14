@@ -138,6 +138,13 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     private long ifSeqNo = UNASSIGNED_SEQ_NO;
     private long ifPrimaryTerm = UNASSIGNED_PRIMARY_TERM;
 
+    /**
+     * Creates a new IndexRequest.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         if (in.getVersion().before(Version.V_2_0_0)) {
@@ -176,6 +183,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
         requireAlias = in.readBoolean();
     }
 
+    /**
+     * Creates a new IndexRequest.
+     */
     public IndexRequest() {
         super(NO_SHARD_ID);
     }
@@ -183,6 +193,8 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     /**
      * Constructs a new index request against the specific index. The
      * {@code #source(byte[], MediaType)} must be set.
+     *
+     * @param index the index
      */
     public IndexRequest(String index) {
         super(NO_SHARD_ID);
@@ -256,6 +268,8 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     /**
      * The content type. This will be used when generating a document from user provided objects like Maps and when parsing the
      * source at index time
+     *
+     * @return the content type
      */
     public MediaType getContentType() {
         return contentType;
@@ -271,6 +285,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Sets the id of the indexed document. If not set, will be automatically generated.
+     *
+     * @param id the identifier
+     * @return the identifier
      */
     public IndexRequest id(String id) {
         this.id = id;
@@ -302,6 +319,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Sets the ingest pipeline to be executed before indexing the document
+     *
+     * @param pipeline the pipeline
+     * @return this instance
      */
     public IndexRequest setPipeline(String pipeline) {
         this.pipeline = pipeline;
@@ -310,6 +330,8 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Returns the ingest pipeline to be executed before indexing the document
+     *
+     * @return the pipeline
      */
     public String getPipeline() {
         return this.pipeline;
@@ -317,6 +339,8 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * The source of the document to index, recopied to a new array if it is unsafe.
+     *
+     * @return the source
      */
     public BytesReference source() {
         return source;
@@ -326,6 +350,7 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * Index the Map in {@code Requests#INDEX_CONTENT_TYPE} format
      *
      * @param source The map to index
+     * @return the source
      */
     public IndexRequest source(Map<String, ?> source) throws OpenSearchGenerationException {
         return source(source, MediaTypeRegistry.JSON);
@@ -335,6 +360,8 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * Index the Map as the provided content type.
      *
      * @param source The map to index
+     * @param contentType the content type
+     * @return the source
      */
     public IndexRequest source(Map<String, ?> source, MediaType contentType) throws OpenSearchGenerationException {
         try {
@@ -351,6 +378,10 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * <p>
      * Note, its preferable to either set it using {@link #source(XContentBuilder)}
      * or using the {@code #source(byte[], MediaType)}.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return the source
      */
     public IndexRequest source(String source, MediaType mediaType) {
         return source(new BytesArray(source), mediaType);
@@ -358,6 +389,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Sets the content source to index.
+     *
+     * @param sourceBuilder the source builder
+     * @return the source
      */
     public IndexRequest source(XContentBuilder sourceBuilder) {
         return source(BytesReference.bytes(sourceBuilder), sourceBuilder.contentType());
@@ -370,6 +404,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * number. Also the first argument in each pair (the field name) must have a
      * valid String representation.</b>
      * </p>
+     *
+     * @param source the source
+     * @return the source
      */
     public IndexRequest source(Object... source) {
         return source(MediaTypeRegistry.JSON, source);
@@ -382,6 +419,10 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
      * number. Also the first argument in each pair (the field name) must have a
      * valid String representation.</b>
      * </p>
+     *
+     * @param mediaType the media type
+     * @param source the source
+     * @return the source
      */
     public IndexRequest source(MediaType mediaType, Object... source) {
         if (source.length % 2 != 0) {
@@ -408,6 +449,10 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Sets the document to index in bytes form.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return the source
      */
     public IndexRequest source(BytesReference source, MediaType mediaType) {
         this.source = Objects.requireNonNull(source);
@@ -417,6 +462,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Sets the type of operation to perform.
+     *
+     * @param opType the op type
+     * @return the op type
      */
     public IndexRequest opType(OpType opType) {
         if (opType != OpType.CREATE && opType != OpType.INDEX) {
@@ -429,6 +477,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
     /**
      * Sets a string representation of the {@link #opType(OpType)}. Can
      * be either "index" or "create".
+     *
+     * @param opType the op type
+     * @return the op type
      */
     public IndexRequest opType(String opType) {
         String op = opType.toLowerCase(Locale.ROOT);
@@ -444,6 +495,9 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
 
     /**
      * Set to {@code true} to force this index to use {@link OpType#CREATE}.
+     *
+     * @param create the create
+     * @return the new instance
      */
     public IndexRequest create(boolean create) {
         if (create) {
@@ -630,6 +684,12 @@ public class IndexRequest extends ReplicatedWriteRequest<IndexRequest> implement
         return requireAlias;
     }
 
+    /**
+     * Sets the require alias.
+     *
+     * @param requireAlias the require alias
+     * @return this instance
+     */
     public IndexRequest setRequireAlias(boolean requireAlias) {
         this.requireAlias = requireAlias;
         return this;

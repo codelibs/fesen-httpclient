@@ -55,10 +55,19 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class BytesStreamOutput extends BytesStream {
 
+    /**
+     * The big arrays.
+     */
     protected final BigArrays bigArrays;
 
+    /**
+     * The bytes.
+     */
     @Nullable
     protected ByteArray bytes;
+    /**
+     * The count.
+     */
     protected int count;
 
     /**
@@ -80,6 +89,12 @@ public class BytesStreamOutput extends BytesStream {
         this(expectedSize, BigArrays.NON_RECYCLING_INSTANCE);
     }
 
+    /**
+     * Creates a new BytesStreamOutput.
+     *
+     * @param expectedSize the expected size
+     * @param bigArrays the big arrays
+     */
     protected BytesStreamOutput(int expectedSize, BigArrays bigArrays) {
         this.bigArrays = bigArrays;
         if (expectedSize != 0) {

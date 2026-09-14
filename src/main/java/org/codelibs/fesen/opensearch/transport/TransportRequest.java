@@ -54,8 +54,17 @@ public abstract class TransportRequest implements Writeable, TaskAwareRequest {
      */
     private TaskId parentTaskId = TaskId.EMPTY_TASK_ID;
 
+    /**
+     * Creates a new TransportRequest.
+     */
     public TransportRequest() {}
 
+    /**
+     * Creates a new TransportRequest by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TransportRequest(StreamInput in) throws IOException {
         parentTaskId = TaskId.readFromStream(in);
     }

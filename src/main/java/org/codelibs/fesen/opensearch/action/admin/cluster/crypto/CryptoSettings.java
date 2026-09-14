@@ -37,6 +37,11 @@ public class CryptoSettings implements Writeable, ToXContentObject {
     private String keyProviderType;
     private Settings settings = EMPTY_SETTINGS;
 
+    /**
+     * Creates a new CryptoSettings.
+     *
+     * @param keyProviderName the key provider name
+     */
     public CryptoSettings(String keyProviderName) {
         this.keyProviderName = keyProviderName;
     }
@@ -59,6 +64,7 @@ public class CryptoSettings implements Writeable, ToXContentObject {
     /**
      * Constructs a new crypto settings with provided key provider name.
      * @param keyProviderName Name of the key provider
+     * @return the key provider name
      */
     public CryptoSettings keyProviderName(String keyProviderName) {
         this.keyProviderName = keyProviderName;
@@ -68,6 +74,7 @@ public class CryptoSettings implements Writeable, ToXContentObject {
     /**
      * Constructs a new crypto settings with provided key provider type.
      * @param keyProviderType Type of key provider to be used in encryption.
+     * @return the key provider type
      */
     public CryptoSettings keyProviderType(String keyProviderType) {
         this.keyProviderType = keyProviderType;

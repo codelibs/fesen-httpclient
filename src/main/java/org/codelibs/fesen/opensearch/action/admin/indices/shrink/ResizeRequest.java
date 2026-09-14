@@ -63,6 +63,9 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @PublicApi(since = "1.0.0")
 public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements IndicesRequest, ToXContentObject {
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<ResizeRequest, Void> PARSER = new ObjectParser<>("resize_request");
     private static final ParseField MAX_SHARD_SIZE = new ParseField("max_shard_size");
 
@@ -94,6 +97,12 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
 
     ResizeRequest() {}
 
+    /**
+     * Creates a new ResizeRequest.
+     *
+     * @param targetIndex the target index
+     * @param sourceIndex the source index
+     */
     public ResizeRequest(String targetIndex, String sourceIndex) {
         this.targetIndexRequest = new CreateIndexRequest(targetIndex);
         this.sourceIndex = sourceIndex;
@@ -162,6 +171,11 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         return validationException;
     }
 
+    /**
+     * Sets the source index.
+     *
+     * @param index the index
+     */
     public void setSourceIndex(String index) {
         this.sourceIndex = index;
     }
@@ -188,12 +202,19 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
         return IndicesOptions.lenientExpandOpen();
     }
 
+    /**
+     * Sets the target index.
+     *
+     * @param targetIndexRequest the target index request
+     */
     public void setTargetIndex(CreateIndexRequest targetIndexRequest) {
         this.targetIndexRequest = Objects.requireNonNull(targetIndexRequest, "target index request must not be null");
     }
 
     /**
      * Returns the {@link CreateIndexRequest} for the shrink index
+     *
+     * @return the target index request
      */
     public CreateIndexRequest getTargetIndexRequest() {
         return targetIndexRequest;
@@ -201,6 +222,8 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
 
     /**
      * Returns the source index name
+     *
+     * @return the source index
      */
     public String getSourceIndex() {
         return sourceIndex;
@@ -208,6 +231,8 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
 
     /**
      * The type of the resize operation
+     *
+     * @param type the type
      */
     public void setResizeType(ResizeType type) {
         this.type = Objects.requireNonNull(type);
@@ -215,6 +240,8 @@ public class ResizeRequest extends AcknowledgedRequest<ResizeRequest> implements
 
     /**
      * Returns the type of the resize operation
+     *
+     * @return the resize type
      */
     public ResizeType getResizeType() {
         return type;

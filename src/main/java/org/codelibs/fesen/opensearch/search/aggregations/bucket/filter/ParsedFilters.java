@@ -54,6 +54,11 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
  * @opensearch.internal
  */
 public class ParsedFilters extends ParsedMultiBucketAggregation<ParsedFilters.ParsedBucket> implements Filters {
+    /**
+     * Creates a new ParsedFilters.
+     */
+    public ParsedFilters() {
+    }
 
     private Map<String, ParsedBucket> bucketMap;
 
@@ -91,6 +96,14 @@ public class ParsedFilters extends ParsedMultiBucketAggregation<ParsedFilters.Pa
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedFilters fromXContent(XContentParser parser, String name) throws IOException {
         ParsedFilters aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -112,6 +125,11 @@ public class ParsedFilters extends ParsedMultiBucketAggregation<ParsedFilters.Pa
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Filters.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private String key;
 

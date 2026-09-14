@@ -69,7 +69,14 @@ public class NamedWriteableRegistry {
         /** A reader capability of reading*/
         public final Writeable.Reader<?> reader;
 
-        /** Creates a new entry which can be stored by the registry. */
+        /**
+         * Creates a new entry which can be stored by the registry.
+         *
+         * @param <T> the element type
+         * @param categoryClass the category class
+         * @param name the name
+         * @param reader the reader
+         */
         public <T extends NamedWriteable> Entry(Class<T> categoryClass, String name, Writeable.Reader<? extends T> reader) {
             this.categoryClass = Objects.requireNonNull(categoryClass);
             this.name = Objects.requireNonNull(name);
@@ -85,6 +92,8 @@ public class NamedWriteableRegistry {
 
     /**
      * Constructs a new registry from the given entries.
+     *
+     * @param entries the entries
      */
     public NamedWriteableRegistry(List<Entry> entries) {
         if (entries.isEmpty()) {
@@ -134,6 +143,11 @@ public class NamedWriteableRegistry {
     /**
      * Returns a reader for a {@link NamedWriteable} object identified by the
      * name provided as argument and its category.
+     *
+     * @param <T> the element type
+     * @param categoryClass the category class
+     * @param name the name
+     * @return the reader
      */
     public <T> Writeable.Reader<? extends T> getReader(Class<T> categoryClass, String name) {
         Map<String, Writeable.Reader<?>> readers = registry.get(categoryClass);

@@ -44,6 +44,12 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class ExtendedStatsBucketParser extends BucketMetricsParser {
+    /**
+     * Creates a new ExtendedStatsBucketParser.
+     */
+    public ExtendedStatsBucketParser() {
+    }
+
     static final ParseField SIGMA = new ParseField("sigma");
 
     @Override

@@ -52,6 +52,8 @@ import java.util.Objects;
 /**
  * Implementation of range bucket
  *
+ * @param <B> the builder type
+ * @param <R> the result type
  * @opensearch.internal
  */
 public class InternalRange<B extends InternalRange.Bucket, R extends InternalRange<B, R>> extends InternalMultiBucketAggregation<R, B>
@@ -66,14 +68,37 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
      */
     public static class Bucket extends InternalMultiBucketAggregation.InternalBucket implements Range.Bucket {
 
+        /**
+         * The keyed.
+         */
         protected final transient boolean keyed;
+        /**
+         * The format.
+         */
         protected final transient DocValueFormat format;
+        /**
+         * The from.
+         */
         protected final double from;
+        /**
+         * The to.
+         */
         protected final double to;
         private final long docCount;
         private final InternalAggregations aggregations;
         private final String key;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param keyed the keyed
+         * @param format the format
+         */
         public Bucket(
             String key,
             double from,
@@ -112,10 +137,20 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
             return to;
         }
 
+        /**
+         * Returns the keyed.
+         *
+         * @return the keyed
+         */
         public boolean getKeyed() {
             return keyed;
         }
 
+        /**
+         * Returns the format.
+         *
+         * @return the format
+         */
         public DocValueFormat getFormat() {
             return format;
         }
@@ -148,6 +183,11 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
             return aggregations;
         }
 
+        /**
+         * Returns the factory.
+         *
+         * @return the factory
+         */
         protected Factory<? extends Bucket, ?> getFactory() {
             return FACTORY;
         }
@@ -219,22 +259,62 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
     /**
      * Factory for a range
      *
+     * @param <B> the builder type
+     * @param <R> the result type
      * @opensearch.internal
      */
     public static class Factory<B extends Bucket, R extends InternalRange<B, R>> {
+        /**
+         * Creates a new Factory.
+         */
+        public Factory() {
+        }
+
+        /**
+         * Returns the value source type.
+         *
+         * @return the value source type
+         */
         public ValuesSourceType getValueSourceType() {
             return CoreValuesSourceType.NUMERIC;
         }
 
+        /**
+         * Returns the value type.
+         *
+         * @return the value type
+         */
         public ValueType getValueType() {
             return ValueType.NUMERIC;
         }
 
+        /**
+         * Creates this instance.
+         *
+         * @param name the name
+         * @param ranges the ranges
+         * @param format the format
+         * @param keyed the keyed
+         * @param metadata the metadata
+         * @return the new instance
+         */
         @SuppressWarnings("unchecked")
         public R create(String name, List<B> ranges, DocValueFormat format, boolean keyed, Map<String, Object> metadata) {
             return (R) new InternalRange<B, R>(name, ranges, format, keyed, metadata);
         }
 
+        /**
+         * Creates a new bucket.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param keyed the keyed
+         * @param format the format
+         * @return the new bucket
+         */
         @SuppressWarnings("unchecked")
         public B createBucket(
             String key,
@@ -248,11 +328,25 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
             return (B) new Bucket(key, from, to, docCount, aggregations, keyed, format);
         }
 
+        /**
+         * Creates this instance.
+         *
+         * @param ranges the ranges
+         * @param prototype the prototype
+         * @return the new instance
+         */
         @SuppressWarnings("unchecked")
         public R create(List<B> ranges, R prototype) {
             return (R) new InternalRange<B, R>(prototype.name, ranges, prototype.format, prototype.keyed, prototype.metadata);
         }
 
+        /**
+         * Creates a new bucket.
+         *
+         * @param aggregations the aggregations
+         * @param prototype the prototype
+         * @return the new bucket
+         */
         @SuppressWarnings("unchecked")
         public B createBucket(InternalAggregations aggregations, B prototype) {
             return (B) new Bucket(
@@ -268,9 +362,24 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
     }
 
     private final List<B> ranges;
+    /**
+     * The format.
+     */
     protected final DocValueFormat format;
+    /**
+     * The keyed.
+     */
     protected final boolean keyed;
 
+    /**
+     * Creates a new InternalRange.
+     *
+     * @param name the name
+     * @param ranges the ranges
+     * @param format the format
+     * @param keyed the keyed
+     * @param metadata the metadata
+     */
     public InternalRange(String name, List<B> ranges, DocValueFormat format, boolean keyed, Map<String, Object> metadata) {
         super(name, metadata);
         this.ranges = ranges;
@@ -298,6 +407,11 @@ public class InternalRange<B extends InternalRange.Bucket, R extends InternalRan
         return ranges;
     }
 
+    /**
+     * Returns the factory.
+     *
+     * @return the factory
+     */
     public Factory<B, R> getFactory() {
         return FACTORY;
     }

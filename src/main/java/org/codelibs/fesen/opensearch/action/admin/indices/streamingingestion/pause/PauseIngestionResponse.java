@@ -27,6 +27,14 @@ public class PauseIngestionResponse extends IngestionUpdateStateResponse {
         super(in);
     }
 
+    /**
+     * Creates a new PauseIngestionResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     * @param shardFailuresList the shard failures list
+     * @param errorMessage the error message
+     */
     public PauseIngestionResponse(
         final boolean acknowledged,
         final boolean shardsAcknowledged,

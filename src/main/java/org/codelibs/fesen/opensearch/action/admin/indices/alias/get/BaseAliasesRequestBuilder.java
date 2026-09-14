@@ -42,6 +42,8 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Base request builder for listing index aliases
  *
+ * @param <Response> the response type
+ * @param <Builder> the builder type
  * @opensearch.internal
  */
 public abstract class BaseAliasesRequestBuilder<
@@ -51,16 +53,35 @@ public abstract class BaseAliasesRequestBuilder<
         Response,
         Builder> {
 
+    /**
+     * Creates a new BaseAliasesRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param aliases the aliases
+     */
     public BaseAliasesRequestBuilder(OpenSearchClient client, ActionType<Response> action, String... aliases) {
         super(client, action, new GetAliasesRequest(aliases));
     }
 
+    /**
+     * Sets the aliases.
+     *
+     * @param aliases the aliases
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public Builder setAliases(String... aliases) {
         request.aliases(aliases);
         return (Builder) this;
     }
 
+    /**
+     * Sets the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public Builder setIndices(String... indices) {
         request.indices(indices);

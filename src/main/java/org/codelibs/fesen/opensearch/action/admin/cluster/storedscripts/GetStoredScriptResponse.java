@@ -59,8 +59,17 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
 @PublicApi(since = "1.0.0")
 public class GetStoredScriptResponse extends ActionResponse implements StatusToXContentObject {
 
+    /**
+     * The _ID_PARSE_FIELD constant.
+     */
     public static final ParseField _ID_PARSE_FIELD = new ParseField("_id");
+    /**
+     * The FOUND_PARSE_FIELD constant.
+     */
     public static final ParseField FOUND_PARSE_FIELD = new ParseField("found");
+    /**
+     * The SCRIPT constant.
+     */
     public static final ParseField SCRIPT = new ParseField("script");
 
     private static final ConstructingObjectParser<GetStoredScriptResponse, String> PARSER = new ConstructingObjectParser<>(
@@ -88,6 +97,12 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
     private String id;
     private StoredScriptSource source;
 
+    /**
+     * Creates a new GetStoredScriptResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetStoredScriptResponse(StreamInput in) throws IOException {
         super(in);
 
@@ -106,6 +121,8 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
     }
 
     /**
+     * Returns the source.
+     *
      * @return if a stored script and if not found <code>null</code>
      */
     public StoredScriptSource getSource() {
@@ -132,6 +149,13 @@ public class GetStoredScriptResponse extends ActionResponse implements StatusToX
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GetStoredScriptResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

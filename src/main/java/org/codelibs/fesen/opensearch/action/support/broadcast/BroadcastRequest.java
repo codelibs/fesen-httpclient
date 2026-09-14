@@ -46,20 +46,38 @@ import java.io.IOException;
 /**
  * Transport request for broadcast operations
  *
+ * @param <Request> the request type
  * @opensearch.api
  */
 @PublicApi(since = "3.6.0")
 public class BroadcastRequest<Request extends BroadcastRequest<Request>> extends ActionRequest implements IndicesRequest.Replaceable {
 
+    /**
+     * The indices.
+     */
     protected String[] indices;
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpenAndForbidClosed();
 
+    /**
+     * The should cancel on timeout.
+     */
     protected boolean shouldCancelOnTimeout = false;
 
+    /**
+     * Creates a new BroadcastRequest.
+     *
+     * @param indices the indices
+     */
     protected BroadcastRequest(String... indices) {
         this.indices = indices;
     }
 
+    /**
+     * Creates a new BroadcastRequest.
+     *
+     * @param indices the indices
+     * @param indicesOptions the indices options
+     */
     protected BroadcastRequest(String[] indices, IndicesOptions indicesOptions) {
         this.indices = indices;
         this.indicesOptions = indicesOptions;
@@ -80,6 +98,11 @@ public class BroadcastRequest<Request extends BroadcastRequest<Request>> extends
         return (Request) this;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
     public TimeValue timeout() {
         return this.timeout;
     }
@@ -94,6 +117,12 @@ public class BroadcastRequest<Request extends BroadcastRequest<Request>> extends
         return indicesOptions;
     }
 
+    /**
+     * Returns the indices options.
+     *
+     * @param indicesOptions the indices options
+     * @return the indices options
+     */
     @SuppressWarnings("unchecked")
     public final Request indicesOptions(IndicesOptions indicesOptions) {
         this.indicesOptions = indicesOptions;

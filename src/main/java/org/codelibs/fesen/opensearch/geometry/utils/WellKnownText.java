@@ -61,14 +61,38 @@ import java.util.Locale;
  */
 public class WellKnownText {
     /* The instance of WKT serializer that coerces values and accepts Z component */
+    /**
+     * The INSTANCE constant.
+     */
     public static final WellKnownText INSTANCE = new WellKnownText(true, new StandardValidator(true));
 
+    /**
+     * The EMPTY constant.
+     */
     public static final String EMPTY = "EMPTY";
+    /**
+     * The SPACE constant.
+     */
     public static final String SPACE = " ";
+    /**
+     * The LPAREN constant.
+     */
     public static final String LPAREN = "(";
+    /**
+     * The RPAREN constant.
+     */
     public static final String RPAREN = ")";
+    /**
+     * The COMMA constant.
+     */
     public static final String COMMA = ",";
+    /**
+     * The NAN constant.
+     */
     public static final String NAN = "NaN";
+    /**
+     * The MAX_DEPTH_OF_GEO_COLLECTION constant.
+     */
     public static final int MAX_DEPTH_OF_GEO_COLLECTION = 1000;
 
     private final String NUMBER = "<NUMBER>";
@@ -78,17 +102,35 @@ public class WellKnownText {
     private final boolean coerce;
     private final GeometryValidator validator;
 
+    /**
+     * Creates a new WellKnownText.
+     *
+     * @param coerce the coerce
+     * @param validator the validator
+     */
     public WellKnownText(boolean coerce, GeometryValidator validator) {
         this.coerce = coerce;
         this.validator = validator;
     }
 
+    /**
+     * Returns this instance as wkt.
+     *
+     * @param geometry the geometry
+     * @return the wkt
+     */
     public String toWKT(Geometry geometry) {
         StringBuilder builder = new StringBuilder();
         toWKT(geometry, builder);
         return builder.toString();
     }
 
+    /**
+     * Returns this instance as wkt.
+     *
+     * @param geometry the geometry
+     * @param sb the sb
+     */
     public void toWKT(Geometry geometry, StringBuilder sb) {
         sb.append(getWKTName(geometry));
         sb.append(SPACE);
@@ -250,6 +292,14 @@ public class WellKnownText {
         }
     }
 
+    /**
+     * Creates an instance from wkt.
+     *
+     * @param wkt the wkt
+     * @return the new wkt
+     * @throws IOException if an I/O error occurs
+     * @throws ParseException if the input cannot be parsed
+     */
     public Geometry fromWKT(String wkt) throws IOException, ParseException {
         StringReader reader = new StringReader(wkt);
         try {

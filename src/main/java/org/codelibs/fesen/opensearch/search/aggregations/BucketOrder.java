@@ -55,9 +55,16 @@ import java.util.function.ToLongFunction;
  */
 public abstract class BucketOrder implements ToXContentObject, Writeable {
     /**
+     * Creates a new BucketOrder.
+     */
+    public BucketOrder() {
+    }
+
+    /**
      * Creates a bucket ordering strategy that sorts buckets by their document counts (ascending or descending).
      *
      * @param asc direction to sort by: {@code true} for ascending, {@code false} for descending.
+     * @return this instance
      */
     public static BucketOrder count(boolean asc) {
         return asc ? InternalOrder.COUNT_ASC : InternalOrder.COUNT_DESC;
@@ -68,6 +75,7 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
      * used as a tie-breaker to avoid non-deterministic ordering.
      *
      * @param asc direction to sort by: {@code true} for ascending, {@code false} for descending.
+     * @return the key
      */
     public static BucketOrder key(boolean asc) {
         return asc ? InternalOrder.KEY_ASC : InternalOrder.KEY_DESC;
@@ -78,6 +86,7 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
      *
      * @param path path to the sub-aggregation to sort on.
      * @param asc  direction to sort by: {@code true} for ascending, {@code false} for descending.
+     * @return the aggregation
      * @see AggregationPath
      */
     public static BucketOrder aggregation(String path, boolean asc) {
@@ -89,6 +98,7 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
      * avoid non-deterministic ordering.
      *
      * @param orders a list of {@link BucketOrder} objects to sort on, in order of priority.
+     * @return the compound
      */
     public static BucketOrder compound(List<BucketOrder> orders) {
         return new InternalOrder.CompoundOrder(orders);
@@ -99,6 +109,7 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
      * avoid non-deterministic ordering.
      *
      * @param orders a list of {@link BucketOrder} parameters to sort on, in order of priority.
+     * @return the compound
      */
     public static BucketOrder compound(BucketOrder... orders) {
         return compound(Arrays.asList(orders));
@@ -106,6 +117,8 @@ public abstract class BucketOrder implements ToXContentObject, Writeable {
 
     /**
      * Build a comparator for fully built buckets.
+     *
+     * @return the comparator
      */
     public abstract Comparator<Bucket> comparator();
 

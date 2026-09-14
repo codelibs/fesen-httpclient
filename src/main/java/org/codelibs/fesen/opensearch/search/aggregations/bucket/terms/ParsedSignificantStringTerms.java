@@ -46,6 +46,11 @@ import java.nio.CharBuffer;
  * @opensearch.internal
  */
 public class ParsedSignificantStringTerms extends ParsedSignificantTerms {
+    /**
+     * Creates a new ParsedSignificantStringTerms.
+     */
+    public ParsedSignificantStringTerms() {
+    }
 
     @Override
     public String getType() {
@@ -61,6 +66,14 @@ public class ParsedSignificantStringTerms extends ParsedSignificantTerms {
         declareParsedSignificantTermsFields(PARSER, ParsedBucket::fromXContent);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedSignificantStringTerms fromXContent(XContentParser parser, String name) throws IOException {
         return parseSignificantTermsXContent(() -> PARSER.parse(parser, null), name);
     }
@@ -71,6 +84,11 @@ public class ParsedSignificantStringTerms extends ParsedSignificantTerms {
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedSignificantTerms.ParsedBucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private BytesRef key;
 

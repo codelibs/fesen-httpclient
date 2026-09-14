@@ -37,8 +37,17 @@ public class TaskResourceStats implements Writeable, ToXContentFragment {
     private final Map<String, TaskResourceUsage> resourceUsage;
     private final TaskThreadUsage threadUsage;
 
+    /**
+     * The THREAD_INFO constant.
+     */
     public static final String THREAD_INFO = "thread_info";
 
+    /**
+     * Creates a new TaskResourceStats.
+     *
+     * @param resourceUsage the resource usage
+     * @param threadUsage the thread usage
+     */
     public TaskResourceStats(Map<String, TaskResourceUsage> resourceUsage, TaskThreadUsage threadUsage) {
         this.resourceUsage = Objects.requireNonNull(resourceUsage, "resource usage is required");
         this.threadUsage = Objects.requireNonNull(threadUsage, "thread usage is required");
@@ -46,6 +55,9 @@ public class TaskResourceStats implements Writeable, ToXContentFragment {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TaskResourceStats(StreamInput in) throws IOException {
         resourceUsage = in.readMap(StreamInput::readString, TaskResourceUsage::readFromStream);
@@ -80,6 +92,13 @@ public class TaskResourceStats implements Writeable, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static TaskResourceStats fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         if (token == null) {

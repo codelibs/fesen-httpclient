@@ -84,6 +84,12 @@ public class IndexingPressureStats implements Writeable, ToXContentFragment {
         this.memoryLimit = builder.memoryLimit;
     }
 
+    /**
+     * Creates a new IndexingPressureStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexingPressureStats(StreamInput in) throws IOException {
         totalCombinedCoordinatingAndPrimaryBytes = in.readVLong();
         totalCoordinatingBytes = in.readVLong();
@@ -104,6 +110,19 @@ public class IndexingPressureStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param totalCombinedCoordinatingAndPrimaryBytes the total combined coordinating and primary bytes
+     * @param totalCoordinatingBytes the total coordinating bytes
+     * @param totalPrimaryBytes the total primary bytes
+     * @param totalReplicaBytes the total replica bytes
+     * @param currentCombinedCoordinatingAndPrimaryBytes the current combined coordinating and primary bytes
+     * @param currentCoordinatingBytes the current coordinating bytes
+     * @param currentPrimaryBytes the current primary bytes
+     * @param currentReplicaBytes the current replica bytes
+     * @param coordinatingRejections the coordinating rejections
+     * @param primaryRejections the primary rejections
+     * @param replicaRejections the replica rejections
+     * @param memoryLimit the memory limit
      */
     @Deprecated
     public IndexingPressureStats(
@@ -152,63 +171,138 @@ public class IndexingPressureStats implements Writeable, ToXContentFragment {
         private long replicaRejections = 0;
         private long memoryLimit = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the total combined coordinating and primary bytes.
+         *
+         * @param bytes the bytes
+         * @return the total combined coordinating and primary bytes
+         */
         public Builder totalCombinedCoordinatingAndPrimaryBytes(long bytes) {
             this.totalCombinedCoordinatingAndPrimaryBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the total coordinating bytes.
+         *
+         * @param bytes the bytes
+         * @return the total coordinating bytes
+         */
         public Builder totalCoordinatingBytes(long bytes) {
             this.totalCoordinatingBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the total primary bytes.
+         *
+         * @param bytes the bytes
+         * @return the total primary bytes
+         */
         public Builder totalPrimaryBytes(long bytes) {
             this.totalPrimaryBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the total replica bytes.
+         *
+         * @param bytes the bytes
+         * @return the total replica bytes
+         */
         public Builder totalReplicaBytes(long bytes) {
             this.totalReplicaBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the current combined coordinating and primary bytes.
+         *
+         * @param bytes the bytes
+         * @return the current combined coordinating and primary bytes
+         */
         public Builder currentCombinedCoordinatingAndPrimaryBytes(long bytes) {
             this.currentCombinedCoordinatingAndPrimaryBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the current coordinating bytes.
+         *
+         * @param bytes the bytes
+         * @return the current coordinating bytes
+         */
         public Builder currentCoordinatingBytes(long bytes) {
             this.currentCoordinatingBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the current primary bytes.
+         *
+         * @param bytes the bytes
+         * @return the current primary bytes
+         */
         public Builder currentPrimaryBytes(long bytes) {
             this.currentPrimaryBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the current replica bytes.
+         *
+         * @param bytes the bytes
+         * @return the current replica bytes
+         */
         public Builder currentReplicaBytes(long bytes) {
             this.currentReplicaBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the coordinating rejections.
+         *
+         * @param rejections the rejections
+         * @return the coordinating rejections
+         */
         public Builder coordinatingRejections(long rejections) {
             this.coordinatingRejections = rejections;
             return this;
         }
 
+        /**
+         * Returns the primary rejections.
+         *
+         * @param rejections the rejections
+         * @return the primary rejections
+         */
         public Builder primaryRejections(long rejections) {
             this.primaryRejections = rejections;
             return this;
         }
 
+        /**
+         * Returns the replica rejections.
+         *
+         * @param rejections the rejections
+         * @return the replica rejections
+         */
         public Builder replicaRejections(long rejections) {
             this.replicaRejections = rejections;
             return this;
         }
 
+        /**
+         * Returns the memory limit.
+         *
+         * @param limit the limit
+         * @return the memory limit
+         */
         public Builder memoryLimit(long limit) {
             this.memoryLimit = limit;
             return this;
@@ -241,46 +335,101 @@ public class IndexingPressureStats implements Writeable, ToXContentFragment {
         out.writeVLong(memoryLimit);
     }
 
+    /**
+     * Returns the total combined coordinating and primary bytes.
+     *
+     * @return the total combined coordinating and primary bytes
+     */
     public long getTotalCombinedCoordinatingAndPrimaryBytes() {
         return totalCombinedCoordinatingAndPrimaryBytes;
     }
 
+    /**
+     * Returns the total coordinating bytes.
+     *
+     * @return the total coordinating bytes
+     */
     public long getTotalCoordinatingBytes() {
         return totalCoordinatingBytes;
     }
 
+    /**
+     * Returns the total primary bytes.
+     *
+     * @return the total primary bytes
+     */
     public long getTotalPrimaryBytes() {
         return totalPrimaryBytes;
     }
 
+    /**
+     * Returns the total replica bytes.
+     *
+     * @return the total replica bytes
+     */
     public long getTotalReplicaBytes() {
         return totalReplicaBytes;
     }
 
+    /**
+     * Returns the current combined coordinating and primary bytes.
+     *
+     * @return the current combined coordinating and primary bytes
+     */
     public long getCurrentCombinedCoordinatingAndPrimaryBytes() {
         return currentCombinedCoordinatingAndPrimaryBytes;
     }
 
+    /**
+     * Returns the current coordinating bytes.
+     *
+     * @return the current coordinating bytes
+     */
     public long getCurrentCoordinatingBytes() {
         return currentCoordinatingBytes;
     }
 
+    /**
+     * Returns the current primary bytes.
+     *
+     * @return the current primary bytes
+     */
     public long getCurrentPrimaryBytes() {
         return currentPrimaryBytes;
     }
 
+    /**
+     * Returns the current replica bytes.
+     *
+     * @return the current replica bytes
+     */
     public long getCurrentReplicaBytes() {
         return currentReplicaBytes;
     }
 
+    /**
+     * Returns the coordinating rejections.
+     *
+     * @return the coordinating rejections
+     */
     public long getCoordinatingRejections() {
         return coordinatingRejections;
     }
 
+    /**
+     * Returns the primary rejections.
+     *
+     * @return the primary rejections
+     */
     public long getPrimaryRejections() {
         return primaryRejections;
     }
 
+    /**
+     * Returns the replica rejections.
+     *
+     * @return the replica rejections
+     */
     public long getReplicaRejections() {
         return replicaRejections;
     }

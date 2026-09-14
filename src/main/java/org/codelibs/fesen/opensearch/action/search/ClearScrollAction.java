@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClearScrollAction extends ActionType<ClearScrollResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClearScrollAction INSTANCE = new ClearScrollAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/scroll/clear";
 
     private ClearScrollAction() {

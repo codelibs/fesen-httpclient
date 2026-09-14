@@ -50,8 +50,14 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class LinearModel extends MovAvgModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "linear";
 
+    /**
+     * Creates a new LinearModel.
+     */
     public LinearModel() {}
 
     @Override
@@ -100,6 +106,9 @@ public class LinearModel extends MovAvgModel {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final AbstractModelParser PARSER = new AbstractModelParser() {
         @Override
         public MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize) throws ParseException {
@@ -114,6 +123,12 @@ public class LinearModel extends MovAvgModel {
      * @opensearch.internal
      */
     public static class LinearModelBuilder implements MovAvgModelBuilder {
+        /**
+         * Creates a new LinearModelBuilder.
+         */
+        public LinearModelBuilder() {
+        }
+
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
             builder.field(MovAvgPipelineAggregationBuilder.MODEL.getPreferredName(), NAME);

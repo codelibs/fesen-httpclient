@@ -19,6 +19,11 @@ import java.util.Map;
  * Propagates "TASK_ID" across thread contexts
  */
 public class TaskThreadContextStatePropagator implements ThreadContextStatePropagator {
+    /**
+     * Creates a new TaskThreadContextStatePropagator.
+     */
+    public TaskThreadContextStatePropagator() {
+    }
 
     @Override
     @SuppressWarnings("removal")

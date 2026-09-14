@@ -49,21 +49,29 @@ public interface Range extends MultiBucketsAggregation {
     interface Bucket extends MultiBucketsAggregation.Bucket {
 
         /**
+         * Returns the from.
+         *
          * @return  The lower bound of the range
          */
         Object getFrom();
 
         /**
+         * Returns the from as string.
+         *
          * @return The string value for the lower bound of the range
          */
         String getFromAsString();
 
         /**
+         * Returns the to.
+         *
          * @return The upper bound of the range (excluding)
          */
         Object getTo();
 
         /**
+         * Returns the to as string.
+         *
          * @return The string value for the upper bound of the range (excluding)
          */
         String getToAsString();

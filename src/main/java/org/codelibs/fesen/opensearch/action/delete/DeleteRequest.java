@@ -85,6 +85,13 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
     private long ifSeqNo = UNASSIGNED_SEQ_NO;
     private long ifPrimaryTerm = UNASSIGNED_PRIMARY_TERM;
 
+    /**
+     * Creates a new DeleteRequest.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DeleteRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         if (in.getVersion().before(Version.V_2_0_0)) {
@@ -99,6 +106,9 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
         ifPrimaryTerm = in.readVLong();
     }
 
+    /**
+     * Creates a new DeleteRequest.
+     */
     public DeleteRequest() {
         super(NO_SHARD_ID);
     }
@@ -106,6 +116,8 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
     /**
      * Constructs a new delete request against the specified index. The {@link #id(String)}
      * must be set.
+     *
+     * @param index the index
      */
     public DeleteRequest(String index) {
         super(NO_SHARD_ID);
@@ -146,6 +158,9 @@ public class DeleteRequest extends ReplicatedWriteRequest<DeleteRequest>
 
     /**
      * Sets the id of the document to delete.
+     *
+     * @param id the identifier
+     * @return the identifier
      */
     public DeleteRequest id(String id) {
         this.id = id;

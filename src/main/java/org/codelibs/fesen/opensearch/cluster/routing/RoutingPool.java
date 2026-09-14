@@ -22,7 +22,13 @@ import org.codelibs.fesen.opensearch.index.IndexModule;
  */
 @PublicApi(since = "2.7.0")
 public enum RoutingPool {
+    /**
+     * The LOCAL_ONLY value.
+     */
     LOCAL_ONLY,
+    /**
+     * The REMOTE_CAPABLE value.
+     */
     REMOTE_CAPABLE;
 
     /**

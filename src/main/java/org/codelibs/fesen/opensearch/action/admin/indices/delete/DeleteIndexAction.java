@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class DeleteIndexAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteIndexAction INSTANCE = new DeleteIndexAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/delete";
 
     private DeleteIndexAction() {

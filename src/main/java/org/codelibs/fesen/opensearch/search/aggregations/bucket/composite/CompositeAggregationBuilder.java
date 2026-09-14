@@ -61,12 +61,27 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  * @opensearch.internal
  */
 public class CompositeAggregationBuilder extends AbstractAggregationBuilder<CompositeAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "composite";
 
+    /**
+     * The AFTER_FIELD_NAME constant.
+     */
     public static final ParseField AFTER_FIELD_NAME = new ParseField("after");
+    /**
+     * The SIZE_FIELD_NAME constant.
+     */
     public static final ParseField SIZE_FIELD_NAME = new ParseField("size");
+    /**
+     * The SOURCES_FIELD_NAME constant.
+     */
     public static final ParseField SOURCES_FIELD_NAME = new ParseField("sources");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<CompositeAggregationBuilder, String> PARSER = new ConstructingObjectParser<>(
         NAME,
         false,
@@ -95,12 +110,25 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
     private Map<String, Object> after;
     private int size = 10;
 
+    /**
+     * Creates a new CompositeAggregationBuilder.
+     *
+     * @param name the name
+     * @param sources the sources
+     */
     public CompositeAggregationBuilder(String name, List<CompositeValuesSourceBuilder<?>> sources) {
         super(name);
         validateSources(sources);
         this.sources = sources;
     }
 
+    /**
+     * Creates a new CompositeAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected CompositeAggregationBuilder(
         CompositeAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -137,6 +165,8 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
 
     /**
      * Gets the list of {@link CompositeValuesSourceBuilder} for this aggregation.
+     *
+     * @return the sources
      */
     public List<CompositeValuesSourceBuilder<?>> sources() {
         return sources;
@@ -145,6 +175,9 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
     /**
      * Sets the values that indicates which composite bucket this request should "aggregate after".
      * Defaults to {@code null}.
+     *
+     * @param afterKey the after key
+     * @return this instance
      */
     public CompositeAggregationBuilder aggregateAfter(Map<String, Object> afterKey) {
         this.after = afterKey;
@@ -153,6 +186,9 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
 
     /**
      * The number of composite buckets to return. Defaults to {@code 10}.
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public CompositeAggregationBuilder size(int size) {
         this.size = size;
@@ -160,6 +196,8 @@ public class CompositeAggregationBuilder extends AbstractAggregationBuilder<Comp
     }
 
     /**
+     * Returns the number of elements.
+     *
      * @return the number of composite buckets. Defaults to {@code 10}.
      */
     public int size() {

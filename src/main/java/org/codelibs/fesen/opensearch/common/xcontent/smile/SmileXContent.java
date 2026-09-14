@@ -63,11 +63,20 @@ import tools.jackson.dataformat.smile.SmileWriteFeature;
  * A Smile based content implementation using Jackson.
  */
 public class SmileXContent implements XContent, XContentConstraints {
+    /**
+     * Returns the content builder.
+     *
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
+     */
     public static XContentBuilder contentBuilder() throws IOException {
         return XContentBuilder.builder(smileXContent);
     }
 
     static final SmileFactory smileFactory;
+    /**
+     * The smile XContent.
+     */
     public static final SmileXContent smileXContent;
 
     static {

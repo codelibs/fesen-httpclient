@@ -69,6 +69,12 @@ public class RestoreInfo implements ToXContentObject, Writeable {
 
     RestoreInfo() {}
 
+    /**
+     * Creates a new RestoreInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RestoreInfo(StreamInput in) throws IOException {
         name = in.readString();
         indices = Collections.unmodifiableList(in.readStringList());
@@ -134,6 +140,13 @@ public class RestoreInfo implements ToXContentObject, Writeable {
         PARSER.declareField(shardsParser::parse, new ParseField(Fields.SHARDS), ObjectParser.ValueType.OBJECT);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static RestoreInfo fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }
@@ -151,6 +164,7 @@ public class RestoreInfo implements ToXContentObject, Writeable {
      *
      * @param in stream input
      * @return restore info
+     * @throws IOException if an I/O error occurs
      */
     public static RestoreInfo readOptionalRestoreInfo(StreamInput in) throws IOException {
         return in.readOptionalWriteable(RestoreInfo::new);

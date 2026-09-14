@@ -45,44 +45,100 @@ public class ShardIndexingPressureTracker {
     private final OperationTracker replicaOperationTracker = new OperationTracker();
     private final CommonOperationTracker commonOperationTracker = new CommonOperationTracker();
 
+    /**
+     * Creates a new ShardIndexingPressureTracker.
+     *
+     * @param shardId the shard identifier
+     * @param initialPrimaryAndCoordinatingLimits the initial primary and coordinating limits
+     * @param initialReplicaLimits the initial replica limits
+     */
     public ShardIndexingPressureTracker(ShardId shardId, long initialPrimaryAndCoordinatingLimits, long initialReplicaLimits) {
         this.shardId = shardId;
         this.primaryAndCoordinatingLimits = new AtomicLong(initialPrimaryAndCoordinatingLimits);
         this.replicaLimits = new AtomicLong(initialReplicaLimits);
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         return shardId;
     }
 
+    /**
+     * Returns the primary and coordinating limits.
+     *
+     * @return the primary and coordinating limits
+     */
     public long getPrimaryAndCoordinatingLimits() {
         return primaryAndCoordinatingLimits.get();
     }
 
+    /**
+     * Compares the and set primary and coordinating limits.
+     *
+     * @param expectedValue the expected value
+     * @param newValue the new value
+     * @return this instance
+     */
     public boolean compareAndSetPrimaryAndCoordinatingLimits(long expectedValue, long newValue) {
         return primaryAndCoordinatingLimits.compareAndSet(expectedValue, newValue);
     }
 
+    /**
+     * Returns the replica limits.
+     *
+     * @return the replica limits
+     */
     public long getReplicaLimits() {
         return replicaLimits.get();
     }
 
+    /**
+     * Compares the and set replica limits.
+     *
+     * @param expectedValue the expected value
+     * @param newValue the new value
+     * @return this instance
+     */
     public boolean compareAndSetReplicaLimits(long expectedValue, long newValue) {
         return replicaLimits.compareAndSet(expectedValue, newValue);
     }
 
+    /**
+     * Returns the coordinating operation tracker.
+     *
+     * @return the coordinating operation tracker
+     */
     public OperationTracker getCoordinatingOperationTracker() {
         return coordinatingOperationTracker;
     }
 
+    /**
+     * Returns the primary operation tracker.
+     *
+     * @return the primary operation tracker
+     */
     public OperationTracker getPrimaryOperationTracker() {
         return primaryOperationTracker;
     }
 
+    /**
+     * Returns the replica operation tracker.
+     *
+     * @return the replica operation tracker
+     */
     public OperationTracker getReplicaOperationTracker() {
         return replicaOperationTracker;
     }
 
+    /**
+     * Returns the common operation tracker.
+     *
+     * @return the common operation tracker
+     */
     public CommonOperationTracker getCommonOperationTracker() {
         return commonOperationTracker;
     }
@@ -96,18 +152,39 @@ public class ShardIndexingPressureTracker {
      * @opensearch.internal
      */
     public static class OperationTracker {
+        /**
+         * Creates a new OperationTracker.
+         */
+        public OperationTracker() {
+        }
+
         private final StatsTracker statsTracker = new StatsTracker();
         private final RejectionTracker rejectionTracker = new RejectionTracker();
         private final PerformanceTracker performanceTracker = new PerformanceTracker();
 
+        /**
+         * Returns the stats tracker.
+         *
+         * @return the stats tracker
+         */
         public StatsTracker getStatsTracker() {
             return statsTracker;
         }
 
+        /**
+         * Returns the rejection tracker.
+         *
+         * @return the rejection tracker
+         */
         public RejectionTracker getRejectionTracker() {
             return rejectionTracker;
         }
 
+        /**
+         * Returns the performance tracker.
+         *
+         * @return the performance tracker
+         */
         public PerformanceTracker getPerformanceTracker() {
             return performanceTracker;
         }
@@ -122,30 +199,68 @@ public class ShardIndexingPressureTracker {
      * @opensearch.internal
      */
     public static class StatsTracker {
+        /**
+         * Creates a new StatsTracker.
+         */
+        public StatsTracker() {
+        }
+
         private final AtomicLong currentBytes = new AtomicLong();
         private final AtomicLong totalBytes = new AtomicLong();
         private final AtomicLong requestCount = new AtomicLong();
 
+        /**
+         * Returns the current bytes.
+         *
+         * @return the current bytes
+         */
         public long getCurrentBytes() {
             return currentBytes.get();
         }
 
+        /**
+         * Increments the current bytes.
+         *
+         * @param bytes the bytes
+         * @return this instance
+         */
         public long incrementCurrentBytes(long bytes) {
             return currentBytes.addAndGet(bytes);
         }
 
+        /**
+         * Returns the total bytes.
+         *
+         * @return the total bytes
+         */
         public long getTotalBytes() {
             return totalBytes.get();
         }
 
+        /**
+         * Increments the total bytes.
+         *
+         * @param bytes the bytes
+         * @return this instance
+         */
         public long incrementTotalBytes(long bytes) {
             return totalBytes.addAndGet(bytes);
         }
 
+        /**
+         * Returns the request count.
+         *
+         * @return the request count
+         */
         public long getRequestCount() {
             return requestCount.get();
         }
 
+        /**
+         * Increments the request count.
+         *
+         * @return this instance
+         */
         public long incrementRequestCount() {
             return requestCount.incrementAndGet();
         }
@@ -164,39 +279,85 @@ public class ShardIndexingPressureTracker {
      * @opensearch.internal
      */
     public static class RejectionTracker {
+        /**
+         * Creates a new RejectionTracker.
+         */
+        public RejectionTracker() {
+        }
+
         private final AtomicLong totalRejections = new AtomicLong();
         private final AtomicLong nodeLimitsBreachedRejections = new AtomicLong();
         private final AtomicLong lastSuccessfulRequestLimitsBreachedRejections = new AtomicLong();
         private final AtomicLong throughputDegradationLimitsBreachedRejections = new AtomicLong();
 
+        /**
+         * Returns the total rejections.
+         *
+         * @return the total rejections
+         */
         public long getTotalRejections() {
             return totalRejections.get();
         }
 
+        /**
+         * Increments the total rejections.
+         *
+         * @return this instance
+         */
         public long incrementTotalRejections() {
             return totalRejections.incrementAndGet();
         }
 
+        /**
+         * Returns the node limits breached rejections.
+         *
+         * @return the node limits breached rejections
+         */
         public long getNodeLimitsBreachedRejections() {
             return nodeLimitsBreachedRejections.get();
         }
 
+        /**
+         * Increments the node limits breached rejections.
+         *
+         * @return this instance
+         */
         public long incrementNodeLimitsBreachedRejections() {
             return nodeLimitsBreachedRejections.incrementAndGet();
         }
 
+        /**
+         * Returns the last successful request limits breached rejections.
+         *
+         * @return the last successful request limits breached rejections
+         */
         public long getLastSuccessfulRequestLimitsBreachedRejections() {
             return lastSuccessfulRequestLimitsBreachedRejections.get();
         }
 
+        /**
+         * Increments the last successful request limits breached rejections.
+         *
+         * @return this instance
+         */
         public long incrementLastSuccessfulRequestLimitsBreachedRejections() {
             return lastSuccessfulRequestLimitsBreachedRejections.incrementAndGet();
         }
 
+        /**
+         * Returns the throughput degradation limits breached rejections.
+         *
+         * @return the throughput degradation limits breached rejections
+         */
         public long getThroughputDegradationLimitsBreachedRejections() {
             return throughputDegradationLimitsBreachedRejections.get();
         }
 
+        /**
+         * Increments the throughput degradation limits breached rejections.
+         *
+         * @return this instance
+         */
         public long incrementThroughputDegradationLimitsBreachedRejections() {
             return throughputDegradationLimitsBreachedRejections.incrementAndGet();
         }
@@ -215,6 +376,12 @@ public class ShardIndexingPressureTracker {
      * @opensearch.internal
      */
     public static class PerformanceTracker {
+        /**
+         * Creates a new PerformanceTracker.
+         */
+        public PerformanceTracker() {
+        }
+
         private final AtomicLong latencyInMillis = new AtomicLong();
         private volatile long lastSuccessfulRequestTimestamp = 0;
         private final AtomicLong totalOutstandingRequests = new AtomicLong();
@@ -226,50 +393,111 @@ public class ShardIndexingPressureTracker {
         private final AtomicLong throughputMovingAverage = new AtomicLong();
         private final ConcurrentLinkedQueue<Double> throughputMovingQueue = new ConcurrentLinkedQueue<>();
 
+        /**
+         * Returns the latency in milliseconds.
+         *
+         * @return the latency in milliseconds
+         */
         public long getLatencyInMillis() {
             return latencyInMillis.get();
         }
 
+        /**
+         * Adds the latency in milliseconds.
+         *
+         * @param latency the latency
+         * @return this instance
+         */
         public long addLatencyInMillis(long latency) {
             return latencyInMillis.addAndGet(latency);
         }
 
+        /**
+         * Returns the last successful request timestamp.
+         *
+         * @return the last successful request timestamp
+         */
         public long getLastSuccessfulRequestTimestamp() {
             return lastSuccessfulRequestTimestamp;
         }
 
+        /**
+         * Updates the last successful request timestamp.
+         *
+         * @param timeStamp the time stamp
+         */
         public void updateLastSuccessfulRequestTimestamp(long timeStamp) {
             lastSuccessfulRequestTimestamp = timeStamp;
         }
 
+        /**
+         * Returns the total outstanding requests.
+         *
+         * @return the total outstanding requests
+         */
         public long getTotalOutstandingRequests() {
             return totalOutstandingRequests.get();
         }
 
+        /**
+         * Increments the total outstanding requests.
+         *
+         * @return this instance
+         */
         public long incrementTotalOutstandingRequests() {
             return totalOutstandingRequests.incrementAndGet();
         }
 
+        /**
+         * Resets the total outstanding requests.
+         */
         public void resetTotalOutstandingRequests() {
             totalOutstandingRequests.set(0L);
         }
 
+        /**
+         * Returns the throughput moving average.
+         *
+         * @return the throughput moving average
+         */
         public long getThroughputMovingAverage() {
             return throughputMovingAverage.get();
         }
 
+        /**
+         * Updates the throughput moving average.
+         *
+         * @param newAvg the new avg
+         * @return this instance
+         */
         public long updateThroughputMovingAverage(long newAvg) {
             return throughputMovingAverage.getAndSet(newAvg);
         }
 
+        /**
+         * Adds the new throughout.
+         *
+         * @param newThroughput the new throughput
+         * @return this instance
+         */
         public boolean addNewThroughout(Double newThroughput) {
             return throughputMovingQueue.offer(newThroughput);
         }
 
+        /**
+         * Returns the first throughput.
+         *
+         * @return the first throughput
+         */
         public Double getFirstThroughput() {
             return throughputMovingQueue.poll();
         }
 
+        /**
+         * Returns the throughput moving queue size.
+         *
+         * @return the throughput moving queue size
+         */
         public long getThroughputMovingQueueSize() {
             return throughputMovingQueue.size();
         }
@@ -285,21 +513,49 @@ public class ShardIndexingPressureTracker {
      * @opensearch.internal
      */
     public static class CommonOperationTracker {
+        /**
+         * Creates a new CommonOperationTracker.
+         */
+        public CommonOperationTracker() {
+        }
+
         private final AtomicLong currentCombinedCoordinatingAndPrimaryBytes = new AtomicLong();
         private final AtomicLong totalCombinedCoordinatingAndPrimaryBytes = new AtomicLong();
 
+        /**
+         * Returns the current combined coordinating and primary bytes.
+         *
+         * @return the current combined coordinating and primary bytes
+         */
         public long getCurrentCombinedCoordinatingAndPrimaryBytes() {
             return currentCombinedCoordinatingAndPrimaryBytes.get();
         }
 
+        /**
+         * Increments the current combined coordinating and primary bytes.
+         *
+         * @param bytes the bytes
+         * @return this instance
+         */
         public long incrementCurrentCombinedCoordinatingAndPrimaryBytes(long bytes) {
             return currentCombinedCoordinatingAndPrimaryBytes.addAndGet(bytes);
         }
 
+        /**
+         * Returns the total combined coordinating and primary bytes.
+         *
+         * @return the total combined coordinating and primary bytes
+         */
         public long getTotalCombinedCoordinatingAndPrimaryBytes() {
             return totalCombinedCoordinatingAndPrimaryBytes.get();
         }
 
+        /**
+         * Increments the total combined coordinating and primary bytes.
+         *
+         * @param bytes the bytes
+         * @return this instance
+         */
         public long incrementTotalCombinedCoordinatingAndPrimaryBytes(long bytes) {
             return totalCombinedCoordinatingAndPrimaryBytes.addAndGet(bytes);
         }

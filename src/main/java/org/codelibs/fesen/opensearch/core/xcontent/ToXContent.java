@@ -55,15 +55,45 @@ public interface ToXContent {
      */
     @PublicApi(since = "1.0.0")
     interface Params {
+        /**
+         * Returns the param.
+         *
+         * @param key the key
+         * @return the param
+         */
         String param(String key);
 
+        /**
+         * Returns the param.
+         *
+         * @param key the key
+         * @param defaultValue the default value
+         * @return the param
+         */
         String param(String key, String defaultValue);
 
+        /**
+         * Returns the param as boolean.
+         *
+         * @param key the key
+         * @param defaultValue the default value
+         * @return the param as boolean
+         */
         boolean paramAsBoolean(String key, boolean defaultValue);
 
+        /**
+         * Returns the param as boolean.
+         *
+         * @param key the key
+         * @param defaultValue the default value
+         * @return the param as boolean
+         */
         Boolean paramAsBoolean(String key, Boolean defaultValue);
     }
 
+    /**
+     * The empty params.
+     */
     Params EMPTY_PARAMS = new Params() {
         @Override
         public String param(String key) {
@@ -96,6 +126,11 @@ public interface ToXContent {
 
         private final Map<String, String> params;
 
+        /**
+         * Creates a new MapParams.
+         *
+         * @param params the serialization parameters
+         */
         public MapParams(Map<String, String> params) {
             this.params = params;
         }
@@ -134,6 +169,12 @@ public interface ToXContent {
 
         private final Params delegate;
 
+        /**
+         * Creates a new DelegatingMapParams.
+         *
+         * @param params the serialization parameters
+         * @param delegate the delegate
+         */
         public DelegatingMapParams(Map<String, String> params, Params delegate) {
             super(params);
             this.delegate = delegate;
@@ -160,8 +201,21 @@ public interface ToXContent {
         }
     }
 
+    /**
+     * Writes this instance to the given content builder.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent
+     * @throws IOException if an I/O error occurs
+     */
     XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException;
 
+    /**
+     * Returns the fragment flag.
+     *
+     * @return the fragment flag
+     */
     default boolean isFragment() {
         return true;
     }

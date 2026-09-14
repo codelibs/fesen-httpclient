@@ -48,19 +48,40 @@ public abstract class BroadcastShardResponse extends TransportResponse {
 
     ShardId shardId;
 
+    /**
+     * Creates a new BroadcastShardResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected BroadcastShardResponse(StreamInput in) throws IOException {
         super(in);
         shardId = new ShardId(in);
     }
 
+    /**
+     * Creates a new BroadcastShardResponse.
+     *
+     * @param shardId the shard identifier
+     */
     protected BroadcastShardResponse(ShardId shardId) {
         this.shardId = shardId;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return this.shardId.getIndexName();
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         return this.shardId;
     }

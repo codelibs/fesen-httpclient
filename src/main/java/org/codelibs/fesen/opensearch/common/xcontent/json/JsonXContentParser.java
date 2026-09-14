@@ -49,10 +49,20 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.TokenStreamLocation;
 
+/**
+ * The JsonXContentParser class.
+ */
 public class JsonXContentParser extends AbstractXContentParser {
 
     final JsonParser parser;
 
+    /**
+     * Creates a new JsonXContentParser.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param parser the parser
+     */
     public JsonXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, JsonParser parser) {
         super(xContentRegistry, deprecationHandler);
         this.parser = parser;

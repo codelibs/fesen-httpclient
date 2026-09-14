@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetMappingsAction extends ActionType<GetMappingsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetMappingsAction INSTANCE = new GetMappingsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/mappings/get";
 
     private GetMappingsAction() {

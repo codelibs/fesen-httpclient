@@ -55,16 +55,34 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractAllocationDecision implements ToXContentFragment, Writeable {
 
+    /**
+     * The target node.
+     */
     @Nullable
     protected final DiscoveryNode targetNode;
+    /**
+     * The node decisions.
+     */
     @Nullable
     protected final List<NodeAllocationResult> nodeDecisions;
 
+    /**
+     * Creates a new AbstractAllocationDecision.
+     *
+     * @param targetNode the target node
+     * @param nodeDecisions the node decisions
+     */
     protected AbstractAllocationDecision(@Nullable DiscoveryNode targetNode, @Nullable List<NodeAllocationResult> nodeDecisions) {
         this.targetNode = targetNode;
         this.nodeDecisions = nodeDecisions != null ? sortNodeDecisions(nodeDecisions) : null;
     }
 
+    /**
+     * Creates a new AbstractAllocationDecision by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected AbstractAllocationDecision(StreamInput in) throws IOException {
         targetNode = in.readOptionalWriteable(DiscoveryNode::new);
         nodeDecisions = in.readBoolean() ? Collections.unmodifiableList(in.readList(NodeAllocationResult::new)) : null;
@@ -74,6 +92,8 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
      * Returns {@code true} if a decision was taken by the allocator, {@code false} otherwise.
      * If no decision was taken, then the rest of the fields in this object cannot be accessed and will
      * throw an {@code IllegalStateException}.
+     *
+     * @return the decision taken flag
      */
     public abstract boolean isDecisionTaken();
 
@@ -81,6 +101,8 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
      * Get the node that the allocator will assign the shard to, returning {@code null} if there is no node to
      * which the shard will be assigned or moved.  If {@link #isDecisionTaken()} returns {@code false}, then
      * invoking this method will throw an {@code IllegalStateException}.
+     *
+     * @return the target node
      */
     @Nullable
     public DiscoveryNode getTargetNode() {
@@ -92,6 +114,8 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
      * Gets the sorted list of individual node-level decisions that went into making the ultimate decision whether
      * to allocate or move the shard.  If {@link #isDecisionTaken()} returns {@code false}, then
      * invoking this method will throw an {@code IllegalStateException}.
+     *
+     * @return the node decisions
      */
     @Nullable
     public List<NodeAllocationResult> getNodeDecisions() {
@@ -102,6 +126,8 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
     /**
      * Gets the explanation for the decision.  If {@link #isDecisionTaken()} returns {@code false}, then invoking
      * this method will throw an {@code IllegalStateException}.
+     *
+     * @return the explanation
      */
     public abstract String getExplanation();
 
@@ -116,6 +142,9 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
         }
     }
 
+    /**
+     * Checks the decision state.
+     */
     protected void checkDecisionState() {
         if (isDecisionTaken() == false) {
             throw new IllegalStateException("decision was not taken, individual object fields cannot be accessed");
@@ -124,6 +153,12 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
 
     /**
      * Generates X-Content for a {@link DiscoveryNode} that leaves off some of the non-critical fields.
+     *
+     * @param node the node
+     * @param outerObjectWritten the outer object written
+     * @param builder the content builder
+     * @return the discovery node to XContent
+     * @throws IOException if an I/O error occurs
      */
     public static XContentBuilder discoveryNodeToXContent(DiscoveryNode node, boolean outerObjectWritten, XContentBuilder builder)
         throws IOException {
@@ -143,6 +178,9 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
 
     /**
      * Sorts a list of node level decisions by the decision type, then by weight ranking, and finally by node id.
+     *
+     * @param nodeDecisions the node decisions
+     * @return this instance
      */
     public List<NodeAllocationResult> sortNodeDecisions(List<NodeAllocationResult> nodeDecisions) {
         return Collections.unmodifiableList(nodeDecisions.stream().sorted().collect(Collectors.toList()));
@@ -151,6 +189,12 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
     /**
      * Generates X-Content for the node-level decisions, creating the outer "node_decisions" object
      * in which they are serialized.
+     *
+     * @param nodeDecisions the node decisions
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the node decisions to XContent
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder nodeDecisionsToXContent(List<NodeAllocationResult> nodeDecisions, XContentBuilder builder, Params params)
         throws IOException {
@@ -169,6 +213,8 @@ public abstract class AbstractAllocationDecision implements ToXContentFragment, 
 
     /**
      * Returns {@code true} if there is at least one node that returned a {@link Type#YES} decision for allocating this shard.
+     *
+     * @return the at least one node with yes decision
      */
     protected boolean atLeastOneNodeWithYesDecision() {
         if (nodeDecisions == null) {

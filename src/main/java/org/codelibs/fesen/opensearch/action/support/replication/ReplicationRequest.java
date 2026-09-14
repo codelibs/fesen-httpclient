@@ -56,10 +56,14 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
  * Requests that are run on a particular replica, first on the primary and then on the replicas like {@link IndexRequest} or
  * the shard refresh action.
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public abstract class ReplicationRequest<Request extends ReplicationRequest<Request>> extends ActionRequest implements IndicesRequest {
 
+    /**
+     * The DEFAULT_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_TIMEOUT = new TimeValue(1, TimeUnit.MINUTES);
 
     /**
@@ -69,7 +73,13 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
      */
     protected final ShardId shardId;
 
+    /**
+     * The timeout.
+     */
     protected TimeValue timeout;
+    /**
+     * The index.
+     */
     protected String index;
 
     /**
@@ -79,6 +89,13 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
 
     private long routedBasedOnClusterVersion = 0;
 
+    /**
+     * Creates a new ReplicationRequest.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ReplicationRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(in);
         final boolean thinRead = shardId != null;
@@ -103,6 +120,8 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
 
     /**
      * Creates a new request with resolved shard id
+     *
+     * @param shardId the shard identifier
      */
     public ReplicationRequest(@Nullable ShardId shardId) {
         this.index = shardId == null ? null : shardId.getIndexName();
@@ -110,14 +129,30 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
         this.timeout = DEFAULT_TIMEOUT;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
     public TimeValue timeout() {
         return timeout;
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @return this instance
+     */
     public String index() {
         return this.index;
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @param index the index
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final Request index(String index) {
         this.index = index;
@@ -134,6 +169,11 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
         return IndicesOptions.strictSingleIndexNoExpandForbidClosed();
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return this.waitForActiveShards;
     }
@@ -160,6 +200,9 @@ public abstract class ReplicationRequest<Request extends ReplicationRequest<Requ
     /**
      * Thin serialization that does not write {@link #shardId} and will only write {@link #index} if it is different from the index name in
      * {@link #shardId}.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     public void writeThin(StreamOutput out) throws IOException {
         super.writeTo(out);

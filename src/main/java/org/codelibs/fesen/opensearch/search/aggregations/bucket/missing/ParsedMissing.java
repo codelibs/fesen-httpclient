@@ -42,12 +42,25 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedMissing extends ParsedSingleBucketAggregation implements Missing {
+    /**
+     * Creates a new ParsedMissing.
+     */
+    public ParsedMissing() {
+    }
 
     @Override
     public String getType() {
         return MissingAggregationBuilder.NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedMissing fromXContent(XContentParser parser, final String name) throws IOException {
         return parseXContent(parser, new ParsedMissing(), name);
     }

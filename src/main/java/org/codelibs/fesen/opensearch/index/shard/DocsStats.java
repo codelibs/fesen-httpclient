@@ -54,6 +54,9 @@ public class DocsStats implements Writeable, ToXContentFragment {
     private long deleted = 0;
     private long totalSizeInBytes = 0;
 
+    /**
+     * Creates a new DocsStats.
+     */
     public DocsStats() {
 
     }
@@ -69,6 +72,12 @@ public class DocsStats implements Writeable, ToXContentFragment {
         this.totalSizeInBytes = builder.totalSizeInBytes;
     }
 
+    /**
+     * Creates a new DocsStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DocsStats(StreamInput in) throws IOException {
         count = in.readVLong();
         deleted = in.readVLong();
@@ -78,6 +87,10 @@ public class DocsStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param count the count
+     * @param deleted the deleted
+     * @param totalSizeInBytes the total size in bytes
      */
     @Deprecated
     public DocsStats(long count, long deleted, long totalSizeInBytes) {
@@ -86,6 +99,11 @@ public class DocsStats implements Writeable, ToXContentFragment {
         this.totalSizeInBytes = totalSizeInBytes;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param other the other instance
+     */
     public void add(DocsStats other) {
         if (other == null) {
             return;
@@ -108,18 +126,39 @@ public class DocsStats implements Writeable, ToXContentFragment {
         private long deleted = 0;
         private long totalSizeInBytes = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Counts this instance.
+         *
+         * @param count the count
+         * @return this instance
+         */
         public Builder count(long count) {
             this.count = count;
             return this;
         }
 
+        /**
+         * Returns the deleted.
+         *
+         * @param deleted the deleted
+         * @return the deleted
+         */
         public Builder deleted(long deleted) {
             this.deleted = deleted;
             return this;
         }
 
+        /**
+         * Returns the total size in bytes.
+         *
+         * @param totalSizeInBytes the total size in bytes
+         * @return the total size in bytes
+         */
         public Builder totalSizeInBytes(long totalSizeInBytes) {
             this.totalSizeInBytes = totalSizeInBytes;
             return this;

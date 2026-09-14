@@ -39,8 +39,18 @@ import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 
 import tools.jackson.core.JsonParser;
 
+/**
+ * The CborXContentParser class.
+ */
 public class CborXContentParser extends JsonXContentParser {
 
+    /**
+     * Creates a new CborXContentParser.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param parser the parser
+     */
     public CborXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, JsonParser parser) {
         super(xContentRegistry, deprecationHandler, parser);
     }

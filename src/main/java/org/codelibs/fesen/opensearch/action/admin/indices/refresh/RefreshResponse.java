@@ -73,6 +73,12 @@ public class RefreshResponse extends BroadcastResponse {
         super(totalShards, successfulShards, failedShards, shardFailures);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static RefreshResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

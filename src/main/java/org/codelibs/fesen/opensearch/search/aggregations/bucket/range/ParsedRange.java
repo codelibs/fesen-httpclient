@@ -54,6 +54,11 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
  * @opensearch.internal
  */
 public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.ParsedBucket> implements Range {
+    /**
+     * Creates a new ParsedRange.
+     */
+    public ParsedRange() {
+    }
 
     @Override
     public String getType() {
@@ -65,6 +70,13 @@ public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.Parsed
         return buckets;
     }
 
+    /**
+     * Performs the declare parsed range fields step.
+     *
+     * @param objectParser the object parser
+     * @param bucketParser the bucket parser
+     * @param keyedBucketParser the keyed bucket parser
+     */
     protected static void declareParsedRangeFields(
         final ObjectParser<? extends ParsedRange, Void> objectParser,
         final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
@@ -86,6 +98,14 @@ public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.Parsed
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedRange fromXContent(XContentParser parser, String name) throws IOException {
         ParsedRange aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -98,11 +118,31 @@ public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.Parsed
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Range.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
+        /**
+         * The key.
+         */
         protected String key;
+        /**
+         * The from.
+         */
         protected double from = Double.NEGATIVE_INFINITY;
+        /**
+         * The from as string.
+         */
         protected String fromAsString;
+        /**
+         * The to.
+         */
         protected double to = Double.POSITIVE_INFINITY;
+        /**
+         * The to as string.
+         */
         protected String toAsString;
 
         @Override
@@ -175,6 +215,16 @@ public class ParsedRange extends ParsedMultiBucketAggregation<ParsedRange.Parsed
             return Double.isInfinite(d) ? null : Double.toString(d);
         }
 
+        /**
+         * Parses the range bucket XContent.
+         *
+         * @param <B> the builder type
+         * @param parser the parser
+         * @param bucketSupplier the bucket supplier
+         * @param keyed the keyed
+         * @return this instance
+         * @throws IOException if an I/O error occurs
+         */
         protected static <B extends ParsedBucket> B parseRangeBucketXContent(
             final XContentParser parser,
             final Supplier<B> bucketSupplier,

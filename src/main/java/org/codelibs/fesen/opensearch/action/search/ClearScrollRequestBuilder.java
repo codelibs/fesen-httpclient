@@ -46,10 +46,22 @@ import java.util.List;
 @PublicApi(since = "1.0.0")
 public class ClearScrollRequestBuilder extends ActionRequestBuilder<ClearScrollRequest, ClearScrollResponse> {
 
+    /**
+     * Creates a new ClearScrollRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClearScrollRequestBuilder(OpenSearchClient client, ClearScrollAction action) {
         super(client, action, new ClearScrollRequest());
     }
 
+    /**
+     * Adds the scroll identifier.
+     *
+     * @param cursorId the cursor identifier
+     * @return this instance
+     */
     public ClearScrollRequestBuilder addScrollId(String cursorId) {
         request.addScrollId(cursorId);
         return this;

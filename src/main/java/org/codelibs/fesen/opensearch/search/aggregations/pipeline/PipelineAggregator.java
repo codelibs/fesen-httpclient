@@ -60,8 +60,17 @@ public abstract class PipelineAggregator {
      */
     @FunctionalInterface
     public interface Parser {
+        /**
+         * The buckets path.
+         */
         ParseField BUCKETS_PATH = new ParseField("buckets_path");
+        /**
+         * The format.
+         */
         ParseField FORMAT = new ParseField("format");
+        /**
+         * The gap policy.
+         */
         ParseField GAP_POLICY = new ParseField("gap_policy");
 
         /**
@@ -94,6 +103,12 @@ public abstract class PipelineAggregator {
         private final Map<String, PipelineTree> subTrees;
         private final List<PipelineAggregator> aggregators;
 
+        /**
+         * Creates a new PipelineTree.
+         *
+         * @param subTrees the sub trees
+         * @param aggregators the aggregators
+         */
         public PipelineTree(Map<String, PipelineTree> subTrees, List<PipelineAggregator> aggregators) {
             this.subTrees = subTrees;
             this.aggregators = aggregators;
@@ -102,6 +117,8 @@ public abstract class PipelineAggregator {
         /**
          * The {@link PipelineAggregator}s for the aggregation at this
          * position in the tree.
+         *
+         * @return the aggregators
          */
         public List<PipelineAggregator> aggregators() {
             return aggregators;
@@ -110,6 +127,9 @@ public abstract class PipelineAggregator {
         /**
          * Get the sub-tree at for the named sub-aggregation or {@link #EMPTY}
          * if there are no pipeline aggragations for that sub-aggregator.
+         *
+         * @param name the name
+         * @return the sub tree
          */
         public PipelineTree subTree(String name) {
             return subTrees.getOrDefault(name, EMPTY);
@@ -117,6 +137,8 @@ public abstract class PipelineAggregator {
 
         /**
          * Return {@code true} if this node in the tree has any subtrees.
+         *
+         * @return the sub trees flag
          */
         public boolean hasSubTrees() {
             return false == subTrees.isEmpty();
@@ -132,11 +154,25 @@ public abstract class PipelineAggregator {
     private String[] bucketsPaths;
     private Map<String, Object> metadata;
 
+    /**
+     * Creates a new PipelineAggregator.
+     *
+     * @param name the name
+     * @param bucketsPaths the buckets paths
+     * @param metadata the metadata
+     */
     protected PipelineAggregator(String name, String[] bucketsPaths, Map<String, Object> metadata) {
         this.name = name;
         this.bucketsPaths = bucketsPaths;
         this.metadata = metadata;
     }
 
+    /**
+     * Reduces this instance.
+     *
+     * @param aggregation the aggregation
+     * @param reduceContext the reduce context
+     * @return this instance
+     */
     public abstract InternalAggregation reduce(InternalAggregation aggregation, ReduceContext reduceContext);
 }

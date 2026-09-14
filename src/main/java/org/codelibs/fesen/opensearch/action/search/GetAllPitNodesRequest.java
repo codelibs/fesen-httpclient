@@ -24,6 +24,11 @@ import java.io.IOException;
 @PublicApi(since = "2.3.0")
 public class GetAllPitNodesRequest extends BaseNodesRequest<GetAllPitNodesRequest> {
 
+    /**
+     * Creates a new GetAllPitNodesRequest.
+     *
+     * @param concreteNodes the concrete nodes
+     */
     public GetAllPitNodesRequest(DiscoveryNode... concreteNodes) {
         super(concreteNodes);
     }

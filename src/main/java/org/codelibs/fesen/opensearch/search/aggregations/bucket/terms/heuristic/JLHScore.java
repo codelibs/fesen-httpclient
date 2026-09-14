@@ -45,9 +45,18 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class JLHScore extends SignificanceHeuristic {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "jlh";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<JLHScore, Void> PARSER = new ObjectParser<>(NAME, JLHScore::new);
 
+    /**
+     * Creates a new JLHScore.
+     */
     public JLHScore() {}
 
     @Override

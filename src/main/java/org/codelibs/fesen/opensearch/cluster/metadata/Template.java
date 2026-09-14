@@ -67,6 +67,9 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
     private static final ParseField MAPPINGS = new ParseField("mappings");
     private static final ParseField ALIASES = new ParseField("aliases");
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<Template, Void> PARSER = new ConstructingObjectParser<>(
         "template",
@@ -98,12 +101,25 @@ public class Template extends AbstractDiffable<Template> implements ToXContentOb
     @Nullable
     private final Map<String, AliasMetadata> aliases;
 
+    /**
+     * Creates a new Template.
+     *
+     * @param settings the settings
+     * @param mappings the mappings
+     * @param aliases the aliases
+     */
     public Template(@Nullable Settings settings, @Nullable CompressedXContent mappings, @Nullable Map<String, AliasMetadata> aliases) {
         this.settings = settings;
         this.mappings = mappings;
         this.aliases = aliases;
     }
 
+    /**
+     * Creates a new Template by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public Template(StreamInput in) throws IOException {
         if (in.readBoolean()) {
             this.settings = Settings.readSettingsFromStream(in);

@@ -46,8 +46,17 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public abstract class ActionResponse extends TransportResponse {
 
+    /**
+     * Creates a new ActionResponse.
+     */
     public ActionResponse() {}
 
+    /**
+     * Creates a new ActionResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ActionResponse(StreamInput in) throws IOException {
         super(in);
     }

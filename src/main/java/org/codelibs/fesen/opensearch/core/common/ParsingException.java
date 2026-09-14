@@ -51,14 +51,38 @@ import java.io.IOException;
  */
 public class ParsingException extends OpenSearchException {
 
+    /**
+     * The UNKNOWN_POSITION constant.
+     */
     public static final int UNKNOWN_POSITION = -1;
+    /**
+     * The line number.
+     */
     private final int lineNumber;
+    /**
+     * The column number.
+     */
     private final int columnNumber;
 
+    /**
+     * Creates a new ParsingException.
+     *
+     * @param contentLocation the content location
+     * @param msg the msg
+     * @param args the args
+     */
     public ParsingException(XContentLocation contentLocation, String msg, Object... args) {
         this(contentLocation, msg, null, args);
     }
 
+    /**
+     * Creates a new ParsingException.
+     *
+     * @param contentLocation the content location
+     * @param msg the msg
+     * @param cause the cause
+     * @param args the args
+     */
     public ParsingException(XContentLocation contentLocation, String msg, Throwable cause, Object... args) {
         super(msg, cause, args);
         int lineNumber = UNKNOWN_POSITION;
@@ -71,6 +95,12 @@ public class ParsingException extends OpenSearchException {
         this.lineNumber = lineNumber;
     }
 
+    /**
+     * Creates a new ParsingException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ParsingException(StreamInput in) throws IOException {
         super(in);
         lineNumber = in.readInt();

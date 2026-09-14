@@ -46,6 +46,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public abstract class SmoothingModel implements NamedWriteable, ToXContentFragment {
+    /**
+     * Creates a new SmoothingModel.
+     */
+    public SmoothingModel() {
+    }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
@@ -78,8 +83,20 @@ public abstract class SmoothingModel implements NamedWriteable, ToXContentFragme
         return doHashCode();
     }
 
+    /**
+     * Returns the hash code of this instance.
+     *
+     * @return the hash code of this instance
+     */
     protected abstract int doHashCode();
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SmoothingModel fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         String fieldName = null;
@@ -109,8 +126,19 @@ public abstract class SmoothingModel implements NamedWriteable, ToXContentFragme
 
     /**
      * subtype specific implementation of "equals".
+     *
+     * @param other the other instance
+     * @return the equals
      */
     protected abstract boolean doEquals(SmoothingModel other);
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException;
 }

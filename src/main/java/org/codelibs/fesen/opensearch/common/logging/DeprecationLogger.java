@@ -70,6 +70,9 @@ public class DeprecationLogger {
     /**
      * Creates a new deprecation logger for the supplied class. Internally, it delegates to
      * {@link #getLogger(String)}, passing the full class name.
+     *
+     * @param aClass the a class
+     * @return the logger
      */
     public static DeprecationLogger getLogger(Class<?> aClass) {
         return getLogger(toLoggerName(aClass));
@@ -80,6 +83,9 @@ public class DeprecationLogger {
      * prefixes the logger name with "deprecation", if it starts with "org.codelibs.fesen.opensearch.",
      * it replaces "org.codelibs.fesen.opensearch" with "org.codelibs.fesen.opensearch.deprecation" to maintain
      * the "org.codelibs.fesen.opensearch" namespace.
+     *
+     * @param name the name
+     * @return the logger
      */
     public static DeprecationLogger getLogger(String name) {
         return new DeprecationLogger(getDeprecatedLoggerForName(name));
@@ -102,6 +108,11 @@ public class DeprecationLogger {
     /**
      * Logs a message at the {@link #DEPRECATION} level. The message is also sent to the header warning logger,
      * so that it can be returned to the client.
+     *
+     * @param key the key
+     * @param msg the msg
+     * @param params the serialization parameters
+     * @return the deprecate
      */
     public DeprecationLoggerBuilder deprecate(final String key, final String msg, final Object... params) {
         return new DeprecationLoggerBuilder().withDeprecation(key, msg, params);
@@ -114,7 +125,20 @@ public class DeprecationLogger {
      */
     @PublicApi(since = "1.0.0")
     public class DeprecationLoggerBuilder {
+        /**
+         * Creates a new DeprecationLoggerBuilder.
+         */
+        public DeprecationLoggerBuilder() {
+        }
 
+        /**
+         * Returns the with deprecation.
+         *
+         * @param key the key
+         * @param msg the msg
+         * @param params the serialization parameters
+         * @return the with deprecation
+         */
         public DeprecationLoggerBuilder withDeprecation(String key, String msg, Object[] params) {
             // Check if the logger is enabled to skip the overhead of deduplicating messages if the logger is disabled
             if (logger.isEnabled(DEPRECATION)) {

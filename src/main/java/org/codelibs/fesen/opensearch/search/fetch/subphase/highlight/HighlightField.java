@@ -62,6 +62,12 @@ public class HighlightField implements ToXContentFragment, Writeable {
 
     private Text[] fragments;
 
+    /**
+     * Creates a new HighlightField by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public HighlightField(StreamInput in) throws IOException {
         name = in.readString();
         if (in.readBoolean()) {
@@ -77,6 +83,12 @@ public class HighlightField implements ToXContentFragment, Writeable {
         }
     }
 
+    /**
+     * Creates a new HighlightField.
+     *
+     * @param name the name
+     * @param fragments the fragments
+     */
     public HighlightField(String name, Text[] fragments) {
         this.name = Objects.requireNonNull(name, "missing highlight field name");
         this.fragments = fragments;
@@ -84,6 +96,8 @@ public class HighlightField implements ToXContentFragment, Writeable {
 
     /**
      * The name of the field highlighted.
+     *
+     * @return the name
      */
     public String name() {
         return name;
@@ -91,6 +105,8 @@ public class HighlightField implements ToXContentFragment, Writeable {
 
     /**
      * The name of the field highlighted.
+     *
+     * @return the name
      */
     public String getName() {
         return name();
@@ -98,6 +114,8 @@ public class HighlightField implements ToXContentFragment, Writeable {
 
     /**
      * The highlighted fragments. {@code null} if failed to highlight (for example, the field is not stored).
+     *
+     * @return the fragments
      */
     public Text[] fragments() {
         return fragments;
@@ -122,6 +140,13 @@ public class HighlightField implements ToXContentFragment, Writeable {
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static HighlightField fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
         String fieldName = parser.currentName();

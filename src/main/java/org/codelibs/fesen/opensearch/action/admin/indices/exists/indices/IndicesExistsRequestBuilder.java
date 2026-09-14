@@ -47,6 +47,13 @@ public class IndicesExistsRequestBuilder extends ClusterManagerNodeReadOperation
     IndicesExistsResponse,
     IndicesExistsRequestBuilder> {
 
+    /**
+     * Creates a new IndicesExistsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public IndicesExistsRequestBuilder(OpenSearchClient client, IndicesExistsAction action, String... indices) {
         super(client, action, new IndicesExistsRequest(indices));
     }

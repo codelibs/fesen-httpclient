@@ -63,6 +63,9 @@ import static org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder.par
  * @opensearch.internal
  */
 public class FiltersAggregationBuilder extends AbstractAggregationBuilder<FiltersAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "filters";
 
     private static final ParseField FILTERS_FIELD = new ParseField("filters");
@@ -75,6 +78,8 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
     private String otherBucketKey = "_other_";
 
     /**
+     * Creates a new FiltersAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param filters
@@ -97,6 +102,8 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
     }
 
     /**
+     * Creates a new FiltersAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param filters
@@ -112,6 +119,13 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
         this.keyed = false;
     }
 
+    /**
+     * Creates a new FiltersAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     public FiltersAggregationBuilder(FiltersAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.filters = new ArrayList<>(clone.filters);
@@ -144,6 +158,9 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
 
     /**
      * Set whether to include a bucket for documents not matching any filter
+     *
+     * @param otherBucket the other bucket
+     * @return the other bucket
      */
     public FiltersAggregationBuilder otherBucket(boolean otherBucket) {
         this.otherBucket = otherBucket;
@@ -152,6 +169,8 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
 
     /**
      * Get whether to include a bucket for documents not matching any filter
+     *
+     * @return the other bucket
      */
     public boolean otherBucket() {
         return otherBucket;
@@ -159,12 +178,16 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
 
     /**
      * Get the filters. This will be an unmodifiable list
+     *
+     * @return the filters
      */
     public List<KeyedFilter> filters() {
         return Collections.unmodifiableList(this.filters);
     }
 
     /**
+     * Returns the keyed flag.
+     *
      * @return true if this builders filters have a key
      */
     public boolean isKeyed() {
@@ -174,6 +197,9 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
     /**
      * Set the key to use for the bucket for documents not matching any
      * filter.
+     *
+     * @param otherBucketKey the other bucket key
+     * @return the other bucket key
      */
     public FiltersAggregationBuilder otherBucketKey(String otherBucketKey) {
         if (otherBucketKey == null) {
@@ -186,6 +212,8 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
     /**
      * Get the key to use for the bucket for documents not matching any
      * filter.
+     *
+     * @return the other bucket key
      */
     public String otherBucketKey() {
         return otherBucketKey;
@@ -239,6 +267,14 @@ public class FiltersAggregationBuilder extends AbstractAggregationBuilder<Filter
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static FiltersAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
 
         List<FiltersAggregator.KeyedFilter> filters = new ArrayList<>();

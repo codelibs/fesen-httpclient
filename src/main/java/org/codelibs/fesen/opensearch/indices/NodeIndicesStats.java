@@ -77,9 +77,21 @@ import java.util.Optional;
  */
 @PublicApi(since = "1.0.0")
 public class NodeIndicesStats implements Writeable, ToXContentFragment {
+    /**
+     * The stats.
+     */
     protected CommonStats stats;
+    /**
+     * The stats by index.
+     */
     protected Map<Index, CommonStats> statsByIndex;
+    /**
+     * The stats by shard.
+     */
     protected Map<Index, List<IndexShardStats>> statsByShard;
+    /**
+     * The status counter stats.
+     */
     protected StatusCounterStats statusCounterStats;
 
     /**
@@ -154,6 +166,11 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
         return statsByShard;
     }
 
+    /**
+     * Returns the segments.
+     *
+     * @return the segments
+     */
     @Nullable
     public SegmentsStats getSegments() {
         return stats.getSegments();
@@ -293,8 +310,17 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
      */
     @PublicApi(since = "3.0.0")
     public enum StatsLevel {
+        /**
+         * The INDICES value.
+         */
         INDICES("indices"),
+        /**
+         * The SHARDS value.
+         */
         SHARDS("shards"),
+        /**
+         * The NODE value.
+         */
         NODE("node");
 
         private final String restName;
@@ -303,6 +329,11 @@ public class NodeIndicesStats implements Writeable, ToXContentFragment {
             this.restName = restName;
         }
 
+        /**
+         * Returns the rest name.
+         *
+         * @return the rest name
+         */
         public String getRestName() {
             return restName;
         }

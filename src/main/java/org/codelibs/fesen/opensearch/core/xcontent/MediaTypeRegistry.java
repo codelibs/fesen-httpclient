@@ -53,16 +53,28 @@ import java.util.Map;
  * @opensearch.internal
  */
 public final class MediaTypeRegistry {
+    /**
+     * Creates a new MediaTypeRegistry.
+     */
+    public MediaTypeRegistry() {
+    }
+
     private static Map<String, MediaType> formatToMediaType = Map.of();
     private static Map<String, MediaType> typeWithSubtypeToMediaType = Map.of();
     private static Map<String, MediaType> knownStringsToMediaType = Map.of();
 
     // Default mediaType singleton
     private static MediaType DEFAULT_MEDIA_TYPE;
+    /**
+     * The GUESS_HEADER_LENGTH constant.
+     */
     public static final int GUESS_HEADER_LENGTH = 20;
 
     // JSON is a core type, so we create a static instance for implementations that require JSON format (e.g., tests)
     // todo we should explore moving the concrete JSON implementation from the xcontent library to core
+    /**
+     * The JSON constant.
+     */
     public static final MediaType JSON;
 
     static {
@@ -115,6 +127,12 @@ public final class MediaTypeRegistry {
         knownStringsToMediaType = Map.copyOf(knownStringMap);
     }
 
+    /**
+     * Creates an instance from media type.
+     *
+     * @param mediaType the media type
+     * @return the new media type
+     */
     public static MediaType fromMediaType(String mediaType) {
         if (mediaType == null) {
             return null;
@@ -128,6 +146,12 @@ public final class MediaTypeRegistry {
         return parsedMediaType != null ? parsedMediaType.getMediaType() : null;
     }
 
+    /**
+     * Creates an instance from format.
+     *
+     * @param format the format
+     * @return the new format
+     */
     public static MediaType fromFormat(String format) {
         if (format == null) {
             return null;
@@ -137,6 +161,10 @@ public final class MediaTypeRegistry {
 
     /**
      * Returns a binary content builder for the provided content type.
+     *
+     * @param type the type
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
      */
     public static XContentBuilder contentBuilder(MediaType type) throws IOException {
         for (var mediaType : formatToMediaType.values()) {
@@ -150,6 +178,10 @@ public final class MediaTypeRegistry {
     /**
      * Guesses the content (type) based on the provided char sequence and returns the corresponding {@link XContent}
      *
+     * @param data the data
+     * @param offset the offset
+     * @param length the length
+     * @return the XContent
      * @deprecated the content type should not be guessed except for few cases where we effectively don't know the content type.
      * The REST layer should move to reading the Content-Type header instead. There are other places where auto-detection may be needed.
      * This method is deprecated to prevent usages of it from spreading further without specific reasons.
@@ -166,6 +198,8 @@ public final class MediaTypeRegistry {
     /**
      * Guesses the content type based on the provided bytes and returns the corresponding {@link XContent}
      *
+     * @param data the data
+     * @return the XContent
      * @deprecated the content type should not be guessed except for few cases where we effectively don't know the content type.
      * The REST layer should move to reading the Content-Type header instead. There are other places where auto-detection may be needed.
      * This method is deprecated to prevent usages of it from spreading further without specific reasons.
@@ -178,6 +212,8 @@ public final class MediaTypeRegistry {
     /**
      * Guesses the content type based on the provided char sequence.
      *
+     * @param content the content
+     * @return the XContent type
      * @deprecated the content type should not be guessed except for few cases where we effectively don't know the content type.
      * The REST layer should move to reading the Content-Type header instead. There are other places where auto-detection may be needed.
      * This method is deprecated to prevent usages of it from spreading further without specific reasons.
@@ -210,6 +246,9 @@ public final class MediaTypeRegistry {
     /**
      * Guesses the content type based on the provided input stream without consuming it.
      *
+     * @param si the si
+     * @return the XContent type
+     * @throws IOException if an I/O error occurs
      * @deprecated the content type should not be guessed except for few cases where we effectively don't know the content type.
      * The REST layer should move to reading the Content-Type header instead. There are other places where auto-detection may be needed.
      * This method is deprecated to prevent usages of it from spreading further without specific reasons.
@@ -256,6 +295,8 @@ public final class MediaTypeRegistry {
     /**
      * Guesses the content type based on the provided bytes.
      *
+     * @param bytes the bytes
+     * @return the XContent type
      * @deprecated the content type should not be guessed except for few cases where we effectively don't know the content type.
      * The REST layer should move to reading the Content-Type header instead. There are other places where auto-detection may be needed.
      * This method is deprecated to prevent usages of it from spreading further without specific reasons.
@@ -278,6 +319,10 @@ public final class MediaTypeRegistry {
     /**
      * Guesses the content type based on the provided bytes.
      *
+     * @param data the data
+     * @param offset the offset
+     * @param length the length
+     * @return the media type from bytes
      * @deprecated the content type should not be guessed except for few cases where we effectively don't know the content type.
      * The REST layer should move to reading the Content-Type header instead. There are other places where auto-detection may be needed.
      * This method is deprecated to prevent usages of it from spreading further without specific reasons.
@@ -359,11 +404,22 @@ public final class MediaTypeRegistry {
         private final Map<String, String> parameters;
         private final MediaType mediaType;
 
+        /**
+         * Creates a new ParsedMediaType.
+         *
+         * @param mediaType the media type
+         * @param parameters the parameters
+         */
         public ParsedMediaType(MediaType mediaType, Map<String, String> parameters) {
             this.parameters = parameters;
             this.mediaType = mediaType;
         }
 
+        /**
+         * Returns the media type.
+         *
+         * @return the media type
+         */
         public MediaType getMediaType() {
             return mediaType;
         }

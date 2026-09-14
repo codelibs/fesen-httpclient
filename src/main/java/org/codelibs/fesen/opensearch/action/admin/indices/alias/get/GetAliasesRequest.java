@@ -55,11 +55,19 @@ public class GetAliasesRequest extends ClusterManagerNodeReadRequest<GetAliasesR
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandHidden();
     private String[] originalAliases = Strings.EMPTY_ARRAY;
 
+    /**
+     * Creates a new GetAliasesRequest.
+     *
+     * @param aliases the aliases
+     */
     public GetAliasesRequest(String... aliases) {
         this.aliases = aliases;
         this.originalAliases = aliases;
     }
 
+    /**
+     * Creates a new GetAliasesRequest.
+     */
     public GetAliasesRequest() {}
 
     @Override
@@ -77,6 +85,12 @@ public class GetAliasesRequest extends ClusterManagerNodeReadRequest<GetAliasesR
         return this;
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @param aliases the aliases
+     * @return the aliases
+     */
     public GetAliasesRequest aliases(String... aliases) {
         this.aliases = aliases;
         this.originalAliases = aliases;

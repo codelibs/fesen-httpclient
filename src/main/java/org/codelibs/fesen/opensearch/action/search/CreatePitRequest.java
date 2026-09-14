@@ -49,6 +49,13 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
     private String[] indices = Strings.EMPTY_ARRAY;
     private IndicesOptions indicesOptions = SearchRequest.DEFAULT_INDICES_OPTIONS;
 
+    /**
+     * Creates a new CreatePitRequest.
+     *
+     * @param keepAlive the keep alive
+     * @param allowPartialPitCreation the allow partial pit creation
+     * @param indices the indices
+     */
     public CreatePitRequest(TimeValue keepAlive, Boolean allowPartialPitCreation, String... indices) {
         this.keepAlive = keepAlive;
         this.allowPartialPitCreation = allowPartialPitCreation;
@@ -66,30 +73,65 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
         out.writeOptionalBoolean(allowPartialPitCreation);
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @return the routing
+     */
     public String getRouting() {
         return routing;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String getPreference() {
         return preference;
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public String[] getIndices() {
         return indices;
     }
 
+    /**
+     * Returns the keep alive.
+     *
+     * @return the keep alive
+     */
     public TimeValue getKeepAlive() {
         return keepAlive;
     }
 
+    /**
+     * Returns the allow partial pit creation flag.
+     *
+     * @return the allow partial pit creation flag
+     */
     public boolean shouldAllowPartialPitCreation() {
         return allowPartialPitCreation;
     }
 
+    /**
+     * Sets the routing.
+     *
+     * @param routing the routing value
+     */
     public void setRouting(String routing) {
         this.routing = routing;
     }
 
+    /**
+     * Sets the preference.
+     *
+     * @param preference the preference
+     */
     public void setPreference(String preference) {
         this.preference = preference;
     }
@@ -113,6 +155,11 @@ public class CreatePitRequest extends ActionRequest implements IndicesRequest.Re
         return indicesOptions;
     }
 
+    /**
+     * Builds the description.
+     *
+     * @return the new description
+     */
     public final String buildDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append("indices[");

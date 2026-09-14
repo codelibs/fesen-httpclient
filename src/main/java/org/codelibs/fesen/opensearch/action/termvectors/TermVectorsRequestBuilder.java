@@ -52,6 +52,12 @@ import java.util.Map;
 @PublicApi(since = "1.0.0")
 public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsRequest, TermVectorsResponse> {
 
+    /**
+     * Creates a new TermVectorsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public TermVectorsRequestBuilder(OpenSearchClient client, TermVectorsAction action) {
         super(client, action, new TermVectorsRequest());
     }
@@ -59,6 +65,11 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
     /**
      * Constructs a new term vector request builder for a document that will be fetch
      * from the provided index. Use {@code index}, and {@code id} to specify the document to load.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     * @param id the identifier
      */
     public TermVectorsRequestBuilder(OpenSearchClient client, TermVectorsAction action, String index, String id) {
         super(client, action, new TermVectorsRequest(index, id));
@@ -67,6 +78,9 @@ public class TermVectorsRequestBuilder extends ActionRequestBuilder<TermVectorsR
     /**
      * Sets whether to return only term vectors for special selected fields. Returns the term
      * vectors for all fields if selectedFields == null
+     *
+     * @param fields the fields
+     * @return this instance
      */
     public TermVectorsRequestBuilder setSelectedFields(String... fields) {
         request.selectedFields(fields);

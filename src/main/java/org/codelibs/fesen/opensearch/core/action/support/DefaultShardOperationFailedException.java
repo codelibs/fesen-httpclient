@@ -61,12 +61,21 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
     private static final String SHARD_ID = "shard";
     private static final String REASON = "reason";
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<DefaultShardOperationFailedException, Void> PARSER = new ConstructingObjectParser<>(
         "failures",
         true,
         arg -> new DefaultShardOperationFailedException((String) arg[0], (int) arg[1], (Throwable) arg[2])
     );
 
+    /**
+     * Performs the declare fields step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     */
     protected static <T extends DefaultShardOperationFailedException> void declareFields(ConstructingObjectParser<T, Void> objectParser) {
         objectParser.declareString(constructorArg(), new ParseField(INDEX));
         objectParser.declareInt(constructorArg(), new ParseField(SHARD_ID));
@@ -77,20 +86,50 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
         declareFields(PARSER);
     }
 
+    /**
+     * Creates a new DefaultShardOperationFailedException.
+     */
     protected DefaultShardOperationFailedException() {}
 
+    /**
+     * Creates a new DefaultShardOperationFailedException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected DefaultShardOperationFailedException(StreamInput in) throws IOException {
         readFrom(in, this);
     }
 
+    /**
+     * Creates a new DefaultShardOperationFailedException.
+     *
+     * @param index the index
+     * @param shardId the shard identifier
+     * @param cause the cause
+     */
     public DefaultShardOperationFailedException(String index, int shardId, Throwable cause) {
         super(index, shardId, detailedMessage(cause), ExceptionsHelper.status(cause), cause);
     }
 
+    /**
+     * Reads the shard operation failed.
+     *
+     * @param in the input to read from
+     * @return the shard operation failed
+     * @throws IOException if an I/O error occurs
+     */
     public static DefaultShardOperationFailedException readShardOperationFailed(StreamInput in) throws IOException {
         return new DefaultShardOperationFailedException(in);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @param f the f
+     * @throws IOException if an I/O error occurs
+     */
     public static void readFrom(StreamInput in, DefaultShardOperationFailedException f) throws IOException {
         f.index = in.readOptionalString();
         f.shardId = in.readVInt();
@@ -120,6 +159,14 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
         return builder;
     }
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field("shard", shardId());
         builder.field("index", index());
@@ -132,6 +179,12 @@ public class DefaultShardOperationFailedException extends ShardOperationFailedEx
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static DefaultShardOperationFailedException fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

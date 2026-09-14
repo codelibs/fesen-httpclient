@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  * A list backed by an {@link AtomicReferenceArray} with potential null values, easily allowing
  * to get the concrete values as a list using {@link #asList()}.
  *
+ * @param <E> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -51,12 +52,19 @@ public class AtomicArray<E> {
     private final AtomicReferenceArray<E> array;
     private volatile List<E> nonNullList;
 
+    /**
+     * Creates a new AtomicArray.
+     *
+     * @param size the size
+     */
     public AtomicArray(int size) {
         array = new AtomicReferenceArray<>(size);
     }
 
     /**
      * The size of the expected results, including potential null values.
+     *
+     * @return the length
      */
     public int length() {
         return array.length();
@@ -75,6 +83,12 @@ public class AtomicArray<E> {
         }
     }
 
+    /**
+     * Sets the once.
+     *
+     * @param i the i
+     * @param value the value
+     */
     public final void setOnce(int i, E value) {
         if (array.compareAndSet(i, null, value) == false) {
             throw new IllegalStateException("index [" + i + "] has already been set");
@@ -96,6 +110,8 @@ public class AtomicArray<E> {
 
     /**
      * Returns the it as a non null list.
+     *
+     * @return the list
      */
     public List<E> asList() {
         if (nonNullList == null) {
@@ -117,6 +133,9 @@ public class AtomicArray<E> {
 
     /**
      * Copies the content of the underlying atomic array to a normal one.
+     *
+     * @param a the a
+     * @return the array
      */
     public E[] toArray(E[] a) {
         if (a.length != array.length()) {

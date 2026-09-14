@@ -29,6 +29,12 @@ public class RepositoriesStats implements Writeable, ToXContentObject {
 
     List<RepositoryStatsSnapshot> repositoryStatsSnapshots;
 
+    /**
+     * Creates a new RepositoriesStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RepositoriesStats(StreamInput in) throws IOException {
         this.repositoryStatsSnapshots = in.readList(RepositoryStatsSnapshot::new);
     }

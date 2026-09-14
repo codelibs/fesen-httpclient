@@ -50,12 +50,23 @@ import java.util.Objects;
 public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScoreFunctionBuilder> {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(RandomScoreFunctionBuilder.class);
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "random_score";
     private String field;
     private Integer seed;
 
+    /**
+     * Creates a new RandomScoreFunctionBuilder.
+     */
     public RandomScoreFunctionBuilder() {}
 
+    /**
+     * Creates a new RandomScoreFunctionBuilder.
+     *
+     * @param functionName the function name
+     */
     public RandomScoreFunctionBuilder(@Nullable String functionName) {
         setFunctionName(functionName);
     }
@@ -81,6 +92,7 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
      * random number for a specific doc.
      *
      * @param seed The seed.
+     * @return the seed
      */
     public RandomScoreFunctionBuilder seed(int seed) {
         this.seed = seed;
@@ -89,6 +101,8 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
 
     /**
      * seed variant taking a long value.
+     * @param seed the seed
+     * @return the seed
      * @see #seed(int)
      */
     public RandomScoreFunctionBuilder seed(long seed) {
@@ -98,6 +112,8 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
 
     /**
      * seed variant taking a String value.
+     * @param seed the seed
+     * @return the seed
      * @see #seed(int)
      */
     public RandomScoreFunctionBuilder seed(String seed) {
@@ -108,6 +124,11 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
         return this;
     }
 
+    /**
+     * Returns the seed.
+     *
+     * @return the seed
+     */
     public Integer getSeed() {
         return seed;
     }
@@ -116,6 +137,9 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
      * Set the field to be used for random number generation. This parameter is compulsory
      * when a {@link #seed(int) seed} is set and ignored otherwise. Note that documents that
      * have the same value for a field will get the same score.
+     *
+     * @param field the field
+     * @return this instance
      */
     public RandomScoreFunctionBuilder setField(String field) {
         this.field = field;
@@ -124,6 +148,7 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
 
     /**
      * Get the field to use for random number generation.
+     * @return the field
      * @see #setField(String)
      */
     public String getField() {
@@ -156,6 +181,13 @@ public class RandomScoreFunctionBuilder extends ScoreFunctionBuilder<RandomScore
         return Long.hashCode(value);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static RandomScoreFunctionBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {
         RandomScoreFunctionBuilder randomScoreFunctionBuilder = new RandomScoreFunctionBuilder();
         String currentFieldName = null;

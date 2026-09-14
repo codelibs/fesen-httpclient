@@ -45,12 +45,21 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
  */
 @PublicApi(since = "1.0.0")
 public class GetTaskRequestBuilder extends ActionRequestBuilder<GetTaskRequest, GetTaskResponse> {
+    /**
+     * Creates a new GetTaskRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public GetTaskRequestBuilder(OpenSearchClient client, GetTaskAction action) {
         super(client, action, new GetTaskRequest());
     }
 
     /**
      * Set the TaskId to look up. Required.
+     *
+     * @param taskId the task identifier
+     * @return this instance
      */
     public final GetTaskRequestBuilder setTaskId(TaskId taskId) {
         request.setTaskId(taskId);

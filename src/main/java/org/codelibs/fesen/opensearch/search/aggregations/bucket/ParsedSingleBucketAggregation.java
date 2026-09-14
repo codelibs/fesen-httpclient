@@ -51,8 +51,16 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
  * @opensearch.internal
  */
 public abstract class ParsedSingleBucketAggregation extends ParsedAggregation implements SingleBucketAggregation {
+    /**
+     * Creates a new ParsedSingleBucketAggregation.
+     */
+    public ParsedSingleBucketAggregation() {
+    }
 
     private long docCount;
+    /**
+     * The aggregations.
+     */
     protected Aggregations aggregations = new Aggregations(Collections.emptyList());
 
     @Override
@@ -60,6 +68,11 @@ public abstract class ParsedSingleBucketAggregation extends ParsedAggregation im
         return docCount;
     }
 
+    /**
+     * Sets the doc count.
+     *
+     * @param docCount the doc count
+     */
     protected void setDocCount(long docCount) {
         this.docCount = docCount;
     }
@@ -76,6 +89,16 @@ public abstract class ParsedSingleBucketAggregation extends ParsedAggregation im
         return builder;
     }
 
+    /**
+     * Parses the XContent.
+     *
+     * @param <T> the element type
+     * @param parser the parser
+     * @param aggregation the aggregation
+     * @param name the name
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     protected static <T extends ParsedSingleBucketAggregation> T parseXContent(final XContentParser parser, T aggregation, String name)
         throws IOException {
         aggregation.setName(name);

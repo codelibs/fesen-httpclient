@@ -67,10 +67,19 @@ import java.util.function.Predicate;
 @PublicApi(since = "1.0.0")
 public final class UnassignedInfo implements ToXContentFragment, Writeable {
 
+    /**
+     * The DATE_TIME_FORMATTER constant.
+     */
     public static final DateFormatter DATE_TIME_FORMATTER = DateFormatter.forPattern("date_optional_time").withZone(ZoneOffset.UTC);
 
+    /**
+     * The DEFAULT_DELAYED_NODE_LEFT_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_DELAYED_NODE_LEFT_TIMEOUT = TimeValue.timeValueMinutes(1);
 
+    /**
+     * The CLUSTER_DELAYED_NODE_LEFT_TIMEOUT_SETTING constant.
+     */
     public static final Setting<TimeValue> CLUSTER_DELAYED_NODE_LEFT_TIMEOUT_SETTING = Setting.positiveTimeSetting(
         "cluster.routing.allocation.unassigned.node_left.delayed_timeout",
         DEFAULT_DELAYED_NODE_LEFT_TIMEOUT,
@@ -78,6 +87,9 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
         Property.NodeScope
     );
 
+    /**
+     * The INDEX_DELAYED_NODE_LEFT_TIMEOUT_SETTING constant.
+     */
     public static final Setting<TimeValue> INDEX_DELAYED_NODE_LEFT_TIMEOUT_SETTING = Setting.positiveTimeSetting(
         "index.unassigned.node_left.delayed_timeout",
         DEFAULT_DELAYED_NODE_LEFT_TIMEOUT,
@@ -213,6 +225,13 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
             out.writeByte(id);
         }
 
+        /**
+         * Reads this instance from the given input.
+         *
+         * @param in the input to read from
+         * @return the from
+         * @throws IOException if an I/O error occurs
+         */
         public static AllocationStatus readFrom(StreamInput in) throws IOException {
             byte id = in.readByte();
             switch (id) {
@@ -233,6 +252,11 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
             }
         }
 
+        /**
+         * Returns the value.
+         *
+         * @return the value
+         */
         public String value() {
             return toString().toLowerCase(Locale.ROOT);
         }
@@ -269,6 +293,8 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
     }
 
     /**
+     * Creates a new UnassignedInfo.
+     *
      * @param reason               the cause for making this shard unassigned. See {@link Reason} for more information.
      * @param message              more information about cause.
      * @param failure              the shard level failure that caused this shard to be unassigned, if exists.
@@ -277,6 +303,7 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
      * @param delayed              if allocation of this shard is delayed due to delayed node-left timeout settings.
      * @param lastAllocationStatus the result of the last allocation attempt for this shard
      * @param failedNodeIds        a set of nodeIds that failed to complete allocations for this shard
+     * @param failedAllocations the failed allocations
      */
     public UnassignedInfo(
         Reason reason,
@@ -306,6 +333,12 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
         assert !(delayed && reason != Reason.NODE_LEFT) : "shard can only be delayed if it is unassigned due to a node leaving";
     }
 
+    /**
+     * Creates a new UnassignedInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public UnassignedInfo(StreamInput in) throws IOException {
         this.reason = Reason.values()[(int) in.readByte()];
         this.unassignedTimeMillis = in.readLong();
@@ -334,6 +367,8 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
 
     /**
      * Returns the number of previously failed allocations of this shard.
+     *
+     * @return the num failed allocations
      */
     public int getNumFailedAllocations() {
         return failedAllocations;
@@ -341,6 +376,8 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
 
     /**
      * Returns true if allocation of this shard is delayed due to delayed node-left timeout settings.
+     *
+     * @return the delayed flag
      */
     public boolean isDelayed() {
         return delayed;
@@ -348,6 +385,8 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
 
     /**
      * The reason why the shard is unassigned.
+     *
+     * @return the reason
      */
     public Reason getReason() {
         return this.reason;
@@ -356,6 +395,8 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
     /**
      * The timestamp in milliseconds when the shard became unassigned, based on System.currentTimeMillis().
      * Note, we use timestamp here since we want to make sure its preserved across node serializations.
+     *
+     * @return the unassigned time in milliseconds
      */
     public long getUnassignedTimeInMillis() {
         return this.unassignedTimeMillis;
@@ -363,6 +404,8 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
 
     /**
      * Builds a string representation of the message and the failure if exists.
+     *
+     * @return the details
      */
     @Nullable
     public String getDetails() {
@@ -374,11 +417,18 @@ public final class UnassignedInfo implements ToXContentFragment, Writeable {
 
     /**
      * Get the status for the last allocation attempt for this shard.
+     *
+     * @return the last allocation status
      */
     public AllocationStatus getLastAllocationStatus() {
         return lastAllocationStatus;
     }
 
+    /**
+     * Returns the short summary.
+     *
+     * @return the short summary
+     */
     public String shortSummary() {
         StringBuilder sb = new StringBuilder();
         sb.append("[reason=").append(reason).append("]");

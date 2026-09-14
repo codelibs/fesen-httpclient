@@ -149,6 +149,19 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
         );
     }
 
+    /**
+     * Creates a new DiscoveryNode.
+     *
+     * @param nodeName the node name
+     * @param nodeId the node identifier
+     * @param ephemeralId the ephemeral identifier
+     * @param hostName the host name
+     * @param hostAddress the host address
+     * @param address the address
+     * @param attributes the attributes
+     * @param roles the roles
+     * @param version the version
+     */
     public DiscoveryNode(
         String nodeName,
         String nodeId,
@@ -180,6 +193,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
      * @param attributes       node attributes
      * @param roles            node roles
      * @param version          the version of the node
+     * @param hostName the host name
+     * @param streamAddress the stream address
      */
     public DiscoveryNode(
         String nodeName,
@@ -284,10 +299,23 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     }
 
+    /**
+     * Writes the to with attribute.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeToWithAttribute(StreamOutput out) throws IOException {
         writeToUtil(out, true);
     }
 
+    /**
+     * Writes the to util.
+     *
+     * @param out the output to write to
+     * @param includeAllAttributes the include all attributes
+     * @throws IOException if an I/O error occurs
+     */
     public void writeToUtil(StreamOutput out, boolean includeAllAttributes) throws IOException {
         writeNodeDetails(out);
 
@@ -336,17 +364,26 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     /**
      * The address that the node can be communicated with.
+     *
+     * @return the address
      */
     public TransportAddress getAddress() {
         return address;
     }
 
+    /**
+     * Returns the stream address.
+     *
+     * @return the stream address
+     */
     public TransportAddress getStreamAddress() {
         return streamAddress;
     }
 
     /**
      * The unique id of the node.
+     *
+     * @return the identifier
      */
     public String getId() {
         return nodeId;
@@ -358,6 +395,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
      * will be read from the data folder and will remain the same across restarts). Since all node attributes and addresses
      * are maintained during the life span of a node process, we can (and are) using the ephemeralId in
      * {@link DiscoveryNode#equals(Object)}.
+     *
+     * @return the ephemeral identifier
      */
     public String getEphemeralId() {
         return ephemeralId;
@@ -365,6 +404,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     /**
      * The name of the node.
+     *
+     * @return the name
      */
     public String getName() {
         return this.nodeName;
@@ -372,6 +413,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     /**
      * The node attributes.
+     *
+     * @return the attributes
      */
     public Map<String, String> getAttributes() {
         return this.attributes;
@@ -379,6 +422,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     /**
      * Should this node hold data (shards) or not.
+     *
+     * @return the data node flag
      */
     public boolean isDataNode() {
         return roles.stream().anyMatch(DiscoveryNodeRole::canContainData);
@@ -386,6 +431,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     /**
      * Can this node become cluster-manager or not.
+     *
+     * @return the cluster manager node flag
      */
     public boolean isClusterManagerNode() {
         return roles.contains(DiscoveryNodeRole.MASTER_ROLE) || roles.contains(DiscoveryNodeRole.CLUSTER_MANAGER_ROLE);
@@ -393,6 +440,8 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     /**
      * Returns a boolean that tells whether this an ingest node or not
+     *
+     * @return the ingest node flag
      */
     public boolean isIngestNode() {
         return roles.contains(DiscoveryNodeRole.INGEST_ROLE);
@@ -427,14 +476,29 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
         return roles;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public Version getVersion() {
         return this.version;
     }
 
+    /**
+     * Returns the host name.
+     *
+     * @return the host name
+     */
     public String getHostName() {
         return this.hostName;
     }
 
+    /**
+     * Returns the host address.
+     *
+     * @return the host address
+     */
     public String getHostAddress() {
         return this.hostAddress;
     }
@@ -521,6 +585,12 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
 
     private static Map<String, DiscoveryNodeRole> roleMap = rolesToMap(DiscoveryNodeRole.BUILT_IN_ROLES.stream());
 
+    /**
+     * Returns the role from role name.
+     *
+     * @param roleName the role name
+     * @return the role from role name
+     */
     public static DiscoveryNodeRole getRoleFromRoleName(final String roleName) {
         // As we are supporting dynamic role, should make role name case-insensitive to avoid confusion of role name like "Data"/"DATA"
         String lowerCasedRoleName = Objects.requireNonNull(roleName).toLowerCase(Locale.ROOT);
@@ -530,10 +600,20 @@ public class DiscoveryNode implements VerifiableWriteable, ToXContentFragment {
         return new DiscoveryNodeRole.DynamicRole(lowerCasedRoleName, lowerCasedRoleName, false);
     }
 
+    /**
+     * Returns the possible roles.
+     *
+     * @return the possible roles
+     */
     public static Set<DiscoveryNodeRole> getPossibleRoles() {
         return Collections.unmodifiableSet(new HashSet<>(roleMap.values()));
     }
 
+    /**
+     * Returns the possible role names.
+     *
+     * @return the possible role names
+     */
     public static Set<String> getPossibleRoleNames() {
         return roleMap.keySet();
     }

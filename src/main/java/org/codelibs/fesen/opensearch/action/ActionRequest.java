@@ -47,6 +47,9 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public abstract class ActionRequest extends TransportRequest {
 
+    /**
+     * Creates a new ActionRequest.
+     */
     public ActionRequest() {
         super();
         // this does not set the listenerThreaded API, if needed, its up to the caller to set it
@@ -54,14 +57,27 @@ public abstract class ActionRequest extends TransportRequest {
         // this.listenerThreaded = request.listenerThreaded();
     }
 
+    /**
+     * Creates a new ActionRequest by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ActionRequest(StreamInput in) throws IOException {
         super(in);
     }
 
+    /**
+     * Validates this instance.
+     *
+     * @return this instance
+     */
     public abstract ActionRequestValidationException validate();
 
     /**
      * Should this task store its result after it has finished?
+     *
+     * @return the should store result
      */
     public boolean getShouldStoreResult() {
         return false;

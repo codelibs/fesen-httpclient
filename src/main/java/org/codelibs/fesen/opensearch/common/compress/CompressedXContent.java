@@ -88,6 +88,9 @@ public final class CompressedXContent {
     /**
      * Create a {@link CompressedXContent} out of a serialized {@link ToXContent}
      * that may already be compressed.
+     *
+     * @param data the data
+     * @throws IOException if an I/O error occurs
      */
     public CompressedXContent(BytesReference data) throws IOException {
         Compressor compressor = CompressorRegistry.compressor(data);
@@ -107,25 +110,49 @@ public final class CompressedXContent {
         assert this.crc32 == crc32(uncompressed());
     }
 
+    /**
+     * Creates a new CompressedXContent.
+     *
+     * @param data the data
+     * @throws IOException if an I/O error occurs
+     */
     public CompressedXContent(byte[] data) throws IOException {
         this(new BytesArray(data));
     }
 
+    /**
+     * Creates a new CompressedXContent.
+     *
+     * @param str the str
+     * @throws IOException if an I/O error occurs
+     */
     public CompressedXContent(String str) throws IOException {
         this(new BytesArray(str.getBytes(StandardCharsets.UTF_8)));
     }
 
-    /** Return the compressed bytes. */
+    /**
+     * Return the compressed bytes.
+     *
+     * @return the compressed
+     */
     public byte[] compressed() {
         return this.bytes;
     }
 
-    /** Return the compressed bytes as a {@link BytesReference}. */
+    /**
+     * Return the compressed bytes as a {@link BytesReference}.
+     *
+     * @return the compressed reference
+     */
     public BytesReference compressedReference() {
         return new BytesArray(bytes);
     }
 
-    /** Return the uncompressed bytes. */
+    /**
+     * Return the uncompressed bytes.
+     *
+     * @return the uncompressed
+     */
     public BytesReference uncompressed() {
         try {
             return CompressorRegistry.uncompress(new BytesArray(bytes));
@@ -134,20 +161,44 @@ public final class CompressedXContent {
         }
     }
 
+    /**
+     * Returns the string.
+     *
+     * @return the string
+     */
     public String string() {
         return uncompressed().utf8ToString();
     }
 
+    /**
+     * Reads the compressed string.
+     *
+     * @param in the input to read from
+     * @return the compressed string
+     * @throws IOException if an I/O error occurs
+     */
     public static CompressedXContent readCompressedString(StreamInput in) throws IOException {
         int crc32 = in.readInt();
         return new CompressedXContent(in.readByteArray(), crc32);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeTo(StreamOutput out) throws IOException {
         out.writeInt(crc32);
         out.writeByteArray(bytes);
     }
 
+    /**
+     * Writes the verifiable to.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeVerifiableTo(BufferedChecksumStreamOutput out) throws IOException {
         out.writeInt(crc32);
     }

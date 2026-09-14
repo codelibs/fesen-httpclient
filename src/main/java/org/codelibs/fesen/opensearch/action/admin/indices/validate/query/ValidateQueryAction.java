@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ValidateQueryAction extends ActionType<ValidateQueryResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ValidateQueryAction INSTANCE = new ValidateQueryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/validate/query";
 
     private ValidateQueryAction() {

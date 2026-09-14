@@ -48,47 +48,96 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class SpanTermQueryBuilder extends BaseTermQueryBuilder<SpanTermQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_term";
 
     private static final ParseField TERM_FIELD = new ParseField("term");
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, String) */
+    /**
+     * Creates a new SpanTermQueryBuilder.
+     *
+     * @param name the name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, String)
+     */
     public SpanTermQueryBuilder(String name, String value) {
         super(name, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, int) */
+    /**
+     * Creates a new SpanTermQueryBuilder.
+     *
+     * @param name the name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, int)
+     */
     public SpanTermQueryBuilder(String name, int value) {
         super(name, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, long) */
+    /**
+     * Creates a new SpanTermQueryBuilder.
+     *
+     * @param name the name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, long)
+     */
     public SpanTermQueryBuilder(String name, long value) {
         super(name, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, float) */
+    /**
+     * Creates a new SpanTermQueryBuilder.
+     *
+     * @param name the name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, float)
+     */
     public SpanTermQueryBuilder(String name, float value) {
         super(name, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, double) */
+    /**
+     * Creates a new SpanTermQueryBuilder.
+     *
+     * @param name the name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, double)
+     */
     public SpanTermQueryBuilder(String name, double value) {
         super(name, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, Object) */
+    /**
+     * Creates a new SpanTermQueryBuilder.
+     *
+     * @param name the name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, Object)
+     */
     public SpanTermQueryBuilder(String name, Object value) {
         super(name, value);
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanTermQueryBuilder(StreamInput in) throws IOException {
         super(in);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanTermQueryBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {
         String fieldName = null;
         Object value = null;

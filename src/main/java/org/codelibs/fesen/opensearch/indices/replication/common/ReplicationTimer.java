@@ -29,8 +29,17 @@ public class ReplicationTimer implements Writeable {
     private long time = -1;
     private long stopTime = 0;
 
+    /**
+     * Creates a new ReplicationTimer.
+     */
     public ReplicationTimer() {}
 
+    /**
+     * Creates a new ReplicationTimer by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ReplicationTimer(StreamInput in) throws IOException {
         startTime = in.readVLong();
         startNanoTime = in.readVLong();
@@ -47,6 +56,9 @@ public class ReplicationTimer implements Writeable {
         out.writeVLong(time());
     }
 
+    /**
+     * Starts this instance.
+     */
     public synchronized void start() {
         assert startTime == 0 : "already started";
         startTime = System.currentTimeMillis();
@@ -55,6 +67,8 @@ public class ReplicationTimer implements Writeable {
 
     /**
      * Returns start time in millis
+     *
+     * @return this instance
      */
     public synchronized long startTime() {
         return startTime;
@@ -62,6 +76,8 @@ public class ReplicationTimer implements Writeable {
 
     /**
      * Returns elapsed time in millis, or 0 if timer was not started
+     *
+     * @return the time
      */
     public synchronized long time() {
         if (startNanoTime == 0) {
@@ -75,11 +91,16 @@ public class ReplicationTimer implements Writeable {
 
     /**
      * Returns stop time in millis
+     *
+     * @return this instance
      */
     public synchronized long stopTime() {
         return stopTime;
     }
 
+    /**
+     * Stops this instance.
+     */
     public synchronized void stop() {
         assert stopTime == 0 : "already stopped";
         stopTime = Math.max(System.currentTimeMillis(), startTime);
@@ -87,6 +108,9 @@ public class ReplicationTimer implements Writeable {
         assert time >= 0;
     }
 
+    /**
+     * Resets this instance.
+     */
     public synchronized void reset() {
         startTime = 0;
         startNanoTime = 0;

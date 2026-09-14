@@ -53,11 +53,15 @@ public interface Aggregation extends ToXContentFragment {
     String TYPED_KEYS_DELIMITER = "#";
 
     /**
+     * Returns the name.
+     *
      * @return The name of this aggregation.
      */
     String getName();
 
     /**
+     * Returns the type.
+     *
      * @return a string representing the type of the aggregation. This type is added to
      * the aggregation name in the response, so that it can later be used by clients
      * to determine type of the aggregation and parse it into the proper object.
@@ -66,6 +70,8 @@ public interface Aggregation extends ToXContentFragment {
 
     /**
      * Get the optional byte array metadata that was set on the aggregation
+     *
+     * @return the metadata
      */
     Map<String, Object> getMetadata();
 
@@ -73,21 +79,75 @@ public interface Aggregation extends ToXContentFragment {
      * Common xcontent fields that are shared among addAggregation
      */
     final class CommonFields extends ParseField.CommonFields {
+        /**
+         * Creates a new CommonFields.
+         */
+        CommonFields() {
+        }
+
+        /**
+         * The META constant.
+         */
         public static final ParseField META = new ParseField("meta");
+        /**
+         * The BUCKETS constant.
+         */
         public static final ParseField BUCKETS = new ParseField("buckets");
+        /**
+         * The VALUE constant.
+         */
         public static final ParseField VALUE = new ParseField("value");
+        /**
+         * The VALUES constant.
+         */
         public static final ParseField VALUES = new ParseField("values");
+        /**
+         * The VALUE_AS_STRING constant.
+         */
         public static final ParseField VALUE_AS_STRING = new ParseField("value_as_string");
+        /**
+         * The DOC_COUNT constant.
+         */
         public static final ParseField DOC_COUNT = new ParseField("doc_count");
+        /**
+         * The KEY constant.
+         */
         public static final ParseField KEY = new ParseField("key");
+        /**
+         * The KEY_AS_STRING constant.
+         */
         public static final ParseField KEY_AS_STRING = new ParseField("key_as_string");
+        /**
+         * The FROM constant.
+         */
         public static final ParseField FROM = new ParseField("from");
+        /**
+         * The FROM_AS_STRING constant.
+         */
         public static final ParseField FROM_AS_STRING = new ParseField("from_as_string");
+        /**
+         * The TO constant.
+         */
         public static final ParseField TO = new ParseField("to");
+        /**
+         * The TO_AS_STRING constant.
+         */
         public static final ParseField TO_AS_STRING = new ParseField("to_as_string");
+        /**
+         * The MIN constant.
+         */
         public static final ParseField MIN = new ParseField("min");
+        /**
+         * The MIN_AS_STRING constant.
+         */
         public static final ParseField MIN_AS_STRING = new ParseField("min_as_string");
+        /**
+         * The MAX constant.
+         */
         public static final ParseField MAX = new ParseField("max");
+        /**
+         * The MAX_AS_STRING constant.
+         */
         public static final ParseField MAX_AS_STRING = new ParseField("max_as_string");
     }
 }

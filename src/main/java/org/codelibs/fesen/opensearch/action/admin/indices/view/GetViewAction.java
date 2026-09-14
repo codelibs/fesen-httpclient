@@ -32,9 +32,18 @@ import java.util.Objects;
 @ExperimentalApi
 public class GetViewAction extends ActionType<GetViewAction.Response> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetViewAction INSTANCE = new GetViewAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "views:data/read/get";
 
+    /**
+     * Creates a new GetViewAction.
+     */
     public GetViewAction() {
         super(NAME, GetViewAction.Response::new);
     }
@@ -44,10 +53,20 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
     public static class Request extends ClusterManagerNodeRequest<Request> {
         private final String name;
 
+        /**
+         * Creates a new Request.
+         *
+         * @param name the name
+         */
         public Request(final String name) {
             this.name = name;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
@@ -98,15 +117,31 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
 
         private final View view;
 
+        /**
+         * Creates a new Response.
+         *
+         * @param view the view
+         */
         public Response(final View view) {
             this.view = view;
         }
 
+        /**
+         * Creates a new Response.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Response(final StreamInput in) throws IOException {
             super(in);
             this.view = new View(in);
         }
 
+        /**
+         * Returns the view.
+         *
+         * @return the view
+         */
         public View getView() {
             return view;
         }
@@ -145,6 +180,13 @@ public class GetViewAction extends ActionType<GetViewAction.Response> {
             PARSER.declareObject(ConstructingObjectParser.constructorArg(), View.PARSER, new ParseField("view"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Response fromXContent(final XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }

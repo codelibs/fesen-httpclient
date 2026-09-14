@@ -65,6 +65,9 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
     private boolean rewrite;
     private boolean allShards;
 
+    /**
+     * Creates a new ValidateQueryRequest.
+     */
     public ValidateQueryRequest() {
         this(Strings.EMPTY_ARRAY);
     }
@@ -72,6 +75,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
     /**
      * Constructs a new validate request against the provided indices. No indices provided means it will
      * run against all indices.
+     *
+     * @param indices the indices
      */
     public ValidateQueryRequest(String... indices) {
         super(indices);
@@ -89,11 +94,19 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
 
     /**
      * The query to validate.
+     *
+     * @return this instance
      */
     public QueryBuilder query() {
         return query;
     }
 
+    /**
+     * Queries this instance.
+     *
+     * @param query the query
+     * @return this instance
+     */
     public ValidateQueryRequest query(QueryBuilder query) {
         this.query = query;
         return this;
@@ -101,6 +114,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
 
     /**
      * Indicate if detailed information about query is requested
+     *
+     * @param explain the explain
      */
     public void explain(boolean explain) {
         this.explain = explain;
@@ -108,6 +123,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
 
     /**
      * Indicates if detailed information about query is requested
+     *
+     * @return the explain
      */
     public boolean explain() {
         return explain;
@@ -115,6 +132,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
 
     /**
      * Indicates whether the query should be rewritten into primitive queries
+     *
+     * @return this instance
      */
     public boolean rewrite() {
         return rewrite;
@@ -122,6 +141,8 @@ public class ValidateQueryRequest extends BroadcastRequest<ValidateQueryRequest>
 
     /**
      * Indicates whether the query should be validated on all shards instead of one random shard
+     *
+     * @return the all shards
      */
     public boolean allShards() {
         return allShards;

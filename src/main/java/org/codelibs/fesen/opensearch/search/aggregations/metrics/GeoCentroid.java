@@ -41,7 +41,17 @@ import org.codelibs.fesen.opensearch.search.aggregations.Aggregation;
  * @opensearch.internal
  */
 public interface GeoCentroid extends Aggregation {
+    /**
+     * Returns the centroid.
+     *
+     * @return the centroid
+     */
     GeoPoint centroid();
 
+    /**
+     * Counts this instance.
+     *
+     * @return this instance
+     */
     long count();
 }

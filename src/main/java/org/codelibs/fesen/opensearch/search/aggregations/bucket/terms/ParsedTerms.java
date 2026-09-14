@@ -56,8 +56,19 @@ import static org.codelibs.fesen.opensearch.search.aggregations.bucket.terms.Int
  * @opensearch.internal
  */
 public abstract class ParsedTerms extends ParsedMultiBucketAggregation<ParsedTerms.ParsedBucket> implements Terms {
+    /**
+     * Creates a new ParsedTerms.
+     */
+    public ParsedTerms() {
+    }
 
+    /**
+     * The doc count error upper bound.
+     */
     protected long docCountErrorUpperBound;
+    /**
+     * The sum other doc count.
+     */
     protected long sumOtherDocCount;
 
     @Override
@@ -115,8 +126,16 @@ public abstract class ParsedTerms extends ParsedMultiBucketAggregation<ParsedTer
      * @opensearch.internal
      */
     public abstract static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Terms.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         boolean showDocCountError = false;
+        /**
+         * The doc count error.
+         */
         protected long docCountError;
 
         @Override

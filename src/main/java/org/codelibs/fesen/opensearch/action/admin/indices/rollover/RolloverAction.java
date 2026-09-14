@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class RolloverAction extends ActionType<RolloverResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final RolloverAction INSTANCE = new RolloverAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/rollover";
 
     private RolloverAction() {

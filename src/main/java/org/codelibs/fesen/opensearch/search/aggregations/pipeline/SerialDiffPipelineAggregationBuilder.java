@@ -56,6 +56,9 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<SerialDiffPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "serial_diff";
 
     private static final ParseField GAP_POLICY = new ParseField("gap_policy");
@@ -65,6 +68,12 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
     private GapPolicy gapPolicy = GapPolicy.SKIP;
     private int lag = 1;
 
+    /**
+     * Creates a new SerialDiffPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public SerialDiffPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -78,6 +87,9 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     /**
      * Sets the lag to use when calculating the serial difference.
+     *
+     * @param lag the lag
+     * @return the lag
      */
     public SerialDiffPipelineAggregationBuilder lag(int lag) {
         if (lag <= 0) {
@@ -89,6 +101,8 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     /**
      * Gets the lag to use when calculating the serial difference.
+     *
+     * @return the lag
      */
     public int lag() {
         return lag;
@@ -96,6 +110,9 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     /**
      * Sets the format to use on the output of this aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     public SerialDiffPipelineAggregationBuilder format(String format) {
         if (format == null) {
@@ -107,6 +124,8 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     /**
      * Gets the format to use on the output of this aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
@@ -114,6 +133,9 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     /**
      * Sets the GapPolicy to use on the output of this aggregation.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
      */
     public SerialDiffPipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
@@ -125,11 +147,18 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
 
     /**
      * Gets the GapPolicy to use on the output of this aggregation.
+     *
+     * @return the gap policy
      */
     public GapPolicy gapPolicy() {
         return gapPolicy;
     }
 
+    /**
+     * Returns the formatter.
+     *
+     * @return the formatter
+     */
     protected DocValueFormat formatter() {
         if (format != null) {
             return new DocValueFormat.Decimal(format);
@@ -153,6 +182,14 @@ public class SerialDiffPipelineAggregationBuilder extends AbstractPipelineAggreg
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param reducerName the reducer name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static SerialDiffPipelineAggregationBuilder parse(String reducerName, XContentParser parser) throws IOException {
         XContentParser.Token token;
         String currentFieldName = null;

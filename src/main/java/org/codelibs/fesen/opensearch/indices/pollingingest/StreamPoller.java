@@ -26,10 +26,25 @@ public interface StreamPoller {
      * @opensearch.api
      */
     enum ResetState {
+        /**
+         * The EARLIEST value.
+         */
         EARLIEST,
+        /**
+         * The LATEST value.
+         */
         LATEST,
+        /**
+         * The RESET_BY_OFFSET value.
+         */
         RESET_BY_OFFSET,
+        /**
+         * The RESET_BY_TIMESTAMP value.
+         */
         RESET_BY_TIMESTAMP,
+        /**
+         * The NONE value.
+         */
         NONE,
     }
 }

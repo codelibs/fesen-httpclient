@@ -39,6 +39,8 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
 
     /**
      * Constructs a new resume ingestion request.
+     *
+     * @param indices the indices
      */
     public ResumeIngestionRequest(String[] indices) {
         this(indices, new ResetSettings[0]);
@@ -46,6 +48,9 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
 
     /**
      * Constructs a new resume ingestion request with reset settings.
+     *
+     * @param indices the indices
+     * @param resetSettings the reset settings
      */
     public ResumeIngestionRequest(String[] indices, ResetSettings[] resetSettings) {
         this.indices = indices;
@@ -107,6 +112,11 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
         out.writeArray(resetSettings);
     }
 
+    /**
+     * Returns the reset settings.
+     *
+     * @return the reset settings
+     */
     public ResetSettings[] getResetSettings() {
         return resetSettings;
     }
@@ -121,6 +131,13 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
         private final ResetMode mode;
         private final String value;
 
+        /**
+         * Creates a new ResetSettings.
+         *
+         * @param shard the shard
+         * @param mode the mode
+         * @param value the value
+         */
         public ResetSettings(int shard, ResetMode mode, String value) {
             this.shard = shard;
             this.mode = mode;
@@ -134,14 +151,29 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
             out.writeString(value);
         }
 
+        /**
+         * Returns the shard.
+         *
+         * @return the shard
+         */
         public int getShard() {
             return shard;
         }
 
+        /**
+         * Returns the mode.
+         *
+         * @return the mode
+         */
         public ResetMode getMode() {
             return mode;
         }
 
+        /**
+         * Returns the value.
+         *
+         * @return the value
+         */
         public String getValue() {
             return value;
         }
@@ -152,7 +184,13 @@ public class ResumeIngestionRequest extends AcknowledgedRequest<ResumeIngestionR
          */
         @PublicApi(since = "3.6.0")
         public enum ResetMode {
+            /**
+             * The OFFSET value.
+             */
             OFFSET,
+            /**
+             * The timestamp.
+             */
             TIMESTAMP
         }
 

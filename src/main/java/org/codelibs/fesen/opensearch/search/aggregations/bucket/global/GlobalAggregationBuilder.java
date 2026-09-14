@@ -49,17 +49,40 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class GlobalAggregationBuilder extends AbstractAggregationBuilder<GlobalAggregationBuilder> {
+    /**
+     * Parses this instance.
+     *
+     * @param parser the parser
+     * @param aggregationName the aggregation name
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static GlobalAggregationBuilder parse(XContentParser parser, String aggregationName) throws IOException {
         parser.nextToken();
         return new GlobalAggregationBuilder(aggregationName);
     }
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "global";
 
+    /**
+     * Creates a new GlobalAggregationBuilder.
+     *
+     * @param name the name
+     */
     public GlobalAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new GlobalAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected GlobalAggregationBuilder(GlobalAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }

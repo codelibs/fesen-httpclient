@@ -27,6 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @opensearch.internal
  */
 public class FeatureFlags {
+    /**
+     * Creates a new FeatureFlags.
+     */
+    public FeatureFlags() {
+    }
+
     // Prefixes public for testing
     private static final String OS_EXPERIMENTAL_PREFIX = "opensearch.experimental.";
     static final String FEATURE_FLAG_PREFIX = OS_EXPERIMENTAL_PREFIX + "feature.";
@@ -63,6 +69,9 @@ public class FeatureFlags {
      */
     public static final String WRITABLE_WARM_INDEX_EXPERIMENTAL_FLAG = "opensearch.experimental.feature.writable_warm_index.enabled";
 
+    /**
+     * The REMOTE_STORE_MIGRATION_EXPERIMENTAL_SETTING constant.
+     */
     public static final Setting<Boolean> REMOTE_STORE_MIGRATION_EXPERIMENTAL_SETTING = Setting.boolSetting(
         REMOTE_STORE_MIGRATION_EXPERIMENTAL,
         false,
@@ -74,28 +83,46 @@ public class FeatureFlags {
      */
     public static final String PLUGGABLE_DATAFORMAT_EXPERIMENTAL_FLAG = FEATURE_FLAG_PREFIX + "pluggable.dataformat.enabled";
 
+    /**
+     * The PLUGGABLE_DATAFORMAT_EXPERIMENTAL_SETTING constant.
+     */
     public static final Setting<Boolean> PLUGGABLE_DATAFORMAT_EXPERIMENTAL_SETTING = Setting.boolSetting(
         PLUGGABLE_DATAFORMAT_EXPERIMENTAL_FLAG,
         false,
         Property.NodeScope
     );
 
+    /**
+     * The CONTEXT_AWARE_MIGRATION_EXPERIMENTAL_SETTING constant.
+     */
     public static final Setting<Boolean> CONTEXT_AWARE_MIGRATION_EXPERIMENTAL_SETTING = Setting.boolSetting(
         CONTEXT_AWARE_MIGRATION_EXPERIMENTAL_FLAG,
         false,
         Property.NodeScope
     );
 
+    /**
+     * The EXTENSIONS_SETTING constant.
+     */
     public static final Setting<Boolean> EXTENSIONS_SETTING = Setting.boolSetting(EXTENSIONS, false, Property.NodeScope);
 
+    /**
+     * The TELEMETRY_SETTING constant.
+     */
     public static final Setting<Boolean> TELEMETRY_SETTING = Setting.boolSetting(TELEMETRY, false, Property.NodeScope);
 
+    /**
+     * The DATETIME_FORMATTER_CACHING_SETTING constant.
+     */
     public static final Setting<Boolean> DATETIME_FORMATTER_CACHING_SETTING = Setting.boolSetting(
         DATETIME_FORMATTER_CACHING,
         false,
         Property.NodeScope
     );
 
+    /**
+     * The WRITABLE_WARM_INDEX_SETTING constant.
+     */
     public static final Setting<Boolean> WRITABLE_WARM_INDEX_SETTING = Setting.boolSetting(
         WRITABLE_WARM_INDEX_EXPERIMENTAL_FLAG,
         false,
@@ -106,20 +133,35 @@ public class FeatureFlags {
      * Gates the functionality of application based configuration templates.
      */
     public static final String APPLICATION_BASED_CONFIGURATION_TEMPLATES = FEATURE_FLAG_PREFIX + "application_templates.enabled";
+    /**
+     * The APPLICATION_BASED_CONFIGURATION_TEMPLATES_SETTING constant.
+     */
     public static final Setting<Boolean> APPLICATION_BASED_CONFIGURATION_TEMPLATES_SETTING = Setting.boolSetting(
         APPLICATION_BASED_CONFIGURATION_TEMPLATES,
         false,
         Property.NodeScope
     );
 
+    /**
+     * The TERM_VERSION_PRECOMMIT_ENABLE constant.
+     */
     public static final String TERM_VERSION_PRECOMMIT_ENABLE = OS_EXPERIMENTAL_PREFIX + "optimization.termversion.precommit.enabled";
+    /**
+     * The TERM_VERSION_PRECOMMIT_ENABLE_SETTING constant.
+     */
     public static final Setting<Boolean> TERM_VERSION_PRECOMMIT_ENABLE_SETTING = Setting.boolSetting(
         TERM_VERSION_PRECOMMIT_ENABLE,
         false,
         Property.NodeScope
     );
 
+    /**
+     * The STREAM_TRANSPORT constant.
+     */
     public static final String STREAM_TRANSPORT = FEATURE_FLAG_PREFIX + "transport.stream.enabled";
+    /**
+     * The STREAM_TRANSPORT_SETTING constant.
+     */
     public static final Setting<Boolean> STREAM_TRANSPORT_SETTING = Setting.boolSetting(STREAM_TRANSPORT, false, Property.NodeScope);
 
     /**
@@ -128,6 +170,9 @@ public class FeatureFlags {
      * version to unknown. Disabled by default so snapshot listing tolerates such repositories.
      */
     public static final String SNAPSHOT_STRICT_VERSION_PARSING = FEATURE_FLAG_PREFIX + "snapshot.strict_version_parsing.enabled";
+    /**
+     * The SNAPSHOT_STRICT_VERSION_PARSING_SETTING constant.
+     */
     public static final Setting<Boolean> SNAPSHOT_STRICT_VERSION_PARSING_SETTING = Setting.boolSetting(
         SNAPSHOT_STRICT_VERSION_PARSING,
         false,
@@ -139,6 +184,9 @@ public class FeatureFlags {
      * Default off for the first minor, flipped on in the next, removed one minor later.
      */
     public static final String SNAPSHOT_RESILIENCE = FEATURE_FLAG_PREFIX + "snapshot_resilience.enabled";
+    /**
+     * The SNAPSHOT_RESILIENCE_SETTING constant.
+     */
     public static final Setting<Boolean> SNAPSHOT_RESILIENCE_SETTING = Setting.boolSetting(SNAPSHOT_RESILIENCE, false, Property.NodeScope);
 
     /**
@@ -243,10 +291,22 @@ public class FeatureFlags {
 
     private static final FeatureFlagsImpl featureFlagsImpl = new FeatureFlagsImpl();
 
+    /**
+     * Returns the enabled flag.
+     *
+     * @param featureFlagName the feature flag name
+     * @return the enabled flag
+     */
     public static boolean isEnabled(String featureFlagName) {
         return featureFlagsImpl.isEnabled(featureFlagName);
     }
 
+    /**
+     * Returns the enabled flag.
+     *
+     * @param featureFlag the feature flag
+     * @return the enabled flag
+     */
     public static boolean isEnabled(Setting<Boolean> featureFlag) {
         return featureFlagsImpl.isEnabled(featureFlag);
     }
@@ -261,6 +321,12 @@ public class FeatureFlags {
      */
     public static class TestUtils {
         /**
+         * Creates a new TestUtils.
+         */
+        public TestUtils() {
+        }
+
+        /**
          * AutoCloseable helper which sets a feature flag and makes it immutable for the lifetime of the lock.
          * Throws an exception if two locks exist for the same flag as we should never reach this state.
          * Initializing two write locks for the same flag throws a RuntimeException.
@@ -270,14 +336,31 @@ public class FeatureFlags {
             private final String flag;
             private final Boolean prev;
 
+            /**
+             * Returns the locked flag.
+             *
+             * @param flag the flag
+             * @return the locked flag
+             */
             public static boolean isLocked(String flag) {
                 return writeLocks.contains(flag);
             }
 
+            /**
+             * Creates a new FlagWriteLock.
+             *
+             * @param flag the flag
+             */
             public FlagWriteLock(String flag) {
                 this(flag, true);
             }
 
+            /**
+             * Creates a new FlagWriteLock.
+             *
+             * @param flag the flag
+             * @param value the value
+             */
             public FlagWriteLock(String flag, Boolean value) {
                 if (writeLocks.contains(flag)) {
                     throw new RuntimeException("Cannot initialize second write lock for feature flag: " + flag);

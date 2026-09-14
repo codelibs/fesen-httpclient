@@ -50,13 +50,36 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class ParsedStats extends ParsedAggregation implements Stats {
+    /**
+     * Creates a new ParsedStats.
+     */
+    public ParsedStats() {
+    }
 
+    /**
+     * The count.
+     */
     protected long count;
+    /**
+     * The min.
+     */
     protected double min;
+    /**
+     * The max.
+     */
     protected double max;
+    /**
+     * The sum.
+     */
     protected double sum;
+    /**
+     * The avg.
+     */
     protected double avg;
 
+    /**
+     * The value as string.
+     */
     protected final Map<String, String> valueAsString = new HashMap<>();
 
     @Override
@@ -143,6 +166,11 @@ public class ParsedStats extends ParsedAggregation implements Stats {
         declareStatsFields(PARSER);
     }
 
+    /**
+     * Performs the declare stats fields step.
+     *
+     * @param objectParser the object parser
+     */
     protected static void declareStatsFields(ObjectParser<? extends ParsedStats, Void> objectParser) {
         declareAggregationFields(objectParser);
         objectParser.declareLong((agg, value) -> agg.count = value, new ParseField(Fields.COUNT));
@@ -188,12 +216,27 @@ public class ParsedStats extends ParsedAggregation implements Stats {
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedStats fromXContent(XContentParser parser, final String name) {
         ParsedStats parsedStats = PARSER.apply(parser, null);
         parsedStats.setName(name);
         return parsedStats;
     }
 
+    /**
+     * Returns the other stats to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the other stats to XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected XContentBuilder otherStatsToXContent(XContentBuilder builder, Params params) throws IOException {
         return builder;
     }
