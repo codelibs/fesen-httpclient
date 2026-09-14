@@ -75,6 +75,25 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
     @Nullable
     private final Object[] collapseValues;
 
+    /**
+     * Returns hits that carry nothing, with a total hit count of zero.
+     *
+     * @return the empty hits
+     */
+    public static SearchHits empty() {
+        return empty(true);
+    }
+
+    /**
+     * Returns hits that carry nothing.
+     *
+     * @param withTotalHits whether to report a total hit count of zero rather than none at all
+     * @return the empty hits
+     */
+    public static SearchHits empty(boolean withTotalHits) {
+        return new SearchHits(EMPTY, withTotalHits ? new TotalHits(0, TotalHits.Relation.EQUAL_TO) : null, 0);
+    }
+
     public SearchHits(SearchHit[] hits, @Nullable TotalHits totalHits, float maxScore) {
         this(hits, totalHits, maxScore, null, null, null);
     }

@@ -129,6 +129,69 @@ public class SearchResponse extends ActionResponse implements StatusToXContentOb
         pointInTimeId = in.readOptionalString();
     }
 
+    /**
+     * Creates a new SearchResponse that is not tied to a point in time and has no phase timings.
+     *
+     * @param internalResponse the response sections
+     * @param scrollId the scroll identifier, or null
+     * @param totalShards the number of shards the request went to
+     * @param successfulShards the number of shards that answered
+     * @param skippedShards the number of shards that were skipped
+     * @param tookInMillis how long the request took, in milliseconds
+     * @param shardFailures the shard failures
+     * @param clusters the clusters the request went to
+     */
+    public SearchResponse(
+        SearchResponseSections internalResponse,
+        String scrollId,
+        int totalShards,
+        int successfulShards,
+        int skippedShards,
+        long tookInMillis,
+        ShardSearchFailure[] shardFailures,
+        Clusters clusters
+    ) {
+        this(internalResponse, scrollId, totalShards, successfulShards, skippedShards, tookInMillis, null, shardFailures, clusters, null);
+    }
+
+    /**
+     * Creates a new SearchResponse with no phase timings.
+     *
+     * @param internalResponse the response sections
+     * @param scrollId the scroll identifier, or null
+     * @param totalShards the number of shards the request went to
+     * @param successfulShards the number of shards that answered
+     * @param skippedShards the number of shards that were skipped
+     * @param tookInMillis how long the request took, in milliseconds
+     * @param shardFailures the shard failures
+     * @param clusters the clusters the request went to
+     * @param pointInTimeId the point-in-time identifier, or null
+     */
+    public SearchResponse(
+        SearchResponseSections internalResponse,
+        String scrollId,
+        int totalShards,
+        int successfulShards,
+        int skippedShards,
+        long tookInMillis,
+        ShardSearchFailure[] shardFailures,
+        Clusters clusters,
+        String pointInTimeId
+    ) {
+        this(
+            internalResponse,
+            scrollId,
+            totalShards,
+            successfulShards,
+            skippedShards,
+            tookInMillis,
+            null,
+            shardFailures,
+            clusters,
+            pointInTimeId
+        );
+    }
+
     public SearchResponse(
         SearchResponseSections internalResponse,
         String scrollId,
