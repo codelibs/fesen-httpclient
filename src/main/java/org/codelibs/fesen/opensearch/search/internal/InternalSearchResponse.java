@@ -58,6 +58,93 @@ import java.util.List;
 @PublicApi(since = "1.0.0")
 public class InternalSearchResponse extends SearchResponseSections implements Writeable, ToXContentFragment {
 
+    /**
+     * Returns a response that carries no hits.
+     *
+     * @return the empty response
+     */
+    public static InternalSearchResponse empty() {
+        return empty(true);
+    }
+
+    /**
+     * Returns a response that carries no hits.
+     *
+     * @param withTotalHits whether to report a total hit count of zero rather than none at all
+     * @return the empty response
+     */
+    public static InternalSearchResponse empty(boolean withTotalHits) {
+        return new InternalSearchResponse(SearchHits.empty(withTotalHits), null, null, null, false, null, 1);
+    }
+
+    /**
+     * Creates a new InternalSearchResponse with no search extensions and no processor results.
+     *
+     * @param hits the hits
+     * @param aggregations the aggregations
+     * @param suggest the suggestions
+     * @param profileResults the profile results
+     * @param timedOut whether the query timed out
+     * @param terminatedEarly whether collection stopped early
+     * @param numReducePhases the number of reduce phases
+     */
+    public InternalSearchResponse(
+        SearchHits hits,
+        InternalAggregations aggregations,
+        Suggest suggest,
+        SearchProfileShardResults profileResults,
+        boolean timedOut,
+        Boolean terminatedEarly,
+        int numReducePhases
+    ) {
+        this(
+            hits,
+            aggregations,
+            suggest,
+            profileResults,
+            timedOut,
+            terminatedEarly,
+            numReducePhases,
+            Collections.emptyList(),
+            Collections.emptyList()
+        );
+    }
+
+    /**
+     * Creates a new InternalSearchResponse with no processor results.
+     *
+     * @param hits the hits
+     * @param aggregations the aggregations
+     * @param suggest the suggestions
+     * @param profileResults the profile results
+     * @param timedOut whether the query timed out
+     * @param terminatedEarly whether collection stopped early
+     * @param numReducePhases the number of reduce phases
+     * @param searchExtBuilderList the search extensions
+     */
+    public InternalSearchResponse(
+        SearchHits hits,
+        InternalAggregations aggregations,
+        Suggest suggest,
+        SearchProfileShardResults profileResults,
+        boolean timedOut,
+        Boolean terminatedEarly,
+        int numReducePhases,
+        List<SearchExtBuilder> searchExtBuilderList
+    ) {
+        this(
+            hits,
+            aggregations,
+            suggest,
+            profileResults,
+            timedOut,
+            terminatedEarly,
+            numReducePhases,
+            searchExtBuilderList,
+            Collections.emptyList()
+        );
+    }
+
     public InternalSearchResponse(
         SearchHits hits,
         InternalAggregations aggregations,

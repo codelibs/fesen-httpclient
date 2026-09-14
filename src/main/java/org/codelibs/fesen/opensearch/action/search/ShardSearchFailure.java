@@ -82,6 +82,15 @@ public class ShardSearchFailure extends ShardOperationFailedException {
         cause = in.readException();
     }
 
+    /**
+     * Creates a new ShardSearchFailure for a failure that is not tied to a shard.
+     *
+     * @param e the exception that caused the failure
+     */
+    public ShardSearchFailure(Exception e) {
+        this(e, null);
+    }
+
     public ShardSearchFailure(Exception e, @Nullable SearchShardTarget shardTarget) {
         this(e, ExceptionsHelper.unwrapCause(e), shardTarget);
     }
