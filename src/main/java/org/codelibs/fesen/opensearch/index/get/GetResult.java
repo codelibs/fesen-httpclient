@@ -72,7 +72,13 @@ import static org.codelibs.fesen.opensearch.index.seqno.SequenceNumbers.UNASSIGN
 @PublicApi(since = "1.0.0")
 public class GetResult implements Writeable, Iterable<DocumentField>, ToXContentObject {
 
+    /**
+     * The _INDEX constant.
+     */
     public static final String _INDEX = "_index";
+    /**
+     * The _ID constant.
+     */
     public static final String _ID = "_id";
     private static final String _VERSION = "_version";
     private static final String _SEQ_NO = "_seq_no";
@@ -91,6 +97,12 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
     private Map<String, Object> sourceAsMap;
     private BytesReference source;
 
+    /**
+     * Creates a new GetResult by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetResult(StreamInput in) throws IOException {
         index = in.readString();
         if (in.getVersion().before(Version.V_2_0_0)) {
@@ -114,6 +126,19 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         }
     }
 
+    /**
+     * Creates a new GetResult.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @param seqNo the seq no
+     * @param primaryTerm the primary term
+     * @param version the version
+     * @param exists the exists
+     * @param source the source
+     * @param documentFields the document fields
+     * @param metaFields the meta fields
+     */
     public GetResult(
         String index,
         String id,
@@ -144,6 +169,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * Does the document exist.
+     *
+     * @return the exists flag
      */
     public boolean isExists() {
         return exists;
@@ -151,6 +178,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * The index the document was fetched from.
+     *
+     * @return the index
      */
     public String getIndex() {
         return index;
@@ -158,6 +187,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * The id of the document.
+     *
+     * @return the identifier
      */
     public String getId() {
         return id;
@@ -165,6 +196,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * The sequence number assigned to the last operation that has changed this document, if found.
+     *
+     * @return the seq no
      */
     public long getSeqNo() {
         return seqNo;
@@ -172,6 +205,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * The primary term of the last primary that has changed this document, if found.
+     *
+     * @return the primary term
      */
     public long getPrimaryTerm() {
         return primaryTerm;
@@ -179,6 +214,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * Returns bytes reference, also un compress the source if needed.
+     *
+     * @return the source ref
      */
     public BytesReference sourceRef() {
         if (source == null) {
@@ -195,6 +232,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * Internal source representation, might be compressed....
+     *
+     * @return the internal source ref
      */
     public BytesReference internalSourceRef() {
         return source;
@@ -202,6 +241,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * Is the source empty (not available) or not.
+     *
+     * @return the source empty flag
      */
     public boolean isSourceEmpty() {
         return source == null;
@@ -209,6 +250,8 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
 
     /**
      * The source of the document (As a map).
+     *
+     * @return the source as map
      */
     public Map<String, Object> sourceAsMap() throws OpenSearchParseException {
         if (source == null) {
@@ -222,18 +265,38 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return sourceAsMap;
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public Map<String, Object> getSource() {
         return sourceAsMap();
     }
 
+    /**
+     * Returns the metadata fields.
+     *
+     * @return the metadata fields
+     */
     public Map<String, DocumentField> getMetadataFields() {
         return metaFields;
     }
 
+    /**
+     * Returns the document fields.
+     *
+     * @return the document fields
+     */
     public Map<String, DocumentField> getDocumentFields() {
         return documentFields;
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public Map<String, DocumentField> getFields() {
         Map<String, DocumentField> fields = new HashMap<>();
         fields.putAll(metaFields);
@@ -241,6 +304,12 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return fields;
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param name the name
+     * @return the field
+     */
     public DocumentField field(String name) {
         return getFields().get(name);
     }
@@ -252,6 +321,14 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return allFields.values().iterator();
     }
 
+    /**
+     * Returns this instance as XContent embedded.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent embedded
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder toXContentEmbedded(XContentBuilder builder, Params params) throws IOException {
         if (seqNo != UNASSIGNED_SEQ_NO) { // seqNo may not be assigned if read from an old node
             builder.field(_SEQ_NO, seqNo);
@@ -300,12 +377,28 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return builder;
     }
 
+    /**
+     * Creates an instance from XContent embedded.
+     *
+     * @param parser the parser
+     * @return the new XContent embedded
+     * @throws IOException if an I/O error occurs
+     */
     public static GetResult fromXContentEmbedded(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
         return fromXContentEmbedded(parser, null, null);
     }
 
+    /**
+     * Creates an instance from XContent embedded.
+     *
+     * @param parser the parser
+     * @param index the index
+     * @param id the identifier
+     * @return the new XContent embedded
+     * @throws IOException if an I/O error occurs
+     */
     public static GetResult fromXContentEmbedded(XContentParser parser, String index, String id) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
@@ -372,6 +465,13 @@ public class GetResult implements Writeable, Iterable<DocumentField>, ToXContent
         return new GetResult(index, id, seqNo, primaryTerm, version, found, source, documentFields, metaFields);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GetResult fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);

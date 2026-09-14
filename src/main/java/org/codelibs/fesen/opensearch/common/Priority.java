@@ -46,21 +46,59 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public enum Priority {
 
+    /**
+     * The IMMEDIATE value.
+     */
     IMMEDIATE((byte) 0),
+    /**
+     * The URGENT value.
+     */
     URGENT((byte) 1),
+    /**
+     * The HIGH value.
+     */
     HIGH((byte) 2),
+    /**
+     * The NORMAL value.
+     */
     NORMAL((byte) 3),
+    /**
+     * The LOW value.
+     */
     LOW((byte) 4),
+    /**
+     * The LANGUID value.
+     */
     LANGUID((byte) 5);
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param input the input
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static Priority readFrom(StreamInput input) throws IOException {
         return fromByte(input.readByte());
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param priority the priority
+     * @param output the output
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeTo(Priority priority, StreamOutput output) throws IOException {
         output.writeByte(priority.value);
     }
 
+    /**
+     * Creates an instance from byte.
+     *
+     * @param b the b
+     * @return the new byte
+     */
     public static Priority fromByte(byte b) {
         switch (b) {
             case 0:

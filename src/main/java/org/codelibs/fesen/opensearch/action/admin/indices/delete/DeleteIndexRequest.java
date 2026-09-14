@@ -57,6 +57,9 @@ public class DeleteIndexRequest extends AcknowledgedRequest<DeleteIndexRequest> 
     // Delete index should work by default on both open and closed indices.
     private IndicesOptions indicesOptions = IndicesOptions.fromOptions(false, true, true, true, false, false, true, false);
 
+    /**
+     * Creates a new DeleteIndexRequest.
+     */
     public DeleteIndexRequest() {}
 
     /**
@@ -82,6 +85,12 @@ public class DeleteIndexRequest extends AcknowledgedRequest<DeleteIndexRequest> 
         return indicesOptions;
     }
 
+    /**
+     * Returns the indices options.
+     *
+     * @param indicesOptions the indices options
+     * @return the indices options
+     */
     public DeleteIndexRequest indicesOptions(IndicesOptions indicesOptions) {
         this.indicesOptions = indicesOptions;
         return this;

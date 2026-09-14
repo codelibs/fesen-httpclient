@@ -35,12 +35,25 @@ public class DerivedField implements Writeable, ToXContentFragment {
     private Boolean ignoreMalformed;
     private String format;
 
+    /**
+     * Creates a new DerivedField.
+     *
+     * @param name the name
+     * @param type the type
+     * @param script the script
+     */
     public DerivedField(String name, String type, Script script) {
         this.name = name;
         this.type = type;
         this.script = script;
     }
 
+    /**
+     * Creates a new DerivedField by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DerivedField(StreamInput in) throws IOException {
         name = in.readString();
         type = in.readString();

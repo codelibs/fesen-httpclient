@@ -51,14 +51,29 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<ReverseNestedAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "reverse_nested";
 
     private String path;
 
+    /**
+     * Creates a new ReverseNestedAggregationBuilder.
+     *
+     * @param name the name
+     */
     public ReverseNestedAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new ReverseNestedAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param map the map
+     */
     public ReverseNestedAggregationBuilder(ReverseNestedAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> map) {
         super(clone, factoriesBuilder, map);
         this.path = clone.path;
@@ -78,6 +93,9 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
      * Set the path to use for this nested aggregation. The path must match
      * the path to a nested object in the mappings. If it is not specified
      * then this aggregation will go back to the root document.
+     *
+     * @param path the path
+     * @return the path
      */
     public ReverseNestedAggregationBuilder path(String path) {
         if (path == null) {
@@ -89,6 +107,8 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
 
     /**
      * Get the path to use for this nested aggregation.
+     *
+     * @return the path
      */
     public String path() {
         return path;
@@ -109,6 +129,14 @@ public class ReverseNestedAggregationBuilder extends AbstractAggregationBuilder<
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static ReverseNestedAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         String path = null;
 

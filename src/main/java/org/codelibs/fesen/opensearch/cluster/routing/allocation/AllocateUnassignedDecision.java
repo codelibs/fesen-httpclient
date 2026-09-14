@@ -124,6 +124,12 @@ public class AllocateUnassignedDecision extends AbstractAllocationDecision {
         this.configuredDelayInMillis = configuredDelayInMillis;
     }
 
+    /**
+     * Creates a new AllocateUnassignedDecision by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AllocateUnassignedDecision(StreamInput in) throws IOException {
         super(in);
         allocationStatus = in.readOptionalWriteable(AllocationStatus::readFrom);
@@ -142,6 +148,8 @@ public class AllocateUnassignedDecision extends AbstractAllocationDecision {
      * Returns the {@link AllocationDecision} denoting the result of an allocation attempt.
      * If {@link #isDecisionTaken()} returns {@code false}, then invoking this method will
      * throw an {@code IllegalStateException}.
+     *
+     * @return the allocation decision
      */
     public AllocationDecision getAllocationDecision() {
         checkDecisionState();

@@ -47,6 +47,7 @@ import java.util.Optional;
 /**
  * Base Aggregation Builder for bucket metrics pipeline aggs
  *
+ * @param <AF> the af type
  * @opensearch.internal
  */
 public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketMetricsPipelineAggregationBuilder<AF>> extends
@@ -55,12 +56,23 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
     private String format = null;
     private GapPolicy gapPolicy = GapPolicy.SKIP;
 
+    /**
+     * Creates a new BucketMetricsPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param type the type
+     * @param bucketsPaths the buckets paths
+     */
     protected BucketMetricsPipelineAggregationBuilder(String name, String type, String[] bucketsPaths) {
         super(name, type, bucketsPaths);
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @param type the type
+     * @throws IOException if an I/O error occurs
      */
     protected BucketMetricsPipelineAggregationBuilder(StreamInput in, String type) throws IOException {
         super(in, type);
@@ -75,10 +87,19 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
         innerWriteTo(out);
     }
 
+    /**
+     * Performs the inner write to step.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void innerWriteTo(StreamOutput out) throws IOException;
 
     /**
      * Sets the format to use on the output of this aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public AF format(String format) {
@@ -88,11 +109,18 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
 
     /**
      * Gets the format to use on the output of this aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
     }
 
+    /**
+     * Returns the formatter.
+     *
+     * @return the formatter
+     */
     protected DocValueFormat formatter() {
         if (format != null) {
             return new DocValueFormat.Decimal(format);
@@ -103,6 +131,9 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
 
     /**
      * Sets the gap policy to use for this aggregation.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
      */
     @SuppressWarnings("unchecked")
     public AF gapPolicy(GapPolicy gapPolicy) {
@@ -112,6 +143,8 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
 
     /**
      * Gets the gap policy to use for this aggregation.
+     *
+     * @return the gap policy
      */
     public GapPolicy gapPolicy() {
         return gapPolicy;
@@ -162,6 +195,14 @@ public abstract class BucketMetricsPipelineAggregationBuilder<AF extends BucketM
         return builder;
     }
 
+    /**
+     * Returns the XContent body.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent body
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException;
 
     @Override

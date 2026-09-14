@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClusterRerouteAction extends ActionType<ClusterRerouteResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClusterRerouteAction INSTANCE = new ClusterRerouteAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/reroute";
 
     private ClusterRerouteAction() {

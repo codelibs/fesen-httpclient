@@ -73,12 +73,19 @@ public class GeographyValidator implements GeometryValidator {
 
     private final boolean ignoreZValue;
 
+    /**
+     * Creates a new GeographyValidator.
+     *
+     * @param ignoreZValue the ignore z value
+     */
     public GeographyValidator(boolean ignoreZValue) {
         this.ignoreZValue = ignoreZValue;
     }
 
     /**
      * validates latitude value is within standard +/-90 coordinate bounds
+     *
+     * @param latitude the latitude
      */
     protected void checkLatitude(double latitude) {
         if (Double.isNaN(latitude) || latitude < MIN_LAT_INCL || latitude > MAX_LAT_INCL) {
@@ -90,6 +97,8 @@ public class GeographyValidator implements GeometryValidator {
 
     /**
      * validates longitude value is within standard +/-180 coordinate bounds
+     *
+     * @param longitude the longitude
      */
     protected void checkLongitude(double longitude) {
         if (Double.isNaN(longitude) || longitude < MIN_LON_INCL || longitude > MAX_LON_INCL) {
@@ -99,6 +108,11 @@ public class GeographyValidator implements GeometryValidator {
         }
     }
 
+    /**
+     * Checks the altitude.
+     *
+     * @param zValue the z value
+     */
     protected void checkAltitude(double zValue) {
         if (ignoreZValue == false && Double.isNaN(zValue) == false) {
             throw new IllegalArgumentException(

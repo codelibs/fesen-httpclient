@@ -25,6 +25,12 @@ public final class XContentHelper {
      * Returns the bytes that represent the XContent output of the provided {@link ToXContent} object, using the provided
      * {@link MediaType}. Wraps the output into a new anonymous object according to the value returned
      * by the {@link ToXContent#isFragment()} method returns.
+     *
+     * @param toXContent the to XContent
+     * @param mediaType the media type
+     * @param humanReadable the human readable
+     * @return the XContent
+     * @throws IOException if an I/O error occurs
      */
     @Deprecated
     public static BytesReference toXContent(ToXContent toXContent, MediaType mediaType, boolean humanReadable) throws IOException {
@@ -35,6 +41,13 @@ public final class XContentHelper {
      * Returns the bytes that represent the XContent output of the provided {@link ToXContent} object, using the provided
      * {@link MediaType}. Wraps the output into a new anonymous object according to the value returned
      * by the {@link ToXContent#isFragment()} method returns.
+     *
+     * @param toXContent the to XContent
+     * @param mediaType the media type
+     * @param params the serialization parameters
+     * @param humanReadable the human readable
+     * @return the XContent
+     * @throws IOException if an I/O error occurs
      */
     public static BytesReference toXContent(ToXContent toXContent, MediaType mediaType, ToXContent.Params params, boolean humanReadable)
         throws IOException {

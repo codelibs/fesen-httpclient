@@ -54,6 +54,9 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  */
 public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggregationBuilder<VariableWidthHistogramAggregationBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "variable_width_histogram";
     private static final ParseField NUM_BUCKETS_FIELD = new ParseField("buckets");
 
@@ -61,6 +64,9 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
 
     private static final ParseField SHARD_SIZE_FIELD = new ParseField("shard_size");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<VariableWidthHistogramAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         VariableWidthHistogramAggregationBuilder::new
@@ -76,11 +82,22 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
     private int shardSize = -1;
     private int initialBuffer = -1;
 
-    /** Create a new builder with the given name. */
+    /**
+     * Create a new builder with the given name.
+     *
+     * @param name the name
+     */
     public VariableWidthHistogramAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new VariableWidthHistogramAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metaData the meta data
+     */
     protected VariableWidthHistogramAggregationBuilder(
         VariableWidthHistogramAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -95,6 +112,12 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         return CoreValuesSourceType.NUMERIC;
     }
 
+    /**
+     * Sets the num buckets.
+     *
+     * @param numBuckets the num buckets
+     * @return this instance
+     */
     public VariableWidthHistogramAggregationBuilder setNumBuckets(int numBuckets) {
         if (numBuckets <= 0) {
             throw new IllegalArgumentException(NUM_BUCKETS_FIELD.getPreferredName() + " must be greater than [0] for [" + name + "]");
@@ -103,6 +126,12 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         return this;
     }
 
+    /**
+     * Sets the shard size.
+     *
+     * @param shardSize the shard size
+     * @return this instance
+     */
     public VariableWidthHistogramAggregationBuilder setShardSize(int shardSize) {
         if (shardSize <= 1) {
             // A shard size of 1 will cause divide by 0s and, even if it worked, would produce garbage results.
@@ -112,6 +141,12 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         return this;
     }
 
+    /**
+     * Sets the initial buffer.
+     *
+     * @param initialBuffer the initial buffer
+     * @return this instance
+     */
     public VariableWidthHistogramAggregationBuilder setInitialBuffer(int initialBuffer) {
         if (initialBuffer <= 0) {
             throw new IllegalArgumentException(INITIAL_BUFFER_FIELD.getPreferredName() + " must be greater than [0] for [" + name + "]");
@@ -120,10 +155,20 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         return this;
     }
 
+    /**
+     * Returns the num buckets.
+     *
+     * @return the num buckets
+     */
     public int getNumBuckets() {
         return numBuckets;
     }
 
+    /**
+     * Returns the shard size.
+     *
+     * @return the shard size
+     */
     public int getShardSize() {
         if (shardSize == -1) {
             return numBuckets * 50;
@@ -131,6 +176,11 @@ public class VariableWidthHistogramAggregationBuilder extends ValuesSourceAggreg
         return shardSize;
     }
 
+    /**
+     * Returns the initial buffer.
+     *
+     * @return the initial buffer
+     */
     public int getInitialBuffer() {
         if (initialBuffer == -1) {
             return Math.min(10 * getShardSize(), 50000);

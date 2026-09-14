@@ -54,6 +54,14 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
 
     /**
      * Constructor for ProcessorExecutionDetail
+     *
+     * @param processorName the processor name
+     * @param durationMillis the duration milliseconds
+     * @param inputData the input data
+     * @param outputData the output data
+     * @param status the status
+     * @param errorMessage the error message
+     * @param tag the tag
      */
     public ProcessorExecutionDetail(
         String processorName,
@@ -73,6 +81,12 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
         this.tag = tag;
     }
 
+    /**
+     * Creates a new ProcessorExecutionDetail by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ProcessorExecutionDetail(StreamInput in) throws IOException {
         this.processorName = in.readString();
         this.durationMillis = in.readLong();
@@ -172,6 +186,13 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ProcessorExecutionDetail fromXContent(XContentParser parser) throws IOException {
         String processorName = null;
         long durationMillis = 0;
@@ -229,7 +250,13 @@ public class ProcessorExecutionDetail implements Writeable, ToXContentObject {
      */
     @PublicApi(since = "2.19.0")
     public enum ProcessorStatus {
+        /**
+         * The SUCCESS value.
+         */
         SUCCESS,
+        /**
+         * The fail.
+         */
         FAIL
     }
 }

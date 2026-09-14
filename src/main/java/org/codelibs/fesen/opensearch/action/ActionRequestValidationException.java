@@ -41,4 +41,10 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
-public class ActionRequestValidationException extends ValidationException {}
+public class ActionRequestValidationException extends ValidationException {
+    /**
+     * Creates a new ActionRequestValidationException.
+     */
+    public ActionRequestValidationException() {
+    }
+}

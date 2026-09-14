@@ -44,8 +44,16 @@ import java.io.IOException;
  */
 public abstract class FilterStreamInput extends StreamInput {
 
+    /**
+     * The delegate.
+     */
     protected final StreamInput delegate;
 
+    /**
+     * Creates a new FilterStreamInput by reading it from the given input.
+     *
+     * @param delegate the delegate
+     */
     protected FilterStreamInput(StreamInput delegate) {
         this.delegate = delegate;
     }

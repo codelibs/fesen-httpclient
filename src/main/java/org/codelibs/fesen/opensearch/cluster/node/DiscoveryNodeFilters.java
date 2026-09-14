@@ -61,7 +61,13 @@ public class DiscoveryNodeFilters {
      */
     @PublicApi(since = "1.0.0")
     public enum OpType {
+        /**
+         * The AND value.
+         */
         AND,
+        /**
+         * The or.
+         */
         OR
     }
 
@@ -85,6 +91,11 @@ public class DiscoveryNodeFilters {
     /**
      * Creates or updates filters returning a new {@link DiscoveryNodeFilters} object.
      * If the new object has no filters, {@code null} is returned.
+     *
+     * @param original the original
+     * @param opType the op type
+     * @param filters the filters
+     * @return the new or update from key value
      */
     @Nullable
     public static DiscoveryNodeFilters buildOrUpdateFromKeyValue(

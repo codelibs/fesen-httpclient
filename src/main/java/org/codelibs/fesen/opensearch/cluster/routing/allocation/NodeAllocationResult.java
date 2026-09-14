@@ -70,6 +70,12 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
     private final Decision canAllocateDecision;
     private final int weightRanking;
 
+    /**
+     * Creates a new NodeAllocationResult by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodeAllocationResult(StreamInput in) throws IOException {
         node = new DiscoveryNode(in);
         shardStoreInfo = in.readOptionalWriteable(ShardStoreInfo::new);
@@ -89,6 +95,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
 
     /**
      * Get the node that this decision is for.
+     *
+     * @return the node
      */
     public DiscoveryNode getNode() {
         return node;
@@ -96,6 +104,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
 
     /**
      * Get the shard store information for the node, if it exists.
+     *
+     * @return the shard store info
      */
     @Nullable
     public ShardStoreInfo getShardStoreInfo() {
@@ -104,6 +114,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
 
     /**
      * Is the weight assigned for the node?
+     *
+     * @return the weight ranked flag
      */
     public boolean isWeightRanked() {
         return weightRanking > 0;
@@ -117,6 +129,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
      * shard, followed by node3, followed by node1, then node2's weight will be 1, node3's
      * weight will be 2, and node1's weight will be 1.  A value of 0 means the weight was
      * not calculated or factored into the decision.
+     *
+     * @return the weight ranking
      */
     public int getWeightRanking() {
         return weightRanking;
@@ -124,6 +138,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
 
     /**
      * Gets the {@link AllocationDecision} for allocating to this node.
+     *
+     * @return the node decision
      */
     public AllocationDecision getNodeDecision() {
         return nodeDecision;
@@ -170,6 +186,12 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
         @Nullable
         private final Exception storeException;
 
+        /**
+         * Creates a new ShardStoreInfo by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public ShardStoreInfo(StreamInput in) throws IOException {
             this.inSync = in.readBoolean();
             this.allocationId = in.readOptionalString();
@@ -179,6 +201,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
 
         /**
          * Gets the allocation id for the shard copy, if it exists.
+         *
+         * @return the allocation identifier
          */
         @Nullable
         public String getAllocationId() {
@@ -190,6 +214,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
          * Returns {@code false} if the shard copy does not have a matching sync id with the primary
          * shard, or this explanation pertains to the allocation of a primary shard, in which case
          * matching sync ids are irrelevant.
+         *
+         * @return the matching sync identifier flag
          */
         public boolean hasMatchingSyncId() {
             return matchingBytes == Long.MAX_VALUE;
@@ -198,6 +224,8 @@ public class NodeAllocationResult implements ToXContentObject, Writeable, Compar
         /**
          * Gets the store exception when trying to read the store, if there was an error.  If
          * there was no error, returns {@code null}.
+         *
+         * @return the store exception
          */
         @Nullable
         public Exception getStoreException() {

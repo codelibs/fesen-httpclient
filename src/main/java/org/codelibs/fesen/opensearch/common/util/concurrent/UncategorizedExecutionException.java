@@ -44,6 +44,12 @@ import java.io.IOException;
  */
 public class UncategorizedExecutionException extends OpenSearchException {
 
+    /**
+     * Creates a new UncategorizedExecutionException.
+     *
+     * @param msg the msg
+     * @param cause the cause
+     */
     public UncategorizedExecutionException(String msg, Throwable cause) {
         super(msg, cause);
     }

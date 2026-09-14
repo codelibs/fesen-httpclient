@@ -17,7 +17,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class RemoteStoreStatsAction extends ActionType<RemoteStoreStatsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final RemoteStoreStatsAction INSTANCE = new RemoteStoreStatsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/_remotestore/stats";
 
     private RemoteStoreStatsAction() {

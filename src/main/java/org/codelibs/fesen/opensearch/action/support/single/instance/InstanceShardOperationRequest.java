@@ -53,22 +53,49 @@ import java.util.concurrent.TimeUnit;
  */
 // TODO: This request and its associated transport action can be folded into UpdateRequest which is its only concrete production code
 // implementation
+/**
+ * The InstanceShardOperationRequest class.
+ *
+ * @param <Request> the request type
+ */
 public abstract class InstanceShardOperationRequest<Request extends InstanceShardOperationRequest<Request>> extends ActionRequest
     implements
         IndicesRequest {
 
+    /**
+     * The DEFAULT_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_TIMEOUT = new TimeValue(1, TimeUnit.MINUTES);
 
+    /**
+     * The timeout.
+     */
     protected TimeValue timeout = DEFAULT_TIMEOUT;
 
+    /**
+     * The index.
+     */
     protected String index;
     // null means its not set, allows to explicitly direct a request to a specific shard
+    /**
+     * The shard identifier.
+     */
     protected ShardId shardId = null;
 
     private String concreteIndex;
 
+    /**
+     * Creates a new InstanceShardOperationRequest.
+     */
     protected InstanceShardOperationRequest() {}
 
+    /**
+     * Creates a new InstanceShardOperationRequest.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected InstanceShardOperationRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(in);
         // Do a full read if no shard id is given (indicating that this instance isn't read as part of a BulkShardRequest or that `in` is of
@@ -89,6 +116,11 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
         concreteIndex = in.readOptionalString();
     }
 
+    /**
+     * Creates a new InstanceShardOperationRequest.
+     *
+     * @param index the index
+     */
     public InstanceShardOperationRequest(String index) {
         this.index = index;
     }
@@ -102,6 +134,11 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
         return validationException;
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @return this instance
+     */
     public String index() {
         return index;
     }
@@ -116,12 +153,23 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
         return IndicesOptions.strictSingleIndexNoExpandForbidClosed();
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @param index the index
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final Request index(String index) {
         this.index = index;
         return (Request) this;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
     public TimeValue timeout() {
         return timeout;
     }
@@ -135,6 +183,12 @@ public abstract class InstanceShardOperationRequest<Request extends InstanceShar
         out.writeOptionalString(concreteIndex);
     }
 
+    /**
+     * Writes the thin.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeThin(StreamOutput out) throws IOException {
         super.writeTo(out);
         if (shardId != null && index.equals(shardId.getIndexName())) {

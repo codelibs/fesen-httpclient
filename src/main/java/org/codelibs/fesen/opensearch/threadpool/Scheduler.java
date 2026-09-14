@@ -79,6 +79,14 @@ public interface Scheduler {
         return scheduler;
     }
 
+    /**
+     * Returns the terminate.
+     *
+     * @param scheduledThreadPoolExecutor the scheduled thread pool executor
+     * @param timeout the timeout
+     * @param timeUnit the time unit
+     * @return the terminate
+     */
     static boolean terminate(ScheduledThreadPoolExecutor scheduledThreadPoolExecutor, long timeout, TimeUnit timeUnit) {
         scheduledThreadPoolExecutor.shutdown();
         if (awaitTermination(scheduledThreadPoolExecutor, timeout, timeUnit)) {
@@ -89,6 +97,14 @@ public interface Scheduler {
         return awaitTermination(scheduledThreadPoolExecutor, timeout, timeUnit);
     }
 
+    /**
+     * Awaits the termination.
+     *
+     * @param scheduledThreadPoolExecutor the scheduled thread pool executor
+     * @param timeout the timeout
+     * @param timeUnit the time unit
+     * @return this instance
+     */
     static boolean awaitTermination(
         final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor,
         final long timeout,
@@ -163,6 +179,8 @@ public interface Scheduler {
 
         /**
          * Cancel the execution of this object. This method is idempotent.
+         *
+         * @return this instance
          */
         boolean cancel();
 
@@ -282,16 +300,34 @@ public interface Scheduler {
      */
     class SafeScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 
+        /**
+         * Creates a new SafeScheduledThreadPoolExecutor.
+         *
+         * @param corePoolSize the core pool size
+         * @param threadFactory the thread factory
+         * @param handler the handler
+         */
         @SuppressForbidden(reason = "properly rethrowing errors, see OpenSearchExecutors.rethrowErrors")
         public SafeScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
             super(corePoolSize, threadFactory, handler);
         }
 
+        /**
+         * Creates a new SafeScheduledThreadPoolExecutor.
+         *
+         * @param corePoolSize the core pool size
+         * @param threadFactory the thread factory
+         */
         @SuppressForbidden(reason = "properly rethrowing errors, see OpenSearchExecutors.rethrowErrors")
         public SafeScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory) {
             super(corePoolSize, threadFactory);
         }
 
+        /**
+         * Creates a new SafeScheduledThreadPoolExecutor.
+         *
+         * @param corePoolSize the core pool size
+         */
         @SuppressForbidden(reason = "properly rethrowing errors, see OpenSearchExecutors.rethrowErrors")
         public SafeScheduledThreadPoolExecutor(int corePoolSize) {
             super(corePoolSize);

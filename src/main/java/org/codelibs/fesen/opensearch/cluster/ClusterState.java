@@ -97,6 +97,9 @@ import java.util.stream.StreamSupport;
 @PublicApi(since = "1.0.0")
 public class ClusterState implements ToXContentFragment, Diffable<ClusterState> {
 
+    /**
+     * The EMPTY_STATE constant.
+     */
     public static final ClusterState EMPTY_STATE = builder(ClusterName.CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY)).build();
 
     /**
@@ -133,8 +136,14 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
 
     }
 
+    /**
+     * The CUSTOM_VALUE_SERIALIZER constant.
+     */
     public static final NamedDiffableValueSerializer<Custom> CUSTOM_VALUE_SERIALIZER = new NamedDiffableValueSerializer<>(Custom.class);
 
+    /**
+     * The UNKNOWN_UUID constant.
+     */
     public static final String UNKNOWN_UUID = "_na_";
 
     private final long version;
@@ -160,6 +169,20 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     // built on demand
     private volatile RoutingNodes routingNodes;
 
+    /**
+     * Creates a new ClusterState.
+     *
+     * @param clusterName the cluster name
+     * @param version the version
+     * @param stateUUID the state UUID
+     * @param metadata the metadata
+     * @param routingTable the routing table
+     * @param nodes the nodes
+     * @param blocks the blocks
+     * @param customs the customs
+     * @param minimumClusterManagerNodesOnPublishingClusterManager the minimum cluster manager nodes on publishing cluster manager
+     * @param wasReadFromDiff the was read from diff
+     */
     public ClusterState(
         ClusterName clusterName,
         long version,
@@ -184,10 +207,20 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         this.wasReadFromDiff = wasReadFromDiff;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long version() {
         return this.version;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long getVersion() {
         return version();
     }
@@ -195,53 +228,107 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
     /**
      * This stateUUID is automatically generated for each version of cluster state. It is used to make sure that
      * we are applying diffs to the right previous state.
+     *
+     * @return the state UUID
      */
     public String stateUUID() {
         return this.stateUUID;
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public DiscoveryNodes nodes() {
         return this.nodes;
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public DiscoveryNodes getNodes() {
         return nodes();
     }
 
+    /**
+     * Returns the metadata.
+     *
+     * @return the metadata
+     */
     public Metadata metadata() {
         return this.metadata;
     }
 
+    /**
+     * Returns the metadata.
+     *
+     * @return the metadata
+     */
     public Metadata getMetadata() {
         return metadata();
     }
 
+    /**
+     * Returns the coordination metadata.
+     *
+     * @return the coordination metadata
+     */
     public CoordinationMetadata coordinationMetadata() {
         return metadata.coordinationMetadata();
     }
 
+    /**
+     * Returns the routing table.
+     *
+     * @return the routing table
+     */
     public RoutingTable routingTable() {
         return routingTable;
     }
 
+    /**
+     * Returns the routing table.
+     *
+     * @return the routing table
+     */
     public RoutingTable getRoutingTable() {
         return routingTable();
     }
 
+    /**
+     * Returns the blocks.
+     *
+     * @return the blocks
+     */
     public ClusterBlocks blocks() {
         return this.blocks;
     }
 
+    /**
+     * Returns the customs.
+     *
+     * @return the customs
+     */
     public Map<String, Custom> customs() {
         return this.customs;
     }
 
+    /**
+     * Returns the cluster name.
+     *
+     * @return the cluster name
+     */
     public ClusterName getClusterName() {
         return this.clusterName;
     }
 
     /**
      * Returns a built (on demand) routing nodes view of the routing table.
+     *
+     * @return the routing nodes
      */
     public RoutingNodes getRoutingNodes() {
         if (routingNodes != null) {
@@ -325,6 +412,9 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
      * @opensearch.internal
      */
     public enum Metric {
+        /**
+         * The VERSION value.
+         */
         VERSION("version"),
 
         /**
@@ -332,12 +422,33 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
          */
         @Deprecated
         MASTER_NODE("master_node"),
+        /**
+         * The CLUSTER_MANAGER_NODE value.
+         */
         CLUSTER_MANAGER_NODE("cluster_manager_node"),
+        /**
+         * The BLOCKS value.
+         */
         BLOCKS("blocks"),
+        /**
+         * The NODES value.
+         */
         NODES("nodes"),
+        /**
+         * The METADATA value.
+         */
         METADATA("metadata"),
+        /**
+         * The ROUTING_TABLE value.
+         */
         ROUTING_TABLE("routing_table"),
+        /**
+         * The ROUTING_NODES value.
+         */
         ROUTING_NODES("routing_nodes"),
+        /**
+         * The CUSTOMS value.
+         */
         CUSTOMS("customs");
 
         private static Map<String, Metric> valueToEnum;
@@ -355,6 +466,13 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             this.value = value;
         }
 
+        /**
+         * Parses the string.
+         *
+         * @param param the param
+         * @param ignoreUnknown the ignore unknown
+         * @return this instance
+         */
         public static EnumSet<Metric> parseString(String param, boolean ignoreUnknown) {
             String[] metrics = Strings.splitStringByCommaToArray(param);
             EnumSet<Metric> result = EnumSet.noneOf(Metric.class);
@@ -495,6 +613,12 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         return builder;
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @param clusterName the cluster name
+     * @return the builder
+     */
     public static Builder builder(ClusterName clusterName) {
         return new Builder(clusterName);
     }
@@ -518,51 +642,111 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         private boolean fromDiff;
         private int minimumClusterManagerNodesOnPublishingClusterManager = -1;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param clusterName the cluster name
+         */
         public Builder(ClusterName clusterName) {
             customs = new HashMap<>();
             this.clusterName = clusterName;
         }
 
+        /**
+         * Returns the nodes.
+         *
+         * @param nodes the nodes
+         * @return the nodes
+         */
         public Builder nodes(DiscoveryNodes nodes) {
             this.nodes = nodes;
             return this;
         }
 
+        /**
+         * Returns the routing table.
+         *
+         * @param routingTable the routing table
+         * @return the routing table
+         */
         public Builder routingTable(RoutingTable routingTable) {
             this.routingTable = routingTable;
             return this;
         }
 
+        /**
+         * Returns the metadata.
+         *
+         * @param metadata the metadata
+         * @return the metadata
+         */
         public Builder metadata(Metadata metadata) {
             this.metadata = metadata;
             return this;
         }
 
+        /**
+         * Returns the blocks.
+         *
+         * @param blocks the blocks
+         * @return the blocks
+         */
         public Builder blocks(ClusterBlocks blocks) {
             this.blocks = blocks;
             return this;
         }
 
+        /**
+         * Returns the version.
+         *
+         * @param version the version
+         * @return the version
+         */
         public Builder version(long version) {
             this.version = version;
             return this;
         }
 
+        /**
+         * Returns the state UUID.
+         *
+         * @param uuid the UUID
+         * @return the state UUID
+         */
         public Builder stateUUID(String uuid) {
             this.uuid = uuid;
             return this;
         }
 
+        /**
+         * Returns the minimum cluster manager nodes on publishing cluster manager.
+         *
+         * @param minimumClusterManagerNodesOnPublishingClusterManager the minimum cluster manager nodes on publishing cluster manager
+         * @return the minimum cluster manager nodes on publishing cluster manager
+         */
         public Builder minimumClusterManagerNodesOnPublishingClusterManager(int minimumClusterManagerNodesOnPublishingClusterManager) {
             this.minimumClusterManagerNodesOnPublishingClusterManager = minimumClusterManagerNodesOnPublishingClusterManager;
             return this;
         }
 
+        /**
+         * Puts the custom.
+         *
+         * @param type the type
+         * @param custom the custom
+         * @return this instance
+         */
         public Builder putCustom(String type, Custom custom) {
             customs.put(type, Objects.requireNonNull(custom, type));
             return this;
         }
 
+        /**
+         * Returns the customs.
+         *
+         * @param customs the customs
+         * @return the customs
+         */
         public Builder customs(final Map<String, Custom> customs) {
             StreamSupport.stream(Spliterators.spliterator(customs.entrySet(), 0), false)
                 .forEach(cursor -> Objects.requireNonNull(cursor.getValue(), cursor.getKey()));
@@ -570,11 +754,22 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
             return this;
         }
 
+        /**
+         * Creates an instance from diff.
+         *
+         * @param fromDiff the from diff
+         * @return the new diff
+         */
         public Builder fromDiff(boolean fromDiff) {
             this.fromDiff = fromDiff;
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public ClusterState build() {
             if (UNKNOWN_UUID.equals(uuid)) {
                 uuid = UUIDs.randomBase64UUID();
@@ -599,6 +794,14 @@ public class ClusterState implements ToXContentFragment, Diffable<ClusterState> 
         return new ClusterStateDiff(previousState, this);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @param localNode the local node
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static ClusterState readFrom(StreamInput in, DiscoveryNode localNode) throws IOException {
         ClusterName clusterName = new ClusterName(in);
         Builder builder = new Builder(clusterName);

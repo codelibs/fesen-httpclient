@@ -67,6 +67,9 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
     static final ParseField CONTEXTS_FIELD = new ParseField("contexts", "context");
     static final ParseField SKIP_DUPLICATES_FIELD = new ParseField("skip_duplicates");
 
+    /**
+     * The SUGGESTION_NAME constant.
+     */
     public static final String SUGGESTION_NAME = "completion";
 
     /**
@@ -109,11 +112,28 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
         PARSER.declareBoolean(CompletionSuggestionBuilder::skipDuplicates, SKIP_DUPLICATES_FIELD);
     }
 
+    /**
+     * The fuzzy options.
+     */
     protected FuzzyOptions fuzzyOptions;
+    /**
+     * The regex options.
+     */
     protected RegexOptions regexOptions;
+    /**
+     * The context bytes.
+     */
     protected BytesReference contextBytes = null;
+    /**
+     * The skip duplicates.
+     */
     protected boolean skipDuplicates = false;
 
+    /**
+     * Creates a new CompletionSuggestionBuilder.
+     *
+     * @param field the field
+     */
     public CompletionSuggestionBuilder(String field) {
         super(field);
     }
@@ -150,6 +170,10 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
 
     /**
      * Same as {@link #prefix(String)} with fuzziness of <code>fuzziness</code>
+     *
+     * @param prefix the prefix
+     * @param fuzziness the fuzziness
+     * @return the prefix
      */
     public CompletionSuggestionBuilder prefix(String prefix, Fuzziness fuzziness) {
         super.prefix(prefix);
@@ -160,6 +184,10 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
     /**
      * Same as {@link #prefix(String)} with full fuzzy options
      * see {@link FuzzyOptions.Builder}
+     *
+     * @param prefix the prefix
+     * @param fuzzyOptions the fuzzy options
+     * @return the prefix
      */
     public CompletionSuggestionBuilder prefix(String prefix, FuzzyOptions fuzzyOptions) {
         super.prefix(prefix);
@@ -179,6 +207,10 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
     /**
      * Same as {@link #regex(String)} with full regular expression options
      * see {@link RegexOptions.Builder}
+     *
+     * @param regex the regex
+     * @param regexOptions the regex options
+     * @return the regex
      */
     public CompletionSuggestionBuilder regex(String regex, RegexOptions regexOptions) {
         this.regex(regex);
@@ -191,6 +223,7 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
      * @param queryContexts named query contexts
      *                      see {@code org.codelibs.fesen.opensearch.search.suggest.completion.context.CategoryQueryContext}
      *                      and {@code org.codelibs.fesen.opensearch.search.suggest.completion.context.GeoQueryContext}
+     * @return the contexts
      */
     public CompletionSuggestionBuilder contexts(Map<String, List<? extends ToXContent>> queryContexts) {
         Objects.requireNonNull(queryContexts, "contexts must not be null");
@@ -218,6 +251,8 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
 
     /**
      * Returns whether duplicate suggestions should be filtered out.
+     *
+     * @return this instance
      */
     public boolean skipDuplicates() {
         return skipDuplicates;
@@ -225,6 +260,9 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
 
     /**
      * Should duplicates be filtered or not. Defaults to {@code false}.
+     *
+     * @param skipDuplicates the skip duplicates
+     * @return this instance
      */
     public CompletionSuggestionBuilder skipDuplicates(boolean skipDuplicates) {
         this.skipDuplicates = skipDuplicates;
@@ -263,6 +301,13 @@ public class CompletionSuggestionBuilder extends SuggestionBuilder<CompletionSug
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CompletionSuggestionBuilder fromXContent(XContentParser parser) throws IOException {
         CompletionSuggestionBuilder.InnerBuilder builder = new CompletionSuggestionBuilder.InnerBuilder();
         PARSER.parse(parser, builder, null);

@@ -57,6 +57,12 @@ public interface AdjacencyMatrix extends MultiBucketsAggregation {
     @Override
     List<? extends Bucket> getBuckets();
 
+    /**
+     * Returns the bucket by key.
+     *
+     * @param key the key
+     * @return the bucket by key
+     */
     Bucket getBucketByKey(String key);
 
 }

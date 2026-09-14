@@ -55,9 +55,21 @@ import static org.codelibs.fesen.opensearch.search.sort.SortBuilder.parseNestedF
  */
 @PublicApi(since = "1.0.0")
 public class NestedSortBuilder implements Writeable, ToXContentObject {
+    /**
+     * The NESTED_FIELD constant.
+     */
     public static final ParseField NESTED_FIELD = new ParseField("nested");
+    /**
+     * The PATH_FIELD constant.
+     */
     public static final ParseField PATH_FIELD = new ParseField("path");
+    /**
+     * The FILTER_FIELD constant.
+     */
     public static final ParseField FILTER_FIELD = new ParseField("filter");
+    /**
+     * The MAX_CHILDREN_FIELD constant.
+     */
     public static final ParseField MAX_CHILDREN_FIELD = new ParseField("max_children");
 
     private final String path;
@@ -65,10 +77,21 @@ public class NestedSortBuilder implements Writeable, ToXContentObject {
     private int maxChildren = Integer.MAX_VALUE;
     private NestedSortBuilder nestedSort;
 
+    /**
+     * Creates a new NestedSortBuilder.
+     *
+     * @param path the path
+     */
     public NestedSortBuilder(String path) {
         this.path = path;
     }
 
+    /**
+     * Creates a new NestedSortBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NestedSortBuilder(StreamInput in) throws IOException {
         path = in.readOptionalString();
         filter = in.readOptionalNamedWriteable(QueryBuilder.class);
@@ -76,32 +99,70 @@ public class NestedSortBuilder implements Writeable, ToXContentObject {
         maxChildren = in.readVInt();
     }
 
+    /**
+     * Returns the path.
+     *
+     * @return the path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Returns the filter.
+     *
+     * @return the filter
+     */
     public QueryBuilder getFilter() {
         return filter;
     }
 
+    /**
+     * Returns the max children.
+     *
+     * @return the max children
+     */
     public int getMaxChildren() {
         return maxChildren;
     }
 
+    /**
+     * Sets the filter.
+     *
+     * @param filter the filter
+     * @return this instance
+     */
     public NestedSortBuilder setFilter(final QueryBuilder filter) {
         this.filter = filter;
         return this;
     }
 
+    /**
+     * Sets the max children.
+     *
+     * @param maxChildren the max children
+     * @return this instance
+     */
     public NestedSortBuilder setMaxChildren(final int maxChildren) {
         this.maxChildren = maxChildren;
         return this;
     }
 
+    /**
+     * Returns the nested sort.
+     *
+     * @return the nested sort
+     */
     public NestedSortBuilder getNestedSort() {
         return nestedSort;
     }
 
+    /**
+     * Sets the nested sort.
+     *
+     * @param nestedSortBuilder the nested sort builder
+     * @return this instance
+     */
     public NestedSortBuilder setNestedSort(final NestedSortBuilder nestedSortBuilder) {
         this.nestedSort = nestedSortBuilder;
         return this;
@@ -139,6 +200,13 @@ public class NestedSortBuilder implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static NestedSortBuilder fromXContent(XContentParser parser) throws IOException {
         String path = null;
         QueryBuilder filter = null;
@@ -193,6 +261,13 @@ public class NestedSortBuilder implements Writeable, ToXContentObject {
         return Objects.hash(path, filter, nestedSort, maxChildren);
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param ctx the ctx
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public NestedSortBuilder rewrite(QueryRewriteContext ctx) throws IOException {
         if (filter == null && nestedSort == null) {
             return this;

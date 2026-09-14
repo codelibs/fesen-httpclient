@@ -49,20 +49,42 @@ import static org.codelibs.fesen.opensearch.core.common.util.CollectionUtils.asA
  * @opensearch.internal
  */
 public class Loggers {
+    /**
+     * Creates a new Loggers.
+     */
+    public Loggers() {
+    }
 
+    /**
+     * The SPACE constant.
+     */
     public static final String SPACE = " ";
 
+    /**
+     * The LOG_DEFAULT_LEVEL_SETTING constant.
+     */
     public static final Setting<Level> LOG_DEFAULT_LEVEL_SETTING = new Setting<>(
         "logger.level",
         Level.INFO.name(),
         Level::valueOf,
         Setting.Property.NodeScope
     );
+    /**
+     * The LOG_LEVEL_SETTING constant.
+     */
     public static final Setting.AffixSetting<Level> LOG_LEVEL_SETTING = Setting.prefixKeySetting(
         "logger.",
         (key) -> new Setting<>(key, Level.INFO.name(), Level::valueOf, Setting.Property.Dynamic, Setting.Property.NodeScope)
     );
 
+    /**
+     * Returns the logger.
+     *
+     * @param clazz the class
+     * @param shardId the shard identifier
+     * @param prefixes the prefixes
+     * @return the logger
+     */
     public static Logger getLogger(Class<?> clazz, ShardId shardId, String... prefixes) {
         return getLogger(clazz, shardId.getIndex(), asArrayList(Integer.toString(shardId.id()), prefixes).toArray(new String[0]));
     }
@@ -70,20 +92,46 @@ public class Loggers {
     /**
      * Just like {@link #getLogger(Class, ShardId, String...)} but String loggerName instead of
      * Class and no extra prefixes.
+     *
+     * @param loggerName the logger name
+     * @param shardId the shard identifier
+     * @return the logger
      */
     public static Logger getLogger(String loggerName, ShardId shardId) {
         String prefix = formatPrefix(shardId.getIndexName(), Integer.toString(shardId.id()));
         return new PrefixLogger(LogManager.getLogger(loggerName), prefix);
     }
 
+    /**
+     * Returns the logger.
+     *
+     * @param clazz the class
+     * @param index the index
+     * @param prefixes the prefixes
+     * @return the logger
+     */
     public static Logger getLogger(Class<?> clazz, Index index, String... prefixes) {
         return getLogger(clazz, asArrayList(Loggers.SPACE, index.getName(), prefixes).toArray(new String[0]));
     }
 
+    /**
+     * Returns the logger.
+     *
+     * @param clazz the class
+     * @param prefixes the prefixes
+     * @return the logger
+     */
     public static Logger getLogger(Class<?> clazz, String... prefixes) {
         return new PrefixLogger(LogManager.getLogger(clazz), formatPrefix(prefixes));
     }
 
+    /**
+     * Returns the logger.
+     *
+     * @param parentLogger the parent logger
+     * @param s the s
+     * @return the logger
+     */
     public static Logger getLogger(Logger parentLogger, String s) {
         Logger inner = LogManager.getLogger(parentLogger.getName() + s);
         if (parentLogger instanceof PrefixLogger) {

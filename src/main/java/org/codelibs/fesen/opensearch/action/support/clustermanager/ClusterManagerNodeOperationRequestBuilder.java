@@ -41,6 +41,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Base request builder for cluster-manager node operations
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class ClusterManagerNodeOperationRequestBuilder<
@@ -50,12 +53,22 @@ public abstract class ClusterManagerNodeOperationRequestBuilder<
         Request,
         Response> {
 
+    /**
+     * Creates a new ClusterManagerNodeOperationRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected ClusterManagerNodeOperationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
     /**
      * Sets the cluster-manager node timeout in case the cluster-manager has not yet been discovered.
+     *
+     * @param timeout the timeout
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setClusterManagerNodeTimeout(TimeValue timeout) {
@@ -65,6 +78,9 @@ public abstract class ClusterManagerNodeOperationRequestBuilder<
 
     /**
      * Sets the cluster-manager node timeout in case the cluster-manager has not yet been discovered.
+     *
+     * @param timeout the timeout
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setClusterManagerNodeTimeout(String timeout) {

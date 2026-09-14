@@ -52,6 +52,13 @@ public class FilterPath {
     private final boolean simpleWildcard;
     private final boolean doubleWildcard;
 
+    /**
+     * Creates a new FilterPath.
+     *
+     * @param filter the filter
+     * @param segment the segment
+     * @param next the next
+     */
     protected FilterPath(String filter, String segment, FilterPath next) {
         this.filter = filter;
         this.segment = segment;
@@ -64,6 +71,12 @@ public class FilterPath {
         this("<empty>", "", null);
     }
 
+    /**
+     * Matches the property.
+     *
+     * @param name the name
+     * @return this instance
+     */
     public FilterPath matchProperty(String name) {
         if ((next != null) && (simpleWildcard || doubleWildcard || Glob.globMatch(segment, name))) {
             return next;
@@ -71,6 +84,11 @@ public class FilterPath {
         return null;
     }
 
+    /**
+     * Returns the matches.
+     *
+     * @return the matches
+     */
     public boolean matches() {
         return next == null;
     }
@@ -79,6 +97,12 @@ public class FilterPath {
         return doubleWildcard;
     }
 
+    /**
+     * Returns the compile.
+     *
+     * @param filters the filters
+     * @return the compile
+     */
     public static FilterPath[] compile(Set<String> filters) {
         if (filters == null || filters.isEmpty()) {
             return null;

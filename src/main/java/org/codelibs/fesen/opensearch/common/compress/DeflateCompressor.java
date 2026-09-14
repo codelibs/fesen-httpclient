@@ -58,6 +58,11 @@ import java.util.zip.InflaterOutputStream;
  * @opensearch.experimental - class methods might change
  */
 public class DeflateCompressor implements Compressor {
+    /**
+     * Creates a new DeflateCompressor.
+     */
+    public DeflateCompressor() {
+    }
 
     // An arbitrary header that we use to identify compressed streams
     // It needs to be different from other compressors and to not be specific
@@ -167,6 +172,7 @@ public class DeflateCompressor implements Compressor {
      * @param in           input stream to wrap
      * @param threadLocal  whether this stream will only be used on the current thread or not
      * @return             decompressing stream
+     * @throws IOException if an I/O error occurs
      */
     public static InputStream inputStream(InputStream in, boolean threadLocal) throws IOException {
         final byte[] header = in.readNBytes(HEADER.length);

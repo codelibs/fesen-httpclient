@@ -56,12 +56,30 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
 @PublicApi(since = "1.0.0")
 public class QueryExplanation implements Writeable, ToXContentFragment {
 
+    /**
+     * The INDEX_FIELD constant.
+     */
     public static final String INDEX_FIELD = "index";
+    /**
+     * The SHARD_FIELD constant.
+     */
     public static final String SHARD_FIELD = "shard";
+    /**
+     * The VALID_FIELD constant.
+     */
     public static final String VALID_FIELD = "valid";
+    /**
+     * The ERROR_FIELD constant.
+     */
     public static final String ERROR_FIELD = "error";
+    /**
+     * The EXPLANATION_FIELD constant.
+     */
     public static final String EXPLANATION_FIELD = "explanation";
 
+    /**
+     * The RANDOM_SHARD constant.
+     */
     public static final int RANDOM_SHARD = -1;
 
     static final ConstructingObjectParser<QueryExplanation, Void> PARSER = new ConstructingObjectParser<>("query_explanation", true, a -> {
@@ -89,6 +107,12 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
 
     private String error;
 
+    /**
+     * Creates a new QueryExplanation by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public QueryExplanation(StreamInput in) throws IOException {
         index = in.readOptionalString();
         shard = in.readInt();
@@ -97,6 +121,15 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
         error = in.readOptionalString();
     }
 
+    /**
+     * Creates a new QueryExplanation.
+     *
+     * @param index the index
+     * @param shard the shard
+     * @param valid the valid
+     * @param explanation the explanation
+     * @param error the error
+     */
     public QueryExplanation(String index, int shard, boolean valid, String explanation, String error) {
         this.index = index;
         this.shard = shard;
@@ -105,22 +138,47 @@ public class QueryExplanation implements Writeable, ToXContentFragment {
         this.error = error;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return this.index;
     }
 
+    /**
+     * Returns the shard.
+     *
+     * @return the shard
+     */
     public int getShard() {
         return this.shard;
     }
 
+    /**
+     * Returns the valid flag.
+     *
+     * @return the valid flag
+     */
     public boolean isValid() {
         return this.valid;
     }
 
+    /**
+     * Returns the error.
+     *
+     * @return the error
+     */
     public String getError() {
         return this.error;
     }
 
+    /**
+     * Returns the explanation.
+     *
+     * @return the explanation
+     */
     public String getExplanation() {
         return this.explanation;
     }

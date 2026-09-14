@@ -44,6 +44,13 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class GetIndexRequestBuilder extends ClusterInfoRequestBuilder<GetIndexRequest, GetIndexResponse, GetIndexRequestBuilder> {
 
+    /**
+     * Creates a new GetIndexRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public GetIndexRequestBuilder(OpenSearchClient client, GetIndexAction action, String... indices) {
         super(client, action, new GetIndexRequest().indices(indices));
     }

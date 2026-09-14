@@ -58,6 +58,12 @@ import java.util.regex.Pattern;
  */
 public class HeaderWarning {
     /**
+     * Creates a new HeaderWarning.
+     */
+    public HeaderWarning() {
+    }
+
+    /**
      * Regular expression to test if a string matches the RFC7234 specification for warning headers. This pattern assumes that the warn code
      * is always 299. Further, this pattern assumes that the warn agent represents a version of OpenSearch including the build hash.
      */
@@ -74,6 +80,9 @@ public class HeaderWarning {
         "\\d{2}:\\d{2}:\\d{2} " + // (two-digit hour):(two-digit minute):(two-digit second)
         "GMT" + // GMT
         "\")?"); // closing quote (optional, since an older version can still send a warn-date)
+    /**
+     * The WARNING_XCONTENT_LOCATION_PATTERN constant.
+     */
     public static final Pattern WARNING_XCONTENT_LOCATION_PATTERN = Pattern.compile("^\\[.*?]\\[-?\\d+:-?\\d+] ");
 
     /*
@@ -129,6 +138,11 @@ public class HeaderWarning {
      */
     static final CopyOnWriteArraySet<ThreadContext> THREAD_CONTEXT = new CopyOnWriteArraySet<>();
 
+    /**
+     * Returns the x opaque identifier.
+     *
+     * @return the x opaque identifier
+     */
     public static String getXOpaqueId() {
         return THREAD_CONTEXT.stream()
             .filter(t -> t.getHeader(Task.X_OPAQUE_ID) != null)

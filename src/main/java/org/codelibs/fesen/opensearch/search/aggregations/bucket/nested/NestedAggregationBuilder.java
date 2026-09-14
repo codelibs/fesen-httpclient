@@ -51,11 +51,16 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "nested";
 
     private final String path;
 
     /**
+     * Creates a new NestedAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param path
@@ -70,6 +75,13 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
         this.path = path;
     }
 
+    /**
+     * Creates a new NestedAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected NestedAggregationBuilder(NestedAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.path = clone.path;
@@ -87,6 +99,8 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
 
     /**
      * Get the path to use for this nested aggregation.
+     *
+     * @return the path
      */
     public String path() {
         return path;
@@ -105,6 +119,14 @@ public class NestedAggregationBuilder extends AbstractAggregationBuilder<NestedA
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static NestedAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         String path = null;
 

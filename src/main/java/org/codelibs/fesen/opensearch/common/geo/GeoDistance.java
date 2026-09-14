@@ -46,10 +46,22 @@ import java.util.Locale;
  * @opensearch.internal
  */
 public enum GeoDistance implements Writeable {
+    /**
+     * The PLANE value.
+     */
     PLANE,
+    /**
+     * The ARC value.
+     */
     ARC;
 
-    /** Creates a GeoDistance instance from an input stream */
+    /**
+     * Creates a GeoDistance instance from an input stream
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoDistance readFromStream(StreamInput in) throws IOException {
         int ord = in.readVInt();
         if (ord < 0 || ord >= values().length) {

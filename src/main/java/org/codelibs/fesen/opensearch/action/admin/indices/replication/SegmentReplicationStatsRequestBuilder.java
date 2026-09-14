@@ -23,6 +23,12 @@ public class SegmentReplicationStatsRequestBuilder extends BroadcastOperationReq
     SegmentReplicationStatsResponse,
     SegmentReplicationStatsRequestBuilder> {
 
+    /**
+     * Creates a new SegmentReplicationStatsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public SegmentReplicationStatsRequestBuilder(OpenSearchClient client, SegmentReplicationStatsAction action) {
         super(client, action, new SegmentReplicationStatsRequest());
     }

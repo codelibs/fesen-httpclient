@@ -48,8 +48,16 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class MaxSizeCondition extends Condition<ByteSizeValue> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "max_size";
 
+    /**
+     * Creates a new MaxSizeCondition.
+     *
+     * @param value the value
+     */
     public MaxSizeCondition(ByteSizeValue value) {
         super(NAME);
         this.value = value;

@@ -45,6 +45,7 @@ import java.util.Set;
 /**
  * Registry for looking things up using ParseField semantics.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public class ParseFieldRegistry<T> {
@@ -63,6 +64,8 @@ public class ParseFieldRegistry<T> {
      * Lookup a value from the registry by name while checking that the name matches the ParseField.
      *
      * @param name The name of the thing to look up.
+     * @param xContentLocation the XContent location
+     * @param deprecationHandler the deprecation handler
      * @return The value being looked up. Never null.
      * @throws ParsingException if the named thing isn't in the registry or the name was deprecated and deprecated names aren't supported.
      */
@@ -78,6 +81,7 @@ public class ParseFieldRegistry<T> {
      * Lookup a value from the registry by name while checking that the name matches the ParseField.
      *
      * @param name The name of the thing to look up.
+     * @param deprecationHandler the deprecation handler
      * @return The value being looked up or null if it wasn't found.
      * @throws ParsingException if the named thing isn't in the registry or the name was deprecated and deprecated names aren't supported.
      */

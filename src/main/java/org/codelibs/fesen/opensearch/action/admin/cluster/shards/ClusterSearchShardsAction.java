@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClusterSearchShardsAction extends ActionType<ClusterSearchShardsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClusterSearchShardsAction INSTANCE = new ClusterSearchShardsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/shards/search_shards";
 
     private ClusterSearchShardsAction() {

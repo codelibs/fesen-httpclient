@@ -44,12 +44,22 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
  */
 @PublicApi(since = "1.0.0")
 public class FieldCapabilitiesRequestBuilder extends ActionRequestBuilder<FieldCapabilitiesRequest, FieldCapabilitiesResponse> {
+    /**
+     * Creates a new FieldCapabilitiesRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public FieldCapabilitiesRequestBuilder(OpenSearchClient client, FieldCapabilitiesAction action, String... indices) {
         super(client, action, new FieldCapabilitiesRequest().indices(indices));
     }
 
     /**
      * The list of field names to retrieve.
+     *
+     * @param fields the fields
+     * @return this instance
      */
     public FieldCapabilitiesRequestBuilder setFields(String... fields) {
         request().fields(fields);

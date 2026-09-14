@@ -52,6 +52,9 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterStateRequest> implements IndicesRequest.Replaceable {
 
+    /**
+     * The DEFAULT_WAIT_FOR_NODE_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_WAIT_FOR_NODE_TIMEOUT = TimeValue.timeValueMinutes(1);
 
     private boolean routingTable = true;
@@ -64,6 +67,9 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
     private String[] indices = Strings.EMPTY_ARRAY;
     private IndicesOptions indicesOptions = IndicesOptions.lenientExpandOpen();
 
+    /**
+     * Creates a new ClusterStateRequest.
+     */
     public ClusterStateRequest() {}
 
     @Override
@@ -85,18 +91,38 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
         return null;
     }
 
+    /**
+     * Returns the routing table.
+     *
+     * @return the routing table
+     */
     public boolean routingTable() {
         return routingTable;
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public boolean nodes() {
         return nodes;
     }
 
+    /**
+     * Returns the metadata.
+     *
+     * @return the metadata
+     */
     public boolean metadata() {
         return metadata;
     }
 
+    /**
+     * Returns the blocks.
+     *
+     * @return the blocks
+     */
     public boolean blocks() {
         return blocks;
     }
@@ -122,14 +148,29 @@ public class ClusterStateRequest extends ClusterManagerNodeReadRequest<ClusterSt
         return true;
     }
 
+    /**
+     * Returns the customs.
+     *
+     * @return the customs
+     */
     public boolean customs() {
         return customs;
     }
 
+    /**
+     * Waits the for timeout.
+     *
+     * @return this instance
+     */
     public TimeValue waitForTimeout() {
         return waitForTimeout;
     }
 
+    /**
+     * Waits the for metadata version.
+     *
+     * @return this instance
+     */
     public Long waitForMetadataVersion() {
         return waitForMetadataVersion;
     }

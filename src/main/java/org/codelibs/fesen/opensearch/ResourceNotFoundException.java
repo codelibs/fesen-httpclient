@@ -43,10 +43,23 @@ import java.io.IOException;
  */
 public class ResourceNotFoundException extends OpenSearchException {
 
+    /**
+     * Creates a new ResourceNotFoundException.
+     *
+     * @param msg the msg
+     * @param args the args
+     */
     public ResourceNotFoundException(String msg, Object... args) {
         super(msg, args);
     }
 
+    /**
+     * Creates a new ResourceNotFoundException.
+     *
+     * @param msg the msg
+     * @param cause the cause
+     * @param args the args
+     */
     public ResourceNotFoundException(String msg, Throwable cause, Object... args) {
         super(msg, cause, args);
     }

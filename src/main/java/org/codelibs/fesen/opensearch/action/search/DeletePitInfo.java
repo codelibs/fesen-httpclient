@@ -36,21 +36,43 @@ public class DeletePitInfo extends TransportResponse implements Writeable, ToXCo
 
     private final String pitId;
 
+    /**
+     * Creates a new DeletePitInfo.
+     *
+     * @param successful the successful
+     * @param pitId the pit identifier
+     */
     public DeletePitInfo(boolean successful, String pitId) {
         this.successful = successful;
         this.pitId = pitId;
     }
 
+    /**
+     * Creates a new DeletePitInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DeletePitInfo(StreamInput in) throws IOException {
         successful = in.readBoolean();
         pitId = in.readString();
 
     }
 
+    /**
+     * Returns the successful flag.
+     *
+     * @return the successful flag
+     */
     public boolean isSuccessful() {
         return successful;
     }
 
+    /**
+     * Returns the pit identifier.
+     *
+     * @return the pit identifier
+     */
     public String getPitId() {
         return pitId;
     }

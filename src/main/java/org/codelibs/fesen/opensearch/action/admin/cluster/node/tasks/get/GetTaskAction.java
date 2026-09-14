@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetTaskAction extends ActionType<GetTaskResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetTaskAction INSTANCE = new GetTaskAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/task/get";
 
     private GetTaskAction() {

@@ -50,6 +50,10 @@ public class GetSnapshotsRequestBuilder extends ClusterManagerNodeOperationReque
 
     /**
      * Constructs the new get snapshot request with specified repository
+     *
+     * @param client the client
+     * @param action the action
+     * @param repository the repository
      */
     public GetSnapshotsRequestBuilder(OpenSearchClient client, GetSnapshotsAction action, String repository) {
         super(client, action, new GetSnapshotsRequest(repository));

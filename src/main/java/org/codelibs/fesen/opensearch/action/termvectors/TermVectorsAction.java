@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class TermVectorsAction extends ActionType<TermVectorsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final TermVectorsAction INSTANCE = new TermVectorsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/tv";
 
     private TermVectorsAction() {

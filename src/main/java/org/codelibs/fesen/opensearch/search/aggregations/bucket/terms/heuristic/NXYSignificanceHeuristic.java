@@ -51,15 +51,27 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  */
 public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
 
+    /**
+     * The BACKGROUND_IS_SUPERSET constant.
+     */
     protected static final ParseField BACKGROUND_IS_SUPERSET = new ParseField("background_is_superset");
 
+    /**
+     * The INCLUDE_NEGATIVES_FIELD constant.
+     */
     protected static final ParseField INCLUDE_NEGATIVES_FIELD = new ParseField("include_negatives");
 
+    /**
+     * The SCORE_ERROR_MESSAGE constant.
+     */
     protected static final String SCORE_ERROR_MESSAGE = ", does your background filter not include all documents in the bucket? "
         + "If so and it is intentional, set \""
         + BACKGROUND_IS_SUPERSET.getPreferredName()
         + "\": false";
 
+    /**
+     * The background is superset.
+     */
     protected final boolean backgroundIsSuperset;
 
     /**
@@ -69,6 +81,12 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
      */
     protected final boolean includeNegatives;
 
+    /**
+     * Creates a new NXYSignificanceHeuristic.
+     *
+     * @param includeNegatives the include negatives
+     * @param backgroundIsSuperset the background is superset
+     */
     protected NXYSignificanceHeuristic(boolean includeNegatives, boolean backgroundIsSuperset) {
         this.includeNegatives = includeNegatives;
         this.backgroundIsSuperset = backgroundIsSuperset;
@@ -104,9 +122,25 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
      * @opensearch.internal
      */
     protected static class Frequencies {
+        /**
+         * Creates a new Frequencies.
+         */
+        protected Frequencies() {
+        }
+
         double N00, N01, N10, N11, N0_, N1_, N_0, N_1, N;
     }
 
+    /**
+     * Computes the nxys.
+     *
+     * @param subsetFreq the subset freq
+     * @param subsetSize the subset size
+     * @param supersetFreq the superset freq
+     * @param supersetSize the superset size
+     * @param scoreFunctionName the score function name
+     * @return the nxys
+     */
     protected Frequencies computeNxys(long subsetFreq, long subsetSize, long supersetFreq, long supersetSize, String scoreFunctionName) {
         checkFrequencies(subsetFreq, subsetSize, supersetFreq, supersetSize, scoreFunctionName);
         Frequencies frequencies = new Frequencies();
@@ -152,6 +186,15 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
         return frequencies;
     }
 
+    /**
+     * Checks the frequencies.
+     *
+     * @param subsetFreq the subset freq
+     * @param subsetSize the subset size
+     * @param supersetFreq the superset freq
+     * @param supersetSize the superset size
+     * @param scoreFunctionName the score function name
+     */
     protected void checkFrequencies(long subsetFreq, long subsetSize, long supersetFreq, long supersetSize, String scoreFunctionName) {
         checkFrequencyValidity(subsetFreq, subsetSize, supersetFreq, supersetSize, scoreFunctionName);
         if (backgroundIsSuperset) {
@@ -167,6 +210,12 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
         }
     }
 
+    /**
+     * Builds this instance.
+     *
+     * @param builder the content builder
+     * @throws IOException if an I/O error occurs
+     */
     protected void build(XContentBuilder builder) throws IOException {
         builder.field(INCLUDE_NEGATIVES_FIELD.getPreferredName(), includeNegatives)
             .field(BACKGROUND_IS_SUPERSET.getPreferredName(), backgroundIsSuperset);
@@ -174,6 +223,8 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
 
     /**
      * Set up and {@linkplain ConstructingObjectParser} to accept the standard arguments for an {@linkplain NXYSignificanceHeuristic}.
+     *
+     * @param parser the parser
      */
     protected static void declareParseFields(ConstructingObjectParser<? extends NXYSignificanceHeuristic, ?> parser) {
         parser.declareBoolean(optionalConstructorArg(), INCLUDE_NEGATIVES_FIELD);
@@ -182,6 +233,10 @@ public abstract class NXYSignificanceHeuristic extends SignificanceHeuristic {
 
     /**
      * Adapt a standard two argument ctor into one that consumes a {@linkplain ConstructingObjectParser}'s fields.
+     *
+     * @param <T> the element type
+     * @param ctor the ctor
+     * @return the new from parsed args
      */
     protected static <T> Function<Object[], T> buildFromParsedArgs(BiFunction<Boolean, Boolean, T> ctor) {
         return args -> {

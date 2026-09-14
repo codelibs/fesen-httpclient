@@ -56,8 +56,14 @@ public class MultiValuesSourceFieldConfig extends BaseMultiValuesSourceFieldConf
     private final QueryBuilder filter;
 
     private static final String NAME = "field_config";
+    /**
+     * The FILTER constant.
+     */
     public static final ParseField FILTER = new ParseField("filter");
 
+    /**
+     * The PARSER constant.
+     */
     public static final TriFunction<Boolean, Boolean, Boolean, ObjectParser<Builder, Void>> PARSER = (
         scriptable,
         timezoneAware,
@@ -81,11 +87,26 @@ public class MultiValuesSourceFieldConfig extends BaseMultiValuesSourceFieldConf
         return parser;
     };
 
+    /**
+     * Creates a new MultiValuesSourceFieldConfig.
+     *
+     * @param fieldName the field name
+     * @param missing the missing
+     * @param script the script
+     * @param timeZone the time zone
+     * @param filter the filter
+     */
     protected MultiValuesSourceFieldConfig(String fieldName, Object missing, Script script, ZoneId timeZone, QueryBuilder filter) {
         super(fieldName, missing, script, timeZone);
         this.filter = filter;
     }
 
+    /**
+     * Creates a new MultiValuesSourceFieldConfig by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MultiValuesSourceFieldConfig(StreamInput in) throws IOException {
         super(in);
         this.filter = in.readOptionalNamedWriteable(QueryBuilder.class);
@@ -125,8 +146,20 @@ public class MultiValuesSourceFieldConfig extends BaseMultiValuesSourceFieldConf
      * @opensearch.internal
      */
     public static class Builder extends BaseMultiValuesSourceFieldConfig.Builder<BaseMultiValuesSourceFieldConfig, Builder> {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
+
         private QueryBuilder filter = null;
 
+        /**
+         * Sets the filter.
+         *
+         * @param filter the filter
+         * @return this instance
+         */
         public Builder setFilter(QueryBuilder filter) {
             this.filter = filter;
             return this;

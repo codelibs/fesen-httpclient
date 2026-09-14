@@ -20,15 +20,31 @@ public class ResourceUsageMetric {
     private final ResourceStats stats;
     private final long value;
 
+    /**
+     * Creates a new ResourceUsageMetric.
+     *
+     * @param stats the stats
+     * @param value the value
+     */
     public ResourceUsageMetric(ResourceStats stats, long value) {
         this.stats = stats;
         this.value = value;
     }
 
+    /**
+     * Returns the stats.
+     *
+     * @return the stats
+     */
     public ResourceStats getStats() {
         return stats;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public long getValue() {
         return value;
     }

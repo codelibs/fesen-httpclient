@@ -49,6 +49,11 @@ import java.util.regex.Pattern;
  * @opensearch.internal
  */
 public class Regex {
+    /**
+     * Creates a new Regex.
+     */
+    public Regex() {
+    }
 
     /**
      * This Regex / {@link Pattern} flag is supported from Java 7 on.
@@ -57,6 +62,9 @@ public class Regex {
 
     /**
      * Is the str a simple match pattern.
+     *
+     * @param str the str
+     * @return the simple match pattern flag
      */
     public static boolean isSimpleMatchPattern(String str) {
         return str.indexOf('*') != -1;

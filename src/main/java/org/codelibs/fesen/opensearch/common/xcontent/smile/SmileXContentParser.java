@@ -39,8 +39,18 @@ import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
 
 import tools.jackson.core.JsonParser;
 
+/**
+ * The SmileXContentParser class.
+ */
 public class SmileXContentParser extends JsonXContentParser {
 
+    /**
+     * Creates a new SmileXContentParser.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param parser the parser
+     */
     public SmileXContentParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, JsonParser parser) {
         super(xContentRegistry, deprecationHandler, parser);
     }

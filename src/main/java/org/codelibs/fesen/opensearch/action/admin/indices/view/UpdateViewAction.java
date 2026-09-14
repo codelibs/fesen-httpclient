@@ -21,9 +21,18 @@ import java.util.List;
 @ExperimentalApi
 public class UpdateViewAction extends ActionType<GetViewAction.Response> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final UpdateViewAction INSTANCE = new UpdateViewAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/views/update";
 
+    /**
+     * Creates a new UpdateViewAction.
+     */
     public UpdateViewAction() {
         super(NAME, GetViewAction.Response::new);
     }

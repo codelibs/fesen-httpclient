@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class PutMappingAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PutMappingAction INSTANCE = new PutMappingAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/mapping/put";
 
     private PutMappingAction() {

@@ -87,6 +87,9 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
      */
     private boolean applyLevelAtTransportLayer = false;
 
+    /**
+     * Creates a new ClusterHealthRequest.
+     */
     public ClusterHealthRequest() {}
 
     @Override
@@ -148,39 +151,85 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
         return true;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
     public TimeValue timeout() {
         return timeout;
     }
 
+    /**
+     * Waits the for status.
+     *
+     * @return this instance
+     */
     public ClusterHealthStatus waitForStatus() {
         return waitForStatus;
     }
 
+    /**
+     * Waits the for status.
+     *
+     * @param waitForStatus the wait for status
+     * @return this instance
+     */
     public ClusterHealthRequest waitForStatus(ClusterHealthStatus waitForStatus) {
         this.waitForStatus = waitForStatus;
         return this;
     }
 
+    /**
+     * Waits the for yellow status.
+     *
+     * @return this instance
+     */
     public ClusterHealthRequest waitForYellowStatus() {
         return waitForStatus(ClusterHealthStatus.YELLOW);
     }
 
+    /**
+     * Waits the for no relocating shards.
+     *
+     * @return this instance
+     */
     public boolean waitForNoRelocatingShards() {
         return waitForNoRelocatingShards;
     }
 
+    /**
+     * Waits the for no initializing shards.
+     *
+     * @return this instance
+     */
     public boolean waitForNoInitializingShards() {
         return waitForNoInitializingShards;
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return waitForActiveShards;
     }
 
+    /**
+     * Waits the for nodes.
+     *
+     * @return this instance
+     */
     public String waitForNodes() {
         return waitForNodes;
     }
 
+    /**
+     * Waits the for events.
+     *
+     * @return this instance
+     */
     public Priority waitForEvents() {
         return this.waitForEvents;
     }
@@ -188,11 +237,18 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
     /**
      * Get the level of detail for the health information to be returned.
      * Only used by the high-level REST Client.
+     *
+     * @return the level
      */
     public Level level() {
         return level;
     }
 
+    /**
+     * Returns the apply level at transport layer flag.
+     *
+     * @return the apply level at transport layer flag
+     */
     public boolean isApplyLevelAtTransportLayer() {
         return applyLevelAtTransportLayer;
     }
@@ -217,9 +273,21 @@ public class ClusterHealthRequest extends ClusterManagerNodeReadRequest<ClusterH
      */
     @PublicApi(since = "1.0.0")
     public enum Level {
+        /**
+         * The CLUSTER value.
+         */
         CLUSTER,
+        /**
+         * The INDICES value.
+         */
         INDICES,
+        /**
+         * The SHARDS value.
+         */
         SHARDS,
+        /**
+         * The awareness attributes.
+         */
         AWARENESS_ATTRIBUTES
     }
 }

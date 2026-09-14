@@ -41,9 +41,18 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetPipelineAction extends ActionType<GetPipelineResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetPipelineAction INSTANCE = new GetPipelineAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/ingest/pipeline/get";
 
+    /**
+     * Creates a new GetPipelineAction.
+     */
     public GetPipelineAction() {
         super(NAME, GetPipelineResponse::new);
     }

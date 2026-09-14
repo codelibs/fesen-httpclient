@@ -60,11 +60,16 @@ public class IndicesShardStoresRequest extends ClusterManagerNodeReadRequest<Ind
 
     /**
      * Create a request for shard stores info for <code>indices</code>
+     *
+     * @param indices the indices
      */
     public IndicesShardStoresRequest(String... indices) {
         this.indices = indices;
     }
 
+    /**
+     * Creates a new IndicesShardStoresRequest.
+     */
     public IndicesShardStoresRequest() {}
 
     @Override
@@ -94,6 +99,8 @@ public class IndicesShardStoresRequest extends ClusterManagerNodeReadRequest<Ind
 
     /**
      * Returns the shard criteria to get store information on
+     *
+     * @return the shard statuses
      */
     public EnumSet<ClusterHealthStatus> shardStatuses() {
         return statuses;

@@ -56,6 +56,9 @@ import java.util.Arrays;
 @PublicApi(since = "1.0.0")
 public class GetFieldMappingsRequest extends ActionRequest implements IndicesRequest.Replaceable {
 
+    /**
+     * The local.
+     */
     protected boolean local = false;
 
     private String[] fields = Strings.EMPTY_ARRAY;
@@ -66,8 +69,16 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
 
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
 
+    /**
+     * Creates a new GetFieldMappingsRequest.
+     */
     public GetFieldMappingsRequest() {}
 
+    /**
+     * Returns the local.
+     *
+     * @return the local
+     */
     public boolean local() {
         return local;
     }
@@ -93,16 +104,31 @@ public class GetFieldMappingsRequest extends ActionRequest implements IndicesReq
         return true;
     }
 
-    /** @param fields a list of fields to retrieve the mapping for */
+    /**
+     * Returns the fields.
+     *
+     * @param fields a list of fields to retrieve the mapping for
+     * @return the fields
+     */
     public GetFieldMappingsRequest fields(String... fields) {
         this.fields = fields;
         return this;
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public String[] fields() {
         return fields;
     }
 
+    /**
+     * Includes the defaults.
+     *
+     * @return this instance
+     */
     public boolean includeDefaults() {
         return includeDefaults;
     }

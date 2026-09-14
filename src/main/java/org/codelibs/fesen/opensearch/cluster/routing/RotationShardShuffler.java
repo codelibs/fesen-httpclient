@@ -46,6 +46,11 @@ public class RotationShardShuffler extends ShardShuffler {
 
     private final AtomicInteger seed;
 
+    /**
+     * Creates a new RotationShardShuffler.
+     *
+     * @param seed the seed
+     */
     public RotationShardShuffler(int seed) {
         this.seed = new AtomicInteger(seed);
     }

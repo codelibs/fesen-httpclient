@@ -34,6 +34,13 @@ public class TaskAwareRunnable extends AbstractRunnable implements WrappedRunnab
     private final ThreadContext threadContext;
     private final AtomicReference<RunnableTaskExecutionListener> runnableTaskListener;
 
+    /**
+     * Creates a new TaskAwareRunnable.
+     *
+     * @param threadContext the thread context
+     * @param original the original
+     * @param runnableTaskListener the runnable task listener
+     */
     public TaskAwareRunnable(
         final ThreadContext threadContext,
         final Runnable original,

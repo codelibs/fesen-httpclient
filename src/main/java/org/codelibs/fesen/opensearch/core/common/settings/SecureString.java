@@ -52,6 +52,8 @@ public final class SecureString implements CharSequence, Closeable {
      * Constructs a new SecureString which controls the passed in char array.
      * <p>
      * Note: When this instance is closed, the array will be zeroed out.
+     *
+     * @param chars the chars
      */
     public SecureString(char[] chars) {
         this.chars = Objects.requireNonNull(chars);
@@ -140,6 +142,8 @@ public final class SecureString implements CharSequence, Closeable {
      * Returns the underlying char[]. This is a dangerous operation as the array may be modified while it is being used by other threads
      * or a consumer may modify the values in the array. For safety, it is preferable to use {@link #clone()} and pass its chars to the
      * consumer when the chars are needed multiple times.
+     *
+     * @return the chars
      */
     public synchronized char[] getChars() {
         ensureNotClosed();

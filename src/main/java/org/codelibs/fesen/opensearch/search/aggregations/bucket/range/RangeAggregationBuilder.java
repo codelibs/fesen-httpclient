@@ -48,7 +48,13 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregationBuilder, Range> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "range";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<RangeAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, RangeAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
@@ -61,10 +67,22 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
         }, (p, c) -> RangeAggregator.Range.PARSER.parse(p, null), RangeAggregator.RANGES_FIELD);
     }
 
+    /**
+     * Creates a new RangeAggregationBuilder.
+     *
+     * @param name the name
+     */
     public RangeAggregationBuilder(String name) {
         super(name, InternalRange.FACTORY);
     }
 
+    /**
+     * Creates a new RangeAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected RangeAggregationBuilder(
         RangeAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -87,6 +105,7 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
      *            the lower bound on the distances, inclusive
      * @param to
      *            the upper bound on the distances, exclusive
+     * @return this instance
      */
     public RangeAggregationBuilder addRange(String key, double from, double to) {
         addRange(new Range(key, from, to));
@@ -97,6 +116,10 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
      * Same as {@link #addRange(String, double, double)} but the key will be
      * automatically generated based on <code>from</code> and
      * <code>to</code>.
+     *
+     * @param from the offset
+     * @param to the target
+     * @return this instance
      */
     public RangeAggregationBuilder addRange(double from, double to) {
         return addRange(null, from, to);
@@ -109,6 +132,7 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
      *            the key to use for this range in the response
      * @param to
      *            the upper bound on the distances, exclusive
+     * @return this instance
      */
     public RangeAggregationBuilder addUnboundedTo(String key, double to) {
         addRange(new Range(key, null, to));
@@ -118,6 +142,9 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
     /**
      * Same as {@link #addUnboundedTo(String, double)} but the key will be
      * computed automatically.
+     *
+     * @param to the target
+     * @return this instance
      */
     public RangeAggregationBuilder addUnboundedTo(double to) {
         return addUnboundedTo(null, to);
@@ -130,6 +157,7 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
      *            the key to use for this range in the response
      * @param from
      *            the lower bound on the distances, inclusive
+     * @return this instance
      */
     public RangeAggregationBuilder addUnboundedFrom(String key, double from) {
         addRange(new Range(key, from, null));
@@ -139,6 +167,9 @@ public class RangeAggregationBuilder extends AbstractRangeBuilder<RangeAggregati
     /**
      * Same as {@link #addUnboundedFrom(String, double)} but the key will be
      * computed automatically.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public RangeAggregationBuilder addUnboundedFrom(double from) {
         return addUnboundedFrom(null, from);

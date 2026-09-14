@@ -28,8 +28,17 @@ public interface IngestionMessageMapper {
      * @opensearch.api
      */
     enum MapperType {
+        /**
+         * The DEFAULT value.
+         */
         DEFAULT("default"),
+        /**
+         * The RAW_PAYLOAD value.
+         */
         RAW_PAYLOAD("raw_payload"),
+        /**
+         * The FIELD_MAPPING value.
+         */
         FIELD_MAPPING("field_mapping");
 
         private final String name;
@@ -38,10 +47,21 @@ public interface IngestionMessageMapper {
             this.name = name;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param value the value
+         * @return the new string
+         */
         public static MapperType fromString(String value) {
             for (MapperType type : MapperType.values()) {
                 if (type.name.equalsIgnoreCase(value)) {

@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class UpgradeStatusAction extends ActionType<UpgradeStatusResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final UpgradeStatusAction INSTANCE = new UpgradeStatusAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/upgrade";
 
     private UpgradeStatusAction() {

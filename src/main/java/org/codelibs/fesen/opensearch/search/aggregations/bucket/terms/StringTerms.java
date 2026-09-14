@@ -50,6 +50,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bucket> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "sterms";
 
     /**
@@ -60,6 +63,16 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
     public static class Bucket extends InternalTerms.Bucket<Bucket> {
         BytesRef termBytes;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param term the term
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param showDocCountError the show doc count error
+         * @param docCountError the doc count error
+         * @param format the format
+         */
         public Bucket(
             BytesRef term,
             long docCount,
@@ -74,6 +87,11 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @param format the format
+         * @param showDocCountError the show doc count error
+         * @throws IOException if an I/O error occurs
          */
         public Bucket(StreamInput in, DocValueFormat format, boolean showDocCountError) throws IOException {
             super(in, format, showDocCountError);
@@ -130,6 +148,21 @@ public class StringTerms extends InternalMappedTerms<StringTerms, StringTerms.Bu
         }
     }
 
+    /**
+     * Creates a new StringTerms.
+     *
+     * @param name the name
+     * @param reduceOrder the reduce order
+     * @param order the order
+     * @param metadata the metadata
+     * @param format the format
+     * @param shardSize the shard size
+     * @param showTermDocCountError the show term doc count error
+     * @param otherDocCount the other doc count
+     * @param buckets the buckets
+     * @param docCountError the doc count error
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     public StringTerms(
         String name,
         BucketOrder reduceOrder,

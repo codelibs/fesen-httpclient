@@ -45,9 +45,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * Future adapter action
  *
+ * @param <T> the element type
+ * @param <L> the l type
  * @opensearch.internal
  */
 public abstract class AdapterActionFuture<T, L> extends BaseFuture<T> implements ActionFuture<T>, ActionListener<L> {
+    /**
+     * Creates a new AdapterActionFuture.
+     */
+    public AdapterActionFuture() {
+    }
 
     @Override
     public T actionGet() {
@@ -92,6 +99,12 @@ public abstract class AdapterActionFuture<T, L> extends BaseFuture<T> implements
         setException(e);
     }
 
+    /**
+     * Converts this instance.
+     *
+     * @param listenerResponse the listener response
+     * @return this instance
+     */
     protected abstract T convert(L listenerResponse);
 
     private static RuntimeException unwrapEsException(OpenSearchException esEx) {

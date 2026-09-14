@@ -58,6 +58,19 @@ import java.io.IOException;
  * <p>Values are a snapshot at construction time and are not guaranteed to be
  * internally consistent across concurrent cache activity.
  *
+ * @param hits the hits
+ * @param misses the misses
+ * @param hitBytes the hit bytes
+ * @param missBytes the miss bytes
+ * @param evictions the evictions
+ * @param evictionBytes the eviction bytes
+ * @param removed the removed
+ * @param removedBytes the removed bytes
+ * @param memoryBytesUsed the memory bytes used
+ * @param diskBytesUsed the disk bytes used
+ * @param totalBytes the total bytes
+ * @param activeInBytes the active in bytes
+ * @param tieredStats the tiered stats
  * @opensearch.experimental
  */
 @ExperimentalApi
@@ -67,6 +80,22 @@ public record BlockCacheStats(long hits, long misses, long hitBytes, long missBy
         Writeable,
         ToXContentFragment {
 
+    /**
+     * Creates a new BlockCacheStats.
+     *
+     * @param hits the hits
+     * @param misses the misses
+     * @param hitBytes the hit bytes
+     * @param missBytes the miss bytes
+     * @param evictions the evictions
+     * @param evictionBytes the eviction bytes
+     * @param removed the removed
+     * @param removedBytes the removed bytes
+     * @param memoryBytesUsed the memory bytes used
+     * @param diskBytesUsed the disk bytes used
+     * @param totalBytes the total bytes
+     * @param activeInBytes the active in bytes
+     */
     public BlockCacheStats(
         long hits,
         long misses,
@@ -98,6 +127,12 @@ public record BlockCacheStats(long hits, long misses, long hitBytes, long missBy
         );
     }
 
+    /**
+     * Creates a new BlockCacheStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BlockCacheStats(StreamInput in) throws IOException {
         this(
             in.readLong(),

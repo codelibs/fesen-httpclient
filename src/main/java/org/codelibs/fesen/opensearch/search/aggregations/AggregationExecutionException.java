@@ -43,6 +43,11 @@ import java.io.IOException;
  */
 public class AggregationExecutionException extends OpenSearchException {
 
+    /**
+     * Creates a new AggregationExecutionException.
+     *
+     * @param msg the msg
+     */
     public AggregationExecutionException(String msg) {
         super(msg);
     }

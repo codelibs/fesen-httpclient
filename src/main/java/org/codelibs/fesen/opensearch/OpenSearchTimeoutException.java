@@ -44,6 +44,11 @@ import java.io.IOException;
  */
 public class OpenSearchTimeoutException extends OpenSearchException {
 
+    /**
+     * Creates a new OpenSearchTimeoutException.
+     *
+     * @param cause the cause
+     */
     public OpenSearchTimeoutException(Throwable cause) {
         super(cause);
     }

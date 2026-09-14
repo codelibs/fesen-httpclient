@@ -59,16 +59,22 @@ import static org.codelibs.fesen.opensearch.cluster.metadata.IndexMetadata.INDEX
 public interface IndexAbstraction {
 
     /**
+     * Returns the type.
+     *
      * @return the type of the index abstraction
      */
     Type getType();
 
     /**
+     * Returns the name.
+     *
      * @return the name of the index abstraction
      */
     String getName();
 
     /**
+     * Returns the indices.
+     *
      * @return All {@link IndexMetadata} of all concrete indices this index abstraction is referring to.
      */
     List<IndexMetadata> getIndices();
@@ -86,6 +92,8 @@ public interface IndexAbstraction {
     IndexMetadata getWriteIndex();
 
     /**
+     * Returns the parent data stream.
+     *
      * @return the data stream to which this index belongs or <code>null</code> if this is not a concrete index or
      * if it is a concrete index that does not belong to a data stream.
      */
@@ -93,11 +101,15 @@ public interface IndexAbstraction {
     DataStream getParentDataStream();
 
     /**
+     * Returns the hidden flag.
+     *
      * @return whether this index abstraction is hidden or not
      */
     boolean isHidden();
 
     /**
+     * Returns the system flag.
+     *
      * @return whether this index abstraction should be treated as a system index or not
      */
     boolean isSystem();
@@ -147,11 +159,22 @@ public interface IndexAbstraction {
         private final IndexMetadata concreteIndex;
         private final DataStream dataStream;
 
+        /**
+         * Creates a new Index.
+         *
+         * @param indexMetadata the index metadata
+         * @param dataStream the data stream
+         */
         public Index(IndexMetadata indexMetadata, DataStream dataStream) {
             this.concreteIndex = indexMetadata;
             this.dataStream = dataStream;
         }
 
+        /**
+         * Creates a new Index.
+         *
+         * @param indexMetadata the index metadata
+         */
         public Index(IndexMetadata indexMetadata) {
             this(indexMetadata, null);
         }
@@ -204,6 +227,12 @@ public interface IndexAbstraction {
         private final SetOnce<IndexMetadata> writeIndex = new SetOnce<>();
         private final boolean isHidden;
 
+        /**
+         * Creates a new Alias.
+         *
+         * @param aliasMetadata the alias metadata
+         * @param indexMetadata the index metadata
+         */
         public Alias(AliasMetadata aliasMetadata, IndexMetadata indexMetadata) {
             this.aliasName = aliasMetadata.getAlias();
             this.referenceIndexMetadatas = new ArrayList<>();
@@ -250,6 +279,9 @@ public interface IndexAbstraction {
             this.referenceIndexMetadatas.add(indexMetadata);
         }
 
+        /**
+         * Computes the and validate alias properties.
+         */
         public void computeAndValidateAliasProperties() {
             // Validate write indices
             List<IndexMetadata> writeIndices = referenceIndexMetadatas.stream()
@@ -317,6 +349,12 @@ public interface IndexAbstraction {
         private final List<IndexMetadata> dataStreamIndices;
         private final IndexMetadata writeIndex;
 
+        /**
+         * Creates a new DataStream.
+         *
+         * @param dataStream the data stream
+         * @param dataStreamIndices the data stream indices
+         */
         public DataStream(org.codelibs.fesen.opensearch.cluster.metadata.DataStream dataStream, List<IndexMetadata> dataStreamIndices) {
             this.dataStream = dataStream;
             this.dataStreamIndices = List.copyOf(dataStreamIndices);

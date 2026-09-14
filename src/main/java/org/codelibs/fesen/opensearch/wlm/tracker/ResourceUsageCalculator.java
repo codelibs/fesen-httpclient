@@ -19,9 +19,16 @@ import java.util.List;
 @PublicApi(since = "2.18.0")
 public abstract class ResourceUsageCalculator {
     /**
+     * Creates a new ResourceUsageCalculator.
+     */
+    public ResourceUsageCalculator() {
+    }
+
+    /**
      * calculates the current resource usage for the workload group
      *
      * @param tasks        list of tasks in the workload group
+     * @return the resource usage
      */
     public abstract double calculateResourceUsage(List<WorkloadGroupTask> tasks);
 

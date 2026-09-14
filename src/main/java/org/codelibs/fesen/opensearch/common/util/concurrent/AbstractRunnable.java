@@ -38,9 +38,16 @@ package org.codelibs.fesen.opensearch.common.util.concurrent;
  * @opensearch.internal
  */
 public abstract class AbstractRunnable implements Runnable {
+    /**
+     * Creates a new AbstractRunnable.
+     */
+    public AbstractRunnable() {
+    }
 
     /**
      * Should the runnable force its execution in case it gets rejected?
+     *
+     * @return the force execution flag
      */
     public boolean isForceExecution() {
         return false;
@@ -67,12 +74,16 @@ public abstract class AbstractRunnable implements Runnable {
 
     /**
      * This method is invoked for all exception thrown by {@link #doRun()}
+     *
+     * @param e the exception
      */
     public abstract void onFailure(Exception e);
 
     /**
      * This should be executed if the thread-pool executing this action rejected the execution.
      * The default implementation forwards to {@link #onFailure(Exception)}
+     *
+     * @param e the exception
      */
     public void onRejection(Exception e) {
         onFailure(e);

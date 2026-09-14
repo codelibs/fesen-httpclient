@@ -44,6 +44,12 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class CancelTasksRequestBuilder extends TasksRequestBuilder<CancelTasksRequest, CancelTasksResponse, CancelTasksRequestBuilder> {
 
+    /**
+     * Creates a new CancelTasksRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public CancelTasksRequestBuilder(OpenSearchClient client, CancelTasksAction action) {
         super(client, action, new CancelTasksRequest());
     }

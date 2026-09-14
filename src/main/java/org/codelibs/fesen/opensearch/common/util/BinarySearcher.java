@@ -47,14 +47,25 @@ package org.codelibs.fesen.opensearch.common.util;
  * @opensearch.internal
  */
 public abstract class BinarySearcher {
+    /**
+     * Creates a new BinarySearcher.
+     */
+    public BinarySearcher() {
+    }
 
     /**
+     * Compares this instance.
+     *
+     * @param index the index
      * @return a negative integer, zero, or a positive integer if the array's value at <code>index</code> is less than,
      * equal to, or greater than the value being searched for.
      */
     protected abstract int compare(int index);
 
     /**
+     * Returns the distance.
+     *
+     * @param index the index
      * @return the magnitude of the distance between the element at <code>index</code> and the value being searched for.
      * It will usually be <code>Math.abs(array[index] - searchValue)</code>.
      */
@@ -78,10 +89,12 @@ public abstract class BinarySearcher {
      * Unlike most binary search implementations, the value being searched for is not an argument to search method.
      * Rather, this value should be stored by the subclass along with the underlying array.
      *
+     * @param from the offset
+     * @param to the target
      * @return the index of the closest element.
      *
      * Requires: The underlying array should be sorted.
-     **/
+      */
     public int search(int from, int to) {
         while (from < to) {
             int mid = (from + to) >>> 1;

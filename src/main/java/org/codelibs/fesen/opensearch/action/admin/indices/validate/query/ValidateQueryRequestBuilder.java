@@ -48,6 +48,12 @@ public class ValidateQueryRequestBuilder extends BroadcastOperationRequestBuilde
     ValidateQueryResponse,
     ValidateQueryRequestBuilder> {
 
+    /**
+     * Creates a new ValidateQueryRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ValidateQueryRequestBuilder(OpenSearchClient client, ValidateQueryAction action) {
         super(client, action, new ValidateQueryRequest());
     }
@@ -55,6 +61,8 @@ public class ValidateQueryRequestBuilder extends BroadcastOperationRequestBuilde
     /**
      * The query to validate.
      *
+     * @param queryBuilder the query builder
+     * @return this instance
      * @see org.codelibs.fesen.opensearch.index.query.QueryBuilders
      */
     public ValidateQueryRequestBuilder setQuery(QueryBuilder queryBuilder) {
@@ -65,6 +73,8 @@ public class ValidateQueryRequestBuilder extends BroadcastOperationRequestBuilde
     /**
      * Indicates if detailed information about the query should be returned.
      *
+     * @param explain the explain
+     * @return this instance
      * @see org.codelibs.fesen.opensearch.index.query.QueryBuilders
      */
     public ValidateQueryRequestBuilder setExplain(boolean explain) {

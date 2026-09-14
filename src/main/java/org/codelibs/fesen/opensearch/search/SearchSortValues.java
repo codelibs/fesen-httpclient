@@ -90,6 +90,13 @@ public class SearchSortValues implements ToXContentFragment, Writeable {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SearchSortValues fromXContent(XContentParser parser) throws IOException {
         XContentParserUtils.ensureExpectedToken(XContentParser.Token.START_ARRAY, parser.currentToken(), parser);
         return new SearchSortValues(parser.list().toArray());
@@ -97,6 +104,8 @@ public class SearchSortValues implements ToXContentFragment, Writeable {
 
     /**
      * Returns the formatted version of the values that sorting was performed against
+     *
+     * @return the formatted sort values
      */
     public Object[] getFormattedSortValues() {
         return formattedSortValues;

@@ -37,12 +37,36 @@ package org.codelibs.fesen.opensearch.geometry;
  */
 public interface Geometry {
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     ShapeType type();
 
+    /**
+     * Visits this instance.
+     *
+     * @param <T> the element type
+     * @param <E> the element type
+     * @param visitor the visitor
+     * @return this instance
+     * @throws E if an e failure occurs
+     */
     <T, E extends Exception> T visit(GeometryVisitor<T, E> visitor) throws E;
 
+    /**
+     * Returns whether this instance holds no elements.
+     *
+     * @return whether this instance holds no elements
+     */
     boolean isEmpty();
 
+    /**
+     * Returns the z flag.
+     *
+     * @return the z flag
+     */
     default boolean hasZ() {
         return false;
     }

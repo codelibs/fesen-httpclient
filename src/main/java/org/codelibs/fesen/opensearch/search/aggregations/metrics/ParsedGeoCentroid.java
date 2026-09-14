@@ -47,6 +47,12 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedGeoCentroid extends ParsedAggregation implements GeoCentroid {
+    /**
+     * Creates a new ParsedGeoCentroid.
+     */
+    public ParsedGeoCentroid() {
+    }
+
     private GeoPoint centroid;
     private long count;
 
@@ -100,6 +106,13 @@ public class ParsedGeoCentroid extends ParsedAggregation implements GeoCentroid 
         GEO_POINT_PARSER.declareDouble(GeoPoint::resetLon, Fields.CENTROID_LON);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedGeoCentroid fromXContent(XContentParser parser, final String name) {
         ParsedGeoCentroid geoCentroid = PARSER.apply(parser, null);
         geoCentroid.setName(name);

@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class OpenIndexAction extends ActionType<OpenIndexResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final OpenIndexAction INSTANCE = new OpenIndexAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/open";
 
     private OpenIndexAction() {

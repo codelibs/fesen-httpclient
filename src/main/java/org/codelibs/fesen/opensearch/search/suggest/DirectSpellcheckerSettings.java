@@ -47,18 +47,53 @@ import java.util.Comparator;
  * @opensearch.internal
  */
 public class DirectSpellcheckerSettings {
+    /**
+     * Creates a new DirectSpellcheckerSettings.
+     */
+    public DirectSpellcheckerSettings() {
+    }
 
     // NB: If this changes, make sure to change the default in TermBuilderSuggester
+    /**
+     * The DEFAULT_SUGGEST_MODE constant.
+     */
     public static SuggestMode DEFAULT_SUGGEST_MODE = SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX;
+    /**
+     * The DEFAULT_ACCURACY constant.
+     */
     public static float DEFAULT_ACCURACY = 0.5f;
+    /**
+     * The DEFAULT_SORT constant.
+     */
     public static SortBy DEFAULT_SORT = SortBy.SCORE;
     // NB: If this changes, make sure to change the default in TermBuilderSuggester
+    /**
+     * The DEFAULT_STRING_DISTANCE constant.
+     */
     public static StringDistance DEFAULT_STRING_DISTANCE = DirectSpellChecker.INTERNAL_LEVENSHTEIN;
+    /**
+     * The DEFAULT_MAX_EDITS constant.
+     */
     public static int DEFAULT_MAX_EDITS = LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE;
+    /**
+     * The DEFAULT_MAX_INSPECTIONS constant.
+     */
     public static int DEFAULT_MAX_INSPECTIONS = 5;
+    /**
+     * The DEFAULT_MAX_TERM_FREQ constant.
+     */
     public static float DEFAULT_MAX_TERM_FREQ = 0.01f;
+    /**
+     * The DEFAULT_PREFIX_LENGTH constant.
+     */
     public static int DEFAULT_PREFIX_LENGTH = 1;
+    /**
+     * The DEFAULT_MIN_WORD_LENGTH constant.
+     */
     public static int DEFAULT_MIN_WORD_LENGTH = 4;
+    /**
+     * The DEFAULT_MIN_DOC_FREQ constant.
+     */
     public static float DEFAULT_MIN_DOC_FREQ = 0f;
 
     private SuggestMode suggestMode = DEFAULT_SUGGEST_MODE;

@@ -72,14 +72,38 @@ public final class RangeAggregator {
      * @opensearch.internal
      */
     public static class Range implements Writeable, ToXContentObject {
+        /**
+         * The KEY_FIELD constant.
+         */
         public static final ParseField KEY_FIELD = new ParseField("key");
+        /**
+         * The FROM_FIELD constant.
+         */
         public static final ParseField FROM_FIELD = new ParseField("from");
+        /**
+         * The TO_FIELD constant.
+         */
         public static final ParseField TO_FIELD = new ParseField("to");
 
+        /**
+         * The key.
+         */
         protected final String key;
+        /**
+         * The from.
+         */
         protected final double from;
+        /**
+         * The from as str.
+         */
         protected final String fromAsStr;
+        /**
+         * The to.
+         */
         protected final double to;
+        /**
+         * The to as str.
+         */
         protected final String toAsStr;
 
         /**
@@ -90,6 +114,12 @@ public final class RangeAggregator {
          * {@code from} and {@code to} parameters if they are non-null
          * and finite. Otherwise they parse from {@code fromrStr} and
          * {@code toStr}.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param fromAsStr the from as str
+         * @param to the target
+         * @param toAsStr the to as str
          */
         public Range(String key, Double from, String fromAsStr, Double to, String toAsStr) {
             this.key = key;
@@ -99,10 +129,24 @@ public final class RangeAggregator {
             this.toAsStr = toAsStr;
         }
 
+        /**
+         * Creates a new Range.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         */
         public Range(String key, Double from, Double to) {
             this(key, from, null, to, null);
         }
 
+        /**
+         * Creates a new Range.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         */
         public Range(String key, String from, String to) {
             this(key, null, from, null, to);
         }
@@ -143,6 +187,9 @@ public final class RangeAggregator {
             return builder;
         }
 
+        /**
+         * The PARSER constant.
+         */
         public static final ConstructingObjectParser<Range, Void> PARSER = new ConstructingObjectParser<>("range", arg -> {
             String key = (String) arg[0];
             Object from = arg[1];

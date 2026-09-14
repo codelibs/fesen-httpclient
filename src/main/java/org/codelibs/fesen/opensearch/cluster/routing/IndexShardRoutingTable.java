@@ -192,6 +192,8 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
 
     /**
      * Returns the number of this shards instances.
+     *
+     * @return the number of elements
      */
     public int size() {
         return shards.size();
@@ -262,6 +264,11 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         }
     }
 
+    /**
+     * Returns the primary shard.
+     *
+     * @return the primary shard
+     */
     public ShardRouting primaryShard() {
         return primary;
     }
@@ -275,6 +282,11 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
     public static class WeightedRoutingKey {
         private final WeightedRouting weightedRouting;
 
+        /**
+         * Creates a new WeightedRoutingKey.
+         *
+         * @param weightedRouting the weighted routing
+         */
         public WeightedRoutingKey(WeightedRouting weightedRouting) {
             this.weightedRouting = weightedRouting;
         }
@@ -305,15 +317,31 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         private final List<ShardRouting> shardRoutingsWithWeight;
         private final List<ShardRouting> shardRoutingWithoutWeight;
 
+        /**
+         * Creates a new WeightedShardRoutings.
+         *
+         * @param shardRoutingsWithWeight the shard routings with weight
+         * @param shardRoutingWithoutWeight the shard routing without weight
+         */
         public WeightedShardRoutings(List<ShardRouting> shardRoutingsWithWeight, List<ShardRouting> shardRoutingWithoutWeight) {
             this.shardRoutingsWithWeight = Collections.unmodifiableList(shardRoutingsWithWeight);
             this.shardRoutingWithoutWeight = Collections.unmodifiableList(shardRoutingWithoutWeight);
         }
 
+        /**
+         * Returns the shard routings with weight.
+         *
+         * @return the shard routings with weight
+         */
         public List<ShardRouting> getShardRoutingsWithWeight() {
             return shardRoutingsWithWeight;
         }
 
+        /**
+         * Returns the shard routing without weight.
+         *
+         * @return the shard routing without weight
+         */
         public List<ShardRouting> getShardRoutingWithoutWeight() {
             return shardRoutingWithoutWeight;
         }
@@ -329,16 +357,32 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
         private ShardId shardId;
         private final List<ShardRouting> shards;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param shardId the shard identifier
+         */
         public Builder(ShardId shardId) {
             this.shardId = shardId;
             this.shards = new ArrayList<>();
         }
 
+        /**
+         * Adds the shard.
+         *
+         * @param shardEntry the shard entry
+         * @return this instance
+         */
         public Builder addShard(ShardRouting shardEntry) {
             shards.add(shardEntry);
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IndexShardRoutingTable build() {
             // don't allow more than one shard copy with same id to be allocated to same node
             assert distinctNodes(shards) : "more than one shard with same id assigned to same node (shards: " + shards + ")";
@@ -362,6 +406,14 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
             return true;
         }
 
+        /**
+         * Reads the from thin.
+         *
+         * @param in the input to read from
+         * @param index the index
+         * @return the from thin
+         * @throws IOException if an I/O error occurs
+         */
         public static IndexShardRoutingTable readFromThin(StreamInput in, Index index) throws IOException {
             int iShardId = in.readVInt();
             ShardId shardId = new ShardId(index, iShardId);
@@ -376,6 +428,13 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
             return builder.build();
         }
 
+        /**
+         * Writes the to thin.
+         *
+         * @param indexShard the index shard
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
+         */
         public static void writeToThin(IndexShardRoutingTable indexShard, StreamOutput out) throws IOException {
             out.writeVInt(indexShard.shardId.id());
 
@@ -385,6 +444,13 @@ public class IndexShardRoutingTable extends AbstractDiffable<IndexShardRoutingTa
             }
         }
 
+        /**
+         * Writes the verifiable to.
+         *
+         * @param indexShard the index shard
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
+         */
         public static void writeVerifiableTo(IndexShardRoutingTable indexShard, StreamOutput out) throws IOException {
             out.writeVInt(indexShard.shardId.id());
             out.writeVInt(indexShard.shards.size());

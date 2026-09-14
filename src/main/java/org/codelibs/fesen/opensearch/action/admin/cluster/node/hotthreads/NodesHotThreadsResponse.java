@@ -50,10 +50,23 @@ import java.util.List;
 @PublicApi(since = "1.0.0")
 public class NodesHotThreadsResponse extends BaseNodesResponse<NodeHotThreads> {
 
+    /**
+     * Creates a new NodesHotThreadsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodesHotThreadsResponse(StreamInput in) throws IOException {
         super(in);
     }
 
+    /**
+     * Creates a new NodesHotThreadsResponse.
+     *
+     * @param clusterName the cluster name
+     * @param nodes the nodes
+     * @param failures the failures
+     */
     public NodesHotThreadsResponse(ClusterName clusterName, List<NodeHotThreads> nodes, List<FailedNodeException> failures) {
         super(clusterName, nodes, failures);
     }

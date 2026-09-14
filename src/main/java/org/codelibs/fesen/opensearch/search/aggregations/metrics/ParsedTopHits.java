@@ -47,6 +47,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedTopHits extends ParsedAggregation implements TopHits {
+    /**
+     * Creates a new ParsedTopHits.
+     */
+    public ParsedTopHits() {
+    }
 
     private SearchHits searchHits;
 
@@ -79,6 +84,14 @@ public class ParsedTopHits extends ParsedAggregation implements TopHits {
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedTopHits fromXContent(XContentParser parser, String name) throws IOException {
         ParsedTopHits aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);

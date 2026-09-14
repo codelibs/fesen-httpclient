@@ -40,6 +40,7 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 /**
  * A generic action. Should strive to make it a singleton.
  *
+ * @param <Response> the response type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -49,6 +50,8 @@ public class ActionType<Response extends ActionResponse> {
     private final Writeable.Reader<Response> responseReader;
 
     /**
+     * Creates a new ActionType.
+     *
      * @param name The name of the action, must be unique across actions.
      * @param responseReader A reader for the response type
      */
@@ -59,6 +62,8 @@ public class ActionType<Response extends ActionResponse> {
 
     /**
      * The name of the action. Must be unique across actions.
+     *
+     * @return the name
      */
     public String name() {
         return this.name;
@@ -66,6 +71,8 @@ public class ActionType<Response extends ActionResponse> {
 
     /**
      * Get a reader that can create a new instance of the class from a {@link StreamInput}
+     *
+     * @return the response reader
      */
     public Writeable.Reader<Response> getResponseReader() {
         return responseReader;

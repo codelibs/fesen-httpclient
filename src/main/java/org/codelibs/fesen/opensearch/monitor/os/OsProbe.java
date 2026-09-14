@@ -99,6 +99,8 @@ public class OsProbe {
 
     /**
      * Returns the amount of free physical memory in bytes.
+     *
+     * @return the free physical memory size
      */
     public long getFreePhysicalMemorySize() {
         if (getFreePhysicalMemorySize == null) {
@@ -120,6 +122,8 @@ public class OsProbe {
 
     /**
      * Returns the total amount of physical memory in bytes.
+     *
+     * @return the total physical memory size
      */
     public long getTotalPhysicalMemorySize() {
         if (getTotalPhysicalMemorySize == null) {
@@ -141,6 +145,8 @@ public class OsProbe {
 
     /**
      * Returns the amount of free swap space in bytes.
+     *
+     * @return the free swap space size
      */
     public long getFreeSwapSpaceSize() {
         if (getFreeSwapSpaceSize == null) {
@@ -162,6 +168,8 @@ public class OsProbe {
 
     /**
      * Returns the total amount of swap space in bytes.
+     *
+     * @return the total swap space size
      */
     public long getTotalSwapSpaceSize() {
         if (getTotalSwapSpaceSize == null) {
@@ -236,6 +244,11 @@ public class OsProbe {
         return readSingleLine(PathUtils.get("/proc/loadavg"));
     }
 
+    /**
+     * Returns the system CPU percent.
+     *
+     * @return the system CPU percent
+     */
     public short getSystemCpuPercent() {
         return Probes.getLoadAndScaleToPercent(getSystemCpuLoad, osMxBean);
     }
@@ -596,6 +609,11 @@ public class OsProbe {
         private static final OsProbe INSTANCE = new OsProbe();
     }
 
+    /**
+     * Returns the instance.
+     *
+     * @return the instance
+     */
     public static OsProbe getInstance() {
         return OsProbeHolder.INSTANCE;
     }
@@ -613,6 +631,11 @@ public class OsProbe {
         this.logger = logger;
     }
 
+    /**
+     * Returns the OS stats.
+     *
+     * @return the OS stats
+     */
     public OsStats osStats() {
         final OsStats.Cpu cpu = new OsStats.Cpu(getSystemCpuPercent(), getSystemLoadAverage());
         final OsStats.Mem mem = new OsStats.Mem(getTotalPhysicalMemorySize(), getFreePhysicalMemorySize());

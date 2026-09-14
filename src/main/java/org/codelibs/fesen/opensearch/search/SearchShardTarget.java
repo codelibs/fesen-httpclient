@@ -60,6 +60,12 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
     private final transient OriginalIndices originalIndices;
     private final String clusterAlias;
 
+    /**
+     * Creates a new SearchShardTarget by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchShardTarget(StreamInput in) throws IOException {
         if (in.readBoolean()) {
             nodeId = in.readText();
@@ -71,6 +77,14 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
         clusterAlias = in.readOptionalString();
     }
 
+    /**
+     * Creates a new SearchShardTarget.
+     *
+     * @param nodeId the node identifier
+     * @param shardId the shard identifier
+     * @param clusterAlias the cluster alias
+     * @param originalIndices the original indices
+     */
     public SearchShardTarget(String nodeId, ShardId shardId, @Nullable String clusterAlias, OriginalIndices originalIndices) {
         this.nodeId = nodeId == null ? null : new Text(nodeId);
         this.shardId = shardId;
@@ -78,23 +92,48 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
         this.clusterAlias = clusterAlias;
     }
 
+    /**
+     * Returns the node identifier.
+     *
+     * @return the node identifier
+     */
     @Nullable
     public String getNodeId() {
         return nodeId != null ? nodeId.string() : null;
     }
 
+    /**
+     * Returns the node identifier text.
+     *
+     * @return the node identifier text
+     */
     public Text getNodeIdText() {
         return this.nodeId;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return shardId.getIndexName();
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         return shardId;
     }
 
+    /**
+     * Returns the cluster alias.
+     *
+     * @return the cluster alias
+     */
     @Nullable
     public String getClusterAlias() {
         return clusterAlias;
@@ -102,6 +141,8 @@ public final class SearchShardTarget implements Writeable, Comparable<SearchShar
 
     /**
      * Returns the fully qualified index name, including the index prefix that indicates which cluster results come from.
+     *
+     * @return the fully qualified index name
      */
     public String getFullyQualifiedIndexName() {
         return RemoteClusterAware.buildRemoteIndexName(clusterAlias, getIndex());

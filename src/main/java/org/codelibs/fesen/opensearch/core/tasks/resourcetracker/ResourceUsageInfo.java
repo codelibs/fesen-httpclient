@@ -30,12 +30,22 @@ public class ResourceUsageInfo {
     private static final Logger logger = LogManager.getLogger(ResourceUsageInfo.class);
     private final EnumMap<ResourceStats, ResourceStatsInfo> statsInfo = new EnumMap<>(ResourceStats.class);
 
+    /**
+     * Creates a new ResourceUsageInfo.
+     *
+     * @param resourceUsageMetrics the resource usage metrics
+     */
     public ResourceUsageInfo(ResourceUsageMetric... resourceUsageMetrics) {
         for (ResourceUsageMetric resourceUsageMetric : resourceUsageMetrics) {
             this.statsInfo.put(resourceUsageMetric.getStats(), new ResourceStatsInfo(resourceUsageMetric.getValue()));
         }
     }
 
+    /**
+     * Records the resource usage metrics.
+     *
+     * @param resourceUsageMetrics the resource usage metrics
+     */
     public void recordResourceUsageMetrics(ResourceUsageMetric... resourceUsageMetrics) {
         for (ResourceUsageMetric resourceUsageMetric : resourceUsageMetrics) {
             final ResourceStatsInfo resourceStatsInfo = statsInfo.get(resourceUsageMetric.getStats());
@@ -79,6 +89,11 @@ public class ResourceUsageInfo {
         );
     }
 
+    /**
+     * Returns the stats info.
+     *
+     * @return the stats info
+     */
     public Map<ResourceStats, ResourceStatsInfo> getStatsInfo() {
         return Collections.unmodifiableMap(statsInfo);
     }
@@ -100,10 +115,20 @@ public class ResourceUsageInfo {
             this.endValue = new AtomicLong(startValue);
         }
 
+        /**
+         * Returns the total value.
+         *
+         * @return the total value
+         */
         public long getTotalValue() {
             return endValue.get() - startValue;
         }
 
+        /**
+         * Returns the start value.
+         *
+         * @return the start value
+         */
         public long getStartValue() {
             return startValue;
         }

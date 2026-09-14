@@ -55,6 +55,11 @@ public class IndexShardSegments implements Iterable<ShardSegments> {
         this.shards = shards;
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         return this.shardId;
     }

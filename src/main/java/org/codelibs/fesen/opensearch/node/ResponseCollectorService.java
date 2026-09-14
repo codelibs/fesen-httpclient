@@ -61,6 +61,11 @@ import java.util.concurrent.ConcurrentMap;
  * only the ComputedNodeStats payload, which AdaptiveSelectionStats carries in _nodes/stats.
  */
 public final class ResponseCollectorService {
+    /**
+     * Creates a new ResponseCollectorService.
+     */
+    public ResponseCollectorService() {
+    }
 
     private final ConcurrentMap<String, NodeStatistics> nodeIdToStats = ConcurrentCollections.newConcurrentMap();
 
@@ -82,11 +87,32 @@ public final class ResponseCollectorService {
 
         private double cachedRank = 0;
 
+        /**
+         * The node identifier.
+         */
         public final String nodeId;
+        /**
+         * The queue size.
+         */
         public final int queueSize;
+        /**
+         * The response time.
+         */
         public final double responseTime;
+        /**
+         * The service time.
+         */
         public final double serviceTime;
 
+        /**
+         * Creates a new ComputedNodeStats.
+         *
+         * @param nodeId the node identifier
+         * @param clientNum the client num
+         * @param queueSize the queue size
+         * @param responseTime the response time
+         * @param serviceTime the service time
+         */
         public ComputedNodeStats(String nodeId, int clientNum, int queueSize, double responseTime, double serviceTime) {
             this.nodeId = nodeId;
             this.clientNum = clientNum;
@@ -150,6 +176,12 @@ public final class ResponseCollectorService {
             return rank;
         }
 
+        /**
+         * Ranks this instance.
+         *
+         * @param outstandingRequests the outstanding requests
+         * @return this instance
+         */
         public double rank(long outstandingRequests) {
             if (cachedRank == 0) {
                 cachedRank = innerRank(outstandingRequests);

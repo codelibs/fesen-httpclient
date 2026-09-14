@@ -40,15 +40,26 @@ import java.util.List;
  * @opensearch.internal
  */
 public abstract class ShardShuffler {
+    /**
+     * Creates a new ShardShuffler.
+     */
+    public ShardShuffler() {
+    }
 
     /**
      * Return a new seed.
+     *
+     * @return the next seed
      */
     public abstract int nextSeed();
 
     /**
      * Return a shuffled view over the list of shards. The behavior of this method must be deterministic: if the same list and the same seed
      * are provided twice, then the result needs to be the same.
+     *
+     * @param shards the shards
+     * @param seed the seed
+     * @return this instance
      */
     public abstract List<ShardRouting> shuffle(List<ShardRouting> shards, int seed);
 

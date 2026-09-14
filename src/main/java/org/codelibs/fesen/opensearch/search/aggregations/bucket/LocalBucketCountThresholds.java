@@ -23,15 +23,31 @@ public class LocalBucketCountThresholds {
     private final long minDocCount;
     private final int requiredSize;
 
+    /**
+     * Creates a new LocalBucketCountThresholds.
+     *
+     * @param localminDocCount the localmin doc count
+     * @param localRequiredSize the local required size
+     */
     public LocalBucketCountThresholds(long localminDocCount, int localRequiredSize) {
         this.minDocCount = localminDocCount;
         this.requiredSize = localRequiredSize;
     }
 
+    /**
+     * Returns the required size.
+     *
+     * @return the required size
+     */
     public int getRequiredSize() {
         return requiredSize;
     }
 
+    /**
+     * Returns the min doc count.
+     *
+     * @return the min doc count
+     */
     public long getMinDocCount() {
         return minDocCount;
     }

@@ -65,6 +65,12 @@ public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResp
     final long timestamp;
     final String clusterUUID;
 
+    /**
+     * Creates a new ClusterStatsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterStatsResponse(StreamInput in) throws IOException {
         super(in);
         timestamp = in.readVLong();
@@ -84,6 +90,18 @@ public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResp
         indicesStats = new ClusterStatsIndices(getNodes(), mappingStats, analysisStats);
     }
 
+    /**
+     * Creates a new ClusterStatsResponse.
+     *
+     * @param timestamp the timestamp
+     * @param clusterUUID the cluster UUID
+     * @param clusterName the cluster name
+     * @param nodes the nodes
+     * @param failures the failures
+     * @param state the state
+     * @param requestedMetrics the requested metrics
+     * @param indicesMetrics the indices metrics
+     */
     public ClusterStatsResponse(
         long timestamp,
         String clusterUUID,
@@ -116,10 +134,20 @@ public class ClusterStatsResponse extends BaseNodesResponse<ClusterStatsNodeResp
         this.status = status;
     }
 
+    /**
+     * Returns the cluster UUID.
+     *
+     * @return the cluster UUID
+     */
     public String getClusterUUID() {
         return this.clusterUUID;
     }
 
+    /**
+     * Returns the timestamp.
+     *
+     * @return the timestamp
+     */
     public long getTimestamp() {
         return this.timestamp;
     }

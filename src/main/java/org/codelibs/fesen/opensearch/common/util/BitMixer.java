@@ -32,6 +32,11 @@ package org.codelibs.fesen.opensearch.common.util;
  * range.
  */
 public final class BitMixer {
+    /**
+     * Creates a new BitMixer.
+     */
+    public BitMixer() {
+    }
 
     /**
      * Computes David Stafford variant 9 of 64bit mix function (MH3 finalization step,
@@ -40,6 +45,8 @@ public final class BitMixer {
      * Variant 9 is picked because it contains two 32-bit shifts which could be possibly
      * optimized into better machine code.
      *
+     * @param z the z
+     * @return the mix64
      * @see "http://zimbry.blogspot.com/2011/09/better-bit-mixing-improving-on.html"
      */
     public static long mix64(long z) {

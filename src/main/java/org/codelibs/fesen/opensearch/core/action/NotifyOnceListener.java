@@ -41,15 +41,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * the is called is only called once. Subclasses should implement notification logic with
  * innerOnResponse and innerOnFailure.
  *
+ * @param <Response> the response type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public abstract class NotifyOnceListener<Response> implements ActionListener<Response> {
+    /**
+     * Creates a new NotifyOnceListener.
+     */
+    public NotifyOnceListener() {
+    }
 
     private final AtomicBoolean hasBeenCalled = new AtomicBoolean(false);
 
+    /**
+     * Performs the inner on response step.
+     *
+     * @param response the response
+     */
     protected abstract void innerOnResponse(Response response);
 
+    /**
+     * Performs the inner on failure step.
+     *
+     * @param e the exception
+     */
     protected abstract void innerOnFailure(Exception e);
 
     @Override

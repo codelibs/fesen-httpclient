@@ -17,10 +17,22 @@ import java.io.IOException;
  */
 public class SearchTaskCancellationStats extends BaseSearchTaskCancellationStats {
 
+    /**
+     * Creates a new SearchTaskCancellationStats.
+     *
+     * @param currentTaskCount the current task count
+     * @param totalTaskCount the total task count
+     */
     public SearchTaskCancellationStats(long currentTaskCount, long totalTaskCount) {
         super(currentTaskCount, totalTaskCount);
     }
 
+    /**
+     * Creates a new SearchTaskCancellationStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchTaskCancellationStats(StreamInput in) throws IOException {
         super(in);
     }

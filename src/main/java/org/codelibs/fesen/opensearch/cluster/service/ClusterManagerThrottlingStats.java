@@ -32,6 +32,9 @@ public class ClusterManagerThrottlingStats implements Writeable, ToXContentFragm
 
     private Map<String, CounterMetric> throttledTasksCount;
 
+    /**
+     * Creates a new ClusterManagerThrottlingStats.
+     */
     public ClusterManagerThrottlingStats() {
         throttledTasksCount = new ConcurrentHashMap<>();
     }
@@ -40,16 +43,33 @@ public class ClusterManagerThrottlingStats implements Writeable, ToXContentFragm
         throttledTasksCount.computeIfAbsent(type, k -> new CounterMetric()).inc(counts);
     }
 
+    /**
+     * Returns the throttling count.
+     *
+     * @param type the type
+     * @return the throttling count
+     */
     public long getThrottlingCount(String type) {
         return throttledTasksCount.get(type) == null ? 0 : throttledTasksCount.get(type).count();
     }
 
+    /**
+     * Returns the total throttled task count.
+     *
+     * @return the total throttled task count
+     */
     public long getTotalThrottledTaskCount() {
         CounterMetric totalCount = new CounterMetric();
         throttledTasksCount.forEach((aClass, counterMetric) -> { totalCount.inc(counterMetric.count()); });
         return totalCount.count();
     }
 
+    /**
+     * Handles the throttle event.
+     *
+     * @param type the type
+     * @param counts the counts
+     */
     public void onThrottle(String type, int counts) {
         incrementThrottlingCount(type, counts);
     }
@@ -63,6 +83,12 @@ public class ClusterManagerThrottlingStats implements Writeable, ToXContentFragm
         }
     }
 
+    /**
+     * Creates a new ClusterManagerThrottlingStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterManagerThrottlingStats(StreamInput in) throws IOException {
         int throttledTaskEntries = in.readVInt();
         throttledTasksCount = new ConcurrentHashMap<>();

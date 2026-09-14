@@ -62,11 +62,29 @@ public final class FunctionScoreQuery {
      * @opensearch.internal
      */
     public enum ScoreMode implements Writeable {
+        /**
+         * The FIRST value.
+         */
         FIRST,
+        /**
+         * The AVG value.
+         */
         AVG,
+        /**
+         * The MAX value.
+         */
         MAX,
+        /**
+         * The SUM value.
+         */
         SUM,
+        /**
+         * The MIN value.
+         */
         MIN,
+        /**
+         * The MULTIPLY value.
+         */
         MULTIPLY;
 
         @Override
@@ -74,10 +92,23 @@ public final class FunctionScoreQuery {
             out.writeEnum(this);
         }
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static ScoreMode readFromStream(StreamInput in) throws IOException {
             return in.readEnum(ScoreMode.class);
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param scoreMode the score mode
+         * @return the new string
+         */
         public static ScoreMode fromString(String scoreMode) {
             return valueOf(scoreMode.toUpperCase(Locale.ROOT));
         }

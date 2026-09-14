@@ -56,15 +56,31 @@ import static org.codelibs.fesen.opensearch.common.unit.TimeValue.timeValueMinut
 /**
  * Base class for requesting bulk by scrolls
  *
+ * @param <Self> the self type
  * @opensearch.internal
  */
 public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScrollRequest<Self>> extends ActionRequest {
 
+    /**
+     * The MAX_DOCS_ALL_MATCHES constant.
+     */
     public static final int MAX_DOCS_ALL_MATCHES = -1;
+    /**
+     * The DEFAULT_SCROLL_TIMEOUT constant.
+     */
     public static final TimeValue DEFAULT_SCROLL_TIMEOUT = timeValueMinutes(5);
+    /**
+     * The DEFAULT_SCROLL_SIZE constant.
+     */
     public static final int DEFAULT_SCROLL_SIZE = 1000;
 
+    /**
+     * The AUTO_SLICES constant.
+     */
     public static final int AUTO_SLICES = 0;
+    /**
+     * The AUTO_SLICES_VALUE constant.
+     */
     public static final String AUTO_SLICES_VALUE = "auto";
     private static final int DEFAULT_SLICES = 1;
 
@@ -148,6 +164,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * `this` cast to Self. Used for building fluent methods without cast
      * warnings.
+     *
+     * @return the self
      */
     protected abstract Self self();
 
@@ -180,6 +198,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * Maximum number of processed documents. Defaults to -1 meaning process all
      * documents.
+     *
+     * @return the max docs
      */
     public int getMaxDocs() {
         return maxDocs;
@@ -188,6 +208,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * Maximum number of processed documents. Defaults to -1 meaning process all
      * documents.
+     *
+     * @param maxDocs the max docs
+     * @return this instance
      */
     public Self setMaxDocs(int maxDocs) {
         if (maxDocs < 0) {
@@ -202,6 +225,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Whether or not version conflicts cause the action to abort.
+     *
+     * @return the abort on version conflict flag
      */
     public boolean isAbortOnVersionConflict() {
         return abortOnVersionConflict;
@@ -209,6 +234,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Set whether or not version conflicts cause the action to abort.
+     *
+     * @param abortOnVersionConflict the abort on version conflict
+     * @return this instance
      */
     public Self setAbortOnVersionConflict(boolean abortOnVersionConflict) {
         this.abortOnVersionConflict = abortOnVersionConflict;
@@ -217,6 +245,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Sets abortOnVersionConflict based on REST-friendly names.
+     *
+     * @param conflicts the conflicts
      */
     public void setConflicts(String conflicts) {
         switch (conflicts) {
@@ -233,6 +263,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * The search request that matches the documents to process.
+     *
+     * @return the search request
      */
     public SearchRequest getSearchRequest() {
         return searchRequest;
@@ -240,6 +272,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Call refresh on the indexes we've written to after the request ends?
+     *
+     * @return the refresh flag
      */
     public boolean isRefresh() {
         return refresh;
@@ -247,6 +281,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Call refresh on the indexes we've written to after the request ends?
+     *
+     * @param refresh the refresh
+     * @return this instance
      */
     public Self setRefresh(boolean refresh) {
         this.refresh = refresh;
@@ -255,6 +292,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Timeout to wait for the shards on to be available for each bulk request?
+     *
+     * @return the timeout
      */
     public TimeValue getTimeout() {
         return timeout;
@@ -262,6 +301,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Timeout to wait for the shards on to be available for each bulk request?
+     *
+     * @param timeout the timeout
+     * @return this instance
      */
     public Self setTimeout(TimeValue timeout) {
         this.timeout = timeout;
@@ -270,6 +312,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * The number of shard copies that must be active before proceeding with the write.
+     *
+     * @return the wait for active shards
      */
     public ActiveShardCount getWaitForActiveShards() {
         return activeShardCount;
@@ -278,6 +322,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * Sets the number of shard copies that must be active before proceeding with the write.
      * See {@code ReplicationRequest#waitForActiveShards(ActiveShardCount)} for details.
+     *
+     * @param activeShardCount the active shard count
+     * @return this instance
      */
     public Self setWaitForActiveShards(ActiveShardCount activeShardCount) {
         this.activeShardCount = activeShardCount;
@@ -288,6 +335,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
      * A shortcut for {@link #setWaitForActiveShards(ActiveShardCount)} where the numerical
      * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
      * to get the ActiveShardCount.
+     *
+     * @param waitForActiveShards the wait for active shards
+     * @return this instance
      */
     public Self setWaitForActiveShards(final int waitForActiveShards) {
         return setWaitForActiveShards(ActiveShardCount.from(waitForActiveShards));
@@ -295,6 +345,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Set the initial delay after a rejection before retrying request.
+     *
+     * @param retryBackoffInitialTime the retry backoff initial time
+     * @return this instance
      */
     public Self setRetryBackoffInitialTime(TimeValue retryBackoffInitialTime) {
         this.retryBackoffInitialTime = retryBackoffInitialTime;
@@ -303,6 +356,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Set the total number of retries attempted for rejections. There is no way to ask for unlimited retries.
+     *
+     * @param maxRetries the max retries
+     * @return this instance
      */
     public Self setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
@@ -313,6 +369,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
      * The throttle for this request in sub-requests per second. {@link Float#POSITIVE_INFINITY} means set no throttle and that is the
      * default. Throttling is done between batches, as we start the next scroll requests. That way we can increase the scroll's timeout to
      * make sure that it contains any time that we might wait.
+     *
+     * @return the requests per second
      */
     public float getRequestsPerSecond() {
         return requestsPerSecond;
@@ -322,6 +380,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
      * Set the throttle for this request in sub-requests per second. {@link Float#POSITIVE_INFINITY} means set no throttle and that is the
      * default. Throttling is done between batches, as we start the next scroll requests. That way we can increase the scroll's timeout to
      * make sure that it contains any time that we might wait.
+     *
+     * @param requestsPerSecond the requests per second
+     * @return this instance
      */
     public Self setRequestsPerSecond(float requestsPerSecond) {
         if (requestsPerSecond <= 0) {
@@ -335,6 +396,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Should this task store its result after it has finished?
+     *
+     * @param shouldStoreResult the should store result
+     * @return this instance
      */
     public Self setShouldStoreResult(boolean shouldStoreResult) {
         this.shouldStoreResult = shouldStoreResult;
@@ -349,6 +413,9 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * The number of slices this task should be divided into. Defaults to 1 meaning the task isn't sliced into subtasks.
      * A value of 0 is equivalent to the "auto" slices parameter of the Rest API.
+     *
+     * @param slices the slices
+     * @return this instance
      */
     public Self setSlices(int slices) {
         if (slices < 0) {
@@ -360,6 +427,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * The number of slices this task should be divided into. Defaults to 1 meaning the task isn't sliced into subtasks.
+     *
+     * @return the slices
      */
     public int getSlices() {
         return slices;
@@ -367,11 +436,21 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
 
     /**
      * Build a new request for a slice of the parent request.
+     *
+     * @param slicingTask the slicing task
+     * @param slice the slice
+     * @param totalSlices the total slices
+     * @return the for slice
      */
     public abstract Self forSlice(TaskId slicingTask, SearchRequest slice, int totalSlices);
 
     /**
      * Setup a clone of this request with the information needed to process a slice of it.
+     *
+     * @param request the request
+     * @param slicingTask the slicing task
+     * @param totalSlices the total slices
+     * @return the for slice
      */
     protected Self doForSlice(Self request, TaskId slicingTask, int totalSlices) {
         if (totalSlices < 1) {
@@ -424,6 +503,8 @@ public abstract class AbstractBulkByScrollRequest<Self extends AbstractBulkByScr
     /**
      * Append a short description of the search request to a StringBuilder. Used
      * to make toString.
+     *
+     * @param b the b
      */
     protected void searchToString(StringBuilder b) {
         if (searchRequest.indices() != null && searchRequest.indices().length != 0) {

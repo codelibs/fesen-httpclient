@@ -52,7 +52,13 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class MissingAggregationBuilder extends ValuesSourceAggregationBuilder<MissingAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "missing";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<MissingAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         MissingAggregationBuilder::new
@@ -61,10 +67,22 @@ public class MissingAggregationBuilder extends ValuesSourceAggregationBuilder<Mi
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new MissingAggregationBuilder.
+     *
+     * @param name the name
+     */
     public MissingAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MissingAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected MissingAggregationBuilder(
         MissingAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

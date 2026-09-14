@@ -59,7 +59,19 @@ import java.util.Locale;
  * @opensearch.internal
  */
 public final class GeometryIO {
+    /**
+     * Creates a new GeometryIO.
+     */
+    public GeometryIO() {
+    }
 
+    /**
+     * Writes the geometry.
+     *
+     * @param out the output to write to
+     * @param geometry the geometry
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeGeometry(StreamOutput out, Geometry geometry) throws IOException {
         out.writeString(GeoJson.getGeoJsonName(geometry).toLowerCase(Locale.ROOT));
         geometry.visit(new GeometryVisitor<Void, IOException>() {
@@ -161,6 +173,13 @@ public final class GeometryIO {
         });
     }
 
+    /**
+     * Reads the geometry.
+     *
+     * @param in the input to read from
+     * @return the geometry
+     * @throws IOException if an I/O error occurs
+     */
     public static Geometry readGeometry(StreamInput in) throws IOException {
         String type = in.readString();
         switch (type) {

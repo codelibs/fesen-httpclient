@@ -66,11 +66,34 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
         }
     }
 
+    /**
+     * The count.
+     */
     protected final long count;
+    /**
+     * The min.
+     */
     protected final double min;
+    /**
+     * The max.
+     */
     protected final double max;
+    /**
+     * The sum.
+     */
     protected final double sum;
 
+    /**
+     * Creates a new InternalStats.
+     *
+     * @param name the name
+     * @param count the count
+     * @param sum the sum
+     * @param min the min
+     * @param max the max
+     * @param formatter the formatter
+     * @param metadata the metadata
+     */
     public InternalStats(
         String name,
         long count,
@@ -98,6 +121,12 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
         writeOtherStatsTo(out);
     }
 
+    /**
+     * Writes the other stats to.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected void writeOtherStatsTo(StreamOutput out) throws IOException {}
 
     @Override
@@ -229,6 +258,14 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
         return builder;
     }
 
+    /**
+     * Returns the other stats to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the other stats to XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected XContentBuilder otherStatsToXContent(XContentBuilder builder, Params params) throws IOException {
         return builder;
     }

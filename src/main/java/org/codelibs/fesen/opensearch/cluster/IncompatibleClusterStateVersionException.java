@@ -43,10 +43,23 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class IncompatibleClusterStateVersionException extends OpenSearchException {
+    /**
+     * Creates a new IncompatibleClusterStateVersionException.
+     *
+     * @param msg the msg
+     */
     public IncompatibleClusterStateVersionException(String msg) {
         super(msg);
     }
 
+    /**
+     * Creates a new IncompatibleClusterStateVersionException.
+     *
+     * @param expectedVersion the expected version
+     * @param expectedUuid the expected UUID
+     * @param receivedVersion the received version
+     * @param receivedUuid the received UUID
+     */
     public IncompatibleClusterStateVersionException(long expectedVersion, String expectedUuid, long receivedVersion, String receivedUuid) {
         super(
             "Expected diff for version "

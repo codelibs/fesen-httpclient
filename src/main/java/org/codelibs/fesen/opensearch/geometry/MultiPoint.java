@@ -38,10 +38,18 @@ import java.util.List;
  * Represents a MultiPoint object on the earth's surface in decimal degrees and optional altitude in meters.
  */
 public class MultiPoint extends GeometryCollection<Point> {
+    /**
+     * The EMPTY constant.
+     */
     public static final MultiPoint EMPTY = new MultiPoint();
 
     private MultiPoint() {}
 
+    /**
+     * Creates a new MultiPoint.
+     *
+     * @param points the points
+     */
     public MultiPoint(List<Point> points) {
         super(points);
     }

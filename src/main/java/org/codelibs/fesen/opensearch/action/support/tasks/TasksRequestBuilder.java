@@ -40,6 +40,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Builder for task-based requests
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public class TasksRequestBuilder<
@@ -47,10 +50,23 @@ public class TasksRequestBuilder<
     Response extends BaseTasksResponse,
     RequestBuilder extends TasksRequestBuilder<Request, Response, RequestBuilder>> extends ActionRequestBuilder<Request, Response> {
 
+    /**
+     * Creates a new TasksRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected TasksRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
+    /**
+     * Sets the nodes identifiers.
+     *
+     * @param nodesIds the nodes identifiers
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setNodesIds(String... nodesIds) {
         request.setNodes(nodesIds);

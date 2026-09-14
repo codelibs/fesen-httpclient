@@ -47,10 +47,18 @@ import java.text.ParseException;
  * @opensearch.internal
  */
 public class WKTGeometryFormat implements GeometryFormat<Geometry> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "wkt";
 
     private final WellKnownText wellKnownTextParser;
 
+    /**
+     * Creates a new WKTGeometryFormat.
+     *
+     * @param wellKnownTextParser the well known text parser
+     */
     public WKTGeometryFormat(WellKnownText wellKnownTextParser) {
         this.wellKnownTextParser = wellKnownTextParser;
     }

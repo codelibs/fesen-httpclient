@@ -40,6 +40,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Builder for Operation Requests
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class NodesOperationRequestBuilder<
@@ -49,16 +52,35 @@ public abstract class NodesOperationRequestBuilder<
         Request,
         Response> {
 
+    /**
+     * Creates a new NodesOperationRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected NodesOperationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
+    /**
+     * Sets the nodes identifiers.
+     *
+     * @param nodesIds the nodes identifiers
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setNodesIds(String... nodesIds) {
         request.nodesIds(nodesIds);
         return (RequestBuilder) this;
     }
 
+    /**
+     * Sets the timeout.
+     *
+     * @param timeout the timeout
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setTimeout(String timeout) {
         request.timeout(timeout);

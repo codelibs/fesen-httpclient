@@ -79,6 +79,9 @@ import static org.codelibs.fesen.opensearch.search.suggest.phrase.DirectCandidat
  */
 public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuilder> {
 
+    /**
+     * The SUGGESTION_NAME constant.
+     */
     public static final String SUGGESTION_NAME = "term";
 
     private SuggestMode suggestMode = SuggestMode.MISSING;
@@ -92,6 +95,11 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
     private int minWordLength = DEFAULT_MIN_WORD_LENGTH;
     private float minDocFreq = DEFAULT_MIN_DOC_FREQ;
 
+    /**
+     * Creates a new TermSuggestionBuilder.
+     *
+     * @param field the field
+     */
     public TermSuggestionBuilder(String field) {
         super(field);
     }
@@ -139,6 +147,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * <li><code>always</code> - Suggest any matching suggest terms based on
      * tokens in the suggest text.
      * </ol>
+     *
+     * @param suggestMode the suggest mode
+     * @return this instance
      */
     public TermSuggestionBuilder suggestMode(SuggestMode suggestMode) {
         Objects.requireNonNull(suggestMode, "suggestMode must not be null");
@@ -148,6 +159,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the suggest mode setting.
+     *
+     * @return this instance
      */
     public SuggestMode suggestMode() {
         return suggestMode;
@@ -160,6 +173,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * candidate spelling correction.
      * <p>
      * Default is {@code 0.5}
+     *
+     * @param accuracy the accuracy
+     * @return the accuracy
      */
     public TermSuggestionBuilder accuracy(float accuracy) {
         if (accuracy < 0.0f || accuracy > 1.0f) {
@@ -171,6 +187,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the accuracy setting.
+     *
+     * @return the accuracy
      */
     public float accuracy() {
         return accuracy;
@@ -187,6 +205,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * </ol>
      * <p>
      * What the score is depends on the suggester being used.
+     *
+     * @param sort the sort
+     * @return this instance
      */
     public TermSuggestionBuilder sort(SortBy sort) {
         Objects.requireNonNull(sort, "sort must not be null");
@@ -196,6 +217,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the sort setting.
+     *
+     * @return this instance
      */
     public SortBy sort() {
         return sort;
@@ -217,6 +240,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * <li><code>ngram</code> - String distance algorithm based on character
      * n-grams.
      * </ol>
+     *
+     * @param stringDistance the string distance
+     * @return the string distance
      */
     public TermSuggestionBuilder stringDistance(StringDistanceImpl stringDistance) {
         Objects.requireNonNull(stringDistance, "stringDistance must not be null");
@@ -226,6 +252,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the string distance implementation setting.
+     *
+     * @return the string distance
      */
     public StringDistanceImpl stringDistance() {
         return stringDistance;
@@ -236,6 +264,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * be considered as a suggestion. Can only be a value between 1 and 2. Any
      * other value result in an bad request error being thrown. Defaults to
      * {@code 2}.
+     *
+     * @param maxEdits the max edits
+     * @return the max edits
      */
     public TermSuggestionBuilder maxEdits(int maxEdits) {
         if (maxEdits < 1 || maxEdits > 2) {
@@ -247,6 +278,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the maximum edit distance setting.
+     *
+     * @return the max edits
      */
     public int maxEdits() {
         return maxEdits;
@@ -256,6 +289,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * A factor that is used to multiply with the size in order to inspect more
      * candidate suggestions. Can improve accuracy at the cost of performance.
      * Defaults to {@code 5}.
+     *
+     * @param maxInspections the max inspections
+     * @return the max inspections
      */
     public TermSuggestionBuilder maxInspections(int maxInspections) {
         if (maxInspections < 0) {
@@ -267,6 +303,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the factor for inspecting more candidate suggestions setting.
+     *
+     * @return the max inspections
      */
     public int maxInspections() {
         return maxInspections;
@@ -282,6 +320,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * This can be used to exclude high frequency terms from being suggested.
      * High frequency terms are usually spelled correctly. On top of this,
      * this also improves the suggest performance.
+     *
+     * @param maxTermFreq the max term freq
+     * @return the max term freq
      */
     public TermSuggestionBuilder maxTermFreq(float maxTermFreq) {
         if (maxTermFreq < 0.0f) {
@@ -296,6 +337,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the maximum term frequency threshold setting.
+     *
+     * @return the max term freq
      */
     public float maxTermFreq() {
         return maxTermFreq;
@@ -306,6 +349,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * a candidate suggestion. Defaults to 1. Increasing this number improves
      * suggest performance. Usually misspellings don't occur in the beginning of
      * terms.
+     *
+     * @param prefixLength the prefix length
+     * @return the prefix length
      */
     public TermSuggestionBuilder prefixLength(int prefixLength) {
         if (prefixLength < 0) {
@@ -317,6 +363,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the minimum prefix length that must match setting.
+     *
+     * @return the prefix length
      */
     public int prefixLength() {
         return prefixLength;
@@ -325,6 +373,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
     /**
      * The minimum length a suggest text term must have in order to be
      * corrected. Defaults to {@code 4}.
+     *
+     * @param minWordLength the min word length
+     * @return the min word length
      */
     public TermSuggestionBuilder minWordLength(int minWordLength) {
         if (minWordLength < 1) {
@@ -336,6 +387,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
 
     /**
      * Get the minimum length of a text term to be corrected setting.
+     *
+     * @return the min word length
      */
     public int minWordLength() {
         return minWordLength;
@@ -347,6 +400,9 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
      * percentage of number of documents. This can improve quality by only
      * suggesting high frequency terms. Defaults to 0f and is not enabled. If a
      * value higher than 1 is specified then the number cannot be fractional.
+     *
+     * @param minDocFreq the min doc freq
+     * @return the min doc freq
      */
     public TermSuggestionBuilder minDocFreq(float minDocFreq) {
         if (minDocFreq < 0.0f) {
@@ -362,6 +418,8 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
     /**
      * Get the minimal threshold for the frequency of a term appearing in the
      * document set setting.
+     *
+     * @return the min doc freq
      */
     public float minDocFreq() {
         return minDocFreq;
@@ -382,6 +440,13 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static TermSuggestionBuilder fromXContent(XContentParser parser) throws IOException {
         TermSuggestionBuilder tmpSuggestion = new TermSuggestionBuilder("_na_");
         XContentParser.Token token;
@@ -505,15 +570,33 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
             out.writeEnum(this);
         }
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static SuggestMode readFromStream(final StreamInput in) throws IOException {
             return in.readEnum(SuggestMode.class);
         }
 
+        /**
+         * Resolves this instance.
+         *
+         * @param str the str
+         * @return this instance
+         */
         public static SuggestMode resolve(final String str) {
             Objects.requireNonNull(str, "Input string is null");
             return valueOf(str.toUpperCase(Locale.ROOT));
         }
 
+        /**
+         * Returns this instance as lucene.
+         *
+         * @return the lucene
+         */
         public abstract org.apache.lucene.search.spell.SuggestMode toLucene();
     }
 
@@ -565,10 +648,23 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
             out.writeEnum(this);
         }
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static StringDistanceImpl readFromStream(final StreamInput in) throws IOException {
             return in.readEnum(StringDistanceImpl.class);
         }
 
+        /**
+         * Resolves this instance.
+         *
+         * @param str the str
+         * @return this instance
+         */
         public static StringDistanceImpl resolve(final String str) {
             Objects.requireNonNull(str, "Input string is null");
             final String distanceVal = str.toLowerCase(Locale.ROOT);
@@ -588,6 +684,11 @@ public class TermSuggestionBuilder extends SuggestionBuilder<TermSuggestionBuild
             }
         }
 
+        /**
+         * Returns this instance as lucene.
+         *
+         * @return the lucene
+         */
         public abstract StringDistance toLucene();
     }
 

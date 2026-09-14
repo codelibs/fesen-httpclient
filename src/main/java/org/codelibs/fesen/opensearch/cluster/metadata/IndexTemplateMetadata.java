@@ -106,6 +106,17 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
 
     private final Map<String, AliasMetadata> aliases;
 
+    /**
+     * Creates a new IndexTemplateMetadata.
+     *
+     * @param name the name
+     * @param order the order
+     * @param version the version
+     * @param patterns the patterns
+     * @param settings the settings
+     * @param mappings the mappings
+     * @param aliases the aliases
+     */
     public IndexTemplateMetadata(
         String name,
         int order,
@@ -134,31 +145,66 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         this.aliases = Collections.unmodifiableMap(aliases);
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String name() {
         return this.name;
     }
 
+    /**
+     * Returns the order.
+     *
+     * @return the order
+     */
     public int order() {
         return this.order;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     @Nullable
     public Integer version() {
         return version;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Returns the patterns.
+     *
+     * @return the patterns
+     */
     public List<String> patterns() {
         return this.patterns;
     }
 
+    /**
+     * Returns the settings.
+     *
+     * @return the settings
+     */
     public Settings settings() {
         return this.settings;
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public CompressedXContent mappings() {
         if (this.mappings.isEmpty()) {
             return null;
@@ -166,6 +212,11 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         return this.mappings.values().iterator().next();
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @return the aliases
+     */
     public Map<String, AliasMetadata> aliases() {
         return this.aliases;
     }
@@ -198,6 +249,13 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         return result;
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static IndexTemplateMetadata readFrom(StreamInput in) throws IOException {
         Builder builder = new Builder(in.readString());
         builder.order(in.readInt());
@@ -216,6 +274,13 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
         return builder.build();
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<IndexTemplateMetadata> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(IndexTemplateMetadata::readFrom, in);
     }
@@ -293,47 +358,102 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
 
         private final Map<String, AliasMetadata> aliases;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param name the name
+         */
         public Builder(String name) {
             this.name = name;
             mappings = new HashMap<>();
             aliases = new HashMap<>();
         }
 
+        /**
+         * Returns the order.
+         *
+         * @param order the order
+         * @return the order
+         */
         public Builder order(int order) {
             this.order = order;
             return this;
         }
 
+        /**
+         * Returns the version.
+         *
+         * @param version the version
+         * @return the version
+         */
         public Builder version(Integer version) {
             this.version = version;
             return this;
         }
 
+        /**
+         * Returns the patterns.
+         *
+         * @param indexPatterns the index patterns
+         * @return the patterns
+         */
         public Builder patterns(List<String> indexPatterns) {
             this.indexPatterns = indexPatterns;
             return this;
         }
 
+        /**
+         * Returns the settings.
+         *
+         * @param settings the settings
+         * @return the settings
+         */
         public Builder settings(Settings settings) {
             this.settings = settings;
             return this;
         }
 
+        /**
+         * Puts the mapping.
+         *
+         * @param mappingType the mapping type
+         * @param mappingSource the mapping source
+         * @return this instance
+         */
         public Builder putMapping(String mappingType, CompressedXContent mappingSource) {
             mappings.put(mappingType, mappingSource);
             return this;
         }
 
+        /**
+         * Puts the mapping.
+         *
+         * @param mappingType the mapping type
+         * @param mappingSource the mapping source
+         * @return this instance
+         * @throws IOException if an I/O error occurs
+         */
         public Builder putMapping(String mappingType, String mappingSource) throws IOException {
             mappings.put(mappingType, new CompressedXContent(mappingSource));
             return this;
         }
 
+        /**
+         * Puts the alias.
+         *
+         * @param aliasMetadata the alias metadata
+         * @return this instance
+         */
         public Builder putAlias(AliasMetadata aliasMetadata) {
             aliases.put(aliasMetadata.alias(), aliasMetadata);
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IndexTemplateMetadata build() {
             return new IndexTemplateMetadata(name, order, version, indexPatterns, settings, mappings, aliases);
         }
@@ -344,6 +464,11 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
          * <p>
          * This method is used for serializing templates before storing them in the cluster metadata,
          * and also in the REST layer when returning a deprecated typed response.
+         *
+         * @param indexTemplateMetadata the index template metadata
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @throws IOException if an I/O error occurs
          */
         public static void toXContentWithTypes(
             IndexTemplateMetadata indexTemplateMetadata,
@@ -362,6 +487,11 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
          * Note that this method should currently only be used for creating REST responses,
          * and not when directly updating stored templates. Index templates are still stored
          * in the old, typed format, and have yet to be migrated to be typeless.
+         *
+         * @param indexTemplateMetadata the index template metadata
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @throws IOException if an I/O error occurs
          */
         public static void toXContent(IndexTemplateMetadata indexTemplateMetadata, XContentBuilder builder, ToXContent.Params params)
             throws IOException {
@@ -425,6 +555,14 @@ public class IndexTemplateMetadata extends AbstractDiffable<IndexTemplateMetadat
             return (Map<String, Object>) mapping.values().iterator().next();
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @param templateName the template name
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static IndexTemplateMetadata fromXContent(XContentParser parser, String templateName) throws IOException {
             Builder builder = new Builder(templateName);
 

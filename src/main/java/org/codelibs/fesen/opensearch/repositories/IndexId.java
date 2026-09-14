@@ -55,6 +55,9 @@ public final class IndexId implements Writeable, ToXContentObject {
     static final String NAME = "name";
     static final String ID = "id";
     static final String SHARD_PATH_TYPE = "shard_path_type";
+    /**
+     * The DEFAULT_SHARD_PATH_TYPE constant.
+     */
     public static final int DEFAULT_SHARD_PATH_TYPE = 0;
 
     private final String name;
@@ -62,6 +65,13 @@ public final class IndexId implements Writeable, ToXContentObject {
     private final int shardPathType;
     private final int hashCode;
 
+    /**
+     * Creates a new IndexId.
+     *
+     * @param name the name
+     * @param id the identifier
+     * @param shardPathType the shard path type
+     */
     public IndexId(String name, String id, int shardPathType) {
         this.name = name;
         this.id = id;
@@ -69,6 +79,12 @@ public final class IndexId implements Writeable, ToXContentObject {
         this.hashCode = computeHashCode();
     }
 
+    /**
+     * Creates a new IndexId.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexId(final StreamInput in) throws IOException {
         this.name = in.readString();
         this.id = in.readString();
@@ -82,6 +98,8 @@ public final class IndexId implements Writeable, ToXContentObject {
 
     /**
      * The name of the index.
+     *
+     * @return the name
      */
     public String getName() {
         return name;

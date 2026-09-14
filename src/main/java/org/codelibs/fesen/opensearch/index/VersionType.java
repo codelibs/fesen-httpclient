@@ -47,6 +47,9 @@ import java.util.Locale;
  */
 @PublicApi(since = "1.0.0")
 public enum VersionType implements Writeable {
+    /**
+     * The INTERNAL value.
+     */
     INTERNAL((byte) 0) {
         @Override
         public boolean isVersionConflictForWrites(long currentVersion, long expectedVersion, boolean deleted) {
@@ -106,6 +109,9 @@ public enum VersionType implements Writeable {
             return version > 0L || version == Versions.MATCH_ANY;
         }
     },
+    /**
+     * The EXTERNAL value.
+     */
     EXTERNAL((byte) 1) {
         @Override
         public boolean isVersionConflictForWrites(long currentVersion, long expectedVersion, boolean deleted) {
@@ -164,6 +170,9 @@ public enum VersionType implements Writeable {
         }
 
     },
+    /**
+     * The EXTERNAL_GTE value.
+     */
     EXTERNAL_GTE((byte) 2) {
         @Override
         public boolean isVersionConflictForWrites(long currentVersion, long expectedVersion, boolean deleted) {
@@ -229,6 +238,11 @@ public enum VersionType implements Writeable {
         this.value = value;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public byte getValue() {
         return value;
     }
@@ -253,6 +267,7 @@ public enum VersionType implements Writeable {
      * @param expectedVersion the version specified for the write operation
      * @param deleted         true if the document is currently deleted (note that #currentVersion will typically be
      *                        {@link Versions#NOT_FOUND}, but may be something else if the document was recently deleted
+     * @return the explain conflict for writes
      */
     public abstract String explainConflictForWrites(long currentVersion, long expectedVersion, boolean deleted);
 
@@ -272,12 +287,15 @@ public enum VersionType implements Writeable {
      *
      * @param currentVersion  the current version for the document
      * @param expectedVersion the version specified for the read operation
+     * @return the explain conflict for reads
      */
     public abstract String explainConflictForReads(long currentVersion, long expectedVersion);
 
     /**
      * Returns the new version for a document, based on its current one and the specified in the request
      *
+     * @param currentVersion the current version
+     * @param expectedVersion the expected version
      * @return new version
      */
     public abstract long updateVersion(long currentVersion, long expectedVersion);
@@ -285,6 +303,7 @@ public enum VersionType implements Writeable {
     /**
      * validate the version is a valid value for this type when writing.
      *
+     * @param version the version
      * @return true if valid, false o.w
      */
     public abstract boolean validateVersionForWrites(long version);
@@ -292,10 +311,17 @@ public enum VersionType implements Writeable {
     /**
      * validate the version is a valid value for this type when reading.
      *
+     * @param version the version
      * @return true if valid, false o.w
      */
     public abstract boolean validateVersionForReads(long version);
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param versionType the version type
+     * @return the new string
+     */
     public static VersionType fromString(String versionType) {
         if ("internal".equals(versionType)) {
             return INTERNAL;
@@ -309,10 +335,22 @@ public enum VersionType implements Writeable {
         throw new IllegalArgumentException("No version type match [" + versionType + "]");
     }
 
+    /**
+     * Returns a string representation of this instance.
+     *
+     * @param versionType the version type
+     * @return a string representation of this instance
+     */
     public static String toString(VersionType versionType) {
         return versionType.name().toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * Creates an instance from value.
+     *
+     * @param value the value
+     * @return the new value
+     */
     public static VersionType fromValue(byte value) {
         if (value == 0) {
             return INTERNAL;
@@ -324,6 +362,13 @@ public enum VersionType implements Writeable {
         throw new IllegalArgumentException("No version type match [" + value + "]");
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static VersionType readFromStream(StreamInput in) throws IOException {
         return in.readEnum(VersionType.class);
     }

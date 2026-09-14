@@ -69,6 +69,12 @@ public final class TransportAddress implements Writeable, ToXContentFragment {
 
     private final InetSocketAddress address;
 
+    /**
+     * Creates a new TransportAddress.
+     *
+     * @param address the address
+     * @param port the port
+     */
     public TransportAddress(InetAddress address, int port) {
         this(new InetSocketAddress(address, port));
     }
@@ -118,6 +124,7 @@ public final class TransportAddress implements Writeable, ToXContentFragment {
 
     /**
      * Returns a string representation of the enclosed {@link InetSocketAddress}
+     * @return the address
      * @see NetworkAddress#format(InetAddress)
      */
     public String getAddress() {
@@ -126,6 +133,8 @@ public final class TransportAddress implements Writeable, ToXContentFragment {
 
     /**
      * Returns the enclosed {@link InetSocketAddress}
+     *
+     * @return the address
      */
     public InetSocketAddress address() {
         return this.address;

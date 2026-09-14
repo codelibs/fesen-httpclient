@@ -41,9 +41,18 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class NodesUsageAction extends ActionType<NodesUsageResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final NodesUsageAction INSTANCE = new NodesUsageAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/nodes/usage";
 
+    /**
+     * Creates a new NodesUsageAction.
+     */
     protected NodesUsageAction() {
         super(NAME, NodesUsageResponse::new);
     }

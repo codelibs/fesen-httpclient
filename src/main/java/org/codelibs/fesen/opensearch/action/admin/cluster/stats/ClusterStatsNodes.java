@@ -89,6 +89,9 @@ public class ClusterStatsNodes implements ToXContentFragment {
     private final PackagingTypes packagingTypes;
     private final IngestStats ingestStats;
 
+    /**
+     * The NODE_STATS_METRICS constant.
+     */
     public static final Set<Metric> NODE_STATS_METRICS = Set.of(
         // Stats computed from node info and node stat
         Metric.OS,
@@ -436,6 +439,11 @@ public class ClusterStatsNodes implements ToXContentFragment {
             this.maxOpenFileDescriptors = maxOpenFileDescriptors;
         }
 
+        /**
+         * Returns the avg open file descriptors.
+         *
+         * @return the avg open file descriptors
+         */
         public long getAvgOpenFileDescriptors() {
             if (count == 0) {
                 return -1;
@@ -443,6 +451,11 @@ public class ClusterStatsNodes implements ToXContentFragment {
             return totalOpenFileDescriptors / count;
         }
 
+        /**
+         * Returns the max open file descriptors.
+         *
+         * @return the max open file descriptors
+         */
         public long getMaxOpenFileDescriptors() {
             if (count == 0) {
                 return -1;
@@ -450,6 +463,11 @@ public class ClusterStatsNodes implements ToXContentFragment {
             return maxOpenFileDescriptors;
         }
 
+        /**
+         * Returns the min open file descriptors.
+         *
+         * @return the min open file descriptors
+         */
         public long getMinOpenFileDescriptors() {
             if (count == 0) {
                 return -1;
@@ -534,6 +552,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
 
         /**
          * Total heap used in the cluster
+         *
+         * @return the heap used
          */
         public ByteSizeValue getHeapUsed() {
             return new ByteSizeValue(heapUsed);
@@ -541,6 +561,8 @@ public class ClusterStatsNodes implements ToXContentFragment {
 
         /**
          * Maximum total heap available to the cluster
+         *
+         * @return the heap max
          */
         public ByteSizeValue getHeapMax() {
             return new ByteSizeValue(heapMax);

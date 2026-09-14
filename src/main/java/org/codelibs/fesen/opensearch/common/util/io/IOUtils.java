@@ -70,6 +70,10 @@ public final class IOUtils {
     }
 
     /**
+     * Closes this instance and releases the resources it holds.
+     *
+     * @param closeable the closeable
+     * @throws IOException if an I/O error occurs
      */
     public static void close(@Nullable Closeable closeable) throws IOException {
         if (closeable != null) {
@@ -84,6 +88,8 @@ public final class IOUtils {
      * no exceptions are encountered and the passed in exception is null, it completes normally.
      *
      * @param objects objects to close
+     * @param e the exception
+     * @throws IOException if an I/O error occurs
      */
     public static void close(final Exception e, final Closeable... objects) throws IOException {
         close(e, Arrays.asList(objects));
@@ -96,6 +102,7 @@ public final class IOUtils {
      * no exceptions.
      *
      * @param objects objects to close
+     * @throws IOException if an I/O error occurs
      */
     public static void close(final Iterable<? extends Closeable> objects) throws IOException {
         close(null, objects);
@@ -109,6 +116,7 @@ public final class IOUtils {
      * @param ex existing Exception to add exceptions occurring during close to
      * @param objects objects to close
      *
+     * @throws IOException if an I/O error occurs
      */
     public static void close(final Exception ex, final Iterable<? extends Closeable> objects) throws IOException {
         Exception firstException = ex;
@@ -135,6 +143,9 @@ public final class IOUtils {
     }
 
     /**
+     * Closes the while handling exception.
+     *
+     * @param closeable the closeable
      */
     public static void closeWhileHandlingException(final Closeable closeable) {
         // noinspection EmptyCatchBlock
@@ -144,7 +155,16 @@ public final class IOUtils {
     }
 
     // TODO: replace with constants class if needed (cf. org.apache.lucene.util.Constants)
+    /**
+     * The WINDOWS constant.
+     */
     public static final boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
+    /**
+     * The LINUX constant.
+     */
     public static final boolean LINUX = System.getProperty("os.name").startsWith("Linux");
+    /**
+     * The MAC_OS_X constant.
+     */
     public static final boolean MAC_OS_X = System.getProperty("os.name").startsWith("Mac OS X");
 }

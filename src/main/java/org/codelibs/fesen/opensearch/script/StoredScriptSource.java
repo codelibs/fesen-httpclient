@@ -330,6 +330,8 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
      *
      * @param ignoreEmpty Specify as {@code true} to ignoreEmpty the empty source check.
      *                    This allows empty templates to be loaded for backwards compatibility.
+     * @param parser the parser
+     * @return the new XContent
      */
     public static StoredScriptSource fromXContent(XContentParser parser, boolean ignoreEmpty) {
         return PARSER.apply(parser, null).build(ignoreEmpty);
@@ -356,6 +358,9 @@ public class StoredScriptSource extends AbstractDiffable<StoredScriptSource> imp
      * Reads a {@link StoredScriptSource} from a stream.  Version 5.3+ will read
      * all of the lang, source, and options parameters.  For versions prior to 5.3,
      * only the source parameter will be read in as a bytes reference.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public StoredScriptSource(StreamInput in) throws IOException {
         this.lang = in.readString();

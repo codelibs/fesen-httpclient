@@ -72,6 +72,9 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
     private static final String UNASSIGNED_SHARDS = "unassigned_shards";
     private static final String PRIMARY_ACTIVE = "primary_active";
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<ClusterShardHealth, Integer> PARSER = new ConstructingObjectParser<>(
         "cluster_shard_health",
         true,
@@ -114,6 +117,13 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
     private int delayedUnassignedShards;
     private final boolean primaryActive;
 
+    /**
+     * Creates a new ClusterShardHealth.
+     *
+     * @param shardId the shard identifier
+     * @param shardRoutingTable the shard routing table
+     * @param isSearchOnlyClusterBlockEnabled the is search only cluster block enabled
+     */
     public ClusterShardHealth(
         final int shardId,
         final IndexShardRoutingTable shardRoutingTable,
@@ -153,6 +163,13 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
     }
 
     // Original constructor can call the new one
+    /**
+     * Creates a new ClusterShardHealth.
+     *
+     * @param shardId the shard identifier
+     * @param shardRoutingTable the shard routing table
+     * @param indexMetadata the index metadata
+     */
     public ClusterShardHealth(final int shardId, final IndexShardRoutingTable shardRoutingTable, final IndexMetadata indexMetadata) {
         this(
             shardId,
@@ -161,6 +178,12 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
         );
     }
 
+    /**
+     * Creates a new ClusterShardHealth.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterShardHealth(final StreamInput in) throws IOException {
         shardId = in.readVInt();
         status = ClusterHealthStatus.fromValue(in.readByte());
@@ -192,34 +215,74 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
         this.primaryActive = primaryActive;
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public int getShardId() {
         return shardId;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public ClusterHealthStatus getStatus() {
         return status;
     }
 
+    /**
+     * Returns the relocating shards.
+     *
+     * @return the relocating shards
+     */
     public int getRelocatingShards() {
         return relocatingShards;
     }
 
+    /**
+     * Returns the active shards.
+     *
+     * @return the active shards
+     */
     public int getActiveShards() {
         return activeShards;
     }
 
+    /**
+     * Returns the primary active flag.
+     *
+     * @return the primary active flag
+     */
     public boolean isPrimaryActive() {
         return primaryActive;
     }
 
+    /**
+     * Returns the initializing shards.
+     *
+     * @return the initializing shards
+     */
     public int getInitializingShards() {
         return initializingShards;
     }
 
+    /**
+     * Returns the unassigned shards.
+     *
+     * @return the unassigned shards
+     */
     public int getUnassignedShards() {
         return unassignedShards;
     }
 
+    /**
+     * Returns the delayed unassigned shards.
+     *
+     * @return the delayed unassigned shards
+     */
     public int getDelayedUnassignedShards() {
         return delayedUnassignedShards;
     }
@@ -298,6 +361,12 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
      *     <li>Shard health is YELLOW when some (but not all) search replicas are active</li>
      *     <li>Shard health is RED when no search replicas are active</li>
      * </ul>
+     *
+     * @param primaryRouting the primary routing
+     * @param activeShards the active shards
+     * @param totalShards the total shards
+     * @param indexMetadata the index metadata
+     * @return the shard health
      */
     public static ClusterHealthStatus getShardHealth(
         final ShardRouting primaryRouting,
@@ -322,6 +391,9 @@ public final class ClusterShardHealth implements Writeable, ToXContentFragment {
      * some point, cluster health should still turn RED.
      * <p>
      * NB: this method should *not* be called on active shards nor on non-primary shards.
+     *
+     * @param shardRouting the shard routing
+     * @return the inactive primary health
      */
     public static ClusterHealthStatus getInactivePrimaryHealth(final ShardRouting shardRouting) {
         assert shardRouting.primary() : "cannot invoke on a replica shard: " + shardRouting;

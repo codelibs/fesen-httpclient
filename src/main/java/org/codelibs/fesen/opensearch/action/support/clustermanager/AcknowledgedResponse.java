@@ -57,6 +57,12 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
 
     private static final ParseField ACKNOWLEDGED = new ParseField("acknowledged");
 
+    /**
+     * Performs the declare acknowledged field step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     */
     protected static <T extends AcknowledgedResponse> void declareAcknowledgedField(ConstructingObjectParser<T, Void> objectParser) {
         objectParser.declareField(
             constructorArg(),
@@ -66,13 +72,29 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
         );
     }
 
+    /**
+     * The acknowledged.
+     */
     protected boolean acknowledged;
 
+    /**
+     * Creates a new AcknowledgedResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AcknowledgedResponse(StreamInput in) throws IOException {
         super(in);
         acknowledged = in.readBoolean();
     }
 
+    /**
+     * Creates a new AcknowledgedResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @param readAcknowledged the read acknowledged
+     * @throws IOException if an I/O error occurs
+     */
     public AcknowledgedResponse(StreamInput in, boolean readAcknowledged) throws IOException {
         super(in);
         if (readAcknowledged) {
@@ -80,6 +102,11 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
         }
     }
 
+    /**
+     * Creates a new AcknowledgedResponse.
+     *
+     * @param acknowledged the acknowledged
+     */
     public AcknowledgedResponse(boolean acknowledged) {
         this.acknowledged = acknowledged;
     }
@@ -106,6 +133,13 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
         return builder;
     }
 
+    /**
+     * Adds the custom fields.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected void addCustomFields(XContentBuilder builder, Params params) throws IOException {
 
     }
@@ -128,6 +162,13 @@ public class AcknowledgedResponse extends ActionResponse implements ToXContentOb
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static AcknowledgedResponse fromXContent(XContentParser parser) throws IOException {
         return new AcknowledgedResponse(ACKNOWLEDGED_FLAG_PARSER.apply(parser, null));
     }

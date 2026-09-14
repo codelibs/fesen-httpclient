@@ -49,10 +49,23 @@ public class GetSettingsRequestBuilder extends ClusterManagerNodeReadOperationRe
     GetSettingsResponse,
     GetSettingsRequestBuilder> {
 
+    /**
+     * Creates a new GetSettingsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public GetSettingsRequestBuilder(OpenSearchClient client, GetSettingsAction action, String... indices) {
         super(client, action, new GetSettingsRequest().indices(indices));
     }
 
+    /**
+     * Sets the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     public GetSettingsRequestBuilder setIndices(String... indices) {
         request.indices(indices);
         return this;

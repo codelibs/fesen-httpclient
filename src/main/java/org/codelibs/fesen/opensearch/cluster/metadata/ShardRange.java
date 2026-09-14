@@ -21,6 +21,9 @@ import java.io.IOException;
 /**
  * Represents the hash range assigned to a shard.
  *
+ * @param shardId the shard identifier
+ * @param start the start position
+ * @param end the end position
  * @opensearch.experimental
  */
 @ExperimentalApi

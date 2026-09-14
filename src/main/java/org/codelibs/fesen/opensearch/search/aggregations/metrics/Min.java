@@ -40,6 +40,8 @@ public interface Min extends NumericMetricsAggregation.SingleValue {
 
     /**
      * The minimum.
+     *
+     * @return the value
      */
     double getValue();
 }

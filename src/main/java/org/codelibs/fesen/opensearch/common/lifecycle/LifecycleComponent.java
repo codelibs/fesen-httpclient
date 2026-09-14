@@ -43,13 +43,34 @@ import org.codelibs.fesen.opensearch.common.lease.Releasable;
 @PublicApi(since = "1.0.0")
 public interface LifecycleComponent extends Releasable {
 
+    /**
+     * Returns the lifecycle state.
+     *
+     * @return the lifecycle state
+     */
     Lifecycle.State lifecycleState();
 
+    /**
+     * Adds the lifecycle listener.
+     *
+     * @param listener the listener
+     */
     void addLifecycleListener(LifecycleListener listener);
 
+    /**
+     * Removes the lifecycle listener.
+     *
+     * @param listener the listener
+     */
     void removeLifecycleListener(LifecycleListener listener);
 
+    /**
+     * Starts this instance.
+     */
     void start();
 
+    /**
+     * Stops this instance.
+     */
     void stop();
 }

@@ -44,6 +44,8 @@ public interface StatusToXContentObject extends ToXContentObject {
 
     /**
      * Returns the REST status to make sure it is returned correctly
+     *
+     * @return the status
      */
     RestStatus status();
 }

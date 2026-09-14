@@ -72,10 +72,19 @@ public class MergeStats implements Writeable, ToXContentFragment {
 
     private final MergedSegmentWarmerStats warmerStats;
 
+    /**
+     * Creates a new MergeStats.
+     */
     public MergeStats() {
         this.warmerStats = new MergedSegmentWarmerStats();
     }
 
+    /**
+     * Creates a new MergeStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MergeStats(StreamInput in) throws IOException {
         total = in.readVLong();
         totalTimeInMillis = in.readVLong();
@@ -98,6 +107,11 @@ public class MergeStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param mergeStats the merge stats
+     */
     public void add(MergeStats mergeStats) {
         if (mergeStats == null) {
             return;
@@ -110,6 +124,11 @@ public class MergeStats implements Writeable, ToXContentFragment {
         addTotals(mergeStats);
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param mergeStats the merge stats
+     */
     public void addTotals(MergeStats mergeStats) {
         if (mergeStats == null) {
             return;
@@ -129,12 +148,19 @@ public class MergeStats implements Writeable, ToXContentFragment {
         this.warmerStats.addTotals(mergeStats.warmerStats);
     }
 
+    /**
+     * Adds the unreferenced file clean up stats.
+     *
+     * @param unreferencedFileCleanUpsPerformed the unreferenced file clean ups performed
+     */
     public void addUnreferencedFileCleanUpStats(long unreferencedFileCleanUpsPerformed) {
         this.unreferencedFileCleanUpsPerformed += unreferencedFileCleanUpsPerformed;
     }
 
     /**
      * The total time large merges were stopped so smaller merges could finish.
+     *
+     * @return the total stopped time
      */
     public TimeValue getTotalStoppedTime() {
         return new TimeValue(totalStoppedTimeInMillis);
@@ -142,6 +168,8 @@ public class MergeStats implements Writeable, ToXContentFragment {
 
     /**
      * The total time merge IO writes were throttled.
+     *
+     * @return the total throttled time
      */
     public TimeValue getTotalThrottledTime() {
         return new TimeValue(totalThrottledTimeInMillis);
@@ -149,15 +177,27 @@ public class MergeStats implements Writeable, ToXContentFragment {
 
     /**
      * The total time merges have been executed.
+     *
+     * @return the total time
      */
     public TimeValue getTotalTime() {
         return new TimeValue(totalTimeInMillis);
     }
 
+    /**
+     * Returns the total size.
+     *
+     * @return the total size
+     */
     public ByteSizeValue getTotalSize() {
         return new ByteSizeValue(totalSizeInBytes);
     }
 
+    /**
+     * Returns the current size.
+     *
+     * @return the current size
+     */
     public ByteSizeValue getCurrentSize() {
         return new ByteSizeValue(currentSizeInBytes);
     }

@@ -112,13 +112,22 @@ public final class ThreadContext implements Writeable {
         -1,
         Setting.Property.NodeScope
     );
+    /**
+     * The SETTING_HTTP_MAX_WARNING_HEADER_SIZE constant.
+     */
     public static final Setting<ByteSizeValue> SETTING_HTTP_MAX_WARNING_HEADER_SIZE = Setting.byteSizeSetting(
         "http.max_warning_header_size",
         new ByteSizeValue(-1),
         Setting.Property.NodeScope
     );
 
+    /**
+     * The PREFIX constant.
+     */
     public static final String PREFIX = "request.headers";
+    /**
+     * The DEFAULT_HEADERS_SETTING constant.
+     */
     public static final Setting<Settings> DEFAULT_HEADERS_SETTING = Setting.groupSetting(PREFIX + ".", Property.NodeScope);
 
     // thread context permissions
@@ -145,6 +154,8 @@ public final class ThreadContext implements Writeable {
     /**
      * Removes the current context and resets a default context. The removed context can be
      * restored by closing the returned {@link StoredContext}.
+     *
+     * @return the stash context
      */
     public StoredContext stashContext() {
         final ThreadContextStruct context = threadLocal.get();
@@ -192,6 +203,9 @@ public final class ThreadContext implements Writeable {
      * Add an entry in the grant portion of the policy file like this:
      *
      * permission org.codelibs.fesen.opensearch.secure_sm.ThreadContextPermission "stashAndMergeHeaders";
+     *
+     * @param headers the headers
+     * @return the stash and merge headers
      */
     @SuppressWarnings("removal")
     public StoredContext stashAndMergeHeaders(Map<String, String> headers) {
@@ -205,11 +219,19 @@ public final class ThreadContext implements Writeable {
     /**
      * Just like {@link #stashContext()} but no default context is set.
      * @param preserveResponseHeaders if set to <code>true</code> the response headers of the restore thread will be preserved.
+     * @return the new stored context
      */
     public StoredContext newStoredContext(boolean preserveResponseHeaders) {
         return newStoredContext(preserveResponseHeaders, Collections.emptyList());
     }
 
+    /**
+     * Creates a new stored context.
+     *
+     * @param preserveResponseHeaders the preserve response headers
+     * @param transientHeadersToClear the transient headers to clear
+     * @return the new stored context
+     */
     public StoredContext newStoredContext(boolean preserveResponseHeaders, Collection<String> transientHeadersToClear) {
         return newStoredContext(preserveResponseHeaders, false, transientHeadersToClear);
     }
@@ -220,6 +242,9 @@ public final class ThreadContext implements Writeable {
      * restored by closing the returned {@link StoredContext}.
      *
      * @param preserveResponseHeaders if set to <code>true</code> the response headers of the restore thread will be preserved.
+     * @param preserveTransients the preserve transients
+     * @param transientHeadersToClear the transient headers to clear
+     * @return the new stored context
      */
     public StoredContext newStoredContext(
         boolean preserveResponseHeaders,
@@ -290,6 +315,9 @@ public final class ThreadContext implements Writeable {
 
     /**
      * Returns the header for the given key or <code>null</code> if not present
+     *
+     * @param key the key
+     * @return the header
      */
     public String getHeader(String key) {
         String value = threadLocal.get().requestHeaders.get(key);
@@ -301,6 +329,10 @@ public final class ThreadContext implements Writeable {
 
     /**
      * Returns a transient header object or <code>null</code> if there is no header for the given key
+     *
+     * @param <T> the element type
+     * @param key the key
+     * @return the transient
      */
     @SuppressWarnings("unchecked") // (T)object
     public <T> T getTransient(String key) {
@@ -310,6 +342,9 @@ public final class ThreadContext implements Writeable {
     /**
      * Saves the current thread context and wraps command in a Runnable that restores that context before running command. If
      * <code>command</code> has already been passed through this method then it is returned unaltered rather than wrapped twice.
+     *
+     * @param command the command
+     * @return the preserve context
      */
     public Runnable preserveContext(Runnable command) {
         if (command instanceof ContextPreservingAbstractRunnable) {
@@ -326,6 +361,9 @@ public final class ThreadContext implements Writeable {
 
     /**
      * Unwraps a command that was previously wrapped by {@link #preserveContext(Runnable)}.
+     *
+     * @param command the command
+     * @return this instance
      */
     public Runnable unwrap(Runnable command) {
         if (command instanceof WrappedRunnable) {
@@ -352,11 +390,20 @@ public final class ThreadContext implements Writeable {
         @Override
         void close();
 
+        /**
+         * Restores this instance.
+         */
         default void restore() {
             close();
         }
     }
 
+    /**
+     * Builds the default headers.
+     *
+     * @param settings the settings
+     * @return the new default headers
+     */
     public static Map<String, String> buildDefaultHeaders(Settings settings) {
         Settings headers = DEFAULT_HEADERS_SETTING.get(settings);
         if (headers == null) {

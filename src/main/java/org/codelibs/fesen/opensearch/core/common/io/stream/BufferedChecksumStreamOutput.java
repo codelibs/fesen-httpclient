@@ -59,11 +59,21 @@ public final class BufferedChecksumStreamOutput extends StreamOutput {
     private final StreamOutput out;
     private final Checksum digest;
 
+    /**
+     * Creates a new BufferedChecksumStreamOutput.
+     *
+     * @param out the output to write to
+     */
     public BufferedChecksumStreamOutput(StreamOutput out) {
         this.out = out;
         this.digest = new BufferedChecksum(new CRC32());
     }
 
+    /**
+     * Returns the checksum.
+     *
+     * @return the checksum
+     */
     public long getChecksum() {
         return this.digest.getValue();
     }
@@ -96,6 +106,9 @@ public final class BufferedChecksumStreamOutput extends StreamOutput {
         digest.reset();
     }
 
+    /**
+     * Resets the digest.
+     */
     public void resetDigest() {
         digest.reset();
     }
@@ -120,6 +133,15 @@ public final class BufferedChecksumStreamOutput extends StreamOutput {
         });
     }
 
+    /**
+     * Writes the map values.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map the map
+     * @param valueWriter the value writer
+     * @throws IOException if an I/O error occurs
+     */
     public <K, V> void writeMapValues(Map<K, V> map, final Writeable.Writer<V> valueWriter) throws IOException {
         writeVInt(map.size());
         map.keySet().stream().sorted().forEachOrdered(key -> {

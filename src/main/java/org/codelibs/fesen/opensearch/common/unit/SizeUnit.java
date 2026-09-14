@@ -38,6 +38,9 @@ package org.codelibs.fesen.opensearch.common.unit;
  * @opensearch.internal
  */
 public enum SizeUnit {
+    /**
+     * The SINGLE value.
+     */
     SINGLE {
         @Override
         public long toSingles(long size) {
@@ -69,6 +72,9 @@ public enum SizeUnit {
             return size / (C5 / C0);
         }
     },
+    /**
+     * The KILO value.
+     */
     KILO {
         @Override
         public long toSingles(long size) {
@@ -100,6 +106,9 @@ public enum SizeUnit {
             return size / (C5 / C1);
         }
     },
+    /**
+     * The MEGA value.
+     */
     MEGA {
         @Override
         public long toSingles(long size) {
@@ -131,6 +140,9 @@ public enum SizeUnit {
             return size / (C5 / C2);
         }
     },
+    /**
+     * The GIGA value.
+     */
     GIGA {
         @Override
         public long toSingles(long size) {
@@ -162,6 +174,9 @@ public enum SizeUnit {
             return size / (C5 / C3);
         }
     },
+    /**
+     * The TERA value.
+     */
     TERA {
         @Override
         public long toSingles(long size) {
@@ -193,6 +208,9 @@ public enum SizeUnit {
             return size / (C5 / C0);
         }
     },
+    /**
+     * The PETA value.
+     */
     PETA {
         @Override
         public long toSingles(long size) {
@@ -244,15 +262,51 @@ public enum SizeUnit {
         return d * m;
     }
 
+    /**
+     * Returns this instance as singles.
+     *
+     * @param size the size
+     * @return the singles
+     */
     public abstract long toSingles(long size);
 
+    /**
+     * Returns this instance as kilo.
+     *
+     * @param size the size
+     * @return the kilo
+     */
     public abstract long toKilo(long size);
 
+    /**
+     * Returns this instance as mega.
+     *
+     * @param size the size
+     * @return the mega
+     */
     public abstract long toMega(long size);
 
+    /**
+     * Returns this instance as giga.
+     *
+     * @param size the size
+     * @return the giga
+     */
     public abstract long toGiga(long size);
 
+    /**
+     * Returns this instance as tera.
+     *
+     * @param size the size
+     * @return the tera
+     */
     public abstract long toTera(long size);
 
+    /**
+     * Returns this instance as peta.
+     *
+     * @param size the size
+     * @return the peta
+     */
     public abstract long toPeta(long size);
 }

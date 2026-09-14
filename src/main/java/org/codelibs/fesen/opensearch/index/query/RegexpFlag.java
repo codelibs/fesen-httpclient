@@ -96,6 +96,11 @@ public enum RegexpFlag {
         this.value = value;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public int value() {
         return value;
     }

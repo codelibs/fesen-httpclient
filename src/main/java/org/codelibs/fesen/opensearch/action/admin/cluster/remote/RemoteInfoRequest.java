@@ -45,6 +45,9 @@ import java.io.IOException;
  */
 public final class RemoteInfoRequest extends ActionRequest {
 
+    /**
+     * Creates a new RemoteInfoRequest.
+     */
     public RemoteInfoRequest() {}
 
     @Override

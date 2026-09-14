@@ -69,11 +69,26 @@ public class ClusterStatsIndices implements ToXContentFragment {
     private AnalysisStats analysis;
     private MappingStats mappings;
 
+    /**
+     * Creates a new ClusterStatsIndices.
+     *
+     * @param nodeResponses the node responses
+     * @param mappingStats the mapping stats
+     * @param analysisStats the analysis stats
+     */
     public ClusterStatsIndices(List<ClusterStatsNodeResponse> nodeResponses, MappingStats mappingStats, AnalysisStats analysisStats) {
         this(Set.of(IndexMetric.values()), nodeResponses, mappingStats, analysisStats);
 
     }
 
+    /**
+     * Creates a new ClusterStatsIndices.
+     *
+     * @param indicesMetrics the indices metrics
+     * @param nodeResponses the node responses
+     * @param mappingStats the mapping stats
+     * @param analysisStats the analysis stats
+     */
     public ClusterStatsIndices(
         Set<IndexMetric> indicesMetrics,
         List<ClusterStatsNodeResponse> nodeResponses,
@@ -171,10 +186,20 @@ public class ClusterStatsIndices implements ToXContentFragment {
         this.analysis = analysisStats;
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public MappingStats getMappings() {
         return mappings;
     }
 
+    /**
+     * Returns the analysis.
+     *
+     * @return the analysis
+     */
     public AnalysisStats getAnalysis() {
         return analysis;
     }
@@ -242,8 +267,16 @@ public class ClusterStatsIndices implements ToXContentFragment {
         double totalIndexReplication = 0;
         double maxIndexReplication = -1;
 
+        /**
+         * Creates a new ShardStats.
+         */
         public ShardStats() {}
 
+        /**
+         * Creates a new ShardStats.
+         *
+         * @param aggregatedIndexStats the aggregated index stats
+         */
         public ShardStats(ClusterStatsNodeResponse.AggregatedIndexStats aggregatedIndexStats) {
             this.total = aggregatedIndexStats.total;
             this.primaries = aggregatedIndexStats.primaries;
@@ -251,6 +284,8 @@ public class ClusterStatsIndices implements ToXContentFragment {
 
         /**
          * returns how many *redundant* copies of the data the cluster holds - running with no replicas will return 0
+         *
+         * @return the replication
          */
         public double getReplication() {
             if (primaries == 0) {
@@ -261,6 +296,8 @@ public class ClusterStatsIndices implements ToXContentFragment {
 
         /**
          * average number of shards (primary+replicas) across the indices
+         *
+         * @return the avg index shards
          */
         public double getAvgIndexShards() {
             if (this.indices == 0) {
@@ -271,6 +308,8 @@ public class ClusterStatsIndices implements ToXContentFragment {
 
         /**
          * the average number primary shards across the indices
+         *
+         * @return the avg index primary shards
          */
         public double getAvgIndexPrimaryShards() {
             if (this.indices == 0) {
@@ -281,6 +320,8 @@ public class ClusterStatsIndices implements ToXContentFragment {
 
         /**
          * average replication factor across the indices. See {@link #getReplication}
+         *
+         * @return the avg index replication
          */
         public double getAvgIndexReplication() {
             if (indices == 0) {
@@ -289,6 +330,11 @@ public class ClusterStatsIndices implements ToXContentFragment {
             return this.totalIndexReplication / this.indices;
         }
 
+        /**
+         * Adds the index shard count.
+         *
+         * @param indexShardCount the index shard count
+         */
         public void addIndexShardCount(ShardStats indexShardCount) {
             this.indices++;
             this.primaries += indexShardCount.primaries;
@@ -313,6 +359,11 @@ public class ClusterStatsIndices implements ToXContentFragment {
             }
         }
 
+        /**
+         * Adds the stats from.
+         *
+         * @param incomingStats the incoming stats
+         */
         public void addStatsFrom(ClusterStatsNodeResponse.AggregatedIndexStats incomingStats) {
             this.total += incomingStats.total;
             this.primaries += incomingStats.primaries;

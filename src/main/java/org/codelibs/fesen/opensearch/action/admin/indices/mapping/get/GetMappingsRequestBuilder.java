@@ -47,6 +47,13 @@ public class GetMappingsRequestBuilder extends ClusterInfoRequestBuilder<
     GetMappingsResponse,
     GetMappingsRequestBuilder> {
 
+    /**
+     * Creates a new GetMappingsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public GetMappingsRequestBuilder(OpenSearchClient client, GetMappingsAction action, String... indices) {
         super(client, action, new GetMappingsRequest().indices(indices));
     }

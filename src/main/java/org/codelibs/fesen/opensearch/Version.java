@@ -61,6 +61,9 @@ public class Version implements Comparable<Version>, ToXContentFragment {
      * Exception thrown when an unsupported version ID is encountered.
      */
     public static class UnsupportedVersionException extends RuntimeException {
+        /**
+         * The version string.
+         */
         private final String versionString;
 
         private UnsupportedVersionException(int versionId) {
@@ -68,6 +71,11 @@ public class Version implements Comparable<Version>, ToXContentFragment {
             this.versionString = legacyFriendlyIdToString(versionId);
         }
 
+        /**
+         * Returns the version string.
+         *
+         * @return the version string
+         */
         public String getVersionString() {
             return versionString;
         }
@@ -108,75 +116,270 @@ public class Version implements Comparable<Version>, ToXContentFragment {
      * The unreleased last minor is the current major with a upped minor: 2._5_.0
      * The unreleased revision is the very release with a upped revision 2.4._1_
      */
+    /**
+     * The V_EMPTY_ID constant.
+     */
     public static final int V_EMPTY_ID = 0;
+    /**
+     * The V_EMPTY constant.
+     */
     public static final Version V_EMPTY = new Version(V_EMPTY_ID, org.apache.lucene.util.Version.LATEST);
 
     // RELEASED
+    /**
+     * The V_2_0_0 constant.
+     */
     public static final Version V_2_0_0 = new Version(2000099, org.apache.lucene.util.Version.LUCENE_9_1_0);
+    /**
+     * The V_2_0_1 constant.
+     */
     public static final Version V_2_0_1 = new Version(2000199, org.apache.lucene.util.Version.LUCENE_9_1_0);
+    /**
+     * The V_2_1_0 constant.
+     */
     public static final Version V_2_1_0 = new Version(2010099, org.apache.lucene.util.Version.LUCENE_9_2_0);
+    /**
+     * The V_2_2_0 constant.
+     */
     public static final Version V_2_2_0 = new Version(2020099, org.apache.lucene.util.Version.LUCENE_9_3_0);
+    /**
+     * The V_2_2_1 constant.
+     */
     public static final Version V_2_2_1 = new Version(2020199, org.apache.lucene.util.Version.LUCENE_9_3_0);
+    /**
+     * The V_2_3_0 constant.
+     */
     public static final Version V_2_3_0 = new Version(2030099, org.apache.lucene.util.Version.LUCENE_9_3_0);
+    /**
+     * The V_2_4_0 constant.
+     */
     public static final Version V_2_4_0 = new Version(2040099, org.apache.lucene.util.Version.LUCENE_9_4_1);
+    /**
+     * The V_2_4_1 constant.
+     */
     public static final Version V_2_4_1 = new Version(2040199, org.apache.lucene.util.Version.LUCENE_9_4_2);
+    /**
+     * The V_2_5_0 constant.
+     */
     public static final Version V_2_5_0 = new Version(2050099, org.apache.lucene.util.Version.LUCENE_9_4_2);
+    /**
+     * The V_2_5_1 constant.
+     */
     public static final Version V_2_5_1 = new Version(2050199, org.apache.lucene.util.Version.LUCENE_9_4_2);
 
     // UNRELEASED
+    /**
+     * The V_2_4_2 constant.
+     */
     public static final Version V_2_4_2 = new Version(2040299, org.apache.lucene.util.Version.LUCENE_9_4_2);
+    /**
+     * The V_2_6_0 constant.
+     */
     public static final Version V_2_6_0 = new Version(2060099, org.apache.lucene.util.Version.LUCENE_9_5_0);
+    /**
+     * The V_2_6_1 constant.
+     */
     public static final Version V_2_6_1 = new Version(2060199, org.apache.lucene.util.Version.LUCENE_9_5_0);
+    /**
+     * The V_2_7_0 constant.
+     */
     public static final Version V_2_7_0 = new Version(2070099, org.apache.lucene.util.Version.LUCENE_9_5_0);
+    /**
+     * The V_2_7_1 constant.
+     */
     public static final Version V_2_7_1 = new Version(2070199, org.apache.lucene.util.Version.LUCENE_9_5_0);
+    /**
+     * The V_2_8_0 constant.
+     */
     public static final Version V_2_8_0 = new Version(2080099, org.apache.lucene.util.Version.LUCENE_9_6_0);
+    /**
+     * The V_2_8_1 constant.
+     */
     public static final Version V_2_8_1 = new Version(2080199, org.apache.lucene.util.Version.LUCENE_9_6_0);
+    /**
+     * The V_2_9_0 constant.
+     */
     public static final Version V_2_9_0 = new Version(2090099, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_9_1 constant.
+     */
     public static final Version V_2_9_1 = new Version(2090199, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_10_0 constant.
+     */
     public static final Version V_2_10_0 = new Version(2100099, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_10_1 constant.
+     */
     public static final Version V_2_10_1 = new Version(2100199, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_11_0 constant.
+     */
     public static final Version V_2_11_0 = new Version(2110099, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_11_1 constant.
+     */
     public static final Version V_2_11_1 = new Version(2110199, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_11_2 constant.
+     */
     public static final Version V_2_11_2 = new Version(2110299, org.apache.lucene.util.Version.LUCENE_9_7_0);
+    /**
+     * The V_2_12_0 constant.
+     */
     public static final Version V_2_12_0 = new Version(2120099, org.apache.lucene.util.Version.LUCENE_9_9_2);
+    /**
+     * The V_2_12_1 constant.
+     */
     public static final Version V_2_12_1 = new Version(2120199, org.apache.lucene.util.Version.LUCENE_9_9_2);
+    /**
+     * The V_2_13_0 constant.
+     */
     public static final Version V_2_13_0 = new Version(2130099, org.apache.lucene.util.Version.LUCENE_9_10_0);
+    /**
+     * The V_2_13_1 constant.
+     */
     public static final Version V_2_13_1 = new Version(2130199, org.apache.lucene.util.Version.LUCENE_9_10_0);
+    /**
+     * The V_2_14_0 constant.
+     */
     public static final Version V_2_14_0 = new Version(2140099, org.apache.lucene.util.Version.LUCENE_9_10_0);
+    /**
+     * The V_2_14_1 constant.
+     */
     public static final Version V_2_14_1 = new Version(2140199, org.apache.lucene.util.Version.LUCENE_9_10_0);
+    /**
+     * The V_2_15_0 constant.
+     */
     public static final Version V_2_15_0 = new Version(2150099, org.apache.lucene.util.Version.LUCENE_9_10_0);
+    /**
+     * The V_2_15_1 constant.
+     */
     public static final Version V_2_15_1 = new Version(2150199, org.apache.lucene.util.Version.LUCENE_9_10_0);
+    /**
+     * The V_2_16_0 constant.
+     */
     public static final Version V_2_16_0 = new Version(2160099, org.apache.lucene.util.Version.LUCENE_9_11_1);
+    /**
+     * The V_2_16_1 constant.
+     */
     public static final Version V_2_16_1 = new Version(2160199, org.apache.lucene.util.Version.LUCENE_9_11_1);
+    /**
+     * The V_2_17_0 constant.
+     */
     public static final Version V_2_17_0 = new Version(2170099, org.apache.lucene.util.Version.LUCENE_9_11_1);
+    /**
+     * The V_2_17_1 constant.
+     */
     public static final Version V_2_17_1 = new Version(2170199, org.apache.lucene.util.Version.LUCENE_9_11_1);
+    /**
+     * The V_2_17_2 constant.
+     */
     public static final Version V_2_17_2 = new Version(2170299, org.apache.lucene.util.Version.LUCENE_9_11_1);
+    /**
+     * The V_2_18_0 constant.
+     */
     public static final Version V_2_18_0 = new Version(2180099, org.apache.lucene.util.Version.LUCENE_9_12_0);
+    /**
+     * The V_2_18_1 constant.
+     */
     public static final Version V_2_18_1 = new Version(2180199, org.apache.lucene.util.Version.LUCENE_9_12_1);
+    /**
+     * The V_2_19_0 constant.
+     */
     public static final Version V_2_19_0 = new Version(2190099, org.apache.lucene.util.Version.LUCENE_9_12_1);
+    /**
+     * The V_2_19_1 constant.
+     */
     public static final Version V_2_19_1 = new Version(2190199, org.apache.lucene.util.Version.LUCENE_9_12_1);
+    /**
+     * The V_2_19_2 constant.
+     */
     public static final Version V_2_19_2 = new Version(2190299, org.apache.lucene.util.Version.LUCENE_9_12_1);
+    /**
+     * The V_2_19_3 constant.
+     */
     public static final Version V_2_19_3 = new Version(2190399, org.apache.lucene.util.Version.LUCENE_9_12_2);
+    /**
+     * The V_2_19_4 constant.
+     */
     public static final Version V_2_19_4 = new Version(2190499, org.apache.lucene.util.Version.LUCENE_9_12_3);
+    /**
+     * The V_2_19_5 constant.
+     */
     public static final Version V_2_19_5 = new Version(2190599, org.apache.lucene.util.Version.LUCENE_9_12_3);
+    /**
+     * The V_2_19_6 constant.
+     */
     public static final Version V_2_19_6 = new Version(2190699, org.apache.lucene.util.Version.LUCENE_9_12_3);
+    /**
+     * The V_3_0_0 constant.
+     */
     public static final Version V_3_0_0 = new Version(3000099, org.apache.lucene.util.Version.LUCENE_10_1_0);
+    /**
+     * The V_3_1_0 constant.
+     */
     public static final Version V_3_1_0 = new Version(3010099, org.apache.lucene.util.Version.LUCENE_10_2_1);
+    /**
+     * The V_3_2_0 constant.
+     */
     public static final Version V_3_2_0 = new Version(3020099, org.apache.lucene.util.Version.LUCENE_10_2_2);
+    /**
+     * The V_3_3_0 constant.
+     */
     public static final Version V_3_3_0 = new Version(3030099, org.apache.lucene.util.Version.LUCENE_10_3_1);
+    /**
+     * The V_3_3_1 constant.
+     */
     public static final Version V_3_3_1 = new Version(3030199, org.apache.lucene.util.Version.LUCENE_10_3_1);
+    /**
+     * The V_3_3_2 constant.
+     */
     public static final Version V_3_3_2 = new Version(3030299, org.apache.lucene.util.Version.LUCENE_10_3_1);
+    /**
+     * The V_3_4_0 constant.
+     */
     public static final Version V_3_4_0 = new Version(3040099, org.apache.lucene.util.Version.LUCENE_10_3_2);
+    /**
+     * The V_3_5_0 constant.
+     */
     public static final Version V_3_5_0 = new Version(3050099, org.apache.lucene.util.Version.LUCENE_10_3_2);
+    /**
+     * The V_3_5_1 constant.
+     */
     public static final Version V_3_5_1 = new Version(3050199, org.apache.lucene.util.Version.LUCENE_10_3_2);
+    /**
+     * The V_3_6_0 constant.
+     */
     public static final Version V_3_6_0 = new Version(3060099, org.apache.lucene.util.Version.LUCENE_10_4_0);
+    /**
+     * The V_3_6_1 constant.
+     */
     public static final Version V_3_6_1 = new Version(3060199, org.apache.lucene.util.Version.LUCENE_10_4_0);
+    /**
+     * The V_3_7_0 constant.
+     */
     public static final Version V_3_7_0 = new Version(3070099, org.apache.lucene.util.Version.LUCENE_10_4_0);
+    /**
+     * The V_3_7_1 constant.
+     */
     public static final Version V_3_7_1 = new Version(3070199, org.apache.lucene.util.Version.LUCENE_10_4_0);
+    /**
+     * The V_3_8_0 constant.
+     */
     public static final Version V_3_8_0 = new Version(3080099, org.apache.lucene.util.Version.LUCENE_10_5_0);
+    /**
+     * The CURRENT constant.
+     */
     public static final Version CURRENT = V_3_8_0;
 
+    /**
+     * The identifier to version.
+     */
     protected static final Map<Integer, Version> idToVersion;
+    /**
+     * The string to version.
+     */
     protected static final Map<String, Version> stringToVersion;
     static {
         final Map<Integer, Version> builder = new HashMap<>();
@@ -246,6 +449,12 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         stringToVersion = Map.copyOf(builderByString);
     }
 
+    /**
+     * Creates an instance from identifier.
+     *
+     * @param id the identifier
+     * @return the new identifier
+     */
     public static Version fromId(int id) {
         if (id != 0 && (id & MASK) == 0) {
             throw new UnsupportedVersionException(id);
@@ -285,6 +494,10 @@ public class Version implements Comparable<Version>, ToXContentFragment {
 
     /**
      * Returns the minimum version between the 2.
+     *
+     * @param version1 the version1
+     * @param version2 the version2
+     * @return the min
      */
     public static Version min(Version version1, Version version2) {
         return version1.id < version2.id ? version1 : version2;
@@ -292,6 +505,10 @@ public class Version implements Comparable<Version>, ToXContentFragment {
 
     /**
      * Returns the maximum version between the 2
+     *
+     * @param version1 the version1
+     * @param version2 the version2
+     * @return the max
      */
     public static Version max(Version version1, Version version2) {
         return version1.id > version2.id ? version1 : version2;
@@ -299,6 +516,9 @@ public class Version implements Comparable<Version>, ToXContentFragment {
 
     /**
      * Returns the version given its string representation, current version if the argument is null or empty
+     *
+     * @param version the version
+     * @return the new string
      */
     public static Version fromString(String version) {
         if (Strings.hasLength(version) == false) {
@@ -355,12 +575,33 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         }
     }
 
+    /**
+     * The MASK constant.
+     */
     public static final int MASK = 0x08000000;
+    /**
+     * The identifier.
+     */
     public final int id;
+    /**
+     * The major.
+     */
     public final byte major;
+    /**
+     * The minor.
+     */
     public final byte minor;
+    /**
+     * The revision.
+     */
     public final byte revision;
+    /**
+     * The build.
+     */
     public final byte build;
+    /**
+     * The lucene version.
+     */
     public final org.apache.lucene.util.Version luceneVersion;
 
     Version(int id, org.apache.lucene.util.Version luceneVersion) {
@@ -381,18 +622,42 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         this.minIndexCompatVersion = null;
     }
 
+    /**
+     * Returns the after.
+     *
+     * @param version the version
+     * @return the after
+     */
     public boolean after(Version version) {
         return version.id < id;
     }
 
+    /**
+     * Handles the or after event.
+     *
+     * @param version the version
+     * @return the on or after
+     */
     public boolean onOrAfter(Version version) {
         return version.id <= id;
     }
 
+    /**
+     * Returns the before.
+     *
+     * @param version the version
+     * @return the before
+     */
     public boolean before(Version version) {
         return version.id > id;
     }
 
+    /**
+     * Handles the or before event.
+     *
+     * @param version the version
+     * @return the on or before
+     */
     public boolean onOrBefore(Version version) {
         return version.id >= id;
     }
@@ -418,10 +683,16 @@ public class Version implements Comparable<Version>, ToXContentFragment {
 
     // lazy initialized because we don't yet have the declared versions ready when instantiating the cached Version
     // instances
+    /**
+     * The min compat version.
+     */
     protected Version minCompatVersion = null;
 
     // lazy initialized because we don't yet have the declared versions ready when instantiating the cached Version
     // instances
+    /**
+     * The min index compat version.
+     */
     protected Version minIndexCompatVersion = null;
 
     /**
@@ -430,6 +701,8 @@ public class Version implements Comparable<Version>, ToXContentFragment {
      * to communicate with a node running the current version. The returned version
      * is in most of the cases the smallest major version release unless the current version
      * is a beta or RC release then the version itself is returned.
+     *
+     * @return the minimum compatibility version
      */
     public Version minimumCompatibilityVersion() {
         Version res = minCompatVersion;
@@ -440,6 +713,11 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         return res;
     }
 
+    /**
+     * Computes the min compat version.
+     *
+     * @return the min compat version
+     */
     protected Version computeMinCompatVersion() {
         if (major >= 3) {
             // all major versions from 3 onwards are compatible with last minor series of the previous major
@@ -462,6 +740,9 @@ public class Version implements Comparable<Version>, ToXContentFragment {
 
     /**
      * this is used to ensure the version id for new versions of OpenSearch are always less than the predecessor versions
+     *
+     * @param id the identifier
+     * @return the mask identifier
      */
     protected int maskId(final int id) {
         return MASK ^ id;
@@ -471,6 +752,8 @@ public class Version implements Comparable<Version>, ToXContentFragment {
      * Returns the minimum created index version that this version supports. Indices created with lower versions
      * can't be used with this version. This should also be used for file based serialization backwards compatibility ie. on serialization
      * code that is used to read / write file formats like transaction logs, cluster state, and index metadata.
+     *
+     * @return the minimum index compatibility version
      */
     public Version minimumIndexCompatibilityVersion() {
         Version res = minIndexCompatVersion;
@@ -481,6 +764,11 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         return res;
     }
 
+    /**
+     * Computes the min index compat version.
+     *
+     * @return the min index compat version
+     */
     protected Version computeMinIndexCompatVersion() {
         final int bwcMajor = major - 1;
         final int bwcMinor = 0;
@@ -527,6 +815,11 @@ public class Version implements Comparable<Version>, ToXContentFragment {
         return id;
     }
 
+    /**
+     * Returns the beta flag.
+     *
+     * @return the beta flag
+     */
     public boolean isBeta() {
         return build >= 25 && build < 50;
     }
@@ -535,11 +828,18 @@ public class Version implements Comparable<Version>, ToXContentFragment {
      * Returns true iff this version is an alpha version
      * Note: This has been introduced in version 5 of the OpenSearch predecessor. Previous versions will never
      * have an alpha version.
+     *
+     * @return the alpha flag
      */
     public boolean isAlpha() {
         return build < 25;
     }
 
+    /**
+     * Returns the release flag.
+     *
+     * @return the release flag
+     */
     public boolean isRelease() {
         return build == 99;
     }
@@ -548,6 +848,9 @@ public class Version implements Comparable<Version>, ToXContentFragment {
      * Extracts a sorted list of declared version constants from a class.
      * The argument would normally be Version.class but is exposed for
      * testing with other classes-containing-version-constants.
+     *
+     * @param versionClass the version class
+     * @return the declared versions
      */
     public static List<Version> getDeclaredVersions(final Class<?> versionClass) {
         final Field[] fields = versionClass.getFields();

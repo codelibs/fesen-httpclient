@@ -48,11 +48,22 @@ public abstract class BaseNodeResponse extends TransportResponse {
 
     private DiscoveryNode node;
 
+    /**
+     * Creates a new BaseNodeResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected BaseNodeResponse(StreamInput in) throws IOException {
         super(in);
         node = new DiscoveryNode(in);
     }
 
+    /**
+     * Creates a new BaseNodeResponse.
+     *
+     * @param node the node
+     */
     protected BaseNodeResponse(DiscoveryNode node) {
         assert node != null;
         this.node = node;
@@ -60,6 +71,8 @@ public abstract class BaseNodeResponse extends TransportResponse {
 
     /**
      * The node this information relates to.
+     *
+     * @return the node
      */
     public DiscoveryNode getNode() {
         return node;

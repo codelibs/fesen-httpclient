@@ -55,6 +55,12 @@ public final class RepositoryStatsSnapshot implements Writeable, ToXContentObjec
     private final RepositoryStats repositoryStats;
     private final long clusterVersion;
 
+    /**
+     * Creates a new RepositoryStatsSnapshot by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RepositoryStatsSnapshot(StreamInput in) throws IOException {
         this.repositoryInfo = new RepositoryInfo(in);
         this.repositoryStats = new RepositoryStats(in);

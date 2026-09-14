@@ -52,12 +52,20 @@ public final class Scroll implements Writeable {
 
     private final TimeValue keepAlive;
 
+    /**
+     * Creates a new Scroll by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public Scroll(StreamInput in) throws IOException {
         this.keepAlive = in.readTimeValue();
     }
 
     /**
      * Constructs a new scroll of the provided keep alive.
+     *
+     * @param keepAlive the keep alive
      */
     public Scroll(TimeValue keepAlive) {
         this.keepAlive = Objects.requireNonNull(keepAlive, "keepAlive must not be null");
@@ -65,6 +73,8 @@ public final class Scroll implements Writeable {
 
     /**
      * How long the resources will be kept open to support the scroll request.
+     *
+     * @return the keep alive
      */
     public TimeValue keepAlive() {
         return keepAlive;

@@ -56,6 +56,12 @@ public class RecoveryResponse extends BroadcastResponse {
 
     private final Map<String, List<RecoveryState>> shardRecoveryStates;
 
+    /**
+     * Creates a new RecoveryResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RecoveryResponse(StreamInput in) throws IOException {
         super(in);
         shardRecoveryStates = in.readMapOfLists(StreamInput::readString, RecoveryState::new);
@@ -82,6 +88,11 @@ public class RecoveryResponse extends BroadcastResponse {
         this.shardRecoveryStates = shardRecoveryStates;
     }
 
+    /**
+     * Returns the recoveries flag.
+     *
+     * @return the recoveries flag
+     */
     public boolean hasRecoveries() {
         return shardRecoveryStates.size() > 0;
     }

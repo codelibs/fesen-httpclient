@@ -74,6 +74,13 @@ public class TransportStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param serverOpen the server open
+     * @param totalOutboundConnections the total outbound connections
+     * @param rxCount the rx count
+     * @param rxSize the rx size
+     * @param txCount the tx count
+     * @param txSize the tx size
      */
     @Deprecated
     public TransportStats(long serverOpen, long totalOutboundConnections, long rxCount, long rxSize, long txCount, long txSize) {
@@ -85,6 +92,12 @@ public class TransportStats implements Writeable, ToXContentFragment {
         this.txSize = txSize;
     }
 
+    /**
+     * Creates a new TransportStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TransportStats(StreamInput in) throws IOException {
         serverOpen = in.readVLong();
         totalOutboundConnections = in.readVLong();
@@ -116,33 +129,72 @@ public class TransportStats implements Writeable, ToXContentFragment {
         private long txCount = 0;
         private long txSize = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the server open.
+         *
+         * @param serverOpen the server open
+         * @return the server open
+         */
         public Builder serverOpen(long serverOpen) {
             this.serverOpen = serverOpen;
             return this;
         }
 
+        /**
+         * Returns the total outbound connections.
+         *
+         * @param connections the connections
+         * @return the total outbound connections
+         */
         public Builder totalOutboundConnections(long connections) {
             this.totalOutboundConnections = connections;
             return this;
         }
 
+        /**
+         * Returns the rx count.
+         *
+         * @param count the count
+         * @return the rx count
+         */
         public Builder rxCount(long count) {
             this.rxCount = count;
             return this;
         }
 
+        /**
+         * Returns the rx size.
+         *
+         * @param size the size
+         * @return the rx size
+         */
         public Builder rxSize(long size) {
             this.rxSize = size;
             return this;
         }
 
+        /**
+         * Returns the tx count.
+         *
+         * @param count the count
+         * @return the tx count
+         */
         public Builder txCount(long count) {
             this.txCount = count;
             return this;
         }
 
+        /**
+         * Returns the tx size.
+         *
+         * @param size the size
+         * @return the tx size
+         */
         public Builder txSize(long size) {
             this.txSize = size;
             return this;

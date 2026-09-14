@@ -42,6 +42,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Transport request builder for a replication operation
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class ReplicationRequestBuilder<
@@ -49,10 +52,23 @@ public abstract class ReplicationRequestBuilder<
     Response extends ActionResponse,
     RequestBuilder extends ReplicationRequestBuilder<Request, Response, RequestBuilder>> extends ActionRequestBuilder<Request, Response> {
 
+    /**
+     * Creates a new ReplicationRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected ReplicationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
+    /**
+     * Sets the index.
+     *
+     * @param index the index
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setIndex(String index) {
         request.index(index);

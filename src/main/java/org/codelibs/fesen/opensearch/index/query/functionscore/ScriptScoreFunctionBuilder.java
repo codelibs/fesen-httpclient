@@ -50,14 +50,28 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class ScriptScoreFunctionBuilder extends ScoreFunctionBuilder<ScriptScoreFunctionBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "script_score";
 
     private final Script script;
 
+    /**
+     * Creates a new ScriptScoreFunctionBuilder.
+     *
+     * @param script the script
+     */
     public ScriptScoreFunctionBuilder(Script script) {
         this(script, null);
     }
 
+    /**
+     * Creates a new ScriptScoreFunctionBuilder.
+     *
+     * @param script the script
+     * @param functionName the function name
+     */
     public ScriptScoreFunctionBuilder(Script script, @Nullable String functionName) {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null");
@@ -71,6 +85,11 @@ public class ScriptScoreFunctionBuilder extends ScoreFunctionBuilder<ScriptScore
         script.writeTo(out);
     }
 
+    /**
+     * Returns the script.
+     *
+     * @return the script
+     */
     public Script getScript() {
         return this.script;
     }
@@ -97,6 +116,13 @@ public class ScriptScoreFunctionBuilder extends ScoreFunctionBuilder<ScriptScore
         return Objects.hash(this.script);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ScriptScoreFunctionBuilder fromXContent(XContentParser parser) throws IOException, ParsingException {
         Script script = null;
         String currentFieldName = null;

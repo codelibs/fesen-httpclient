@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class RestoreSnapshotAction extends ActionType<RestoreSnapshotResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final RestoreSnapshotAction INSTANCE = new RestoreSnapshotAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/snapshot/restore";
 
     private RestoreSnapshotAction() {

@@ -38,13 +38,31 @@ package org.codelibs.fesen.opensearch.monitor.jvm;
  * @opensearch.internal
  */
 public class GcNames {
+    /**
+     * Creates a new GcNames.
+     */
+    public GcNames() {
+    }
 
+    /**
+     * The YOUNG constant.
+     */
     public static final String YOUNG = "young";
+    /**
+     * The OLD constant.
+     */
     public static final String OLD = "old";
+    /**
+     * The SURVIVOR constant.
+     */
     public static final String SURVIVOR = "survivor";
 
     /**
      * Resolves the GC type by its memory pool name ({@link java.lang.management.MemoryPoolMXBean#getName()}.
+     *
+     * @param poolName the pool name
+     * @param defaultName the default name
+     * @return the by memory pool name
      */
     public static String getByMemoryPoolName(String poolName, String defaultName) {
         if ("Eden Space".equals(poolName)
@@ -68,6 +86,13 @@ public class GcNames {
         return defaultName;
     }
 
+    /**
+     * Returns the by GC name.
+     *
+     * @param gcName the GC name
+     * @param defaultName the default name
+     * @return the by GC name
+     */
     public static String getByGcName(String gcName, String defaultName) {
         if ("Copy".equals(gcName) || "PS Scavenge".equals(gcName) || "ParNew".equals(gcName) || "G1 Young Generation".equals(gcName)) {
             return YOUNG;

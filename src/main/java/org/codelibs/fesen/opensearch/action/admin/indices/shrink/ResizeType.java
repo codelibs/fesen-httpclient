@@ -41,7 +41,16 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  */
 @PublicApi(since = "1.0.0")
 public enum ResizeType {
+    /**
+     * The SHRINK value.
+     */
     SHRINK,
+    /**
+     * The SPLIT value.
+     */
     SPLIT,
+    /**
+     * The CLONE value.
+     */
     CLONE;
 }

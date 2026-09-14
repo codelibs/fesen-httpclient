@@ -40,6 +40,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Request builder for broadcast operations
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class BroadcastOperationRequestBuilder<
@@ -49,10 +52,23 @@ public abstract class BroadcastOperationRequestBuilder<
         Request,
         Response> {
 
+    /**
+     * Creates a new BroadcastOperationRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected BroadcastOperationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }
 
+    /**
+     * Sets the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final RequestBuilder setIndices(String... indices) {
         request.indices(indices);

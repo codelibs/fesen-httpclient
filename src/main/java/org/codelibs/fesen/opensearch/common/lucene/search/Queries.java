@@ -63,12 +63,29 @@ import java.util.regex.Pattern;
  * @opensearch.internal
  */
 public class Queries {
+    /**
+     * Creates a new Queries.
+     */
+    public Queries() {
+    }
 
-    /** Return a query that matches no document. */
+    /**
+     * Return a query that matches no document.
+     *
+     * @param reason the reason
+     * @return the new match no docs query
+     */
     public static Query newMatchNoDocsQuery(String reason) {
         return new MatchNoDocsQuery(reason);
     }
 
+    /**
+     * Applies the minimum should match.
+     *
+     * @param query the query
+     * @param minimumShouldMatch the minimum should match
+     * @return this instance
+     */
     public static Query applyMinimumShouldMatch(BooleanQuery query, @Nullable String minimumShouldMatch) {
         if (minimumShouldMatch == null) {
             return query;
@@ -96,6 +113,10 @@ public class Queries {
     /**
      * Potentially apply minimum should match value if we have a query that it can be applied to,
      * otherwise return the original query.
+     *
+     * @param query the query
+     * @param minimumShouldMatch the minimum should match
+     * @return the maybe apply minimum should match
      */
     public static Query maybeApplyMinimumShouldMatch(Query query, @Nullable String minimumShouldMatch) {
         if (query instanceof BooleanQuery) {
@@ -110,6 +131,13 @@ public class Queries {
     private static Pattern spacePattern = Pattern.compile(" ");
     private static Pattern lessThanPattern = Pattern.compile("<");
 
+    /**
+     * Calculates the min should match.
+     *
+     * @param optionalClauseCount the optional clause count
+     * @param spec the spec
+     * @return the min should match
+     */
     public static int calculateMinShouldMatch(int optionalClauseCount, String spec) {
         int result = optionalClauseCount;
         spec = spec.trim();

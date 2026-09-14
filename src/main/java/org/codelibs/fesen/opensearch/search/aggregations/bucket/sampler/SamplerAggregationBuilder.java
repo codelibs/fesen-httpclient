@@ -51,16 +51,34 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class SamplerAggregationBuilder extends AbstractAggregationBuilder<SamplerAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "sampler";
 
+    /**
+     * The DEFAULT_SHARD_SAMPLE_SIZE constant.
+     */
     public static final int DEFAULT_SHARD_SAMPLE_SIZE = 100;
 
     private int shardSize = DEFAULT_SHARD_SAMPLE_SIZE;
 
+    /**
+     * Creates a new SamplerAggregationBuilder.
+     *
+     * @param name the name
+     */
     public SamplerAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new SamplerAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected SamplerAggregationBuilder(SamplerAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.shardSize = clone.shardSize;
@@ -78,6 +96,9 @@ public class SamplerAggregationBuilder extends AbstractAggregationBuilder<Sample
 
     /**
      * Set the max num docs to be returned from each shard.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     public SamplerAggregationBuilder shardSize(int shardSize) {
         this.shardSize = shardSize;
@@ -86,6 +107,8 @@ public class SamplerAggregationBuilder extends AbstractAggregationBuilder<Sample
 
     /**
      * Get the max num docs to be returned from each shard.
+     *
+     * @return the shard size
      */
     public int shardSize() {
         return shardSize;
@@ -104,6 +127,14 @@ public class SamplerAggregationBuilder extends AbstractAggregationBuilder<Sample
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static SamplerAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         XContentParser.Token token;
         String currentFieldName = null;

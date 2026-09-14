@@ -48,12 +48,23 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class IndicesSegmentsRequest extends BroadcastRequest<IndicesSegmentsRequest> {
 
+    /**
+     * The verbose.
+     */
     protected boolean verbose = false;
 
+    /**
+     * Creates a new IndicesSegmentsRequest.
+     */
     public IndicesSegmentsRequest() {
         this(Strings.EMPTY_ARRAY);
     }
 
+    /**
+     * Creates a new IndicesSegmentsRequest.
+     *
+     * @param indices the indices
+     */
     public IndicesSegmentsRequest(String... indices) {
         super(indices);
     }
@@ -61,6 +72,8 @@ public class IndicesSegmentsRequest extends BroadcastRequest<IndicesSegmentsRequ
     /**
      * <code>true</code> if detailed information about each segment should be returned,
      * <code>false</code> otherwise.
+     *
+     * @return the verbose
      */
     public boolean verbose() {
         return verbose;

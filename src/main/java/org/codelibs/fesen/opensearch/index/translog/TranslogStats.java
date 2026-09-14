@@ -63,6 +63,9 @@ public class TranslogStats implements Writeable, ToXContentFragment {
      */
     private final RemoteTranslogStats remoteTranslogStats;
 
+    /**
+     * Creates a new TranslogStats.
+     */
     public TranslogStats() {
         remoteTranslogStats = new RemoteTranslogStats();
     }
@@ -81,6 +84,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
         this.remoteTranslogStats = builder.remoteTranslogStats;
     }
 
+    /**
+     * Creates a new TranslogStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TranslogStats(StreamInput in) throws IOException {
         numberOfOperations = in.readVInt();
         translogSizeInBytes = in.readVLong();
@@ -95,6 +104,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link TranslogStats.Builder} instead.
+     *
+     * @param numberOfOperations the number of operations
+     * @param translogSizeInBytes the translog size in bytes
+     * @param uncommittedOperations the uncommitted operations
+     * @param uncommittedSizeInBytes the uncommitted size in bytes
+     * @param earliestLastModifiedAge the earliest last modified age
      */
     @Deprecated
     public TranslogStats(
@@ -128,12 +143,22 @@ public class TranslogStats implements Writeable, ToXContentFragment {
         this.remoteTranslogStats = new RemoteTranslogStats();
     }
 
+    /**
+     * Adds the remote translog stats.
+     *
+     * @param remoteTranslogStats the remote translog stats
+     */
     public void addRemoteTranslogStats(RemoteTranslogStats remoteTranslogStats) {
         if (this.remoteTranslogStats != null) {
             this.remoteTranslogStats.add(remoteTranslogStats);
         }
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param other the other instance
+     */
     public void add(TranslogStats other) {
         if (other == null) {
             return;
@@ -164,8 +189,17 @@ public class TranslogStats implements Writeable, ToXContentFragment {
         private long earliestLastModifiedAge = 0;
         private final RemoteTranslogStats remoteTranslogStats = new RemoteTranslogStats();
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the number of operations.
+         *
+         * @param operations the operations
+         * @return the number of operations
+         */
         public Builder numberOfOperations(int operations) {
             if (operations < 0) {
                 throw new IllegalArgumentException("numberOfOperations must be >= 0");
@@ -174,6 +208,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
             return this;
         }
 
+        /**
+         * Returns the translog size in bytes.
+         *
+         * @param size the size
+         * @return the translog size in bytes
+         */
         public Builder translogSizeInBytes(long size) {
             if (size < 0) {
                 throw new IllegalArgumentException("translogSizeInBytes must be >= 0");
@@ -182,6 +222,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
             return this;
         }
 
+        /**
+         * Returns the uncommitted operations.
+         *
+         * @param operations the operations
+         * @return the uncommitted operations
+         */
         public Builder uncommittedOperations(int operations) {
             if (operations < 0) {
                 throw new IllegalArgumentException("uncommittedOperations must be >= 0");
@@ -190,6 +236,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
             return this;
         }
 
+        /**
+         * Returns the uncommitted size in bytes.
+         *
+         * @param bytes the bytes
+         * @return the uncommitted size in bytes
+         */
         public Builder uncommittedSizeInBytes(long bytes) {
             if (bytes < 0) {
                 throw new IllegalArgumentException("uncommittedSizeInBytes must be >= 0");
@@ -198,6 +250,12 @@ public class TranslogStats implements Writeable, ToXContentFragment {
             return this;
         }
 
+        /**
+         * Returns the earliest last modified age.
+         *
+         * @param age the age
+         * @return the earliest last modified age
+         */
         public Builder earliestLastModifiedAge(long age) {
             if (age < 0) {
                 throw new IllegalArgumentException("earliestLastModifiedAge must be >= 0");

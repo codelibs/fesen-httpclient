@@ -83,6 +83,9 @@ import java.util.stream.IntStream;
  * @opensearch.internal
  */
 public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "terms";
 
     private final String fieldName;
@@ -99,7 +102,13 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
      * This flag is used to decide how to parse the value and build query upon later
      */
     public enum ValueType {
+        /**
+         * The DEFAULT value.
+         */
         DEFAULT("default"),
+        /**
+         * The BITMAP value.
+         */
         BITMAP("bitmap");
 
         private final String type;
@@ -108,6 +117,12 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
             this.type = type;
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param type the type
+         * @return the new string
+         */
         public static ValueType fromString(String type) {
             for (ValueType valueType : ValueType.values()) {
                 if (valueType.type.equalsIgnoreCase(type)) {
@@ -118,11 +133,23 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
         }
     }
 
+    /**
+     * Returns the value type.
+     *
+     * @param valueType the value type
+     * @return the value type
+     */
     public TermsQueryBuilder valueType(ValueType valueType) {
         this.valueType = valueType;
         return this;
     }
 
+    /**
+     * Creates a new TermsQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param termsLookup the terms lookup
+     */
     public TermsQueryBuilder(String fieldName, TermsLookup termsLookup) {
         this(fieldName, null, termsLookup);
     }
@@ -247,6 +274,9 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TermsQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -277,14 +307,29 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
         return this.fieldName;
     }
 
+    /**
+     * Returns the value type.
+     *
+     * @return the value type
+     */
     public ValueType valueType() {
         return this.valueType;
     }
 
+    /**
+     * Returns the values.
+     *
+     * @return the values
+     */
     public List<Object> values() {
         return convertBack(this.values);
     }
 
+    /**
+     * Returns the terms lookup.
+     *
+     * @return the terms lookup
+     */
     public TermsLookup termsLookup() {
         return this.termsLookup;
     }
@@ -428,6 +473,13 @@ public class TermsQueryBuilder extends AbstractQueryBuilder<TermsQueryBuilder> i
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static TermsQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         List<Object> values = null;

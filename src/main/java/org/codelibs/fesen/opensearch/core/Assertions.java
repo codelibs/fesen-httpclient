@@ -45,6 +45,9 @@ public final class Assertions {
 
     }
 
+    /**
+     * The ENABLED constant.
+     */
     public static final boolean ENABLED;
 
     static {

@@ -64,6 +64,8 @@ public class FlushRequest extends BroadcastRequest<FlushRequest> {
     /**
      * Constructs a new flush request against one or more indices. If nothing is provided, all indices will
      * be flushed.
+     *
+     * @param indices the indices
      */
     public FlushRequest(String... indices) {
         super(indices);
@@ -72,6 +74,8 @@ public class FlushRequest extends BroadcastRequest<FlushRequest> {
     /**
      * Returns {@code true} iff a flush should block
      * if a another flush operation is already running. Otherwise {@code false}
+     *
+     * @return this instance
      */
     public boolean waitIfOngoing() {
         return this.waitIfOngoing;
@@ -79,6 +83,8 @@ public class FlushRequest extends BroadcastRequest<FlushRequest> {
 
     /**
      * Force flushing, even if one is possibly not needed.
+     *
+     * @return this instance
      */
     public boolean force() {
         return force;
@@ -86,6 +92,9 @@ public class FlushRequest extends BroadcastRequest<FlushRequest> {
 
     /**
      * Force flushing, even if one is possibly not needed.
+     *
+     * @param force the force
+     * @return this instance
      */
     public FlushRequest force(boolean force) {
         this.force = force;

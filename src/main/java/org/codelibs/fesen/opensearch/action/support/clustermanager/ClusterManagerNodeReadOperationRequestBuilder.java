@@ -39,6 +39,9 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 /**
  * Base request builder for cluster-manager node read operations that can be executed on the local node as well
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
+ * @param <RequestBuilder> the request builder type
  * @opensearch.internal
  */
 public abstract class ClusterManagerNodeReadOperationRequestBuilder<
@@ -47,6 +50,13 @@ public abstract class ClusterManagerNodeReadOperationRequestBuilder<
     RequestBuilder extends ClusterManagerNodeReadOperationRequestBuilder<Request, Response, RequestBuilder>> extends
     ClusterManagerNodeOperationRequestBuilder<Request, Response, RequestBuilder> {
 
+    /**
+     * Creates a new ClusterManagerNodeReadOperationRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected ClusterManagerNodeReadOperationRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         super(client, action, request);
     }

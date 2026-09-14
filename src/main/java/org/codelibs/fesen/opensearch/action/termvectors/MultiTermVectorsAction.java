@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class MultiTermVectorsAction extends ActionType<MultiTermVectorsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final MultiTermVectorsAction INSTANCE = new MultiTermVectorsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/mtv";
 
     private MultiTermVectorsAction() {

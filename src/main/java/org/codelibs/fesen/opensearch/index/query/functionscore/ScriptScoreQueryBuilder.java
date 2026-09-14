@@ -59,9 +59,21 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  */
 public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQueryBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "script_score";
+    /**
+     * The QUERY_FIELD constant.
+     */
     public static final ParseField QUERY_FIELD = new ParseField("query");
+    /**
+     * The SCRIPT_FIELD constant.
+     */
     public static final ParseField SCRIPT_FIELD = new ParseField("script");
+    /**
+     * The MIN_SCORE_FIELD constant.
+     */
     public static final ParseField MIN_SCORE_FIELD = new ParseField("min_score");
 
     private static final ConstructingObjectParser<ScriptScoreQueryBuilder, Void> PARSER = new ConstructingObjectParser<>(
@@ -84,6 +96,12 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
         PARSER.declareString(optionalConstructorArg(), AbstractQueryBuilder.NAME_FIELD);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ScriptScoreQueryBuilder fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }
@@ -112,6 +130,9 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public ScriptScoreQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -129,6 +150,8 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
 
     /**
      * Returns the query builder that defines which documents the script_score query will be executed on.
+     *
+     * @return this instance
      */
     public QueryBuilder query() {
         return this.query;
@@ -147,11 +170,22 @@ public class ScriptScoreQueryBuilder extends AbstractQueryBuilder<ScriptScoreQue
         builder.endObject();
     }
 
+    /**
+     * Sets the min score.
+     *
+     * @param minScore the min score
+     * @return this instance
+     */
     public ScriptScoreQueryBuilder setMinScore(float minScore) {
         this.minScore = minScore;
         return this;
     }
 
+    /**
+     * Returns the min score.
+     *
+     * @return the min score
+     */
     public Float getMinScore() {
         return this.minScore;
     }

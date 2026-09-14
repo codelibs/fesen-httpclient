@@ -47,6 +47,11 @@ import java.util.Map.Entry;
  * @opensearch.internal
  */
 public class ParsedPercentilesBucket extends ParsedPercentiles implements Percentiles {
+    /**
+     * Creates a new ParsedPercentilesBucket.
+     */
+    public ParsedPercentilesBucket() {
+    }
 
     @Override
     public String getType() {
@@ -106,6 +111,14 @@ public class ParsedPercentilesBucket extends ParsedPercentiles implements Percen
         ParsedPercentiles.declarePercentilesFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedPercentilesBucket fromXContent(XContentParser parser, String name) throws IOException {
         ParsedPercentilesBucket aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);

@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class IndicesExistsAction extends ActionType<IndicesExistsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final IndicesExistsAction INSTANCE = new IndicesExistsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/exists";
 
     private IndicesExistsAction() {

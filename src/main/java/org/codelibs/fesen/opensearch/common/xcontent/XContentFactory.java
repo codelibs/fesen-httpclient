@@ -46,9 +46,17 @@ import java.io.OutputStream;
  * A one stop to use {@link XContent} and {@link XContentBuilder}.
  */
 public class XContentFactory {
+    /**
+     * Creates a new XContentFactory.
+     */
+    public XContentFactory() {
+    }
 
     /**
      * Returns a content builder using JSON format ({@link org.codelibs.fesen.opensearch.common.xcontent.XContentType#JSON}.
+     *
+     * @return the JSON builder
+     * @throws IOException if an I/O error occurs
      */
     public static XContentBuilder jsonBuilder() throws IOException {
         return MediaTypeRegistry.contentBuilder(XContentType.JSON);
@@ -56,6 +64,10 @@ public class XContentFactory {
 
     /**
      * Constructs a new json builder that will output the result into the provided output stream.
+     *
+     * @param os the OS
+     * @return the JSON builder
+     * @throws IOException if an I/O error occurs
      */
     public static XContentBuilder jsonBuilder(OutputStream os) throws IOException {
         return new XContentBuilder(JsonXContent.jsonXContent, os);

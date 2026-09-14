@@ -75,7 +75,13 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
 
     private static final Logger logger = LogManager.getLogger(SnapshotInfo.class);
 
+    /**
+     * The CONTEXT_MODE_PARAM constant.
+     */
     public static final String CONTEXT_MODE_PARAM = "context_mode";
+    /**
+     * The CONTEXT_MODE_SNAPSHOT constant.
+     */
     public static final String CONTEXT_MODE_SNAPSHOT = "SNAPSHOT";
     private static final DateFormatter DATE_TIME_FORMATTER = DateFormatter.forPattern("strict_date_optional_time");
     private static final String SNAPSHOT = "snapshot";
@@ -117,6 +123,12 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
      * @opensearch.internal
      */
     public static final class SnapshotInfoBuilder {
+        /**
+         * Creates a new SnapshotInfoBuilder.
+         */
+        public SnapshotInfoBuilder() {
+        }
+
         private String snapshotName = null;
         private String snapshotUUID = null;
         private String state = null;
@@ -194,6 +206,11 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
             this.shardFailures = shardFailures;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public SnapshotInfo build() {
             SnapshotId snapshotId = new SnapshotId(snapshotName, snapshotUUID);
 
@@ -261,6 +278,9 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
         }
     }
 
+    /**
+     * The SNAPSHOT_INFO_PARSER constant.
+     */
     public static final ObjectParser<SnapshotInfoBuilder, Void> SNAPSHOT_INFO_PARSER = new ObjectParser<>(
         SnapshotInfoBuilder.class.getName(),
         true,
@@ -372,6 +392,9 @@ public final class SnapshotInfo implements Comparable<SnapshotInfo>, ToXContent,
 
     /**
      * Constructs snapshot information from stream input
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SnapshotInfo(final StreamInput in) throws IOException {
         snapshotId = new SnapshotId(in);

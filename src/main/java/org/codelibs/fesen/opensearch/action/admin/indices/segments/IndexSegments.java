@@ -73,6 +73,11 @@ public class IndexSegments implements Iterable<IndexShardSegments> {
         }
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return this.index;
     }

@@ -64,14 +64,38 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
     private static final String CUTOFF_FREQUENCY_DEPRECATION_MSG = "you can omit this option, "
         + "the [multi_match] query can skip block of documents efficiently if the total number of hits is not tracked";
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "multi_match";
 
+    /**
+     * The DEFAULT_TYPE constant.
+     */
     public static final MultiMatchQueryBuilder.Type DEFAULT_TYPE = MultiMatchQueryBuilder.Type.BEST_FIELDS;
+    /**
+     * The DEFAULT_OPERATOR constant.
+     */
     public static final Operator DEFAULT_OPERATOR = Operator.OR;
+    /**
+     * The DEFAULT_PHRASE_SLOP constant.
+     */
     public static final int DEFAULT_PHRASE_SLOP = MatchQuery.DEFAULT_PHRASE_SLOP;
+    /**
+     * The DEFAULT_PREFIX_LENGTH constant.
+     */
     public static final int DEFAULT_PREFIX_LENGTH = FuzzyQuery.defaultPrefixLength;
+    /**
+     * The DEFAULT_MAX_EXPANSIONS constant.
+     */
     public static final int DEFAULT_MAX_EXPANSIONS = FuzzyQuery.defaultMaxExpansions;
+    /**
+     * The DEFAULT_ZERO_TERMS_QUERY constant.
+     */
     public static final MatchQuery.ZeroTermsQuery DEFAULT_ZERO_TERMS_QUERY = MatchQuery.DEFAULT_ZERO_TERMS_QUERY;
+    /**
+     * The DEFAULT_FUZZY_TRANSPOSITIONS constant.
+     */
     public static final boolean DEFAULT_FUZZY_TRANSPOSITIONS = FuzzyQuery.defaultTranspositions;
 
     private static final ParseField SLOP_FIELD = new ParseField("slop");
@@ -164,10 +188,22 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
             this.parseField = parseField;
         }
 
+        /**
+         * Parses the field.
+         *
+         * @return this instance
+         */
         public ParseField parseField() {
             return parseField;
         }
 
+        /**
+         * Parses this instance.
+         *
+         * @param value the value
+         * @param deprecationHandler the deprecation handler
+         * @return this instance
+         */
         public static Type parse(String value, DeprecationHandler deprecationHandler) {
             MultiMatchQueryBuilder.Type[] values = MultiMatchQueryBuilder.Type.values();
             Type type = null;
@@ -183,6 +219,13 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
             return type;
         }
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static Type readFromStream(StreamInput in) throws IOException {
             return Type.values()[in.readVInt()];
         }
@@ -195,6 +238,8 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Returns the type (for testing)
+     *
+     * @return the type
      */
     public MultiMatchQueryBuilder.Type getType() {
         return type;
@@ -202,6 +247,9 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Constructs a new text query.
+     *
+     * @param value the value
+     * @param fields the fields
      */
     public MultiMatchQueryBuilder(Object value, String... fields) {
         if (value == null) {
@@ -219,6 +267,9 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MultiMatchQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -273,12 +324,20 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         out.writeBoolean(fuzzyTranspositions);
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public Object value() {
         return value;
     }
 
     /**
      * Adds a field to run the multi match against.
+     *
+     * @param field the field
+     * @return the field
      */
     public MultiMatchQueryBuilder field(String field) {
         if (Strings.isEmpty(field)) {
@@ -290,6 +349,10 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Adds a field to run the multi match against with a specific boost.
+     *
+     * @param field the field
+     * @param boost the boost
+     * @return the field
      */
     public MultiMatchQueryBuilder field(String field, float boost) {
         if (Strings.isEmpty(field)) {
@@ -302,6 +365,9 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Add several fields to run the query against with a specific boost.
+     *
+     * @param fields the fields
+     * @return the fields
      */
     public MultiMatchQueryBuilder fields(Map<String, Float> fields) {
         for (float fieldBoost : fields.values()) {
@@ -311,12 +377,20 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public Map<String, Float> fields() {
         return fieldsBoosts;
     }
 
     /**
      * Sets the type of the text query.
+     *
+     * @param type the type
+     * @return the type
      */
     public MultiMatchQueryBuilder type(MultiMatchQueryBuilder.Type type) {
         if (type == null) {
@@ -328,6 +402,9 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Sets the type of the text query.
+     *
+     * @param type the type
+     * @return the type
      */
     public MultiMatchQueryBuilder type(Object type) {
         if (type == null) {
@@ -337,12 +414,20 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public Type type() {
         return type;
     }
 
     /**
      * Sets the operator to use when using a boolean query. Defaults to {@code OR}.
+     *
+     * @param operator the operator
+     * @return the operator
      */
     public MultiMatchQueryBuilder operator(Operator operator) {
         if (operator == null) {
@@ -352,6 +437,11 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the operator.
+     *
+     * @return the operator
+     */
     public Operator operator() {
         return operator;
     }
@@ -359,18 +449,29 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
     /**
      * Explicitly set the analyzer to use. Defaults to use explicit mapping config for the field, or, if not
      * set, the default search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public MultiMatchQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
+    /**
+     * Returns the analyzer.
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return analyzer;
     }
 
     /**
      * Set the phrase slop if evaluated to a phrase query type.
+     *
+     * @param slop the slop
+     * @return the slop
      */
     public MultiMatchQueryBuilder slop(int slop) {
         if (slop < 0) {
@@ -380,10 +481,21 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the slop.
+     *
+     * @return the slop
+     */
     public int slop() {
         return slop;
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
+     */
     @Deprecated
     /*
       Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO".
@@ -397,16 +509,30 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
 
     /**
      * Sets the fuzziness used when evaluated to a fuzzy query type. Defaults to "AUTO".
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
      */
     public MultiMatchQueryBuilder fuzziness(Fuzziness fuzziness) {
         this.fuzziness = fuzziness;
         return this;
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @return the fuzziness
+     */
     public Fuzziness fuzziness() {
         return fuzziness;
     }
 
+    /**
+     * Returns the prefix length.
+     *
+     * @param prefixLength the prefix length
+     * @return the prefix length
+     */
     public MultiMatchQueryBuilder prefixLength(int prefixLength) {
         if (prefixLength < 0) {
             throw new IllegalArgumentException("No negative prefix length allowed.");
@@ -415,6 +541,11 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the prefix length.
+     *
+     * @return the prefix length
+     */
     public int prefixLength() {
         return prefixLength;
     }
@@ -422,6 +553,9 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
     /**
      * When using fuzzy or prefix type query, the number of term expansions to use. Defaults to unbounded
      * so its recommended to set it to a reasonable value for faster execution.
+     *
+     * @param maxExpansions the max expansions
+     * @return the max expansions
      */
     public MultiMatchQueryBuilder maxExpansions(int maxExpansions) {
         if (maxExpansions <= 0) {
@@ -431,24 +565,51 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the max expansions.
+     *
+     * @return the max expansions
+     */
     public int maxExpansions() {
         return maxExpansions;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
+     */
     public MultiMatchQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
         this.minimumShouldMatch = minimumShouldMatch;
         return this;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @return the minimum should match
+     */
     public String minimumShouldMatch() {
         return minimumShouldMatch;
     }
 
+    /**
+     * Returns the fuzzy rewrite.
+     *
+     * @param fuzzyRewrite the fuzzy rewrite
+     * @return the fuzzy rewrite
+     */
     public MultiMatchQueryBuilder fuzzyRewrite(String fuzzyRewrite) {
         this.fuzzyRewrite = fuzzyRewrite;
         return this;
     }
 
+    /**
+     * Returns the fuzzy rewrite.
+     *
+     * @return the fuzzy rewrite
+     */
     public String fuzzyRewrite() {
         return fuzzyRewrite;
     }
@@ -463,6 +624,8 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
      * <p>A tie-breaker value of {@code 1.0} is interpreted as a signal to score queries as
      * "most-match" queries where all matching query clauses are considered for scoring.</p>
      *
+     * @param tieBreaker the tie breaker
+     * @return the tie breaker
      * @see Type
      */
     public MultiMatchQueryBuilder tieBreaker(float tieBreaker) {
@@ -480,6 +643,8 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
      * <p>A tie-breaker value of {@code 1.0} is interpreted as a signal to score queries as
      * "most-match" queries where all matching query clauses are considered for scoring.</p>
      *
+     * @param tieBreaker the tie breaker
+     * @return the tie breaker
      * @see Type
      */
     public MultiMatchQueryBuilder tieBreaker(Float tieBreaker) {
@@ -487,18 +652,31 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the tie breaker.
+     *
+     * @return the tie breaker
+     */
     public Float tieBreaker() {
         return tieBreaker;
     }
 
     /**
      * Sets whether format based failures will be ignored.
+     *
+     * @param lenient the lenient
+     * @return the lenient
      */
     public MultiMatchQueryBuilder lenient(boolean lenient) {
         this.lenient = lenient;
         return this;
     }
 
+    /**
+     * Returns the lenient.
+     *
+     * @return the lenient
+     */
     public boolean lenient() {
         return lenient == null ? MatchQuery.DEFAULT_LENIENCY : lenient;
     }
@@ -508,6 +686,8 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
      * maximum threshold of a terms document frequency to be considered a low
      * frequency term.
      *
+     * @param cutoff the cutoff
+     * @return the cutoff frequency
      * @deprecated Since max_score optimization landed in 7.0, normal MultiMatchQuery
      *             will achieve the same result without any configuration.
      */
@@ -522,6 +702,8 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
      * maximum threshold of a terms document frequency to be considered a low
      * frequency term.
      *
+     * @param cutoff the cutoff
+     * @return the cutoff frequency
      * @deprecated Since max_score optimization landed in 7.0, normal MultiMatchQuery
      *             will achieve the same result without any configuration.
      */
@@ -531,10 +713,21 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the cutoff frequency.
+     *
+     * @return the cutoff frequency
+     */
     public Float cutoffFrequency() {
         return cutoffFrequency;
     }
 
+    /**
+     * Returns the zero terms query.
+     *
+     * @param zeroTermsQuery the zero terms query
+     * @return the zero terms query
+     */
     public MultiMatchQueryBuilder zeroTermsQuery(MatchQuery.ZeroTermsQuery zeroTermsQuery) {
         if (zeroTermsQuery == null) {
             throw new IllegalArgumentException("[" + NAME + "] requires zero terms query to be non-null");
@@ -543,10 +736,21 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         return this;
     }
 
+    /**
+     * Returns the zero terms query.
+     *
+     * @return the zero terms query
+     */
     public MatchQuery.ZeroTermsQuery zeroTermsQuery() {
         return zeroTermsQuery;
     }
 
+    /**
+     * Returns the auto generate synonyms phrase query.
+     *
+     * @param enable the enable
+     * @return the auto generate synonyms phrase query
+     */
     public MultiMatchQueryBuilder autoGenerateSynonymsPhraseQuery(boolean enable) {
         this.autoGenerateSynonymsPhraseQuery = enable;
         return this;
@@ -555,11 +759,18 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
     /**
      * Whether phrase queries should be automatically generated for multi terms synonyms.
      * Defaults to {@code true}.
+     *
+     * @return the auto generate synonyms phrase query
      */
     public boolean autoGenerateSynonymsPhraseQuery() {
         return autoGenerateSynonymsPhraseQuery;
     }
 
+    /**
+     * Returns the fuzzy transpositions.
+     *
+     * @return the fuzzy transpositions
+     */
     public boolean fuzzyTranspositions() {
         return fuzzyTranspositions;
     }
@@ -570,6 +781,9 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
      * distance formula which supports transpositions. Setting transposition to false will
      * switch to classic Levenshtein distance.<br>
      * If not set, Damerau-Levenshtein distance metric will be used.
+     *
+     * @param fuzzyTranspositions the fuzzy transpositions
+     * @return the fuzzy transpositions
      */
     public MultiMatchQueryBuilder fuzzyTranspositions(boolean fuzzyTranspositions) {
         this.fuzzyTranspositions = fuzzyTranspositions;
@@ -618,6 +832,13 @@ public class MultiMatchQueryBuilder extends AbstractQueryBuilder<MultiMatchQuery
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MultiMatchQueryBuilder fromXContent(XContentParser parser) throws IOException {
         Object value = null;
         Map<String, Float> fieldsBoosts = new HashMap<>();

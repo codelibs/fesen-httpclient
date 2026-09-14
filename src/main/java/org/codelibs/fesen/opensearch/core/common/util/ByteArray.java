@@ -47,38 +47,61 @@ public interface ByteArray extends BigArray {
 
     /**
      * Get an element given its index.
+     *
+     * @param index the index
+     * @return the value
      */
     byte get(long index);
 
     /**
      * Set a value at the given index and return the previous value.
+     *
+     * @param index the index
+     * @param value the value
+     * @return this instance
      */
     byte set(long index, byte value);
 
     /**
      * Get a reference to a slice.
      *
+     * @param index the index
+     * @param len the len
+     * @param ref the ref
      * @return <code>true</code> when a byte[] was materialized, <code>false</code> otherwise.
      */
     boolean get(long index, int len, BytesRef ref);
 
     /**
      * Bulk set.
+     *
+     * @param index the index
+     * @param buf the buf
+     * @param offset the offset
+     * @param len the len
      */
     void set(long index, byte[] buf, int offset, int len);
 
     /**
      * Fill slots between <code>fromIndex</code> inclusive to <code>toIndex</code> exclusive with <code>value</code>.
+     *
+     * @param fromIndex the from index
+     * @param toIndex the to index
+     * @param value the value
      */
     void fill(long fromIndex, long toIndex, byte value);
 
     /**
      * Checks if this instance is backed by a single byte array analogous to {@link ByteBuffer#hasArray()}.
+     *
+     * @return the array flag
      */
     boolean hasArray();
 
     /**
      * Get backing byte array analogous to {@link ByteBuffer#array()}.
+     *
+     * @return the array
      */
     byte[] array();
 }

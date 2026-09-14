@@ -82,8 +82,17 @@ public class RemoteSegmentStats implements Writeable, ToXContentFragment {
      */
     private long totalRejections;
 
+    /**
+     * Creates a new RemoteSegmentStats.
+     */
     public RemoteSegmentStats() {}
 
+    /**
+     * Creates a new RemoteSegmentStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RemoteSegmentStats(StreamInput in) throws IOException {
         uploadBytesStarted = in.readLong();
         uploadBytesFailed = in.readLong();
@@ -103,50 +112,110 @@ public class RemoteSegmentStats implements Writeable, ToXContentFragment {
 
     // Getter and setters. All are visible for testing
     // Setters are only used for testing
+    /**
+     * Returns the upload bytes started.
+     *
+     * @return the upload bytes started
+     */
     public long getUploadBytesStarted() {
         return uploadBytesStarted;
     }
 
+    /**
+     * Returns the upload bytes failed.
+     *
+     * @return the upload bytes failed
+     */
     public long getUploadBytesFailed() {
         return uploadBytesFailed;
     }
 
+    /**
+     * Returns the upload bytes succeeded.
+     *
+     * @return the upload bytes succeeded
+     */
     public long getUploadBytesSucceeded() {
         return uploadBytesSucceeded;
     }
 
+    /**
+     * Returns the download bytes started.
+     *
+     * @return the download bytes started
+     */
     public long getDownloadBytesStarted() {
         return downloadBytesStarted;
     }
 
+    /**
+     * Returns the download bytes failed.
+     *
+     * @return the download bytes failed
+     */
     public long getDownloadBytesFailed() {
         return downloadBytesFailed;
     }
 
+    /**
+     * Returns the download bytes succeeded.
+     *
+     * @return the download bytes succeeded
+     */
     public long getDownloadBytesSucceeded() {
         return downloadBytesSucceeded;
     }
 
+    /**
+     * Returns the max refresh time lag.
+     *
+     * @return the max refresh time lag
+     */
     public long getMaxRefreshTimeLag() {
         return maxRefreshTimeLag;
     }
 
+    /**
+     * Returns the max refresh bytes lag.
+     *
+     * @return the max refresh bytes lag
+     */
     public long getMaxRefreshBytesLag() {
         return maxRefreshBytesLag;
     }
 
+    /**
+     * Returns the total refresh bytes lag.
+     *
+     * @return the total refresh bytes lag
+     */
     public long getTotalRefreshBytesLag() {
         return totalRefreshBytesLag;
     }
 
+    /**
+     * Returns the total upload time.
+     *
+     * @return the total upload time
+     */
     public long getTotalUploadTime() {
         return totalUploadTime;
     }
 
+    /**
+     * Returns the total download time.
+     *
+     * @return the total download time
+     */
     public long getTotalDownloadTime() {
         return totalDownloadTime;
     }
 
+    /**
+     * Returns the total rejections.
+     *
+     * @return the total rejections
+     */
     public long getTotalRejections() {
         return totalRejections;
     }

@@ -34,6 +34,9 @@ public class SearchPipelineInfo implements ReportingService.Info {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SearchPipelineInfo(StreamInput in) throws IOException {
         if (in.getVersion().before(Version.V_2_8_0)) {

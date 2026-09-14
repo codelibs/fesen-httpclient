@@ -41,7 +41,11 @@ package org.codelibs.fesen.opensearch.action;
 public interface RealtimeRequest {
 
     /**
+     * Returns the realtime.
+     *
      * @param realtime Controls whether this request should be realtime by reading from the translog.
+     * @param <R> the result type
+     * @return the realtime
      */
     <R extends RealtimeRequest> R realtime(boolean realtime);
 

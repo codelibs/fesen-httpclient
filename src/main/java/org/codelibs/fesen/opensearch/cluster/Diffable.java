@@ -37,12 +37,16 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 /**
  * Cluster state part, changes in which can be serialized
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public interface Diffable<T> extends Writeable {
 
     /**
      * Returns serializable object representing differences between this and previousState
+     *
+     * @param previousState the previous state
+     * @return the diff
      */
     Diff<T> diff(T previousState);
 

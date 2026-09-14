@@ -52,6 +52,8 @@ public class PublishClusterStateStats implements Writeable, ToXContentObject {
     private final long compatibleClusterStateDiffReceivedCount;
 
     /**
+     * Creates a new PublishClusterStateStats.
+     *
      * @param fullClusterStateReceivedCount the number of times this node has received a full copy of the cluster state from the cluster-manager.
      * @param incompatibleClusterStateDiffReceivedCount the number of times this node has received a cluster-state diff from the cluster-manager.
      * @param compatibleClusterStateDiffReceivedCount the number of times that received cluster-state diffs were compatible with
@@ -66,6 +68,12 @@ public class PublishClusterStateStats implements Writeable, ToXContentObject {
         this.compatibleClusterStateDiffReceivedCount = compatibleClusterStateDiffReceivedCount;
     }
 
+    /**
+     * Creates a new PublishClusterStateStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PublishClusterStateStats(StreamInput in) throws IOException {
         fullClusterStateReceivedCount = in.readVLong();
         incompatibleClusterStateDiffReceivedCount = in.readVLong();

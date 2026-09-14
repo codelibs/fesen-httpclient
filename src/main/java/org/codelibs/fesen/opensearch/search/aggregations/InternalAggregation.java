@@ -105,11 +105,18 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
          * Returns <code>true</code> iff the current reduce phase is the final reduce phase. This indicates if operations like
          * pipeline aggregations should be applied or if specific features like {@code minDocCount} should be taken into account.
          * Operations that are potentially losing information can only be applied during the final reduce phase.
+         *
+         * @return the final reduce flag
          */
         public boolean isFinalReduce() {
             return pipelineTreeRoot != null;
         }
 
+        /**
+         * Returns the slice level flag.
+         *
+         * @return the slice level flag
+         */
         public boolean isSliceLevel() {
             return this.isSliceLevel;
         }
@@ -117,6 +124,9 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         /**
          * For slice level partial reduce we will apply shard level `shard_size` and `shard_min_doc_count` limits
          * whereas for coordinator level partial reduce it will use top level `size` and `min_doc_count`
+         *
+         * @param bucketCountThresholds the bucket count thresholds
+         * @return the local bucket count thresholds
          */
         public LocalBucketCountThresholds asLocalBucketCountThresholds(TermsAggregator.BucketCountThresholds bucketCountThresholds) {
             if (isSliceLevel()) {
@@ -128,6 +138,8 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
         /**
          * The root of the tree of pipeline aggregations for this request.
+         *
+         * @return the pipeline tree root
          */
         public PipelineTree pipelineTreeRoot() {
             return pipelineTreeRoot;
@@ -136,6 +148,8 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         /**
          * Adds {@code count} buckets to the global count for the request and fails if this number is greater than
          * the maximum number of buckets allowed in a response
+         *
+         * @param size the size
          */
         public void consumeBucketsAndMaybeBreak(int size) {
             multiBucketConsumer.accept(size);
@@ -143,14 +157,21 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     }
 
+    /**
+     * The name.
+     */
     protected final String name;
 
+    /**
+     * The metadata.
+     */
     protected final Map<String, Object> metadata;
 
     /**
      * Constructs an aggregation result with a given name.
      *
      * @param name The name of the aggregation.
+     * @param metadata the metadata
      */
     protected InternalAggregation(String name, Map<String, Object> metadata) {
         this.name = name;
@@ -159,6 +180,9 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected InternalAggregation(StreamInput in) throws IOException {
         name = in.readString();
@@ -172,6 +196,12 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
     @Override
@@ -196,6 +226,9 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
      * aggregations don't <strong>have</strong> buckets in them. It
      * should be overridden by aggregations that contain buckets. Implementers
      * should respect the description above.
+     *
+     * @param rewriter the rewriter
+     * @return this instance
      */
     public InternalAggregation copyWithRewritenBuckets(Function<InternalAggregations, InternalAggregations> rewriter) {
         throw new IllegalStateException(
@@ -205,12 +238,19 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     /**
      * Run a {@linkplain Consumer} over all buckets in this aggregation.
+     *
+     * @param consumer the consumer
      */
     public void forEachBucket(Consumer<InternalAggregations> consumer) {}
 
     /**
      * Creates the output from all pipeline aggs that this aggregation is associated with.  Should only
      * be called after all aggregations have been fully reduced
+     *
+     * @param reducedAggs the reduced aggs
+     * @param reduceContext the reduce context
+     * @param pipelinesForThisAgg the pipelines for this agg
+     * @return this instance
      */
     public InternalAggregation reducePipelines(
         InternalAggregation reducedAggs,
@@ -230,6 +270,9 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
      * try reusing an existing instance (typically the first in the given list) to save on redundant object
      * construction.
      *
+     * @param aggregations the aggregations
+     * @param reduceContext the reduce context
+     * @return this instance
      * @see #mustReduceOnSingleInternalAgg()
      */
     public abstract InternalAggregation reduce(List<InternalAggregation> aggregations, ReduceContext reduceContext);
@@ -237,21 +280,35 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
     /**
      * Signal the framework if the {@linkplain InternalAggregation#reduce(List, ReduceContext)} phase needs to be called
      * when there is only one {@linkplain InternalAggregation}.
+     *
+     * @return the reduce on single internal agg flag
      */
     protected abstract boolean mustReduceOnSingleInternalAgg();
 
     /**
      * Return true if this aggregation is mapped, and can lead a reduction.  If this agg returns
      * false, it should return itself if asked to lead a reduction
+     *
+     * @return the mapped flag
      */
     public boolean isMapped() {
         return true;
     }
 
+    /**
+     * Returns the property.
+     *
+     * @param path the path
+     * @return the property
+     */
     public abstract Object getProperty(List<String> path);
 
     /**
      * Read a size under the assumption that a value of 0 means unlimited.
+     *
+     * @param in the input to read from
+     * @return the size
+     * @throws IOException if an I/O error occurs
      */
     protected static int readSize(StreamInput in) throws IOException {
         final int size = in.readVInt();
@@ -260,6 +317,10 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     /**
      * Write a size under the assumption that a value of 0 means unlimited.
+     *
+     * @param size the size
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     protected static void writeSize(int size, StreamOutput out) throws IOException {
         if (size == Integer.MAX_VALUE) {
@@ -295,6 +356,14 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
         return builder;
     }
 
+    /**
+     * Returns the XContent body.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent body
+     * @throws IOException if an I/O error occurs
+     */
     public abstract XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException;
 
     @Override
@@ -322,6 +391,9 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     /**
      * Get value to use when sorting by this aggregation.
+     *
+     * @param key the key
+     * @return this instance
      */
     public double sortValue(String key) {
         // subclasses will override this with a real implementation if they can be sorted
@@ -330,6 +402,10 @@ public abstract class InternalAggregation implements Aggregation, NamedWriteable
 
     /**
      * Get value to use when sorting by a descendant of this aggregation.
+     *
+     * @param head the head
+     * @param tail the tail
+     * @return this instance
      */
     public double sortValue(AggregationPath.PathElement head, Iterator<AggregationPath.PathElement> tail) {
         // subclasses will override this with a real implementation if you can sort on a descendant

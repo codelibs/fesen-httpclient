@@ -35,6 +35,12 @@ package org.codelibs.fesen.opensearch.geometry.utils;
  * Utilities for common Bit twiddling methods. Borrowed heavily from Lucene (org.apache.lucene.util.BitUtil).
  */
 public class BitUtil {  // magic numbers for bit interleaving
+    /**
+     * Creates a new BitUtil.
+     */
+    public BitUtil() {
+    }
+
     private static final long MAGIC[] = {
         0x5555555555555555L,
         0x3333333333333333L,
@@ -50,6 +56,10 @@ public class BitUtil {  // magic numbers for bit interleaving
      * Interleaves the first 32 bits of each long value
      * <p>
      * Adapted from: <a href="http://graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN">bithacks.html#InterleaveBMN</a>
+     *
+     * @param even the even
+     * @param odd the odd
+     * @return the interleave
      */
     public static long interleave(int even, int odd) {
         long v1 = 0x00000000FFFFFFFFL & even;
@@ -70,6 +80,9 @@ public class BitUtil {  // magic numbers for bit interleaving
 
     /**
      * Extract just the even-bits value as a long from the bit-interleaved value
+     *
+     * @param b the b
+     * @return the deinterleave
      */
     public static long deinterleave(long b) {
         b &= MAGIC[0];
@@ -83,6 +96,9 @@ public class BitUtil {  // magic numbers for bit interleaving
 
     /**
      * flip flops odd with even bits
+     *
+     * @param b the b
+     * @return the flip flop
      */
     public static final long flipFlop(final long b) {
         return ((b & MAGIC[6]) >>> 1) | ((b & MAGIC[0]) << 1);

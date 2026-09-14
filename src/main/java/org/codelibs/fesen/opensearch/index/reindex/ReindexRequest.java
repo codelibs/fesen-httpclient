@@ -84,6 +84,9 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
 
     private RemoteInfo remoteInfo;
 
+    /**
+     * Creates a new ReindexRequest.
+     */
     public ReindexRequest() {
         this(new SearchRequest(), new IndexRequest(), true);
     }
@@ -150,6 +153,9 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
 
     /**
      * Set the indices which will act as the source for the ReindexRequest
+     *
+     * @param sourceIndices the source indices
+     * @return this instance
      */
     public ReindexRequest setSourceIndices(String... sourceIndices) {
         if (sourceIndices != null) {
@@ -160,6 +166,9 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
 
     /**
      * Set the target index for the ReindexRequest
+     *
+     * @param destIndex the dest index
+     * @return this instance
      */
     public ReindexRequest setDestIndex(String destIndex) {
         if (destIndex != null) {
@@ -170,6 +179,9 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
 
     /**
      * Set the {@link RemoteInfo} if the source indices are in a remote cluster.
+     *
+     * @param remoteInfo the remote info
+     * @return this instance
      */
     public ReindexRequest setRemoteInfo(RemoteInfo remoteInfo) {
         this.remoteInfo = remoteInfo;
@@ -178,6 +190,8 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
 
     /**
      * Gets the target for this reindex request in the for of an {@link IndexRequest}
+     *
+     * @return the destination
      */
     public IndexRequest getDestination() {
         return destination;
@@ -185,6 +199,8 @@ public class ReindexRequest extends AbstractBulkIndexByScrollRequest<ReindexRequ
 
     /**
      * Get the {@link RemoteInfo} if it was set for this request.
+     *
+     * @return the remote info
      */
     public RemoteInfo getRemoteInfo() {
         return remoteInfo;

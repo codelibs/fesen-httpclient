@@ -59,6 +59,12 @@ public class SnapshotsStatusResponse extends ActionResponse implements ToXConten
 
     private final List<SnapshotStatus> snapshots;
 
+    /**
+     * Creates a new SnapshotsStatusResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SnapshotsStatusResponse(StreamInput in) throws IOException {
         super(in);
         snapshots = Collections.unmodifiableList(in.readList(SnapshotStatus::new));
@@ -107,6 +113,13 @@ public class SnapshotsStatusResponse extends ActionResponse implements ToXConten
         PARSER.declareObjectArray(constructorArg(), SnapshotStatus.PARSER, new ParseField("snapshots"));
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SnapshotsStatusResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

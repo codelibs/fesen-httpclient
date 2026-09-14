@@ -38,7 +38,13 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
     private static final int MAX_TARGET_COUNT = 25;
     private static final int MAX_TARGET_INDEX_PATTERN_LENGTH = 64;
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final CreateViewAction INSTANCE = new CreateViewAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/views/create";
 
     private CreateViewAction() {
@@ -54,12 +60,24 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
         private final String description;
         private final List<Target> targets;
 
+        /**
+         * Creates a new Request.
+         *
+         * @param name the name
+         * @param description the description
+         * @param targets the targets
+         */
         public Request(final String name, final String description, final List<Target> targets) {
             this.name = name;
             this.description = Objects.requireNonNullElse(description, "");
             this.targets = targets;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
@@ -68,6 +86,11 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
             return description;
         }
 
+        /**
+         * Returns the targets.
+         *
+         * @return the targets
+         */
         public List<Target> getTargets() {
             return new ArrayList<>(targets);
         }
@@ -136,12 +159,25 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
         /** View target representation for create requests */
         @ExperimentalApi
         public static class Target implements Writeable {
+            /**
+             * The index pattern.
+             */
             public final String indexPattern;
 
+            /**
+             * Creates a new Target.
+             *
+             * @param indexPattern the index pattern
+             */
             public Target(final String indexPattern) {
                 this.indexPattern = indexPattern;
             }
 
+            /**
+             * Returns the index pattern.
+             *
+             * @return the index pattern
+             */
             public String getIndexPattern() {
                 return indexPattern;
             }
@@ -164,6 +200,11 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
                 out.writeString(indexPattern);
             }
 
+            /**
+             * Validates this instance.
+             *
+             * @return this instance
+             */
             public ActionRequestValidationException validate() {
                 ActionRequestValidationException validationException = null;
 
@@ -188,6 +229,13 @@ public class CreateViewAction extends ActionType<GetViewAction.Response> {
                 PARSER.declareString(ConstructingObjectParser.constructorArg(), View.Target.INDEX_PATTERN_FIELD);
             }
 
+            /**
+             * Parses an instance from the given parser.
+             *
+             * @param parser the parser
+             * @return the new XContent
+             * @throws IOException if an I/O error occurs
+             */
             public static Target fromXContent(final XContentParser parser) throws IOException {
                 return PARSER.parse(parser, null);
             }

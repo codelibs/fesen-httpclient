@@ -33,6 +33,16 @@ public class RemoteStoreShardMetadata implements Writeable, ToXContentFragment {
     private final String latestSegmentMetadataFileName;
     private final String latestTranslogMetadataFileName;
 
+    /**
+     * Creates a new RemoteStoreShardMetadata.
+     *
+     * @param indexName the index name
+     * @param shardId the shard identifier
+     * @param segmentMetadataFiles the segment metadata files
+     * @param translogMetadataFiles the translog metadata files
+     * @param latestSegmentMetadataFileName the latest segment metadata file name
+     * @param latestTranslogMetadataFileName the latest translog metadata file name
+     */
     public RemoteStoreShardMetadata(
         String indexName,
         int shardId,
@@ -49,6 +59,12 @@ public class RemoteStoreShardMetadata implements Writeable, ToXContentFragment {
         this.latestTranslogMetadataFileName = latestTranslogMetadataFileName;
     }
 
+    /**
+     * Creates a new RemoteStoreShardMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     @SuppressWarnings("unchecked")
     public RemoteStoreShardMetadata(StreamInput in) throws IOException {
         this.indexName = in.readString();
@@ -107,26 +123,56 @@ public class RemoteStoreShardMetadata implements Writeable, ToXContentFragment {
         return builder.endObject();
     }
 
+    /**
+     * Returns the index name.
+     *
+     * @return the index name
+     */
     public String getIndexName() {
         return indexName;
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public int getShardId() {
         return shardId;
     }
 
+    /**
+     * Returns the segment metadata files.
+     *
+     * @return the segment metadata files
+     */
     public Map<String, Map<String, Object>> getSegmentMetadataFiles() {
         return segmentMetadataFiles;
     }
 
+    /**
+     * Returns the translog metadata files.
+     *
+     * @return the translog metadata files
+     */
     public Map<String, Map<String, Object>> getTranslogMetadataFiles() {
         return translogMetadataFiles;
     }
 
+    /**
+     * Returns the latest segment metadata file name.
+     *
+     * @return the latest segment metadata file name
+     */
     public String getLatestSegmentMetadataFileName() {
         return latestSegmentMetadataFileName;
     }
 
+    /**
+     * Returns the latest translog metadata file name.
+     *
+     * @return the latest translog metadata file name
+     */
     public String getLatestTranslogMetadataFileName() {
         return latestTranslogMetadataFileName;
     }

@@ -86,6 +86,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
     // expressions only against indices
     private static final IndicesOptions INDICES_OPTIONS = IndicesOptions.fromOptions(false, false, true, false, true, false, true, false);
 
+    /**
+     * Creates a new IndicesAliasesRequest.
+     */
     public IndicesAliasesRequest() {}
 
     /**
@@ -119,8 +122,17 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
          */
         @PublicApi(since = "1.0.0")
         public enum Type {
+            /**
+             * The ADD value.
+             */
             ADD((byte) 0, AliasActions.ADD),
+            /**
+             * The REMOVE value.
+             */
             REMOVE((byte) 1, AliasActions.REMOVE),
+            /**
+             * The REMOVE_INDEX value.
+             */
             REMOVE_INDEX((byte) 2, AliasActions.REMOVE_INDEX);
 
             private final byte value;
@@ -131,10 +143,21 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
                 this.fieldName = field.getPreferredName();
             }
 
+            /**
+             * Returns the value.
+             *
+             * @return the value
+             */
             public byte value() {
                 return value;
             }
 
+            /**
+             * Creates an instance from value.
+             *
+             * @param value the value
+             * @return the new value
+             */
             public static Type fromValue(byte value) {
                 switch (value) {
                     case 0:
@@ -151,6 +174,8 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Build a new {@code AliasAction} to add aliases.
+         *
+         * @return this instance
          */
         public static AliasActions add() {
             return new AliasActions(AliasActions.Type.ADD);
@@ -158,6 +183,8 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Build a new {@code AliasAction} to remove aliases.
+         *
+         * @return this instance
          */
         public static AliasActions remove() {
             return new AliasActions(AliasActions.Type.REMOVE);
@@ -165,6 +192,8 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Build a new {@code AliasAction} to remove an index.
+         *
+         * @return this instance
          */
         public static AliasActions removeIndex() {
             return new AliasActions(AliasActions.Type.REMOVE_INDEX);
@@ -259,6 +288,11 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         private Boolean isHidden;
         private Boolean mustExist;
 
+        /**
+         * Creates a new AliasActions.
+         *
+         * @param type the type
+         */
         public AliasActions(AliasActions.Type type) {
             this.type = type;
         }
@@ -307,6 +341,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Set the index this action is operating on.
+         *
+         * @param index the index
+         * @return this instance
          */
         public AliasActions index(String index) {
             if (false == Strings.hasLength(index)) {
@@ -318,6 +355,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Aliases to use with this action.
+         *
+         * @param aliases the aliases
+         * @return the aliases
          */
         public AliasActions aliases(String... aliases) {
             if (type == AliasActions.Type.REMOVE_INDEX) {
@@ -338,6 +378,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Set the alias this action is operating on.
+         *
+         * @param alias the alias
+         * @return the alias
          */
         public AliasActions alias(String alias) {
             if (type == AliasActions.Type.REMOVE_INDEX) {
@@ -353,6 +396,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
         /**
          * Set the default routing.
+         *
+         * @param routing the routing value
+         * @return the routing
          */
         public AliasActions routing(String routing) {
             if (type != AliasActions.Type.ADD) {
@@ -362,6 +408,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
+        /**
+         * Searches the routing.
+         *
+         * @param searchRouting the search routing
+         * @return this instance
+         */
         public AliasActions searchRouting(String searchRouting) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[search_routing] is unsupported for [" + type + "]");
@@ -370,6 +422,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
+        /**
+         * Indexes the routing.
+         *
+         * @param indexRouting the index routing
+         * @return this instance
+         */
         public AliasActions indexRouting(String indexRouting) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[index_routing] is unsupported for [" + type + "]");
@@ -378,6 +436,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
+        /**
+         * Filters this instance.
+         *
+         * @param filter the filter
+         * @return this instance
+         */
         public AliasActions filter(String filter) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[filter] is unsupported for [" + type + "]");
@@ -386,6 +450,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
+        /**
+         * Filters this instance.
+         *
+         * @param filter the filter
+         * @return this instance
+         */
         public AliasActions filter(Map<String, Object> filter) {
             if (filter == null || filter.isEmpty()) {
                 this.filter = null;
@@ -401,6 +471,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             }
         }
 
+        /**
+         * Writes the index.
+         *
+         * @param writeIndex the write index
+         * @return this instance
+         */
         public AliasActions writeIndex(Boolean writeIndex) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[is_write_index] is unsupported for [" + type + "]");
@@ -409,6 +485,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
+        /**
+         * Returns the hidden flag.
+         *
+         * @param isHidden the is hidden
+         * @return the hidden flag
+         */
         public AliasActions isHidden(Boolean isHidden) {
             if (type != AliasActions.Type.ADD) {
                 throw new IllegalArgumentException("[" + IS_HIDDEN.getPreferredName() + "] is unsupported for [" + type + "]");
@@ -417,6 +499,12 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
             return this;
         }
 
+        /**
+         * Returns the exist flag.
+         *
+         * @param mustExist the must exist
+         * @return the exist flag
+         */
         public AliasActions mustExist(Boolean mustExist) {
             if (type != Type.REMOVE) {
                 throw new IllegalArgumentException("[" + MUST_EXIST.getPreferredName() + "] is unsupported for [" + type + "]");
@@ -545,6 +633,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
 
     /**
      * Add the action to this request and validate it.
+     *
+     * @param aliasAction the alias action
+     * @return this instance
      */
     public IndicesAliasesRequest addAliasAction(AliasActions aliasAction) {
         aliasAction.validate();
@@ -581,6 +672,9 @@ public class IndicesAliasesRequest extends AcknowledgedRequest<IndicesAliasesReq
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<IndicesAliasesRequest, Void> PARSER = new ObjectParser<>("aliases", IndicesAliasesRequest::new);
     static {
         PARSER.declareObjectArray((request, actions) -> {

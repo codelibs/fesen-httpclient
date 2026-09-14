@@ -52,6 +52,9 @@ import java.util.Objects;
  */
 public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQueryBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "terms_set";
 
     static final ParseField TERMS_FIELD = new ParseField("terms");
@@ -64,11 +67,23 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
     private String minimumShouldMatchField;
     private Script minimumShouldMatchScript;
 
+    /**
+     * Creates a new TermsSetQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param values the values
+     */
     public TermsSetQueryBuilder(String fieldName, List<?> values) {
         this.fieldName = Objects.requireNonNull(fieldName);
         this.values = TermsQueryBuilder.convert(Objects.requireNonNull(values));
     }
 
+    /**
+     * Creates a new TermsSetQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public TermsSetQueryBuilder(StreamInput in) throws IOException {
         super(in);
         this.fieldName = in.readString();
@@ -90,14 +105,30 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
         return fieldName;
     }
 
+    /**
+     * Returns the values.
+     *
+     * @return the values
+     */
     public List<?> getValues() {
         return values;
     }
 
+    /**
+     * Returns the minimum should match field.
+     *
+     * @return the minimum should match field
+     */
     public String getMinimumShouldMatchField() {
         return minimumShouldMatchField;
     }
 
+    /**
+     * Sets the minimum should match field.
+     *
+     * @param minimumShouldMatchField the minimum should match field
+     * @return this instance
+     */
     public TermsSetQueryBuilder setMinimumShouldMatchField(String minimumShouldMatchField) {
         if (minimumShouldMatchScript != null) {
             throw new IllegalArgumentException("A script has already been specified. Cannot specify both a field and script");
@@ -106,10 +137,21 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
         return this;
     }
 
+    /**
+     * Returns the minimum should match script.
+     *
+     * @return the minimum should match script
+     */
     public Script getMinimumShouldMatchScript() {
         return minimumShouldMatchScript;
     }
 
+    /**
+     * Sets the minimum should match script.
+     *
+     * @param minimumShouldMatchScript the minimum should match script
+     * @return this instance
+     */
     public TermsSetQueryBuilder setMinimumShouldMatchScript(Script minimumShouldMatchScript) {
         if (minimumShouldMatchField != null) {
             throw new IllegalArgumentException("A field has already been specified. Cannot specify both a field and script");
@@ -152,6 +194,13 @@ public final class TermsSetQueryBuilder extends AbstractQueryBuilder<TermsSetQue
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static TermsSetQueryBuilder fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         if (token != XContentParser.Token.FIELD_NAME) {

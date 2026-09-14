@@ -16,8 +16,17 @@ import java.util.Locale;
  * @opensearch.api
  */
 public enum StatusType {
+    /**
+     * The SUCCESS value.
+     */
     SUCCESS,
+    /**
+     * The USER_ERROR value.
+     */
     USER_ERROR,
+    /**
+     * The SYSTEM_FAILURE value.
+     */
     SYSTEM_FAILURE;
 
     @Override

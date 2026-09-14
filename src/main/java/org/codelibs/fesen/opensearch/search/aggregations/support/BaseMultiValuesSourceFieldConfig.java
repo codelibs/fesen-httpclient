@@ -70,6 +70,14 @@ public abstract class BaseMultiValuesSourceFieldConfig implements Writeable, ToX
             }
         };
 
+    /**
+     * Creates a new BaseMultiValuesSourceFieldConfig.
+     *
+     * @param fieldName the field name
+     * @param missing the missing
+     * @param script the script
+     * @param timeZone the time zone
+     */
     public BaseMultiValuesSourceFieldConfig(String fieldName, Object missing, Script script, ZoneId timeZone) {
         this.fieldName = fieldName;
         this.missing = missing;
@@ -77,6 +85,12 @@ public abstract class BaseMultiValuesSourceFieldConfig implements Writeable, ToX
         this.timeZone = timeZone;
     }
 
+    /**
+     * Creates a new BaseMultiValuesSourceFieldConfig by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BaseMultiValuesSourceFieldConfig(StreamInput in) throws IOException {
         this.fieldName = in.readOptionalString();
         this.missing = in.readGenericValue();
@@ -141,34 +155,71 @@ public abstract class BaseMultiValuesSourceFieldConfig implements Writeable, ToX
     /**
      * Base builder for the multi values source field configuration
      *
+     * @param <C> the context type
+     * @param <B> the builder type
      * @opensearch.internal
      */
     public abstract static class Builder<C extends BaseMultiValuesSourceFieldConfig, B extends Builder<C, B>> {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
+
         String fieldName;
         Object missing = null;
         Script script = null;
         ZoneId timeZone = null;
 
+        /**
+         * Sets the field name.
+         *
+         * @param fieldName the field name
+         * @return this instance
+         */
         public B setFieldName(String fieldName) {
             this.fieldName = fieldName;
             return (B) this;
         }
 
+        /**
+         * Sets the missing.
+         *
+         * @param missing the missing
+         * @return this instance
+         */
         public B setMissing(Object missing) {
             this.missing = missing;
             return (B) this;
         }
 
+        /**
+         * Sets the script.
+         *
+         * @param script the script
+         * @return this instance
+         */
         public B setScript(Script script) {
             this.script = script;
             return (B) this;
         }
 
+        /**
+         * Sets the time zone.
+         *
+         * @param timeZone the time zone
+         * @return this instance
+         */
         public B setTimeZone(ZoneId timeZone) {
             this.timeZone = timeZone;
             return (B) this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         abstract public C build();
     }
 }

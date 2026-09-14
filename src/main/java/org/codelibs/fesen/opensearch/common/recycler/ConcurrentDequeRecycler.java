@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A {@link Recycler} implementation based on a concurrent {@link Deque}. This implementation is thread-safe.
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public class ConcurrentDequeRecycler<T> extends DequeRecycler<T> {
@@ -47,6 +48,12 @@ public class ConcurrentDequeRecycler<T> extends DequeRecycler<T> {
     // we maintain size separately because concurrent deque implementations typically have linear-time size() impls
     final AtomicInteger size;
 
+    /**
+     * Creates a new ConcurrentDequeRecycler.
+     *
+     * @param c the c
+     * @param maxSize the max size
+     */
     public ConcurrentDequeRecycler(C<T> c, int maxSize) {
         super(c, ConcurrentCollections.newDeque(), maxSize);
         this.size = new AtomicInteger();

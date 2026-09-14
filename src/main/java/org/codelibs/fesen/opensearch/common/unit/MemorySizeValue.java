@@ -52,7 +52,12 @@ public enum MemorySizeValue {
 
     /** Parse the provided string as a memory size. This method either accepts absolute values such as
      *  {@code 42} (default assumed unit is byte) or {@code 2mb}, or percentages of the heap size: if
-     *  the heap is 1G, {@code 10%} will be parsed as {@code 100mb}.  */
+      * the heap is 1G, {@code 10%} will be parsed as {@code 100mb}.
+     *
+     * @param sValue the s value
+     * @param settingName the setting name
+     * @return this instance
+      */
     public static ByteSizeValue parseBytesSizeValueOrHeapRatio(String sValue, String settingName) {
         return parseBytesSizeValueOrRatio(sValue, settingName, JvmInfo.jvmInfo().getMem().getHeapMax().getBytes());
     }
@@ -60,7 +65,12 @@ public enum MemorySizeValue {
     /** Parse the provided string as a memory size. This method either accepts absolute values such as
      *  {@code 42} (default assumed unit is byte) or {@code 2mb}, or percentages of available native memory
      *  (total physical memory minus JVM heap): if the machine has 32G and JVM heap is 8G,
-     *  {@code 5%} will be parsed as {@code 1228mb}. */
+      * {@code 5%} will be parsed as {@code 1228mb}.
+     *
+     * @param sValue the s value
+     * @param settingName the setting name
+     * @return this instance
+      */
     public static ByteSizeValue parseBytesSizeValueOrNativeMemoryRatio(String sValue, String settingName) {
         long totalPhysical = OsProbe.getInstance().getTotalPhysicalMemorySize();
         long jvmHeap = JvmInfo.jvmInfo().getConfiguredMaxHeapSize();

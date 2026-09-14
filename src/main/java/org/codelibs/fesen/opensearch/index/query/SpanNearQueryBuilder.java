@@ -61,6 +61,9 @@ import static org.codelibs.fesen.opensearch.index.query.SpanQueryBuilder.SpanQue
  * @opensearch.internal
  */
 public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_near";
 
     /** Default for flag controlling whether matches are required to be in-order */
@@ -79,6 +82,8 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
     private boolean inOrder = DEFAULT_IN_ORDER;
 
     /**
+     * Creates a new SpanNearQueryBuilder.
+     *
      * @param initialClause an initial span query clause
      * @param slop controls the maximum number of intervening unmatched positions permitted
      */
@@ -92,6 +97,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanNearQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -110,6 +118,8 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
     }
 
     /**
+     * Returns the slop.
+     *
      * @return the maximum number of intervening unmatched positions permitted
      */
     public int slop() {
@@ -118,6 +128,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
 
     /**
      * Add a span clause to the current list of clauses
+     *
+     * @param clause the clause
+     * @return this instance
      */
     public SpanNearQueryBuilder addClause(SpanQueryBuilder clause) {
         if (clause == null) {
@@ -128,6 +141,8 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
     }
 
     /**
+     * Returns the clauses.
+     *
      * @return the {@link SpanQueryBuilder} clauses that were set for this query
      */
     public List<SpanQueryBuilder> clauses() {
@@ -138,6 +153,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
      * When <code>inOrder</code> is true, the spans from each clause
      * must be in the same order as in <code>clauses</code> and must be non-overlapping.
      * Defaults to <code>true</code>
+     *
+     * @param inOrder the in order
+     * @return the in order
      */
     public SpanNearQueryBuilder inOrder(boolean inOrder) {
         this.inOrder = inOrder;
@@ -145,6 +163,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
     }
 
     /**
+     * Returns the in order.
+     *
+     * @return the in order
      * @see SpanNearQueryBuilder#inOrder(boolean)
      */
     public boolean inOrder() {
@@ -165,6 +186,13 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanNearQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
         int slop = DEFAULT_SLOP;
@@ -266,6 +294,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
      * @opensearch.internal
      */
     public static class SpanGapQueryBuilder implements SpanQueryBuilder, WithFieldName {
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "span_gap";
 
         /** Name of field to match against. */
@@ -292,6 +323,9 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public SpanGapQueryBuilder(StreamInput in) throws IOException {
             fieldName = in.readString();
@@ -307,6 +341,8 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
         }
 
         /**
+         * Returns the width.
+         *
          * @return width The width of the gap introduced
          */
         public int width() {
@@ -364,6 +400,13 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
             return builder;
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static SpanGapQueryBuilder fromXContent(XContentParser parser) throws IOException {
             String fieldName = null;
             int width = 0;
@@ -405,6 +448,14 @@ public class SpanNearQueryBuilder extends AbstractQueryBuilder<SpanNearQueryBuil
         }
 
         // copied from AbstractQueryBuilder
+        /**
+         * Performs the throw parsing exception on multiple fields step.
+         *
+         * @param queryName the query name
+         * @param contentLocation the content location
+         * @param processedFieldName the processed field name
+         * @param currentFieldName the current field name
+         */
         protected static void throwParsingExceptionOnMultipleFields(
             String queryName,
             XContentLocation contentLocation,

@@ -61,6 +61,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public class CollectorResult implements ToXContentObject, Writeable {
 
+    /**
+     * The COLLECTOR_MANAGER constant.
+     */
     public static final String COLLECTOR_MANAGER = "CollectorManager";
 
     private static final ParseField NAME = new ParseField("name");
@@ -119,6 +122,19 @@ public class CollectorResult implements ToXContentObject, Writeable {
      */
     private List<CollectorResult> children;
 
+    /**
+     * Creates a new CollectorResult.
+     *
+     * @param collectorName the collector name
+     * @param reason the reason
+     * @param time the time
+     * @param reduceTime the reduce time
+     * @param maxSliceTime the max slice time
+     * @param minSliceTime the min slice time
+     * @param avgSliceTime the avg slice time
+     * @param sliceCount the slice count
+     * @param children the children
+     */
     public CollectorResult(
         String collectorName,
         String reason,
@@ -143,6 +159,9 @@ public class CollectorResult implements ToXContentObject, Writeable {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public CollectorResult(StreamInput in) throws IOException {
         this.collectorName = in.readString();
@@ -188,6 +207,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the time.
+     *
      * @return the profiled time for this collector/collector manager (inclusive of children)
      */
     public long getTime() {
@@ -195,6 +216,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the reduce time.
+     *
      * @return the profiled reduce time for this collector manager (inclusive of children)
      */
     public long getReduceTime() {
@@ -202,6 +225,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the max slice time.
+     *
      * @return the profiled maximum slice time for this collector manager (inclusive of children)
      */
     public long getMaxSliceTime() {
@@ -209,6 +234,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the min slice time.
+     *
      * @return the profiled minimum slice time for this collector manager (inclusive of children)
      */
     public long getMinSliceTime() {
@@ -216,6 +243,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the avg slice time.
+     *
      * @return the profiled average slice time for this collector manager (inclusive of children)
      */
     public long getAvgSliceTime() {
@@ -223,6 +252,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the slice count.
+     *
      * @return the profiled segment slice count for this collector manager (inclusive of children)
      */
     public int getSliceCount() {
@@ -230,6 +261,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the reason.
+     *
      * @return a human readable "hint" about what this collector/collector manager was used for
      */
     public String getReason() {
@@ -237,6 +270,8 @@ public class CollectorResult implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the name.
+     *
      * @return the lucene class name of the collector/collector manager
      */
     public String getName() {
@@ -271,6 +306,13 @@ public class CollectorResult implements ToXContentObject, Writeable {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CollectorResult fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);

@@ -38,17 +38,53 @@ import java.util.Locale;
  * Shape types supported by opensearch
  */
 public enum ShapeType {
+    /**
+     * The POINT value.
+     */
     POINT,
+    /**
+     * The MULTIPOINT value.
+     */
     MULTIPOINT,
+    /**
+     * The LINESTRING value.
+     */
     LINESTRING,
+    /**
+     * The MULTILINESTRING value.
+     */
     MULTILINESTRING,
+    /**
+     * The POLYGON value.
+     */
     POLYGON,
+    /**
+     * The MULTIPOLYGON value.
+     */
     MULTIPOLYGON,
+    /**
+     * The GEOMETRYCOLLECTION value.
+     */
     GEOMETRYCOLLECTION,
+    /**
+     * The linearring.
+     */
     LINEARRING, // not serialized by itself in WKT or WKB
+    /**
+     * The envelope.
+     */
     ENVELOPE, // not part of the actual WKB spec
+    /**
+     * The circle.
+     */
     CIRCLE; // not part of the actual WKB spec
 
+    /**
+     * Returns the for name.
+     *
+     * @param shapeName the shape name
+     * @return the for name
+     */
     public static ShapeType forName(String shapeName) {
         return ShapeType.valueOf(shapeName.toUpperCase(Locale.ROOT));
     }

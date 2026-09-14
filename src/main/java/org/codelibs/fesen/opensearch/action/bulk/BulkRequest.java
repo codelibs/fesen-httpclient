@@ -104,8 +104,16 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     private long sizeInBytes = 0;
 
+    /**
+     * Creates a new BulkRequest.
+     */
     public BulkRequest() {}
 
+    /**
+     * Creates a new BulkRequest.
+     *
+     * @param globalIndex the global index
+     */
     public BulkRequest(@Nullable String globalIndex) {
         this.globalIndex = globalIndex;
     }
@@ -113,6 +121,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
     /**
      * Adds an {@link IndexRequest} to the list of actions to execute. Follows the same behavior of {@link IndexRequest}
      * (for example, if no id is provided, one will be generated, or usage of the create flag).
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequest add(IndexRequest request) {
         return internalAdd(request);
@@ -131,6 +142,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     /**
      * Adds an {@link UpdateRequest} to the list of actions to execute.
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequest add(UpdateRequest request) {
         return internalAdd(request);
@@ -156,6 +170,9 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     /**
      * Adds an {@link DeleteRequest} to the list of actions to execute.
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequest add(DeleteRequest request) {
         Objects.requireNonNull(request, "'request' must not be null");
@@ -169,6 +186,8 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     /**
      * The list of requests in this bulk request.
+     *
+     * @return the requests
      */
     public List<DocWriteRequest<?>> requests() {
         return this.requests;
@@ -176,11 +195,18 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
 
     /**
      * The number of actions in the bulk request.
+     *
+     * @return the number of actions
      */
     public int numberOfActions() {
         return requests.size();
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return this.waitForActiveShards;
     }
@@ -230,18 +256,38 @@ public class BulkRequest extends ActionRequest implements CompositeIndicesReques
         return this;
     }
 
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
     public TimeValue timeout() {
         return timeout;
     }
 
+    /**
+     * Returns the pipeline.
+     *
+     * @return the pipeline
+     */
     public String pipeline() {
         return globalPipeline;
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @return the routing
+     */
     public String routing() {
         return globalRouting;
     }
 
+    /**
+     * Requires the alias.
+     *
+     * @return this instance
+     */
     public Boolean requireAlias() {
         return globalRequireAlias;
     }

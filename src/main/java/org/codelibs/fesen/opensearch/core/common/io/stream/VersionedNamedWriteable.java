@@ -48,6 +48,8 @@ public interface VersionedNamedWriteable extends NamedWriteable {
 
     /**
      * The minimal version of the recipient this object can be sent to
+     *
+     * @return the minimal supported version
      */
     Version getMinimalSupportedVersion();
 }

@@ -74,6 +74,8 @@ public enum SearchType {
 
     /**
      * The internal id of the type.
+     *
+     * @return the identifier
      */
     public byte id() {
         return this.id;
@@ -81,6 +83,9 @@ public enum SearchType {
 
     /**
      * Constructs search type based on the internal id.
+     *
+     * @param id the identifier
+     * @return the new identifier
      */
     public static SearchType fromId(byte id) {
         if (id == 0) {
@@ -97,6 +102,9 @@ public enum SearchType {
      * The a string representation search type to execute, defaults to {@link SearchType#DEFAULT}. Can be
      * one of "dfs_query_then_fetch"/"dfsQueryThenFetch", "dfs_query_and_fetch"/"dfsQueryAndFetch",
      * "query_then_fetch"/"queryThenFetch" and "query_and_fetch"/"queryAndFetch".
+     *
+     * @param searchType the search type
+     * @return the new string
      */
     public static SearchType fromString(String searchType) {
         if (searchType == null) {

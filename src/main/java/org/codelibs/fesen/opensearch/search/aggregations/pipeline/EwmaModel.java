@@ -50,6 +50,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class EwmaModel extends MovAvgModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "ewma";
 
     private static final double DEFAULT_ALPHA = 0.3;
@@ -62,10 +65,18 @@ public class EwmaModel extends MovAvgModel {
      */
     private final double alpha;
 
+    /**
+     * Creates a new EwmaModel.
+     */
     public EwmaModel() {
         this(DEFAULT_ALPHA);
     }
 
+    /**
+     * Creates a new EwmaModel.
+     *
+     * @param alpha the alpha
+     */
     public EwmaModel(double alpha) {
         this.alpha = alpha;
     }
@@ -120,6 +131,9 @@ public class EwmaModel extends MovAvgModel {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final AbstractModelParser PARSER = new AbstractModelParser() {
         @Override
         public MovAvgModel parse(@Nullable Map<String, Object> settings, String pipelineName, int windowSize) throws ParseException {
@@ -152,6 +166,11 @@ public class EwmaModel extends MovAvgModel {
      * @opensearch.internal
      */
     public static class EWMAModelBuilder implements MovAvgModelBuilder {
+        /**
+         * Creates a new EWMAModelBuilder.
+         */
+        public EWMAModelBuilder() {
+        }
 
         private double alpha = DEFAULT_ALPHA;
 

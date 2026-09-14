@@ -44,6 +44,12 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
     private final ShardSearchFailure[] shardFailures;
     private final long creationTime;
 
+    /**
+     * Creates a new CreatePitResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CreatePitResponse(StreamInput in) throws IOException {
         super(in);
         id = in.readString();
@@ -63,6 +69,17 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
         }
     }
 
+    /**
+     * Creates a new CreatePitResponse.
+     *
+     * @param id the identifier
+     * @param creationTime the creation time
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param skippedShards the skipped shards
+     * @param failedShards the failed shards
+     * @param shardFailures the shard failures
+     */
     public CreatePitResponse(
         String id,
         long creationTime,
@@ -101,6 +118,10 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
 
     /**
      * Parse the create PIT response body into a new {@link CreatePitResponse} object
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static CreatePitResponse fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.nextToken(), parser);
@@ -108,6 +129,13 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
         return innerFromXContent(parser);
     }
 
+    /**
+     * Returns the inner from XContent.
+     *
+     * @param parser the parser
+     * @return the inner from XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CreatePitResponse innerFromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
         String currentFieldName = parser.currentName();
@@ -175,12 +203,19 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
         );
     }
 
+    /**
+     * Returns the creation time.
+     *
+     * @return the creation time
+     */
     public long getCreationTime() {
         return creationTime;
     }
 
     /**
      * The failed number of shards the search was executed on.
+     *
+     * @return the failed shards
      */
     public int getFailedShards() {
         return shardFailures.length;
@@ -188,6 +223,8 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
 
     /**
      * The failures that occurred during the search.
+     *
+     * @return the shard failures
      */
     public ShardSearchFailure[] getShardFailures() {
         return this.shardFailures;
@@ -207,12 +244,19 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
         }
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String getId() {
         return id;
     }
 
     /**
      * The total number of shards the create pit operation was executed on.
+     *
+     * @return the total shards
      */
     public int getTotalShards() {
         return totalShards;
@@ -220,11 +264,18 @@ public class CreatePitResponse extends ActionResponse implements StatusToXConten
 
     /**
      * The successful number of shards the create pit operation was executed on.
+     *
+     * @return the successful shards
      */
     public int getSuccessfulShards() {
         return successfulShards;
     }
 
+    /**
+     * Returns the skipped shards.
+     *
+     * @return the skipped shards
+     */
     public int getSkippedShards() {
         return skippedShards;
     }

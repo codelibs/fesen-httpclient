@@ -58,7 +58,13 @@ public abstract class AggregationBuilder
         BaseAggregationBuilder,
         Rewriteable<AggregationBuilder> {
 
+    /**
+     * The name.
+     */
     protected final String name;
+    /**
+     * The factories builder.
+     */
     protected AggregatorFactories.Builder factoriesBuilder = AggregatorFactories.builder();
 
     /**
@@ -73,12 +79,22 @@ public abstract class AggregationBuilder
         this.name = name;
     }
 
+    /**
+     * Creates a new AggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     */
     protected AggregationBuilder(AggregationBuilder clone, AggregatorFactories.Builder factoriesBuilder) {
         this.name = clone.name;
         this.factoriesBuilder = factoriesBuilder;
     }
 
-    /** Return this aggregation's name. */
+    /**
+     * Return this aggregation's name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
@@ -87,21 +103,43 @@ public abstract class AggregationBuilder
     @Override
     public abstract AggregationBuilder setMetadata(Map<String, Object> metadata);
 
-    /** Return any associated metadata with this {@link AggregationBuilder}. */
+    /**
+     * Return any associated metadata with this {@link AggregationBuilder}.
+     *
+     * @return the metadata
+     */
     public abstract Map<String, Object> getMetadata();
 
-    /** Add a sub aggregation to this builder. */
+    /**
+     * Add a sub aggregation to this builder.
+     *
+     * @param aggregation the aggregation
+     * @return the sub aggregation
+     */
     public abstract AggregationBuilder subAggregation(AggregationBuilder aggregation);
 
-    /** Add a sub aggregation to this builder. */
+    /**
+     * Add a sub aggregation to this builder.
+     *
+     * @param aggregation the aggregation
+     * @return the sub aggregation
+     */
     public abstract AggregationBuilder subAggregation(PipelineAggregationBuilder aggregation);
 
-    /** Return the configured set of subaggregations **/
+    /**
+     * Return the configured set of subaggregations *
+     *
+     * @return the sub aggregations
+     */
     public Collection<AggregationBuilder> getSubAggregations() {
         return factoriesBuilder.getAggregatorFactories();
     }
 
-    /** Return the configured set of pipeline aggregations **/
+    /**
+     * Return the configured set of pipeline aggregations *
+     *
+     * @return the pipeline aggregations
+     */
     public Collection<PipelineAggregationBuilder> getPipelineAggregations() {
         return factoriesBuilder.getPipelineAggregatorFactories();
     }
@@ -122,6 +160,10 @@ public abstract class AggregationBuilder
     /**
      * Create a shallow copy of this builder and replacing {@link #factoriesBuilder} and <code>metadata</code>.
      * Used by {@link #rewrite(QueryRewriteContext)}.
+     *
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     * @return the shallow copy
      */
     protected abstract AggregationBuilder shallowCopy(AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metadata);
 
@@ -143,6 +185,10 @@ public abstract class AggregationBuilder
      * this method return the builder itself. If the builder did not change the
      * identity reference must be returned otherwise the builder will be
      * rewritten infinitely.
+     *
+     * @param queryShardContext the query shard context
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     protected AggregationBuilder doRewrite(QueryRewriteContext queryShardContext) throws IOException {
         return this;
@@ -160,14 +206,25 @@ public abstract class AggregationBuilder
      */
     @PublicApi(since = "1.0.0")
     public enum BucketCardinality {
+        /**
+         * The NONE value.
+         */
         NONE,
+        /**
+         * The ONE value.
+         */
         ONE,
+        /**
+         * The MANY value.
+         */
         MANY;
     }
 
     /**
      * A rough count of the number of buckets that {@link Aggregator}s built
      * by this builder will contain per owning parent bucket.
+     *
+     * @return this instance
      */
     public abstract BucketCardinality bucketCardinality();
 
@@ -177,6 +234,15 @@ public abstract class AggregationBuilder
      * @opensearch.internal
      */
     public static final class CommonFields extends ParseField.CommonFields {
+        /**
+         * Creates a new CommonFields.
+         */
+        public CommonFields() {
+        }
+
+        /**
+         * The VALUE_TYPE constant.
+         */
         public static final ParseField VALUE_TYPE = new ParseField("value_type");
     }
 

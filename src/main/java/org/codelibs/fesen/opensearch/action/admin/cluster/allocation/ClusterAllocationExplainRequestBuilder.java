@@ -47,23 +47,44 @@ public class ClusterAllocationExplainRequestBuilder extends ClusterManagerNodeOp
     ClusterAllocationExplainResponse,
     ClusterAllocationExplainRequestBuilder> {
 
+    /**
+     * Creates a new ClusterAllocationExplainRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClusterAllocationExplainRequestBuilder(OpenSearchClient client, ClusterAllocationExplainAction action) {
         super(client, action, new ClusterAllocationExplainRequest());
     }
 
-    /** The index name to use when finding the shard to explain */
+    /**
+     * The index name to use when finding the shard to explain
+     *
+     * @param index the index
+     * @return this instance
+     */
     public ClusterAllocationExplainRequestBuilder setIndex(String index) {
         request.setIndex(index);
         return this;
     }
 
-    /** The shard number to use when finding the shard to explain */
+    /**
+     * The shard number to use when finding the shard to explain
+     *
+     * @param shard the shard
+     * @return this instance
+     */
     public ClusterAllocationExplainRequestBuilder setShard(int shard) {
         request.setShard(shard);
         return this;
     }
 
-    /** Whether the primary or replica should be explained */
+    /**
+     * Whether the primary or replica should be explained
+     *
+     * @param primary the primary
+     * @return this instance
+     */
     public ClusterAllocationExplainRequestBuilder setPrimary(boolean primary) {
         request.setPrimary(primary);
         return this;

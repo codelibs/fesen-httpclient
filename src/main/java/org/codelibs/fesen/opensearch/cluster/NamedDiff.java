@@ -39,12 +39,15 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.NamedWriteable;
 /**
  * Diff that also support NamedWriteable interface
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public interface NamedDiff<T extends Diffable<T>> extends Diff<T>, NamedWriteable {
     /**
      * The minimal version of the recipient this custom object can be sent to
+     *
+     * @return the minimal supported version
      */
     default Version getMinimalSupportedVersion() {
         return Version.CURRENT.minimumIndexCompatibilityVersion();

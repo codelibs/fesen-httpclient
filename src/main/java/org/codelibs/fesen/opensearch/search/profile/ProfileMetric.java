@@ -20,11 +20,17 @@ public abstract class ProfileMetric {
 
     private final String name;
 
+    /**
+     * Creates a new ProfileMetric.
+     *
+     * @param name the name
+     */
     public ProfileMetric(String name) {
         this.name = name;
     }
 
     /**
+     * Returns the name.
      *
      * @return name of the metric
      */
@@ -33,6 +39,7 @@ public abstract class ProfileMetric {
     }
 
     /**
+     * Returns this instance as breakdown map.
      *
      * @return map representation of breakdown
      */

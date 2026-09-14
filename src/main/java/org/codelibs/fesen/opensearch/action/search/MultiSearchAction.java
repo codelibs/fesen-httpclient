@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class MultiSearchAction extends ActionType<MultiSearchResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final MultiSearchAction INSTANCE = new MultiSearchAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/msearch";
 
     private MultiSearchAction() {

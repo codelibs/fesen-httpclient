@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class SearchAction extends ActionType<SearchResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final SearchAction INSTANCE = new SearchAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/search";
 
     private SearchAction() {

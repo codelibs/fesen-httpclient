@@ -74,6 +74,14 @@ public final class TaskResult implements Writeable, ToXContentObject {
     @Nullable
     private final BytesReference response;
 
+    /**
+     * Creates a new TaskResult.
+     *
+     * @param completed the completed
+     * @param task the task
+     * @param error the error
+     * @param result the result
+     */
     public TaskResult(boolean completed, TaskInfo task, @Nullable BytesReference error, @Nullable BytesReference result) {
         this.completed = completed;
         this.task = requireNonNull(task, "task is required");
@@ -83,6 +91,9 @@ public final class TaskResult implements Writeable, ToXContentObject {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TaskResult(StreamInput in) throws IOException {
         completed = in.readBoolean();
@@ -102,6 +113,8 @@ public final class TaskResult implements Writeable, ToXContentObject {
     /**
      * Convert {@code #getError()} from XContent to a Map for easy processing. Will return an empty map if the task didn't finish with an
      * error, hasn't yet finished, or didn't store its result.
+     *
+     * @return the error as map
      */
     public Map<String, Object> getErrorAsMap() {
         if (error == null) {
@@ -113,6 +126,8 @@ public final class TaskResult implements Writeable, ToXContentObject {
     /**
      * Convert {@code #getResponse()} from XContent to a Map for easy processing. Will return an empty map if the task was finished with an
      * error, hasn't yet finished, or didn't store its result.
+     *
+     * @return the response as map
      */
     public Map<String, Object> getResponseAsMap() {
         if (response == null) {
@@ -128,6 +143,14 @@ public final class TaskResult implements Writeable, ToXContentObject {
         return builder.endObject();
     }
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         builder.field("completed", completed);
         builder.startObject("task");
@@ -142,6 +165,9 @@ public final class TaskResult implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final InstantiatingObjectParser<TaskResult, Void> PARSER;
 
     static {

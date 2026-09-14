@@ -57,12 +57,22 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 /**
  * Base class for all values source agg builders
  *
+ * @param <AB> the aggregation builder type
  * @opensearch.internal
  */
 public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggregationBuilder<AB>> extends AbstractAggregationBuilder<AB>
     implements
         WithFieldName {
 
+    /**
+     * Performs the declare fields step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     * @param scriptable the scriptable
+     * @param formattable the formattable
+     * @param timezoneAware the timezone aware
+     */
     public static <T> void declareFields(
         AbstractObjectParser<? extends ValuesSourceAggregationBuilder<?>, T> objectParser,
         boolean scriptable,
@@ -73,6 +83,16 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     }
 
+    /**
+     * Performs the declare fields step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     * @param scriptable the scriptable
+     * @param formattable the formattable
+     * @param timezoneAware the timezone aware
+     * @param fieldRequired the field required
+     */
     public static <T> void declareFields(
         AbstractObjectParser<? extends ValuesSourceAggregationBuilder<?>, T> objectParser,
         boolean scriptable,
@@ -145,15 +165,29 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     /**
      * Base leaf only
      *
+     * @param <VS> the vs type
+     * @param <AB> the aggregation builder type
      * @opensearch.internal
      */
     public abstract static class LeafOnly<VS extends ValuesSource, AB extends ValuesSourceAggregationBuilder<AB>> extends
         ValuesSourceAggregationBuilder<AB> {
 
+        /**
+         * Creates a new LeafOnly.
+         *
+         * @param name the name
+         */
         protected LeafOnly(String name) {
             super(name);
         }
 
+        /**
+         * Creates a new LeafOnly.
+         *
+         * @param clone the clone
+         * @param factoriesBuilder the factories builder
+         * @param metadata the metadata
+         */
         protected LeafOnly(LeafOnly<VS, AB> clone, Builder factoriesBuilder, Map<String, Object> metadata) {
             super(clone, factoriesBuilder, metadata);
             if (factoriesBuilder.count() > 0) {
@@ -165,6 +199,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
         /**
          * Read an aggregation from a stream
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         protected LeafOnly(StreamInput in) throws IOException {
             super(in);
@@ -189,10 +226,22 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     private String format = null;
     private Object missing = null;
     private ZoneId timeZone = null;
+    /**
+     * Creates a new ValuesSourceAggregationBuilder.
+     *
+     * @param name the name
+     */
     protected ValuesSourceAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new ValuesSourceAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected ValuesSourceAggregationBuilder(
         ValuesSourceAggregationBuilder<AB> clone,
         Builder factoriesBuilder,
@@ -209,6 +258,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected ValuesSourceAggregationBuilder(StreamInput in) throws IOException {
         super(in);
@@ -260,6 +312,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Write subclass's state to the stream.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     protected abstract void innerWriteTo(StreamOutput out) throws IOException;
 
@@ -269,6 +324,7 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
      * This method only exists for legacy support.  No new aggregations need this, nor should they override it.
      *
      * @param version For backwards compatibility, subclasses can change behavior based on the version
+     * @return this instance
      */
     protected boolean serializeTargetValueType(Version version) {
         return false;
@@ -276,6 +332,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Sets the field to use for this aggregation.
+     *
+     * @param field the field
+     * @return the field
      */
     @SuppressWarnings("unchecked")
     public AB field(String field) {
@@ -288,6 +347,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Gets the field to use for this aggregation.
+     *
+     * @return the field
      */
     public String field() {
         return field;
@@ -300,6 +361,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Sets the script to use for this aggregation.
+     *
+     * @param script the script
+     * @return the script
      */
     @SuppressWarnings("unchecked")
     public AB script(Script script) {
@@ -312,6 +376,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Gets the script to use for this aggregation.
+     *
+     * @return the script
      */
     public Script script() {
         return script;
@@ -335,12 +401,20 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
         return (AB) this;
     }
 
+    /**
+     * Returns the user value type hint.
+     *
+     * @return the user value type hint
+     */
     public ValueType userValueTypeHint() {
         return userValueTypeHint;
     }
 
     /**
      * Sets the format to use for the output of the aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public AB format(String format) {
@@ -353,6 +427,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Gets the format to use for the output of the aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
@@ -361,6 +437,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     /**
      * Sets the value to use when the aggregation finds a missing value in a
      * document
+     *
+     * @param missing the missing
+     * @return the missing
      */
     @SuppressWarnings("unchecked")
     public AB missing(Object missing) {
@@ -374,6 +453,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
     /**
      * Gets the value to use when the aggregation finds a missing value in a
      * document
+     *
+     * @return the missing
      */
     public Object missing() {
         return missing;
@@ -381,6 +462,9 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Sets the time zone to use for this aggregation
+     *
+     * @param timeZone the time zone
+     * @return the time zone
      */
     @SuppressWarnings("unchecked")
     public AB timeZone(ZoneId timeZone) {
@@ -393,6 +477,8 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
 
     /**
      * Gets the time zone to use for this aggregation
+     *
+     * @return the time zone
      */
     public ZoneId timeZone() {
         return timeZone;
@@ -432,6 +518,14 @@ public abstract class ValuesSourceAggregationBuilder<AB extends ValuesSourceAggr
         return builder;
     }
 
+    /**
+     * Returns the XContent body.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent body
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException;
 
     @Override

@@ -113,6 +113,8 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
 
     /**
      * Returns {@code true} iff the first unassigned shard is to be used
+     *
+     * @return the use any unassigned shard
      */
     public boolean useAnyUnassignedShard() {
         return this.index == null && this.shard == null && this.primary == null && this.currentNode == null;
@@ -120,6 +122,9 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
 
     /**
      * Sets the index name of the shard to explain.
+     *
+     * @param index the index
+     * @return this instance
      */
     public ClusterAllocationExplainRequest setIndex(String index) {
         this.index = index;
@@ -128,6 +133,8 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
 
     /**
      * Returns the index name of the shard to explain, or {@code null} to use any unassigned shard (see {@link #useAnyUnassignedShard()}).
+     *
+     * @return the index
      */
     @Nullable
     public String getIndex() {
@@ -136,6 +143,9 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
 
     /**
      * Sets the shard id of the shard to explain.
+     *
+     * @param shard the shard
+     * @return this instance
      */
     public ClusterAllocationExplainRequest setShard(Integer shard) {
         this.shard = shard;
@@ -144,6 +154,8 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
 
     /**
      * Returns the shard id of the shard to explain, or {@code null} to use any unassigned shard (see {@link #useAnyUnassignedShard()}).
+     *
+     * @return the shard
      */
     @Nullable
     public Integer getShard() {
@@ -153,6 +165,9 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
     /**
      * Sets whether to explain the allocation of the primary shard or a replica shard copy
      * for the shard id (see {@link #getShard()}).
+     *
+     * @param primary the primary
+     * @return this instance
      */
     public ClusterAllocationExplainRequest setPrimary(Boolean primary) {
         this.primary = primary;
@@ -163,6 +178,8 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
      * Returns {@code true} if explaining the primary shard for the shard id (see {@link #getShard()}),
      * {@code false} if explaining a replica shard copy for the shard id, or {@code null} to use any
      * unassigned shard (see {@link #useAnyUnassignedShard()}).
+     *
+     * @return the primary flag
      */
     @Nullable
     public Boolean isPrimary() {
@@ -172,6 +189,9 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
     /**
      * Requests the explain API to explain an already assigned replica shard currently allocated to
      * the given node.
+     *
+     * @param currentNodeId the current node identifier
+     * @return this instance
      */
     public ClusterAllocationExplainRequest setCurrentNode(String currentNodeId) {
         this.currentNode = currentNodeId;
@@ -181,6 +201,8 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
     /**
      * Returns {@code true} if yes decisions should be included.  Otherwise only "no" and "throttle"
      * decisions are returned.
+     *
+     * @return this instance
      */
     public boolean includeYesDecisions() {
         return this.includeYesDecisions;
@@ -188,6 +210,8 @@ public class ClusterAllocationExplainRequest extends ClusterManagerNodeRequest<C
 
     /**
      * Returns {@code true} if information about disk usage and shard sizes should also be returned.
+     *
+     * @return this instance
      */
     public boolean includeDiskInfo() {
         return this.includeDiskInfo;

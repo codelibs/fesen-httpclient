@@ -56,11 +56,23 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
         this.method = method;
     }
 
+    /**
+     * Creates an instance from stream.
+     *
+     * @param in the input to read from
+     * @return the new stream
+     * @throws IOException if an I/O error occurs
+     */
     public static PercentilesConfig fromStream(StreamInput in) throws IOException {
         PercentilesMethod method = PercentilesMethod.readFromStream(in);
         return method.configFromStream(in);
     }
 
+    /**
+     * Returns the method.
+     *
+     * @return the method
+     */
     public PercentilesMethod getMethod() {
         return method;
     }
@@ -93,10 +105,18 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
         static final double DEFAULT_COMPRESSION = 100.0;
         private double compression;
 
+        /**
+         * Creates a new TDigest.
+         */
         public TDigest() {
             this(DEFAULT_COMPRESSION);
         }
 
+        /**
+         * Creates a new TDigest.
+         *
+         * @param compression the compression
+         */
         public TDigest(double compression) {
             super(PercentilesMethod.TDIGEST);
             setCompression(compression);
@@ -106,6 +126,11 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
             this(in.readDouble());
         }
 
+        /**
+         * Sets the compression.
+         *
+         * @param compression the compression
+         */
         public void setCompression(double compression) {
             if (compression < 0.0) {
                 throw new IllegalArgumentException("[compression] must be greater than or equal to 0. Found [" + compression + "]");
@@ -113,6 +138,11 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
             this.compression = compression;
         }
 
+        /**
+         * Returns the compression.
+         *
+         * @return the compression
+         */
         public double getCompression() {
             return compression;
         }
@@ -156,10 +186,18 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
         static final int DEFAULT_NUMBER_SIG_FIGS = 3;
         private int numberOfSignificantValueDigits;
 
+        /**
+         * Creates a new Hdr.
+         */
         public Hdr() {
             this(DEFAULT_NUMBER_SIG_FIGS);
         }
 
+        /**
+         * Creates a new Hdr.
+         *
+         * @param numberOfSignificantValueDigits the number of significant value digits
+         */
         public Hdr(int numberOfSignificantValueDigits) {
             super(PercentilesMethod.HDR);
             setNumberOfSignificantValueDigits(numberOfSignificantValueDigits);
@@ -169,6 +207,11 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
             this(in.readVInt());
         }
 
+        /**
+         * Sets the number of significant value digits.
+         *
+         * @param numberOfSignificantValueDigits the number of significant value digits
+         */
         public void setNumberOfSignificantValueDigits(int numberOfSignificantValueDigits) {
             if (numberOfSignificantValueDigits < 0 || numberOfSignificantValueDigits > 5) {
                 throw new IllegalArgumentException("[numberOfSignificantValueDigits] must be between 0 and 5");
@@ -176,6 +219,11 @@ public abstract class PercentilesConfig implements ToXContent, Writeable {
             this.numberOfSignificantValueDigits = numberOfSignificantValueDigits;
         }
 
+        /**
+         * Returns the number of significant value digits.
+         *
+         * @return the number of significant value digits
+         */
         public int getNumberOfSignificantValueDigits() {
             return numberOfSignificantValueDigits;
         }

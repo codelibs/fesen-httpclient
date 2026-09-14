@@ -74,8 +74,14 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? extends Option>>>, Writeable, ToXContentFragment {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "suggest";
 
+    /**
+     * The COMPARATOR constant.
+     */
     public static final Comparator<Option> COMPARATOR = (first, second) -> {
         int cmp = Float.compare(second.getScore(), first.getScore());
         if (cmp != 0) {
@@ -86,6 +92,11 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
     private final List<Suggestion<? extends Entry<? extends Option>>> suggestions;
 
+    /**
+     * Creates a new Suggest.
+     *
+     * @param suggestions the suggestions
+     */
     public Suggest(List<Suggestion<? extends Entry<? extends Option>>> suggestions) {
         // we sort suggestions by their names to ensure iteration over suggestions are consistent
         // this is needed as we need to fill in suggestion docs in SearchPhaseController#sortDocs
@@ -94,6 +105,12 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         this.suggestions = suggestions;
     }
 
+    /**
+     * Creates a new Suggest by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public Suggest(StreamInput in) throws IOException {
         int suggestionCount = in.readVInt();
         suggestions = new ArrayList<>(suggestionCount);
@@ -128,6 +145,10 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
     /**
      * this parsing method assumes that the leading "suggest" field name has already been parsed by the caller
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static Suggest fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.START_OBJECT, parser.currentToken(), parser);
@@ -168,16 +189,35 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
 
     /**
      * The suggestion responses corresponding with the suggestions in the request.
+     * @param <T> the element type
      * @opensearch.api
      */
     @PublicApi(since = "1.0.0")
     public abstract static class Suggestion<T extends Suggestion.Entry> implements Iterable<T>, NamedWriteable, ToXContentFragment {
 
+        /**
+         * The TYPE constant.
+         */
         public static final int TYPE = 0;
+        /**
+         * The name.
+         */
         protected final String name;
+        /**
+         * The size.
+         */
         protected final int size;
+        /**
+         * The entries.
+         */
         protected final List<T> entries = new ArrayList<>(5);
 
+        /**
+         * Creates a new Suggestion.
+         *
+         * @param name the name
+         * @param size the size
+         */
         public Suggestion(String name, int size) {
             this.name = name;
             this.size = size; // The suggested term size specified in request, only used for merging shard responses
@@ -189,12 +229,21 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         }
 
         /**
+         * Returns the name.
+         *
          * @return The name of the suggestion as is defined in the request.
          */
         public String getName() {
             return name;
         }
 
+        /**
+         * Creates a new entry.
+         *
+         * @param in the input to read from
+         * @return the new entry
+         * @throws IOException if an I/O error occurs
+         */
         protected abstract T newEntry(StreamInput in) throws IOException;
 
         @Override
@@ -248,6 +297,13 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             return Objects.hash(name, size, entries);
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         @SuppressWarnings("unchecked")
         public static Suggestion<? extends Entry<? extends Option>> fromXContent(XContentParser parser) throws IOException {
             ensureExpectedToken(XContentParser.Token.START_ARRAY, parser.currentToken(), parser);
@@ -259,6 +315,7 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
         /**
          * Represents a part from the suggest text with suggested options.
          *
+         * @param <O> the o type
          * @opensearch.api
          */
         @PublicApi(since = "1.0.0")
@@ -267,14 +324,32 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             private static final String TEXT = "text";
             private static final String OFFSET = "offset";
             private static final String LENGTH = "length";
+            /**
+             * The OPTIONS constant.
+             */
             protected static final String OPTIONS = "options";
 
+            /**
+             * The text.
+             */
             protected Text text;
+            /**
+             * The offset.
+             */
             protected int offset;
+            /**
+             * The length.
+             */
             protected int length;
 
+            /**
+             * The options.
+             */
             protected List<O> options = new ArrayList<>(5);
 
+            /**
+             * Creates a new Entry.
+             */
             protected Entry() {}
 
             @Override
@@ -303,6 +378,13 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 return Objects.hash(text, offset, length, options);
             }
 
+            /**
+             * Creates a new option.
+             *
+             * @param in the input to read from
+             * @return the new option
+             * @throws IOException if an I/O error occurs
+             */
             protected abstract O newOption(StreamInput in) throws IOException;
 
             @Override
@@ -339,9 +421,21 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
             @PublicApi(since = "1.0.0")
             public abstract static class Option implements Writeable, ToXContentFragment {
 
+                /**
+                 * The TEXT constant.
+                 */
                 public static final ParseField TEXT = new ParseField("text");
+                /**
+                 * The HIGHLIGHTED constant.
+                 */
                 public static final ParseField HIGHLIGHTED = new ParseField("highlighted");
+                /**
+                 * The SCORE constant.
+                 */
                 public static final ParseField SCORE = new ParseField("score");
+                /**
+                 * The COLLATE_MATCH constant.
+                 */
                 public static final ParseField COLLATE_MATCH = new ParseField("collate_match");
 
                 private final Text text;
@@ -349,6 +443,14 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 private float score;
                 private Boolean collateMatch;
 
+                /**
+                 * Creates a new Option.
+                 *
+                 * @param text the text
+                 * @param highlighted the highlighted
+                 * @param score the score
+                 * @param collateMatch the collate match
+                 */
                 public Option(Text text, Text highlighted, float score, Boolean collateMatch) {
                     this.text = text;
                     this.highlighted = highlighted;
@@ -356,15 +458,30 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                     this.collateMatch = collateMatch;
                 }
 
+                /**
+                 * Creates a new Option.
+                 *
+                 * @param text the text
+                 * @param highlighted the highlighted
+                 * @param score the score
+                 */
                 public Option(Text text, Text highlighted, float score) {
                     this(text, highlighted, score, null);
                 }
 
+                /**
+                 * Creates a new Option.
+                 *
+                 * @param text the text
+                 * @param score the score
+                 */
                 public Option(Text text, float score) {
                     this(text, null, score);
                 }
 
                 /**
+                 * Returns the text.
+                 *
                  * @return The actual suggested text.
                  */
                 public Text getText() {
@@ -372,6 +489,8 @@ public class Suggest implements Iterable<Suggest.Suggestion<? extends Entry<? ex
                 }
 
                 /**
+                 * Returns the score.
+                 *
                  * @return The score based on the edit distance difference between the suggested term and the
                  *         term in the suggest text.
                  */

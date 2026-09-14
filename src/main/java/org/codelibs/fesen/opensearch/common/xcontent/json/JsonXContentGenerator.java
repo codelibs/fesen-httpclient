@@ -63,6 +63,9 @@ import tools.jackson.core.io.SerializedString;
 import tools.jackson.core.json.JsonWriteContext;
 import tools.jackson.core.util.JsonGeneratorDelegate;
 
+/**
+ * The JsonXContentGenerator class.
+ */
 public class JsonXContentGenerator implements XContentGenerator {
 
     /** Generator used to write content **/
@@ -87,6 +90,14 @@ public class JsonXContentGenerator implements XContentGenerator {
     private static final SerializedString LF = new SerializedString("\n");
     private boolean prettyPrint = false;
 
+    /**
+     * Creates a new JsonXContentGenerator.
+     *
+     * @param jsonGenerator the JSON generator
+     * @param os the OS
+     * @param includes the includes
+     * @param excludes the excludes
+     */
     public JsonXContentGenerator(JsonGenerator jsonGenerator, OutputStream os, Set<String> includes, Set<String> excludes) {
         Objects.requireNonNull(includes, "Including filters must not be null");
         Objects.requireNonNull(excludes, "Excluding filters must not be null");
@@ -449,6 +460,9 @@ public class JsonXContentGenerator implements XContentGenerator {
         }
     }
 
+    /**
+     * Writes the end raw.
+     */
     public void writeEndRaw() {
         assert base != null : "JsonGenerator should be of instance GeneratorBase but was: " + generator.getClass();
         if (base != null) {
@@ -526,11 +540,22 @@ public class JsonXContentGenerator implements XContentGenerator {
         return supportsRawWrites() && isFiltered() == false && contentType == contentType() && prettyPrint == false;
     }
 
-    /** Whether this generator supports writing raw data directly */
+    /**
+     * Whether this generator supports writing raw data directly
+     *
+     * @return the supports raw writes
+     */
     protected boolean supportsRawWrites() {
         return true;
     }
 
+    /**
+     * Copies the raw value.
+     *
+     * @param stream the stream
+     * @param xContent the XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected void copyRawValue(InputStream stream, XContent xContent) throws IOException {
         // EMPTY is safe here because we never call namedObject
         try (

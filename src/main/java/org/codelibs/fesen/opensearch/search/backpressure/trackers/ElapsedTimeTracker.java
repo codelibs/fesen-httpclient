@@ -34,6 +34,12 @@ public class ElapsedTimeTracker extends TaskResourceUsageTracker {
     private final LongSupplier thresholdSupplier;
     private final LongSupplier timeNanosSupplier;
 
+    /**
+     * Creates a new ElapsedTimeTracker.
+     *
+     * @param thresholdSupplier the threshold supplier
+     * @param timeNanosSupplier the time nanoseconds supplier
+     */
     public ElapsedTimeTracker(LongSupplier thresholdSupplier, LongSupplier timeNanosSupplier) {
         this(thresholdSupplier, timeNanosSupplier, (Task task) -> {
             long usage = timeNanosSupplier.getAsLong() - task.getStartTimeNanos();
@@ -56,6 +62,13 @@ public class ElapsedTimeTracker extends TaskResourceUsageTracker {
         });
     }
 
+    /**
+     * Creates a new ElapsedTimeTracker.
+     *
+     * @param thresholdSupplier the threshold supplier
+     * @param timeNanosSupplier the time nanoseconds supplier
+     * @param resourceUsageBreachEvaluator the resource usage breach evaluator
+     */
     public ElapsedTimeTracker(
         LongSupplier thresholdSupplier,
         LongSupplier timeNanosSupplier,
@@ -87,12 +100,25 @@ public class ElapsedTimeTracker extends TaskResourceUsageTracker {
         private final long currentMax;
         private final long currentAvg;
 
+        /**
+         * Creates a new Stats.
+         *
+         * @param cancellationCount the cancellation count
+         * @param currentMax the current max
+         * @param currentAvg the current avg
+         */
         public Stats(long cancellationCount, long currentMax, long currentAvg) {
             this.cancellationCount = cancellationCount;
             this.currentMax = currentMax;
             this.currentAvg = currentAvg;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             this(in.readVLong(), in.readVLong(), in.readVLong());
         }

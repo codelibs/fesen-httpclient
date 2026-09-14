@@ -44,10 +44,21 @@ import java.io.IOException;
  */
 public class InvalidAggregationPathException extends OpenSearchException {
 
+    /**
+     * Creates a new InvalidAggregationPathException.
+     *
+     * @param msg the msg
+     */
     public InvalidAggregationPathException(String msg) {
         super(msg);
     }
 
+    /**
+     * Creates a new InvalidAggregationPathException.
+     *
+     * @param msg the msg
+     * @param cause the cause
+     */
     public InvalidAggregationPathException(String msg, Throwable cause) {
         super(msg, cause);
     }

@@ -45,10 +45,18 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class OpenSearchStatusException extends OpenSearchException {
+    /**
+     * The status.
+     */
     private final RestStatus status;
 
     /**
      * Build the exception with a specific status and cause.
+     *
+     * @param msg the msg
+     * @param status the status
+     * @param cause the cause
+     * @param args the args
      */
     public OpenSearchStatusException(String msg, RestStatus status, Throwable cause, Object... args) {
         super(msg, cause, args);

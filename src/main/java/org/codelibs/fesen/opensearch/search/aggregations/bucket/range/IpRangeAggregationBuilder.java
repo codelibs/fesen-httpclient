@@ -66,9 +66,15 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuilder<IpRangeAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "ip_range";
     private static final ParseField MASK_FIELD = new ParseField("mask");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<IpRangeAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         IpRangeAggregationBuilder::new
@@ -213,10 +219,22 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     private boolean keyed = false;
     private List<Range> ranges = new ArrayList<>();
 
+    /**
+     * Creates a new IpRangeAggregationBuilder.
+     *
+     * @param name the name
+     */
     public IpRangeAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new IpRangeAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected IpRangeAggregationBuilder(IpRangeAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.ranges = new ArrayList<>(clone.ranges);
@@ -233,21 +251,41 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
         return NAME;
     }
 
+    /**
+     * Returns the keyed.
+     *
+     * @param keyed the keyed
+     * @return the keyed
+     */
     public IpRangeAggregationBuilder keyed(boolean keyed) {
         this.keyed = keyed;
         return this;
     }
 
+    /**
+     * Returns the keyed.
+     *
+     * @return the keyed
+     */
     public boolean keyed() {
         return keyed;
     }
 
-    /** Get the current list or ranges that are configured on this aggregation. */
+    /**
+     * Get the current list or ranges that are configured on this aggregation.
+     *
+     * @return the ranges
+     */
     public List<Range> getRanges() {
         return Collections.unmodifiableList(ranges);
     }
 
-    /** Add a new {@link Range} to this aggregation. */
+    /**
+     * Add a new {@link Range} to this aggregation.
+     *
+     * @param range the range
+     * @return this instance
+     */
     public IpRangeAggregationBuilder addRange(Range range) {
         ranges.add(range);
         return this;
@@ -262,6 +300,7 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
      *            the lower bound on the distances, inclusive
      * @param to
      *            the upper bound on the distances, exclusive
+     * @return this instance
      */
     public IpRangeAggregationBuilder addRange(String key, String from, String to) {
         addRange(new Range(key, from, to));
@@ -270,6 +309,10 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
 
     /**
      * Add a new range to this aggregation using the CIDR notation.
+     *
+     * @param key the key
+     * @param mask the mask
+     * @return this instance
      */
     public IpRangeAggregationBuilder addMaskRange(String key, String mask) {
         return addRange(new Range(key, mask));
@@ -278,6 +321,9 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     /**
      * Same as {@link #addMaskRange(String, String)} but uses the mask itself as
      * a key.
+     *
+     * @param mask the mask
+     * @return this instance
      */
     public IpRangeAggregationBuilder addMaskRange(String mask) {
         return addRange(new Range(mask, mask));
@@ -286,6 +332,10 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     /**
      * Same as {@link #addRange(String, String, String)} but the key will be
      * automatically generated.
+     *
+     * @param from the offset
+     * @param to the target
+     * @return this instance
      */
     public IpRangeAggregationBuilder addRange(String from, String to) {
         return addRange(null, from, to);
@@ -294,6 +344,10 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     /**
      * Same as {@link #addRange(String, String, String)} but there will be no
      * lower bound.
+     *
+     * @param key the key
+     * @param to the target
+     * @return this instance
      */
     public IpRangeAggregationBuilder addUnboundedTo(String key, String to) {
         addRange(new Range(key, null, to));
@@ -303,6 +357,9 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     /**
      * Same as {@link #addUnboundedTo(String, String)} but the key will be
      * generated automatically.
+     *
+     * @param to the target
+     * @return this instance
      */
     public IpRangeAggregationBuilder addUnboundedTo(String to) {
         return addUnboundedTo(null, to);
@@ -311,6 +368,10 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     /**
      * Same as {@link #addRange(String, String, String)} but there will be no
      * upper bound.
+     *
+     * @param key the key
+     * @param from the offset
+     * @return this instance
      */
     public IpRangeAggregationBuilder addUnboundedFrom(String key, String from) {
         addRange(new Range(key, from, null));
@@ -325,6 +386,9 @@ public final class IpRangeAggregationBuilder extends ValuesSourceAggregationBuil
     /**
      * Same as {@link #addUnboundedFrom(String, String)} but the key will be
      * generated automatically.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public IpRangeAggregationBuilder addUnboundedFrom(String from) {
         return addUnboundedFrom(null, from);

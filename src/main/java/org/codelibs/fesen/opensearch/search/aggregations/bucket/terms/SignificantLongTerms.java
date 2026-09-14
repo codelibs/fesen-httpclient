@@ -49,6 +49,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class SignificantLongTerms extends InternalMappedSignificantTerms<SignificantLongTerms, SignificantLongTerms.Bucket> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "siglterms";
 
     /**
@@ -128,6 +131,18 @@ public class SignificantLongTerms extends InternalMappedSignificantTerms<Signifi
         }
     }
 
+    /**
+     * Creates a new SignificantLongTerms.
+     *
+     * @param name the name
+     * @param metadata the metadata
+     * @param format the format
+     * @param subsetSize the subset size
+     * @param supersetSize the superset size
+     * @param significanceHeuristic the significance heuristic
+     * @param buckets the buckets
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     public SignificantLongTerms(
         String name,
         Map<String, Object> metadata,

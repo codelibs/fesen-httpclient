@@ -27,28 +27,61 @@ public class TaskCancellation implements Comparable<TaskCancellation> {
     private final List<Reason> reasons;
     private final List<Runnable> onCancelCallbacks;
 
+    /**
+     * Creates a new TaskCancellation.
+     *
+     * @param task the task
+     * @param reasons the reasons
+     * @param onCancelCallbacks the on cancel callbacks
+     */
     public TaskCancellation(CancellableTask task, List<Reason> reasons, List<Runnable> onCancelCallbacks) {
         this.task = task;
         this.reasons = reasons;
         this.onCancelCallbacks = onCancelCallbacks;
     }
 
+    /**
+     * Returns the task.
+     *
+     * @return the task
+     */
     public CancellableTask getTask() {
         return task;
     }
 
+    /**
+     * Returns the reasons.
+     *
+     * @return the reasons
+     */
     public List<Reason> getReasons() {
         return reasons;
     }
 
+    /**
+     * Returns the on cancel callbacks.
+     *
+     * @return the on cancel callbacks
+     */
     public List<Runnable> getOnCancelCallbacks() {
         return onCancelCallbacks;
     }
 
+    /**
+     * Returns the reason string.
+     *
+     * @return the reason string
+     */
     public String getReasonString() {
         return reasons.stream().map(Reason::getMessage).collect(Collectors.joining(", "));
     }
 
+    /**
+     * Merges this instance.
+     *
+     * @param other the other instance
+     * @return this instance
+     */
     public TaskCancellation merge(final TaskCancellation other) {
         if (other == this) {
             return this;
@@ -92,6 +125,8 @@ public class TaskCancellation implements Comparable<TaskCancellation> {
      * <p>
      * A zero score indicates no reason to cancel the task.
      * A task with a higher score suggests greater possibility of recovering the node when it is cancelled.
+     *
+     * @return the total cancellation score
      */
     public int totalCancellationScore() {
         return reasons.stream().mapToInt(Reason::getCancellationScore).sum();
@@ -99,6 +134,8 @@ public class TaskCancellation implements Comparable<TaskCancellation> {
 
     /**
      * A task is eligible for cancellation if it has one or more cancellation reasons, and is not already cancelled.
+     *
+     * @return the eligible for cancellation flag
      */
     public boolean isEligibleForCancellation() {
         return (task.isCancelled() == false) && (reasons.size() > 0);
@@ -116,15 +153,31 @@ public class TaskCancellation implements Comparable<TaskCancellation> {
         private final String message;
         private final int cancellationScore;
 
+        /**
+         * Creates a new Reason.
+         *
+         * @param message the message
+         * @param cancellationScore the cancellation score
+         */
         public Reason(String message, int cancellationScore) {
             this.message = message;
             this.cancellationScore = cancellationScore;
         }
 
+        /**
+         * Returns the message.
+         *
+         * @return the message
+         */
         public String getMessage() {
             return message;
         }
 
+        /**
+         * Returns the cancellation score.
+         *
+         * @return the cancellation score
+         */
         public int getCancellationScore() {
             return cancellationScore;
         }

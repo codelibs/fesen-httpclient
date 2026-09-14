@@ -54,6 +54,9 @@ import static org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder.par
  * @opensearch.internal
  */
 public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "query";
 
     private static final ParseField RESCORE_QUERY_FIELD = new ParseField("rescore_query");
@@ -75,8 +78,17 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
         QUERY_RESCORE_PARSER.declareString((struct, value) -> struct.setScoreMode(QueryRescoreMode.fromString(value)), SCORE_MODE_FIELD);
     }
 
+    /**
+     * The DEFAULT_RESCORE_QUERYWEIGHT constant.
+     */
     public static final float DEFAULT_RESCORE_QUERYWEIGHT = 1.0f;
+    /**
+     * The DEFAULT_QUERYWEIGHT constant.
+     */
     public static final float DEFAULT_QUERYWEIGHT = 1.0f;
+    /**
+     * The DEFAULT_SCORE_MODE constant.
+     */
     public static final QueryRescoreMode DEFAULT_SCORE_MODE = QueryRescoreMode.Total;
     private final QueryBuilder queryBuilder;
     private float rescoreQueryWeight = DEFAULT_RESCORE_QUERYWEIGHT;
@@ -109,6 +121,9 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
 
     /**
      * Sets the original query weight for rescoring. The default is {@code 1.0}
+     *
+     * @param queryWeight the query weight
+     * @return this instance
      */
     public QueryRescorerBuilder setQueryWeight(float queryWeight) {
         this.queryWeight = queryWeight;
@@ -117,6 +132,9 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
 
     /**
      * Sets the original query weight for rescoring. The default is {@code 1.0}
+     *
+     * @param rescoreQueryWeight the rescore query weight
+     * @return this instance
      */
     public QueryRescorerBuilder setRescoreQueryWeight(float rescoreQueryWeight) {
         this.rescoreQueryWeight = rescoreQueryWeight;
@@ -125,6 +143,9 @@ public class QueryRescorerBuilder extends RescorerBuilder<QueryRescorerBuilder> 
 
     /**
      * Sets the original query score mode. The default is {@link QueryRescoreMode#Total}.
+     *
+     * @param scoreMode the score mode
+     * @return this instance
      */
     public QueryRescorerBuilder setScoreMode(QueryRescoreMode scoreMode) {
         this.scoreMode = scoreMode;

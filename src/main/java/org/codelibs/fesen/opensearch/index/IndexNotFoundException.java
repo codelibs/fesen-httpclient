@@ -44,15 +44,32 @@ import java.io.IOException;
  */
 public final class IndexNotFoundException extends ResourceNotFoundException {
 
+    /**
+     * Creates a new IndexNotFoundException.
+     *
+     * @param index the index
+     */
     public IndexNotFoundException(String index) {
         this(index, (Throwable) null);
     }
 
+    /**
+     * Creates a new IndexNotFoundException.
+     *
+     * @param index the index
+     * @param cause the cause
+     */
     public IndexNotFoundException(String index, Throwable cause) {
         super("no such index [" + index + "]", cause);
         setIndex(index);
     }
 
+    /**
+     * Creates a new IndexNotFoundException.
+     *
+     * @param index the index
+     * @param cause the cause
+     */
     public IndexNotFoundException(Index index, Throwable cause) {
         super("no such index [" + index.getName() + "]", cause);
         setIndex(index);

@@ -48,40 +48,75 @@ public class RemoteStoreNodeAttribute {
         Setting.Property.Final
     );
 
+    /**
+     * The REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX constant.
+     */
     public static final List<String> REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX = List.of("remote_store", "remote_publication");
 
+    /**
+     * The REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS constant.
+     */
     public static final List<String> REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS = REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX.stream()
         .map(prefix -> prefix + ".state.repository")
         .collect(Collectors.toList());
 
+    /**
+     * The REMOTE_ROUTING_TABLE_REPOSITORY_NAME_ATTRIBUTE_KEYS constant.
+     */
     public static final List<String> REMOTE_ROUTING_TABLE_REPOSITORY_NAME_ATTRIBUTE_KEYS = REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX.stream()
         .map(prefix -> prefix + ".routing_table.repository")
         .collect(Collectors.toList());
+    /**
+     * The REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS constant.
+     */
     public static final List<String> REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS = REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX.stream()
         .map(prefix -> prefix + ".segment.repository")
         .collect(Collectors.toList());
+    /**
+     * The REMOTE_TRANSLOG_REPOSITORY_NAME_ATTRIBUTE_KEYS constant.
+     */
     public static final List<String> REMOTE_TRANSLOG_REPOSITORY_NAME_ATTRIBUTE_KEYS = REMOTE_STORE_NODE_ATTRIBUTE_KEY_PREFIX.stream()
         .map(prefix -> prefix + ".translog.repository")
         .collect(Collectors.toList());
 
+    /**
+     * The REPOSITORY_TYPE_ATTRIBUTE_KEY_FORMAT constant.
+     */
     public static final String REPOSITORY_TYPE_ATTRIBUTE_KEY_FORMAT = "%s.repository.%s.type";
+    /**
+     * The REPOSITORY_CRYPTO_ATTRIBUTE_KEY_FORMAT constant.
+     */
     public static final String REPOSITORY_CRYPTO_ATTRIBUTE_KEY_FORMAT = "%s.repository.%s." + CryptoMetadata.CRYPTO_METADATA_KEY;
+    /**
+     * The REPOSITORY_CRYPTO_SETTINGS_PREFIX constant.
+     */
     public static final String REPOSITORY_CRYPTO_SETTINGS_PREFIX = REPOSITORY_CRYPTO_ATTRIBUTE_KEY_FORMAT
         + "."
         + CryptoMetadata.SETTINGS_KEY;
+    /**
+     * The REPOSITORY_SETTINGS_ATTRIBUTE_KEY_PREFIX constant.
+     */
     public static final String REPOSITORY_SETTINGS_ATTRIBUTE_KEY_PREFIX = "%s.repository.%s.settings.";
 
     private final RepositoriesMetadata repositoriesMetadata;
 
+    /**
+     * The SUPPORTED_DATA_REPO_NAME_ATTRIBUTES constant.
+     */
     public static List<List<String>> SUPPORTED_DATA_REPO_NAME_ATTRIBUTES = Arrays.asList(
         REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS,
         REMOTE_TRANSLOG_REPOSITORY_NAME_ATTRIBUTE_KEYS
     );
 
+    /**
+     * The REMOTE_STORE_MODE_KEY constant.
+     */
     public static final String REMOTE_STORE_MODE_KEY = "remote_store.mode";
 
     /**
      * Creates a new {@link RemoteStoreNodeAttribute}
+     *
+     * @param node the node
      */
     public RemoteStoreNodeAttribute(DiscoveryNode node) {
         this.repositoriesMetadata = buildRepositoriesMetadata(node);
@@ -237,14 +272,31 @@ public class RemoteStoreNodeAttribute {
         return repoNamesWithPrefix;
     }
 
+    /**
+     * Returns the repositories metadata.
+     *
+     * @return the repositories metadata
+     */
     public RepositoriesMetadata getRepositoriesMetadata() {
         return this.repositoriesMetadata;
     }
 
+    /**
+     * Returns the cluster state repo configured flag.
+     *
+     * @param attributes the attributes
+     * @return the cluster state repo configured flag
+     */
     public static boolean isClusterStateRepoConfigured(Map<String, String> attributes) {
         return containsKey(attributes, REMOTE_CLUSTER_STATE_REPOSITORY_NAME_ATTRIBUTE_KEYS);
     }
 
+    /**
+     * Returns the segment repo configured flag.
+     *
+     * @param attributes the attributes
+     * @return the segment repo configured flag
+     */
     public static boolean isSegmentRepoConfigured(Map<String, String> attributes) {
         return containsKey(attributes, REMOTE_SEGMENT_REPOSITORY_NAME_ATTRIBUTE_KEYS);
     }

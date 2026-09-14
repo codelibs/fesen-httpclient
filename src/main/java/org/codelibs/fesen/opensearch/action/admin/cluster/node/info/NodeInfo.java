@@ -79,6 +79,12 @@ public class NodeInfo extends BaseNodeResponse {
     @Nullable
     private ByteSizeValue totalIndexingBuffer;
 
+    /**
+     * Creates a new NodeInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodeInfo(StreamInput in) throws IOException {
         super(in);
         version = in.readVersion();
@@ -105,6 +111,25 @@ public class NodeInfo extends BaseNodeResponse {
         }
     }
 
+    /**
+     * Creates a new NodeInfo.
+     *
+     * @param version the version
+     * @param build the build
+     * @param node the node
+     * @param settings the settings
+     * @param os the OS
+     * @param process the process
+     * @param jvm the JVM
+     * @param threadPool the thread pool
+     * @param transport the transport
+     * @param http the HTTP
+     * @param plugins the plugins
+     * @param ingest the ingest
+     * @param aggsInfo the aggs info
+     * @param totalIndexingBuffer the total indexing buffer
+     * @param searchPipelineInfo the search pipeline info
+     */
     public NodeInfo(
         Version version,
         Build build,
@@ -141,6 +166,8 @@ public class NodeInfo extends BaseNodeResponse {
 
     /**
      * The current OpenSearch version
+     *
+     * @return the version
      */
     public Version getVersion() {
         return version;
@@ -148,6 +175,8 @@ public class NodeInfo extends BaseNodeResponse {
 
     /**
      * The build version of the node.
+     *
+     * @return the build
      */
     public Build getBuild() {
         return this.build;
@@ -155,6 +184,8 @@ public class NodeInfo extends BaseNodeResponse {
 
     /**
      * The settings of the node.
+     *
+     * @return the settings
      */
     @Nullable
     public Settings getSettings() {
@@ -175,6 +206,11 @@ public class NodeInfo extends BaseNodeResponse {
         return clazz.cast(infoMap.get(clazz));
     }
 
+    /**
+     * Returns the total indexing buffer.
+     *
+     * @return the total indexing buffer
+     */
     @Nullable
     public ByteSizeValue getTotalIndexingBuffer() {
         return totalIndexingBuffer;
@@ -221,6 +257,14 @@ public class NodeInfo extends BaseNodeResponse {
         }
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @param version the version
+     * @param build the build
+     * @param node the node
+     * @return the builder
+     */
     public static NodeInfo.Builder builder(Version version, Build build, DiscoveryNode node) {
         return new Builder(version, build, node);
     }
@@ -252,6 +296,11 @@ public class NodeInfo extends BaseNodeResponse {
         private ByteSizeValue totalIndexingBuffer;
         private SearchPipelineInfo searchPipelineInfo;
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public NodeInfo build() {
             return new NodeInfo(
                 version,

@@ -63,18 +63,48 @@ import java.util.TreeMap;
  */
 public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQueryBuilder> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "query_string";
 
+    /**
+     * The DEFAULT_DETERMINIZE_WORK_LIMIT constant.
+     */
     public static final int DEFAULT_DETERMINIZE_WORK_LIMIT = Operations.DEFAULT_DETERMINIZE_WORK_LIMIT;
+    /**
+     * The DEFAULT_ENABLE_POSITION_INCREMENTS constant.
+     */
     public static final boolean DEFAULT_ENABLE_POSITION_INCREMENTS = true;
+    /**
+     * The DEFAULT_ESCAPE constant.
+     */
     public static final boolean DEFAULT_ESCAPE = false;
+    /**
+     * The DEFAULT_FUZZY_PREFIX_LENGTH constant.
+     */
     public static final int DEFAULT_FUZZY_PREFIX_LENGTH = FuzzyQuery.defaultPrefixLength;
+    /**
+     * The DEFAULT_FUZZY_MAX_EXPANSIONS constant.
+     */
     public static final int DEFAULT_FUZZY_MAX_EXPANSIONS = FuzzyQuery.defaultMaxExpansions;
+    /**
+     * The DEFAULT_PHRASE_SLOP constant.
+     */
     public static final int DEFAULT_PHRASE_SLOP = 0;
     /** Default maximum edit distance. Defaults to AUTO. */
     public static final Fuzziness DEFAULT_FUZZINESS = Fuzziness.AUTO;
+    /**
+     * The DEFAULT_OPERATOR constant.
+     */
     public static final Operator DEFAULT_OPERATOR = Operator.OR;
+    /**
+     * The DEFAULT_TYPE constant.
+     */
     public static final MultiMatchQueryBuilder.Type DEFAULT_TYPE = MultiMatchQueryBuilder.Type.BEST_FIELDS;
+    /**
+     * The DEFAULT_FUZZY_TRANSPOSITIONS constant.
+     */
     public static final boolean DEFAULT_FUZZY_TRANSPOSITIONS = FuzzyQuery.defaultTranspositions;
 
     private static final ParseField QUERY_FIELD = new ParseField("query");
@@ -160,6 +190,11 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
 
     private boolean fuzzyTranspositions = DEFAULT_FUZZY_TRANSPOSITIONS;
 
+    /**
+     * Creates a new QueryStringQueryBuilder.
+     *
+     * @param queryString the query string
+     */
     public QueryStringQueryBuilder(String queryString) {
         if (queryString == null) {
             throw new IllegalArgumentException("query text missing");
@@ -169,6 +204,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public QueryStringQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -242,6 +280,11 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         out.writeBoolean(fuzzyTranspositions);
     }
 
+    /**
+     * Queries the string.
+     *
+     * @return this instance
+     */
     public String queryString() {
         return this.queryString;
     }
@@ -249,12 +292,20 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * The default field to run against when no prefix field is specified. Only relevant when
      * not explicitly adding fields the query string will run against.
+     *
+     * @param defaultField the default field
+     * @return the default field
      */
     public QueryStringQueryBuilder defaultField(String defaultField) {
         this.defaultField = defaultField;
         return this;
     }
 
+    /**
+     * Returns the default field.
+     *
+     * @return the default field
+     */
     public String defaultField() {
         return this.defaultField;
     }
@@ -263,6 +314,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
      * Adds a field to run the query string against. The field will be associated with the
      * default boost of {@link AbstractQueryBuilder#DEFAULT_BOOST}.
      * Use {@link #field(String, float)} to set a specific boost for the field.
+     *
+     * @param field the field
+     * @return the field
      */
     public QueryStringQueryBuilder field(String field) {
         this.fieldsAndWeights.put(field, AbstractQueryBuilder.DEFAULT_BOOST);
@@ -271,6 +325,10 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
 
     /**
      * Adds a field to run the query string against with a specific boost.
+     *
+     * @param field the field
+     * @param boost the boost
+     * @return the field
      */
     public QueryStringQueryBuilder field(String field, float boost) {
         checkNegativeBoost(boost);
@@ -280,6 +338,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
 
     /**
      * Add several fields to run the query against with a specific boost.
+     *
+     * @param fields the fields
+     * @return the fields
      */
     public QueryStringQueryBuilder fields(Map<String, Float> fields) {
         for (float fieldBoost : fields.values()) {
@@ -289,13 +350,20 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         return this;
     }
 
-    /** Returns the fields including their respective boosts to run the query against. */
+    /**
+     * Returns the fields including their respective boosts to run the query against.
+     *
+     * @return the fields
+     */
     public Map<String, Float> fields() {
         return this.fieldsAndWeights;
     }
 
     /**
+     * Returns the type.
+     *
      * @param type Sets how multiple fields should be combined to build textual part queries.
+     * @return the type
      */
     public QueryStringQueryBuilder type(MultiMatchQueryBuilder.Type type) {
         this.type = type;
@@ -305,12 +373,20 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * When more than one field is used with the query string, and combined queries are using
      * dis max, control the tie breaker for it.
+     *
+     * @param tieBreaker the tie breaker
+     * @return the tie breaker
      */
     public QueryStringQueryBuilder tieBreaker(float tieBreaker) {
         this.tieBreaker = tieBreaker;
         return this;
     }
 
+    /**
+     * Returns the tie breaker.
+     *
+     * @return the tie breaker
+     */
     public Float tieBreaker() {
         return this.tieBreaker;
     }
@@ -324,12 +400,20 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
      * <p>
      * In {@link Operator#AND} mode terms are considered to be in conjunction: the
      * above mentioned query is parsed as <code>capital AND of AND Hungary</code>
+     *
+     * @param defaultOperator the default operator
+     * @return the default operator
      */
     public QueryStringQueryBuilder defaultOperator(Operator defaultOperator) {
         this.defaultOperator = defaultOperator == null ? DEFAULT_OPERATOR : defaultOperator;
         return this;
     }
 
+    /**
+     * Returns the default operator.
+     *
+     * @return the default operator
+     */
     public Operator defaultOperator() {
         return this.defaultOperator;
     }
@@ -337,6 +421,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * The optional analyzer used to analyze the query string. Note, if a field has search analyzer
      * defined for it, then it will be used automatically. Defaults to the smart search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public QueryStringQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
@@ -346,6 +433,8 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * The optional analyzer used to analyze the query string. Note, if a field has search analyzer
      * defined for it, then it will be used automatically. Defaults to the smart search analyzer.
+     *
+     * @return the analyzer
      */
     public String analyzer() {
         return analyzer;
@@ -354,6 +443,8 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * The optional analyzer used to analyze the query string for phrase searches. Note, if a field has search (quote) analyzer
      * defined for it, then it will be used automatically. Defaults to the smart search analyzer.
+     *
+     * @return the quote analyzer
      */
     public String quoteAnalyzer() {
         return quoteAnalyzer;
@@ -362,6 +453,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * The optional analyzer used to analyze the query string for phrase searches. Note, if a field has search (quote) analyzer
      * defined for it, then it will be used automatically. Defaults to the smart search analyzer.
+     *
+     * @param quoteAnalyzer the quote analyzer
+     * @return the quote analyzer
      */
     public QueryStringQueryBuilder quoteAnalyzer(String quoteAnalyzer) {
         this.quoteAnalyzer = quoteAnalyzer;
@@ -370,6 +464,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
 
     /**
      * Protects against too-difficult regular expression queries.
+     *
+     * @param maxDeterminizedStates the max determinized states
+     * @return the max determinized states
      */
     public QueryStringQueryBuilder maxDeterminizedStates(int maxDeterminizedStates) {
         if (maxDeterminizedStates < 0) {
@@ -392,18 +489,31 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         return this;
     }
 
+    /**
+     * Returns the max determinized states.
+     *
+     * @return the max determinized states
+     */
     public int maxDeterminizedStates() {
         return this.maxDeterminizedStates;
     }
 
     /**
      * Should leading wildcards be allowed or not. Defaults to {@code true}.
+     *
+     * @param allowLeadingWildcard the allow leading wildcard
+     * @return the allow leading wildcard
      */
     public QueryStringQueryBuilder allowLeadingWildcard(Boolean allowLeadingWildcard) {
         this.allowLeadingWildcard = allowLeadingWildcard;
         return this;
     }
 
+    /**
+     * Returns the allow leading wildcard.
+     *
+     * @return the allow leading wildcard
+     */
     public Boolean allowLeadingWildcard() {
         return this.allowLeadingWildcard;
     }
@@ -414,54 +524,100 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
      * <p>
      * When set, result phrase and multi-phrase queries will be aware of position increments.
      * Useful when e.g. a StopFilter increases the position increment of the token that follows an omitted token.
+     *
+     * @param enablePositionIncrements the enable position increments
+     * @return this instance
      */
     public QueryStringQueryBuilder enablePositionIncrements(boolean enablePositionIncrements) {
         this.enablePositionIncrements = enablePositionIncrements;
         return this;
     }
 
+    /**
+     * Enables the position increments.
+     *
+     * @return this instance
+     */
     public boolean enablePositionIncrements() {
         return this.enablePositionIncrements;
     }
 
     /**
      * Set the edit distance for fuzzy queries. Default is "AUTO".
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
      */
     public QueryStringQueryBuilder fuzziness(Fuzziness fuzziness) {
         this.fuzziness = fuzziness;
         return this;
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @return the fuzziness
+     */
     public Fuzziness fuzziness() {
         return this.fuzziness;
     }
 
     /**
      * Set the minimum prefix length for fuzzy queries. Default is 1.
+     *
+     * @param fuzzyPrefixLength the fuzzy prefix length
+     * @return the fuzzy prefix length
      */
     public QueryStringQueryBuilder fuzzyPrefixLength(int fuzzyPrefixLength) {
         this.fuzzyPrefixLength = fuzzyPrefixLength;
         return this;
     }
 
+    /**
+     * Returns the fuzzy prefix length.
+     *
+     * @return the fuzzy prefix length
+     */
     public int fuzzyPrefixLength() {
         return fuzzyPrefixLength;
     }
 
+    /**
+     * Returns the fuzzy max expansions.
+     *
+     * @param fuzzyMaxExpansions the fuzzy max expansions
+     * @return the fuzzy max expansions
+     */
     public QueryStringQueryBuilder fuzzyMaxExpansions(int fuzzyMaxExpansions) {
         this.fuzzyMaxExpansions = fuzzyMaxExpansions;
         return this;
     }
 
+    /**
+     * Returns the fuzzy max expansions.
+     *
+     * @return the fuzzy max expansions
+     */
     public int fuzzyMaxExpansions() {
         return fuzzyMaxExpansions;
     }
 
+    /**
+     * Returns the fuzzy rewrite.
+     *
+     * @param fuzzyRewrite the fuzzy rewrite
+     * @return the fuzzy rewrite
+     */
     public QueryStringQueryBuilder fuzzyRewrite(String fuzzyRewrite) {
         this.fuzzyRewrite = fuzzyRewrite;
         return this;
     }
 
+    /**
+     * Returns the fuzzy rewrite.
+     *
+     * @return the fuzzy rewrite
+     */
     public String fuzzyRewrite() {
         return fuzzyRewrite;
     }
@@ -469,16 +625,30 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * Sets the default slop for phrases.  If zero, then exact phrase matches
      * are required. Default value is zero.
+     *
+     * @param phraseSlop the phrase slop
+     * @return the phrase slop
      */
     public QueryStringQueryBuilder phraseSlop(int phraseSlop) {
         this.phraseSlop = phraseSlop;
         return this;
     }
 
+    /**
+     * Returns the phrase slop.
+     *
+     * @return the phrase slop
+     */
     public int phraseSlop() {
         return phraseSlop;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param rewrite the rewrite
+     * @return this instance
+     */
     public QueryStringQueryBuilder rewrite(String rewrite) {
         this.rewrite = rewrite;
         return this;
@@ -486,37 +656,69 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
 
     /**
      * Set to {@code true} to enable analysis on wildcard and prefix queries.
+     *
+     * @param analyzeWildcard the analyze wildcard
+     * @return this instance
      */
     public QueryStringQueryBuilder analyzeWildcard(Boolean analyzeWildcard) {
         this.analyzeWildcard = analyzeWildcard;
         return this;
     }
 
+    /**
+     * Analyzes the wildcard.
+     *
+     * @return this instance
+     */
     public Boolean analyzeWildcard() {
         return this.analyzeWildcard;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @return this instance
+     */
     public String rewrite() {
         return this.rewrite;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
+     */
     public QueryStringQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
         this.minimumShouldMatch = minimumShouldMatch;
         return this;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @return the minimum should match
+     */
     public String minimumShouldMatch() {
         return this.minimumShouldMatch;
     }
 
     /**
      * An optional field name suffix to automatically try and add to the field searched when using quoted text.
+     *
+     * @param quoteFieldSuffix the quote field suffix
+     * @return the quote field suffix
      */
     public QueryStringQueryBuilder quoteFieldSuffix(String quoteFieldSuffix) {
         this.quoteFieldSuffix = quoteFieldSuffix;
         return this;
     }
 
+    /**
+     * Returns the quote field suffix.
+     *
+     * @return the quote field suffix
+     */
     public String quoteFieldSuffix() {
         return this.quoteFieldSuffix;
     }
@@ -524,18 +726,29 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * Sets the query string parser to be lenient when parsing field values, defaults to the index
      * setting and if not set, defaults to false.
+     *
+     * @param lenient the lenient
+     * @return the lenient
      */
     public QueryStringQueryBuilder lenient(Boolean lenient) {
         this.lenient = lenient;
         return this;
     }
 
+    /**
+     * Returns the lenient.
+     *
+     * @return the lenient
+     */
     public Boolean lenient() {
         return this.lenient;
     }
 
     /**
      * In case of date field, we can adjust the from/to fields using a timezone
+     *
+     * @param timeZone the time zone
+     * @return the time zone
      */
     public QueryStringQueryBuilder timeZone(String timeZone) {
         if (timeZone != null) {
@@ -546,27 +759,52 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         return this;
     }
 
+    /**
+     * Returns the time zone.
+     *
+     * @param timeZone the time zone
+     * @return the time zone
+     */
     public QueryStringQueryBuilder timeZone(ZoneId timeZone) {
         this.timeZone = timeZone;
         return this;
     }
 
+    /**
+     * Returns the time zone.
+     *
+     * @return the time zone
+     */
     public ZoneId timeZone() {
         return this.timeZone;
     }
 
     /**
      * Set to {@code true} to enable escaping of the query string
+     *
+     * @param escape the escape
+     * @return this instance
      */
     public QueryStringQueryBuilder escape(boolean escape) {
         this.escape = escape;
         return this;
     }
 
+    /**
+     * Escapes this instance.
+     *
+     * @return this instance
+     */
     public boolean escape() {
         return this.escape;
     }
 
+    /**
+     * Returns the auto generate synonyms phrase query.
+     *
+     * @param value the value
+     * @return the auto generate synonyms phrase query
+     */
     public QueryStringQueryBuilder autoGenerateSynonymsPhraseQuery(boolean value) {
         this.autoGenerateSynonymsPhraseQuery = value;
         return this;
@@ -575,11 +813,18 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
     /**
      * Whether phrase queries should be automatically generated for multi terms synonyms.
      * Defaults to {@code true}.
+     *
+     * @return the auto generate synonyms phrase query
      */
     public boolean autoGenerateSynonymsPhraseQuery() {
         return autoGenerateSynonymsPhraseQuery;
     }
 
+    /**
+     * Returns the fuzzy transpositions.
+     *
+     * @return the fuzzy transpositions
+     */
     public boolean fuzzyTranspositions() {
         return fuzzyTranspositions;
     }
@@ -590,6 +835,9 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
      * distance formula which supports transpositions. Setting transposition to false will
      * switch to classic Levenshtein distance.<br>
      * If not set, Damerau-Levenshtein distance metric will be used.
+     *
+     * @param fuzzyTranspositions the fuzzy transpositions
+     * @return the fuzzy transpositions
      */
     public QueryStringQueryBuilder fuzzyTranspositions(boolean fuzzyTranspositions) {
         this.fuzzyTranspositions = fuzzyTranspositions;
@@ -658,6 +906,13 @@ public class QueryStringQueryBuilder extends AbstractQueryBuilder<QueryStringQue
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static QueryStringQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String currentFieldName = null;
         XContentParser.Token token;

@@ -62,11 +62,23 @@ public class GetSettingsResponse extends ActionResponse implements ToXContentObj
     private final Map<String, Settings> indexToSettings;
     private final Map<String, Settings> indexToDefaultSettings;
 
+    /**
+     * Creates a new GetSettingsResponse.
+     *
+     * @param indexToSettings the index to settings
+     * @param indexToDefaultSettings the index to default settings
+     */
     public GetSettingsResponse(Map<String, Settings> indexToSettings, Map<String, Settings> indexToDefaultSettings) {
         this.indexToSettings = Collections.unmodifiableMap(indexToSettings);
         this.indexToDefaultSettings = Collections.unmodifiableMap(indexToDefaultSettings);
     }
 
+    /**
+     * Creates a new GetSettingsResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetSettingsResponse(StreamInput in) throws IOException {
         super(in);
         indexToSettings = in.readMap(StreamInput::readString, Settings::readSettingsFromStream);
@@ -77,6 +89,8 @@ public class GetSettingsResponse extends ActionResponse implements ToXContentObj
      * Returns a map of index name to {@link Settings} object.  The returned {@link Settings}
      * objects contain only those settings explicitly set on a given index.  Any settings
      * taking effect as defaults must be accessed via {@code #getIndexToDefaultSettings()}.
+     *
+     * @return the index to settings
      */
     public Map<String, Settings> getIndexToSettings() {
         return indexToSettings;
@@ -88,6 +102,10 @@ public class GetSettingsResponse extends ActionResponse implements ToXContentObj
      * return a value where the setting was explicitly set on the index.  If the includeDefaults
      * flag was set to true on the GetSettingsRequest, this method will fall back to return the default
      * value if the setting was not explicitly set.
+     *
+     * @param index the index
+     * @param setting the setting
+     * @return the setting
      */
     public String getSetting(String index, String setting) {
         Settings settings = indexToSettings.get(index);
@@ -149,6 +167,13 @@ public class GetSettingsResponse extends ActionResponse implements ToXContentObj
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GetSettingsResponse fromXContent(XContentParser parser) throws IOException {
         HashMap<String, Settings> indexToSettings = new HashMap<>();
         HashMap<String, Settings> indexToDefaultSettings = new HashMap<>();

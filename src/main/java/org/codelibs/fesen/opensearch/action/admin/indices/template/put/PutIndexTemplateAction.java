@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class PutIndexTemplateAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final PutIndexTemplateAction INSTANCE = new PutIndexTemplateAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/template/put";
 
     private PutIndexTemplateAction() {

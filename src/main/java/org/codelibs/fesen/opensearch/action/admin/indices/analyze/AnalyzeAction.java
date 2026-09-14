@@ -68,7 +68,13 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @PublicApi(since = "1.0.0")
 public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final AnalyzeAction INSTANCE = new AnalyzeAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/analyze";
 
     private AnalyzeAction() {
@@ -94,6 +100,9 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
         private String[] attributes = Strings.EMPTY_ARRAY;
         private String normalizer;
 
+        /**
+         * Creates a new Request.
+         */
         public Request() {}
 
         /**
@@ -105,83 +114,184 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             this.index(index);
         }
 
+        /**
+         * Returns the text.
+         *
+         * @return the text
+         */
         public String[] text() {
             return this.text;
         }
 
+        /**
+         * Returns the text.
+         *
+         * @param text the text
+         * @return the text
+         */
         public Request text(String... text) {
             this.text = text;
             return this;
         }
 
+        /**
+         * Returns the text.
+         *
+         * @param text the text
+         * @return the text
+         */
         public Request text(List<String> text) {
             this.text = text.toArray(new String[] {});
             return this;
         }
 
+        /**
+         * Returns the analyzer.
+         *
+         * @param analyzer the analyzer
+         * @return the analyzer
+         */
         public Request analyzer(String analyzer) {
             this.analyzer = analyzer;
             return this;
         }
 
+        /**
+         * Returns the analyzer.
+         *
+         * @return the analyzer
+         */
         public String analyzer() {
             return this.analyzer;
         }
 
+        /**
+         * Performs the tokenizer step.
+         *
+         * @param tokenizer the tokenizer
+         */
         public void tokenizer(NameOrDefinition tokenizer) {
             this.tokenizer = tokenizer;
         }
 
+        /**
+         * Returns the tokenizer.
+         *
+         * @return the tokenizer
+         */
         public NameOrDefinition tokenizer() {
             return this.tokenizer;
         }
 
+        /**
+         * Sets the token filters.
+         *
+         * @param tokenFilters the token filters
+         */
         public void setTokenFilters(List<NameOrDefinition> tokenFilters) {
             this.tokenFilters.addAll(tokenFilters);
         }
 
+        /**
+         * Returns the token filters.
+         *
+         * @return the token filters
+         */
         public List<NameOrDefinition> tokenFilters() {
             return this.tokenFilters;
         }
 
+        /**
+         * Sets the char filters.
+         *
+         * @param charFilters the char filters
+         */
         public void setCharFilters(List<NameOrDefinition> charFilters) {
             this.charFilters.addAll(charFilters);
         }
 
+        /**
+         * Returns the char filters.
+         *
+         * @return the char filters
+         */
         public List<NameOrDefinition> charFilters() {
             return this.charFilters;
         }
 
+        /**
+         * Returns the field.
+         *
+         * @param field the field
+         * @return the field
+         */
         public Request field(String field) {
             this.field = field;
             return this;
         }
 
+        /**
+         * Returns the field.
+         *
+         * @return the field
+         */
         public String field() {
             return this.field;
         }
 
+        /**
+         * Returns the explain.
+         *
+         * @param explain the explain
+         * @return the explain
+         */
         public Request explain(boolean explain) {
             this.explain = explain;
             return this;
         }
 
+        /**
+         * Returns the explain.
+         *
+         * @return the explain
+         */
         public boolean explain() {
             return this.explain;
         }
 
+        /**
+         * Performs the attributes step.
+         *
+         * @param attributes the attributes
+         */
         public void attributes(List<String> attributes) {
             this.attributes = attributes.toArray(new String[] {});
         }
 
+        /**
+         * Returns the attributes.
+         *
+         * @return the attributes
+         */
         public String[] attributes() {
             return this.attributes;
         }
 
+        /**
+         * Returns the normalizer.
+         *
+         * @return the normalizer
+         */
         public String normalizer() {
             return this.normalizer;
         }
 
+        /**
+         * Returns the normalizer.
+         *
+         * @param normalizer the normalizer
+         * @return the normalizer
+         */
         public Request normalizer(String normalizer) {
             this.normalizer = normalizer;
             return this;
@@ -262,6 +372,12 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
         private final DetailAnalyzeResponse detail;
         private final List<AnalyzeToken> tokens;
 
+        /**
+         * Creates a new Response.
+         *
+         * @param tokens the tokens
+         * @param detail the detail
+         */
         public Response(List<AnalyzeToken> tokens, DetailAnalyzeResponse detail) {
             if (tokens == null && detail == null) {
                 throw new IllegalArgumentException("Neither token nor detail set on AnalysisAction.Response");
@@ -270,12 +386,23 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             this.detail = detail;
         }
 
+        /**
+         * Creates a new Response by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Response(StreamInput in) throws IOException {
             AnalyzeToken[] tokenArray = in.readOptionalArray(AnalyzeToken::new, AnalyzeToken[]::new);
             tokens = tokenArray != null ? Arrays.asList(tokenArray) : null;
             detail = in.readOptionalWriteable(DetailAnalyzeResponse::new);
         }
 
+        /**
+         * Returns the tokens.
+         *
+         * @return the tokens
+         */
         public List<AnalyzeToken> getTokens() {
             return this.tokens;
         }
@@ -389,6 +516,17 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             return Objects.hash(term, startOffset, endOffset, position, positionLength, attributes, type);
         }
 
+        /**
+         * Creates a new AnalyzeToken.
+         *
+         * @param term the term
+         * @param position the position
+         * @param startOffset the start offset
+         * @param endOffset the end offset
+         * @param positionLength the position length
+         * @param type the type
+         * @param attributes the attributes
+         */
         public AnalyzeToken(
             String term,
             int position,
@@ -422,30 +560,65 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             attributes = in.readMap();
         }
 
+        /**
+         * Returns the term.
+         *
+         * @return the term
+         */
         public String getTerm() {
             return this.term;
         }
 
+        /**
+         * Returns the start offset.
+         *
+         * @return the start offset
+         */
         public int getStartOffset() {
             return this.startOffset;
         }
 
+        /**
+         * Returns the end offset.
+         *
+         * @return the end offset
+         */
         public int getEndOffset() {
             return this.endOffset;
         }
 
+        /**
+         * Returns the position.
+         *
+         * @return the position
+         */
         public int getPosition() {
             return this.position;
         }
 
+        /**
+         * Returns the position length.
+         *
+         * @return the position length
+         */
         public int getPositionLength() {
             return this.positionLength;
         }
 
+        /**
+         * Returns the type.
+         *
+         * @return the type
+         */
         public String getType() {
             return this.type;
         }
 
+        /**
+         * Returns the attributes.
+         *
+         * @return the attributes
+         */
         public Map<String, Object> getAttributes() {
             return this.attributes;
         }
@@ -497,10 +670,22 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
         private final AnalyzeTokenList tokenizer;
         private final AnalyzeTokenList[] tokenfilters;
 
+        /**
+         * Creates a new DetailAnalyzeResponse.
+         *
+         * @param analyzer the analyzer
+         */
         public DetailAnalyzeResponse(AnalyzeTokenList analyzer) {
             this(false, analyzer, null, null, null);
         }
 
+        /**
+         * Creates a new DetailAnalyzeResponse.
+         *
+         * @param charfilters the charfilters
+         * @param tokenizer the tokenizer
+         * @param tokenfilters the tokenfilters
+         */
         public DetailAnalyzeResponse(CharFilteredText[] charfilters, AnalyzeTokenList tokenizer, AnalyzeTokenList[] tokenfilters) {
             this(true, null, charfilters, tokenizer, tokenfilters);
         }
@@ -666,6 +851,12 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
             return result;
         }
 
+        /**
+         * Creates a new AnalyzeTokenList.
+         *
+         * @param name the name
+         * @param tokens the tokens
+         */
         public AnalyzeTokenList(String name, AnalyzeToken[] tokens) {
             this.name = name;
             this.tokens = tokens;
@@ -715,6 +906,12 @@ public class AnalyzeAction extends ActionType<AnalyzeAction.Response> {
         static final String NAME = "name";
         static final String FILTERED_TEXT = "filtered_text";
 
+        /**
+         * Creates a new CharFilteredText.
+         *
+         * @param name the name
+         * @param texts the texts
+         */
         public CharFilteredText(String name, String[] texts) {
             this.name = name;
             if (texts != null) {

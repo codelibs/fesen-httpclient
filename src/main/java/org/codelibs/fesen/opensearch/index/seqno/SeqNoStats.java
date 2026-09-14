@@ -59,6 +59,13 @@ public class SeqNoStats implements ToXContentFragment, Writeable {
     private final long localCheckpoint;
     private final long globalCheckpoint;
 
+    /**
+     * Creates a new SeqNoStats.
+     *
+     * @param maxSeqNo the max seq no
+     * @param localCheckpoint the local checkpoint
+     * @param globalCheckpoint the global checkpoint
+     */
     public SeqNoStats(long maxSeqNo, long localCheckpoint, long globalCheckpoint) {
         assert localCheckpoint <= maxSeqNo : "local checkpoint [" + localCheckpoint + "] is above maximum seq no [" + maxSeqNo + "]";
         // note that the global checkpoint can be higher from both maxSeqNo and localCheckpoint
@@ -68,6 +75,12 @@ public class SeqNoStats implements ToXContentFragment, Writeable {
         this.globalCheckpoint = globalCheckpoint;
     }
 
+    /**
+     * Creates a new SeqNoStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SeqNoStats(StreamInput in) throws IOException {
         this(in.readZLong(), in.readZLong(), in.readZLong());
     }

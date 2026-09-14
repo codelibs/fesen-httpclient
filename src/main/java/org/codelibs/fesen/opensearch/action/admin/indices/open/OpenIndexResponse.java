@@ -59,10 +59,22 @@ public class OpenIndexResponse extends ShardsAcknowledgedResponse {
         declareAcknowledgedAndShardsAcknowledgedFields(PARSER);
     }
 
+    /**
+     * Creates a new OpenIndexResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public OpenIndexResponse(StreamInput in) throws IOException {
         super(in, true);
     }
 
+    /**
+     * Creates a new OpenIndexResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     */
     public OpenIndexResponse(boolean acknowledged, boolean shardsAcknowledged) {
         super(acknowledged, shardsAcknowledged);
     }
@@ -73,6 +85,12 @@ public class OpenIndexResponse extends ShardsAcknowledgedResponse {
         writeShardsAcknowledged(out);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static OpenIndexResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

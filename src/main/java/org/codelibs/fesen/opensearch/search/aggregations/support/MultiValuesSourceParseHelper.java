@@ -45,7 +45,20 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public final class MultiValuesSourceParseHelper {
+    /**
+     * Creates a new MultiValuesSourceParseHelper.
+     */
+    public MultiValuesSourceParseHelper() {
+    }
 
+    /**
+     * Performs the declare common step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     * @param formattable the formattable
+     * @param expectedValueType the expected value type
+     */
     public static <T> void declareCommon(
         AbstractObjectParser<? extends MultiValuesSourceAggregationBuilder<?>, T> objectParser,
         boolean formattable,
@@ -79,6 +92,17 @@ public final class MultiValuesSourceParseHelper {
         }
     }
 
+    /**
+     * Performs the declare field step.
+     *
+     * @param <VS> the vs type
+     * @param <T> the element type
+     * @param fieldName the field name
+     * @param objectParser the object parser
+     * @param scriptable the scriptable
+     * @param timezoneAware the timezone aware
+     * @param filterable the filterable
+     */
     public static <VS extends ValuesSource, T> void declareField(
         String fieldName,
         AbstractObjectParser<? extends MultiValuesSourceAggregationBuilder<?>, T> objectParser,

@@ -30,9 +30,21 @@ import java.util.Optional;
  */
 @ExperimentalApi
 public class CryptoMetadata implements Writeable {
+    /**
+     * The CRYPTO_METADATA_KEY constant.
+     */
     static final public String CRYPTO_METADATA_KEY = "crypto_metadata";
+    /**
+     * The KEY_PROVIDER_NAME_KEY constant.
+     */
     static final public String KEY_PROVIDER_NAME_KEY = "key_provider_name";
+    /**
+     * The KEY_PROVIDER_TYPE_KEY constant.
+     */
     static final public String KEY_PROVIDER_TYPE_KEY = "key_provider_type";
+    /**
+     * The SETTINGS_KEY constant.
+     */
     static final public String SETTINGS_KEY = "settings";
     private final String keyProviderName;
     private final String keyProviderType;
@@ -78,6 +90,12 @@ public class CryptoMetadata implements Writeable {
         return this.settings;
     }
 
+    /**
+     * Creates a new CryptoMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CryptoMetadata(StreamInput in) throws IOException {
         keyProviderName = in.readString();
         keyProviderType = in.readString();
@@ -96,6 +114,13 @@ public class CryptoMetadata implements Writeable {
         Settings.writeSettingsToStream(settings, out);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CryptoMetadata fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         String keyProviderType = null;
@@ -129,6 +154,14 @@ public class CryptoMetadata implements Writeable {
         return new CryptoMetadata(keyProviderName, keyProviderType, settings);
     }
 
+    /**
+     * Writes this instance to the given content builder.
+     *
+     * @param cryptoMetadata the crypto metadata
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     public void toXContent(CryptoMetadata cryptoMetadata, XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject(CRYPTO_METADATA_KEY);
         builder.field(KEY_PROVIDER_NAME_KEY, cryptoMetadata.keyProviderName());

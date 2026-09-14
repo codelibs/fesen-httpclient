@@ -59,6 +59,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class SignificantTextAggregationBuilder extends AbstractAggregationBuilder<SignificantTextAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "significant_text";
 
     static final ParseField FIELD_NAME = new ParseField("field");
@@ -119,10 +122,25 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         );
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static SignificantTextAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, new SignificantTextAggregationBuilder(aggregationName, null), null);
     }
 
+    /**
+     * Creates a new SignificantTextAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected SignificantTextAggregationBuilder(
         SignificantTextAggregationBuilder clone,
         Builder factoriesBuilder,
@@ -143,10 +161,20 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return new SignificantTextAggregationBuilder(this, factoriesBuilder, metadata);
     }
 
+    /**
+     * Returns the bucket count thresholds.
+     *
+     * @return the bucket count thresholds
+     */
     protected TermsAggregator.BucketCountThresholds getBucketCountThresholds() {
         return new TermsAggregator.BucketCountThresholds(bucketCountThresholds);
     }
 
+    /**
+     * Buckets the count thresholds.
+     *
+     * @return this instance
+     */
     public TermsAggregator.BucketCountThresholds bucketCountThresholds() {
         return bucketCountThresholds;
     }
@@ -165,6 +193,12 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         );
     }
 
+    /**
+     * Buckets the count thresholds.
+     *
+     * @param bucketCountThresholds the bucket count thresholds
+     * @return this instance
+     */
     public SignificantTextAggregationBuilder bucketCountThresholds(TermsAggregator.BucketCountThresholds bucketCountThresholds) {
         if (bucketCountThresholds == null) {
             throw new IllegalArgumentException("[bucketCountThresholds] must not be null: [" + name + "]");
@@ -176,6 +210,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     /**
      * Sets the size - indicating how many term buckets should be returned
      * (defaults to 10)
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public SignificantTextAggregationBuilder size(int size) {
         if (size <= 0) {
@@ -190,6 +227,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
      * will return to the coordinating node (the node that coordinates the
      * search execution). The higher the shard size is, the more accurate the
      * results are.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     public SignificantTextAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
@@ -202,6 +242,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     /**
      * Sets the name of the text field that will be the subject of this
      * aggregation.
+     *
+     * @param fieldName the field name
+     * @return the field name
      */
     public SignificantTextAggregationBuilder fieldName(String fieldName) {
         this.fieldName = fieldName;
@@ -212,6 +255,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
      * Selects the fields to load from _source JSON and analyze.
      * If none are specified, the indexed "fieldName" value is assumed
      * to also be the name of the JSON field holding the value
+     *
+     * @param names the names
+     * @return the source field names
      */
     public SignificantTextAggregationBuilder sourceFieldNames(List<String> names) {
         this.sourceFieldNames = names.toArray(new String[0]);
@@ -222,6 +268,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
      * Control if duplicate paragraphs of text should try be filtered from the
      * statistical text analysis. Can improve results but slows down analysis.
      * Default is false.
+     *
+     * @param filterDuplicateText the filter duplicate text
+     * @return this instance
      */
     public SignificantTextAggregationBuilder filterDuplicateText(boolean filterDuplicateText) {
         this.filterDuplicateText = filterDuplicateText;
@@ -231,6 +280,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     /**
      * Set the minimum document count terms should have in order to appear in
      * the response.
+     *
+     * @param minDocCount the min doc count
+     * @return the min doc count
      */
     public SignificantTextAggregationBuilder minDocCount(long minDocCount) {
         if (minDocCount < 0) {
@@ -245,6 +297,9 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
     /**
      * Set the minimum document count terms should have on the shard in order to
      * appear in the response.
+     *
+     * @param shardMinDocCount the shard min doc count
+     * @return the shard min doc count
      */
     public SignificantTextAggregationBuilder shardMinDocCount(long shardMinDocCount) {
         if (shardMinDocCount < 0) {
@@ -256,6 +311,12 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return this;
     }
 
+    /**
+     * Returns the background filter.
+     *
+     * @param backgroundFilter the background filter
+     * @return the background filter
+     */
     public SignificantTextAggregationBuilder backgroundFilter(QueryBuilder backgroundFilter) {
         if (backgroundFilter == null) {
             throw new IllegalArgumentException("[backgroundFilter] must not be null: [" + name + "]");
@@ -264,12 +325,20 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return this;
     }
 
+    /**
+     * Returns the background filter.
+     *
+     * @return the background filter
+     */
     public QueryBuilder backgroundFilter() {
         return filterBuilder;
     }
 
     /**
      * Set terms to include and exclude from the aggregation results
+     *
+     * @param includeExclude the include exclude
+     * @return this instance
      */
     public SignificantTextAggregationBuilder includeExclude(IncludeExclude includeExclude) {
         this.includeExclude = includeExclude;
@@ -278,11 +347,19 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
 
     /**
      * Get terms to include and exclude from the aggregation results
+     *
+     * @return this instance
      */
     public IncludeExclude includeExclude() {
         return includeExclude;
     }
 
+    /**
+     * Returns the significance heuristic.
+     *
+     * @param significanceHeuristic the significance heuristic
+     * @return the significance heuristic
+     */
     public SignificantTextAggregationBuilder significanceHeuristic(SignificanceHeuristic significanceHeuristic) {
         if (significanceHeuristic == null) {
             throw new IllegalArgumentException("[significanceHeuristic] must not be null: [" + name + "]");
@@ -291,11 +368,18 @@ public class SignificantTextAggregationBuilder extends AbstractAggregationBuilde
         return this;
     }
 
+    /**
+     * Returns the significance heuristic.
+     *
+     * @return the significance heuristic
+     */
     public SignificanceHeuristic significanceHeuristic() {
         return significanceHeuristic;
     }
 
     /**
+     * Creates a new SignificantTextAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param fieldName

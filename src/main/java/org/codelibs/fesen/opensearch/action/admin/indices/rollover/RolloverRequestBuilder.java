@@ -50,15 +50,33 @@ public class RolloverRequestBuilder extends ClusterManagerNodeOperationRequestBu
     RolloverRequest,
     RolloverResponse,
     RolloverRequestBuilder> {
+    /**
+     * Creates a new RolloverRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public RolloverRequestBuilder(OpenSearchClient client, RolloverAction action) {
         super(client, action, new RolloverRequest());
     }
 
+    /**
+     * Sets the rollover target.
+     *
+     * @param rolloverTarget the rollover target
+     * @return this instance
+     */
     public RolloverRequestBuilder setRolloverTarget(String rolloverTarget) {
         this.request.setRolloverTarget(rolloverTarget);
         return this;
     }
 
+    /**
+     * Sets the new index name.
+     *
+     * @param newIndexName the new index name
+     * @return this instance
+     */
     public RolloverRequestBuilder setNewIndexName(String newIndexName) {
         this.request.setNewIndexName(newIndexName);
         return this;

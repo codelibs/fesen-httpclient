@@ -87,6 +87,12 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
         private final SearchResponse response;
         private final Exception exception;
 
+        /**
+         * Creates a new Item.
+         *
+         * @param response the response
+         * @param exception the exception
+         */
         public Item(SearchResponse response, Exception exception) {
             this.response = response;
             this.exception = exception;
@@ -115,6 +121,8 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
 
         /**
          * Is it a failed search?
+         *
+         * @return the failure flag
          */
         public boolean isFailure() {
             return exception != null;
@@ -122,12 +130,19 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
 
         /**
          * The actual search response, null if its a failure.
+         *
+         * @return the response
          */
         @Nullable
         public SearchResponse getResponse() {
             return this.response;
         }
 
+        /**
+         * Returns the failure.
+         *
+         * @return the failure
+         */
         public Exception getFailure() {
             return exception;
         }
@@ -136,6 +151,12 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
     private final Item[] items;
     private final long tookInMillis;
 
+    /**
+     * Creates a new MultiSearchResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MultiSearchResponse(StreamInput in) throws IOException {
         super(in);
         items = new Item[in.readVInt()];
@@ -145,6 +166,12 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
         tookInMillis = in.readVLong();
     }
 
+    /**
+     * Creates a new MultiSearchResponse.
+     *
+     * @param items the items
+     * @param tookInMillis the took in milliseconds
+     */
     public MultiSearchResponse(Item[] items, long tookInMillis) {
         this.items = items;
         this.tookInMillis = tookInMillis;
@@ -157,6 +184,8 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
 
     /**
      * The list of responses, the order is the same as the one provided in the request.
+     *
+     * @return the responses
      */
     public Item[] getResponses() {
         return this.items;
@@ -192,6 +221,12 @@ public class MultiSearchResponse extends ActionResponse implements Iterable<Mult
         return builder;
     }
 
+    /**
+     * Creates an instance from x context.
+     *
+     * @param parser the parser
+     * @return the new x context
+     */
     public static MultiSearchResponse fromXContext(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

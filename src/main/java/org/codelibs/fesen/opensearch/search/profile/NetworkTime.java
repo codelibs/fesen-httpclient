@@ -26,11 +26,23 @@ public class NetworkTime implements Writeable {
     private long inboundNetworkTime;
     private long outboundNetworkTime;
 
+    /**
+     * Creates a new NetworkTime.
+     *
+     * @param inboundTime the inbound time
+     * @param outboundTime the outbound time
+     */
     public NetworkTime(long inboundTime, long outboundTime) {
         this.inboundNetworkTime = inboundTime;
         this.outboundNetworkTime = outboundTime;
     }
 
+    /**
+     * Creates a new NetworkTime by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NetworkTime(StreamInput in) throws IOException {
         if (in.getVersion().onOrAfter(Version.V_2_0_0)) {
             this.inboundNetworkTime = in.readVLong();
@@ -45,10 +57,20 @@ public class NetworkTime implements Writeable {
         }
     }
 
+    /**
+     * Returns the inbound network time.
+     *
+     * @return the inbound network time
+     */
     public long getInboundNetworkTime() {
         return this.inboundNetworkTime;
     }
 
+    /**
+     * Returns the outbound network time.
+     *
+     * @return the outbound network time
+     */
     public long getOutboundNetworkTime() {
         return this.outboundNetworkTime;
     }

@@ -52,6 +52,9 @@ import static java.util.Collections.emptyList;
  * @opensearch.internal
  */
 public class UnmappedTerms extends InternalTerms<UnmappedTerms, UnmappedTerms.Bucket> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "umterms";
 
     /**
@@ -72,6 +75,14 @@ public class UnmappedTerms extends InternalTerms<UnmappedTerms, UnmappedTerms.Bu
         }
     }
 
+    /**
+     * Creates a new UnmappedTerms.
+     *
+     * @param name the name
+     * @param order the order
+     * @param bucketCountThresholds the bucket count thresholds
+     * @param metadata the metadata
+     */
     public UnmappedTerms(
         String name,
         BucketOrder order,

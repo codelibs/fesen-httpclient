@@ -50,6 +50,13 @@ public class IndicesShardStoreRequestBuilder extends ClusterManagerNodeReadOpera
     IndicesShardStoresResponse,
     IndicesShardStoreRequestBuilder> {
 
+    /**
+     * Creates a new IndicesShardStoreRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public IndicesShardStoreRequestBuilder(OpenSearchClient client, ActionType<IndicesShardStoresResponse> action, String... indices) {
         super(client, action, new IndicesShardStoresRequest(indices));
     }

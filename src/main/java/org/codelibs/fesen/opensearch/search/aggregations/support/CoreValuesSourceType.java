@@ -46,13 +46,37 @@ import java.util.Locale;
 @PublicApi(since = "1.0.0")
 public enum CoreValuesSourceType implements ValuesSourceType {
 
+    /**
+     * The NUMERIC value.
+     */
     NUMERIC,
+    /**
+     * The BYTES value.
+     */
     BYTES,
+    /**
+     * The GEOPOINT value.
+     */
     GEOPOINT,
+    /**
+     * The GEO_SHAPE value.
+     */
     GEO_SHAPE,
+    /**
+     * The RANGE value.
+     */
     RANGE,
+    /**
+     * The IP value.
+     */
     IP,
+    /**
+     * The DATE value.
+     */
     DATE,
+    /**
+     * The BOOLEAN value.
+     */
     BOOLEAN;
 
     @Override

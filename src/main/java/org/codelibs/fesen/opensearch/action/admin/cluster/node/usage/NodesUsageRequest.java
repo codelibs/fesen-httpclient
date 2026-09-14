@@ -53,6 +53,8 @@ public class NodesUsageRequest extends BaseNodesRequest<NodesUsageRequest> {
     /**
      * Get usage from nodes based on the nodes ids specified. If none are
      * passed, usage for all nodes will be returned.
+     *
+     * @param nodesIds the nodes identifiers
      */
     public NodesUsageRequest(String... nodesIds) {
         super(nodesIds);

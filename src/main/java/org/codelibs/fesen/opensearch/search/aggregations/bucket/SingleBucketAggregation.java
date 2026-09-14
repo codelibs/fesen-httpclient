@@ -44,6 +44,8 @@ import org.codelibs.fesen.opensearch.search.aggregations.HasAggregations;
 public interface SingleBucketAggregation extends Aggregation, HasAggregations {
 
     /**
+     * Returns the doc count.
+     *
      * @return  The number of documents in this bucket
      */
     long getDocCount();

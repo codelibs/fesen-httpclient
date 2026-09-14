@@ -46,6 +46,11 @@ import java.nio.CharBuffer;
  * @opensearch.internal
  */
 public class ParsedStringTerms extends ParsedTerms {
+    /**
+     * Creates a new ParsedStringTerms.
+     */
+    public ParsedStringTerms() {
+    }
 
     @Override
     public String getType() {
@@ -61,6 +66,14 @@ public class ParsedStringTerms extends ParsedTerms {
         declareParsedTermsFields(PARSER, ParsedBucket::fromXContent);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedStringTerms fromXContent(XContentParser parser, String name) throws IOException {
         ParsedStringTerms aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -73,6 +86,11 @@ public class ParsedStringTerms extends ParsedTerms {
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedTerms.ParsedBucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private BytesRef key;
 

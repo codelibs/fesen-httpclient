@@ -58,9 +58,18 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writeable, ToXContentFragment {
 
+    /**
+     * The CONDITION_FIELD constant.
+     */
     public static final ParseField CONDITION_FIELD = new ParseField("met_conditions");
+    /**
+     * The TIME_FIELD constant.
+     */
     public static final ParseField TIME_FIELD = new ParseField("time");
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<RolloverInfo, String> PARSER = new ConstructingObjectParser<>(
         "rollover_info",
@@ -80,22 +89,47 @@ public class RolloverInfo extends AbstractDiffable<RolloverInfo> implements Writ
     private final List<Condition<?>> metConditions;
     private final long time;
 
+    /**
+     * Creates a new RolloverInfo.
+     *
+     * @param alias the alias
+     * @param metConditions the met conditions
+     * @param time the time
+     */
     public RolloverInfo(String alias, List<Condition<?>> metConditions, long time) {
         this.alias = alias;
         this.metConditions = metConditions;
         this.time = time;
     }
 
+    /**
+     * Creates a new RolloverInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RolloverInfo(StreamInput in) throws IOException {
         this.alias = in.readString();
         this.time = in.readVLong();
         this.metConditions = (List) in.readNamedWriteableList(Condition.class);
     }
 
+    /**
+     * Returns the alias.
+     *
+     * @return the alias
+     */
     public String getAlias() {
         return alias;
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<RolloverInfo> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(RolloverInfo::new, in);
     }

@@ -55,7 +55,13 @@ public class FieldMaskingSpanQueryBuilder extends AbstractQueryBuilder<FieldMask
         SpanQueryBuilder,
         WithFieldName {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_field_masking";
+    /**
+     * The SPAN_FIELD_MASKING_FIELD constant.
+     */
     public static final ParseField SPAN_FIELD_MASKING_FIELD = new ParseField(NAME, "field_masking_span");
 
     private static final ParseField FIELD_FIELD = new ParseField("field");
@@ -84,6 +90,9 @@ public class FieldMaskingSpanQueryBuilder extends AbstractQueryBuilder<FieldMask
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public FieldMaskingSpanQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -106,6 +115,8 @@ public class FieldMaskingSpanQueryBuilder extends AbstractQueryBuilder<FieldMask
     }
 
     /**
+     * Returns the inner query.
+     *
      * @return the inner {@link QueryBuilder}
      */
     public SpanQueryBuilder innerQuery() {
@@ -122,6 +133,13 @@ public class FieldMaskingSpanQueryBuilder extends AbstractQueryBuilder<FieldMask
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static FieldMaskingSpanQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
 

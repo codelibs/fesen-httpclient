@@ -64,6 +64,8 @@ public interface Provider<T> {
      * while the scope in question is not currently active, and {@code ProvisionException} if an
      * instance cannot be provided. Such exceptions include messages and throwables to describe
      * why provision failed.
+     *
+     * @return the value
      */
     T get();
 }

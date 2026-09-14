@@ -73,11 +73,29 @@ public final class IndexModule {
      */
     @PublicApi(since = "1.0.0")
     public enum Type {
+        /**
+         * The HYBRIDFS value.
+         */
         HYBRIDFS("hybridfs"),
+        /**
+         * The NIOFS value.
+         */
         NIOFS("niofs"),
+        /**
+         * The MMAPFS value.
+         */
         MMAPFS("mmapfs"),
+        /**
+         * The SIMPLEFS value.
+         */
         SIMPLEFS("simplefs"),
+        /**
+         * The FS value.
+         */
         FS("fs"),
+        /**
+         * The REMOTE_SNAPSHOT value.
+         */
         REMOTE_SNAPSHOT("remote_snapshot");
 
         private final String settingsKey;

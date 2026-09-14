@@ -40,5 +40,10 @@ package org.codelibs.fesen.opensearch;
  * @opensearch.internal
  */
 public interface OpenSearchWrapperException {
+    /**
+     * Returns the cause.
+     *
+     * @return the cause
+     */
     Throwable getCause();
 }

@@ -41,9 +41,17 @@ import org.apache.lucene.util.BytesRefBuilder;
  * @opensearch.internal
  */
 public class BytesRefs {
+    /**
+     * Creates a new BytesRefs.
+     */
+    public BytesRefs() {
+    }
 
     /**
      * Converts an object value to BytesRef.
+     *
+     * @param value the value
+     * @return the bytes ref
      */
     public static BytesRef toBytesRef(Object value) {
         if (value == null) {

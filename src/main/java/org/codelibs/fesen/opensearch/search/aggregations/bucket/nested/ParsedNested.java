@@ -42,12 +42,25 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedNested extends ParsedSingleBucketAggregation implements Nested {
+    /**
+     * Creates a new ParsedNested.
+     */
+    public ParsedNested() {
+    }
 
     @Override
     public String getType() {
         return NestedAggregationBuilder.NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedNested fromXContent(XContentParser parser, final String name) throws IOException {
         return parseXContent(parser, new ParsedNested(), name);
     }

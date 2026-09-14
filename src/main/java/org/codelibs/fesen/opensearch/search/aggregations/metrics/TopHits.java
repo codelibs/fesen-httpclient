@@ -42,6 +42,8 @@ import org.codelibs.fesen.opensearch.search.aggregations.Aggregation;
 public interface TopHits extends Aggregation {
 
     /**
+     * Returns the hits.
+     *
      * @return The top matching hits for the bucket
      */
     SearchHits getHits();

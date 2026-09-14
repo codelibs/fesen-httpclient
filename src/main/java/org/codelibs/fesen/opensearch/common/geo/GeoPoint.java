@@ -64,41 +64,95 @@ import java.util.Locale;
  */
 public class GeoPoint implements ToXContentFragment {
 
+    /**
+     * The lat.
+     */
     protected double lat;
+    /**
+     * The lon.
+     */
     protected double lon;
 
+    /**
+     * Creates a new GeoPoint.
+     */
     public GeoPoint() {}
 
+    /**
+     * Creates a new GeoPoint.
+     *
+     * @param lat the lat
+     * @param lon the lon
+     */
     public GeoPoint(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
     }
 
+    /**
+     * Creates a new GeoPoint.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GeoPoint(final StreamInput in) throws IOException {
         this.lat = in.readDouble();
         this.lon = in.readDouble();
     }
 
+    /**
+     * Resets this instance.
+     *
+     * @param lat the lat
+     * @param lon the lon
+     * @return this instance
+     */
     public GeoPoint reset(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
         return this;
     }
 
+    /**
+     * Resets the lat.
+     *
+     * @param lat the lat
+     * @return this instance
+     */
     public GeoPoint resetLat(double lat) {
         this.lat = lat;
         return this;
     }
 
+    /**
+     * Resets the lon.
+     *
+     * @param lon the lon
+     * @return this instance
+     */
     public GeoPoint resetLon(double lon) {
         this.lon = lon;
         return this;
     }
 
+    /**
+     * Resets the from string.
+     *
+     * @param value the value
+     * @return this instance
+     */
     public GeoPoint resetFromString(String value) {
         return resetFromString(value, false, EffectivePoint.BOTTOM_LEFT);
     }
 
+    /**
+     * Resets the from string.
+     *
+     * @param value the value
+     * @param ignoreZValue the ignore z value
+     * @param effectivePoint the effective point
+     * @return this instance
+     */
     public GeoPoint resetFromString(String value, final boolean ignoreZValue, EffectivePoint effectivePoint) {
         if (value.toLowerCase(Locale.ROOT).contains("point")) {
             return resetFromWKT(value, ignoreZValue);
@@ -108,6 +162,13 @@ public class GeoPoint implements ToXContentFragment {
         return parseGeoHash(value, effectivePoint);
     }
 
+    /**
+     * Resets the from coordinates.
+     *
+     * @param value the value
+     * @param ignoreZValue the ignore z value
+     * @return this instance
+     */
     public GeoPoint resetFromCoordinates(String value, final boolean ignoreZValue) {
         String[] vals = value.split(",");
         if (vals.length > 3) {
@@ -169,6 +230,12 @@ public class GeoPoint implements ToXContentFragment {
 
     // todo this is a crutch because LatLonPoint doesn't have a helper for returning .stringValue()
 
+    /**
+     * Resets the from geo hash.
+     *
+     * @param geohash the geohash
+     * @return this instance
+     */
     public GeoPoint resetFromGeoHash(String geohash) {
         final long hash;
         try {
@@ -179,23 +246,49 @@ public class GeoPoint implements ToXContentFragment {
         return this.reset(Geohash.decodeLatitude(hash), Geohash.decodeLongitude(hash));
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeTo(final StreamOutput out) throws IOException {
         out.writeDouble(this.lat);
         out.writeDouble(this.lon);
     }
 
+    /**
+     * Returns the lat.
+     *
+     * @return the lat
+     */
     public double lat() {
         return this.lat;
     }
 
+    /**
+     * Returns the lat.
+     *
+     * @return the lat
+     */
     public double getLat() {
         return this.lat;
     }
 
+    /**
+     * Returns the lon.
+     *
+     * @return the lon
+     */
     public double lon() {
         return this.lon;
     }
 
+    /**
+     * Returns the lon.
+     *
+     * @return the lon
+     */
     public double getLon() {
         return this.lon;
     }
@@ -229,6 +322,12 @@ public class GeoPoint implements ToXContentFragment {
         return lat + ", " + lon;
     }
 
+    /**
+     * Creates an instance from geohash.
+     *
+     * @param geohash the geohash
+     * @return the new geohash
+     */
     public static GeoPoint fromGeohash(String geohash) {
         return new GeoPoint().resetFromGeoHash(geohash);
     }
@@ -238,6 +337,13 @@ public class GeoPoint implements ToXContentFragment {
         return builder.latlon(lat, lon);
     }
 
+    /**
+     * Returns the assert z value.
+     *
+     * @param ignoreZValue the ignore z value
+     * @param zValue the z value
+     * @return the assert z value
+     */
     public static double assertZValue(final boolean ignoreZValue, double zValue) {
         if (ignoreZValue == false) {
             throw new OpenSearchParseException(

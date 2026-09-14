@@ -34,6 +34,9 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
     private final IncludeExclude includeExclude;
 
     private static final String NAME = "field_config";
+    /**
+     * The FILTER constant.
+     */
     public static final ParseField FILTER = new ParseField("filter");
 
     /**
@@ -42,6 +45,15 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
      * @opensearch.internal
      */
     public interface ParserSupplier {
+        /**
+         * Applies this instance to the given input.
+         *
+         * @param scriptable the scriptable
+         * @param timezoneAware the timezone aware
+         * @param valueTypeHinted the value type hinted
+         * @param formatted the formatted
+         * @return this instance
+         */
         ObjectParser<MultiTermsValuesSourceConfig.Builder, Void> apply(
             Boolean scriptable,
             Boolean timezoneAware,
@@ -50,6 +62,9 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
         );
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final MultiTermsValuesSourceConfig.ParserSupplier PARSER = (scriptable, timezoneAware, valueTypeHinted, formatted) -> {
 
         ObjectParser<MultiTermsValuesSourceConfig.Builder, Void> parser = new ObjectParser<>(
@@ -87,6 +102,17 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
         return parser;
     };
 
+    /**
+     * Creates a new MultiTermsValuesSourceConfig.
+     *
+     * @param fieldName the field name
+     * @param missing the missing
+     * @param script the script
+     * @param timeZone the time zone
+     * @param userValueTypeHint the user value type hint
+     * @param format the format
+     * @param includeExclude the include exclude
+     */
     protected MultiTermsValuesSourceConfig(
         String fieldName,
         Object missing,
@@ -145,24 +171,53 @@ public class MultiTermsValuesSourceConfig extends BaseMultiValuesSourceFieldConf
      * @opensearch.internal
      */
     public static class Builder extends BaseMultiValuesSourceFieldConfig.Builder<MultiTermsValuesSourceConfig, Builder> {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
+
         private ValueType userValueTypeHint = null;
         private String format;
         private IncludeExclude includeExclude = null;
 
+        /**
+         * Returns the include exclude.
+         *
+         * @return the include exclude
+         */
         public IncludeExclude getIncludeExclude() {
             return includeExclude;
         }
 
+        /**
+         * Sets the include exclude.
+         *
+         * @param includeExclude the include exclude
+         * @return this instance
+         */
         public Builder setIncludeExclude(IncludeExclude includeExclude) {
             this.includeExclude = includeExclude;
             return this;
         }
 
+        /**
+         * Sets the user value type hint.
+         *
+         * @param userValueTypeHint the user value type hint
+         * @return this instance
+         */
         public Builder setUserValueTypeHint(ValueType userValueTypeHint) {
             this.userValueTypeHint = userValueTypeHint;
             return this;
         }
 
+        /**
+         * Sets the format.
+         *
+         * @param format the format
+         * @return this instance
+         */
         public Builder setFormat(String format) {
             this.format = format;
             return this;

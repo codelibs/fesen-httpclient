@@ -55,6 +55,12 @@ public class ClusterStateResponse extends ActionResponse {
     private ClusterState clusterState;
     private boolean waitForTimedOut = false;
 
+    /**
+     * Creates a new ClusterStateResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterStateResponse(StreamInput in) throws IOException {
         super(in);
         clusterName = new ClusterName(in);
@@ -62,6 +68,13 @@ public class ClusterStateResponse extends ActionResponse {
         waitForTimedOut = in.readBoolean();
     }
 
+    /**
+     * Creates a new ClusterStateResponse.
+     *
+     * @param clusterName the cluster name
+     * @param clusterState the cluster state
+     * @param waitForTimedOut the wait for timed out
+     */
     public ClusterStateResponse(ClusterName clusterName, ClusterState clusterState, boolean waitForTimedOut) {
         this.clusterName = clusterName;
         this.clusterState = clusterState;
@@ -71,6 +84,8 @@ public class ClusterStateResponse extends ActionResponse {
     /**
      * The requested cluster state.  Only the parts of the cluster state that were
      * requested are included in the returned {@link ClusterState} instance.
+     *
+     * @return the state
      */
     public ClusterState getState() {
         return this.clusterState;

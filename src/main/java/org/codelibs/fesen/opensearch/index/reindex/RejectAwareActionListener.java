@@ -43,11 +43,26 @@ import java.util.function.Consumer;
  * @opensearch.internal
  */
 // public for testing
+/**
+ * The RejectAwareActionListener interface.
+ *
+ * @param <T> the element type
+ */
 public interface RejectAwareActionListener<T> extends ActionListener<T> {
+    /**
+     * Handles the rejection event.
+     *
+     * @param e the exception
+     */
     void onRejection(Exception e);
 
     /**
      * Return a new listener that delegates failure/reject to errorDelegate but forwards response to responseHandler
+     *
+     * @param <X> the x type
+     * @param errorDelegate the error delegate
+     * @param responseHandler the response handler
+     * @return the with response handler
      */
     static <X> RejectAwareActionListener<X> withResponseHandler(RejectAwareActionListener<?> errorDelegate, Consumer<X> responseHandler) {
         return new RejectAwareActionListener<X>() {
@@ -70,6 +85,12 @@ public interface RejectAwareActionListener<T> extends ActionListener<T> {
 
     /**
      * Similar to {@link ActionListener#wrap(CheckedConsumer, Consumer)}, extended to have handler for onRejection.
+     *
+     * @param <Response> the response type
+     * @param onResponse the on response
+     * @param onFailure the on failure
+     * @param onRejection the on rejection
+     * @return this instance
      */
     static <Response> RejectAwareActionListener<Response> wrap(
         CheckedConsumer<Response, ? extends Exception> onResponse,

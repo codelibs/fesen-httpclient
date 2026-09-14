@@ -48,18 +48,29 @@ import java.util.function.Function;
 /**
  * Base class for internal aggregations that are comprised of multiple buckets
  *
+ * @param <A> the aggregation type
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public abstract class InternalMultiBucketAggregation<
     A extends InternalMultiBucketAggregation,
     B extends InternalMultiBucketAggregation.InternalBucket> extends InternalAggregation implements MultiBucketsAggregation {
 
+    /**
+     * Creates a new InternalMultiBucketAggregation.
+     *
+     * @param name the name
+     * @param metadata the metadata
+     */
     public InternalMultiBucketAggregation(String name, Map<String, Object> metadata) {
         super(name, metadata);
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected InternalMultiBucketAggregation(StreamInput in) throws IOException {
         super(in);
@@ -90,6 +101,10 @@ public abstract class InternalMultiBucketAggregation<
     /**
      * Reduce a list of same-keyed buckets (from multiple shards) to a single bucket. This
      * requires all buckets to have the same key.
+     *
+     * @param buckets the buckets
+     * @param context the context
+     * @return this instance
      */
     protected abstract B reduceBucket(List<B> buckets, ReduceContext context);
 
@@ -131,6 +146,9 @@ public abstract class InternalMultiBucketAggregation<
 
     /**
      * Counts the number of inner buckets inside the provided {@link InternalBucket}
+     *
+     * @param bucket the bucket
+     * @return this instance
      */
     public static int countInnerBucket(InternalBucket bucket) {
         int count = 0;
@@ -142,6 +160,9 @@ public abstract class InternalMultiBucketAggregation<
 
     /**
      * Counts the number of inner buckets inside the provided {@link Aggregation}
+     *
+     * @param agg the agg
+     * @return this instance
      */
     public static int countInnerBucket(Aggregation agg) {
         int size = 0;
@@ -227,7 +248,19 @@ public abstract class InternalMultiBucketAggregation<
      * @opensearch.internal
      */
     public abstract static class InternalBucket implements Bucket, Writeable {
+        /**
+         * Creates a new InternalBucket.
+         */
+        public InternalBucket() {
+        }
 
+        /**
+         * Returns the property.
+         *
+         * @param containingAggName the containing agg name
+         * @param path the path
+         * @return the property
+         */
         public Object getProperty(String containingAggName, List<String> path) {
             if (path.isEmpty()) {
                 return this;

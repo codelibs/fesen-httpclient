@@ -48,8 +48,18 @@ public interface NumericMetricsAggregation extends Aggregation {
      */
     interface SingleValue extends NumericMetricsAggregation {
 
+        /**
+         * Returns the value.
+         *
+         * @return the value
+         */
         double value();
 
+        /**
+         * Returns the value as string.
+         *
+         * @return the value as string
+         */
         String getValueAsString();
 
     }

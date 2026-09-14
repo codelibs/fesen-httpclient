@@ -14,7 +14,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * Action type for creating PIT reader context
  */
 public class CreatePitAction extends ActionType<CreatePitResponse> {
+    /**
+     * The INSTANCE constant.
+     */
     public static final CreatePitAction INSTANCE = new CreatePitAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/point_in_time/create";
 
     private CreatePitAction() {

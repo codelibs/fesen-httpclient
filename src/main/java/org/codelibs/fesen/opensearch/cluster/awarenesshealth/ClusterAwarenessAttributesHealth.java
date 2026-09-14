@@ -75,6 +75,12 @@ public class ClusterAwarenessAttributesHealth implements Iterable<ClusterAwarene
         awarenessAttributeValueHealthMap = clusterAwarenessAttributeValueHealthMap;
     }
 
+    /**
+     * Creates a new ClusterAwarenessAttributesHealth.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterAwarenessAttributesHealth(final StreamInput in) throws IOException {
         awarenessAttributeName = in.readString();
         int size = in.readVInt();
@@ -89,6 +95,11 @@ public class ClusterAwarenessAttributesHealth implements Iterable<ClusterAwarene
         }
     }
 
+    /**
+     * Returns the awareness attribute name.
+     *
+     * @return the awareness attribute name
+     */
     public String getAwarenessAttributeName() {
         return awarenessAttributeName;
     }

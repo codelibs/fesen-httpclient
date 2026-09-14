@@ -49,23 +49,53 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public enum DistanceUnit implements Writeable {
+    /**
+     * The INCH value.
+     */
     INCH(0.0254, "in", "inch"),
+    /**
+     * The YARD value.
+     */
     YARD(0.9144, "yd", "yards"),
+    /**
+     * The FEET value.
+     */
     FEET(0.3048, "ft", "feet"),
+    /**
+     * The KILOMETERS value.
+     */
     KILOMETERS(1000.0, "km", "kilometers"),
+    /**
+     * The NAUTICALMILES value.
+     */
     NAUTICALMILES(1852.0, "NM", "nmi", "nauticalmiles"),
+    /**
+     * The MILLIMETERS value.
+     */
     MILLIMETERS(0.001, "mm", "millimeters"),
+    /**
+     * The CENTIMETERS value.
+     */
     CENTIMETERS(0.01, "cm", "centimeters"),
 
     // 'm' is a suffix of 'nmi' so it must follow 'nmi'
+    /**
+     * The MILES value.
+     */
     MILES(1609.344, "mi", "miles"),
 
     // since 'm' is suffix of other unit
     // it must be the last entry of unit
     // names ending with 'm'. otherwise
     // parsing would fail
+    /**
+     * The METERS value.
+     */
     METERS(1, "m", "meters");
 
+    /**
+     * The DEFAULT constant.
+     */
     public static final DistanceUnit DEFAULT = METERS;
 
     private double meters;
@@ -154,9 +184,21 @@ public enum DistanceUnit implements Writeable {
      * @opensearch.internal
      */
     public static class Distance implements Comparable<Distance> {
+        /**
+         * The value.
+         */
         public final double value;
+        /**
+         * The unit.
+         */
         public final DistanceUnit unit;
 
+        /**
+         * Creates a new Distance.
+         *
+         * @param value the value
+         * @param unit the unit
+         */
         public Distance(double value, DistanceUnit unit) {
             super();
             this.value = value;

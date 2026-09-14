@@ -98,12 +98,21 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
         Map.entry("liv", "Live Documents")
     );
 
+    /**
+     * Creates a new SegmentsStats.
+     */
     public SegmentsStats() {
         fileSizes = new HashMap<>();
         remoteSegmentStats = new RemoteSegmentStats();
         replicationStats = new ReplicationStats();
     }
 
+    /**
+     * Creates a new SegmentsStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SegmentsStats(StreamInput in) throws IOException {
         count = in.readVLong();
         // the following was removed in Lucene 9 (https://issues.apache.org/jira/browse/LUCENE-9387)
@@ -131,14 +140,29 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param count the count
+     */
     public void add(long count) {
         this.count += count;
     }
 
+    /**
+     * Adds the index writer memory in bytes.
+     *
+     * @param indexWriterMemoryInBytes the index writer memory in bytes
+     */
     public void addIndexWriterMemoryInBytes(long indexWriterMemoryInBytes) {
         this.indexWriterMemoryInBytes += indexWriterMemoryInBytes;
     }
 
+    /**
+     * Adds the version map memory in bytes.
+     *
+     * @param versionMapMemoryInBytes the version map memory in bytes
+     */
     public void addVersionMapMemoryInBytes(long versionMapMemoryInBytes) {
         this.versionMapMemoryInBytes += versionMapMemoryInBytes;
     }
@@ -147,18 +171,38 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
         this.maxUnsafeAutoIdTimestamp = Math.max(maxUnsafeAutoIdTimestamp, this.maxUnsafeAutoIdTimestamp);
     }
 
+    /**
+     * Adds the bitset memory in bytes.
+     *
+     * @param bitsetMemoryInBytes the bitset memory in bytes
+     */
     public void addBitsetMemoryInBytes(long bitsetMemoryInBytes) {
         this.bitsetMemoryInBytes += bitsetMemoryInBytes;
     }
 
+    /**
+     * Adds the remote segment stats.
+     *
+     * @param remoteSegmentStats the remote segment stats
+     */
     public void addRemoteSegmentStats(RemoteSegmentStats remoteSegmentStats) {
         this.remoteSegmentStats.add(remoteSegmentStats);
     }
 
+    /**
+     * Adds the replication stats.
+     *
+     * @param replicationStats the replication stats
+     */
     public void addReplicationStats(ReplicationStats replicationStats) {
         this.replicationStats.add(replicationStats);
     }
 
+    /**
+     * Adds the file sizes.
+     *
+     * @param newFileSizes the new file sizes
+     */
     public void addFileSizes(final Map<String, Long> newFileSizes) {
         newFileSizes.forEach((k, v) -> this.fileSizes.merge(k, v, (a, b) -> {
             assert a != null;
@@ -167,6 +211,11 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
         }));
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param mergeStats the merge stats
+     */
     public void add(SegmentsStats mergeStats) {
         if (mergeStats == null) {
             return;
@@ -183,6 +232,8 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
 
     /**
      * The number of segments.
+     *
+     * @return the count
      */
     public long getCount() {
         return this.count;
@@ -190,43 +241,72 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
 
     /**
      * Estimation of the memory usage by index writer
+     *
+     * @return the index writer memory in bytes
      */
     public long getIndexWriterMemoryInBytes() {
         return this.indexWriterMemoryInBytes;
     }
 
+    /**
+     * Returns the index writer memory.
+     *
+     * @return the index writer memory
+     */
     public ByteSizeValue getIndexWriterMemory() {
         return new ByteSizeValue(indexWriterMemoryInBytes);
     }
 
     /**
      * Estimation of the memory usage by version map
+     *
+     * @return the version map memory in bytes
      */
     public long getVersionMapMemoryInBytes() {
         return this.versionMapMemoryInBytes;
     }
 
+    /**
+     * Returns the version map memory.
+     *
+     * @return the version map memory
+     */
     public ByteSizeValue getVersionMapMemory() {
         return new ByteSizeValue(versionMapMemoryInBytes);
     }
 
     /**
      * Estimation of how much the cached bit sets are taking. (which nested and p/c rely on)
+     *
+     * @return the bitset memory in bytes
      */
     public long getBitsetMemoryInBytes() {
         return bitsetMemoryInBytes;
     }
 
+    /**
+     * Returns the bitset memory.
+     *
+     * @return the bitset memory
+     */
     public ByteSizeValue getBitsetMemory() {
         return new ByteSizeValue(bitsetMemoryInBytes);
     }
 
-    /** Returns mapping of file names to their size (only used in tests) */
+    /**
+     * Returns mapping of file names to their size (only used in tests)
+     *
+     * @return the file sizes
+     */
     public Map<String, Long> getFileSizes() {
         return Collections.unmodifiableMap(this.fileSizes);
     }
 
-    /** Returns remote_store based stats **/
+    /**
+     * Returns remote_store based stats *
+     *
+     * @return the remote segment stats
+     */
     public RemoteSegmentStats getRemoteSegmentStats() {
         return remoteSegmentStats;
     }
@@ -234,6 +314,8 @@ public class SegmentsStats implements Writeable, ToXContentFragment {
     /**
      * Returns the max timestamp that is used to de-optimize documents with auto-generated IDs in the engine.
      * This is used to ensure we don't add duplicate documents when we assume an append only case based on auto-generated IDs
+     *
+     * @return the max unsafe auto identifier timestamp
      */
     public long getMaxUnsafeAutoIdTimestamp() {
         return maxUnsafeAutoIdTimestamp;

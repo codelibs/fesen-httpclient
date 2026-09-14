@@ -58,6 +58,8 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
     /**
      * Get information from nodes based on the nodes ids specified. If none are passed, information
      * for all nodes will be returned.
+     *
+     * @param nodesIds the nodes identifiers
      */
     public NodesInfoRequest(String... nodesIds) {
         super(nodesIds);
@@ -68,6 +70,8 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
      * Sets to return data for default metrics only.
      * See {@link Metric}
      * See {@link Metric#defaultMetrics()}.
+     *
+     * @return the default metrics
      */
     public NodesInfoRequest defaultMetrics() {
         requestedMetrics.addAll(Metric.defaultMetrics());
@@ -76,6 +80,8 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
 
     /**
      * Get the names of requested metrics
+     *
+     * @return the requested metrics
      */
     public Set<String> requestedMetrics() {
         return new HashSet<>(requestedMetrics);
@@ -93,17 +99,53 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
      * pluggable.
      */
     public enum Metric {
+        /**
+         * The SETTINGS value.
+         */
         SETTINGS("settings"),
+        /**
+         * The OS value.
+         */
         OS("os"),
+        /**
+         * The PROCESS value.
+         */
         PROCESS("process"),
+        /**
+         * The JVM value.
+         */
         JVM("jvm"),
+        /**
+         * The THREAD_POOL value.
+         */
         THREAD_POOL("thread_pool"),
+        /**
+         * The TRANSPORT value.
+         */
         TRANSPORT("transport"),
+        /**
+         * The HTTP value.
+         */
         HTTP("http"),
+        /**
+         * The PLUGINS value.
+         */
         PLUGINS("plugins"),
+        /**
+         * The INGEST value.
+         */
         INGEST("ingest"),
+        /**
+         * The AGGREGATIONS value.
+         */
         AGGREGATIONS("aggregations"),
+        /**
+         * The INDICES value.
+         */
         INDICES("indices"),
+        /**
+         * The SEARCH_PIPELINES value.
+         */
         SEARCH_PIPELINES("search_pipelines");
 
         private String metricName;
@@ -112,6 +154,11 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
             this.metricName = name;
         }
 
+        /**
+         * Returns the metric name.
+         *
+         * @return the metric name
+         */
         public String metricName() {
             return this.metricName;
         }
@@ -119,6 +166,8 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
         /**
          * Return all available metrics.
          * See {@link Metric}
+         *
+         * @return the all metrics
          */
         public static Set<String> allMetrics() {
             return Arrays.stream(values()).map(Metric::metricName).collect(Collectors.toSet());
@@ -132,6 +181,8 @@ public class NodesInfoRequest extends BaseNodesRequest<NodesInfoRequest> {
          * size at bay. Metrics that are NOT included in the default set were typically introduced later
          * and are considered to contain specific type of information that is not usually useful unless you
          * know that you really need it.
+         *
+         * @return the default metrics
          */
         public static Set<String> defaultMetrics() {
             return allMetrics().stream().filter(metric -> !(metric.equals(SEARCH_PIPELINES.metricName()))).collect(Collectors.toSet());

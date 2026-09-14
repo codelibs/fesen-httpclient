@@ -45,6 +45,12 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class UpgradeRequestBuilder extends BroadcastOperationRequestBuilder<UpgradeRequest, UpgradeResponse, UpgradeRequestBuilder> {
 
+    /**
+     * Creates a new UpgradeRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public UpgradeRequestBuilder(OpenSearchClient client, UpgradeAction action) {
         super(client, action, new UpgradeRequest());
     }

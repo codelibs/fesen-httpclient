@@ -54,6 +54,12 @@ public class BoundTransportAddress implements Writeable {
 
     private TransportAddress publishAddress;
 
+    /**
+     * Creates a new BoundTransportAddress by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BoundTransportAddress(StreamInput in) throws IOException {
         int boundAddressLength = in.readInt();
         boundAddresses = new TransportAddress[boundAddressLength];
@@ -63,10 +69,20 @@ public class BoundTransportAddress implements Writeable {
         publishAddress = new TransportAddress(in);
     }
 
+    /**
+     * Returns the bound addresses.
+     *
+     * @return the bound addresses
+     */
     public TransportAddress[] boundAddresses() {
         return boundAddresses;
     }
 
+    /**
+     * Returns the publish address.
+     *
+     * @return the publish address
+     */
     public TransportAddress publishAddress() {
         return publishAddress;
     }

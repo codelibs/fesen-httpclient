@@ -55,7 +55,13 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<
     ValuesSource.Numeric,
     ExtendedStatsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "extended_stats";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<ExtendedStatsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         ExtendedStatsAggregationBuilder::new
@@ -67,10 +73,22 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
 
     private double sigma = 2.0;
 
+    /**
+     * Creates a new ExtendedStatsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public ExtendedStatsAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new ExtendedStatsAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected ExtendedStatsAggregationBuilder(
         ExtendedStatsAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -95,6 +113,12 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
         out.writeDouble(sigma);
     }
 
+    /**
+     * Returns the sigma.
+     *
+     * @param sigma the sigma
+     * @return the sigma
+     */
     public ExtendedStatsAggregationBuilder sigma(double sigma) {
         if (sigma < 0.0) {
             throw new IllegalArgumentException("[sigma] must be greater than or equal to 0. Found [" + sigma + "] in [" + name + "]");
@@ -103,6 +127,11 @@ public class ExtendedStatsAggregationBuilder extends ValuesSourceAggregationBuil
         return this;
     }
 
+    /**
+     * Returns the sigma.
+     *
+     * @return the sigma
+     */
     public double sigma() {
         return sigma;
     }

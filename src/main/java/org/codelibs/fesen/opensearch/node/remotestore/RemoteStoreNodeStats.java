@@ -23,7 +23,13 @@ import java.util.Objects;
  */
 public class RemoteStoreNodeStats implements Writeable, ToXContentFragment {
 
+    /**
+     * The STATS_NAME constant.
+     */
     public static final String STATS_NAME = "remote_store";
+    /**
+     * The LAST_SUCCESSFUL_FETCH_OF_PINNED_TIMESTAMPS constant.
+     */
     public static final String LAST_SUCCESSFUL_FETCH_OF_PINNED_TIMESTAMPS = "last_successful_fetch_of_pinned_timestamps";
 
     /**
@@ -31,14 +37,28 @@ public class RemoteStoreNodeStats implements Writeable, ToXContentFragment {
      */
     private final long lastSuccessfulFetchOfPinnedTimestamps;
 
+    /**
+     * Creates a new RemoteStoreNodeStats.
+     */
     public RemoteStoreNodeStats() {
         this.lastSuccessfulFetchOfPinnedTimestamps = 0L;
     }
 
+    /**
+     * Returns the last successful fetch of pinned timestamps.
+     *
+     * @return the last successful fetch of pinned timestamps
+     */
     public long getLastSuccessfulFetchOfPinnedTimestamps() {
         return this.lastSuccessfulFetchOfPinnedTimestamps;
     }
 
+    /**
+     * Creates a new RemoteStoreNodeStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RemoteStoreNodeStats(StreamInput in) throws IOException {
         this.lastSuccessfulFetchOfPinnedTimestamps = in.readLong();
     }

@@ -57,6 +57,9 @@ import java.util.TreeSet;
 public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole> {
 
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(DiscoveryNodeRole.class);
+    /**
+     * The MASTER_ROLE_DEPRECATION_MESSAGE constant.
+     */
     public static final String MASTER_ROLE_DEPRECATION_MESSAGE =
         "Assigning [master] role in setting [node.roles] is deprecated. To promote inclusive language, please use [cluster_manager] role instead.";
     private final String roleName;
@@ -97,14 +100,33 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
 
     private final boolean isDynamicRole;
 
+    /**
+     * Returns the enabled by default flag.
+     *
+     * @param settings the settings
+     * @return the enabled by default flag
+     */
     public boolean isEnabledByDefault(final Settings settings) {
         return legacySetting() != null && legacySetting().get(settings);
     }
 
+    /**
+     * Creates a new DiscoveryNodeRole.
+     *
+     * @param roleName the role name
+     * @param roleNameAbbreviation the role name abbreviation
+     */
     protected DiscoveryNodeRole(final String roleName, final String roleNameAbbreviation) {
         this(roleName, roleNameAbbreviation, false);
     }
 
+    /**
+     * Creates a new DiscoveryNodeRole.
+     *
+     * @param roleName the role name
+     * @param roleNameAbbreviation the role name abbreviation
+     * @param canContainData the can contain data
+     */
     protected DiscoveryNodeRole(final String roleName, final String roleNameAbbreviation, final boolean canContainData) {
         this(true, false, roleName, roleNameAbbreviation, canContainData);
     }
@@ -124,6 +146,11 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
         this.canContainData = canContainData;
     }
 
+    /**
+     * Returns the legacy setting.
+     *
+     * @return the legacy setting
+     */
     public abstract Setting<Boolean> legacySetting();
 
     /**
@@ -131,6 +158,9 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
      * previous versions, where the role had not yet been added. This method allows overriding
      * the role that should be serialized when communicating to versions prior to the introduction
      * of the discovery node role.
+     *
+     * @param nodeVersion the node version
+     * @return the compatibility role
      */
     public DiscoveryNodeRole getCompatibilityRole(Version nodeVersion) {
         return this;
@@ -269,6 +299,9 @@ public abstract class DiscoveryNodeRole implements Comparable<DiscoveryNodeRole>
         }
     };
 
+    /**
+     * The REMOTE_CLUSTER_CLIENT_ROLE constant.
+     */
     public static final DiscoveryNodeRole REMOTE_CLUSTER_CLIENT_ROLE = new DiscoveryNodeRole("remote_cluster_client", "r") {
 
         @Override

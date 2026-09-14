@@ -54,11 +54,22 @@ public class GetAliasesResponse extends ActionResponse {
 
     private final Map<String, List<AliasMetadata>> aliases;
 
+    /**
+     * Creates a new GetAliasesResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetAliasesResponse(StreamInput in) throws IOException {
         super(in);
         aliases = in.readMap(StreamInput::readString, i -> i.readList(AliasMetadata::new));
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @return the aliases
+     */
     public Map<String, List<AliasMetadata>> getAliases() {
         return aliases;
     }

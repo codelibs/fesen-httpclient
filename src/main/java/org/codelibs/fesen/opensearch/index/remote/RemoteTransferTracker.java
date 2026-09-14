@@ -93,6 +93,12 @@ public abstract class RemoteTransferTracker {
      */
     protected final Object uploadTimeMsMutex;
 
+    /**
+     * Creates a new RemoteTransferTracker.
+     *
+     * @param shardId the shard identifier
+     * @param movingAverageWindowSize the moving average window size
+     */
     public RemoteTransferTracker(ShardId shardId, int movingAverageWindowSize) {
         this.shardId = shardId;
         totalUploadTimeInMillis = new AtomicLong(0);
@@ -110,11 +116,17 @@ public abstract class RemoteTransferTracker {
         uploadTimeMsMovingAverageReference = new AtomicReference<>(new MovingAverage(movingAverageWindowSize));
     }
 
+    /**
+     * Increments the total uploads failed.
+     */
     public void incrementTotalUploadsFailed() {
         checkTotal(totalUploadsStarted.get(), totalUploadsFailed.get(), totalUploadsSucceeded.get(), 1);
         totalUploadsFailed.addAndGet(1);
     }
 
+    /**
+     * Increments the total uploads succeeded.
+     */
     public void incrementTotalUploadsSucceeded() {
         checkTotal(totalUploadsStarted.get(), totalUploadsFailed.get(), totalUploadsSucceeded.get(), 1);
         totalUploadsSucceeded.addAndGet(1);

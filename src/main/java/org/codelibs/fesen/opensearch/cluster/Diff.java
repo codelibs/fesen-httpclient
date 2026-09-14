@@ -38,6 +38,7 @@ import org.codelibs.fesen.opensearch.core.common.io.stream.Writeable;
 /**
  * Represents difference between states of cluster state parts
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -45,6 +46,9 @@ public interface Diff<T> extends Writeable {
 
     /**
      * Applies difference to the specified part and returns the resulted part
+     *
+     * @param part the part
+     * @return this instance
      */
     T apply(T part);
 }

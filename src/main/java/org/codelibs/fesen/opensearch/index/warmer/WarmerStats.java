@@ -56,6 +56,9 @@ public class WarmerStats implements Writeable, ToXContentFragment {
 
     private long totalTimeInMillis;
 
+    /**
+     * Creates a new WarmerStats.
+     */
     public WarmerStats() {
 
     }
@@ -71,6 +74,12 @@ public class WarmerStats implements Writeable, ToXContentFragment {
         this.totalTimeInMillis = builder.totalTimeInMillis;
     }
 
+    /**
+     * Creates a new WarmerStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public WarmerStats(StreamInput in) throws IOException {
         current = in.readVLong();
         total = in.readVLong();
@@ -80,6 +89,10 @@ public class WarmerStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param current the current
+     * @param total the total
+     * @param totalTimeInMillis the total time in milliseconds
      */
     @Deprecated
     public WarmerStats(long current, long total, long totalTimeInMillis) {
@@ -88,6 +101,11 @@ public class WarmerStats implements Writeable, ToXContentFragment {
         this.totalTimeInMillis = totalTimeInMillis;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param warmerStats the warmer stats
+     */
     public void add(WarmerStats warmerStats) {
         if (warmerStats == null) {
             return;
@@ -99,6 +117,8 @@ public class WarmerStats implements Writeable, ToXContentFragment {
 
     /**
      * The total time warmer have been executed.
+     *
+     * @return the total time
      */
     public TimeValue totalTime() {
         return new TimeValue(totalTimeInMillis);
@@ -113,18 +133,39 @@ public class WarmerStats implements Writeable, ToXContentFragment {
         private long total = 0;
         private long totalTimeInMillis = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the current.
+         *
+         * @param current the current
+         * @return the current
+         */
         public Builder current(long current) {
             this.current = current;
             return this;
         }
 
+        /**
+         * Returns the total.
+         *
+         * @param total the total
+         * @return the total
+         */
         public Builder total(long total) {
             this.total = total;
             return this;
         }
 
+        /**
+         * Returns the total time in milliseconds.
+         *
+         * @param time the time
+         * @return the total time in milliseconds
+         */
         public Builder totalTimeInMillis(long time) {
             this.totalTimeInMillis = time;
             return this;

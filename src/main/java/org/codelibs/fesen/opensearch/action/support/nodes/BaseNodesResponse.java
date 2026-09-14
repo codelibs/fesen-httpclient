@@ -47,6 +47,7 @@ import java.util.Objects;
 /**
  * Transport response for nodes requests
  *
+ * @param <TNodeResponse> the t node response type
  * @opensearch.internal
  */
 public abstract class BaseNodesResponse<TNodeResponse extends BaseNodeResponse> extends ActionResponse {
@@ -56,6 +57,12 @@ public abstract class BaseNodesResponse<TNodeResponse extends BaseNodeResponse> 
     private List<TNodeResponse> nodes;
     private Map<String, TNodeResponse> nodesMap;
 
+    /**
+     * Creates a new BaseNodesResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected BaseNodesResponse(StreamInput in) throws IOException {
         super(in);
         clusterName = new ClusterName(in);
@@ -63,6 +70,13 @@ public abstract class BaseNodesResponse<TNodeResponse extends BaseNodeResponse> 
         failures = in.readList(FailedNodeException::new);
     }
 
+    /**
+     * Creates a new BaseNodesResponse.
+     *
+     * @param clusterName the cluster name
+     * @param nodes the nodes
+     * @param failures the failures
+     */
     protected BaseNodesResponse(ClusterName clusterName, List<TNodeResponse> nodes, List<FailedNodeException> failures) {
         this.clusterName = Objects.requireNonNull(clusterName);
         this.failures = Objects.requireNonNull(failures);
@@ -122,12 +136,18 @@ public abstract class BaseNodesResponse<TNodeResponse extends BaseNodeResponse> 
     /**
      * Read the {@link #nodes} from the stream.
      *
+     * @param in the input to read from
      * @return Never {@code null}.
+     * @throws IOException if an I/O error occurs
      */
     protected abstract List<TNodeResponse> readNodesFrom(StreamInput in) throws IOException;
 
     /**
      * Write the {@link #nodes} to the stream.
+     *
+     * @param out the output to write to
+     * @param nodes the nodes
+     * @throws IOException if an I/O error occurs
      */
     protected abstract void writeNodesTo(StreamOutput out, List<TNodeResponse> nodes) throws IOException;
 

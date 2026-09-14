@@ -17,10 +17,22 @@ import java.io.IOException;
  */
 public class SearchShardTaskCancellationStats extends BaseSearchTaskCancellationStats {
 
+    /**
+     * Creates a new SearchShardTaskCancellationStats.
+     *
+     * @param currentTaskCount the current task count
+     * @param totalTaskCount the total task count
+     */
     public SearchShardTaskCancellationStats(long currentTaskCount, long totalTaskCount) {
         super(currentTaskCount, totalTaskCount);
     }
 
+    /**
+     * Creates a new SearchShardTaskCancellationStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchShardTaskCancellationStats(StreamInput in) throws IOException {
         super(in);
     }

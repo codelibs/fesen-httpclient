@@ -62,6 +62,13 @@ public final class GeometryParser {
     private final WellKnownText wellKnownTextParser;
     private final boolean ignoreZValue;
 
+    /**
+     * Creates a new GeometryParser.
+     *
+     * @param rightOrientation the right orientation
+     * @param coerce the coerce
+     * @param ignoreZValue the ignore z value
+     */
     public GeometryParser(boolean rightOrientation, boolean coerce, boolean ignoreZValue) {
         GeometryValidator validator = new StandardValidator(ignoreZValue);
         geoJsonParser = new GeoJson(rightOrientation, coerce, validator);
@@ -71,6 +78,11 @@ public final class GeometryParser {
 
     /**
      * Parses supplied XContent into Geometry
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     * @throws ParseException if the input cannot be parsed
      */
     public Geometry parse(XContentParser parser) throws IOException, ParseException {
         return geometryFormat(parser).fromXContent(parser);
@@ -79,6 +91,9 @@ public final class GeometryParser {
     /**
      * Returns a geometry format object that can parse and then serialize the object back to the same format.
      * This method automatically recognizes the format by examining the provided {@link XContentParser}.
+     *
+     * @param parser the parser
+     * @return the geometry format
      */
     public GeometryFormat<Geometry> geometryFormat(XContentParser parser) {
         if (parser.currentToken() == XContentParser.Token.START_OBJECT) {

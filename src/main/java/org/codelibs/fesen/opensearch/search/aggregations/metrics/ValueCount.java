@@ -40,6 +40,8 @@ package org.codelibs.fesen.opensearch.search.aggregations.metrics;
 public interface ValueCount extends NumericMetricsAggregation.SingleValue {
 
     /**
+     * Returns the value.
+     *
      * @return The count
      */
     long getValue();

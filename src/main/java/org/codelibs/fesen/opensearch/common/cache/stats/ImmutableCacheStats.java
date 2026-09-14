@@ -32,6 +32,15 @@ public class ImmutableCacheStats implements Writeable, ToXContent {
     private final long sizeInBytes;
     private final long items;
 
+    /**
+     * Creates a new ImmutableCacheStats.
+     *
+     * @param hits the hits
+     * @param misses the misses
+     * @param evictions the evictions
+     * @param sizeInBytes the size in bytes
+     * @param items the items
+     */
     public ImmutableCacheStats(long hits, long misses, long evictions, long sizeInBytes, long items) {
         this.hits = hits;
         this.misses = misses;
@@ -40,6 +49,12 @@ public class ImmutableCacheStats implements Writeable, ToXContent {
         this.items = items;
     }
 
+    /**
+     * Creates a new ImmutableCacheStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ImmutableCacheStats(StreamInput in) throws IOException {
         this(in.readVLong(), in.readVLong(), in.readVLong(), in.readVLong(), in.readVLong());
     }
@@ -112,11 +127,35 @@ public class ImmutableCacheStats implements Writeable, ToXContent {
      * Field names used to write the values in this object to XContent.
      */
     public static final class Fields {
+        /**
+         * Creates a new Fields.
+         */
+        public Fields() {
+        }
+
+        /**
+         * The SIZE constant.
+         */
         public static final String SIZE = "size";
+        /**
+         * The SIZE_IN_BYTES constant.
+         */
         public static final String SIZE_IN_BYTES = "size_in_bytes";
+        /**
+         * The EVICTIONS constant.
+         */
         public static final String EVICTIONS = "evictions";
+        /**
+         * The HIT_COUNT constant.
+         */
         public static final String HIT_COUNT = "hit_count";
+        /**
+         * The MISS_COUNT constant.
+         */
         public static final String MISS_COUNT = "miss_count";
+        /**
+         * The ITEM_COUNT constant.
+         */
         public static final String ITEM_COUNT = "item_count";
     }
 }

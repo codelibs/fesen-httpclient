@@ -189,6 +189,12 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
      */
     private long totalEstimatedNativeBytes;
 
+    /**
+     * Creates a new NodeStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodeStats(StreamInput in) throws IOException {
         super(in);
         timestamp = in.readVLong();
@@ -302,6 +308,44 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
         }
     }
 
+    /**
+     * Creates a new NodeStats.
+     *
+     * @param node the node
+     * @param timestamp the timestamp
+     * @param indices the indices
+     * @param os the OS
+     * @param process the process
+     * @param jvm the JVM
+     * @param threadPool the thread pool
+     * @param fs the fs
+     * @param transport the transport
+     * @param http the HTTP
+     * @param breaker the breaker
+     * @param scriptStats the script stats
+     * @param discoveryStats the discovery stats
+     * @param ingestStats the ingest stats
+     * @param adaptiveSelectionStats the adaptive selection stats
+     * @param resourceUsageStats the resource usage stats
+     * @param scriptCacheStats the script cache stats
+     * @param indexingPressureStats the indexing pressure stats
+     * @param shardIndexingPressureStats the shard indexing pressure stats
+     * @param searchBackpressureStats the search backpressure stats
+     * @param clusterManagerThrottlingStats the cluster manager throttling stats
+     * @param weightedRoutingStats the weighted routing stats
+     * @param fileCacheStats the file cache stats
+     * @param fileCacheOnlyStats the file cache only stats
+     * @param blockCacheOnlyStats the block cache only stats
+     * @param taskCancellationStats the task cancellation stats
+     * @param searchPipelineStats the search pipeline stats
+     * @param segmentReplicationRejectionStats the segment replication rejection stats
+     * @param repositoriesStats the repositories stats
+     * @param admissionControlStats the admission control stats
+     * @param nodeCacheStats the node cache stats
+     * @param remoteStoreNodeStats the remote store node stats
+     * @param nativeAllocatorStats the native allocator stats
+     * @param totalEstimatedNativeBytes the total estimated native bytes
+     */
     public NodeStats(
         DiscoveryNode node,
         long timestamp,
@@ -374,12 +418,19 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
         this.totalEstimatedNativeBytes = totalEstimatedNativeBytes;
     }
 
+    /**
+     * Returns the timestamp.
+     *
+     * @return the timestamp
+     */
     public long getTimestamp() {
         return this.timestamp;
     }
 
     /**
      * Indices level stats.
+     *
+     * @return the indices
      */
     @Nullable
     public NodeIndicesStats getIndices() {
@@ -388,6 +439,8 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
 
     /**
      * Operating System level statistics.
+     *
+     * @return the OS
      */
     @Nullable
     public OsStats getOs() {
@@ -396,6 +449,8 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
 
     /**
      * Process level statistics.
+     *
+     * @return the process
      */
     @Nullable
     public ProcessStats getProcess() {
@@ -404,6 +459,8 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
 
     /**
      * JVM level statistics.
+     *
+     * @return the JVM
      */
     @Nullable
     public JvmStats getJvm() {
@@ -412,6 +469,8 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
 
     /**
      * Thread Pool level statistics.
+     *
+     * @return the thread pool
      */
     @Nullable
     public ThreadPoolStats getThreadPool() {
@@ -420,125 +479,247 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
 
     /**
      * File system level stats.
+     *
+     * @return the fs
      */
     @Nullable
     public FsInfo getFs() {
         return fs;
     }
 
+    /**
+     * Returns the transport.
+     *
+     * @return the transport
+     */
     @Nullable
     public TransportStats getTransport() {
         return this.transport;
     }
 
+    /**
+     * Returns the HTTP.
+     *
+     * @return the HTTP
+     */
     @Nullable
     public HttpStats getHttp() {
         return this.http;
     }
 
+    /**
+     * Returns the breaker.
+     *
+     * @return the breaker
+     */
     @Nullable
     public AllCircuitBreakerStats getBreaker() {
         return this.breaker;
     }
 
+    /**
+     * Returns the script stats.
+     *
+     * @return the script stats
+     */
     @Nullable
     public ScriptStats getScriptStats() {
         return this.scriptStats;
     }
 
+    /**
+     * Returns the discovery stats.
+     *
+     * @return the discovery stats
+     */
     @Nullable
     public DiscoveryStats getDiscoveryStats() {
         return this.discoveryStats;
     }
 
+    /**
+     * Returns the ingest stats.
+     *
+     * @return the ingest stats
+     */
     @Nullable
     public IngestStats getIngestStats() {
         return ingestStats;
     }
 
+    /**
+     * Returns the adaptive selection stats.
+     *
+     * @return the adaptive selection stats
+     */
     @Nullable
     public AdaptiveSelectionStats getAdaptiveSelectionStats() {
         return adaptiveSelectionStats;
     }
 
+    /**
+     * Returns the resource usage stats.
+     *
+     * @return the resource usage stats
+     */
     @Nullable
     public NodesResourceUsageStats getResourceUsageStats() {
         return resourceUsageStats;
     }
 
+    /**
+     * Returns the script cache stats.
+     *
+     * @return the script cache stats
+     */
     @Nullable
     public ScriptCacheStats getScriptCacheStats() {
         return scriptCacheStats;
     }
 
+    /**
+     * Returns the indexing pressure stats.
+     *
+     * @return the indexing pressure stats
+     */
     @Nullable
     public IndexingPressureStats getIndexingPressureStats() {
         return indexingPressureStats;
     }
 
+    /**
+     * Returns the shard indexing pressure stats.
+     *
+     * @return the shard indexing pressure stats
+     */
     @Nullable
     public ShardIndexingPressureStats getShardIndexingPressureStats() {
         return shardIndexingPressureStats;
     }
 
+    /**
+     * Returns the search backpressure stats.
+     *
+     * @return the search backpressure stats
+     */
     @Nullable
     public SearchBackpressureStats getSearchBackpressureStats() {
         return searchBackpressureStats;
     }
 
+    /**
+     * Returns the cluster manager throttling stats.
+     *
+     * @return the cluster manager throttling stats
+     */
     @Nullable
     public ClusterManagerThrottlingStats getClusterManagerThrottlingStats() {
         return clusterManagerThrottlingStats;
     }
 
+    /**
+     * Returns the weighted routing stats.
+     *
+     * @return the weighted routing stats
+     */
     public WeightedRoutingStats getWeightedRoutingStats() {
         return weightedRoutingStats;
     }
 
+    /**
+     * Returns the file cache stats.
+     *
+     * @return the file cache stats
+     */
     public AggregateFileCacheStats getFileCacheStats() {
         return fileCacheStats;
     }
 
+    /**
+     * Returns the file cache only stats.
+     *
+     * @return the file cache only stats
+     */
     @Nullable
     public AggregateFileCacheStats getFileCacheOnlyStats() {
         return fileCacheOnlyStats;
     }
 
+    /**
+     * Returns the block cache only stats.
+     *
+     * @return the block cache only stats
+     */
     @Nullable
     public BlockCacheStats getBlockCacheOnlyStats() {
         return blockCacheOnlyStats;
     }
 
+    /**
+     * Returns the task cancellation stats.
+     *
+     * @return the task cancellation stats
+     */
     @Nullable
     public TaskCancellationStats getTaskCancellationStats() {
         return taskCancellationStats;
     }
 
+    /**
+     * Returns the search pipeline stats.
+     *
+     * @return the search pipeline stats
+     */
     @Nullable
     public SearchPipelineStats getSearchPipelineStats() {
         return searchPipelineStats;
     }
 
+    /**
+     * Returns the segment replication rejection stats.
+     *
+     * @return the segment replication rejection stats
+     */
     @Nullable
     public SegmentReplicationRejectionStats getSegmentReplicationRejectionStats() {
         return segmentReplicationRejectionStats;
     }
 
+    /**
+     * Returns the repositories stats.
+     *
+     * @return the repositories stats
+     */
     @Nullable
     public RepositoriesStats getRepositoriesStats() {
         return repositoriesStats;
     }
 
+    /**
+     * Returns the admission control stats.
+     *
+     * @return the admission control stats
+     */
     @Nullable
     public AdmissionControlStats getAdmissionControlStats() {
         return admissionControlStats;
     }
 
+    /**
+     * Returns the node cache stats.
+     *
+     * @return the node cache stats
+     */
     @Nullable
     public NodeCacheStats getNodeCacheStats() {
         return nodeCacheStats;
     }
 
+    /**
+     * Returns the remote store node stats.
+     *
+     * @return the remote store node stats
+     */
     @Nullable
     public RemoteStoreNodeStats getRemoteStoreNodeStats() {
         return remoteStoreNodeStats;
@@ -546,6 +727,8 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
 
     /**
      * Returns the native allocator pool stats (Arrow allocator), or {@code null} if not available.
+     *
+     * @return the native allocator stats
      */
     @Nullable
     public NativeAllocatorPoolStats getNativeAllocatorStats() {
@@ -556,6 +739,8 @@ public class NodeStats extends BaseNodeResponse implements ToXContentFragment {
      * Returns the process-level native-memory estimate captured on this node
      * (RssAnon - JVM heap committed - JVM non-heap committed), or {@code -1} when the probe
      * could not read {@code /proc/self/status}.
+     *
+     * @return the total estimated native bytes
      */
     public long getTotalEstimatedNativeBytes() {
         return totalEstimatedNativeBytes;

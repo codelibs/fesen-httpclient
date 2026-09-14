@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClusterHealthAction extends ActionType<ClusterHealthResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClusterHealthAction INSTANCE = new ClusterHealthAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/health";
 
     private ClusterHealthAction() {

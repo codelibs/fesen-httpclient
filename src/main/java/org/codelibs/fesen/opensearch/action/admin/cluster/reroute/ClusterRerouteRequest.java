@@ -55,11 +55,16 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
     private boolean explain;
     private boolean retryFailed;
 
+    /**
+     * Creates a new ClusterRerouteRequest.
+     */
     public ClusterRerouteRequest() {}
 
     /**
      * Returns the current dry run flag which allows to run the commands without actually applying them,
      * just to get back the resulting cluster state back.
+     *
+     * @return the dry run
      */
     public boolean dryRun() {
         return this.dryRun;
@@ -67,6 +72,8 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
 
     /**
      * Returns the current explain flag
+     *
+     * @return the explain
      */
     public boolean explain() {
         return this.explain;
@@ -74,6 +81,8 @@ public class ClusterRerouteRequest extends AcknowledgedRequest<ClusterRerouteReq
 
     /**
      * Returns the current retry failed flag
+     *
+     * @return the retry failed flag
      */
     public boolean isRetryFailed() {
         return this.retryFailed;

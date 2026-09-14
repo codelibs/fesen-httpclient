@@ -55,6 +55,9 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
     private long hitCount;
     private long missCount;
 
+    /**
+     * Creates a new RequestCacheStats.
+     */
     public RequestCacheStats() {}
 
     /**
@@ -69,6 +72,12 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
         this.missCount = builder.missCount;
     }
 
+    /**
+     * Creates a new RequestCacheStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RequestCacheStats(StreamInput in) throws IOException {
         memorySize = in.readVLong();
         evictions = in.readVLong();
@@ -79,6 +88,11 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param memorySize the memory size
+     * @param evictions the evictions
+     * @param hitCount the hit count
+     * @param missCount the miss count
      */
     @Deprecated
     public RequestCacheStats(long memorySize, long evictions, long hitCount, long missCount) {
@@ -88,6 +102,11 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
         this.missCount = missCount;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param stats the stats
+     */
     public void add(RequestCacheStats stats) {
         this.memorySize += stats.memorySize;
         this.evictions += stats.evictions;
@@ -95,18 +114,38 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
         this.missCount += stats.missCount;
     }
 
+    /**
+     * Returns the memory size.
+     *
+     * @return the memory size
+     */
     public ByteSizeValue getMemorySize() {
         return new ByteSizeValue(memorySize);
     }
 
+    /**
+     * Returns the evictions.
+     *
+     * @return the evictions
+     */
     public long getEvictions() {
         return this.evictions;
     }
 
+    /**
+     * Returns the hit count.
+     *
+     * @return the hit count
+     */
     public long getHitCount() {
         return this.hitCount;
     }
 
+    /**
+     * Returns the miss count.
+     *
+     * @return the miss count
+     */
     public long getMissCount() {
         return this.missCount;
     }
@@ -121,23 +160,50 @@ public class RequestCacheStats implements Writeable, ToXContentFragment {
         private long hitCount = 0;
         private long missCount = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the memory size.
+         *
+         * @param count the count
+         * @return the memory size
+         */
         public Builder memorySize(long count) {
             this.memorySize = count;
             return this;
         }
 
+        /**
+         * Returns the evictions.
+         *
+         * @param count the count
+         * @return the evictions
+         */
         public Builder evictions(long count) {
             this.evictions = count;
             return this;
         }
 
+        /**
+         * Returns the hit count.
+         *
+         * @param count the count
+         * @return the hit count
+         */
         public Builder hitCount(long count) {
             this.hitCount = count;
             return this;
         }
 
+        /**
+         * Returns the miss count.
+         *
+         * @param count the count
+         * @return the miss count
+         */
         public Builder missCount(long count) {
             this.missCount = count;
             return this;

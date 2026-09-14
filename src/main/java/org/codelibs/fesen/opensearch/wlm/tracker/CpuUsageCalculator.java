@@ -18,7 +18,13 @@ import java.util.List;
  */
 public class CpuUsageCalculator extends ResourceUsageCalculator {
     // This value should be initialised at the start time of the process and be used throughout the codebase
+    /**
+     * The PROCESSOR_COUNT constant.
+     */
     public static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
+    /**
+     * The INSTANCE constant.
+     */
     public static final CpuUsageCalculator INSTANCE = new CpuUsageCalculator();
 
     private CpuUsageCalculator() {}

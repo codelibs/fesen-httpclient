@@ -76,6 +76,12 @@ public class AggregationPath {
 
     private static final String AGG_DELIM = ">";
 
+    /**
+     * Parses this instance.
+     *
+     * @param path the path
+     * @return this instance
+     */
     public static AggregationPath parse(String path) {
         String[] elements = Strings.tokenizeToStringArray(path, AGG_DELIM);
         List<PathElement> tokens = new ArrayList<>(elements.length);
@@ -132,9 +138,22 @@ public class AggregationPath {
     public static class PathElement {
 
         private final String fullName;
+        /**
+         * The name.
+         */
         public final String name;
+        /**
+         * The key.
+         */
         public final String key;
 
+        /**
+         * Creates a new PathElement.
+         *
+         * @param fullName the full name
+         * @param name the name
+         * @param key the key
+         */
         public PathElement(String fullName, String name, String key) {
             this.fullName = fullName;
             this.name = name;
@@ -169,6 +188,11 @@ public class AggregationPath {
 
     private final List<PathElement> pathElements;
 
+    /**
+     * Creates a new AggregationPath.
+     *
+     * @param tokens the tokens
+     */
     public AggregationPath(List<PathElement> tokens) {
         this.pathElements = tokens;
         if (tokens == null || tokens.size() == 0) {
@@ -181,12 +205,20 @@ public class AggregationPath {
         return Strings.arrayToDelimitedString(pathElements.toArray(), AGG_DELIM);
     }
 
+    /**
+     * Returns the path elements.
+     *
+     * @return the path elements
+     */
     public List<PathElement> getPathElements() {
         return this.pathElements;
     }
 
     /**
      * Looks up the value of this path against a set of aggregation results.
+     *
+     * @param aggregations the aggregations
+     * @return the value
      */
     public double resolveValue(InternalAggregations aggregations) {
         try {

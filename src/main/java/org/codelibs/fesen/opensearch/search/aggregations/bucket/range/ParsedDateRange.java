@@ -46,6 +46,11 @@ import java.time.ZonedDateTime;
  * @opensearch.internal
  */
 public class ParsedDateRange extends ParsedRange {
+    /**
+     * Creates a new ParsedDateRange.
+     */
+    public ParsedDateRange() {
+    }
 
     @Override
     public String getType() {
@@ -65,6 +70,14 @@ public class ParsedDateRange extends ParsedRange {
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedDateRange fromXContent(XContentParser parser, String name) throws IOException {
         ParsedDateRange aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -77,6 +90,11 @@ public class ParsedDateRange extends ParsedRange {
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedRange.ParsedBucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         @Override
         public Object getFrom() {

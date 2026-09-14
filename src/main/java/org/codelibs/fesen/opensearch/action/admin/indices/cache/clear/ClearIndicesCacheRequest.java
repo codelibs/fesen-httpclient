@@ -55,22 +55,47 @@ public class ClearIndicesCacheRequest extends BroadcastRequest<ClearIndicesCache
     private boolean fileCache = false;
     private String[] fields = Strings.EMPTY_ARRAY;
 
+    /**
+     * Creates a new ClearIndicesCacheRequest.
+     *
+     * @param indices the indices
+     */
     public ClearIndicesCacheRequest(String... indices) {
         super(indices);
     }
 
+    /**
+     * Queries the cache.
+     *
+     * @return this instance
+     */
     public boolean queryCache() {
         return queryCache;
     }
 
+    /**
+     * Returns the request cache.
+     *
+     * @return the request cache
+     */
     public boolean requestCache() {
         return this.requestCache;
     }
 
+    /**
+     * Returns the field data cache.
+     *
+     * @return the field data cache
+     */
     public boolean fieldDataCache() {
         return this.fieldDataCache;
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public String[] fields() {
         return this.fields;
     }

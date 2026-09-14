@@ -18,7 +18,13 @@ import java.util.List;
  * class to help make memory usage calculations for the workload group
  */
 public class MemoryUsageCalculator extends ResourceUsageCalculator {
+    /**
+     * The HEAP_SIZE_BYTES constant.
+     */
     public static final long HEAP_SIZE_BYTES = JvmStats.jvmStats().getMem().getHeapMax().getBytes();
+    /**
+     * The INSTANCE constant.
+     */
     public static final MemoryUsageCalculator INSTANCE = new MemoryUsageCalculator();
 
     private MemoryUsageCalculator() {}

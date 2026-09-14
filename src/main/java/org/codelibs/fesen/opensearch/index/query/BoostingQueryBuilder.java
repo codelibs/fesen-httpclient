@@ -59,6 +59,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "boosting";
 
     private static final ParseField POSITIVE_FIELD = new ParseField("positive");
@@ -90,6 +93,9 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public BoostingQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -107,6 +113,8 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
 
     /**
      * Get the positive query for this boosting query.
+     *
+     * @return the positive query
      */
     public QueryBuilder positiveQuery() {
         return this.positiveQuery;
@@ -114,6 +122,8 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
 
     /**
      * Get the negative query for this boosting query.
+     *
+     * @return the negative query
      */
     public QueryBuilder negativeQuery() {
         return this.negativeQuery;
@@ -121,6 +131,9 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
 
     /**
      * Set the negative boost factor.
+     *
+     * @param negativeBoost the negative boost
+     * @return the negative boost
      */
     public BoostingQueryBuilder negativeBoost(float negativeBoost) {
         if (negativeBoost < 0) {
@@ -132,6 +145,8 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
 
     /**
      * Get the negative boost factor.
+     *
+     * @return the negative boost
      */
     public float negativeBoost() {
         return this.negativeBoost;
@@ -149,6 +164,13 @@ public class BoostingQueryBuilder extends AbstractQueryBuilder<BoostingQueryBuil
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static BoostingQueryBuilder fromXContent(XContentParser parser) throws IOException {
         QueryBuilder positiveQuery = null;
         boolean positiveQueryFound = false;

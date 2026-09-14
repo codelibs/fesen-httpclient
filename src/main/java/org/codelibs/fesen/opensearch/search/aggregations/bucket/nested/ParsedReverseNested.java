@@ -42,12 +42,25 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedReverseNested extends ParsedSingleBucketAggregation implements ReverseNested {
+    /**
+     * Creates a new ParsedReverseNested.
+     */
+    public ParsedReverseNested() {
+    }
 
     @Override
     public String getType() {
         return ReverseNestedAggregationBuilder.NAME;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedReverseNested fromXContent(XContentParser parser, final String name) throws IOException {
         return parseXContent(parser, new ParsedReverseNested(), name);
     }

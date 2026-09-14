@@ -65,15 +65,27 @@ public enum PercentilesMethod implements Writeable {
         }
     };
 
+    /**
+     * The COMPRESSION_FIELD constant.
+     */
     public static final ParseField COMPRESSION_FIELD = new ParseField("compression");
+    /**
+     * The NUMBER_SIGNIFICANT_DIGITS_FIELD constant.
+     */
     public static final ParseField NUMBER_SIGNIFICANT_DIGITS_FIELD = new ParseField("number_of_significant_value_digits");
 
+    /**
+     * The TDIGEST_PARSER constant.
+     */
     public static final ObjectParser<PercentilesConfig.TDigest, String> TDIGEST_PARSER;
     static {
         TDIGEST_PARSER = new ObjectParser<>(PercentilesMethod.TDIGEST.getParseField().getPreferredName(), PercentilesConfig.TDigest::new);
         TDIGEST_PARSER.declareDouble(PercentilesConfig.TDigest::setCompression, COMPRESSION_FIELD);
     }
 
+    /**
+     * The HDR_PARSER constant.
+     */
     public static final ObjectParser<PercentilesConfig.Hdr, String> HDR_PARSER;
     static {
         HDR_PARSER = new ObjectParser<>(PercentilesMethod.HDR.getParseField().getPreferredName(), PercentilesConfig.Hdr::new);
@@ -89,12 +101,21 @@ public enum PercentilesMethod implements Writeable {
     abstract PercentilesConfig configFromStream(StreamInput in) throws IOException;
 
     /**
+     * Returns the parse field.
+     *
      * @return the name of the method
      */
     public ParseField getParseField() {
         return parseField;
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static PercentilesMethod readFromStream(StreamInput in) throws IOException {
         return in.readEnum(PercentilesMethod.class);
     }

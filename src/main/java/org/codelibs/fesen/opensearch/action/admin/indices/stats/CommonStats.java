@@ -72,58 +72,114 @@ import java.util.stream.Stream;
 @PublicApi(since = "1.0.0")
 public class CommonStats implements Writeable, ToXContentFragment {
 
+    /**
+     * The docs.
+     */
     @Nullable
     public DocsStats docs;
 
+    /**
+     * The store.
+     */
     @Nullable
     public StoreStats store;
 
+    /**
+     * The indexing.
+     */
     @Nullable
     public IndexingStats indexing;
 
+    /**
+     * The get.
+     */
     @Nullable
     public GetStats get;
 
+    /**
+     * The search.
+     */
     @Nullable
     public SearchStats search;
 
+    /**
+     * The merge.
+     */
     @Nullable
     public MergeStats merge;
 
+    /**
+     * The refresh.
+     */
     @Nullable
     public RefreshStats refresh;
 
+    /**
+     * The flush.
+     */
     @Nullable
     public FlushStats flush;
 
+    /**
+     * The warmer.
+     */
     @Nullable
     public WarmerStats warmer;
 
+    /**
+     * The query cache.
+     */
     @Nullable
     public QueryCacheStats queryCache;
 
+    /**
+     * The field data.
+     */
     @Nullable
     public FieldDataStats fieldData;
 
+    /**
+     * The completion.
+     */
     @Nullable
     public CompletionStats completion;
 
+    /**
+     * The segments.
+     */
     @Nullable
     public SegmentsStats segments;
 
+    /**
+     * The translog.
+     */
     @Nullable
     public TranslogStats translog;
 
+    /**
+     * The request cache.
+     */
     @Nullable
     public RequestCacheStats requestCache;
 
+    /**
+     * The recovery stats.
+     */
     @Nullable
     public RecoveryStats recoveryStats;
 
+    /**
+     * Creates a new CommonStats.
+     */
     public CommonStats() {
         this(CommonStatsFlags.NONE);
     }
 
+    /**
+     * Creates a new CommonStats.
+     *
+     * @param flags the flags
+     */
     public CommonStats(CommonStatsFlags flags) {
         CommonStatsFlags.Flag[] setFlags = flags.getFlags();
 
@@ -183,6 +239,12 @@ public class CommonStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Creates a new CommonStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CommonStats(StreamInput in) throws IOException {
         docs = in.readOptionalWriteable(DocsStats::new);
         store = in.readOptionalWriteable(StoreStats::new);
@@ -222,6 +284,11 @@ public class CommonStats implements Writeable, ToXContentFragment {
         out.writeOptionalWriteable(recoveryStats);
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param stats the stats
+     */
     public void add(CommonStats stats) {
         if (docs == null) {
             if (stats.getDocs() != null) {
@@ -354,81 +421,161 @@ public class CommonStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Returns the docs.
+     *
+     * @return the docs
+     */
     @Nullable
     public DocsStats getDocs() {
         return this.docs;
     }
 
+    /**
+     * Returns the store.
+     *
+     * @return the store
+     */
     @Nullable
     public StoreStats getStore() {
         return store;
     }
 
+    /**
+     * Returns the indexing.
+     *
+     * @return the indexing
+     */
     @Nullable
     public IndexingStats getIndexing() {
         return indexing;
     }
 
+    /**
+     * Returns the get.
+     *
+     * @return the get
+     */
     @Nullable
     public GetStats getGet() {
         return get;
     }
 
+    /**
+     * Returns the search.
+     *
+     * @return the search
+     */
     @Nullable
     public SearchStats getSearch() {
         return search;
     }
 
+    /**
+     * Returns the merge.
+     *
+     * @return the merge
+     */
     @Nullable
     public MergeStats getMerge() {
         return merge;
     }
 
+    /**
+     * Returns the refresh.
+     *
+     * @return the refresh
+     */
     @Nullable
     public RefreshStats getRefresh() {
         return refresh;
     }
 
+    /**
+     * Returns the flush.
+     *
+     * @return the flush
+     */
     @Nullable
     public FlushStats getFlush() {
         return flush;
     }
 
+    /**
+     * Returns the warmer.
+     *
+     * @return the warmer
+     */
     @Nullable
     public WarmerStats getWarmer() {
         return this.warmer;
     }
 
+    /**
+     * Returns the query cache.
+     *
+     * @return the query cache
+     */
     @Nullable
     public QueryCacheStats getQueryCache() {
         return this.queryCache;
     }
 
+    /**
+     * Returns the field data.
+     *
+     * @return the field data
+     */
     @Nullable
     public FieldDataStats getFieldData() {
         return this.fieldData;
     }
 
+    /**
+     * Returns the completion.
+     *
+     * @return the completion
+     */
     @Nullable
     public CompletionStats getCompletion() {
         return completion;
     }
 
+    /**
+     * Returns the segments.
+     *
+     * @return the segments
+     */
     @Nullable
     public SegmentsStats getSegments() {
         return segments;
     }
 
+    /**
+     * Returns the translog.
+     *
+     * @return the translog
+     */
     @Nullable
     public TranslogStats getTranslog() {
         return translog;
     }
 
+    /**
+     * Returns the request cache.
+     *
+     * @return the request cache
+     */
     @Nullable
     public RequestCacheStats getRequestCache() {
         return requestCache;
     }
 
+    /**
+     * Returns the recovery stats.
+     *
+     * @return the recovery stats
+     */
     @Nullable
     public RecoveryStats getRecoveryStats() {
         return recoveryStats;

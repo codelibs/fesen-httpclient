@@ -47,6 +47,12 @@ public class ClearIndicesCacheRequestBuilder extends BroadcastOperationRequestBu
     ClearIndicesCacheResponse,
     ClearIndicesCacheRequestBuilder> {
 
+    /**
+     * Creates a new ClearIndicesCacheRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ClearIndicesCacheRequestBuilder(OpenSearchClient client, ClearIndicesCacheAction action) {
         super(client, action, new ClearIndicesCacheRequest());
     }

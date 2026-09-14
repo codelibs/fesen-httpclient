@@ -30,6 +30,11 @@ public class WeightedRoutingStats implements ToXContentFragment, Writeable {
 
     private static final WeightedRoutingStats INSTANCE = new WeightedRoutingStats();
 
+    /**
+     * Returns the instance.
+     *
+     * @return the instance
+     */
     public static WeightedRoutingStats getInstance() {
         return INSTANCE;
     }
@@ -38,10 +43,19 @@ public class WeightedRoutingStats implements ToXContentFragment, Writeable {
         failOpenCount = new AtomicInteger(0);
     }
 
+    /**
+     * Creates a new WeightedRoutingStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public WeightedRoutingStats(StreamInput in) throws IOException {
         failOpenCount = new AtomicInteger(in.readInt());
     }
 
+    /**
+     * Updates the fail open count.
+     */
     public void updateFailOpenCount() {
         failOpenCount.getAndIncrement();
     }
@@ -56,6 +70,11 @@ public class WeightedRoutingStats implements ToXContentFragment, Writeable {
         return builder;
     }
 
+    /**
+     * Returns the fail open count.
+     *
+     * @return the fail open count
+     */
     public int getFailOpenCount() {
         return failOpenCount.get();
     }
@@ -78,6 +97,9 @@ public class WeightedRoutingStats implements ToXContentFragment, Writeable {
         return Objects.hash(failOpenCount);
     }
 
+    /**
+     * Resets the fail open count.
+     */
     public void resetFailOpenCount() {
         failOpenCount.set(0);
     }

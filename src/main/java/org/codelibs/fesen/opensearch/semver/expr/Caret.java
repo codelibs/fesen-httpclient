@@ -14,6 +14,11 @@ import org.codelibs.fesen.opensearch.Version;
  * Expression to evaluate version compatibility allowing for minor and patch version variability.
  */
 public class Caret implements Expression {
+    /**
+     * Creates a new Caret.
+     */
+    public Caret() {
+    }
 
     /**
      * Checks if the given version is compatible with the range version allowing for minor and

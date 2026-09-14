@@ -57,6 +57,8 @@ public final class DiffableUtils {
 
     /**
      * Returns a map key serializer for String keys
+     *
+     * @return the string key serializer
      */
     public static KeySerializer<String> getStringKeySerializer() {
         return StringKeySerializer.INSTANCE;
@@ -64,6 +66,8 @@ public final class DiffableUtils {
 
     /**
      * Returns a map key serializer for Integer keys. Encodes as VInt.
+     *
+     * @return the v int key serializer
      */
     public static KeySerializer<Integer> getVIntKeySerializer() {
         return VIntKeySerializer.INSTANCE;
@@ -71,6 +75,13 @@ public final class DiffableUtils {
 
     /**
      * Calculates diff between two Maps of Diffable objects.
+     *
+     * @param <K> the key type
+     * @param <T> the element type
+     * @param before the before
+     * @param after the after
+     * @param keySerializer the key serializer
+     * @return the diff
      */
     public static <K, T extends Diffable<T>> MapDiff<K, T, Map<K, T>> diff(
         Map<K, T> before,
@@ -83,6 +94,14 @@ public final class DiffableUtils {
 
     /**
      * Calculates diff between two Maps of non-diffable objects
+     *
+     * @param <K> the key type
+     * @param <T> the element type
+     * @param before the before
+     * @param after the after
+     * @param keySerializer the key serializer
+     * @param valueSerializer the value serializer
+     * @return the diff
      */
     public static <K, T> MapDiff<K, T, Map<K, T>> diff(
         Map<K, T> before,
@@ -96,6 +115,14 @@ public final class DiffableUtils {
 
     /**
      * Loads an object that represents difference between two Maps of Diffable objects
+     *
+     * @param <K> the key type
+     * @param <T> the element type
+     * @param in the input to read from
+     * @param keySerializer the key serializer
+     * @param valueSerializer the value serializer
+     * @return the jdk map diff
+     * @throws IOException if an I/O error occurs
      */
     public static <K, T> MapDiff<K, T, Map<K, T>> readJdkMapDiff(
         StreamInput in,
@@ -107,6 +134,15 @@ public final class DiffableUtils {
 
     /**
      * Loads an object that represents difference between two Maps of Diffable objects using Diffable proto object
+     *
+     * @param <K> the key type
+     * @param <T> the element type
+     * @param in the input to read from
+     * @param keySerializer the key serializer
+     * @param reader the reader
+     * @param diffReader the diff reader
+     * @return the jdk map diff
+     * @throws IOException if an I/O error occurs
      */
     public static <K, T extends Diffable<T>> MapDiff<K, T, Map<K, T>> readJdkMapDiff(
         StreamInput in,
@@ -186,12 +222,33 @@ public final class DiffableUtils {
      */
     public abstract static class MapDiff<K, T, M> implements Diff<M> {
 
+        /**
+         * The deletes.
+         */
         protected final List<K> deletes;
+        /**
+         * The diffs.
+         */
         protected final Map<K, Diff<T>> diffs; // incremental updates
+        /**
+         * The upserts.
+         */
         protected final Map<K, T> upserts; // additions or full updates
+        /**
+         * The key serializer.
+         */
         protected final KeySerializer<K> keySerializer;
+        /**
+         * The value serializer.
+         */
         protected final ValueSerializer<K, T> valueSerializer;
 
+        /**
+         * Creates a new MapDiff.
+         *
+         * @param keySerializer the key serializer
+         * @param valueSerializer the value serializer
+         */
         protected MapDiff(KeySerializer<K> keySerializer, ValueSerializer<K, T> valueSerializer) {
             this.keySerializer = keySerializer;
             this.valueSerializer = valueSerializer;
@@ -200,6 +257,15 @@ public final class DiffableUtils {
             upserts = new HashMap<>();
         }
 
+        /**
+         * Creates a new MapDiff.
+         *
+         * @param keySerializer the key serializer
+         * @param valueSerializer the value serializer
+         * @param deletes the deletes
+         * @param diffs the diffs
+         * @param upserts the upserts
+         */
         protected MapDiff(
             KeySerializer<K> keySerializer,
             ValueSerializer<K, T> valueSerializer,
@@ -214,6 +280,14 @@ public final class DiffableUtils {
             this.upserts = upserts;
         }
 
+        /**
+         * Creates a new MapDiff by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @param keySerializer the key serializer
+         * @param valueSerializer the value serializer
+         * @throws IOException if an I/O error occurs
+         */
         protected MapDiff(StreamInput in, KeySerializer<K> keySerializer, ValueSerializer<K, T> valueSerializer) throws IOException {
             this.keySerializer = keySerializer;
             this.valueSerializer = valueSerializer;
@@ -318,8 +392,22 @@ public final class DiffableUtils {
      * @opensearch.internal
      */
     public interface KeySerializer<K> {
+        /**
+         * Writes the key.
+         *
+         * @param key the key
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
+         */
         void writeKey(K key, StreamOutput out) throws IOException;
 
+        /**
+         * Reads the key.
+         *
+         * @param in the input to read from
+         * @return the key
+         * @throws IOException if an I/O error occurs
+         */
         K readKey(StreamInput in) throws IOException;
     }
 
@@ -401,21 +489,36 @@ public final class DiffableUtils {
 
         /**
          * Writes value to stream
+         *
+         * @param value the value
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
          */
         void write(V value, StreamOutput out) throws IOException;
 
         /**
          * Reads value from stream. Reading operation can be made dependent on map key.
+         *
+         * @param in the input to read from
+         * @param key the key
+         * @return this instance
+         * @throws IOException if an I/O error occurs
          */
         V read(StreamInput in, K key) throws IOException;
 
         /**
          * Whether this serializer supports diffable values
+         *
+         * @return the supports diffable values
          */
         boolean supportsDiffableValues();
 
         /**
          * Whether this serializer supports the version of the output stream
+         *
+         * @param value the value
+         * @param version the version
+         * @return the supports version
          */
         default boolean supportsVersion(Diff<V> value, Version version) {
             return true;
@@ -423,6 +526,10 @@ public final class DiffableUtils {
 
         /**
          * Whether this serializer supports the version of the output stream
+         *
+         * @param value the value
+         * @param version the version
+         * @return the supports version
          */
         default boolean supportsVersion(V value, Version version) {
             return true;
@@ -430,17 +537,30 @@ public final class DiffableUtils {
 
         /**
          * Computes diff if this serializer supports diffable values
+         *
+         * @param value the value
+         * @param beforePart the before part
+         * @return the diff
          */
         Diff<V> diff(V value, V beforePart);
 
         /**
          * Writes value as diff to stream if this serializer supports diffable values
+         *
+         * @param value the value
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
          */
         void writeDiff(Diff<V> value, StreamOutput out) throws IOException;
 
         /**
          * Reads value as diff from stream if this serializer supports diffable values.
          * Reading operation can be made dependent on map key.
+         *
+         * @param in the input to read from
+         * @param key the key
+         * @return the diff
+         * @throws IOException if an I/O error occurs
          */
         Diff<V> readDiff(StreamInput in, K key) throws IOException;
     }
@@ -454,6 +574,12 @@ public final class DiffableUtils {
      * @opensearch.internal
      */
     public abstract static class DiffableValueSerializer<K, V extends Diffable<V>> implements ValueSerializer<K, V> {
+        /**
+         * Creates a new DiffableValueSerializer.
+         */
+        public DiffableValueSerializer() {
+        }
+
         private static final DiffableValueSerializer WRITE_ONLY_INSTANCE = new DiffableValueSerializer() {
             @Override
             public Object read(StreamInput in, Object key) throws IOException {
@@ -499,6 +625,12 @@ public final class DiffableUtils {
      * @opensearch.internal
      */
     public abstract static class NonDiffableValueSerializer<K, V> implements ValueSerializer<K, V> {
+        /**
+         * Creates a new NonDiffableValueSerializer.
+         */
+        public NonDiffableValueSerializer() {
+        }
+
         private static final NonDiffableValueSerializer ABSTRACT_INSTANCE = new NonDiffableValueSerializer<>() {
             @Override
             public void write(Object value, StreamOutput out) {
@@ -537,12 +669,20 @@ public final class DiffableUtils {
      * <p>
      * Note: this implementation is ignoring the key.
      *
+     * @param <K> the key type
+     * @param <V> the value type
      * @opensearch.internal
      */
     public static class DiffableValueReader<K, V extends Diffable<V>> extends DiffableValueSerializer<K, V> {
         private final Reader<V> reader;
         private final Reader<Diff<V>> diffReader;
 
+        /**
+         * Creates a new DiffableValueReader.
+         *
+         * @param reader the reader
+         * @param diffReader the diff reader
+         */
         public DiffableValueReader(Reader<V> reader, Reader<Diff<V>> diffReader) {
             this.reader = reader;
             this.diffReader = diffReader;
@@ -567,8 +707,20 @@ public final class DiffableUtils {
      * @opensearch.internal
      */
     public static class StringSetValueSerializer<K> extends NonDiffableValueSerializer<K, Set<String>> {
+        /**
+         * Creates a new StringSetValueSerializer.
+         */
+        public StringSetValueSerializer() {
+        }
+
         private static final StringSetValueSerializer INSTANCE = new StringSetValueSerializer();
 
+        /**
+         * Returns the instance.
+         *
+         * @param <K> the key type
+         * @return the instance
+         */
         public static <K> StringSetValueSerializer<K> getInstance() {
             return INSTANCE;
         }

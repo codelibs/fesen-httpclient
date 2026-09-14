@@ -46,16 +46,34 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class GetFieldMappingsRequestBuilder extends ActionRequestBuilder<GetFieldMappingsRequest, GetFieldMappingsResponse> {
 
+    /**
+     * Creates a new GetFieldMappingsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public GetFieldMappingsRequestBuilder(OpenSearchClient client, GetFieldMappingsAction action, String... indices) {
         super(client, action, new GetFieldMappingsRequest().indices(indices));
     }
 
+    /**
+     * Sets the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     public GetFieldMappingsRequestBuilder setIndices(String... indices) {
         request.indices(indices);
         return this;
     }
 
-    /** Sets the fields to retrieve. */
+    /**
+     * Sets the fields to retrieve.
+     *
+     * @param fields the fields
+     * @return this instance
+     */
     public GetFieldMappingsRequestBuilder setFields(String... fields) {
         request.fields(fields);
         return this;

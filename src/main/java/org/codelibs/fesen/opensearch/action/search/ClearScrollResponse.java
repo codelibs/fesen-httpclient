@@ -74,11 +74,23 @@ public class ClearScrollResponse extends ActionResponse implements StatusToXCont
     private final boolean succeeded;
     private final int numFreed;
 
+    /**
+     * Creates a new ClearScrollResponse.
+     *
+     * @param succeeded the succeeded
+     * @param numFreed the num freed
+     */
     public ClearScrollResponse(boolean succeeded, int numFreed) {
         this.succeeded = succeeded;
         this.numFreed = numFreed;
     }
 
+    /**
+     * Creates a new ClearScrollResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClearScrollResponse(StreamInput in) throws IOException {
         super(in);
         succeeded = in.readBoolean();
@@ -86,6 +98,8 @@ public class ClearScrollResponse extends ActionResponse implements StatusToXCont
     }
 
     /**
+     * Returns the succeeded flag.
+     *
      * @return Whether the attempt to clear a scroll was successful.
      */
     public boolean isSucceeded() {
@@ -108,6 +122,10 @@ public class ClearScrollResponse extends ActionResponse implements StatusToXCont
 
     /**
      * Parse the clear scroll response body into a new {@link ClearScrollResponse} object
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static ClearScrollResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.apply(parser, null);

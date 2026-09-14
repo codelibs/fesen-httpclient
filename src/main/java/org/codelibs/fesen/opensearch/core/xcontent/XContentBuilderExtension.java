@@ -89,6 +89,8 @@ public interface XContentBuilderExtension {
      *     transformers.put(Date.class, d -> datePrinter.print(((Date) d).getTime()));
      * }
      * </pre>
+     *
+     * @return the date transformers
      */
     Map<Class<?>, Function<Object, Object>> getDateTransformers();
 }

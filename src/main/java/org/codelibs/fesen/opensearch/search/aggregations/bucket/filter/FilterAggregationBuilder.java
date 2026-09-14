@@ -55,11 +55,16 @@ import static org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder.par
  * @opensearch.internal
  */
 public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "filter";
 
     private final QueryBuilder filter;
 
     /**
+     * Creates a new FilterAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param filter
@@ -75,6 +80,13 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
         this.filter = filter;
     }
 
+    /**
+     * Creates a new FilterAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected FilterAggregationBuilder(
         FilterAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -116,6 +128,14 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param parser the parser
+     * @param aggregationName the aggregation name
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static FilterAggregationBuilder parse(XContentParser parser, String aggregationName) throws IOException {
         QueryBuilder filter = parseInnerQueryBuilder(parser);
         return new FilterAggregationBuilder(aggregationName, filter);
@@ -140,6 +160,11 @@ public class FilterAggregationBuilder extends AbstractAggregationBuilder<FilterA
         return NAME;
     }
 
+    /**
+     * Returns the filter.
+     *
+     * @return the filter
+     */
     public QueryBuilder getFilter() {
         return filter;
     }

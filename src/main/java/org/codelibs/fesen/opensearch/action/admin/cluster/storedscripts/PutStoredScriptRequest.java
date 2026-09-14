@@ -66,6 +66,9 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
     private MediaType mediaType;
     private StoredScriptSource source;
 
+    /**
+     * Creates a new PutStoredScriptRequest.
+     */
     public PutStoredScriptRequest() {
         super();
     }
@@ -87,25 +90,50 @@ public class PutStoredScriptRequest extends AcknowledgedRequest<PutStoredScriptR
         return validationException;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @param id the identifier
+     * @return the identifier
+     */
     public PutStoredScriptRequest id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Returns the content.
+     *
+     * @return the content
+     */
     public BytesReference content() {
         return content;
     }
 
+    /**
+     * Returns the media type.
+     *
+     * @return the media type
+     */
     public MediaType mediaType() {
         return mediaType;
     }
 
     /**
      * Set the script source and the content type of the bytes.
+     *
+     * @param content the content
+     * @param mediaType the media type
+     * @return the content
      */
     public PutStoredScriptRequest content(BytesReference content, MediaType mediaType) {
         this.content = content;

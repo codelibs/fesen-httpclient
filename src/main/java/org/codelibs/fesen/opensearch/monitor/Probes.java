@@ -44,9 +44,22 @@ import java.lang.reflect.Method;
  * @opensearch.internal
  */
 public class Probes {
+    /**
+     * Creates a new Probes.
+     */
+    public Probes() {
+    }
+
     private static final Logger logger = LogManager.getLogger(Probes.class);
     private static volatile boolean shouldLogException = true;
 
+    /**
+     * Returns the load and scale to percent.
+     *
+     * @param method the method
+     * @param osMxBean the OS mx bean
+     * @return the load and scale to percent
+     */
     public static short getLoadAndScaleToPercent(Method method, OperatingSystemMXBean osMxBean) {
         if (method != null) {
             try {

@@ -52,6 +52,9 @@ import java.util.Objects;
  */
 public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPipelineAggregationBuilder<
     PercentilesBucketPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "percentiles_bucket";
     static final ParseField PERCENTS_FIELD = new ParseField("percents");
     static final ParseField KEYED_FIELD = new ParseField("keyed");
@@ -59,6 +62,12 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
     private double[] percents = new double[] { 1.0, 5.0, 25.0, 50.0, 75.0, 95.0, 99.0 };
     private boolean keyed = true;
 
+    /**
+     * Creates a new PercentilesBucketPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public PercentilesBucketPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -71,6 +80,8 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
 
     /**
      * Get the percentages to calculate percentiles for in this aggregation
+     *
+     * @return the percents
      */
     public double[] getPercents() {
         return percents;
@@ -78,6 +89,9 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
 
     /**
      * Set the percentages to calculate percentiles for in this aggregation
+     *
+     * @param percents the percents
+     * @return this instance
      */
     public PercentilesBucketPipelineAggregationBuilder setPercents(double[] percents) {
         if (percents == null) {
@@ -96,6 +110,9 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
 
     /**
      * Set whether the XContent should be keyed
+     *
+     * @param keyed the keyed
+     * @return this instance
      */
     public PercentilesBucketPipelineAggregationBuilder setKeyed(boolean keyed) {
         this.keyed = keyed;
@@ -104,6 +121,8 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
 
     /**
      * Get whether the XContent should be keyed
+     *
+     * @return the keyed
      */
     public boolean getKeyed() {
         return keyed;
@@ -131,6 +150,9 @@ public class PercentilesBucketPipelineAggregationBuilder extends BucketMetricsPi
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final PipelineAggregator.Parser PARSER = new BucketMetricsParser() {
 
         @Override

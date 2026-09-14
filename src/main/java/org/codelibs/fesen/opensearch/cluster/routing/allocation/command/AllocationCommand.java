@@ -63,6 +63,8 @@ public interface AllocationCommand extends NamedWriteable, ToXContentObject {
     /**
      * Returns any feedback the command wants to provide for logging. This message should be appropriate to expose to the user after the
      * command has been applied
+     *
+     * @return the message
      */
     default Optional<String> getMessage() {
         return Optional.empty();

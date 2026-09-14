@@ -41,6 +41,15 @@ public class AggregateFileCacheStats implements Writeable, ToXContentFragment {
     private final FileCacheStats blockFileCacheStats;
     private final FileCacheStats pinnedFileCacheStats;
 
+    /**
+     * Creates a new AggregateFileCacheStats.
+     *
+     * @param timestamp the timestamp
+     * @param overallFileCacheStats the overall file cache stats
+     * @param fullFileCacheStats the full file cache stats
+     * @param blockFileCacheStats the block file cache stats
+     * @param pinnedFileCacheStats the pinned file cache stats
+     */
     public AggregateFileCacheStats(
         final long timestamp,
         final FileCacheStats overallFileCacheStats,
@@ -55,6 +64,12 @@ public class AggregateFileCacheStats implements Writeable, ToXContentFragment {
         this.pinnedFileCacheStats = pinnedFileCacheStats;
     }
 
+    /**
+     * Creates a new AggregateFileCacheStats.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public AggregateFileCacheStats(final StreamInput in) throws IOException {
         this.timestamp = in.readLong();
         this.overallFileCacheStats = new FileCacheStats(in);
@@ -63,6 +78,13 @@ public class AggregateFileCacheStats implements Writeable, ToXContentFragment {
         this.pinnedFileCacheStats = new FileCacheStats(in);
     }
 
+    /**
+     * Calculates the percentage.
+     *
+     * @param used the used
+     * @param max the max
+     * @return the percentage
+     */
     public static short calculatePercentage(long used, long max) {
         return max <= 0 ? 0 : (short) (Math.round((100d * used) / max));
     }
@@ -76,63 +98,138 @@ public class AggregateFileCacheStats implements Writeable, ToXContentFragment {
         pinnedFileCacheStats.writeTo(out);
     }
 
+    /**
+     * Returns the timestamp.
+     *
+     * @return the timestamp
+     */
     public long getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Returns the total.
+     *
+     * @return the total
+     */
     public ByteSizeValue getTotal() {
         return new ByteSizeValue(overallFileCacheStats.getTotal());
     }
 
+    /**
+     * Returns the active.
+     *
+     * @return the active
+     */
     public ByteSizeValue getActive() {
         return new ByteSizeValue(overallFileCacheStats.getActive());
     }
 
+    /**
+     * Returns the active percent.
+     *
+     * @return the active percent
+     */
     public short getActivePercent() {
         return calculatePercentage(overallFileCacheStats.getActive(), overallFileCacheStats.getUsed());
     }
 
+    /**
+     * Returns the used.
+     *
+     * @return the used
+     */
     public ByteSizeValue getUsed() {
         return new ByteSizeValue(overallFileCacheStats.getUsed());
     }
 
+    /**
+     * Returns the pinned usage.
+     *
+     * @return the pinned usage
+     */
     public ByteSizeValue getPinnedUsage() {
         return new ByteSizeValue(overallFileCacheStats.getPinnedUsage());
     }
 
+    /**
+     * Returns the used percent.
+     *
+     * @return the used percent
+     */
     public short getUsedPercent() {
         return calculatePercentage(getUsed().getBytes(), getTotal().getBytes());
     }
 
+    /**
+     * Returns the evicted.
+     *
+     * @return the evicted
+     */
     public ByteSizeValue getEvicted() {
         return new ByteSizeValue(overallFileCacheStats.getEvicted());
     }
 
+    /**
+     * Returns the removed.
+     *
+     * @return the removed
+     */
     public ByteSizeValue getRemoved() {
         return new ByteSizeValue(overallFileCacheStats.getRemoved());
     }
 
+    /**
+     * Returns the cache hits.
+     *
+     * @return the cache hits
+     */
     public long getCacheHits() {
         return overallFileCacheStats.getCacheHits();
     }
 
+    /**
+     * Returns the cache misses.
+     *
+     * @return the cache misses
+     */
     public long getCacheMisses() {
         return overallFileCacheStats.getCacheMisses();
     }
 
     // visible for testing.
+    /**
+     * Returns the block file cache stats.
+     *
+     * @return the block file cache stats
+     */
     public FileCacheStats getBlockFileCacheStats() {
         return blockFileCacheStats;
     }
 
+    /**
+     * Returns the overall file cache stats.
+     *
+     * @return the overall file cache stats
+     */
     public FileCacheStats getOverallFileCacheStats() {
         return overallFileCacheStats;
     }
 
+    /**
+     * Returns the full file cache stats.
+     *
+     * @return the full file cache stats
+     */
     public FileCacheStats getFullFileCacheStats() {
         return fullFileCacheStats;
     }
 
+    /**
+     * Returns the pinned file cache stats.
+     *
+     * @return the pinned file cache stats
+     */
     public FileCacheStats getPinnedFileCacheStats() {
         return pinnedFileCacheStats;
     }
@@ -187,9 +284,21 @@ public class AggregateFileCacheStats implements Writeable, ToXContentFragment {
      */
     @ExperimentalApi
     public enum FileCacheStatsType {
+        /**
+         * The FULL_FILE_STATS value.
+         */
         FULL_FILE_STATS("full_file_stats"),
+        /**
+         * The BLOCK_FILE_STATS value.
+         */
         BLOCK_FILE_STATS("block_file_stats"),
+        /**
+         * The OVER_ALL_STATS value.
+         */
         OVER_ALL_STATS("over_all_stats"),
+        /**
+         * The PINNED_FILE_STATS value.
+         */
         PINNED_FILE_STATS("pinned_file_stats");
 
         private final String fileCacheStatsType;
@@ -203,6 +312,12 @@ public class AggregateFileCacheStats implements Writeable, ToXContentFragment {
             return fileCacheStatsType;
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param fileCacheStatsType the file cache stats type
+         * @return the new string
+         */
         public static FileCacheStatsType fromString(String fileCacheStatsType) {
             return EnumSet.allOf(FileCacheStatsType.class)
                 .stream()

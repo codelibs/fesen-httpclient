@@ -105,10 +105,19 @@ public final class MatchQuery {
      */
     @PublicApi(since = "1.0.0")
     public enum ZeroTermsQuery implements Writeable {
+        /**
+         * The NONE value.
+         */
         NONE(0),
+        /**
+         * The ALL value.
+         */
         ALL(1),
         // this is used internally to make sure that query_string and simple_query_string
         // ignores query part that removes all tokens.
+        /**
+         * The NULL value.
+         */
         NULL(2);
 
         private final int ordinal;

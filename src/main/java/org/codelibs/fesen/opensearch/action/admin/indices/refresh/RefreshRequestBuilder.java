@@ -46,6 +46,12 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class RefreshRequestBuilder extends BroadcastOperationRequestBuilder<RefreshRequest, RefreshResponse, RefreshRequestBuilder> {
 
+    /**
+     * Creates a new RefreshRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public RefreshRequestBuilder(OpenSearchClient client, RefreshAction action) {
         super(client, action, new RefreshRequest());
     }

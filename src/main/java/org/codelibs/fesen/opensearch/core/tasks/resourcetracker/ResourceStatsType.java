@@ -18,6 +18,9 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 @PublicApi(since = "2.1.0")
 public enum ResourceStatsType {
     // resource stats of the worker thread reported directly from runnable.
+    /**
+     * The WORKER_STATS value.
+     */
     WORKER_STATS("worker_stats", false);
 
     private final String statsType;
@@ -28,6 +31,11 @@ public enum ResourceStatsType {
         this.onlyForAnalysis = onlyForAnalysis;
     }
 
+    /**
+     * Returns the only for analysis flag.
+     *
+     * @return the only for analysis flag
+     */
     public boolean isOnlyForAnalysis() {
         return onlyForAnalysis;
     }

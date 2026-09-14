@@ -50,6 +50,12 @@ public final class ShardSearchContextId implements Writeable {
     private final String sessionId;
     private final long id;
 
+    /**
+     * Creates a new ShardSearchContextId.
+     *
+     * @param sessionId the session identifier
+     * @param id the identifier
+     */
     public ShardSearchContextId(String sessionId, long id) {
         this.sessionId = Objects.requireNonNull(sessionId);
         this.id = id;

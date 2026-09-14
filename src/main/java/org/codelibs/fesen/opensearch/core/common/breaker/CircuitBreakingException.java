@@ -53,6 +53,12 @@ public class CircuitBreakingException extends OpenSearchException {
     /** The {@link CircuitBreaker.Durability} of the circuit breaker */
     private final CircuitBreaker.Durability durability;
 
+    /**
+     * Creates a new CircuitBreakingException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CircuitBreakingException(StreamInput in) throws IOException {
         super(in);
         byteLimit = in.readLong();
@@ -60,6 +66,14 @@ public class CircuitBreakingException extends OpenSearchException {
         durability = in.readEnum(CircuitBreaker.Durability.class);
     }
 
+    /**
+     * Creates a new CircuitBreakingException.
+     *
+     * @param message the message
+     * @param bytesWanted the bytes wanted
+     * @param byteLimit the byte limit
+     * @param durability the durability
+     */
     public CircuitBreakingException(String message, long bytesWanted, long byteLimit, CircuitBreaker.Durability durability) {
         super(message);
         this.bytesWanted = bytesWanted;

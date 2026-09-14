@@ -50,6 +50,9 @@ public class ListTasksRequest extends BaseTasksRequest<ListTasksRequest> {
     private boolean detailed = false;
     private boolean waitForCompletion = false;
 
+    /**
+     * Creates a new ListTasksRequest.
+     */
     public ListTasksRequest() {}
 
     @Override
@@ -61,6 +64,8 @@ public class ListTasksRequest extends BaseTasksRequest<ListTasksRequest> {
 
     /**
      * Should the detailed task information be returned.
+     *
+     * @return the detailed
      */
     public boolean getDetailed() {
         return this.detailed;
@@ -68,6 +73,8 @@ public class ListTasksRequest extends BaseTasksRequest<ListTasksRequest> {
 
     /**
      * Should this request wait for all found tasks to complete?
+     *
+     * @return the wait for completion
      */
     public boolean getWaitForCompletion() {
         return waitForCompletion;

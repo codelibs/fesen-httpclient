@@ -76,6 +76,9 @@ public class IndexingStats implements Writeable, ToXContentFragment {
 
             final AtomicLong[] docStatusCounter;
 
+            /**
+             * Creates a new DocStatusStats.
+             */
             public DocStatusStats() {
                 docStatusCounter = new AtomicLong[5];
                 for (int i = 0; i < docStatusCounter.length; ++i) {
@@ -83,6 +86,12 @@ public class IndexingStats implements Writeable, ToXContentFragment {
                 }
             }
 
+            /**
+             * Creates a new DocStatusStats by reading it from the given input.
+             *
+             * @param in the input to read from
+             * @throws IOException if an I/O error occurs
+             */
             public DocStatusStats(StreamInput in) throws IOException {
                 docStatusCounter = in.readArray(i -> new AtomicLong(i.readLong()), AtomicLong[]::new);
 
@@ -164,6 +173,12 @@ public class IndexingStats implements Writeable, ToXContentFragment {
             this.maxLastIndexRequestTimestamp = builder.maxLastIndexRequestTimestamp;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             indexCount = in.readVLong();
             indexTimeInMillis = in.readVLong();
@@ -190,6 +205,18 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         /**
          * This constructor will be deprecated starting in version 3.4.0.
          * Use {@link Builder} instead.
+         *
+         * @param indexCount the index count
+         * @param indexTimeInMillis the index time in milliseconds
+         * @param indexCurrent the index current
+         * @param indexFailedCount the index failed count
+         * @param deleteCount the delete count
+         * @param deleteTimeInMillis the delete time in milliseconds
+         * @param deleteCurrent the delete current
+         * @param noopUpdateCount the noop update count
+         * @param isThrottled the is throttled
+         * @param throttleTimeInMillis the throttle time in milliseconds
+         * @param docStatusStats the doc status stats
          */
         @Deprecated(since = "3.4.0")
         public Stats(
@@ -224,6 +251,19 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         /**
          * This constructor will be deprecated starting in version 3.4.0.
          * Use {@link Builder} instead.
+         *
+         * @param indexCount the index count
+         * @param indexTimeInMillis the index time in milliseconds
+         * @param indexCurrent the index current
+         * @param indexFailedCount the index failed count
+         * @param deleteCount the delete count
+         * @param deleteTimeInMillis the delete time in milliseconds
+         * @param deleteCurrent the delete current
+         * @param noopUpdateCount the noop update count
+         * @param isThrottled the is throttled
+         * @param throttleTimeInMillis the throttle time in milliseconds
+         * @param docStatusStats the doc status stats
+         * @param maxLastIndexRequestTimestamp the max last index request timestamp
          */
         @Deprecated(since = "3.4.0")
         public Stats(
@@ -254,6 +294,11 @@ public class IndexingStats implements Writeable, ToXContentFragment {
             this.maxLastIndexRequestTimestamp = maxLastIndexRequestTimestamp;
         }
 
+        /**
+         * Adds this instance.
+         *
+         * @param stats the stats
+         */
         public void add(Stats stats) {
             indexCount += stats.indexCount;
             indexTimeInMillis += stats.indexTimeInMillis;
@@ -277,6 +322,8 @@ public class IndexingStats implements Writeable, ToXContentFragment {
 
         /**
          * The total amount of time spend on executing index operations.
+         *
+         * @return the index time
          */
         public TimeValue getIndexTime() {
             return new TimeValue(indexTimeInMillis);
@@ -284,6 +331,8 @@ public class IndexingStats implements Writeable, ToXContentFragment {
 
         /**
          * Gets the amount of time in a TimeValue that the index has been under merge throttling control
+         *
+         * @return the throttle time
          */
         public TimeValue getThrottleTime() {
             return new TimeValue(throttleTimeInMillis);
@@ -291,11 +340,18 @@ public class IndexingStats implements Writeable, ToXContentFragment {
 
         /**
          * The total amount of time spend on executing delete operations.
+         *
+         * @return the delete time
          */
         public TimeValue getDeleteTime() {
             return new TimeValue(deleteTimeInMillis);
         }
 
+        /**
+         * Returns the doc status stats.
+         *
+         * @return the doc status stats
+         */
         public DocStatusStats getDocStatusStats() {
             return docStatusStats;
         }
@@ -363,64 +419,139 @@ public class IndexingStats implements Writeable, ToXContentFragment {
             private DocStatusStats docStatusStats = null;
             private long maxLastIndexRequestTimestamp = 0;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Indexes the count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder indexCount(long count) {
                 this.indexCount = count;
                 return this;
             }
 
+            /**
+             * Indexes the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder indexTimeInMillis(long time) {
                 this.indexTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Indexes the current.
+             *
+             * @param current the current
+             * @return this instance
+             */
             public Builder indexCurrent(long current) {
                 this.indexCurrent = current;
                 return this;
             }
 
+            /**
+             * Indexes the failed count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder indexFailedCount(long count) {
                 this.indexFailedCount = count;
                 return this;
             }
 
+            /**
+             * Deletes the count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder deleteCount(long count) {
                 this.deleteCount = count;
                 return this;
             }
 
+            /**
+             * Deletes the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder deleteTimeInMillis(long time) {
                 this.deleteTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Deletes the current.
+             *
+             * @param current the current
+             * @return this instance
+             */
             public Builder deleteCurrent(long current) {
                 this.deleteCurrent = current;
                 return this;
             }
 
+            /**
+             * Returns the noop update count.
+             *
+             * @param count the count
+             * @return the noop update count
+             */
             public Builder noopUpdateCount(long count) {
                 this.noopUpdateCount = count;
                 return this;
             }
 
+            /**
+             * Throttles the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder throttleTimeInMillis(long time) {
                 this.throttleTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Returns the throttled flag.
+             *
+             * @param throttled the throttled
+             * @return the throttled flag
+             */
             public Builder isThrottled(boolean throttled) {
                 this.isThrottled = throttled;
                 return this;
             }
 
             // To be removed soon
+            /**
+             * Returns the doc status stats.
+             *
+             * @param stats the stats
+             * @return the doc status stats
+             */
             public Builder docStatusStats(DocStatusStats stats) {
                 this.docStatusStats = stats;
                 return this;
             }
 
+            /**
+             * Returns the max last index request timestamp.
+             *
+             * @param timestamp the timestamp
+             * @return the max last index request timestamp
+             */
             public Builder maxLastIndexRequestTimestamp(long timestamp) {
                 this.maxLastIndexRequestTimestamp = timestamp;
                 return this;
@@ -438,10 +569,19 @@ public class IndexingStats implements Writeable, ToXContentFragment {
 
     private final Stats totalStats;
 
+    /**
+     * Creates a new IndexingStats.
+     */
     public IndexingStats() {
         totalStats = new Stats();
     }
 
+    /**
+     * Creates a new IndexingStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IndexingStats(StreamInput in) throws IOException {
         totalStats = new Stats(in);
         if (in.getVersion().before(Version.V_2_0_0)) {
@@ -453,10 +593,20 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Creates a new IndexingStats.
+     *
+     * @param totalStats the total stats
+     */
     public IndexingStats(Stats totalStats) {
         this.totalStats = totalStats;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param indexingStats the indexing stats
+     */
     public void add(IndexingStats indexingStats) {
         if (indexingStats == null) {
             return;
@@ -464,6 +614,11 @@ public class IndexingStats implements Writeable, ToXContentFragment {
         addTotals(indexingStats);
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param indexingStats the indexing stats
+     */
     public void addTotals(IndexingStats indexingStats) {
         if (indexingStats == null) {
             return;

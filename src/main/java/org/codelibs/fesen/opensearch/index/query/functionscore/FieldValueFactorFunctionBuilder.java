@@ -51,8 +51,17 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldValueFactorFunctionBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "field_value_factor";
+    /**
+     * The DEFAULT_MODIFIER constant.
+     */
     public static final FieldValueFactorFunction.Modifier DEFAULT_MODIFIER = FieldValueFactorFunction.Modifier.NONE;
+    /**
+     * The DEFAULT_FACTOR constant.
+     */
     public static final float DEFAULT_FACTOR = 1;
 
     private final String field;
@@ -60,10 +69,21 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
     private Double missing;
     private FieldValueFactorFunction.Modifier modifier = DEFAULT_MODIFIER;
 
+    /**
+     * Creates a new FieldValueFactorFunctionBuilder.
+     *
+     * @param fieldName the field name
+     */
     public FieldValueFactorFunctionBuilder(String fieldName) {
         this(fieldName, null);
     }
 
+    /**
+     * Creates a new FieldValueFactorFunctionBuilder.
+     *
+     * @param fieldName the field name
+     * @param functionName the function name
+     */
     public FieldValueFactorFunctionBuilder(String fieldName, @Nullable String functionName) {
         if (fieldName == null) {
             throw new IllegalArgumentException("field_value_factor: field must not be null");
@@ -87,12 +107,21 @@ public class FieldValueFactorFunctionBuilder extends ScoreFunctionBuilder<FieldV
 
     /**
      * Value used instead of the field value for documents that don't have that field defined.
+     *
+     * @param missing the missing
+     * @return the missing
      */
     public FieldValueFactorFunctionBuilder missing(double missing) {
         this.missing = missing;
         return this;
     }
 
+    /**
+     * Returns the modifier.
+     *
+     * @param modifier the modifier
+     * @return the modifier
+     */
     public FieldValueFactorFunctionBuilder modifier(FieldValueFactorFunction.Modifier modifier) {
         if (modifier == null) {
             throw new IllegalArgumentException("field_value_factor: modifier must not be null");

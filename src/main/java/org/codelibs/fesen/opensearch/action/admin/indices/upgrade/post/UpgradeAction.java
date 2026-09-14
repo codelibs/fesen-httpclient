@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class UpgradeAction extends ActionType<UpgradeResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final UpgradeAction INSTANCE = new UpgradeAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/upgrade";
 
     private UpgradeAction() {

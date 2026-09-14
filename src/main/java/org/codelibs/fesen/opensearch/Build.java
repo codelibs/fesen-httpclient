@@ -61,15 +61,38 @@ public class Build {
      */
     public enum Type {
 
+        /**
+         * The DEB value.
+         */
         DEB("deb"),
+        /**
+         * The DOCKER value.
+         */
         DOCKER("docker"),
+        /**
+         * The RPM value.
+         */
         RPM("rpm"),
+        /**
+         * The TAR value.
+         */
         TAR("tar"),
+        /**
+         * The ZIP value.
+         */
         ZIP("zip"),
+        /**
+         * The UNKNOWN value.
+         */
         UNKNOWN("unknown");
 
         final String displayName;
 
+        /**
+         * Returns the display name.
+         *
+         * @return the display name
+         */
         public String displayName() {
             return displayName;
         }
@@ -78,6 +101,13 @@ public class Build {
             this.displayName = displayName;
         }
 
+        /**
+         * Creates an instance from display name.
+         *
+         * @param displayName the display name
+         * @param strict the strict
+         * @return the new display name
+         */
         public static Type fromDisplayName(final String displayName, final boolean strict) {
             switch (displayName) {
                 case "deb":
@@ -189,6 +219,16 @@ public class Build {
     private final String version;
     private final String distribution;
 
+    /**
+     * Creates a new Build.
+     *
+     * @param type the type
+     * @param hash the hash
+     * @param date the date
+     * @param isSnapshot the is snapshot
+     * @param version the version
+     * @param distribution the distribution
+     */
     public Build(final Type type, final String hash, final String date, boolean isSnapshot, String version, String distribution) {
         this.type = type;
         this.hash = hash;
@@ -198,10 +238,20 @@ public class Build {
         this.distribution = distribution;
     }
 
+    /**
+     * Returns the hash.
+     *
+     * @return the hash
+     */
     public String hash() {
         return hash;
     }
 
+    /**
+     * Returns the date.
+     *
+     * @return the date
+     */
     public String date() {
         return date;
     }
@@ -227,10 +277,20 @@ public class Build {
         return version;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public Type type() {
         return type;
     }
 
+    /**
+     * Returns the snapshot flag.
+     *
+     * @return the snapshot flag
+     */
     public boolean isSnapshot() {
         return isSnapshot;
     }

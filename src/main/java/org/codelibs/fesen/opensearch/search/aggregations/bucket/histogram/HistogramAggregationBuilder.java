@@ -58,6 +58,9 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<HistogramAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "histogram";
     private static final ObjectParser<double[], Void> EXTENDED_BOUNDS_PARSER = new ObjectParser<>(
         Histogram.EXTENDED_BOUNDS_FIELD.getPreferredName(),
@@ -68,6 +71,9 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         EXTENDED_BOUNDS_PARSER.declareDouble((bounds, d) -> bounds[1] = d, new ParseField("max"));
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<HistogramAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         HistogramAggregationBuilder::new
@@ -117,11 +123,22 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         return CoreValuesSourceType.NUMERIC;
     }
 
-    /** Create a new builder with the given name. */
+    /**
+     * Create a new builder with the given name.
+     *
+     * @param name the name
+     */
     public HistogramAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new HistogramAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected HistogramAggregationBuilder(
         HistogramAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -153,12 +170,21 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         out.writeOptionalWriteable(hardBounds);
     }
 
-    /** Get the current interval that is set on this builder. */
+    /**
+     * Get the current interval that is set on this builder.
+     *
+     * @return the interval
+     */
     public double interval() {
         return interval;
     }
 
-    /** Set the interval on this builder, and return the builder so that calls can be chained. */
+    /**
+     * Set the interval on this builder, and return the builder so that calls can be chained.
+     *
+     * @param interval the interval
+     * @return the interval
+     */
     public HistogramAggregationBuilder interval(double interval) {
         if (interval <= 0) {
             throw new IllegalArgumentException("[interval] must be >0 for histogram aggregation [" + name + "]");
@@ -167,27 +193,49 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         return this;
     }
 
-    /** Get the current offset that is set on this builder. */
+    /**
+     * Get the current offset that is set on this builder.
+     *
+     * @return the offset
+     */
     public double offset() {
         return offset;
     }
 
-    /** Set the offset on this builder, and return the builder so that calls can be chained. */
+    /**
+     * Set the offset on this builder, and return the builder so that calls can be chained.
+     *
+     * @param offset the offset
+     * @return the offset
+     */
     public HistogramAggregationBuilder offset(double offset) {
         this.offset = offset;
         return this;
     }
 
-    /** Get the current minimum bound that is set on this builder. */
+    /**
+     * Get the current minimum bound that is set on this builder.
+     *
+     * @return the min bound
+     */
     public double minBound() {
         return DoubleBounds.getEffectiveMin(extendedBounds);
     }
 
-    /** Get the current maximum bound that is set on this builder. */
+    /**
+     * Get the current maximum bound that is set on this builder.
+     *
+     * @return the max bound
+     */
     public double maxBound() {
         return DoubleBounds.getEffectiveMax(extendedBounds);
     }
 
+    /**
+     * Returns the extended bounds.
+     *
+     * @return the extended bounds
+     */
     protected DoubleBounds extendedBounds() {
         return extendedBounds;
     }
@@ -197,6 +245,9 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
      * {@code maxBound} will be created even if no documents fell into these
      * buckets.
      *
+     * @param minBound the min bound
+     * @param maxBound the max bound
+     * @return the extended bounds
      * @throws IllegalArgumentException
      *             if maxBound is less that minBound, or if either of the bounds
      *             are not finite.
@@ -210,6 +261,8 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
      * {@code maxBound} will be created even if no documents fell into these
      * buckets.
      *
+     * @param extendedBounds the extended bounds
+     * @return the extended bounds
      * @throws IllegalArgumentException
      *             if maxBound is less that minBound, or if either of the bounds
      *             are not finite.
@@ -224,6 +277,9 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     /**
      * Set hard bounds on this histogram, specifying boundaries outside which buckets cannot be created.
+     *
+     * @param hardBounds the hard bounds
+     * @return the hard bounds
      */
     public HistogramAggregationBuilder hardBounds(DoubleBounds hardBounds) {
         if (hardBounds == null) {
@@ -233,13 +289,21 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
         return this;
     }
 
-    /** Return the order to use to sort buckets of this histogram. */
+    /**
+     * Return the order to use to sort buckets of this histogram.
+     *
+     * @return the order
+     */
     public BucketOrder order() {
         return order;
     }
 
     /** Set a new order on this builder and return the builder so that calls
-     *  can be chained. A tie-breaker may be added to avoid non-deterministic ordering. */
+      * can be chained. A tie-breaker may be added to avoid non-deterministic ordering.
+     *
+     * @param order the order
+     * @return the order
+      */
     public HistogramAggregationBuilder order(BucketOrder order) {
         if (order == null) {
             throw new IllegalArgumentException("[order] must not be null: [" + name + "]");
@@ -255,6 +319,9 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
     /**
      * Sets the order in which the buckets will be returned. A tie-breaker may be added to avoid non-deterministic
      * ordering.
+     *
+     * @param orders the orders
+     * @return the order
      */
     public HistogramAggregationBuilder order(List<BucketOrder> orders) {
         if (orders == null) {
@@ -266,26 +333,40 @@ public class HistogramAggregationBuilder extends ValuesSourceAggregationBuilder<
     }
 
     /** Return whether buckets should be returned as a hash. In case
-     *  {@code keyed} is false, buckets will be returned as an array. */
+      * {@code keyed} is false, buckets will be returned as an array.
+     *
+     * @return the keyed
+      */
     public boolean keyed() {
         return keyed;
     }
 
     /** Set whether to return buckets as a hash or as an array, and return the
-     *  builder so that calls can be chained. */
+      * builder so that calls can be chained.
+     *
+     * @param keyed the keyed
+     * @return the keyed
+      */
     public HistogramAggregationBuilder keyed(boolean keyed) {
         this.keyed = keyed;
         return this;
     }
 
     /** Return the minimum count of documents that buckets need to have in order
-     *  to be included in the response. */
+      * to be included in the response.
+     *
+     * @return the min doc count
+      */
     public long minDocCount() {
         return minDocCount;
     }
 
     /** Set the minimum count of matching documents that buckets need to have
-     *  and return this builder so that calls can be chained. */
+      * and return this builder so that calls can be chained.
+     *
+     * @param minDocCount the min doc count
+     * @return the min doc count
+      */
     public HistogramAggregationBuilder minDocCount(long minDocCount) {
         if (minDocCount < 0) {
             throw new IllegalArgumentException(

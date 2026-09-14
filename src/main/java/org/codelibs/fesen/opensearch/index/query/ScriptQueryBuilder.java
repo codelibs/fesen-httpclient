@@ -61,10 +61,18 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "script";
 
     private final Script script;
 
+    /**
+     * Creates a new ScriptQueryBuilder.
+     *
+     * @param script the script
+     */
     public ScriptQueryBuilder(Script script) {
         if (script == null) {
             throw new IllegalArgumentException("script cannot be null");
@@ -74,6 +82,9 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public ScriptQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -85,6 +96,11 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
         script.writeTo(out);
     }
 
+    /**
+     * Returns the script.
+     *
+     * @return the script
+     */
     public Script script() {
         return this.script;
     }
@@ -102,6 +118,13 @@ public class ScriptQueryBuilder extends AbstractQueryBuilder<ScriptQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ScriptQueryBuilder fromXContent(XContentParser parser) throws IOException {
         // also, when caching, since its isCacheable is false, will result in loading all bit set...
         Script script = null;

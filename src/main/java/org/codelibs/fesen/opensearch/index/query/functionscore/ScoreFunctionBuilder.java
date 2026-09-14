@@ -44,6 +44,7 @@ import java.util.Objects;
 /**
  * Foundation builder for a score function
  *
+ * @param <FB> the fb type
  * @opensearch.internal
  */
 public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> implements ToXContentFragment, NamedWriteable {
@@ -65,16 +66,24 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
 
     /**
      * Write the subclass's components into the stream.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
     /**
      * The name of this score function.
+     *
+     * @return the name
      */
     public abstract String getName();
 
     /**
      * Set the weight applied to the function before combining.
+     *
+     * @param weight the weight
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public final FB setWeight(float weight) {
@@ -91,6 +100,8 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
 
     /**
      * The weight applied to the function before combining.
+     *
+     * @return the weight
      */
     public final Float getWeight() {
         return weight;
@@ -98,6 +109,8 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
 
     /**
      * The name of this function
+     *
+     * @return the function name
      */
     public String getFunctionName() {
         return functionName;
@@ -105,6 +118,8 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
 
     /**
      * Set the name of this function
+     *
+     * @param functionName the function name
      */
     public void setFunctionName(String functionName) {
         this.functionName = functionName;
@@ -126,6 +141,10 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
 
     /**
      * Convert this subclass's data into XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
      */
     protected abstract void doXContent(XContentBuilder builder, Params params) throws IOException;
 
@@ -150,6 +169,9 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
     /**
      * Check that two instances of the same subclass of ScoreFunctionBuilder are equal. Implementers don't need to check any fields in
      * ScoreFunctionBuilder, just fields that they define.
+     *
+     * @param functionBuilder the function builder
+     * @return the equals
      */
     protected abstract boolean doEquals(FB functionBuilder);
 
@@ -161,6 +183,8 @@ public abstract class ScoreFunctionBuilder<FB extends ScoreFunctionBuilder<FB>> 
     /**
      * Hashcode for fields defined in this subclass of ScoreFunctionBuilder. Implementers should ignore fields defined in
      * ScoreFunctionBuilder because they will already be in the hashCode.
+     *
+     * @return the hash code of this instance
      */
     protected abstract int doHashCode();
 

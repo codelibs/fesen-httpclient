@@ -104,6 +104,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns time when snapshot started
+     *
+     * @return the start time
      */
     public long getStartTime() {
         return startTime;
@@ -111,6 +113,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns snapshot running time
+     *
+     * @return the time
      */
     public long getTime() {
         return time;
@@ -118,6 +122,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns incremental file count of the snapshot
+     *
+     * @return the incremental file count
      */
     public int getIncrementalFileCount() {
         return incrementalFileCount;
@@ -125,6 +131,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns total number of files in the snapshot
+     *
+     * @return the total file count
      */
     public int getTotalFileCount() {
         return totalFileCount;
@@ -132,6 +140,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns number of files in the snapshot that were processed so far
+     *
+     * @return the processed file count
      */
     public int getProcessedFileCount() {
         return processedFileCount;
@@ -139,6 +149,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Return incremental files size of the snapshot
+     *
+     * @return the incremental size
      */
     public long getIncrementalSize() {
         return incrementalSize;
@@ -146,6 +158,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns total size of files in the snapshot
+     *
+     * @return the total size
      */
     public long getTotalSize() {
         return totalSize;
@@ -153,6 +167,8 @@ public class SnapshotStats implements Writeable, ToXContentObject {
 
     /**
      * Returns total size of files in the snapshot that were processed so far
+     *
+     * @return the processed size
      */
     public long getProcessedSize() {
         return processedSize;
@@ -228,6 +244,13 @@ public class SnapshotStats implements Writeable, ToXContentObject {
         return builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SnapshotStats fromXContent(XContentParser parser) throws IOException {
         // Parse this old school style instead of using the ObjectParser since there's an impedance mismatch between how the
         // object has historically been written as JSON versus how it is structured in Java.

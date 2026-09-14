@@ -65,11 +65,23 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
     private final String name;
     private final List<Object> values;
 
+    /**
+     * Creates a new DocumentField by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DocumentField(StreamInput in) throws IOException {
         name = in.readString();
         values = in.readList(StreamInput::readGenericValue);
     }
 
+    /**
+     * Creates a new DocumentField.
+     *
+     * @param name the name
+     * @param values the values
+     */
     public DocumentField(String name, List<Object> values) {
         this.name = Objects.requireNonNull(name, "name must not be null");
         this.values = Objects.requireNonNull(values, "values must not be null");
@@ -77,6 +89,8 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
 
     /**
      * The name of the field.
+     *
+     * @return the name
      */
     public String getName() {
         return name;
@@ -84,6 +98,9 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
 
     /**
      * The first value of the hit.
+     *
+     * @param <V> the value type
+     * @return the value
      */
     public <V> V getValue() {
         if (values == null || values.isEmpty()) {
@@ -94,6 +111,8 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
 
     /**
      * The field values.
+     *
+     * @return the values
      */
     public List<Object> getValues() {
         return values;
@@ -123,6 +142,13 @@ public class DocumentField implements Writeable, ToXContentFragment, Iterable<Ob
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static DocumentField fromXContent(XContentParser parser) throws IOException {
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, parser.currentToken(), parser);
         String fieldName = parser.currentName();

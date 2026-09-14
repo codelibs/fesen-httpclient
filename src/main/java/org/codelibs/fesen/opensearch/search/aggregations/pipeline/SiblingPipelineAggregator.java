@@ -46,6 +46,13 @@ import java.util.Map;
  * @opensearch.internal
  */
 public abstract class SiblingPipelineAggregator extends PipelineAggregator {
+    /**
+     * Creates a new SiblingPipelineAggregator.
+     *
+     * @param name the name
+     * @param bucketsPaths the buckets paths
+     * @param metadata the metadata
+     */
     protected SiblingPipelineAggregator(String name, String[] bucketsPaths, Map<String, Object> metadata) {
         super(name, bucketsPaths, metadata);
     }
@@ -59,5 +66,12 @@ public abstract class SiblingPipelineAggregator extends PipelineAggregator {
         });
     }
 
+    /**
+     * Reduces this instance.
+     *
+     * @param aggregations the aggregations
+     * @param context the context
+     * @return this instance
+     */
     public abstract InternalAggregation doReduce(Aggregations aggregations, ReduceContext context);
 }

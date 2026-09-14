@@ -45,6 +45,10 @@ public final class Booleans {
     /**
      * Parses a char[] representation of a boolean value to <code>boolean</code>.
      *
+     * @param text the text
+     * @param offset the offset
+     * @param length the length
+     * @param defaultValue the default value
      * @return <code>true</code> iff the sequence of chars is "true", <code>false</code> iff the sequence of
      * chars is "false" or the provided default value iff either text is <code>null</code> or length == 0.
      * @throws IllegalArgumentException if the string cannot be parsed to boolean.
@@ -89,6 +93,7 @@ public final class Booleans {
      * @param text   sequence to check
      * @param offset offset to start
      * @param length length to check
+     * @return the boolean flag
      */
     public static boolean isBoolean(char[] text, int offset, int length) {
         if (text == null) {
@@ -113,6 +118,12 @@ public final class Booleans {
         }
     }
 
+    /**
+     * Returns the boolean flag.
+     *
+     * @param value the value
+     * @return the boolean flag
+     */
     public static boolean isBoolean(String value) {
         return isFalse(value) || isTrue(value);
     }
@@ -120,6 +131,7 @@ public final class Booleans {
     /**
      * Parses a string representation of a boolean value to <code>boolean</code>.
      *
+     * @param value the value
      * @return <code>true</code> iff the provided value is "true". <code>false</code> iff the provided value is "false".
      * @throws IllegalArgumentException if the string cannot be parsed to boolean.
      */
@@ -151,6 +163,13 @@ public final class Booleans {
         return parseBoolean(value);
     }
 
+    /**
+     * Parses the boolean.
+     *
+     * @param value the value
+     * @param defaultValue the default value
+     * @return this instance
+     */
     @Deprecated
     public static Boolean parseBoolean(String value, Boolean defaultValue) {
         if (value == null || value.isBlank()) {
@@ -160,6 +179,9 @@ public final class Booleans {
     }
 
     /**
+     * Returns the false flag.
+     *
+     * @param value the value
      * @return {@code true} iff the value is "false", otherwise {@code false}.
      */
     public static boolean isFalse(String value) {
@@ -167,6 +189,9 @@ public final class Booleans {
     }
 
     /**
+     * Returns the true flag.
+     *
+     * @param value the value
      * @return {@code true} iff the value is "true", otherwise {@code false}.
      */
     public static boolean isTrue(String value) {

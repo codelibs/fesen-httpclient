@@ -49,6 +49,14 @@ public class MapXContentParser extends AbstractXContentParser {
     private TokenIterator iterator;
     private boolean closed;
 
+    /**
+     * Creates a new MapXContentParser.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param map the map
+     * @param mediaType the media type
+     */
     public MapXContentParser(
         NamedXContentRegistry xContentRegistry,
         DeprecationHandler deprecationHandler,

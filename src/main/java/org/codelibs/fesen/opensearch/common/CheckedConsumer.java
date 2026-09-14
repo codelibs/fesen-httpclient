@@ -39,10 +39,18 @@ import java.util.function.Consumer;
 /**
  * A {@link Consumer}-like interface which allows throwing checked exceptions.
  *
+ * @param <T> the element type
+ * @param <E> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 @FunctionalInterface
 public interface CheckedConsumer<T, E extends Exception> {
+    /**
+     * Accepts the given input.
+     *
+     * @param t the t
+     * @throws E if an e failure occurs
+     */
     void accept(T t) throws E;
 }

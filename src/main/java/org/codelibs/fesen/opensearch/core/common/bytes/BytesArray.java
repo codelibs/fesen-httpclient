@@ -47,19 +47,38 @@ import java.util.Arrays;
  */
 public final class BytesArray extends AbstractBytesReference {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final BytesArray EMPTY = new BytesArray(BytesRef.EMPTY_BYTES, 0, 0);
     private final byte[] bytes;
     private final int offset;
     private final int length;
 
+    /**
+     * Creates a new BytesArray.
+     *
+     * @param bytes the bytes
+     */
     public BytesArray(String bytes) {
         this(new BytesRef(bytes));
     }
 
+    /**
+     * Creates a new BytesArray.
+     *
+     * @param bytesRef the bytes ref
+     */
     public BytesArray(BytesRef bytesRef) {
         this(bytesRef, false);
     }
 
+    /**
+     * Creates a new BytesArray.
+     *
+     * @param bytesRef the bytes ref
+     * @param deepCopy the deep copy
+     */
     public BytesArray(BytesRef bytesRef, boolean deepCopy) {
         if (deepCopy) {
             bytesRef = BytesRef.deepCopyOf(bytesRef);
@@ -69,10 +88,22 @@ public final class BytesArray extends AbstractBytesReference {
         length = bytesRef.length;
     }
 
+    /**
+     * Creates a new BytesArray.
+     *
+     * @param bytes the bytes
+     */
     public BytesArray(byte[] bytes) {
         this(bytes, 0, bytes.length);
     }
 
+    /**
+     * Creates a new BytesArray.
+     *
+     * @param bytes the bytes
+     * @param offset the offset
+     * @param length the length
+     */
     public BytesArray(byte[] bytes, int offset, int length) {
         this.bytes = bytes;
         this.offset = offset;
@@ -121,10 +152,20 @@ public final class BytesArray extends AbstractBytesReference {
         return new BytesArray(bytes, offset + from, length);
     }
 
+    /**
+     * Returns the array.
+     *
+     * @return the array
+     */
     public byte[] array() {
         return bytes;
     }
 
+    /**
+     * Returns the offset.
+     *
+     * @return the offset
+     */
     public int offset() {
         return offset;
     }

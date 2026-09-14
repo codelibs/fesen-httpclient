@@ -82,6 +82,12 @@ public class ClearIndicesCacheResponse extends BroadcastResponse {
         super(totalShards, successfulShards, failedShards, shardFailures);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ClearIndicesCacheResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

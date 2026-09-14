@@ -70,6 +70,12 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
     private final Map<String, Map<String, FieldCapabilities>> responseMap;
     private final List<FieldCapabilitiesIndexResponse> indexResponses;
 
+    /**
+     * Creates a new FieldCapabilitiesResponse.
+     *
+     * @param indices the indices
+     * @param responseMap the response map
+     */
     public FieldCapabilitiesResponse(String[] indices, Map<String, Map<String, FieldCapabilities>> responseMap) {
         this(indices, responseMap, Collections.emptyList());
     }
@@ -84,6 +90,12 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
         this.indices = indices;
     }
 
+    /**
+     * Creates a new FieldCapabilitiesResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public FieldCapabilitiesResponse(StreamInput in) throws IOException {
         super(in);
         indices = in.readStringArray();
@@ -101,6 +113,9 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
     /**
      *
      * Get the field capabilities per type for the provided {@code field}.
+     *
+     * @param field the field
+     * @return the field
      */
     public Map<String, FieldCapabilities> getField(String field) {
         return responseMap.get(field);
@@ -133,6 +148,13 @@ public class FieldCapabilitiesResponse extends ActionResponse implements ToXCont
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static FieldCapabilitiesResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

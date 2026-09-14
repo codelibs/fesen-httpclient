@@ -16,6 +16,8 @@ package org.codelibs.fesen.opensearch.index.query;
 public interface WithFieldName {
     /**
      * Get the field name for this query.
+     *
+     * @return the field name
      */
     String fieldName();
 }

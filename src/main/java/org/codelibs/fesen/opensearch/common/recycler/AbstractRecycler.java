@@ -39,6 +39,9 @@ package org.codelibs.fesen.opensearch.common.recycler;
  */
 abstract class AbstractRecycler<T> implements Recycler<T> {
 
+    /**
+     * The c.
+     */
     protected final Recycler.C<T> c;
 
     protected AbstractRecycler(Recycler.C<T> c) {

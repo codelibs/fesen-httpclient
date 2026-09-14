@@ -45,10 +45,14 @@ import java.util.Objects;
 /**
  * Base class for a TermQueryBuilder
  *
+ * @param <QB> the query builder type
  * @opensearch.internal
  */
 public abstract class BaseTermQueryBuilder<QB extends BaseTermQueryBuilder<QB>> extends AbstractQueryBuilder<QB> implements WithFieldName {
 
+    /**
+     * The VALUE_FIELD constant.
+     */
     public static final ParseField VALUE_FIELD = new ParseField("value");
 
     /** Name of field to match against. */
@@ -139,6 +143,9 @@ public abstract class BaseTermQueryBuilder<QB extends BaseTermQueryBuilder<QB>> 
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected BaseTermQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -161,6 +168,8 @@ public abstract class BaseTermQueryBuilder<QB extends BaseTermQueryBuilder<QB>> 
     /**
      *  Returns the value used in this query.
      *  If necessary, converts internal {@link BytesRef} representation back to string.
+     *
+     * @return the value
      */
     public Object value() {
         return maybeConvertToString(this.value);
@@ -177,6 +186,13 @@ public abstract class BaseTermQueryBuilder<QB extends BaseTermQueryBuilder<QB>> 
         builder.endObject();
     }
 
+    /**
+     * Adds the extra XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected void addExtraXContent(XContentBuilder builder, Params params) throws IOException {
         // Do nothing but allows subclasses to override.
     }

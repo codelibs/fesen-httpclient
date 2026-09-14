@@ -52,6 +52,9 @@ import static org.codelibs.fesen.opensearch.index.query.SpanQueryBuilder.SpanQue
  * @opensearch.internal
  */
 public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_not";
 
     /** the default pre parameter size */
@@ -92,6 +95,9 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanNotQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -110,6 +116,8 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Includes the query.
+     *
      * @return the span query whose matches are filtered
      */
     public SpanQueryBuilder includeQuery() {
@@ -117,6 +125,8 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Excludes the query.
+     *
      * @return the span query whose matches must not overlap
      */
     public SpanQueryBuilder excludeQuery() {
@@ -124,8 +134,11 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Returns the dist.
+     *
      * @param dist the amount of tokens from within the include span can’t have overlap with the exclude span.
      * Equivalent to setting both pre and post parameter.
+     * @return the dist
      */
     public SpanNotQueryBuilder dist(int dist) {
         pre(dist);
@@ -134,8 +147,11 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Returns the pre.
+     *
      * @param pre the amount of tokens before the include span that can’t have overlap with the exclude span. Values
      * smaller than 0 will be ignored and 0 used instead.
+     * @return the pre
      */
     public SpanNotQueryBuilder pre(int pre) {
         this.pre = (pre >= 0) ? pre : 0;
@@ -143,6 +159,8 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Returns the pre.
+     *
      * @return the amount of tokens before the include span that can’t have overlap with the exclude span.
      * @see SpanNotQueryBuilder#pre(int)
      */
@@ -151,7 +169,10 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Returns the post.
+     *
      * @param post the amount of tokens after the include span that can’t have overlap with the exclude span.
+     * @return the post
      */
     public SpanNotQueryBuilder post(int post) {
         this.post = (post >= 0) ? post : 0;
@@ -159,6 +180,8 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
     }
 
     /**
+     * Returns the post.
+     *
      * @return the amount of tokens after the include span that can’t have overlap with the exclude span.
      * @see SpanNotQueryBuilder#post(int)
      */
@@ -179,6 +202,13 @@ public class SpanNotQueryBuilder extends AbstractQueryBuilder<SpanNotQueryBuilde
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanNotQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
 

@@ -16,5 +16,11 @@ import java.io.IOException;
  */
 public interface VerifiableWriteable extends Writeable {
 
+    /**
+     * Writes the verifiable to.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     void writeVerifiableTo(BufferedChecksumStreamOutput out) throws IOException;
 }

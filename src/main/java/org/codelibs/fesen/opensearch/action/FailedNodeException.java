@@ -46,8 +46,17 @@ import java.io.IOException;
  */
 public class FailedNodeException extends OpenSearchException {
 
+    /**
+     * The node identifier.
+     */
     private final String nodeId;
 
+    /**
+     * Creates a new FailedNodeException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public FailedNodeException(StreamInput in) throws IOException {
         super(in);
         nodeId = in.readOptionalString();

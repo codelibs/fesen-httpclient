@@ -52,6 +52,11 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class RefreshRequest extends BroadcastRequest<RefreshRequest> {
 
+    /**
+     * Creates a new RefreshRequest.
+     *
+     * @param indices the indices
+     */
     public RefreshRequest(String... indices) {
         super(indices);
     }

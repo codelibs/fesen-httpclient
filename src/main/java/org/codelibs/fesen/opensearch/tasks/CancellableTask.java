@@ -68,10 +68,31 @@ public abstract class CancellableTask extends Task {
     private final SetOnce<CancelledInfo> cancelledInfo = new SetOnce<>();
     private final TimeValue cancelAfterTimeInterval;
 
+    /**
+     * Creates a new CancellableTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     */
     public CancellableTask(long id, String type, String action, String description, TaskId parentTaskId, Map<String, String> headers) {
         this(id, type, action, description, parentTaskId, headers, TimeValue.MINUS_ONE);
     }
 
+    /**
+     * Creates a new CancellableTask.
+     *
+     * @param id the identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     * @param cancelAfterTimeInterval the cancel after time interval
+     */
     public CancellableTask(
         long id,
         String type,
@@ -87,6 +108,8 @@ public abstract class CancellableTask extends Task {
 
     /**
      * This method is called by the task manager when this task is cancelled.
+     *
+     * @param reason the reason
      */
     public void cancel(String reason) {
         assert reason != null;
@@ -95,12 +118,19 @@ public abstract class CancellableTask extends Task {
         }
     }
 
+    /**
+     * Returns the cancelled flag.
+     *
+     * @return the cancelled flag
+     */
     public boolean isCancelled() {
         return cancelledInfo.get() != null;
     }
 
     /**
      * Returns true if this task can potentially have children that need to be cancelled when it parent is cancelled.
+     *
+     * @return the cancel children on cancellation flag
      */
     public abstract boolean shouldCancelChildrenOnCancellation();
 
@@ -111,6 +141,8 @@ public abstract class CancellableTask extends Task {
 
     /**
      * The reason the task was cancelled or null if it hasn't been cancelled.
+     *
+     * @return the reason cancelled
      */
     @Nullable
     public String getReasonCancelled() {

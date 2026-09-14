@@ -34,6 +34,12 @@ public class NodeCacheStats implements ToXContentFragment, Writeable {
     private final SortedMap<CacheType, ImmutableCacheStatsHolder> statsByCache;
     private final CommonStatsFlags flags;
 
+    /**
+     * Creates a new NodeCacheStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodeCacheStats(StreamInput in) throws IOException {
         this.flags = new CommonStatsFlags(in);
         final java.util.SortedMap<CacheType, ImmutableCacheStatsHolder> read = new java.util.TreeMap<>();

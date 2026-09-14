@@ -51,6 +51,9 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class PercentilesAggregationBuilder extends AbstractPercentilesAggregationBuilder<PercentilesAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = Percentiles.TYPE_NAME;
     private static final double[] DEFAULT_PERCENTS = new double[] { 1, 5, 25, 50, 75, 95, 99 };
     private static final ParseField PERCENTS_FIELD = new ParseField("percents");
@@ -72,18 +75,45 @@ public class PercentilesAggregationBuilder extends AbstractPercentilesAggregatio
         );
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static AggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, aggregationName);
     }
 
+    /**
+     * Creates a new PercentilesAggregationBuilder.
+     *
+     * @param name the name
+     */
     public PercentilesAggregationBuilder(String name) {
         this(name, DEFAULT_PERCENTS, null);
     }
 
+    /**
+     * Creates a new PercentilesAggregationBuilder.
+     *
+     * @param name the name
+     * @param values the values
+     * @param percentilesConfig the percentiles config
+     */
     public PercentilesAggregationBuilder(String name, double[] values, PercentilesConfig percentilesConfig) {
         super(name, values, percentilesConfig, PERCENTS_FIELD);
     }
 
+    /**
+     * Creates a new PercentilesAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected PercentilesAggregationBuilder(
         PercentilesAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -104,6 +134,9 @@ public class PercentilesAggregationBuilder extends AbstractPercentilesAggregatio
 
     /**
      * Set the values to compute percentiles from.
+     *
+     * @param percents the percents
+     * @return the percentiles
      */
     public PercentilesAggregationBuilder percentiles(double... percents) {
         this.values = validatePercentiles(percents, name);
@@ -129,6 +162,8 @@ public class PercentilesAggregationBuilder extends AbstractPercentilesAggregatio
 
     /**
      * Get the values to compute percentiles from.
+     *
+     * @return the percentiles
      */
     public double[] percentiles() {
         return values;

@@ -65,6 +65,11 @@ public class ClusterSearchShardsGroup implements Writeable, ToXContentObject {
         out.writeArray((o, s) -> s.writeToThin(o), shards);
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @return the shards
+     */
     public ShardRouting[] getShards() {
         return shards;
     }

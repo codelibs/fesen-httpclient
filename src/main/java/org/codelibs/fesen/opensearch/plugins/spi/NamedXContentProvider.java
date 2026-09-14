@@ -44,6 +44,8 @@ import java.util.List;
 public interface NamedXContentProvider {
 
     /**
+     * Returns the named XContent parsers.
+     *
      * @return a list of {@link NamedXContentRegistry.Entry} that this plugin provides.
      */
     List<NamedXContentRegistry.Entry> getNamedXContentParsers();

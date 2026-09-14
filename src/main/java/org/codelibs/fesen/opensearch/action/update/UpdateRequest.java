@@ -158,8 +158,18 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     @Nullable
     private IndexRequest doc;
 
+    /**
+     * Creates a new UpdateRequest.
+     */
     public UpdateRequest() {}
 
+    /**
+     * Creates a new UpdateRequest.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public UpdateRequest(@Nullable ShardId shardId, StreamInput in) throws IOException {
         super(shardId, in);
         waitForActiveShards = ActiveShardCount.readFrom(in);
@@ -189,6 +199,12 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         requireAlias = in.readBoolean();
     }
 
+    /**
+     * Creates a new UpdateRequest.
+     *
+     * @param index the index
+     * @param id the identifier
+     */
     public UpdateRequest(String index, String id) {
         super(index);
         this.id = id;
@@ -247,6 +263,9 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
 
     /**
      * Sets the id of the indexed document.
+     *
+     * @param id the identifier
+     * @return the identifier
      */
     public UpdateRequest id(String id) {
         this.id = id;
@@ -276,6 +295,11 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         return this.routing;
     }
 
+    /**
+     * Returns the script.
+     *
+     * @return the script
+     */
     public Script script() {
         return this.script;
     }
@@ -283,6 +307,9 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     /**
      * The script to execute. Note, make sure not to send different script each times and instead
      * use script params if possible with the same (automatically compiled) script.
+     *
+     * @param script the script
+     * @return the script
      */
     public UpdateRequest script(Script script) {
         this.script = script;
@@ -291,6 +318,9 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
 
     /**
      * Explicitly set the fetch source context for this request
+     *
+     * @param context the context
+     * @return this instance
      */
     public UpdateRequest fetchSource(FetchSourceContext context) {
         this.fetchSourceContext = context;
@@ -300,12 +330,20 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     /**
      * Sets the number of retries of a version conflict occurs because the document was updated between
      * getting it and updating it. Defaults to 0.
+     *
+     * @param retryOnConflict the retry on conflict
+     * @return this instance
      */
     public UpdateRequest retryOnConflict(int retryOnConflict) {
         this.retryOnConflict = retryOnConflict;
         return this;
     }
 
+    /**
+     * Retries the on conflict.
+     *
+     * @return this instance
+     */
     public int retryOnConflict() {
         return this.retryOnConflict;
     }
@@ -395,12 +433,20 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         return refreshPolicy;
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return this.waitForActiveShards;
     }
 
     /**
      * Sets the doc to use for updates when a script is not specified.
+     *
+     * @param source the source
+     * @return the doc
      */
     public UpdateRequest doc(XContentBuilder source) {
         safeDoc().source(source);
@@ -410,12 +456,20 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
     /**
      * Sets the doc to use for updates when a script is not specified, the doc provided
      * is a field and value pairs.
+     *
+     * @param source the source
+     * @return the doc
      */
     public UpdateRequest doc(Object... source) {
         safeDoc().source(source);
         return this;
     }
 
+    /**
+     * Returns the doc.
+     *
+     * @return the doc
+     */
     public IndexRequest doc() {
         return this.doc;
     }
@@ -429,12 +483,20 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
 
     /**
      * Sets the doc source of the update request to be used when the document does not exists.
+     *
+     * @param source the source
+     * @return the upsert
      */
     public UpdateRequest upsert(Map<String, Object> source) {
         safeUpsertRequest().source(source);
         return this;
     }
 
+    /**
+     * Returns the upsert request.
+     *
+     * @return the upsert request
+     */
     public IndexRequest upsertRequest() {
         return this.upsertRequest;
     }
@@ -448,6 +510,7 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
 
     /**
      * Should this update attempt to detect if it is a noop? Defaults to true.
+     * @param detectNoop the detect noop
      * @return this for chaining
      */
     public UpdateRequest detectNoop(boolean detectNoop) {
@@ -455,19 +518,43 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         return this;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public UpdateRequest fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, this, null);
     }
 
+    /**
+     * Returns the doc as upsert.
+     *
+     * @return the doc as upsert
+     */
     public boolean docAsUpsert() {
         return this.docAsUpsert;
     }
 
+    /**
+     * Returns the doc as upsert.
+     *
+     * @param shouldUpsertDoc the should upsert doc
+     * @return the doc as upsert
+     */
     public UpdateRequest docAsUpsert(boolean shouldUpsertDoc) {
         this.docAsUpsert = shouldUpsertDoc;
         return this;
     }
 
+    /**
+     * Returns the scripted upsert.
+     *
+     * @param scriptedUpsert the scripted upsert
+     * @return the scripted upsert
+     */
     public UpdateRequest scriptedUpsert(boolean scriptedUpsert) {
         this.scriptedUpsert = scriptedUpsert;
         return this;
@@ -478,6 +565,12 @@ public class UpdateRequest extends InstanceShardOperationRequest<UpdateRequest>
         return requireAlias;
     }
 
+    /**
+     * Sets the require alias.
+     *
+     * @param requireAlias the require alias
+     * @return this instance
+     */
     public UpdateRequest setRequireAlias(boolean requireAlias) {
         this.requireAlias = requireAlias;
         return this;

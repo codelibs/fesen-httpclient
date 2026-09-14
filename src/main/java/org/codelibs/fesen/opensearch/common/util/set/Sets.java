@@ -57,6 +57,13 @@ import java.util.stream.Collectors;
 public final class Sets {
     private Sets() {}
 
+    /**
+     * Creates a new hash set.
+     *
+     * @param <T> the element type
+     * @param elements the elements
+     * @return the new hash set
+     */
     public static <T> HashSet<T> newHashSet(T... elements) {
         Objects.requireNonNull(elements);
         HashSet<T> set = new HashSet<>(elements.length);
@@ -64,6 +71,14 @@ public final class Sets {
         return set;
     }
 
+    /**
+     * Returns the union.
+     *
+     * @param <T> the element type
+     * @param left the left
+     * @param right the right
+     * @return the union
+     */
     public static <T> Set<T> union(Set<T> left, Set<T> right) {
         Objects.requireNonNull(left);
         Objects.requireNonNull(right);

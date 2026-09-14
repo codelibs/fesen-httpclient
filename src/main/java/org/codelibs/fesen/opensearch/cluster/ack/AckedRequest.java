@@ -43,11 +43,15 @@ public interface AckedRequest {
 
     /**
      * Returns the acknowledgement timeout
+     *
+     * @return the ack timeout
      */
     TimeValue ackTimeout();
 
     /**
      * Returns the timeout for the request to be completed on the cluster-manager node
+     *
+     * @return the cluster manager node timeout
      */
     TimeValue clusterManagerNodeTimeout();
 }

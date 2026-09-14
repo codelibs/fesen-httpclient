@@ -48,14 +48,27 @@ import java.util.function.Function;
 /**
  * Superclass for {@link ObjectParser} and {@link ConstructingObjectParser}. Defines most of the "declare" methods so they can be shared.
  *
+ * @param <Value> the value type
+ * @param <Context> the context type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public abstract class AbstractObjectParser<Value, Context> {
+    /**
+     * Creates a new AbstractObjectParser.
+     */
+    public AbstractObjectParser() {
+    }
 
     /**
      * Declare some field. Usually it is easier to use {@link #declareString(BiConsumer, ParseField)} or
      * {@link #declareObject(BiConsumer, ContextParser, ParseField)} rather than call this directly.
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param parser the parser
+     * @param parseField the parse field
+     * @param type the type
      */
     public abstract <T> void declareField(
         BiConsumer<Value, T> consumer,
@@ -84,6 +97,7 @@ public abstract class AbstractObjectParser<Value, Context> {
      *            parses the named object
      * @param parseField
      *            the field to parse
+     * @param <T> the element type
      */
     public abstract <T> void declareNamedObject(
         BiConsumer<Value, T> consumer,
@@ -120,6 +134,7 @@ public abstract class AbstractObjectParser<Value, Context> {
      *            parses each named object
      * @param parseField
      *            the field to parse
+     * @param <T> the element type
      */
     public abstract <T> void declareNamedObjects(
         BiConsumer<Value, List<T>> consumer,
@@ -178,6 +193,7 @@ public abstract class AbstractObjectParser<Value, Context> {
      *            mode (the array of objects)
      * @param parseField
      *            the field to parse
+     * @param <T> the element type
      */
     public abstract <T> void declareNamedObjects(
         BiConsumer<Value, List<T>> consumer,
@@ -186,8 +202,22 @@ public abstract class AbstractObjectParser<Value, Context> {
         ParseField parseField
     );
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public abstract String getName();
 
+    /**
+     * Performs the declare field step.
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param parser the parser
+     * @param parseField the parse field
+     * @param type the type
+     */
     public <T> void declareField(
         BiConsumer<Value, T> consumer,
         CheckedFunction<XContentParser, T, IOException> parser,
@@ -200,25 +230,58 @@ public abstract class AbstractObjectParser<Value, Context> {
         declareField(consumer, (p, c) -> parser.apply(p), parseField, type);
     }
 
+    /**
+     * Performs the declare object step.
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param objectParser the object parser
+     * @param field the field
+     */
     public <T> void declareObject(BiConsumer<Value, T> consumer, ContextParser<Context, T> objectParser, ParseField field) {
         declareField(consumer, (p, c) -> objectParser.parse(p, c), field, ValueType.OBJECT);
     }
 
+    /**
+     * Performs the declare float step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareFloat(BiConsumer<Value, Float> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.floatValue(), field, ValueType.FLOAT);
     }
 
+    /**
+     * Performs the declare double step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareDouble(BiConsumer<Value, Double> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.doubleValue(), field, ValueType.DOUBLE);
     }
 
+    /**
+     * Performs the declare long step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareLong(BiConsumer<Value, Long> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.longValue(), field, ValueType.LONG);
     }
 
+    /**
+     * Performs the declare long or null step.
+     *
+     * @param consumer the consumer
+     * @param nullValue the null value
+     * @param field the field
+     */
     public void declareLongOrNull(BiConsumer<Value, Long> consumer, long nullValue, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(
@@ -229,11 +292,23 @@ public abstract class AbstractObjectParser<Value, Context> {
         );
     }
 
+    /**
+     * Performs the declare int step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareInt(BiConsumer<Value, Integer> consumer, ParseField field) {
         // Using a method reference here angers some compilers
         declareField(consumer, p -> p.intValue(), field, ValueType.INT);
     }
 
+    /**
+     * Performs the declare string step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareString(BiConsumer<Value, String> consumer, ParseField field) {
         declareField(consumer, XContentParser::text, field, ValueType.STRING);
     }
@@ -241,11 +316,22 @@ public abstract class AbstractObjectParser<Value, Context> {
     /**
      * Declare a field of type {@code T} parsed from string and converted to {@code T} using provided function.
      * Throws if the next token is not a string.
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param fromStringFunction the from string function
+     * @param field the field
      */
     public <T> void declareString(BiConsumer<Value, T> consumer, Function<String, T> fromStringFunction, ParseField field) {
         declareField(consumer, p -> fromStringFunction.apply(p.text()), field, ValueType.STRING);
     }
 
+    /**
+     * Performs the declare string or null step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareStringOrNull(BiConsumer<Value, String> consumer, ParseField field) {
         declareField(
             consumer,
@@ -255,10 +341,24 @@ public abstract class AbstractObjectParser<Value, Context> {
         );
     }
 
+    /**
+     * Performs the declare boolean step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareBoolean(BiConsumer<Value, Boolean> consumer, ParseField field) {
         declareField(consumer, XContentParser::booleanValue, field, ValueType.BOOLEAN);
     }
 
+    /**
+     * Performs the declare object array step.
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param objectParser the object parser
+     * @param field the field
+     */
     public <T> void declareObjectArray(BiConsumer<Value, List<T>> consumer, ContextParser<Context, T> objectParser, ParseField field) {
         declareFieldArray(consumer, (p, c) -> objectParser.parse(p, c), field, ValueType.OBJECT_ARRAY);
     }
@@ -266,6 +366,11 @@ public abstract class AbstractObjectParser<Value, Context> {
     /**
      * like {@link #declareObjectArray(BiConsumer, ContextParser, ParseField)}, but can also handle single null values,
      * in which case the consumer isn't called
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param objectParser the object parser
+     * @param field the field
      */
     public <T> void declareObjectArrayOrNull(
         BiConsumer<Value, List<T>> consumer,
@@ -280,16 +385,34 @@ public abstract class AbstractObjectParser<Value, Context> {
         );
     }
 
+    /**
+     * Performs the declare string array step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareStringArray(BiConsumer<Value, List<String>> consumer, ParseField field) {
         declareFieldArray(consumer, (p, c) -> p.text(), field, ValueType.STRING_ARRAY);
     }
 
+    /**
+     * Performs the declare double array step.
+     *
+     * @param consumer the consumer
+     * @param field the field
+     */
     public void declareDoubleArray(BiConsumer<Value, List<Double>> consumer, ParseField field) {
         declareFieldArray(consumer, (p, c) -> p.doubleValue(), field, ValueType.DOUBLE_ARRAY);
     }
 
     /**
      * Declares a field that can contain an array of elements listed in the type ValueType enum
+     *
+     * @param <T> the element type
+     * @param consumer the consumer
+     * @param itemParser the item parser
+     * @param field the field
+     * @param type the type
      */
     public <T> void declareFieldArray(
         BiConsumer<Value, List<T>> consumer,

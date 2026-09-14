@@ -165,6 +165,7 @@ public final class QueueResizableOpenSearchThreadPoolExecutor extends OpenSearch
     /**
      * Resizes the work queue capacity of the pool
      * @param capacity the new capacity
+     * @return this instance
      */
     public synchronized int resize(int capacity) {
         final ResizableBlockingQueue<Runnable> resizableWorkQueue = (ResizableBlockingQueue<Runnable>) workQueue;

@@ -59,22 +59,44 @@ import java.util.Objects;
  * Base class for all classes producing lucene queries.
  * Supports conversion to BytesReference and creation of lucene Query objects.
  *
+ * @param <QB> the query builder type
  * @opensearch.internal
  */
 public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> implements QueryBuilder {
 
     /** Default for boost to apply to resulting Lucene query. Defaults to 1.0*/
     public static final float DEFAULT_BOOST = 1.0f;
+    /**
+     * The NAME_FIELD constant.
+     */
     public static final ParseField NAME_FIELD = new ParseField("_name");
+    /**
+     * The BOOST_FIELD constant.
+     */
     public static final ParseField BOOST_FIELD = new ParseField("boost");
 
+    /**
+     * The query name.
+     */
     protected String queryName;
+    /**
+     * The boost.
+     */
     protected float boost = DEFAULT_BOOST;
 
+    /**
+     * Creates a new AbstractQueryBuilder.
+     */
     protected AbstractQueryBuilder() {
 
     }
 
+    /**
+     * Creates a new AbstractQueryBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected AbstractQueryBuilder(StreamInput in) throws IOException {
         boost = in.readFloat();
         checkNegativeBoost(boost);
@@ -112,6 +134,12 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
     @Override
@@ -122,8 +150,21 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return builder;
     }
 
+    /**
+     * Performs the XContent step.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doXContent(XContentBuilder builder, Params params) throws IOException;
 
+    /**
+     * Prints the boost and query name.
+     *
+     * @param builder the content builder
+     * @throws IOException if an I/O error occurs
+     */
     protected void printBoostAndQueryName(XContentBuilder builder) throws IOException {
         builder.field(BOOST_FIELD.getPreferredName(), boost);
         if (queryName != null) {
@@ -157,6 +198,11 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return this.boost;
     }
 
+    /**
+     * Checks the negative boost.
+     *
+     * @param boost the boost
+     */
     protected final void checkNegativeBoost(float boost) {
         if (Float.compare(boost, 0f) < 0) {
             throw new IllegalArgumentException(
@@ -177,6 +223,13 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return (QB) this;
     }
 
+    /**
+     * Adds the validation error.
+     *
+     * @param validationError the validation error
+     * @param validationException the validation exception
+     * @return this instance
+     */
     protected final QueryValidationException addValidationError(String validationError, QueryValidationException validationException) {
         return QueryValidationException.addValidationError(getName(), validationError, validationException);
     }
@@ -196,6 +249,9 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
 
     /**
      * Indicates whether some other {@link QueryBuilder} object of the same type is "equal to" this one.
+     *
+     * @param other the other instance
+     * @return the equals
      */
     protected abstract boolean doEquals(QB other);
 
@@ -204,6 +260,11 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return Objects.hash(getClass(), queryName, boost, doHashCode());
     }
 
+    /**
+     * Returns the hash code of this instance.
+     *
+     * @return the hash code of this instance
+     */
     protected abstract int doHashCode();
 
     /**
@@ -275,12 +336,23 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return rewritten;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param queryShardContext the query shard context
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     protected QueryBuilder doRewrite(QueryRewriteContext queryShardContext) throws IOException {
         return this;
     }
 
     /**
      * Parses a query excluding the query element that wraps it
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static QueryBuilder parseInnerQueryBuilder(XContentParser parser) throws IOException {
         if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
@@ -325,6 +397,14 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
     }
 
     // Like Objects.requireNotNull(...) but instead throws a IllegalArgumentException
+    /**
+     * Requires the value.
+     *
+     * @param <T> the element type
+     * @param value the value
+     * @param message the message
+     * @return this instance
+     */
     protected static <T> T requireValue(T value, String message) {
         if (value == null) {
             throw new IllegalArgumentException(message);
@@ -332,6 +412,14 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
         return value;
     }
 
+    /**
+     * Performs the throw parsing exception on multiple fields step.
+     *
+     * @param queryName the query name
+     * @param contentLocation the content location
+     * @param processedFieldName the processed field name
+     * @param currentFieldName the current field name
+     */
     protected static void throwParsingExceptionOnMultipleFields(
         String queryName,
         XContentLocation contentLocation,
@@ -357,6 +445,8 @@ public abstract class AbstractQueryBuilder<QB extends AbstractQueryBuilder<QB>> 
      * {@link AbstractObjectParser} passed in. All query builders except
      * {@link MatchAllQueryBuilder} and {@link MatchNoneQueryBuilder} support these fields so they
      * should use this method.
+     *
+     * @param parser the parser
      */
     protected static void declareStandardFields(AbstractObjectParser<? extends QueryBuilder, ?> parser) {
         parser.declareFloat(QueryBuilder::boost, AbstractQueryBuilder.BOOST_FIELD);

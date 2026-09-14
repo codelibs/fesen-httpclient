@@ -52,8 +52,17 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQueryBuilder> implements WithFieldName {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "match_phrase";
+    /**
+     * The SLOP_FIELD constant.
+     */
     public static final ParseField SLOP_FIELD = new ParseField("slop");
+    /**
+     * The ZERO_TERMS_QUERY_FIELD constant.
+     */
     public static final ParseField ZERO_TERMS_QUERY_FIELD = new ParseField("zero_terms_query");
 
     private final String fieldName;
@@ -66,6 +75,12 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
 
     private ZeroTermsQuery zeroTermsQuery = MatchQuery.DEFAULT_ZERO_TERMS_QUERY;
 
+    /**
+     * Creates a new MatchPhraseQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     */
     public MatchPhraseQueryBuilder(String fieldName, Object value) {
         if (Strings.isEmpty(fieldName)) {
             throw new IllegalArgumentException("[" + NAME + "] requires fieldName");
@@ -79,6 +94,9 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MatchPhraseQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -104,7 +122,11 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         return this.fieldName;
     }
 
-    /** Returns the value used in this query. */
+    /**
+     * Returns the value used in this query.
+     *
+     * @return the value
+     */
     public Object value() {
         return this.value;
     }
@@ -112,18 +134,30 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
     /**
      * Explicitly set the analyzer to use. Defaults to use explicit mapping
      * config for the field, or, if not set, the default search analyzer.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public MatchPhraseQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
-    /** Get the analyzer to use, if previously set, otherwise {@code null} */
+    /**
+     * Get the analyzer to use, if previously set, otherwise {@code null}
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return this.analyzer;
     }
 
-    /** Sets a slop factor for phrase queries */
+    /**
+     * Sets a slop factor for phrase queries
+     *
+     * @param slop the slop
+     * @return the slop
+     */
     public MatchPhraseQueryBuilder slop(int slop) {
         if (slop < 0) {
             throw new IllegalArgumentException("No negative slop allowed.");
@@ -132,7 +166,11 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         return this;
     }
 
-    /** Get the slop factor for phrase queries. */
+    /**
+     * Get the slop factor for phrase queries.
+     *
+     * @return the slop
+     */
     public int slop() {
         return this.slop;
     }
@@ -141,6 +179,9 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
      * Sets query to use in case no query terms are available, e.g. after analysis removed them.
      * Defaults to {@link ZeroTermsQuery#NONE}, but can be set to
      * {@link ZeroTermsQuery#ALL} instead.
+     *
+     * @param zeroTermsQuery the zero terms query
+     * @return the zero terms query
      */
     public MatchPhraseQueryBuilder zeroTermsQuery(ZeroTermsQuery zeroTermsQuery) {
         if (zeroTermsQuery == null) {
@@ -150,6 +191,11 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         return this;
     }
 
+    /**
+     * Returns the zero terms query.
+     *
+     * @return the zero terms query
+     */
     public ZeroTermsQuery zeroTermsQuery() {
         return this.zeroTermsQuery;
     }
@@ -189,6 +235,13 @@ public class MatchPhraseQueryBuilder extends AbstractQueryBuilder<MatchPhraseQue
         return Objects.hash(fieldName, value, analyzer, slop);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MatchPhraseQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object value = null;

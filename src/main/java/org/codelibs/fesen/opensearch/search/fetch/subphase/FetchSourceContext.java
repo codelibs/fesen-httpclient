@@ -63,10 +63,22 @@ import java.util.function.Function;
 public class FetchSourceContext implements Writeable, ToXContentObject {
     private static final DeprecationLogger deprecationLogger = DeprecationLogger.getLogger(FetchSourceContext.class);
 
+    /**
+     * The INCLUDES_FIELD constant.
+     */
     public static final ParseField INCLUDES_FIELD = new ParseField("includes", "include");
+    /**
+     * The EXCLUDES_FIELD constant.
+     */
     public static final ParseField EXCLUDES_FIELD = new ParseField("excludes", "exclude");
 
+    /**
+     * The FETCH_SOURCE constant.
+     */
     public static final FetchSourceContext FETCH_SOURCE = new FetchSourceContext(true, null, null);
+    /**
+     * The DO_NOT_FETCH_SOURCE constant.
+     */
     public static final FetchSourceContext DO_NOT_FETCH_SOURCE = new FetchSourceContext(false, null, null);
 
     private static final String AMBIGUOUS_FIELD_MESSAGE = "The same entry [{}] cannot be both included and excluded in _source.";
@@ -75,6 +87,13 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
     private final String[] includes;
     private final String[] excludes;
 
+    /**
+     * Creates a new FetchSourceContext.
+     *
+     * @param fetchSource the fetch source
+     * @param includes the includes
+     * @param excludes the excludes
+     */
     public FetchSourceContext(boolean fetchSource, String[] includes, String[] excludes) {
         this.fetchSource = fetchSource;
         this.includes = includes == null ? Strings.EMPTY_ARRAY : includes;
@@ -83,6 +102,7 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
     }
 
     /**
+     * @param fetchSource the fetch source
      * @deprecated use {@link #FETCH_SOURCE} or {@link #DO_NOT_FETCH_SOURCE} instead
      */
     @Deprecated
@@ -90,6 +110,12 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
         this(fetchSource, Strings.EMPTY_ARRAY, Strings.EMPTY_ARRAY);
     }
 
+    /**
+     * Creates a new FetchSourceContext by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public FetchSourceContext(StreamInput in) throws IOException {
         fetchSource = in.readBoolean();
         includes = in.readStringArray();
@@ -117,18 +143,40 @@ public class FetchSourceContext implements Writeable, ToXContentObject {
         out.writeStringArray(excludes);
     }
 
+    /**
+     * Fetches the source.
+     *
+     * @return this instance
+     */
     public boolean fetchSource() {
         return this.fetchSource;
     }
 
+    /**
+     * Returns the includes.
+     *
+     * @return the includes
+     */
     public String[] includes() {
         return this.includes;
     }
 
+    /**
+     * Returns the excludes.
+     *
+     * @return the excludes
+     */
     public String[] excludes() {
         return this.excludes;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static FetchSourceContext fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         switch (token) {

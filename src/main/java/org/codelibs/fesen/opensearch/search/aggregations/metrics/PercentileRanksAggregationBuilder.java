@@ -50,6 +50,9 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggregationBuilder<PercentileRanksAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = PercentileRanks.TYPE_NAME;
     private static final ParseField VALUES_FIELD = new ParseField("values");
     private static final ConstructingObjectParser<PercentileRanksAggregationBuilder, String> PARSER;
@@ -62,10 +65,24 @@ public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggreg
         );
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static AggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, aggregationName);
     }
 
+    /**
+     * Creates a new PercentileRanksAggregationBuilder.
+     *
+     * @param name the name
+     * @param values the values
+     */
     public PercentileRanksAggregationBuilder(String name, double[] values) {
         this(name, values, null);
     }
@@ -94,6 +111,8 @@ public class PercentileRanksAggregationBuilder extends AbstractPercentilesAggreg
 
     /**
      * Get the values to compute percentiles from.
+     *
+     * @return the values
      */
     public double[] values() {
         return values;

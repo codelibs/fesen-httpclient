@@ -80,8 +80,14 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @PublicApi(since = "1.0.0")
 public class SearchRequest extends ActionRequest implements IndicesRequest.Replaceable {
 
+    /**
+     * The FORMAT_PARAMS constant.
+     */
     public static final ToXContent.Params FORMAT_PARAMS = new ToXContent.MapParams(Collections.singletonMap("pretty", "false"));
 
+    /**
+     * The DEFAULT_BATCHED_REDUCE_SIZE constant.
+     */
     public static final int DEFAULT_BATCHED_REDUCE_SIZE = 512;
 
     private static final long DEFAULT_ABSOLUTE_START_MILLIS = -1;
@@ -115,6 +121,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     private boolean ccsMinimizeRoundtrips = true;
 
+    /**
+     * The DEFAULT_INDICES_OPTIONS constant.
+     */
     public static final IndicesOptions DEFAULT_INDICES_OPTIONS = IndicesOptions.strictExpandOpenAndForbidClosedIgnoreThrottled();
 
     private IndicesOptions indicesOptions = DEFAULT_INDICES_OPTIONS;
@@ -125,6 +134,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     private Boolean phaseTook = null;
 
+    /**
+     * Creates a new SearchRequest.
+     */
     public SearchRequest() {
         this.localClusterAlias = null;
         this.absoluteStartMillis = DEFAULT_ABSOLUTE_START_MILLIS;
@@ -133,6 +145,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * Constructs a new search request from the provided search request
+     *
+     * @param searchRequest the search request
      */
     public SearchRequest(SearchRequest searchRequest) {
         this(
@@ -147,6 +161,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     /**
      * Constructs a new search request against the indices. No indices provided here means that search
      * will run against all indices.
+     *
+     * @param indices the indices
      */
     public SearchRequest(String... indices) {
         this(indices, new SearchSourceBuilder());
@@ -154,6 +170,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * Constructs a new search request against the provided indices with the given search source.
+     *
+     * @param indices the indices
+     * @param source the source
      */
     public SearchRequest(String[] indices, SearchSourceBuilder source) {
         this();
@@ -322,6 +341,12 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
         return indicesOptions;
     }
 
+    /**
+     * Returns the indices options.
+     *
+     * @param indicesOptions the indices options
+     * @return the indices options
+     */
     public SearchRequest indicesOptions(IndicesOptions indicesOptions) {
         this.indicesOptions = Objects.requireNonNull(indicesOptions, "indicesOptions must not be null");
         return this;
@@ -335,6 +360,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     /**
      * Returns whether network round-trips should be minimized when executing cross-cluster search requests.
      * Defaults to <code>true</code>.
+     *
+     * @return the ccs minimize roundtrips flag
      */
     public boolean isCcsMinimizeRoundtrips() {
         return ccsMinimizeRoundtrips;
@@ -342,6 +369,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * A comma separated list of routing values to control the shards the search will be executed on.
+     *
+     * @return the routing
      */
     public String routing() {
         return this.routing;
@@ -349,6 +378,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * A comma separated list of routing values to control the shards the search will be executed on.
+     *
+     * @param routing the routing value
+     * @return the routing
      */
     public SearchRequest routing(String routing) {
         this.routing = routing;
@@ -360,18 +392,29 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
      * or a custom value, which guarantees that the same order
      * will be used across different requests.
+     *
+     * @param preference the preference
+     * @return the preference
      */
     public SearchRequest preference(String preference) {
         this.preference = preference;
         return this;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String preference() {
         return this.preference;
     }
 
     /**
      * The search type to execute, defaults to {@link SearchType#DEFAULT}.
+     *
+     * @param searchType the search type
+     * @return this instance
      */
     public SearchRequest searchType(SearchType searchType) {
         this.searchType = Objects.requireNonNull(searchType, "searchType must not be null");
@@ -382,6 +425,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      * The a string representation search type to execute, defaults to {@link SearchType#DEFAULT}. Can be
      * one of "dfs_query_then_fetch"/"dfsQueryThenFetch", "dfs_query_and_fetch"/"dfsQueryAndFetch",
      * "query_then_fetch"/"queryThenFetch", and "query_and_fetch"/"queryAndFetch".
+     *
+     * @param searchType the search type
+     * @return this instance
      */
     public SearchRequest searchType(String searchType) {
         return searchType(SearchType.fromString(searchType));
@@ -389,6 +435,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * The source of the search request.
+     *
+     * @param sourceBuilder the source builder
+     * @return the source
      */
     public SearchRequest source(SearchSourceBuilder sourceBuilder) {
         this.source = Objects.requireNonNull(sourceBuilder, "source must not be null");
@@ -397,11 +446,18 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * The search source to execute.
+     *
+     * @return the source
      */
     public SearchSourceBuilder source() {
         return source;
     }
 
+    /**
+     * Returns the point in time builder.
+     *
+     * @return the point in time builder
+     */
     public PointInTimeBuilder pointInTimeBuilder() {
         if (source != null) {
             return source.pointInTimeBuilder();
@@ -411,6 +467,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * The type of search to execute.
+     *
+     * @return this instance
      */
     public SearchType searchType() {
         return searchType;
@@ -426,6 +484,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * If set, will enable scrolling of the search request.
+     *
+     * @return this instance
      */
     public Scroll scroll() {
         return scroll;
@@ -433,6 +493,9 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * If set, will enable scrolling of the search request.
+     *
+     * @param scroll the scroll
+     * @return this instance
      */
     public SearchRequest scroll(Scroll scroll) {
         this.scroll = scroll;
@@ -441,15 +504,28 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * If set, will enable scrolling of the search request for the specified timeout.
+     *
+     * @param keepAlive the keep alive
+     * @return this instance
      */
     public SearchRequest scroll(TimeValue keepAlive) {
         return scroll(new Scroll(keepAlive));
     }
 
+    /**
+     * Returns the request cache.
+     *
+     * @return the request cache
+     */
     public Boolean requestCache() {
         return this.requestCache;
     }
 
+    /**
+     * Returns the allow partial search results.
+     *
+     * @return the allow partial search results
+     */
     public Boolean allowPartialSearchResults() {
         return this.allowPartialSearchResults;
     }
@@ -457,6 +533,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
     /**
      * Returns the number of shard results that should be reduced at once on the coordinating node. This value should be used as a
      * protection mechanism to reduce the memory overhead per search request if the potential number of shards in the request can be large.
+     *
+     * @return the batched reduce size
      */
     public int getBatchedReduceSize() {
         return batchedReduceSize;
@@ -466,6 +544,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      * Returns the number of shard requests that should be executed concurrently on a single node. This value should be used as a
      * protection mechanism to reduce the number of shard requests fired per high level search request. Searches that hit the entire
      * cluster can be throttled with this number to reduce the cluster load. The default is {@code 5}
+     *
+     * @return the max concurrent shard requests
      */
     public int getMaxConcurrentShardRequests() {
         return maxConcurrentShardRequests == 0 ? 5 : maxConcurrentShardRequests;
@@ -473,6 +553,8 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
 
     /**
      * Returns value of user-provided phase_took query parameter for this search request.
+     *
+     * @return the phase took flag
      */
     public Boolean isPhaseTook() {
         return phaseTook;
@@ -491,16 +573,28 @@ public class SearchRequest extends ActionRequest implements IndicesRequest.Repla
      * <li>The request targets one or more read-only index</li>
      * <li>The primary sort of the query targets an indexed field</li>
      * </ul>
+     *
+     * @return the pre filter shard size
      */
     @Nullable
     public Integer getPreFilterShardSize() {
         return preFilterShardSize;
     }
 
+    /**
+     * Returns the cancel after time interval.
+     *
+     * @return the cancel after time interval
+     */
     public TimeValue getCancelAfterTimeInterval() {
         return cancelAfterTimeInterval;
     }
 
+    /**
+     * Builds the description.
+     *
+     * @return the new description
+     */
     public final String buildDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append("indices[");

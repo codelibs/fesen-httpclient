@@ -103,26 +103,36 @@ public interface CircuitBreaker {
     long addWithoutBreaking(long bytes);
 
     /**
+     * Returns the used.
+     *
      * @return the currently used bytes the breaker is tracking
      */
     long getUsed();
 
     /**
+     * Returns the limit.
+     *
      * @return maximum number of bytes the circuit breaker can track before tripping
      */
     long getLimit();
 
     /**
+     * Returns the overhead.
+     *
      * @return overhead of circuit breaker
      */
     double getOverhead();
 
     /**
+     * Returns the tripped count.
+     *
      * @return the number of times the circuit breaker has been tripped
      */
     long getTrippedCount();
 
     /**
+     * Returns the name.
+     *
      * @return the name of the breaker
      */
     String getName();

@@ -117,6 +117,12 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
     int[] currentEndOffset = new int[0];
     BytesReference[] currentPayloads = new BytesReference[0];
 
+    /**
+     * Creates a new TermVectorsResponse.
+     *
+     * @param index the index
+     * @param id the identifier
+     */
     public TermVectorsResponse(String index, String id) {
         this.index = index;
         this.id = id;
@@ -166,6 +172,12 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         return headerRef != null;
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     * @throws IOException if an I/O error occurs
+     */
     public Fields getFields() throws IOException {
         if (hasTermVectors() && isExists()) {
             if (!sourceCopied) { // make the bytes safe
@@ -370,6 +382,11 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         }
     }
 
+    /**
+     * Sets the took in milliseconds.
+     *
+     * @param tookInMillis the took in milliseconds
+     */
     public void setTookInMillis(long tookInMillis) {
         this.tookInMillis = tookInMillis;
     }
@@ -380,22 +397,47 @@ public class TermVectorsResponse extends ActionResponse implements ToXContentObj
         }
     }
 
+    /**
+     * Returns the exists flag.
+     *
+     * @return the exists flag
+     */
     public boolean isExists() {
         return exists;
     }
 
+    /**
+     * Sets the exists.
+     *
+     * @param exists the exists
+     */
     public void setExists(boolean exists) {
         this.exists = exists;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public String getIndex() {
         return index;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the artificial flag.
+     *
+     * @return the artificial flag
+     */
     public boolean isArtificial() {
         return artificial;
     }

@@ -47,9 +47,20 @@ import java.util.Locale;
  * @opensearch.internal
  */
 public enum Operator implements Writeable {
+    /**
+     * The OR value.
+     */
     OR,
+    /**
+     * The AND value.
+     */
     AND;
 
+    /**
+     * Returns this instance as boolean clause occur.
+     *
+     * @return the boolean clause occur
+     */
     public BooleanClause.Occur toBooleanClauseOccur() {
         switch (this) {
             case OR:
@@ -61,6 +72,13 @@ public enum Operator implements Writeable {
         }
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static Operator readFromStream(StreamInput in) throws IOException {
         return in.readEnum(Operator.class);
     }
@@ -70,10 +88,22 @@ public enum Operator implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param op the op
+     * @return the new string
+     */
     public static Operator fromString(String op) {
         return valueOf(op.toUpperCase(Locale.ROOT));
     }
 
+    /**
+     * Creates a new operator exception.
+     *
+     * @param op the op
+     * @return the new operator exception
+     */
     public static IllegalArgumentException newOperatorException(String op) {
         return new IllegalArgumentException(
             "operator needs to be either " + CollectionUtils.arrayAsArrayList(values()) + ", but not [" + op + "]"

@@ -44,8 +44,14 @@ import java.util.Arrays;
 @PublicApi(since = "1.0.0")
 public class ParsedScrollId {
 
+    /**
+     * The QUERY_THEN_FETCH_TYPE constant.
+     */
     public static final String QUERY_THEN_FETCH_TYPE = "queryThenFetch";
 
+    /**
+     * The QUERY_AND_FETCH_TYPE constant.
+     */
     public static final String QUERY_AND_FETCH_TYPE = "queryAndFetch";
 
     private final String source;
@@ -62,22 +68,47 @@ public class ParsedScrollId {
         this.originalIndices = originalIndices;
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public String getSource() {
         return source;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Returns the context.
+     *
+     * @return the context
+     */
     public SearchContextIdForNode[] getContext() {
         return context;
     }
 
+    /**
+     * Returns the original indices.
+     *
+     * @return the original indices
+     */
     public String[] getOriginalIndices() {
         return originalIndices;
     }
 
+    /**
+     * Returns the local indices flag.
+     *
+     * @return the local indices flag
+     */
     public boolean hasLocalIndices() {
         return Arrays.stream(context).anyMatch(c -> c.getClusterAlias() == null);
     }

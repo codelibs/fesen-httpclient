@@ -39,6 +39,14 @@ public final class HeapUsageTracker {
         private final long currentAvg;
         private final long rollingAvg;
 
+        /**
+         * Creates a new Stats.
+         *
+         * @param cancellationCount the cancellation count
+         * @param currentMax the current max
+         * @param currentAvg the current avg
+         * @param rollingAvg the rolling avg
+         */
         public Stats(long cancellationCount, long currentMax, long currentAvg, long rollingAvg) {
             this.cancellationCount = cancellationCount;
             this.currentMax = currentMax;
@@ -46,6 +54,12 @@ public final class HeapUsageTracker {
             this.rollingAvg = rollingAvg;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             this(in.readVLong(), in.readVLong(), in.readVLong(), in.readVLong());
         }

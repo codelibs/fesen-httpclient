@@ -60,10 +60,16 @@ import static org.codelibs.fesen.opensearch.search.aggregations.pipeline.Pipelin
  * @opensearch.internal
  */
 public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregationBuilder<MovAvgPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "moving_avg";
 
     static final ParseField MODEL = new ParseField("model");
     private static final ParseField WINDOW = new ParseField("window");
+    /**
+     * The SETTINGS constant.
+     */
     public static final ParseField SETTINGS = new ParseField("settings");
     private static final ParseField PREDICT = new ParseField("predict");
     private static final ParseField MINIMIZE = new ParseField("minimize");
@@ -76,6 +82,12 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
     private int predict = 0;
     private Boolean minimize;
 
+    /**
+     * Creates a new MovAvgPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public MovAvgPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -92,6 +104,9 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
 
     /**
      * Sets the format to use on the output of this aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     public MovAvgPipelineAggregationBuilder format(String format) {
         if (format == null) {
@@ -103,6 +118,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
 
     /**
      * Gets the format to use on the output of this aggregation.
+     *
+     * @return this instance
      */
     public String format() {
         return format;
@@ -110,6 +127,9 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
 
     /**
      * Sets the GapPolicy to use on the output of this aggregation.
+     *
+     * @param gapPolicy the gap policy
+     * @return the gap policy
      */
     public MovAvgPipelineAggregationBuilder gapPolicy(GapPolicy gapPolicy) {
         if (gapPolicy == null) {
@@ -121,11 +141,18 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
 
     /**
      * Gets the GapPolicy to use on the output of this aggregation.
+     *
+     * @return the gap policy
      */
     public GapPolicy gapPolicy() {
         return gapPolicy;
     }
 
+    /**
+     * Returns the formatter.
+     *
+     * @return the formatter
+     */
     protected DocValueFormat formatter() {
         if (format != null) {
             return new DocValueFormat.Decimal(format);
@@ -141,6 +168,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      *
      * @param window
      *            Size of window
+     * @return the window
      */
     public MovAvgPipelineAggregationBuilder window(int window) {
         if (window <= 0) {
@@ -158,6 +186,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      * Gets the window size for the moving average. This window will "slide"
      * across the series, and the values inside that window will be used to
      * calculate the moving avg value
+     *
+     * @return the window
      */
     public int window() {
         return window;
@@ -169,6 +199,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      *
      * @param model
      *            A MovAvgModel which has been prepopulated with settings
+     * @return the model builder
      */
     public MovAvgPipelineAggregationBuilder modelBuilder(MovAvgModelBuilder model) {
         if (model == null) {
@@ -184,6 +215,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      *
      * @param model
      *            A MovAvgModel which has been prepopulated with settings
+     * @return the model
      */
     public MovAvgPipelineAggregationBuilder model(MovAvgModel model) {
         if (model == null) {
@@ -196,6 +228,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
     /**
      * Gets a MovAvgModel for the Moving Average. The model is used to
      * define what type of moving average you want to use on the series
+     *
+     * @return the model
      */
     public MovAvgModel model() {
         return model;
@@ -209,6 +243,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      *
      * @param predict
      *            Number of predictions to make
+     * @return the predict
      */
     public MovAvgPipelineAggregationBuilder predict(int predict) {
         if (predict <= 0) {
@@ -223,6 +258,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      * prediction will be spaced at the intervals specified in the
      * histogram. E.g "predict: 2" will return two new buckets at the end of
      * the histogram with the predicted values.
+     *
+     * @return the predict
      */
     public int predict() {
         return predict;
@@ -234,6 +271,7 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
      *
      * @param minimize
      *            If the model should be fit to the underlying data
+     * @return the minimize
      */
     public MovAvgPipelineAggregationBuilder minimize(boolean minimize) {
         this.minimize = minimize;
@@ -243,6 +281,8 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
     /**
      * Gets whether the model should be fit to the data using a cost
      * minimizing algorithm.
+     *
+     * @return the minimize
      */
     public Boolean minimize() {
         return minimize;
@@ -281,6 +321,15 @@ public class MovAvgPipelineAggregationBuilder extends AbstractPipelineAggregatio
         return builder;
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param movingAverageMdelParserRegistry the moving average mdel parser registry
+     * @param pipelineAggregatorName the pipeline aggregator name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static MovAvgPipelineAggregationBuilder parse(
         ParseFieldRegistry<MovAvgModel.AbstractModelParser> movingAverageMdelParserRegistry,
         String pipelineAggregatorName,

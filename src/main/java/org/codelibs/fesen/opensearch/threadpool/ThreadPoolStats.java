@@ -93,6 +93,15 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
         /**
          * This constructor will be deprecated starting in version 3.4.0.
          * Use {@link Builder} instead.
+         *
+         * @param name the name
+         * @param threads the threads
+         * @param queue the queue
+         * @param active the active
+         * @param rejected the rejected
+         * @param largest the largest
+         * @param completed the completed
+         * @param waitTimeNanos the wait time nanoseconds
          */
         @Deprecated
         public Stats(String name, int threads, int queue, int active, long rejected, int largest, long completed, long waitTimeNanos) {
@@ -107,6 +116,12 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
             this.parallelism = -1;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             name = in.readString();
             threads = in.readInt();
@@ -136,18 +151,38 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
             }
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return this.name;
         }
 
+        /**
+         * Returns the threads.
+         *
+         * @return the threads
+         */
         public int getThreads() {
             return this.threads;
         }
 
+        /**
+         * Returns the wait time.
+         *
+         * @return the wait time
+         */
         public TimeValue getWaitTime() {
             return TimeValue.timeValueNanos(waitTimeNanos);
         }
 
+        /**
+         * Returns the wait time nanoseconds.
+         *
+         * @return the wait time nanoseconds
+         */
         public long getWaitTimeNanos() {
             return waitTimeNanos;
         }
@@ -218,48 +253,105 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
             private long waitTimeNanos = 0;
             private int parallelism = 0;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Returns the name.
+             *
+             * @param name the name
+             * @return the name
+             */
             public Builder name(String name) {
                 this.name = name;
                 return this;
             }
 
+            /**
+             * Returns the threads.
+             *
+             * @param threads the threads
+             * @return the threads
+             */
             public Builder threads(int threads) {
                 this.threads = threads;
                 return this;
             }
 
+            /**
+             * Returns the queue.
+             *
+             * @param queue the queue
+             * @return the queue
+             */
             public Builder queue(int queue) {
                 this.queue = queue;
                 return this;
             }
 
+            /**
+             * Returns the active.
+             *
+             * @param active the active
+             * @return the active
+             */
             public Builder active(int active) {
                 this.active = active;
                 return this;
             }
 
+            /**
+             * Returns the rejected.
+             *
+             * @param rejected the rejected
+             * @return the rejected
+             */
             public Builder rejected(long rejected) {
                 this.rejected = rejected;
                 return this;
             }
 
+            /**
+             * Returns the largest.
+             *
+             * @param largest the largest
+             * @return the largest
+             */
             public Builder largest(int largest) {
                 this.largest = largest;
                 return this;
             }
 
+            /**
+             * Returns the completed.
+             *
+             * @param completed the completed
+             * @return the completed
+             */
             public Builder completed(long completed) {
                 this.completed = completed;
                 return this;
             }
 
+            /**
+             * Waits the time nanoseconds.
+             *
+             * @param waitTimeNanos the wait time nanoseconds
+             * @return this instance
+             */
             public Builder waitTimeNanos(long waitTimeNanos) {
                 this.waitTimeNanos = waitTimeNanos;
                 return this;
             }
 
+            /**
+             * Returns the parallelism.
+             *
+             * @param parallelism the parallelism
+             * @return the parallelism
+             */
             public Builder parallelism(int parallelism) {
                 this.parallelism = parallelism;
                 return this;
@@ -277,11 +369,22 @@ public class ThreadPoolStats implements Writeable, ToXContentFragment, Iterable<
 
     private List<Stats> stats;
 
+    /**
+     * Creates a new ThreadPoolStats.
+     *
+     * @param stats the stats
+     */
     public ThreadPoolStats(List<Stats> stats) {
         Collections.sort(stats);
         this.stats = stats;
     }
 
+    /**
+     * Creates a new ThreadPoolStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ThreadPoolStats(StreamInput in) throws IOException {
         stats = in.readList(Stats::new);
     }

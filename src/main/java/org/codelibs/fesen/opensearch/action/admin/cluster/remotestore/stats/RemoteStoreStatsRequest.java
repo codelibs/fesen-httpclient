@@ -26,6 +26,9 @@ public class RemoteStoreStatsRequest extends BroadcastRequest<RemoteStoreStatsRe
     private String[] shards;
     private boolean local = false;
 
+    /**
+     * Creates a new RemoteStoreStatsRequest.
+     */
     public RemoteStoreStatsRequest() {
         super((String[]) null);
         shards = new String[0];
@@ -38,15 +41,31 @@ public class RemoteStoreStatsRequest extends BroadcastRequest<RemoteStoreStatsRe
         out.writeBoolean(local);
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @param shards the shards
+     * @return the shards
+     */
     public RemoteStoreStatsRequest shards(String... shards) {
         this.shards = shards;
         return this;
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @return the shards
+     */
     public String[] shards() {
         return this.shards;
     }
 
+    /**
+     * Returns the local.
+     *
+     * @return the local
+     */
     public boolean local() {
         return local;
     }

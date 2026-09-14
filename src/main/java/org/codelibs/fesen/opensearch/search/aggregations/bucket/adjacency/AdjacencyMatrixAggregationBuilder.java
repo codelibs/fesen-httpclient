@@ -63,6 +63,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilder<AdjacencyMatrixAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "adjacency_matrix";
 
     private static final String DEFAULT_SEPARATOR = "&";
@@ -88,6 +91,14 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         );
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static AggregationBuilder parse(XContentParser parser, String name) throws IOException {
         AdjacencyMatrixAggregationBuilder result = PARSER.parse(parser, name);
         result.checkConsistency();
@@ -95,6 +106,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
     }
 
     /**
+     * Creates a new AdjacencyMatrixAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      */
@@ -103,6 +116,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
     }
 
     /**
+     * Creates a new AdjacencyMatrixAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param filters
@@ -112,6 +127,13 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         this(name, DEFAULT_SEPARATOR, filters);
     }
 
+    /**
+     * Creates a new AdjacencyMatrixAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected AdjacencyMatrixAggregationBuilder(
         AdjacencyMatrixAggregationBuilder clone,
         Builder factoriesBuilder,
@@ -129,6 +151,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
     }
 
     /**
+     * Creates a new AdjacencyMatrixAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param separator
@@ -145,6 +169,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
     }
 
     /**
+     * Creates a new AdjacencyMatrixAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param filters
@@ -157,6 +183,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
     }
 
     /**
+     * Creates a new AdjacencyMatrixAggregationBuilder.
+     *
      * @param name
      *            the name of this aggregation
      * @param separator
@@ -215,6 +243,12 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         return this;
     }
 
+    /**
+     * Sets the show only intersecting.
+     *
+     * @param showOnlyIntersecting the show only intersecting
+     * @return this instance
+     */
     public AdjacencyMatrixAggregationBuilder setShowOnlyIntersecting(boolean showOnlyIntersecting) {
         this.showOnlyIntersecting = showOnlyIntersecting;
         return this;
@@ -222,6 +256,9 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
 
     /**
      * Set the separator used to join pairs of bucket keys
+     *
+     * @param separator the separator
+     * @return the separator
      */
     public AdjacencyMatrixAggregationBuilder separator(String separator) {
         if (separator == null) {
@@ -233,6 +270,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
 
     /**
      * Get the separator used to join pairs of bucket keys
+     *
+     * @return the separator
      */
     public String separator() {
         return separator;
@@ -240,6 +279,8 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
 
     /**
      * Get the filters. This will be an unmodifiable map
+     *
+     * @return the filters
      */
     public Map<String, QueryBuilder> filters() {
         Map<String, QueryBuilder> result = new HashMap<>(this.filters.size());
@@ -249,6 +290,11 @@ public class AdjacencyMatrixAggregationBuilder extends AbstractAggregationBuilde
         return result;
     }
 
+    /**
+     * Returns the show only intersecting flag.
+     *
+     * @return the show only intersecting flag
+     */
     public boolean isShowOnlyIntersecting() {
         return showOnlyIntersecting;
     }

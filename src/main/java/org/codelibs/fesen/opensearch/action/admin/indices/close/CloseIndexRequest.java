@@ -58,10 +58,15 @@ public class CloseIndexRequest extends AcknowledgedRequest<CloseIndexRequest> im
     private IndicesOptions indicesOptions = IndicesOptions.strictExpandOpen();
     private ActiveShardCount waitForActiveShards = ActiveShardCount.NONE;
 
+    /**
+     * Creates a new CloseIndexRequest.
+     */
     public CloseIndexRequest() {}
 
     /**
      * Constructs a new close index request for the specified index.
+     *
+     * @param indices the indices
      */
     public CloseIndexRequest(String... indices) {
         this.indices = indices;
@@ -107,10 +112,21 @@ public class CloseIndexRequest extends AcknowledgedRequest<CloseIndexRequest> im
         return indicesOptions;
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @return this instance
+     */
     public ActiveShardCount waitForActiveShards() {
         return waitForActiveShards;
     }
 
+    /**
+     * Waits the for active shards.
+     *
+     * @param waitForActiveShards the wait for active shards
+     * @return this instance
+     */
     public CloseIndexRequest waitForActiveShards(final ActiveShardCount waitForActiveShards) {
         this.waitForActiveShards = waitForActiveShards;
         return this;

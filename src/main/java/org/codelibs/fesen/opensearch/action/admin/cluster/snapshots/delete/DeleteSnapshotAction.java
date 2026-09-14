@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class DeleteSnapshotAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteSnapshotAction INSTANCE = new DeleteSnapshotAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/snapshot/delete";
 
     private DeleteSnapshotAction() {

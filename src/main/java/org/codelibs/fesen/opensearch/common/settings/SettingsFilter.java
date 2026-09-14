@@ -58,6 +58,11 @@ public final class SettingsFilter {
     private final Set<String> patterns;
     private final String patternString;
 
+    /**
+     * Creates a new SettingsFilter.
+     *
+     * @param patterns the patterns
+     */
     public SettingsFilter(Collection<String> patterns) {
         for (String pattern : patterns) {
             if (isValidPattern(pattern) == false) {
@@ -70,12 +75,21 @@ public final class SettingsFilter {
 
     /**
      * Returns <code>true</code> iff the given string is either a valid settings key pattern or a simple regular expression
+     * @param pattern the pattern
+     * @return the valid pattern flag
      * @see Regex
      */
     public static boolean isValidPattern(String pattern) {
         return pattern != null || Regex.isSimpleMatchPattern(pattern);
     }
 
+    /**
+     * Filters the settings.
+     *
+     * @param params the serialization parameters
+     * @param settings the settings
+     * @return this instance
+     */
     public static Settings filterSettings(Params params, Settings settings) {
         String patterns = params.param(SETTINGS_FILTER_PARAM);
         final Settings filteredSettings;

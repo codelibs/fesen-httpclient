@@ -164,6 +164,8 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
 
     /**
      * Sets the rollover target to rollover to another index
+     *
+     * @param rolloverTarget the rollover target
      */
     public void setRolloverTarget(String rolloverTarget) {
         this.rolloverTarget = rolloverTarget;
@@ -171,29 +173,53 @@ public class RolloverRequest extends AcknowledgedRequest<RolloverRequest> implem
 
     /**
      * Sets the alias to rollover to another index
+     *
+     * @param newIndexName the new index name
      */
     public void setNewIndexName(String newIndexName) {
         this.newIndexName = newIndexName;
     }
 
+    /**
+     * Returns the dry run flag.
+     *
+     * @return the dry run flag
+     */
     public boolean isDryRun() {
         return dryRun;
     }
 
+    /**
+     * Returns the conditions.
+     *
+     * @return the conditions
+     */
     public Map<String, Condition<?>> getConditions() {
         return conditions;
     }
 
+    /**
+     * Returns the rollover target.
+     *
+     * @return the rollover target
+     */
     public String getRolloverTarget() {
         return rolloverTarget;
     }
 
+    /**
+     * Returns the new index name.
+     *
+     * @return the new index name
+     */
     public String getNewIndexName() {
         return newIndexName;
     }
 
     /**
      * Returns the inner {@link CreateIndexRequest}. Allows to configure mappings, settings and aliases for the new index.
+     *
+     * @return the create index request
      */
     public CreateIndexRequest getCreateIndexRequest() {
         return createIndexRequest;

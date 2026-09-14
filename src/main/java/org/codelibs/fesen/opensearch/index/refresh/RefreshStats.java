@@ -64,8 +64,17 @@ public class RefreshStats implements Writeable, ToXContentFragment {
      */
     private int listeners;
 
+    /**
+     * Creates a new RefreshStats.
+     */
     public RefreshStats() {}
 
+    /**
+     * Creates a new RefreshStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RefreshStats(StreamInput in) throws IOException {
         total = in.readVLong();
         totalTimeInMillis = in.readVLong();
@@ -86,6 +95,12 @@ public class RefreshStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param total the total
+     * @param totalTimeInMillis the total time in milliseconds
+     * @param externalTotal the external total
+     * @param externalTotalTimeInMillis the external total time in milliseconds
+     * @param listeners the listeners
      */
     @Deprecated
     public RefreshStats(long total, long totalTimeInMillis, long externalTotal, long externalTotalTimeInMillis, int listeners) {
@@ -96,10 +111,20 @@ public class RefreshStats implements Writeable, ToXContentFragment {
         this.listeners = listeners;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param refreshStats the refresh stats
+     */
     public void add(RefreshStats refreshStats) {
         addTotals(refreshStats);
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param refreshStats the refresh stats
+     */
     public void addTotals(RefreshStats refreshStats) {
         if (refreshStats == null) {
             return;
@@ -113,6 +138,8 @@ public class RefreshStats implements Writeable, ToXContentFragment {
 
     /**
      * The total time refreshes have been executed.
+     *
+     * @return the total time
      */
     public TimeValue getTotalTime() {
         return new TimeValue(totalTimeInMillis);
@@ -120,6 +147,8 @@ public class RefreshStats implements Writeable, ToXContentFragment {
 
     /**
      * The total time external refreshes have been executed.
+     *
+     * @return the external total time
      */
     public TimeValue getExternalTotalTime() {
         return new TimeValue(externalTotalTimeInMillis);
@@ -161,28 +190,61 @@ public class RefreshStats implements Writeable, ToXContentFragment {
         private long externalTotalTimeInMillis = 0;
         private int listeners = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the total.
+         *
+         * @param total the total
+         * @return the total
+         */
         public Builder total(long total) {
             this.total = total;
             return this;
         }
 
+        /**
+         * Returns the total time in milliseconds.
+         *
+         * @param time the time
+         * @return the total time in milliseconds
+         */
         public Builder totalTimeInMillis(long time) {
             this.totalTimeInMillis = time;
             return this;
         }
 
+        /**
+         * Returns the external total.
+         *
+         * @param total the total
+         * @return the external total
+         */
         public Builder externalTotal(long total) {
             this.externalTotal = total;
             return this;
         }
 
+        /**
+         * Returns the external total time in milliseconds.
+         *
+         * @param time the time
+         * @return the external total time in milliseconds
+         */
         public Builder externalTotalTimeInMillis(long time) {
             this.externalTotalTimeInMillis = time;
             return this;
         }
 
+        /**
+         * Returns the listeners.
+         *
+         * @param listeners the listeners
+         * @return the listeners
+         */
         public Builder listeners(int listeners) {
             this.listeners = listeners;
             return this;

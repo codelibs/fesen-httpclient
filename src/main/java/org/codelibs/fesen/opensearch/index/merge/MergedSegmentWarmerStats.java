@@ -51,8 +51,17 @@ public class MergedSegmentWarmerStats implements Writeable, ToXContentFragment {
     // [PRIMARY SHARD] Current number of ongoing segment warming operations
     private long ongoingCount;
 
+    /**
+     * Creates a new MergedSegmentWarmerStats.
+     */
     public MergedSegmentWarmerStats() {}
 
+    /**
+     * Creates a new MergedSegmentWarmerStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MergedSegmentWarmerStats(StreamInput in) throws IOException {
         totalInvocationsCount = in.readVLong();
         totalTimeMillis = in.readVLong();
@@ -64,10 +73,20 @@ public class MergedSegmentWarmerStats implements Writeable, ToXContentFragment {
         ongoingCount = in.readVLong();
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param mergedSegmentWarmerStats the merged segment warmer stats
+     */
     public void add(MergedSegmentWarmerStats mergedSegmentWarmerStats) {
         this.ongoingCount += mergedSegmentWarmerStats.ongoingCount;
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param mergedSegmentWarmerStats the merged segment warmer stats
+     */
     public synchronized void addTotals(MergedSegmentWarmerStats mergedSegmentWarmerStats) {
         if (mergedSegmentWarmerStats == null) {
             return;
@@ -81,22 +100,47 @@ public class MergedSegmentWarmerStats implements Writeable, ToXContentFragment {
         this.totalReceiveTimeMillis += mergedSegmentWarmerStats.totalReceiveTimeMillis;
     }
 
+    /**
+     * Returns the total time.
+     *
+     * @return the total time
+     */
     public TimeValue getTotalTime() {
         return new TimeValue(totalTimeMillis);
     }
 
+    /**
+     * Returns the total received size.
+     *
+     * @return the total received size
+     */
     public ByteSizeValue getTotalReceivedSize() {
         return new ByteSizeValue(totalBytesReceived);
     }
 
+    /**
+     * Returns the total sent size.
+     *
+     * @return the total sent size
+     */
     public ByteSizeValue getTotalSentSize() {
         return new ByteSizeValue(totalBytesSent);
     }
 
+    /**
+     * Returns the total receive time.
+     *
+     * @return the total receive time
+     */
     public TimeValue getTotalReceiveTime() {
         return new TimeValue(totalReceiveTimeMillis);
     }
 
+    /**
+     * Returns the total send time.
+     *
+     * @return the total send time
+     */
     public TimeValue getTotalSendTime() {
         return new TimeValue(totalSendTimeMillis);
     }

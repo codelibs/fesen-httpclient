@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * An extension to {@link Future} allowing for simplified "get" operations.
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -50,6 +51,8 @@ public interface ActionFuture<T> extends Future<T> {
      * Similar to {@link #get()}, just catching the {@link InterruptedException} and throwing
      * an {@link IllegalStateException} instead. Also catches
      * {@link java.util.concurrent.ExecutionException} and throws the actual cause instead.
+     *
+     * @return the action get
      */
     T actionGet();
 
@@ -57,6 +60,9 @@ public interface ActionFuture<T> extends Future<T> {
      * Similar to {@link #get(long, java.util.concurrent.TimeUnit)}, just catching the {@link InterruptedException} and throwing
      * an {@link IllegalStateException} instead. Also catches
      * {@link java.util.concurrent.ExecutionException} and throws the actual cause instead.
+     *
+     * @param timeout the timeout
+     * @return the action get
      */
     T actionGet(String timeout);
 
@@ -66,6 +72,7 @@ public interface ActionFuture<T> extends Future<T> {
      * {@link java.util.concurrent.ExecutionException} and throws the actual cause instead.
      *
      * @param timeoutMillis Timeout in millis
+     * @return the action get
      */
     T actionGet(long timeoutMillis);
 
@@ -73,6 +80,10 @@ public interface ActionFuture<T> extends Future<T> {
      * Similar to {@link #get(long, java.util.concurrent.TimeUnit)}, just catching the {@link InterruptedException} and throwing
      * an {@link IllegalStateException} instead. Also catches
      * {@link java.util.concurrent.ExecutionException} and throws the actual cause instead.
+     *
+     * @param timeout the timeout
+     * @param unit the unit
+     * @return the action get
      */
     T actionGet(long timeout, TimeUnit unit);
 
@@ -80,6 +91,9 @@ public interface ActionFuture<T> extends Future<T> {
      * Similar to {@link #get(long, java.util.concurrent.TimeUnit)}, just catching the {@link InterruptedException} and throwing
      * an {@link IllegalStateException} instead. Also catches
      * {@link java.util.concurrent.ExecutionException} and throws the actual cause instead.
+     *
+     * @param timeout the timeout
+     * @return the action get
      */
     T actionGet(TimeValue timeout);
 }

@@ -17,11 +17,29 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  */
 @PublicApi(since = "2.9.0")
 public enum SearchPhaseName {
+    /**
+     * The DFS_PRE_QUERY value.
+     */
     DFS_PRE_QUERY("dfs_pre_query"),
+    /**
+     * The QUERY value.
+     */
     QUERY("query"),
+    /**
+     * The FETCH value.
+     */
     FETCH("fetch"),
+    /**
+     * The DFS_QUERY value.
+     */
     DFS_QUERY("dfs_query"),
+    /**
+     * The EXPAND value.
+     */
     EXPAND("expand"),
+    /**
+     * The CAN_MATCH value.
+     */
     CAN_MATCH("can_match");
 
     private final String name;
@@ -30,6 +48,11 @@ public enum SearchPhaseName {
         this.name = name;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }

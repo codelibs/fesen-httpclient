@@ -39,10 +39,20 @@ import java.io.IOException;
 /**
  * Reads an object from a parser using some context.
  *
+ * @param <Context> the context type
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 @FunctionalInterface
 public interface ContextParser<Context, T> {
+    /**
+     * Parses this instance.
+     *
+     * @param p the p
+     * @param c the c
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     T parse(XContentParser p, Context c) throws IOException;
 }

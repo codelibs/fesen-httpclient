@@ -46,6 +46,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedDerivative extends ParsedSimpleValue implements Derivative {
+    /**
+     * Creates a new ParsedDerivative.
+     */
+    public ParsedDerivative() {
+    }
 
     private double normalizedValue;
     private String normalizedAsString;
@@ -78,6 +83,13 @@ public class ParsedDerivative extends ParsedSimpleValue implements Derivative {
         PARSER.declareString((agg, normalAsString) -> agg.normalizedAsString = normalAsString, NORMALIZED_AS_STRING);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedDerivative fromXContent(XContentParser parser, final String name) {
         ParsedDerivative derivative = PARSER.apply(parser, null);
         derivative.setName(name);

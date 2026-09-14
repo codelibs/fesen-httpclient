@@ -53,6 +53,12 @@ public class PluginsAndModules implements ReportingService.Info {
     private final List<PluginInfo> plugins;
     private final List<PluginInfo> modules;
 
+    /**
+     * Creates a new PluginsAndModules by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PluginsAndModules(StreamInput in) throws IOException {
         this.plugins = Collections.unmodifiableList(in.readList(PluginInfo::new));
         this.modules = Collections.unmodifiableList(in.readList(PluginInfo::new));
@@ -66,6 +72,8 @@ public class PluginsAndModules implements ReportingService.Info {
 
     /**
      * Returns an ordered list based on plugins name
+     *
+     * @return the plugin infos
      */
     public List<PluginInfo> getPluginInfos() {
         List<PluginInfo> plugins = new ArrayList<>(this.plugins);
@@ -75,6 +83,8 @@ public class PluginsAndModules implements ReportingService.Info {
 
     /**
      * Returns an ordered list based on modules name
+     *
+     * @return the module infos
      */
     public List<PluginInfo> getModuleInfos() {
         List<PluginInfo> modules = new ArrayList<>(this.modules);

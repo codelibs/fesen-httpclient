@@ -74,10 +74,28 @@ public class RepositoryMetadata implements Writeable {
      */
     private final long pendingGeneration;
 
+    /**
+     * Creates a new RepositoryMetadata.
+     *
+     * @param name the name
+     * @param type the type
+     * @param settings the settings
+     * @param cryptoMetadata the crypto metadata
+     */
     public RepositoryMetadata(String name, String type, Settings settings, CryptoMetadata cryptoMetadata) {
         this(name, type, settings, UNKNOWN_REPO_GEN, EMPTY_REPO_GEN, cryptoMetadata);
     }
 
+    /**
+     * Creates a new RepositoryMetadata.
+     *
+     * @param name the name
+     * @param type the type
+     * @param settings the settings
+     * @param generation the generation
+     * @param pendingGeneration the pending generation
+     * @param cryptoMetadata the crypto metadata
+     */
     public RepositoryMetadata(
         String name,
         String type,
@@ -159,6 +177,12 @@ public class RepositoryMetadata implements Writeable {
         return pendingGeneration;
     }
 
+    /**
+     * Creates a new RepositoryMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RepositoryMetadata(StreamInput in) throws IOException {
         name = in.readString();
         type = in.readString();

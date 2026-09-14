@@ -46,6 +46,9 @@ import java.util.Locale;
  * @opensearch.internal
  */
 public enum CombineFunction implements Writeable {
+    /**
+     * The MULTIPLY value.
+     */
     MULTIPLY {
         @Override
         public float combine(double queryScore, double funcScore, double maxBoost) {
@@ -64,6 +67,9 @@ public enum CombineFunction implements Writeable {
             );
         }
     },
+    /**
+     * The REPLACE value.
+     */
     REPLACE {
         @Override
         public float combine(double queryScore, double funcScore, double maxBoost) {
@@ -77,6 +83,9 @@ public enum CombineFunction implements Writeable {
         }
 
     },
+    /**
+     * The SUM value.
+     */
     SUM {
         @Override
         public float combine(double queryScore, double funcScore, double maxBoost) {
@@ -100,6 +109,9 @@ public enum CombineFunction implements Writeable {
         }
 
     },
+    /**
+     * The AVG value.
+     */
     AVG {
         @Override
         public float combine(double queryScore, double funcScore, double maxBoost) {
@@ -123,6 +135,9 @@ public enum CombineFunction implements Writeable {
         }
 
     },
+    /**
+     * The MIN value.
+     */
     MIN {
         @Override
         public float combine(double queryScore, double funcScore, double maxBoost) {
@@ -146,6 +161,9 @@ public enum CombineFunction implements Writeable {
         }
 
     },
+    /**
+     * The MAX value.
+     */
     MAX {
         @Override
         public float combine(double queryScore, double funcScore, double maxBoost) {
@@ -170,8 +188,24 @@ public enum CombineFunction implements Writeable {
 
     };
 
+    /**
+     * Combines this instance.
+     *
+     * @param queryScore the query score
+     * @param funcScore the func score
+     * @param maxBoost the max boost
+     * @return this instance
+     */
     public abstract float combine(double queryScore, double funcScore, double maxBoost);
 
+    /**
+     * Returns the explain.
+     *
+     * @param queryExpl the query expl
+     * @param funcExpl the func expl
+     * @param maxBoost the max boost
+     * @return the explain
+     */
     public abstract Explanation explain(Explanation queryExpl, Explanation funcExpl, float maxBoost);
 
     @Override
@@ -179,10 +213,23 @@ public enum CombineFunction implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static CombineFunction readFromStream(StreamInput in) throws IOException {
         return in.readEnum(CombineFunction.class);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param combineFunction the combine function
+     * @return the new string
+     */
     public static CombineFunction fromString(String combineFunction) {
         return valueOf(combineFunction.toUpperCase(Locale.ROOT));
     }

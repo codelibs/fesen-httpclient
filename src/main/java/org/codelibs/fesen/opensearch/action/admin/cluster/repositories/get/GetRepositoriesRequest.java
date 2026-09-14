@@ -53,6 +53,9 @@ public class GetRepositoriesRequest extends ClusterManagerNodeReadRequest<GetRep
 
     private String[] repositories = Strings.EMPTY_ARRAY;
 
+    /**
+     * Creates a new GetRepositoriesRequest.
+     */
     public GetRepositoriesRequest() {}
 
     /**

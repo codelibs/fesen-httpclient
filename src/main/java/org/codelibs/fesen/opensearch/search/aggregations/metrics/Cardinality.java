@@ -41,6 +41,8 @@ public interface Cardinality extends NumericMetricsAggregation.SingleValue {
 
     /**
      * The number of unique terms.
+     *
+     * @return the value
      */
     long getValue();
 

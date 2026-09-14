@@ -57,6 +57,9 @@ import java.util.Objects;
  */
 public class DataStreamMetadata implements Metadata.Custom {
 
+    /**
+     * The TYPE constant.
+     */
     public static final String TYPE = "data_stream";
     private static final ParseField DATA_STREAM = new ParseField("data_stream");
     @SuppressWarnings("unchecked")
@@ -79,10 +82,20 @@ public class DataStreamMetadata implements Metadata.Custom {
 
     private final Map<String, DataStream> dataStreams;
 
+    /**
+     * Creates a new DataStreamMetadata.
+     *
+     * @param dataStreams the data streams
+     */
     public DataStreamMetadata(Map<String, DataStream> dataStreams) {
         this.dataStreams = dataStreams;
     }
 
+    /**
+     * Returns the data streams.
+     *
+     * @return the data streams
+     */
     public Map<String, DataStream> dataStreams() {
         return this.dataStreams;
     }
@@ -145,14 +158,30 @@ public class DataStreamMetadata implements Metadata.Custom {
      * @opensearch.internal
      */
     public static class Builder {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
 
         private final Map<String, DataStream> dataStreams = new HashMap<>();
 
+        /**
+         * Puts the data stream.
+         *
+         * @param dataStream the data stream
+         * @return this instance
+         */
         public Builder putDataStream(DataStream dataStream) {
             dataStreams.put(dataStream.getName(), dataStream);
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public DataStreamMetadata build() {
             return new DataStreamMetadata(dataStreams);
         }

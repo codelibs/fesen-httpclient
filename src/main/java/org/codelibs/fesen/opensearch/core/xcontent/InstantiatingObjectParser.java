@@ -74,6 +74,8 @@ import java.util.function.Consumer;
  *   }
  * }</pre>
  *
+ * @param <Value> the value type
+ * @param <Context> the context type
  * @opensearch.internal
  */
 public class InstantiatingObjectParser<Value, Context>
@@ -81,6 +83,16 @@ public class InstantiatingObjectParser<Value, Context>
         BiFunction<XContentParser, Context, Value>,
         ContextParser<Context, Value> {
 
+    /**
+     * Returns the builder.
+     *
+     * @param <Value> the value type
+     * @param <Context> the context type
+     * @param name the name
+     * @param ignoreUnknownFields the ignore unknown fields
+     * @param valueClass the value class
+     * @return the builder
+     */
     public static <Value, Context> Builder<Value, Context> builder(String name, boolean ignoreUnknownFields, Class<Value> valueClass) {
         return new Builder<>(name, ignoreUnknownFields, valueClass);
     }
@@ -88,8 +100,10 @@ public class InstantiatingObjectParser<Value, Context>
     /**
      * Builder for the Instantiating Object Parser
      *
+     * @param <Value> the value type
+     * @param <Context> the context type
      * @opensearch.internal
-     **/
+      */
     public static class Builder<Value, Context> extends AbstractObjectParser<Value, Context> {
 
         private final ConstructingObjectParser<Value, Context> constructingObjectParser;
@@ -98,11 +112,23 @@ public class InstantiatingObjectParser<Value, Context>
 
         private Constructor<Value> constructor;
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param name the name
+         * @param ignoreUnknownFields the ignore unknown fields
+         * @param valueClass the value class
+         */
         public Builder(String name, boolean ignoreUnknownFields, Class<Value> valueClass) {
             this.constructingObjectParser = new ConstructingObjectParser<>(name, ignoreUnknownFields, this::build);
             this.valueClass = valueClass;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         @SuppressWarnings("unchecked")
         public InstantiatingObjectParser<Value, Context> build() {
             Constructor<?> constructor = null;

@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class DeleteByQueryAction extends ActionType<BulkByScrollResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteByQueryAction INSTANCE = new DeleteByQueryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/write/delete/byquery";
 
     private DeleteByQueryAction() {

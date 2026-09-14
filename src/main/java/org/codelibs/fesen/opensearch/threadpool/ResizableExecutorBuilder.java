@@ -43,6 +43,16 @@ public final class ResizableExecutorBuilder extends ExecutorBuilder<ResizableExe
         this(settings, name, size, queueSize, "thread_pool." + name, runnableTaskListener);
     }
 
+    /**
+     * Creates a new ResizableExecutorBuilder.
+     *
+     * @param settings the settings
+     * @param name the name
+     * @param size the size
+     * @param queueSize the queue size
+     * @param prefix the prefix
+     * @param runnableTaskListener the runnable task listener
+     */
     public ResizableExecutorBuilder(
         final Settings settings,
         final String name,

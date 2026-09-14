@@ -60,11 +60,22 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.pa
 @PublicApi(since = "1.0.0")
 public class Aggregations implements Iterable<Aggregation>, ToXContentFragment {
 
+    /**
+     * The AGGREGATIONS_FIELD constant.
+     */
     public static final String AGGREGATIONS_FIELD = "aggregations";
 
+    /**
+     * The aggregations.
+     */
     protected final List<? extends Aggregation> aggregations;
     private Map<String, Aggregation> aggregationsAsMap;
 
+    /**
+     * Creates a new Aggregations.
+     *
+     * @param aggregations the aggregations
+     */
     public Aggregations(List<? extends Aggregation> aggregations) {
         this.aggregations = aggregations;
         if (aggregations.isEmpty()) {
@@ -82,17 +93,26 @@ public class Aggregations implements Iterable<Aggregation>, ToXContentFragment {
 
     /**
      * The list of {@link Aggregation}s.
+     *
+     * @return the list
      */
     public final List<Aggregation> asList() {
         return Collections.unmodifiableList(aggregations);
     }
 
+    /**
+     * Returns the sub agg size.
+     *
+     * @return the sub agg size
+     */
     public final int subAggSize() {
         return aggregations.size();
     }
 
     /**
      * Returns the {@link Aggregation}s keyed by aggregation name.
+     *
+     * @return the map
      */
     public final Map<String, Aggregation> asMap() {
         return getAsMap();
@@ -100,6 +120,8 @@ public class Aggregations implements Iterable<Aggregation>, ToXContentFragment {
 
     /**
      * Returns the {@link Aggregation}s keyed by aggregation name.
+     *
+     * @return the as map
      */
     public final Map<String, Aggregation> getAsMap() {
         if (aggregationsAsMap == null) {
@@ -114,6 +136,10 @@ public class Aggregations implements Iterable<Aggregation>, ToXContentFragment {
 
     /**
      * Returns the aggregation that is associated with the specified name.
+     *
+     * @param <A> the aggregation type
+     * @param name the name
+     * @return the value
      */
     @SuppressWarnings("unchecked")
     public final <A extends Aggregation> A get(String name) {
@@ -145,6 +171,11 @@ public class Aggregations implements Iterable<Aggregation>, ToXContentFragment {
 
     /**
      * Directly write all the aggregations without their bounding object. Used by sub-aggregations (non top level aggs)
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent internal
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder toXContentInternal(XContentBuilder builder, Params params) throws IOException {
         for (Aggregation aggregation : aggregations) {
@@ -153,6 +184,13 @@ public class Aggregations implements Iterable<Aggregation>, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static Aggregations fromXContent(XContentParser parser) throws IOException {
         final List<Aggregation> aggregations = new ArrayList<>();
         XContentParser.Token token;

@@ -67,10 +67,21 @@ public class TermsValuesSourceBuilder extends CompositeValuesSourceBuilder<Terms
         return PARSER.parse(parser, new TermsValuesSourceBuilder(name), null);
     }
 
+    /**
+     * Creates a new TermsValuesSourceBuilder.
+     *
+     * @param name the name
+     */
     public TermsValuesSourceBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new TermsValuesSourceBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected TermsValuesSourceBuilder(StreamInput in) throws IOException {
         super(in);
     }

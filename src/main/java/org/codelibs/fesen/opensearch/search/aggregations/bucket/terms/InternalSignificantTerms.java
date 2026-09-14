@@ -53,6 +53,8 @@ import java.util.Objects;
 /**
  * Result of the significant terms aggregation.
  *
+ * @param <A> the aggregation type
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public abstract class InternalSignificantTerms<A extends InternalSignificantTerms<A, B>, B extends InternalSignificantTerms.Bucket<B>>
@@ -60,12 +62,19 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
     implements
         SignificantTerms {
 
+    /**
+     * The SCORE constant.
+     */
     public static final String SCORE = "score";
+    /**
+     * The BG_COUNT constant.
+     */
     public static final String BG_COUNT = "bg_count";
 
     /**
      * Bucket for a significant terms agg
      *
+     * @param <B> the builder type
      * @opensearch.internal
      */
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
@@ -75,10 +84,21 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
         /**
          * Reads a bucket. Should be a constructor reference.
          *
+         * @param <B> the builder type
          * @opensearch.internal
          */
         @FunctionalInterface
         public interface Reader<B extends Bucket<B>> {
+            /**
+             * Reads this instance.
+             *
+             * @param in the input to read from
+             * @param subsetSize the subset size
+             * @param supersetSize the superset size
+             * @param format the format
+             * @return this instance
+             * @throws IOException if an I/O error occurs
+             */
             B read(StreamInput in, long subsetSize, long supersetSize, DocValueFormat format) throws IOException;
         }
 
@@ -91,6 +111,16 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
         InternalAggregations aggregations;
         final transient DocValueFormat format;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param subsetDf the subset df
+         * @param subsetSize the subset size
+         * @param supersetDf the superset df
+         * @param supersetSize the superset size
+         * @param aggregations the aggregations
+         * @param format the format
+         */
         protected Bucket(
             long subsetDf,
             long subsetSize,
@@ -109,6 +139,11 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @param subsetSize the subset size
+         * @param supersetSize the superset size
+         * @param format the format
          */
         protected Bucket(StreamInput in, long subsetSize, long supersetSize, DocValueFormat format) {
             this.subsetSize = subsetSize;
@@ -191,13 +226,36 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
             return builder;
         }
 
+        /**
+         * Returns the key to XContent.
+         *
+         * @param builder the content builder
+         * @return the key to XContent
+         * @throws IOException if an I/O error occurs
+         */
         protected abstract XContentBuilder keyToXContent(XContentBuilder builder) throws IOException;
     }
 
+    /**
+     * The required size.
+     */
     protected final int requiredSize;
+    /**
+     * The min doc count.
+     */
     protected final long minDocCount;
+    /**
+     * The bucket count thresholds.
+     */
     protected final TermsAggregator.BucketCountThresholds bucketCountThresholds;
 
+    /**
+     * Creates a new InternalSignificantTerms.
+     *
+     * @param name the name
+     * @param bucketCountThresholds the bucket count thresholds
+     * @param metadata the metadata
+     */
     protected InternalSignificantTerms(
         String name,
         TermsAggregator.BucketCountThresholds bucketCountThresholds,
@@ -211,6 +269,9 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected InternalSignificantTerms(StreamInput in) throws IOException {
         super(in);
@@ -227,6 +288,12 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
         writeTermTypeInfoTo(out);
     }
 
+    /**
+     * Writes the term type info to.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void writeTermTypeInfoTo(StreamOutput out) throws IOException;
 
     @Override
@@ -338,17 +405,43 @@ public abstract class InternalSignificantTerms<A extends InternalSignificantTerm
         B prototype
     );
 
+    /**
+     * Creates this instance.
+     *
+     * @param subsetSize the subset size
+     * @param supersetSize the superset size
+     * @param buckets the buckets
+     * @return the new instance
+     */
     protected abstract A create(long subsetSize, long supersetSize, List<B> buckets);
 
     /**
      * Create an array to hold some buckets. Used in collecting the results.
+     *
+     * @param size the size
+     * @return the new buckets array
      */
     protected abstract B[] createBucketsArray(int size);
 
+    /**
+     * Returns the subset size.
+     *
+     * @return the subset size
+     */
     protected abstract long getSubsetSize();
 
+    /**
+     * Returns the superset size.
+     *
+     * @return the superset size
+     */
     protected abstract long getSupersetSize();
 
+    /**
+     * Returns the significance heuristic.
+     *
+     * @return the significance heuristic
+     */
     protected abstract SignificanceHeuristic getSignificanceHeuristic();
 
     @Override

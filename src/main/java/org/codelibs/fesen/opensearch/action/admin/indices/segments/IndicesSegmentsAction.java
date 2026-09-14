@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class IndicesSegmentsAction extends ActionType<IndicesSegmentResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final IndicesSegmentsAction INSTANCE = new IndicesSegmentsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/segments";
 
     private IndicesSegmentsAction() {

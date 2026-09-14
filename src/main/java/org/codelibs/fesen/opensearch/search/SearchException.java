@@ -46,12 +46,28 @@ import java.io.IOException;
  */
 public class SearchException extends OpenSearchException implements OpenSearchWrapperException {
 
+    /**
+     * The shard target.
+     */
     private final SearchShardTarget shardTarget;
 
+    /**
+     * Creates a new SearchException.
+     *
+     * @param shardTarget the shard target
+     * @param msg the msg
+     */
     public SearchException(SearchShardTarget shardTarget, String msg) {
         this(shardTarget, msg, null);
     }
 
+    /**
+     * Creates a new SearchException.
+     *
+     * @param shardTarget the shard target
+     * @param msg the msg
+     * @param cause the cause
+     */
     public SearchException(SearchShardTarget shardTarget, String msg, Throwable cause) {
         super(msg, cause);
         this.shardTarget = shardTarget;
@@ -68,6 +84,11 @@ public class SearchException extends OpenSearchException implements OpenSearchWr
         }
     }
 
+    /**
+     * Returns the shard.
+     *
+     * @return the shard
+     */
     public SearchShardTarget shard() {
         return this.shardTarget;
     }

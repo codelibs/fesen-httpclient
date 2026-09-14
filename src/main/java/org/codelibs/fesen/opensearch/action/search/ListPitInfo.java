@@ -33,26 +33,54 @@ public class ListPitInfo implements ToXContentFragment, Writeable {
     private final long creationTime;
     private final long keepAlive;
 
+    /**
+     * Creates a new ListPitInfo.
+     *
+     * @param pitId the pit identifier
+     * @param creationTime the creation time
+     * @param keepAlive the keep alive
+     */
     public ListPitInfo(String pitId, long creationTime, long keepAlive) {
         this.pitId = pitId;
         this.creationTime = creationTime;
         this.keepAlive = keepAlive;
     }
 
+    /**
+     * Creates a new ListPitInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ListPitInfo(StreamInput in) throws IOException {
         this.pitId = in.readString();
         this.creationTime = in.readLong();
         this.keepAlive = in.readLong();
     }
 
+    /**
+     * Returns the pit identifier.
+     *
+     * @return the pit identifier
+     */
     public String getPitId() {
         return pitId;
     }
 
+    /**
+     * Returns the creation time.
+     *
+     * @return the creation time
+     */
     public long getCreationTime() {
         return creationTime;
     }
 
+    /**
+     * Returns the keep alive.
+     *
+     * @return the keep alive
+     */
     public long getKeepAlive() {
         return keepAlive;
     }

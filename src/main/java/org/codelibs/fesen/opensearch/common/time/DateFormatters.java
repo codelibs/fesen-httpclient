@@ -73,7 +73,16 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
  * @opensearch.internal
  */
 public class DateFormatters {
+    /**
+     * Creates a new DateFormatters.
+     */
+    public DateFormatters() {
+    }
+
     // when run with JDK8, WeekFields for Locale.ROOT would return WeekFields.of(DayOfWeek.SUNDAY,1)
+    /**
+     * The WEEK_FIELDS_ROOT constant.
+     */
     public static final WeekFields WEEK_FIELDS_ROOT = WeekFields.of(DayOfWeek.MONDAY, 4);
     // DateFormatters is being used even before the logging is initialized.
     // If LogManager.getLogger is called before logging config is loaded
@@ -2236,6 +2245,14 @@ public class DateFormatters {
         return from(accessor, Locale.ROOT, ZoneOffset.UTC);
     }
 
+    /**
+     * Creates an instance from the given input.
+     *
+     * @param accessor the accessor
+     * @param locale the locale
+     * @param defaultZone the default zone
+     * @return the new instance
+     */
     public static ZonedDateTime from(TemporalAccessor accessor, Locale locale, ZoneId defaultZone) {
         if (accessor instanceof ZonedDateTime) {
             return (ZonedDateTime) accessor;

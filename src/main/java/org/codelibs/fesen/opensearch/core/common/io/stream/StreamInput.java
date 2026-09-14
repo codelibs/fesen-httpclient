@@ -113,11 +113,18 @@ import static org.codelibs.fesen.opensearch.OpenSearchException.readStackTrace;
  */
 @PublicApi(since = "1.0.0")
 public abstract class StreamInput extends InputStream {
+    /**
+     * Creates a new StreamInput.
+     */
+    public StreamInput() {
+    }
 
     private Version version = Version.CURRENT;
 
     /**
      * The version of the node on the other side of this stream.
+     *
+     * @return the version
      */
     public Version getVersion() {
         return this.version;
@@ -125,6 +132,8 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Set the version of the node on the other side of this stream.
+     *
+     * @param version the version
      */
     public void setVersion(Version version) {
         this.version = version;
@@ -132,6 +141,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads and returns a single byte.
+     *
+     * @return the byte
+     * @throws IOException if an I/O error occurs
      */
     public abstract byte readByte() throws IOException;
 
@@ -141,12 +153,16 @@ public abstract class StreamInput extends InputStream {
      * @param b      the array to read bytes into
      * @param offset the offset in the array to start storing bytes
      * @param len    the number of bytes to read
+     * @throws IOException if an I/O error occurs
      */
     public abstract void readBytes(byte[] b, int offset, int len) throws IOException;
 
     /**
      * Reads a bytes reference from this stream, might hold an actual reference to the underlying
      * bytes of the stream.
+     *
+     * @return the bytes reference
+     * @throws IOException if an I/O error occurs
      */
     public BytesReference readBytesReference() throws IOException {
         int length = readArraySize();
@@ -157,6 +173,9 @@ public abstract class StreamInput extends InputStream {
      * Reads an optional bytes reference from this stream. It might hold an actual reference to the underlying bytes of the stream. Use this
      * only if you must differentiate null from empty. Use {@link StreamInput#readBytesReference()} and
      * {@link StreamOutput#writeBytesReference(BytesReference)} if you do not.
+     *
+     * @return the optional bytes reference
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
     public BytesReference readOptionalBytesReference() throws IOException {
@@ -170,6 +189,10 @@ public abstract class StreamInput extends InputStream {
     /**
      * Reads a bytes reference from this stream, might hold an actual reference to the underlying
      * bytes of the stream.
+     *
+     * @param length the length
+     * @return the bytes reference
+     * @throws IOException if an I/O error occurs
      */
     public BytesReference readBytesReference(int length) throws IOException {
         if (length == 0) {
@@ -180,15 +203,34 @@ public abstract class StreamInput extends InputStream {
         return new BytesArray(bytes, 0, length);
     }
 
+    /**
+     * Reads the bytes ref.
+     *
+     * @return the bytes ref
+     * @throws IOException if an I/O error occurs
+     */
     public BytesRef readBytesRef() throws IOException {
         int length = readArraySize();
         return readBytesRef(length);
     }
 
+    /**
+     * Reads the fully.
+     *
+     * @param b the b
+     * @throws IOException if an I/O error occurs
+     */
     public void readFully(byte[] b) throws IOException {
         readBytes(b, 0, b.length);
     }
 
+    /**
+     * Reads the bytes ref.
+     *
+     * @param length the length
+     * @return the bytes ref
+     * @throws IOException if an I/O error occurs
+     */
     public BytesRef readBytesRef(int length) throws IOException {
         if (length == 0) {
             return new BytesRef();
@@ -198,12 +240,21 @@ public abstract class StreamInput extends InputStream {
         return new BytesRef(bytes, 0, length);
     }
 
+    /**
+     * Reads the short.
+     *
+     * @return the short
+     * @throws IOException if an I/O error occurs
+     */
     public short readShort() throws IOException {
         return (short) (((readByte() & 0xFF) << 8) | (readByte() & 0xFF));
     }
 
     /**
      * Reads four bytes and returns an int.
+     *
+     * @return the int
+     * @throws IOException if an I/O error occurs
      */
     public int readInt() throws IOException {
         return ((readByte() & 0xFF) << 24) | ((readByte() & 0xFF) << 16) | ((readByte() & 0xFF) << 8) | (readByte() & 0xFF);
@@ -214,6 +265,9 @@ public abstract class StreamInput extends InputStream {
      * five bytes.  Smaller values take fewer bytes.  Negative numbers
      * will always use all 5 bytes and are therefore better serialized
      * using {@link #readInt}
+     *
+     * @return the v int
+     * @throws IOException if an I/O error occurs
      */
     public int readVInt() throws IOException {
         byte b = readByte();
@@ -245,6 +299,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads an optional {@link Integer}.
+     *
+     * @return the optional int
+     * @throws IOException if an I/O error occurs
      */
     public Integer readOptionalInt() throws IOException {
         if (readBoolean()) {
@@ -255,6 +312,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads eight bytes and returns a long.
+     *
+     * @return the long
+     * @throws IOException if an I/O error occurs
      */
     public long readLong() throws IOException {
         return (((long) readInt()) << 32) | (readInt() & 0xFFFFFFFFL);
@@ -263,6 +323,9 @@ public abstract class StreamInput extends InputStream {
     /**
      * Reads a long stored in variable-length format. Reads between one and ten bytes. Smaller values take fewer bytes. Negative numbers
      * are encoded in ten bytes so prefer {@link #readLong()} or {@link #readZLong()} for negative numbers.
+     *
+     * @return the v long
+     * @throws IOException if an I/O error occurs
      */
     public long readVLong() throws IOException {
         byte b = readByte();
@@ -318,6 +381,12 @@ public abstract class StreamInput extends InputStream {
         return i;
     }
 
+    /**
+     * Reads the optional v long.
+     *
+     * @return the optional v long
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public Long readOptionalVLong() throws IOException {
         if (readBoolean()) {
@@ -326,6 +395,12 @@ public abstract class StreamInput extends InputStream {
         return null;
     }
 
+    /**
+     * Reads the z long.
+     *
+     * @return the z long
+     * @throws IOException if an I/O error occurs
+     */
     public long readZLong() throws IOException {
         long accumulator = 0L;
         int i = 0;
@@ -340,6 +415,12 @@ public abstract class StreamInput extends InputStream {
         return BitUtil.zigZagDecode(accumulator | (currentByte << i));
     }
 
+    /**
+     * Reads the optional long.
+     *
+     * @return the optional long
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public Long readOptionalLong() throws IOException {
         if (readBoolean()) {
@@ -348,14 +429,32 @@ public abstract class StreamInput extends InputStream {
         return null;
     }
 
+    /**
+     * Reads the big integer.
+     *
+     * @return the big integer
+     * @throws IOException if an I/O error occurs
+     */
     public BigInteger readBigInteger() throws IOException {
         return new BigInteger(readString());
     }
 
+    /**
+     * Reads the media type.
+     *
+     * @return the media type
+     * @throws IOException if an I/O error occurs
+     */
     public MediaType readMediaType() throws IOException {
         return MediaTypeRegistry.fromMediaType(readString());
     }
 
+    /**
+     * Reads the optional text.
+     *
+     * @return the optional text
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public Text readOptionalText() throws IOException {
         int length = readInt();
@@ -365,12 +464,24 @@ public abstract class StreamInput extends InputStream {
         return new Text(readBytesReference(length));
     }
 
+    /**
+     * Reads the text.
+     *
+     * @return the text
+     * @throws IOException if an I/O error occurs
+     */
     public Text readText() throws IOException {
         // use StringAndBytes so we can cache the string if its ever converted to it
         int length = readInt();
         return new Text(readBytesReference(length));
     }
 
+    /**
+     * Reads the optional string.
+     *
+     * @return the optional string
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public String readOptionalString() throws IOException {
         if (readBoolean()) {
@@ -379,6 +490,12 @@ public abstract class StreamInput extends InputStream {
         return null;
     }
 
+    /**
+     * Reads the optional float.
+     *
+     * @return the optional float
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public Float readOptionalFloat() throws IOException {
         if (readBoolean()) {
@@ -387,6 +504,12 @@ public abstract class StreamInput extends InputStream {
         return null;
     }
 
+    /**
+     * Reads the optional v int.
+     *
+     * @return the optional v int
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public Integer readOptionalVInt() throws IOException {
         if (readBoolean()) {
@@ -409,6 +532,12 @@ public abstract class StreamInput extends InputStream {
     // this prevents calling grow for every character since we don't need this
     private CharsRef largeSpare;
 
+    /**
+     * Reads the string.
+     *
+     * @return the string
+     * @throws IOException if an I/O error occurs
+     */
     public String readString() throws IOException {
         final int charCount = readArraySize();
         final CharsRef charsRef;
@@ -538,14 +667,32 @@ public abstract class StreamInput extends InputStream {
         throw new IOException("Invalid string; unexpected character: " + c + " hex: " + Integer.toHexString(c));
     }
 
+    /**
+     * Reads the float.
+     *
+     * @return the float
+     * @throws IOException if an I/O error occurs
+     */
     public final float readFloat() throws IOException {
         return Float.intBitsToFloat(readInt());
     }
 
+    /**
+     * Reads the double.
+     *
+     * @return the double
+     * @throws IOException if an I/O error occurs
+     */
     public final double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
     }
 
+    /**
+     * Reads the optional double.
+     *
+     * @return the optional double
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public final Double readOptionalDouble() throws IOException {
         if (readBoolean()) {
@@ -556,6 +703,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads a boolean.
+     *
+     * @return the boolean
+     * @throws IOException if an I/O error occurs
      */
     public final boolean readBoolean() throws IOException {
         return readBoolean(readByte());
@@ -572,6 +722,12 @@ public abstract class StreamInput extends InputStream {
         }
     }
 
+    /**
+     * Reads the optional boolean.
+     *
+     * @return the optional boolean
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public final Boolean readOptionalBoolean() throws IOException {
         final byte value = readByte();
@@ -591,6 +747,12 @@ public abstract class StreamInput extends InputStream {
     @Override
     public abstract int available() throws IOException;
 
+    /**
+     * Reads the string array.
+     *
+     * @return the string array
+     * @throws IOException if an I/O error occurs
+     */
     public String[] readStringArray() throws IOException {
         int size = readArraySize();
         if (size == 0) {
@@ -603,6 +765,12 @@ public abstract class StreamInput extends InputStream {
         return ret;
     }
 
+    /**
+     * Reads the optional string array.
+     *
+     * @return the optional string array
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public String[] readOptionalStringArray() throws IOException {
         if (readBoolean()) {
@@ -613,6 +781,13 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * If the returned map contains any entries it will be mutable. If it is empty it might be immutable.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param keyReader the key reader
+     * @param valueReader the value reader
+     * @return the map
+     * @throws IOException if an I/O error occurs
      */
     public <K, V> Map<K, V> readMap(Writeable.Reader<K> keyReader, Writeable.Reader<V> valueReader) throws IOException {
         int size = readArraySize();
@@ -643,7 +818,10 @@ public abstract class StreamInput extends InputStream {
      *
      * @param keyReader The key reader
      * @param valueReader The value reader
+     * @param <K> the key type
+     * @param <V> the value type
      * @return Never {@code null}.
+     * @throws IOException if an I/O error occurs
      */
     public <K, V> Map<K, List<V>> readMapOfLists(final Writeable.Reader<K> keyReader, final Writeable.Reader<V> valueReader)
         throws IOException {
@@ -660,6 +838,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * If the returned map contains any entries it will be mutable. If it is empty it might be immutable.
+     *
+     * @return the map
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
     @SuppressWarnings("unchecked")
@@ -680,6 +861,9 @@ public abstract class StreamInput extends InputStream {
     /**
      * Reads a value of unspecified type. If a collection is read then the collection will be mutable if it contains any entry but might
      * be immutable if it is empty.
+     *
+     * @return the generic value
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
     public Object readGenericValue() throws IOException {
@@ -822,6 +1006,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Read a {@linkplain ZoneId}.
+     *
+     * @return the zone identifier
+     * @throws IOException if an I/O error occurs
      */
     public ZoneId readZoneId() throws IOException {
         return ZoneId.of(readString());
@@ -829,6 +1016,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Read an optional {@linkplain ZoneId}.
+     *
+     * @return the optional zone identifier
+     * @throws IOException if an I/O error occurs
      */
     public ZoneId readOptionalZoneId() throws IOException {
         if (readBoolean()) {
@@ -839,6 +1029,12 @@ public abstract class StreamInput extends InputStream {
 
     private static final int[] EMPTY_INT_ARRAY = new int[0];
 
+    /**
+     * Reads the int array.
+     *
+     * @return the int array
+     * @throws IOException if an I/O error occurs
+     */
     public int[] readIntArray() throws IOException {
         int length = readArraySize();
         if (length == 0) {
@@ -851,6 +1047,12 @@ public abstract class StreamInput extends InputStream {
         return values;
     }
 
+    /**
+     * Reads the v int array.
+     *
+     * @return the v int array
+     * @throws IOException if an I/O error occurs
+     */
     public int[] readVIntArray() throws IOException {
         int length = readArraySize();
         if (length == 0) {
@@ -865,6 +1067,12 @@ public abstract class StreamInput extends InputStream {
 
     private static final long[] EMPTY_LONG_ARRAY = new long[0];
 
+    /**
+     * Reads the long array.
+     *
+     * @return the long array
+     * @throws IOException if an I/O error occurs
+     */
     public long[] readLongArray() throws IOException {
         int length = readArraySize();
         if (length == 0) {
@@ -877,6 +1085,12 @@ public abstract class StreamInput extends InputStream {
         return values;
     }
 
+    /**
+     * Reads the v long array.
+     *
+     * @return the v long array
+     * @throws IOException if an I/O error occurs
+     */
     public long[] readVLongArray() throws IOException {
         int length = readArraySize();
         if (length == 0) {
@@ -891,6 +1105,12 @@ public abstract class StreamInput extends InputStream {
 
     private static final float[] EMPTY_FLOAT_ARRAY = new float[0];
 
+    /**
+     * Reads the float array.
+     *
+     * @return the float array
+     * @throws IOException if an I/O error occurs
+     */
     public float[] readFloatArray() throws IOException {
         int length = readArraySize();
         if (length == 0) {
@@ -905,6 +1125,12 @@ public abstract class StreamInput extends InputStream {
 
     private static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
 
+    /**
+     * Reads the double array.
+     *
+     * @return the double array
+     * @throws IOException if an I/O error occurs
+     */
     public double[] readDoubleArray() throws IOException {
         int length = readArraySize();
         if (length == 0) {
@@ -919,6 +1145,12 @@ public abstract class StreamInput extends InputStream {
 
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
+    /**
+     * Reads the byte array.
+     *
+     * @return the byte array
+     * @throws IOException if an I/O error occurs
+     */
     public byte[] readByteArray() throws IOException {
         final int length = readArraySize();
         if (length == 0) {
@@ -950,10 +1182,27 @@ public abstract class StreamInput extends InputStream {
         return values;
     }
 
+    /**
+     * Reads the optional array.
+     *
+     * @param <T> the element type
+     * @param reader the reader
+     * @param arraySupplier the array supplier
+     * @return the optional array
+     * @throws IOException if an I/O error occurs
+     */
     public <T> T[] readOptionalArray(Writeable.Reader<T> reader, IntFunction<T[]> arraySupplier) throws IOException {
         return readBoolean() ? readArray(reader, arraySupplier) : null;
     }
 
+    /**
+     * Reads the optional writeable.
+     *
+     * @param <T> the element type
+     * @param reader the reader
+     * @return the optional writeable
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     public <T extends Writeable> T readOptionalWriteable(Writeable.Reader<T> reader) throws IOException {
         if (readBoolean()) {
@@ -969,6 +1218,13 @@ public abstract class StreamInput extends InputStream {
         }
     }
 
+    /**
+     * Reads the exception.
+     *
+     * @param <T> the element type
+     * @return the exception
+     * @throws IOException if an I/O error occurs
+     */
     @Nullable
     @SuppressWarnings("unchecked")
     public <T extends Exception> T readException() throws IOException {
@@ -1071,16 +1327,32 @@ public abstract class StreamInput extends InputStream {
         return null;
     }
 
-    /** Reads the OpenSearch Version from the input stream */
+    /**
+     * Reads the OpenSearch Version from the input stream
+     *
+     * @return the version
+     * @throws IOException if an I/O error occurs
+     */
     public Version readVersion() throws IOException {
         return Version.fromId(readVInt());
     }
 
+    /**
+     * Reads the semver range.
+     *
+     * @return the semver range
+     * @throws IOException if an I/O error occurs
+     */
     public SemverRange readSemverRange() throws IOException {
         return SemverRange.fromString(readString());
     }
 
-    /** Reads the {@link Version} from the input stream */
+    /**
+     * Reads the {@link Version} from the input stream
+     *
+     * @return the build
+     * @throws IOException if an I/O error occurs
+     */
     public Build readBuild() throws IOException {
         // the following is new for opensearch: we write the distribution to support any "forks"
         final String distribution = readString();
@@ -1096,6 +1368,8 @@ public abstract class StreamInput extends InputStream {
     /**
      * Get the registry of named writeables if this stream has one,
      * {@code null} otherwise.
+     *
+     * @return the named writeable registry
      */
     public NamedWriteableRegistry namedWriteableRegistry() {
         return null;
@@ -1106,6 +1380,11 @@ public abstract class StreamInput extends InputStream {
      * the corresponding entry in the registry by name, so that the proper object can be read and returned.
      * Default implementation throws {@link UnsupportedOperationException} as StreamInput doesn't hold a registry.
      * Use {@link FilterInputStream} instead which wraps a stream and supports a {@link NamedWriteableRegistry} too.
+     *
+     * @param <C> the context type
+     * @param categoryClass the category class
+     * @return the named writeable
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
     public <C extends NamedWriteable> C readNamedWriteable(@SuppressWarnings("unused") Class<C> categoryClass) throws IOException {
@@ -1121,6 +1400,12 @@ public abstract class StreamInput extends InputStream {
      * <p>
      * Prefer {@link StreamInput#readNamedWriteable(Class)} and {@link StreamOutput#writeNamedWriteable(NamedWriteable)} unless you
      * have a compelling reason to use this method instead.
+     *
+     * @param <C> the context type
+     * @param categoryClass the category class
+     * @param name the name
+     * @return the named writeable
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
     public <C extends NamedWriteable> C readNamedWriteable(
@@ -1132,6 +1417,11 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads an optional {@link NamedWriteable}.
+     *
+     * @param <C> the context type
+     * @param categoryClass the category class
+     * @return the optional named writeable
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
     public <C extends NamedWriteable> C readOptionalNamedWriteable(Class<C> categoryClass) throws IOException {
@@ -1145,6 +1435,8 @@ public abstract class StreamInput extends InputStream {
      * Reads a list of objects. The list is expected to have been written using {@link StreamOutput#writeList(List)}.
      * If the returned list contains any entries it will be mutable. If it is empty it might be immutable.
      *
+     * @param <T> the element type
+     * @param reader the reader
      * @return the list of objects
      * @throws IOException if an I/O exception occurs reading the list
      */
@@ -1182,6 +1474,11 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads a set of objects. If the returned set contains any entries it will be mutable. If it is empty it might be immutable.
+     *
+     * @param <T> the element type
+     * @param reader the reader
+     * @return the set
+     * @throws IOException if an I/O error occurs
      */
     public <T> Set<T> readSet(Writeable.Reader<T> reader) throws IOException {
         return readCollection(reader, HashSet::new, Collections.emptySet());
@@ -1206,6 +1503,11 @@ public abstract class StreamInput extends InputStream {
     /**
      * Reads a list of {@link NamedWriteable}s. If the returned list contains any entries it will be mutable.
      * If it is empty it might be immutable.
+     *
+     * @param <T> the element type
+     * @param categoryClass the category class
+     * @return the named writeable list
+     * @throws IOException if an I/O error occurs
      */
     public <T extends NamedWriteable> List<T> readNamedWriteableList(Class<T> categoryClass) throws IOException {
         int count = readArraySize();
@@ -1221,6 +1523,11 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads an enum with type E that was serialized based on the value of its ordinal
+     *
+     * @param <E> the element type
+     * @param enumClass the enum class
+     * @return the enum
+     * @throws IOException if an I/O error occurs
      */
     public <E extends Enum<E>> E readEnum(Class<E> enumClass) throws IOException {
         return readEnum(enumClass, enumClass.getEnumConstants());
@@ -1236,6 +1543,11 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Reads an enum with type E that was serialized based on the value of it's ordinal
+     *
+     * @param <E> the element type
+     * @param enumClass the enum class
+     * @return the enum set
+     * @throws IOException if an I/O error occurs
      */
     public <E extends Enum<E>> EnumSet<E> readEnumSet(Class<E> enumClass) throws IOException {
         int size = readVInt();
@@ -1250,6 +1562,14 @@ public abstract class StreamInput extends InputStream {
         return res;
     }
 
+    /**
+     * Wraps this instance.
+     *
+     * @param bytes the bytes
+     * @param offset the offset
+     * @param length the length
+     * @return this instance
+     */
     public static StreamInput wrap(byte[] bytes, int offset, int length) {
         return new InputStreamStreamInput(new ByteArrayInputStream(bytes, offset, length), length);
     }
@@ -1276,6 +1596,9 @@ public abstract class StreamInput extends InputStream {
     /**
      * This method throws an {@link EOFException} if the given number of bytes can not be read from the this stream. This method might
      * be a no-op depending on the underlying implementation if the information of the remaining bytes is not present.
+     *
+     * @param length the length
+     * @throws EOFException if an eof failure occurs
      */
     protected abstract void ensureCanReadBytes(int length) throws EOFException;
 
@@ -1300,6 +1623,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Read a {@link TimeValue} from the stream
+     *
+     * @return the time value
+     * @throws IOException if an I/O error occurs
      */
     public TimeValue readTimeValue() throws IOException {
         long duration = readZLong();
@@ -1309,6 +1635,9 @@ public abstract class StreamInput extends InputStream {
 
     /**
      * Read an optional {@link TimeValue} from the stream, returning null if no TimeValue was written.
+     *
+     * @return the optional time value
+     * @throws IOException if an I/O error occurs
      */
     public @Nullable TimeValue readOptionalTimeValue() throws IOException {
         if (readBoolean()) {

@@ -75,6 +75,7 @@ public final class SnapshotId implements Comparable<SnapshotId>, Writeable, ToXC
      * Constructs a new snapshot from a input stream
      *
      * @param in  input stream
+     * @throws IOException if an I/O error occurs
      */
     public SnapshotId(final StreamInput in) throws IOException {
         name = in.readString();

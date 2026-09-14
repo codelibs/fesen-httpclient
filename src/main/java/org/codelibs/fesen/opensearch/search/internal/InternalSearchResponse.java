@@ -145,6 +145,19 @@ public class InternalSearchResponse extends SearchResponseSections implements Wr
         );
     }
 
+    /**
+     * Creates a new InternalSearchResponse.
+     *
+     * @param hits the hits
+     * @param aggregations the aggregations
+     * @param suggest the suggest
+     * @param profileResults the profile results
+     * @param timedOut the timed out
+     * @param terminatedEarly the terminated early
+     * @param numReducePhases the num reduce phases
+     * @param searchExtBuilderList the search ext builder list
+     * @param processorResult the processor result
+     */
     public InternalSearchResponse(
         SearchHits hits,
         InternalAggregations aggregations,
@@ -169,6 +182,12 @@ public class InternalSearchResponse extends SearchResponseSections implements Wr
         );
     }
 
+    /**
+     * Creates a new InternalSearchResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public InternalSearchResponse(StreamInput in) throws IOException {
         super(
             new SearchHits(in),

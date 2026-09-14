@@ -67,6 +67,11 @@ public class ProcessProbe {
         private static final ProcessProbe INSTANCE = new ProcessProbe();
     }
 
+    /**
+     * Returns the instance.
+     *
+     * @return the instance
+     */
     public static ProcessProbe getInstance() {
         return ProcessProbeHolder.INSTANCE;
     }
@@ -75,6 +80,8 @@ public class ProcessProbe {
 
     /**
      * Returns the maximum number of file descriptors allowed on the system, or -1 if not supported.
+     *
+     * @return the max file descriptor count
      */
     public long getMaxFileDescriptorCount() {
         if (getMaxFileDescriptorCountField == null) {
@@ -89,6 +96,8 @@ public class ProcessProbe {
 
     /**
      * Returns the number of opened file descriptors associated with the current process, or -1 if not supported.
+     *
+     * @return the open file descriptor count
      */
     public long getOpenFileDescriptorCount() {
         if (getOpenFileDescriptorCountField == null) {
@@ -103,6 +112,8 @@ public class ProcessProbe {
 
     /**
      * Returns the process CPU usage in percent
+     *
+     * @return the process CPU percent
      */
     public short getProcessCpuPercent() {
         return Probes.getLoadAndScaleToPercent(getProcessCpuLoad, osMxBean);
@@ -110,6 +121,8 @@ public class ProcessProbe {
 
     /**
      * Returns the CPU time (in milliseconds) used by the process on which the Java virtual machine is running, or -1 if not supported.
+     *
+     * @return the process CPU total time
      */
     public long getProcessCpuTotalTime() {
         if (getProcessCpuTime != null) {
@@ -127,6 +140,8 @@ public class ProcessProbe {
 
     /**
      * Returns the size (in bytes) of virtual memory that is guaranteed to be available to the running process
+     *
+     * @return the total virtual memory size
      */
     public long getTotalVirtualMemorySize() {
         if (getCommittedVirtualMemorySize != null) {

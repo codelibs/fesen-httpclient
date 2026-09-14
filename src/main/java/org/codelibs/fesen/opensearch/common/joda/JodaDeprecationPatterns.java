@@ -48,6 +48,15 @@ import java.util.stream.Collectors;
  * @opensearch.internal
  */
 public class JodaDeprecationPatterns {
+    /**
+     * Creates a new JodaDeprecationPatterns.
+     */
+    public JodaDeprecationPatterns() {
+    }
+
+    /**
+     * The USE_NEW_FORMAT_SPECIFIERS constant.
+     */
     public static final String USE_NEW_FORMAT_SPECIFIERS = "Use new java.time date format specifiers.";
     private static Map<String, String> JODA_PATTERNS_DEPRECATIONS = new LinkedHashMap<>();
 

@@ -72,6 +72,17 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
     private Map<String, Context> contexts = Map.of();
     private final String[] indices;
 
+    /**
+     * Creates a new GetIndexResponse.
+     *
+     * @param indices the indices
+     * @param mappings the mappings
+     * @param aliases the aliases
+     * @param settings the settings
+     * @param defaultSettings the default settings
+     * @param dataStreams the data streams
+     * @param contexts the contexts
+     */
     public GetIndexResponse(
         String[] indices,
         Map<String, MappingMetadata> mappings,
@@ -177,34 +188,74 @@ public class GetIndexResponse extends ActionResponse implements ToXContentObject
         }
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public String[] indices() {
         return indices;
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public String[] getIndices() {
         return indices();
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public Map<String, MappingMetadata> mappings() {
         return mappings;
     }
 
+    /**
+     * Returns the mappings.
+     *
+     * @return the mappings
+     */
     public Map<String, MappingMetadata> getMappings() {
         return mappings();
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @return the aliases
+     */
     public Map<String, List<AliasMetadata>> aliases() {
         return aliases;
     }
 
+    /**
+     * Returns the aliases.
+     *
+     * @return the aliases
+     */
     public Map<String, List<AliasMetadata>> getAliases() {
         return aliases();
     }
 
+    /**
+     * Returns the settings.
+     *
+     * @return the settings
+     */
     public Map<String, Settings> settings() {
         return settings;
     }
 
+    /**
+     * Returns the settings.
+     *
+     * @return the settings
+     */
     public Map<String, Settings> getSettings() {
         return settings();
     }

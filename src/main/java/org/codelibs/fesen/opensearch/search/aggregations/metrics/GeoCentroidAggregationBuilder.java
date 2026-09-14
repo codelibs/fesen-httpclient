@@ -54,7 +54,13 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
 public class GeoCentroidAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<
     ValuesSource.GeoPoint,
     GeoCentroidAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geo_centroid";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<GeoCentroidAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         GeoCentroidAggregationBuilder::new
@@ -63,10 +69,22 @@ public class GeoCentroidAggregationBuilder extends ValuesSourceAggregationBuilde
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, false, false);
     }
 
+    /**
+     * Creates a new GeoCentroidAggregationBuilder.
+     *
+     * @param name the name
+     */
     public GeoCentroidAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new GeoCentroidAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected GeoCentroidAggregationBuilder(
         GeoCentroidAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

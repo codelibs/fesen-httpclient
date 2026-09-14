@@ -513,6 +513,8 @@ public class StrictISODateTimeFormat {
      * week-date-element = xxxx '-W' ww ['-' e]
      * offset            = 'Z' | (('+' | '-') HH [':' mm [':' ss [('.' | ',') SSS]]])
      * </pre>
+     *
+     * @return the date parser
      */
     public static DateTimeFormatter dateParser() {
         return Constants.dp;
@@ -532,6 +534,7 @@ public class StrictISODateTimeFormat {
      * ord-date-element  = yyyy ['-' DDD]
      * week-date-element = xxxx '-W' ww ['-' e]
      * </pre>
+     * @return the local date parser
      * @since 1.3
      */
     public static DateTimeFormatter localDateParser() {
@@ -550,6 +553,8 @@ public class StrictISODateTimeFormat {
      * ord-date-element  = yyyy ['-' DDD]
      * week-date-element = xxxx '-W' ww ['-' e]
      * </pre>
+     *
+     * @return the date element parser
      */
     public static DateTimeFormatter dateElementParser() {
         return Constants.dpe;
@@ -571,6 +576,8 @@ public class StrictISODateTimeFormat {
      * fraction       = ('.' | ',') digit+
      * offset         = 'Z' | (('+' | '-') HH [':' mm [':' ss [('.' | ',') SSS]]])
      * </pre>
+     *
+     * @return the time parser
      */
     public static DateTimeFormatter timeParser() {
         return Constants.tp;
@@ -592,6 +599,7 @@ public class StrictISODateTimeFormat {
      * second-element = ':' ss [fraction]
      * fraction       = ('.' | ',') digit+
      * </pre>
+     * @return the local time parser
      * @since 1.3
      */
     public static DateTimeFormatter localTimeParser() {
@@ -612,6 +620,8 @@ public class StrictISODateTimeFormat {
      * second-element = ':' ss [fraction]
      * fraction       = ('.' | ',') digit+
      * </pre>
+     *
+     * @return the time element parser
      */
     public static DateTimeFormatter timeElementParser() {
         return Constants.tpe;
@@ -639,6 +649,8 @@ public class StrictISODateTimeFormat {
      * fraction          = ('.' | ',') digit+
      * offset            = 'Z' | (('+' | '-') HH [':' mm [':' ss [('.' | ',') SSS]]])
      * </pre>
+     *
+     * @return the date time parser
      */
     public static DateTimeFormatter dateTimeParser() {
         return Constants.dtp;
@@ -664,6 +676,7 @@ public class StrictISODateTimeFormat {
      * second-element    = ':' ss [fraction]
      * fraction          = ('.' | ',') digit+
      * </pre>
+     * @return the date optional time parser
      * @since 1.3
      */
     public static DateTimeFormatter dateOptionalTimeParser() {
@@ -691,6 +704,7 @@ public class StrictISODateTimeFormat {
      * second-element    = ':' ss [fraction]
      * fraction          = ('.' | ',') digit+
      * </pre>
+     * @return the local date optional time parser
      * @since 1.3
      */
     public static DateTimeFormatter localDateOptionalTimeParser() {

@@ -194,8 +194,17 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
     private ClusterHealthStatus clusterHealthStatus;
     private ClusterAwarenessHealth clusterAwarenessHealth;
 
+    /**
+     * Creates a new ClusterHealthResponse.
+     */
     public ClusterHealthResponse() {}
 
+    /**
+     * Creates a new ClusterHealthResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterHealthResponse(StreamInput in) throws IOException {
         super(in);
         clusterName = in.readString();
@@ -213,11 +222,28 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
         }
     }
 
-    /** needed for plugins BWC */
+    /**
+     * needed for plugins BWC
+     *
+     * @param clusterName the cluster name
+     * @param concreteIndices the concrete indices
+     * @param clusterState the cluster state
+     */
     public ClusterHealthResponse(String clusterName, String[] concreteIndices, ClusterState clusterState) {
         this(clusterName, concreteIndices, clusterState, -1, -1, -1, TimeValue.timeValueHours(0));
     }
 
+    /**
+     * Creates a new ClusterHealthResponse.
+     *
+     * @param clusterName the cluster name
+     * @param concreteIndices the concrete indices
+     * @param clusterState the cluster state
+     * @param numberOfPendingTasks the number of pending tasks
+     * @param numberOfInFlightFetch the number of in flight fetch
+     * @param delayedUnassignedShards the delayed unassigned shards
+     * @param taskMaxWaitingTime the task max waiting time
+     */
     public ClusterHealthResponse(
         String clusterName,
         String[] concreteIndices,
@@ -236,6 +262,17 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
         this.clusterHealthStatus = clusterStateHealth.getStatus();
     }
 
+    /**
+     * Creates a new ClusterHealthResponse.
+     *
+     * @param clusterName the cluster name
+     * @param concreteIndices the concrete indices
+     * @param clusterHealthRequest the cluster health request
+     * @param clusterState the cluster state
+     * @param numberOfPendingTasks the number of pending tasks
+     * @param numberOfInFlightFetch the number of in flight fetch
+     * @param taskMaxWaitingTime the task max waiting time
+     */
     public ClusterHealthResponse(
         String clusterName,
         String[] concreteIndices,
@@ -278,6 +315,11 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
         this.clusterHealthStatus = clusterStateHealth.getStatus();
     }
 
+    /**
+     * Returns the cluster name.
+     *
+     * @return the cluster name
+     */
     public String getClusterName() {
         return clusterName;
     }
@@ -287,42 +329,92 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
         return clusterStateHealth;
     }
 
+    /**
+     * Returns the active shards.
+     *
+     * @return the active shards
+     */
     public int getActiveShards() {
         return clusterStateHealth.getActiveShards();
     }
 
+    /**
+     * Returns the relocating shards.
+     *
+     * @return the relocating shards
+     */
     public int getRelocatingShards() {
         return clusterStateHealth.getRelocatingShards();
     }
 
+    /**
+     * Returns the active primary shards.
+     *
+     * @return the active primary shards
+     */
     public int getActivePrimaryShards() {
         return clusterStateHealth.getActivePrimaryShards();
     }
 
+    /**
+     * Returns the initializing shards.
+     *
+     * @return the initializing shards
+     */
     public int getInitializingShards() {
         return clusterStateHealth.getInitializingShards();
     }
 
+    /**
+     * Returns the unassigned shards.
+     *
+     * @return the unassigned shards
+     */
     public int getUnassignedShards() {
         return clusterStateHealth.getUnassignedShards();
     }
 
+    /**
+     * Returns the number of nodes.
+     *
+     * @return the number of nodes
+     */
     public int getNumberOfNodes() {
         return clusterStateHealth.getNumberOfNodes();
     }
 
+    /**
+     * Returns the number of data nodes.
+     *
+     * @return the number of data nodes
+     */
     public int getNumberOfDataNodes() {
         return clusterStateHealth.getNumberOfDataNodes();
     }
 
+    /**
+     * Returns the discovered cluster manager flag.
+     *
+     * @return the discovered cluster manager flag
+     */
     public boolean hasDiscoveredClusterManager() {
         return clusterStateHealth.hasDiscoveredClusterManager();
     }
 
+    /**
+     * Returns the number of pending tasks.
+     *
+     * @return the number of pending tasks
+     */
     public int getNumberOfPendingTasks() {
         return this.numberOfPendingTasks;
     }
 
+    /**
+     * Returns the number of in flight fetch.
+     *
+     * @return the number of in flight fetch
+     */
     public int getNumberOfInFlightFetch() {
         return this.numberOfInFlightFetch;
     }
@@ -331,6 +423,8 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
      * The number of unassigned shards that are currently being delayed (for example,
      * due to node leaving the cluster and waiting for a timeout for the node to come
      * back in order to allocate the shards back to it).
+     *
+     * @return the delayed unassigned shards
      */
     public int getDelayedUnassignedShards() {
         return this.delayedUnassignedShards;
@@ -338,15 +432,27 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
 
     /**
      * {@code true} if the waitForXXX has timeout out and did not match.
+     *
+     * @return the timed out flag
      */
     public boolean isTimedOut() {
         return this.timedOut;
     }
 
+    /**
+     * Sets the timed out.
+     *
+     * @param timedOut the timed out
+     */
     public void setTimedOut(boolean timedOut) {
         this.timedOut = timedOut;
     }
 
+    /**
+     * Returns the status.
+     *
+     * @return the status
+     */
     public ClusterHealthStatus getStatus() {
         return clusterHealthStatus;
     }
@@ -363,11 +469,17 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
         this.clusterHealthStatus = status;
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public Map<String, ClusterIndexHealth> getIndices() {
         return clusterStateHealth.getIndices();
     }
 
     /**
+     * Returns the task max waiting time.
      *
      * @return The maximum wait time of all tasks in the queue
      */
@@ -377,15 +489,29 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
 
     /**
      * The percentage of active shards, should be 100% in a green system
+     *
+     * @return the active shards percent
      */
     public double getActiveShardsPercent() {
         return clusterStateHealth.getActiveShardsPercent();
     }
 
+    /**
+     * Returns the cluster awareness health.
+     *
+     * @return the cluster awareness health
+     */
     public ClusterAwarenessHealth getClusterAwarenessHealth() {
         return clusterAwarenessHealth;
     }
 
+    /**
+     * Reads the response from.
+     *
+     * @param in the input to read from
+     * @return the response from
+     * @throws IOException if an I/O error occurs
+     */
     public static ClusterHealthResponse readResponseFrom(StreamInput in) throws IOException {
         return new ClusterHealthResponse(in);
     }
@@ -461,6 +587,12 @@ public class ClusterHealthResponse extends ActionResponse implements StatusToXCo
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ClusterHealthResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

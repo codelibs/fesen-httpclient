@@ -59,11 +59,21 @@ public class ScriptCacheStats implements Writeable, ToXContentFragment {
     private final Map<String, ScriptStats> context;
     private final ScriptStats general;
 
+    /**
+     * Creates a new ScriptCacheStats.
+     *
+     * @param context the context
+     */
     public ScriptCacheStats(Map<String, ScriptStats> context) {
         this.context = Collections.unmodifiableMap(context);
         this.general = null;
     }
 
+    /**
+     * Creates a new ScriptCacheStats.
+     *
+     * @param general the general
+     */
     public ScriptCacheStats(ScriptStats general) {
         this.general = Objects.requireNonNull(general);
         this.context = null;
@@ -121,6 +131,8 @@ public class ScriptCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * Get the context specific stats, null if using general cache
+     *
+     * @return the context stats
      */
     public Map<String, ScriptStats> getContextStats() {
         return context;
@@ -128,6 +140,8 @@ public class ScriptCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * The sum of all script stats, either the general stats or the sum of all stats of the context stats.
+     *
+     * @return this instance
      */
     public ScriptStats sum() {
         if (general != null) {

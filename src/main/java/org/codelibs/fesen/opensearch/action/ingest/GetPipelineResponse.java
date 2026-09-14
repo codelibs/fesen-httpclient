@@ -65,6 +65,12 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
 
     private List<PipelineConfiguration> pipelines;
 
+    /**
+     * Creates a new GetPipelineResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public GetPipelineResponse(StreamInput in) throws IOException {
         super(in);
         int size = in.readVInt();
@@ -74,6 +80,11 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
         }
     }
 
+    /**
+     * Creates a new GetPipelineResponse.
+     *
+     * @param pipelines the pipelines
+     */
     public GetPipelineResponse(List<PipelineConfiguration> pipelines) {
         this.pipelines = pipelines;
     }
@@ -86,6 +97,11 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
         }
     }
 
+    /**
+     * Returns the found flag.
+     *
+     * @return the found flag
+     */
     public boolean isFound() {
         return !pipelines.isEmpty();
     }
@@ -106,6 +122,7 @@ public class GetPipelineResponse extends ActionResponse implements StatusToXCont
     }
 
     /**
+     * Parses an instance from the given parser.
      *
      * @param parser the parser for the XContent that contains the serialized GetPipelineResponse.
      * @return an instance of GetPipelineResponse read from the parser

@@ -69,6 +69,10 @@ public final class FieldAndFormat implements Writeable, ToXContentObject {
 
     /**
      * Parse a {@link FieldAndFormat} from some {@link XContent}.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static FieldAndFormat fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
@@ -85,13 +89,23 @@ public final class FieldAndFormat implements Writeable, ToXContentObject {
     /** The format of the field, or {@code null} if defaults should be used. */
     public final String format;
 
-    /** Sole constructor. */
+    /**
+     * Sole constructor.
+     *
+     * @param field the field
+     * @param format the format
+     */
     public FieldAndFormat(String field, @Nullable String format) {
         this.field = Objects.requireNonNull(field);
         this.format = format;
     }
 
-    /** Serialization constructor. */
+    /**
+     * Serialization constructor.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public FieldAndFormat(StreamInput in) throws IOException {
         this.field = in.readString();
         format = in.readOptionalString();

@@ -59,29 +59,44 @@ import static org.codelibs.fesen.opensearch.common.recycler.Recyclers.none;
 @ExperimentalApi
 public class PageCacheRecycler {
 
+    /**
+     * The TYPE_SETTING constant.
+     */
     public static final Setting<Type> TYPE_SETTING = new Setting<>(
         "cache.recycler.page.type",
         Type.CONCURRENT.name(),
         Type::parse,
         Property.NodeScope
     );
+    /**
+     * The LIMIT_HEAP_SETTING constant.
+     */
     public static final Setting<ByteSizeValue> LIMIT_HEAP_SETTING = Setting.memorySizeSetting(
         "cache.recycler.page.limit.heap",
         "10%",
         Property.NodeScope
     );
+    /**
+     * The WEIGHT_BYTES_SETTING constant.
+     */
     public static final Setting<Double> WEIGHT_BYTES_SETTING = Setting.doubleSetting(
         "cache.recycler.page.weight.bytes",
         1d,
         0d,
         Property.NodeScope
     );
+    /**
+     * The WEIGHT_LONG_SETTING constant.
+     */
     public static final Setting<Double> WEIGHT_LONG_SETTING = Setting.doubleSetting(
         "cache.recycler.page.weight.longs",
         1d,
         0d,
         Property.NodeScope
     );
+    /**
+     * The WEIGHT_INT_SETTING constant.
+     */
     public static final Setting<Double> WEIGHT_INT_SETTING = Setting.doubleSetting(
         "cache.recycler.page.weight.ints",
         1d,
@@ -89,6 +104,9 @@ public class PageCacheRecycler {
         Property.NodeScope
     );
     // object pages are less useful to us so we give them a lower weight by default
+    /**
+     * The WEIGHT_OBJECTS_SETTING constant.
+     */
     public static final Setting<Double> WEIGHT_OBJECTS_SETTING = Setting.doubleSetting(
         "cache.recycler.page.weight.objects",
         0.1d,
@@ -98,9 +116,21 @@ public class PageCacheRecycler {
 
     /** Page size in bytes: 16KB */
     public static final int PAGE_SIZE_IN_BYTES = PagedBytesReference.PAGE_SIZE_IN_BYTES;
+    /**
+     * The OBJECT_PAGE_SIZE constant.
+     */
     public static final int OBJECT_PAGE_SIZE = PAGE_SIZE_IN_BYTES / RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+    /**
+     * The LONG_PAGE_SIZE constant.
+     */
     public static final int LONG_PAGE_SIZE = PAGE_SIZE_IN_BYTES / Long.BYTES;
+    /**
+     * The INT_PAGE_SIZE constant.
+     */
     public static final int INT_PAGE_SIZE = PAGE_SIZE_IN_BYTES / Integer.BYTES;
+    /**
+     * The BYTE_PAGE_SIZE constant.
+     */
     public static final int BYTE_PAGE_SIZE = PAGE_SIZE_IN_BYTES;
 
     private final Recycler<byte[]> bytePage;
@@ -108,12 +138,20 @@ public class PageCacheRecycler {
     private final Recycler<long[]> longPage;
     private final Recycler<Object[]> objectPage;
 
+    /**
+     * The NON_RECYCLING_INSTANCE constant.
+     */
     public static final PageCacheRecycler NON_RECYCLING_INSTANCE;
 
     static {
         NON_RECYCLING_INSTANCE = new PageCacheRecycler(Settings.builder().put(LIMIT_HEAP_SETTING.getKey(), "0%").build());
     }
 
+    /**
+     * Creates a new PageCacheRecycler.
+     *
+     * @param settings the settings
+     */
     public PageCacheRecycler(Settings settings) {
         final Type type = TYPE_SETTING.get(settings);
         final long limit = LIMIT_HEAP_SETTING.get(settings).getBytes();
@@ -195,6 +233,12 @@ public class PageCacheRecycler {
         assert PAGE_SIZE_IN_BYTES * (maxBytePageCount + maxIntPageCount + maxLongPageCount + maxObjectPageCount) <= limit;
     }
 
+    /**
+     * Returns the byte page.
+     *
+     * @param clear the clear
+     * @return the byte page
+     */
     public Recycler.V<byte[]> bytePage(boolean clear) {
         final Recycler.V<byte[]> v = bytePage.obtain();
         if (v.isRecycled() && clear) {
@@ -203,6 +247,12 @@ public class PageCacheRecycler {
         return v;
     }
 
+    /**
+     * Returns the int page.
+     *
+     * @param clear the clear
+     * @return the int page
+     */
     public Recycler.V<int[]> intPage(boolean clear) {
         final Recycler.V<int[]> v = intPage.obtain();
         if (v.isRecycled() && clear) {
@@ -211,6 +261,12 @@ public class PageCacheRecycler {
         return v;
     }
 
+    /**
+     * Returns the long page.
+     *
+     * @param clear the clear
+     * @return the long page
+     */
     public Recycler.V<long[]> longPage(boolean clear) {
         final Recycler.V<long[]> v = longPage.obtain();
         if (v.isRecycled() && clear) {
@@ -219,6 +275,11 @@ public class PageCacheRecycler {
         return v;
     }
 
+    /**
+     * Returns the object page.
+     *
+     * @return the object page
+     */
     public Recycler.V<Object[]> objectPage() {
         // object pages are cleared on release anyway
         return objectPage.obtain();
@@ -240,18 +301,27 @@ public class PageCacheRecycler {
      * @opensearch.internal
      */
     public enum Type {
+        /**
+         * The QUEUE value.
+         */
         QUEUE {
             @Override
             <T> Recycler<T> build(Recycler.C<T> c, int limit, int availableProcessors) {
                 return concurrentDeque(c, limit);
             }
         },
+        /**
+         * The CONCURRENT value.
+         */
         CONCURRENT {
             @Override
             <T> Recycler<T> build(Recycler.C<T> c, int limit, int availableProcessors) {
                 return concurrent(dequeFactory(c, limit / availableProcessors), availableProcessors);
             }
         },
+        /**
+         * The NONE value.
+         */
         NONE {
             @Override
             <T> Recycler<T> build(Recycler.C<T> c, int limit, int availableProcessors) {
@@ -259,6 +329,12 @@ public class PageCacheRecycler {
             }
         };
 
+        /**
+         * Parses this instance.
+         *
+         * @param type the type
+         * @return this instance
+         */
         public static Type parse(String type) {
             try {
                 return Type.valueOf(type.toUpperCase(Locale.ROOT));

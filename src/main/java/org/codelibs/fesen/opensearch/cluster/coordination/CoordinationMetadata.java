@@ -63,6 +63,9 @@ import java.util.stream.Collectors;
 @PublicApi(since = "1.0.0")
 public class CoordinationMetadata implements VerifiableWriteable, ToXContentFragment {
 
+    /**
+     * The EMPTY_METADATA constant.
+     */
     public static final CoordinationMetadata EMPTY_METADATA = builder().build();
 
     private final long term;
@@ -116,6 +119,14 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         PARSER.declareObjectArray(ConstructingObjectParser.constructorArg(), VotingConfigExclusion.PARSER, VOTING_CONFIG_EXCLUSIONS_FIELD);
     }
 
+    /**
+     * Creates a new CoordinationMetadata.
+     *
+     * @param term the term
+     * @param lastCommittedConfiguration the last committed configuration
+     * @param lastAcceptedConfiguration the last accepted configuration
+     * @param votingConfigExclusions the voting config exclusions
+     */
     public CoordinationMetadata(
         long term,
         VotingConfiguration lastCommittedConfiguration,
@@ -128,6 +139,12 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         this.votingConfigExclusions = Collections.unmodifiableSet(new HashSet<>(votingConfigExclusions));
     }
 
+    /**
+     * Creates a new CoordinationMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CoordinationMetadata(StreamInput in) throws IOException {
         term = in.readLong();
         lastCommittedConfiguration = new VotingConfiguration(in);
@@ -135,6 +152,11 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         votingConfigExclusions = Collections.unmodifiableSet(in.readSet(VotingConfigExclusion::new));
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -160,18 +182,38 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
             .field(VOTING_CONFIG_EXCLUSIONS_FIELD.getPreferredName(), votingConfigExclusions);
     }
 
+    /**
+     * Returns the term.
+     *
+     * @return the term
+     */
     public long term() {
         return term;
     }
 
+    /**
+     * Returns the last accepted configuration.
+     *
+     * @return the last accepted configuration
+     */
     public VotingConfiguration getLastAcceptedConfiguration() {
         return lastAcceptedConfiguration;
     }
 
+    /**
+     * Returns the last committed configuration.
+     *
+     * @return the last committed configuration
+     */
     public VotingConfiguration getLastCommittedConfiguration() {
         return lastCommittedConfiguration;
     }
 
+    /**
+     * Returns the voting config exclusions.
+     *
+     * @return the voting config exclusions
+     */
     public Set<VotingConfigExclusion> getVotingConfigExclusions() {
         return votingConfigExclusions;
     }
@@ -224,10 +266,18 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         private VotingConfiguration lastAcceptedConfiguration = VotingConfiguration.EMPTY_CONFIG;
         private final Set<VotingConfigExclusion> votingConfigExclusions = new HashSet<>();
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {
 
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public CoordinationMetadata build() {
             return new CoordinationMetadata(term, lastCommittedConfiguration, lastAcceptedConfiguration, votingConfigExclusions);
         }
@@ -243,11 +293,23 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
         private final String nodeId;
         private final String nodeName;
 
+        /**
+         * Creates a new VotingConfigExclusion by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public VotingConfigExclusion(StreamInput in) throws IOException {
             this.nodeId = in.readString();
             this.nodeName = in.readString();
         }
 
+        /**
+         * Creates a new VotingConfigExclusion.
+         *
+         * @param nodeId the node identifier
+         * @param nodeName the node name
+         */
         public VotingConfigExclusion(String nodeId, String nodeName) {
             this.nodeId = nodeId;
             this.nodeName = nodeName;
@@ -259,6 +321,11 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
             out.writeString(nodeName);
         }
 
+        /**
+         * Returns the node identifier.
+         *
+         * @return the node identifier
+         */
         public String getNodeId() {
             return nodeId;
         }
@@ -329,17 +396,34 @@ public class CoordinationMetadata implements VerifiableWriteable, ToXContentFrag
     @PublicApi(since = "1.0.0")
     public static class VotingConfiguration implements Writeable, ToXContentFragment {
 
+        /**
+         * The EMPTY_CONFIG constant.
+         */
         public static final VotingConfiguration EMPTY_CONFIG = new VotingConfiguration(Collections.emptySet());
+        /**
+         * The MUST_JOIN_ELECTED_CLUSTER_MANAGER constant.
+         */
         public static final VotingConfiguration MUST_JOIN_ELECTED_CLUSTER_MANAGER = new VotingConfiguration(
             Collections.singleton("_must_join_elected_cluster_manager_")
         );
 
         private final Set<String> nodeIds;
 
+        /**
+         * Creates a new VotingConfiguration.
+         *
+         * @param nodeIds the node identifiers
+         */
         public VotingConfiguration(Set<String> nodeIds) {
             this.nodeIds = Collections.unmodifiableSet(new HashSet<>(nodeIds));
         }
 
+        /**
+         * Creates a new VotingConfiguration by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public VotingConfiguration(StreamInput in) throws IOException {
             nodeIds = Collections.unmodifiableSet(Sets.newHashSet(in.readStringArray()));
         }

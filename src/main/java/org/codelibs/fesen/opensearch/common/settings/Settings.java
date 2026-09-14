@@ -103,6 +103,9 @@ public final class Settings implements ToXContentFragment {
     /** Prefix an upgrade puts on a setting it could not parse. */
     public static final String ARCHIVED_SETTINGS_PREFIX = "archived.";
 
+    /**
+     * The EMPTY constant.
+     */
     public static final Settings EMPTY = new Settings(Collections.emptyMap(), null);
 
     /** The raw settings from the full key to raw string value. */
@@ -228,6 +231,9 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * A settings that are filtered (and key is removed) with the specified prefix.
+     *
+     * @param prefix the prefix
+     * @return the by prefix
      */
     public Settings getByPrefix(String prefix) {
         return new Settings(
@@ -238,6 +244,9 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns a new settings object that contains all setting of the current one filtered by the given settings key predicate.
+     *
+     * @param predicate the predicate
+     * @return this instance
      */
     public Settings filter(Predicate<String> predicate) {
         return new Settings(
@@ -248,6 +257,9 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns the settings mapped to the given setting name.
+     *
+     * @param setting the setting
+     * @return the as settings
      */
     public Settings getAsSettings(String setting) {
         return getByPrefix(setting + ".");
@@ -266,6 +278,10 @@ public final class Settings implements ToXContentFragment {
     /**
      * Returns the setting value associated with the setting key. If it does not exists,
      * returns the default value provided.
+     *
+     * @param setting the setting
+     * @param defaultValue the default value
+     * @return the value
      */
     public String get(String setting, String defaultValue) {
         String retVal = get(setting);
@@ -275,6 +291,10 @@ public final class Settings implements ToXContentFragment {
     /**
      * Returns the setting value (as int) associated with the setting key. If it does not exists,
      * returns the default value provided.
+     *
+     * @param setting the setting
+     * @param defaultValue the default value
+     * @return the as int
      */
     public Integer getAsInt(String setting, Integer defaultValue) {
         String sValue = get(setting);
@@ -291,6 +311,10 @@ public final class Settings implements ToXContentFragment {
     /**
      * Returns the setting value (as long) associated with the setting key. If it does not exists,
      * returns the default value provided.
+     *
+     * @param setting the setting
+     * @param defaultValue the default value
+     * @return the as long
      */
     public Long getAsLong(String setting, Long defaultValue) {
         String sValue = get(setting);
@@ -306,6 +330,9 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns <code>true</code> iff the given key has a value in this settings object
+     *
+     * @param key the key
+     * @return the value flag
      */
     public boolean hasValue(String key) {
         return settings.get(key) != null;
@@ -325,6 +352,10 @@ public final class Settings implements ToXContentFragment {
     /**
      * Returns the setting value (as boolean) associated with the setting key. If it does not exists,
      * returns the default value provided.
+     *
+     * @param setting the setting
+     * @param defaultValue the default value
+     * @return the as boolean
      */
     public Boolean getAsBoolean(String setting, Boolean defaultValue) {
         return Booleans.parseBoolean(get(setting), defaultValue);
@@ -350,6 +381,7 @@ public final class Settings implements ToXContentFragment {
      * the numbered format.
      *
      * @param key The setting key to load the list by
+     * @param defaultValue the default value
      * @return The setting list values
      */
     public List<String> getAsList(String key, List<String> defaultValue) throws SettingsException {
@@ -393,6 +425,9 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns group settings for the given setting prefix.
+     *
+     * @param settingPrefix the setting prefix
+     * @return the groups
      */
     public Map<String, Settings> getGroups(String settingPrefix) throws SettingsException {
         return getGroups(settingPrefix, false);
@@ -400,6 +435,10 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns group settings for the given setting prefix.
+     *
+     * @param settingPrefix the setting prefix
+     * @param ignoreNonGrouped the ignore non grouped
+     * @return the groups
      */
     public Map<String, Settings> getGroups(String settingPrefix, boolean ignoreNonGrouped) throws SettingsException {
         if (!Strings.hasLength(settingPrefix)) {
@@ -437,6 +476,8 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns group settings for the given setting prefix.
+     *
+     * @return the as groups
      */
     public Map<String, Settings> getAsGroups() throws SettingsException {
         return getGroupsInternal("", false);
@@ -444,6 +485,10 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns a parsed version.
+     *
+     * @param setting the setting
+     * @param defaultVersion the default version
+     * @return the as version
      */
     public Version getAsVersion(String setting, Version defaultVersion) throws SettingsException {
         String sValue = get(setting);
@@ -458,6 +503,8 @@ public final class Settings implements ToXContentFragment {
     }
 
     /**
+     * Returns the names.
+     *
      * @return  The direct keys of this settings
      */
     public Set<String> names() {
@@ -495,6 +542,13 @@ public final class Settings implements ToXContentFragment {
         return settings != null ? settings.hashCode() : 0;
     }
 
+    /**
+     * Reads the settings from stream.
+     *
+     * @param in the input to read from
+     * @return the settings from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static Settings readSettingsFromStream(StreamInput in) throws IOException {
         Builder builder = new Builder();
         int numberOfSettings = in.readVInt();
@@ -512,6 +566,13 @@ public final class Settings implements ToXContentFragment {
         return builder.build();
     }
 
+    /**
+     * Writes the settings to stream.
+     *
+     * @param settings the settings
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeSettingsToStream(Settings settings, StreamOutput out) throws IOException {
         // pull settings to exclude secure settings in size()
         Set<Map.Entry<String, Object>> entries = settings.settings.entrySet();
@@ -525,6 +586,10 @@ public final class Settings implements ToXContentFragment {
     /**
      * Reads an optional {@link Settings} from the stream. Returns {@code null} if no settings were written.
      * Counterpart to {@link #writeOptionalSettingsToStream(Settings, StreamOutput)}.
+     *
+     * @param in the input to read from
+     * @return the optional settings from stream
+     * @throws IOException if an I/O error occurs
      */
     public static Settings readOptionalSettingsFromStream(StreamInput in) throws IOException {
         if (in.readBoolean()) {
@@ -536,6 +601,10 @@ public final class Settings implements ToXContentFragment {
     /**
      * Writes an optional {@link Settings} to the stream. A {@code null} value is permitted.
      * Counterpart to {@link #readOptionalSettingsFromStream(StreamInput)}.
+     *
+     * @param settings the settings
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     public static void writeOptionalSettingsToStream(Settings settings, StreamOutput out) throws IOException {
         if (settings != null) {
@@ -548,6 +617,8 @@ public final class Settings implements ToXContentFragment {
 
     /**
      * Returns a builder to be used in order to build settings.
+     *
+     * @return the builder
      */
     public static Builder builder() {
         return new Builder();
@@ -572,6 +643,10 @@ public final class Settings implements ToXContentFragment {
      * Parsers the generated xcontent from {@link Settings#toXContent(XContentBuilder, Params)} into a new Settings object.
      * Note this method requires the parser to either be positioned on a null token or on
      * {@link XContentParser.Token#START_OBJECT}.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static Settings fromXContent(XContentParser parser) throws IOException {
         return fromXContent(parser, true, false);
@@ -669,6 +744,9 @@ public final class Settings implements ToXContentFragment {
         }
     }
 
+    /**
+     * The FORMAT_PARAMS constant.
+     */
     public static final Set<String> FORMAT_PARAMS = Collections.unmodifiableSet(
         new HashSet<>(Arrays.asList("settings_filter", "flat_settings"))
     );
@@ -681,12 +759,20 @@ public final class Settings implements ToXContentFragment {
         return this.settings.isEmpty() && (secureSettings == null || secureSettings.getSettingNames().isEmpty());
     }
 
-    /** Returns the number of settings in this settings object. */
+    /**
+     * Returns the number of settings in this settings object.
+     *
+     * @return the number of elements
+     */
     public int size() {
         return keySet().size();
     }
 
-    /** Returns the fully qualified setting names contained in this settings object. */
+    /**
+     * Returns the fully qualified setting names contained in this settings object.
+     *
+     * @return the key set
+     */
     public Set<String> keySet() {
         if (keys.get() == null) {
             synchronized (keys) {
@@ -715,6 +801,9 @@ public final class Settings implements ToXContentFragment {
     @PublicApi(since = "1.0.0")
     public static class Builder {
 
+        /**
+         * The EMPTY_SETTINGS constant.
+         */
         public static final Settings EMPTY_SETTINGS = Settings.EMPTY;
 
         // we use a sorted map for consistent serialization when using getAsMap()
@@ -726,12 +815,20 @@ public final class Settings implements ToXContentFragment {
 
         }
 
+        /**
+         * Returns the keys.
+         *
+         * @return the keys
+         */
         public Set<String> keys() {
             return this.map.keySet();
         }
 
         /**
          * Removes the provided setting from the internal map holding the current list of settings.
+         *
+         * @param key the key
+         * @return this instance
          */
         public String remove(String key) {
             return Settings.toString(map.remove(key));
@@ -739,11 +836,20 @@ public final class Settings implements ToXContentFragment {
 
         /**
          * Returns a setting value based on the setting key.
+         *
+         * @param key the key
+         * @return the value
          */
         public String get(String key) {
             return Settings.toString(map.get(key));
         }
 
+        /**
+         * Sets the secure settings.
+         *
+         * @param secureSettings the secure settings
+         * @return this instance
+         */
         public Builder setSecureSettings(SecureSettings secureSettings) {
             if (secureSettings.isLoaded() == false) {
                 throw new IllegalStateException("Secure settings must already be loaded");
@@ -785,6 +891,9 @@ public final class Settings implements ToXContentFragment {
 
         /**
          * Sets a null value for the given setting key
+         *
+         * @param key the key
+         * @return this instance
          */
         public Builder putNull(String key) {
             return put(key, (String) null);
@@ -814,6 +923,13 @@ public final class Settings implements ToXContentFragment {
             return this;
         }
 
+        /**
+         * Puts this instance.
+         *
+         * @param setting the setting
+         * @param version the version
+         * @return this instance
+         */
         public Builder put(String setting, Version version) {
             put(setting, version.id);
             return this;
@@ -836,6 +952,7 @@ public final class Settings implements ToXContentFragment {
          *
          * @param setting The setting key
          * @param value   The size value
+         * @param sizeUnit the size unit
          * @return The builder
          */
         public Builder put(String setting, long value, ByteSizeUnit sizeUnit) {
@@ -869,6 +986,9 @@ public final class Settings implements ToXContentFragment {
 
         /**
          * Sets all the provided settings including secure settings
+         *
+         * @param settings the settings
+         * @return this instance
          */
         public Builder put(Settings settings) {
             return put(settings, true);
@@ -878,6 +998,7 @@ public final class Settings implements ToXContentFragment {
          * Sets all the provided settings.
          * @param settings the settings to set
          * @param copySecureSettings if <code>true</code> all settings including secure settings are copied.
+         * @return this instance
          */
         public Builder put(Settings settings, boolean copySecureSettings) {
             Map<String, Object> settingsMap = new HashMap<>(settings.settings);
@@ -926,6 +1047,9 @@ public final class Settings implements ToXContentFragment {
 
         /**
          * Loads settings from a map.
+         *
+         * @param map the map
+         * @return this instance
          */
         public Builder loadFromMap(Map<String, ?> map) {
             // TODO: do this without a serialization round-trip
@@ -939,6 +1063,10 @@ public final class Settings implements ToXContentFragment {
 
         /**
          * Loads settings from the actual string content that represents them using {@link #fromXContent(XContentParser)}
+         *
+         * @param source the source
+         * @param mediaType the media type
+         * @return this instance
          */
         public Builder loadFromSource(String source, MediaType mediaType) {
             try (
@@ -956,6 +1084,9 @@ public final class Settings implements ToXContentFragment {
          * Checks that all settings(except archived settings and wildcards) in the builder start with the specified prefix.
          * <p>
          * If a setting doesn't start with the prefix, the builder appends the prefix to such setting.
+         *
+         * @param prefix the prefix
+         * @return this instance
          */
         public Builder normalizePrefix(String prefix) {
             Map<String, Object> replacements = new HashMap<>();
@@ -975,6 +1106,8 @@ public final class Settings implements ToXContentFragment {
         /**
          * Builds a {@link Settings} (underlying uses {@link Settings}) based on everything
          * set on this builder.
+         *
+         * @return the new instance
          */
         public Settings build() {
             processLegacyLists(map);

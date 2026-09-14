@@ -49,6 +49,8 @@ public interface WriteResponse {
      * Mark the response as having forced a refresh? Requests that set {@link WriteRequest#setRefreshPolicy(RefreshPolicy)} to
      * {@link RefreshPolicy#IMMEDIATE} should always mark this as true. Requests that set it to {@link RefreshPolicy#WAIT_UNTIL} will only
      * set this to true if they run out of refresh listener slots (see {@code index.max_refresh_listeners}).
+     *
+     * @param forcedRefresh the forced refresh
      */
     void setForcedRefresh(boolean forcedRefresh);
 }

@@ -66,6 +66,9 @@ import java.util.Arrays;
  * @opensearch.internal
  */
 public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "wrapper";
 
     private static final ParseField QUERY_FIELD = new ParseField("query");
@@ -74,6 +77,8 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
 
     /**
      * Creates a query builder given a query provided as a bytes array
+     *
+     * @param source the source
      */
     public WrapperQueryBuilder(byte[] source) {
         if (source == null || source.length == 0) {
@@ -84,6 +89,8 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
 
     /**
      * Creates a query builder given a query provided as a string
+     *
+     * @param source the source
      */
     public WrapperQueryBuilder(String source) {
         if (Strings.isEmpty(source)) {
@@ -94,6 +101,8 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
 
     /**
      * Creates a query builder given a query provided as a {@link BytesReference}
+     *
+     * @param source the source
      */
     public WrapperQueryBuilder(BytesReference source) {
         if (source == null || source.length() == 0) {
@@ -104,6 +113,9 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public WrapperQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -115,6 +127,11 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
         out.writeByteArray(this.source);
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public byte[] source() {
         return this.source;
     }
@@ -131,6 +148,13 @@ public class WrapperQueryBuilder extends AbstractQueryBuilder<WrapperQueryBuilde
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static WrapperQueryBuilder fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
         if (token != XContentParser.Token.FIELD_NAME) {

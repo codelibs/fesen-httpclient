@@ -29,9 +29,18 @@ import java.util.Objects;
 @ExperimentalApi
 public class DeleteViewAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteViewAction INSTANCE = new DeleteViewAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/views/delete";
 
+    /**
+     * Creates a new DeleteViewAction.
+     */
     public DeleteViewAction() {
         super(NAME, AcknowledgedResponse::new);
     }
@@ -41,10 +50,20 @@ public class DeleteViewAction extends ActionType<AcknowledgedResponse> {
     public static class Request extends ClusterManagerNodeRequest<Request> {
         private final String name;
 
+        /**
+         * Creates a new Request.
+         *
+         * @param name the name
+         */
         public Request(final String name) {
             this.name = name;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }

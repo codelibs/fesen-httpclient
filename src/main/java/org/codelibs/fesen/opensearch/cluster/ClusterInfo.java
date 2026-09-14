@@ -66,6 +66,9 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     private final Map<String, DiskUsage> leastAvailableSpaceUsage;
     private final Map<String, DiskUsage> mostAvailableSpaceUsage;
     final Map<String, Long> shardSizes;  // pkg-private for testing only
+    /**
+     * The EMPTY constant.
+     */
     public static final ClusterInfo EMPTY = new ClusterInfo();
     final Map<ShardRouting, String> routingToDataPath;
     final Map<NodeAndPath, ReservedSpace> reservedSpace;
@@ -74,6 +77,9 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     private long avgTotalBytes;
     private long avgFreeByte;
 
+    /**
+     * Creates a new ClusterInfo.
+     */
     protected ClusterInfo() {
         this(Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), Map.of());
     }
@@ -86,6 +92,8 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
      * @param shardSizes a shardkey to size in bytes mapping per shard.
      * @param routingToDataPath the shard routing to datapath mapping
      * @param reservedSpace reserved space per shard broken down by node and data path
+     * @param nodeFileCacheStats the node file cache stats
+     * @param nodeResourceUsageStats the node resource usage stats
      */
     public ClusterInfo(
         final Map<String, DiskUsage> leastAvailableSpaceUsage,
@@ -106,6 +114,12 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
         calculateAvgFreeAndTotalBytes(mostAvailableSpaceUsage);
     }
 
+    /**
+     * Creates a new ClusterInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterInfo(StreamInput in) throws IOException {
         Map<String, DiskUsage> leastMap = in.readMap(StreamInput::readString, DiskUsage::new);
         Map<String, DiskUsage> mostMap = in.readMap(StreamInput::readString, DiskUsage::new);
@@ -239,9 +253,21 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
      * @opensearch.internal
      */
     public static class NodeAndPath implements Writeable {
+        /**
+         * The node identifier.
+         */
         public final String nodeId;
+        /**
+         * The path.
+         */
         public final String path;
 
+        /**
+         * Creates a new NodeAndPath by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public NodeAndPath(StreamInput in) throws IOException {
             this.nodeId = in.readString();
             this.path = in.readString();
@@ -275,6 +301,9 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
     @PublicApi(since = "1.0.0")
     public static class ReservedSpace implements Writeable {
 
+        /**
+         * The EMPTY constant.
+         */
         public static final ReservedSpace EMPTY = new ReservedSpace(0, new HashSet<>());
 
         private final long total;
@@ -334,9 +363,20 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
          * @opensearch.internal
          */
         public static class Builder {
+            /**
+             * Creates a new Builder.
+             */
+            public Builder() {
+            }
+
             private long total;
             private Set<ShardId> shardIds = new HashSet<>();
 
+            /**
+             * Builds this instance.
+             *
+             * @return the new instance
+             */
             public ReservedSpace build() {
                 assert shardIds != null : "already built";
                 final ReservedSpace reservedSpace = new ReservedSpace(total, shardIds);
@@ -344,6 +384,13 @@ public class ClusterInfo implements ToXContentFragment, Writeable {
                 return reservedSpace;
             }
 
+            /**
+             * Adds this instance.
+             *
+             * @param shardId the shard identifier
+             * @param reservedBytes the reserved bytes
+             * @return this instance
+             */
             public Builder add(ShardId shardId, long reservedBytes) {
                 assert shardIds != null : "already built";
                 assert reservedBytes >= 0 : reservedBytes;

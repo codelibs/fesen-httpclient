@@ -73,9 +73,21 @@ import java.util.TreeSet;
  * @opensearch.internal
  */
 public class IncludeExclude implements Writeable, ToXContentFragment {
+    /**
+     * The INCLUDE_FIELD constant.
+     */
     public static final ParseField INCLUDE_FIELD = new ParseField("include");
+    /**
+     * The EXCLUDE_FIELD constant.
+     */
     public static final ParseField EXCLUDE_FIELD = new ParseField("exclude");
+    /**
+     * The PARTITION_FIELD constant.
+     */
     public static final ParseField PARTITION_FIELD = new ParseField("partition");
+    /**
+     * The NUM_PARTITIONS_FIELD constant.
+     */
     public static final ParseField NUM_PARTITIONS_FIELD = new ParseField("num_partitions");
     // Needed to add this seed for a deterministic term hashing policy
     // otherwise tests fail to get expected results and worse, shards
@@ -84,6 +96,13 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
 
     // for parsing purposes only
     // TODO: move all aggs to the same package so that this stuff could be pkg-private
+    /**
+     * Merges this instance.
+     *
+     * @param include the include
+     * @param exclude the exclude
+     * @return this instance
+     */
     public static IncludeExclude merge(IncludeExclude include, IncludeExclude exclude) {
         if (include == null) {
             return exclude;
@@ -108,6 +127,13 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Parses the include.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static IncludeExclude parseInclude(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         if (token == XContentParser.Token.VALUE_STRING) {
@@ -144,6 +170,13 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Parses the exclude.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static IncludeExclude parseExclude(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         if (token == XContentParser.Token.VALUE_STRING) {
@@ -161,6 +194,8 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
     private final int incNumPartitions;
 
     /**
+     * Creates a new IncludeExclude.
+     *
      * @param include   The string or regular expression pattern for the terms to be included
      * @param exclude   The string or regular expression pattern for the terms to be excluded
      */
@@ -174,6 +209,8 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
     }
 
     /**
+     * Creates a new IncludeExclude.
+     *
      * @param includeValues   The terms to be included
      * @param excludeValues   The terms to be excluded
      */
@@ -189,6 +226,12 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         this.excludeValues = excludeValues;
     }
 
+    /**
+     * Creates a new IncludeExclude.
+     *
+     * @param partition the partition
+     * @param numPartitions the num partitions
+     */
     public IncludeExclude(int partition, int numPartitions) {
         if (partition < 0 || partition >= numPartitions) {
             throw new IllegalArgumentException("Partition must be >=0 and < numPartition which is " + numPartitions);
@@ -278,10 +321,20 @@ public class IncludeExclude implements Writeable, ToXContentFragment {
         return set;
     }
 
+    /**
+     * Returns the regex based flag.
+     *
+     * @return the regex based flag
+     */
     public boolean isRegexBased() {
         return include != null || exclude != null;
     }
 
+    /**
+     * Returns the partition based flag.
+     *
+     * @return the partition based flag
+     */
     public boolean isPartitionBased() {
         return incNumPartitions > 0;
     }

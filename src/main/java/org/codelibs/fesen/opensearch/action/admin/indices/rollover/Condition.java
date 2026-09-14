@@ -43,18 +43,36 @@ import java.util.Objects;
 /**
  * Base class for rollover request conditions
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public abstract class Condition<T> implements NamedWriteable, ToXContentFragment {
 
+    /**
+     * The value.
+     */
     protected T value;
+    /**
+     * The name.
+     */
     protected final String name;
 
+    /**
+     * Creates a new Condition.
+     *
+     * @param name the name
+     */
     protected Condition(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the evaluate.
+     *
+     * @param stats the stats
+     * @return the evaluate
+     */
     public abstract Result evaluate(Stats stats);
 
     /**
@@ -94,8 +112,17 @@ public abstract class Condition<T> implements NamedWriteable, ToXContentFragment
      */
     @PublicApi(since = "1.0.0")
     public static class Stats {
+        /**
+         * The num docs.
+         */
         public final long numDocs;
+        /**
+         * The index created.
+         */
         public final long indexCreated;
+        /**
+         * The index size.
+         */
         public final ByteSizeValue indexSize;
 
         /**
@@ -112,6 +139,10 @@ public abstract class Condition<T> implements NamedWriteable, ToXContentFragment
         /**
          * This constructor will be deprecated starting in version 3.4.0.
          * Use {@link Builder} instead.
+         *
+         * @param numDocs the num docs
+         * @param indexCreated the index created
+         * @param indexSize the index size
          */
         @Deprecated
         public Stats(long numDocs, long indexCreated, ByteSizeValue indexSize) {
@@ -129,18 +160,39 @@ public abstract class Condition<T> implements NamedWriteable, ToXContentFragment
             private long indexCreated = 0;
             private ByteSizeValue indexSize = null;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Returns the num docs.
+             *
+             * @param numDocs the num docs
+             * @return the num docs
+             */
             public Builder numDocs(long numDocs) {
                 this.numDocs = numDocs;
                 return this;
             }
 
+            /**
+             * Indexes the created.
+             *
+             * @param indexCreated the index created
+             * @return this instance
+             */
             public Builder indexCreated(long indexCreated) {
                 this.indexCreated = indexCreated;
                 return this;
             }
 
+            /**
+             * Indexes the size.
+             *
+             * @param size the size
+             * @return this instance
+             */
             public Builder indexSize(ByteSizeValue size) {
                 this.indexSize = size;
                 return this;
@@ -163,9 +215,21 @@ public abstract class Condition<T> implements NamedWriteable, ToXContentFragment
      */
     @PublicApi(since = "1.0.0")
     public static class Result {
+        /**
+         * The condition.
+         */
         public final Condition<?> condition;
+        /**
+         * The matched.
+         */
         public final boolean matched;
 
+        /**
+         * Creates a new Result.
+         *
+         * @param condition the condition
+         * @param matched the matched
+         */
         protected Result(Condition<?> condition, boolean matched) {
             this.condition = condition;
             this.matched = matched;

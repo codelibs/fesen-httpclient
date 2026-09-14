@@ -51,16 +51,22 @@ public interface MultiBucketsAggregation extends Aggregation {
      */
     interface Bucket extends HasAggregations, ToXContent {
         /**
+         * Returns the key.
+         *
          * @return The key associated with the bucket
          */
         Object getKey();
 
         /**
+         * Returns the key as string.
+         *
          * @return The key associated with the bucket as a string
          */
         String getKeyAsString();
 
         /**
+         * Returns the doc count.
+         *
          * @return The number of documents that fall within this bucket
          */
         long getDocCount();
@@ -74,6 +80,8 @@ public interface MultiBucketsAggregation extends Aggregation {
     }
 
     /**
+     * Returns the buckets.
+     *
      * @return  The buckets of this aggregation.
      */
     List<? extends Bucket> getBuckets();

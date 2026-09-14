@@ -64,6 +64,9 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
 
     /**
      * Creates a new request with the given source and its content type
+     *
+     * @param source the source
+     * @param mediaType the media type
      */
     public SimulatePipelineRequest(BytesReference source, MediaType mediaType) {
         this.source = Objects.requireNonNull(source);
@@ -77,10 +80,20 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
         return null;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the verbose flag.
+     *
+     * @return the verbose flag
+     */
     public boolean isVerbose() {
         return verbose;
     }
@@ -110,6 +123,12 @@ public class SimulatePipelineRequest extends ActionRequest implements ToXContent
      * @opensearch.internal
      */
     public static final class Fields {
+        /**
+         * Creates a new Fields.
+         */
+        public Fields() {
+        }
+
         static final String PIPELINE = "pipeline";
         static final String DOCS = "docs";
         static final String SOURCE = "_source";

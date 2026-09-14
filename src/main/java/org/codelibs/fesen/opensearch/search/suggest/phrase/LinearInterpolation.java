@@ -57,6 +57,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public final class LinearInterpolation extends SmoothingModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "linear";
     static final ParseField PARSE_FIELD = new ParseField(NAME);
     private static final ParseField TRIGRAM_FIELD = new ParseField("trigram_lambda");
@@ -122,6 +125,13 @@ public final class LinearInterpolation extends SmoothingModel {
         return Objects.hash(trigramLambda, bigramLambda, unigramLambda);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static LinearInterpolation fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         String fieldName = null;

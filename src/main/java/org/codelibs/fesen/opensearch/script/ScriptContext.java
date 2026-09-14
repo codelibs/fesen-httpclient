@@ -71,6 +71,7 @@ import java.lang.reflect.Method;
  * If the variable name starts with an underscore, for example, {@code _score}, the needs method would
  * be {@code boolean needs_score()}.
  *
+ * @param <FactoryType> the factory type type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -97,7 +98,15 @@ public final class ScriptContext<FactoryType> {
     /** The default max compilation rate for scripts in this context.  Script compilation is throttled if this is exceeded */
     public final Tuple<Integer, TimeValue> maxCompilationRateDefault;
 
-    /** Construct a context with the related instance and compiled classes with caller provided cache defaults */
+    /**
+     * Construct a context with the related instance and compiled classes with caller provided cache defaults
+     *
+     * @param name the name
+     * @param factoryClazz the factory clazz
+     * @param cacheSizeDefault the cache size default
+     * @param cacheExpireDefault the cache expire default
+     * @param maxCompilationRateDefault the max compilation rate default
+     */
     public ScriptContext(
         String name,
         Class<FactoryType> factoryClazz,
@@ -142,7 +151,11 @@ public final class ScriptContext<FactoryType> {
     }
 
     /** Construct a context with the related instance and compiled classes with defaults for cacheSizeDefault, cacheExpireDefault and
-     *  maxCompilationRateDefault */
+      * maxCompilationRateDefault
+     *
+     * @param name the name
+     * @param factoryClazz the factory clazz
+      */
     public ScriptContext(String name, Class<FactoryType> factoryClazz) {
         // cache size default, cache expire default, max compilation rate are defaults from ScriptService.
         this(name, factoryClazz, 100, TimeValue.timeValueMillis(0), new Tuple<>(75, TimeValue.timeValueMinutes(5)));

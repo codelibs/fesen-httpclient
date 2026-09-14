@@ -54,25 +54,55 @@ public class RerouteExplanation implements ToXContentObject {
     private AllocationCommand command;
     private Decision decisions;
 
+    /**
+     * Creates a new RerouteExplanation.
+     *
+     * @param command the command
+     * @param decisions the decisions
+     */
     public RerouteExplanation(AllocationCommand command, Decision decisions) {
         this.command = command;
         this.decisions = decisions;
     }
 
+    /**
+     * Returns the command.
+     *
+     * @return the command
+     */
     public AllocationCommand command() {
         return this.command;
     }
 
+    /**
+     * Returns the decisions.
+     *
+     * @return the decisions
+     */
     public Decision decisions() {
         return this.decisions;
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static RerouteExplanation readFrom(StreamInput in) throws IOException {
         AllocationCommand command = in.readNamedWriteable(AllocationCommand.class);
         Decision decisions = Decision.readFrom(in);
         return new RerouteExplanation(command, decisions);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param explanation the explanation
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeTo(RerouteExplanation explanation, StreamOutput out) throws IOException {
         out.writeNamedWriteable(explanation.command);
         explanation.decisions.writeTo(out);

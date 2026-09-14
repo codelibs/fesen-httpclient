@@ -140,12 +140,18 @@ public final class TermVectorsFields extends Fields {
     private final BytesReference termVectors;
     final boolean hasTermStatistic;
     final boolean hasFieldStatistic;
+    /**
+     * The has scores.
+     */
     public final boolean hasScores;
 
     /**
+     * Creates a new TermVectorsFields.
+     *
      * @param headerRef   Stores offsets per field in the {@code termVectors} and some
      *                    header information as {@link BytesRef}.
      * @param termVectors Stores the actual term vectors as a {@link BytesRef}.
+     * @throws IOException if an I/O error occurs
      */
     public TermVectorsFields(BytesReference headerRef, BytesReference termVectors) throws IOException {
         try (StreamInput header = headerRef.streamInput()) {

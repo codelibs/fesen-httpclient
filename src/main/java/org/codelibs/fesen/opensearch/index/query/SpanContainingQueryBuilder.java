@@ -52,6 +52,9 @@ import static org.codelibs.fesen.opensearch.index.query.SpanQueryBuilder.SpanQue
  * @opensearch.internal
  */
 public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContainingQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_containing";
 
     private static final ParseField BIG_FIELD = new ParseField("big");
@@ -61,6 +64,8 @@ public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContain
     private final SpanQueryBuilder little;
 
     /**
+     * Creates a new SpanContainingQueryBuilder.
+     *
      * @param big the big clause, it must enclose {@code little} for a match.
      * @param little the little clause, it must be contained within {@code big} for a match.
      */
@@ -77,6 +82,9 @@ public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContain
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanContainingQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -91,6 +99,8 @@ public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContain
     }
 
     /**
+     * Returns the big query.
+     *
      * @return the big clause, it must enclose {@code little} for a match.
      */
     public SpanQueryBuilder bigQuery() {
@@ -98,6 +108,8 @@ public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContain
     }
 
     /**
+     * Returns the little query.
+     *
      * @return the little clause, it must be contained within {@code big} for a match.
      */
     public SpanQueryBuilder littleQuery() {
@@ -115,6 +127,13 @@ public class SpanContainingQueryBuilder extends AbstractQueryBuilder<SpanContain
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanContainingQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
         String queryName = null;

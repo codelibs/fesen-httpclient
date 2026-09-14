@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ExplainAction extends ActionType<ExplainResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ExplainAction INSTANCE = new ExplainAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/explain";
 
     private ExplainAction() {

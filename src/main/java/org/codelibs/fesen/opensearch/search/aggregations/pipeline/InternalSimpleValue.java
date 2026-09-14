@@ -50,9 +50,23 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class InternalSimpleValue extends InternalNumericMetricsAggregation.SingleValue implements SimpleValue {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "simple_value";
+    /**
+     * The value.
+     */
     protected final double value;
 
+    /**
+     * Creates a new InternalSimpleValue.
+     *
+     * @param name the name
+     * @param value the value
+     * @param formatter the formatter
+     * @param metadata the metadata
+     */
     public InternalSimpleValue(String name, double value, DocValueFormat formatter, Map<String, Object> metadata) {
         super(name, metadata);
         this.format = formatter;
@@ -75,6 +89,11 @@ public class InternalSimpleValue extends InternalNumericMetricsAggregation.Singl
         return value;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public double getValue() {
         return value;
     }

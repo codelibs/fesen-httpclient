@@ -74,6 +74,12 @@ import java.util.regex.Pattern;
  */
 @Deprecated
 public class Joda {
+    /**
+     * Creates a new Joda.
+     */
+    public Joda() {
+    }
+
     // Joda.forPattern could be used even before the logging is initialized.
     // If LogManager.getLogger is called before logging config is loaded
     // it results in errors sent to status logger and startup to fail.
@@ -84,6 +90,9 @@ public class Joda {
 
     /**
      * Parses a joda based pattern, including some named ones (similar to the built in Joda ISO ones).
+     *
+     * @param input the input
+     * @return the for pattern
      */
     public static JodaDateFormatter forPattern(String input) {
         if (Strings.hasLength(input)) {
@@ -327,6 +336,9 @@ public class Joda {
         }
     }
 
+    /**
+     * The quarters.
+     */
     public static final DurationFieldType Quarters = new DurationFieldType("quarters") {
         @Override
         public DurationField getField(Chronology chronology) {
@@ -334,6 +346,9 @@ public class Joda {
         }
     };
 
+    /**
+     * The quarter of year.
+     */
     public static final DateTimeFieldType QuarterOfYear = new DateTimeFieldType("quarterOfYear") {
         @Override
         public DurationFieldType getDurationType() {
@@ -365,6 +380,11 @@ public class Joda {
 
         private final boolean hasMilliSecondPrecision;
 
+        /**
+         * Creates a new EpochTimeParser.
+         *
+         * @param hasMilliSecondPrecision the has milli second precision
+         */
         public EpochTimeParser(boolean hasMilliSecondPrecision) {
             this.hasMilliSecondPrecision = hasMilliSecondPrecision;
         }
@@ -434,6 +454,11 @@ public class Joda {
 
         private boolean hasMilliSecondPrecision;
 
+        /**
+         * Creates a new EpochTimePrinter.
+         *
+         * @param hasMilliSecondPrecision the has milli second precision
+         */
         public EpochTimePrinter(boolean hasMilliSecondPrecision) {
             this.hasMilliSecondPrecision = hasMilliSecondPrecision;
         }

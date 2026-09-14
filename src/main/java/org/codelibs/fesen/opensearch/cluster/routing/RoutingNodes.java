@@ -106,10 +106,21 @@ public class RoutingNodes implements Iterable<RoutingNode> {
     private final Map<String, Recoveries> initialReplicaRecoveries = new HashMap<>();
     private final Map<String, Recoveries> initialPrimaryRecoveries = new HashMap<>();
 
+    /**
+     * Creates a new RoutingNodes.
+     *
+     * @param clusterState the cluster state
+     */
     public RoutingNodes(ClusterState clusterState) {
         this(clusterState, true);
     }
 
+    /**
+     * Creates a new RoutingNodes.
+     *
+     * @param clusterState the cluster state
+     * @param readOnly the read-only
+     */
     public RoutingNodes(ClusterState clusterState, boolean readOnly) {
         this.metadata = clusterState.getMetadata();
         this.readOnly = readOnly;
@@ -243,14 +254,30 @@ public class RoutingNodes implements Iterable<RoutingNode> {
         return Collections.unmodifiableCollection(nodesToShards.values()).iterator();
     }
 
+    /**
+     * Returns the unassigned.
+     *
+     * @return the unassigned
+     */
     public UnassignedShards unassigned() {
         return this.unassignedShards;
     }
 
+    /**
+     * Returns the node.
+     *
+     * @param nodeId the node identifier
+     * @return the node
+     */
     public RoutingNode node(String nodeId) {
         return nodesToShards.get(nodeId);
     }
 
+    /**
+     * Returns the stream.
+     *
+     * @return the stream
+     */
     public Stream<RoutingNode> stream() {
         return nodesToShards.values().stream();
     }
@@ -258,6 +285,9 @@ public class RoutingNodes implements Iterable<RoutingNode> {
     /**
      * Returns all shards that are not in the state UNASSIGNED with the same shard
      * ID as the given shard.
+     *
+     * @param shardId the shard identifier
+     * @return the assigned shards
      */
     public List<ShardRouting> assignedShards(ShardId shardId) {
         final List<ShardRouting> replicaSet = assignedShards.get(shardId);
@@ -308,12 +338,22 @@ public class RoutingNodes implements Iterable<RoutingNode> {
         private int primaries = 0;
         private int ignoredPrimaries = 0;
 
+        /**
+         * Creates a new UnassignedShards.
+         *
+         * @param nodes the nodes
+         */
         public UnassignedShards(RoutingNodes nodes) {
             this.nodes = nodes;
             unassigned = new ArrayList<>();
             ignored = new ArrayList<>();
         }
 
+        /**
+         * Adds this instance.
+         *
+         * @param shardRouting the shard routing
+         */
         public void add(ShardRouting shardRouting) {
             if (shardRouting.primary()) {
                 primaries++;
@@ -337,6 +377,9 @@ public class RoutingNodes implements Iterable<RoutingNode> {
             private final ListIterator<ShardRouting> iterator;
             private ShardRouting current;
 
+            /**
+             * Creates a new UnassignedIterator.
+             */
             public UnassignedIterator() {
                 this.iterator = unassigned.listIterator();
             }

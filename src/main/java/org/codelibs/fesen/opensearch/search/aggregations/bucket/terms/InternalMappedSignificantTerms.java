@@ -49,19 +49,51 @@ import java.util.stream.Collectors;
 /**
  * Implementation of mapped significant terms
  *
+ * @param <A> the aggregation type
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public abstract class InternalMappedSignificantTerms<
     A extends InternalMappedSignificantTerms<A, B>,
     B extends InternalSignificantTerms.Bucket<B>> extends InternalSignificantTerms<A, B> {
 
+    /**
+     * The format.
+     */
     protected final DocValueFormat format;
+    /**
+     * The subset size.
+     */
     protected final long subsetSize;
+    /**
+     * The superset size.
+     */
     protected final long supersetSize;
+    /**
+     * The significance heuristic.
+     */
     protected final SignificanceHeuristic significanceHeuristic;
+    /**
+     * The buckets.
+     */
     protected final List<B> buckets;
+    /**
+     * The bucket map.
+     */
     protected Map<String, B> bucketMap;
 
+    /**
+     * Creates a new InternalMappedSignificantTerms.
+     *
+     * @param name the name
+     * @param metadata the metadata
+     * @param format the format
+     * @param subsetSize the subset size
+     * @param supersetSize the superset size
+     * @param significanceHeuristic the significance heuristic
+     * @param buckets the buckets
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     protected InternalMappedSignificantTerms(
         String name,
         Map<String, Object> metadata,
@@ -80,6 +112,13 @@ public abstract class InternalMappedSignificantTerms<
         this.significanceHeuristic = significanceHeuristic;
     }
 
+    /**
+     * Creates a new InternalMappedSignificantTerms by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @param bucketReader the bucket reader
+     * @throws IOException if an I/O error occurs
+     */
     protected InternalMappedSignificantTerms(StreamInput in, Bucket.Reader<B> bucketReader) throws IOException {
         super(in);
         format = in.readNamedWriteable(DocValueFormat.class);

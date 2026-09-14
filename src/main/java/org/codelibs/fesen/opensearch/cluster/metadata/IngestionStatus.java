@@ -20,11 +20,19 @@ import java.io.IOException;
 
 /**
  * Indicates pull-based ingestion status.
+ *
+ * @param isPaused the is paused
  */
 @PublicApi(since = "3.6.0")
 public record IngestionStatus(boolean isPaused) implements Writeable, ToXContent {
     public static final String IS_PAUSED = "is_paused";
 
+    /**
+     * Creates a new IngestionStatus by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IngestionStatus(StreamInput in) throws IOException {
         this(in.readBoolean());
     }
@@ -42,6 +50,11 @@ public record IngestionStatus(boolean isPaused) implements Writeable, ToXContent
         return builder;
     }
 
+    /**
+     * Returns the default value.
+     *
+     * @return the default value
+     */
     public static IngestionStatus getDefaultValue() {
         return new IngestionStatus(false);
     }

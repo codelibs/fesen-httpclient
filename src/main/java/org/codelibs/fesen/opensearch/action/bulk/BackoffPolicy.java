@@ -58,6 +58,12 @@ import java.util.NoSuchElementException;
  * @opensearch.internal
  */
 public abstract class BackoffPolicy implements Iterable<TimeValue> {
+    /**
+     * Creates a new BackoffPolicy.
+     */
+    public BackoffPolicy() {
+    }
+
     private static final BackoffPolicy NO_BACKOFF = new NoBackoff();
 
     /**
@@ -132,6 +138,10 @@ public abstract class BackoffPolicy implements Iterable<TimeValue> {
 
     /**
      * Wraps the backoff policy in one that calls a method every time a new backoff is taken from the policy.
+     *
+     * @param delegate the delegate
+     * @param onBackoff the on backoff
+     * @return this instance
      */
     public static BackoffPolicy wrap(BackoffPolicy delegate, Runnable onBackoff) {
         return new WrappedBackoffPolicy(delegate, onBackoff);

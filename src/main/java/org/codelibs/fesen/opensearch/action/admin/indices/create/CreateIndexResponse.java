@@ -67,6 +67,12 @@ public class CreateIndexResponse extends ShardsAcknowledgedResponse {
         declareFields(PARSER);
     }
 
+    /**
+     * Performs the declare fields step.
+     *
+     * @param <T> the element type
+     * @param objectParser the object parser
+     */
     protected static <T extends CreateIndexResponse> void declareFields(ConstructingObjectParser<T, Void> objectParser) {
         declareAcknowledgedAndShardsAcknowledgedFields(objectParser);
         objectParser.declareField(constructorArg(), (parser, context) -> parser.textOrNull(), INDEX, ObjectParser.ValueType.STRING_OR_NULL);
@@ -74,11 +80,24 @@ public class CreateIndexResponse extends ShardsAcknowledgedResponse {
 
     private final String index;
 
+    /**
+     * Creates a new CreateIndexResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected CreateIndexResponse(StreamInput in) throws IOException {
         super(in, true);
         index = in.readString();
     }
 
+    /**
+     * Creates a new CreateIndexResponse.
+     *
+     * @param acknowledged the acknowledged
+     * @param shardsAcknowledged the shards acknowledged
+     * @param index the index
+     */
     public CreateIndexResponse(boolean acknowledged, boolean shardsAcknowledged, String index) {
         super(acknowledged, shardsAcknowledged);
         this.index = index;
@@ -91,6 +110,11 @@ public class CreateIndexResponse extends ShardsAcknowledgedResponse {
         out.writeString(index);
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @return this instance
+     */
     public String index() {
         return index;
     }
@@ -101,6 +125,12 @@ public class CreateIndexResponse extends ShardsAcknowledgedResponse {
         builder.field(INDEX.getPreferredName(), index());
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static CreateIndexResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

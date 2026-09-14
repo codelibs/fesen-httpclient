@@ -51,6 +51,12 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
     AcknowledgedResponse,
     IndicesAliasesRequestBuilder> {
 
+    /**
+     * Creates a new IndicesAliasesRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public IndicesAliasesRequestBuilder(OpenSearchClient client, IndicesAliasesAction action) {
         super(client, action, new IndicesAliasesRequest());
     }
@@ -60,6 +66,7 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
      *
      * @param index The index
      * @param alias The alias
+     * @return this instance
      */
     public IndicesAliasesRequestBuilder addAlias(String index, String alias) {
         request.addAliasAction(IndicesAliasesRequest.AliasActions.add().index(index).alias(alias));
@@ -72,6 +79,7 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
      * @param index  The index
      * @param alias  The alias
      * @param filter The filter
+     * @return this instance
      */
     public IndicesAliasesRequestBuilder addAlias(String index, String alias, String filter) {
         request.addAliasAction(IndicesAliasesRequest.AliasActions.add().index(index).alias(alias).filter(filter));
@@ -83,6 +91,7 @@ public class IndicesAliasesRequestBuilder extends AcknowledgedRequestBuilder<
      *
      * @param index The index
      * @param alias The alias
+     * @return this instance
      */
     public IndicesAliasesRequestBuilder removeAlias(String index, String alias) {
         request.addAliasAction(IndicesAliasesRequest.AliasActions.remove().index(index).alias(alias));

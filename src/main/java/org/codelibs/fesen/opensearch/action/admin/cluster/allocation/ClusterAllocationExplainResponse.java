@@ -49,11 +49,22 @@ public class ClusterAllocationExplainResponse extends ActionResponse {
 
     private ClusterAllocationExplanation cae;
 
+    /**
+     * Creates a new ClusterAllocationExplainResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterAllocationExplainResponse(StreamInput in) throws IOException {
         super(in);
         this.cae = new ClusterAllocationExplanation(in);
     }
 
+    /**
+     * Creates a new ClusterAllocationExplainResponse.
+     *
+     * @param cae the cae
+     */
     public ClusterAllocationExplainResponse(ClusterAllocationExplanation cae) {
         this.cae = cae;
     }

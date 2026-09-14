@@ -57,6 +57,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public final class Laplace extends SmoothingModel {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "laplace";
     private static final ParseField ALPHA_FIELD = new ParseField("alpha");
     static final ParseField PARSE_FIELD = new ParseField(NAME);
@@ -69,6 +72,8 @@ public final class Laplace extends SmoothingModel {
 
     /**
      * Creates a Laplace smoothing model.
+     *
+     * @param alpha the alpha
      *
      */
     public Laplace(double alpha) {
@@ -102,6 +107,13 @@ public final class Laplace extends SmoothingModel {
         return Objects.hash(alpha);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SmoothingModel fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         String fieldName = null;

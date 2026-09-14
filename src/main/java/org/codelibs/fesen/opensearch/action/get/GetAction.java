@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetAction extends ActionType<GetResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetAction INSTANCE = new GetAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/get";
 
     private GetAction() {

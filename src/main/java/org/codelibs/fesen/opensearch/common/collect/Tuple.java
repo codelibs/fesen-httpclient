@@ -38,11 +38,22 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  * Java 9 Tuple
  * todo: deprecate and remove w/ min jdk upgrade to 11?
  *
+ * @param <V1> the v1 type
+ * @param <V2> the v2 type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public class Tuple<V1, V2> {
 
+    /**
+     * Returns the tuple.
+     *
+     * @param <V1> the v1 type
+     * @param <V2> the v2 type
+     * @param v1 the v1
+     * @param v2 the v2
+     * @return the tuple
+     */
     public static <V1, V2> Tuple<V1, V2> tuple(V1 v1, V2 v2) {
         return new Tuple<>(v1, v2);
     }
@@ -50,15 +61,31 @@ public class Tuple<V1, V2> {
     private final V1 v1;
     private final V2 v2;
 
+    /**
+     * Creates a new Tuple.
+     *
+     * @param v1 the v1
+     * @param v2 the v2
+     */
     public Tuple(V1 v1, V2 v2) {
         this.v1 = v1;
         this.v2 = v2;
     }
 
+    /**
+     * Returns the v1.
+     *
+     * @return the v1
+     */
     public V1 v1() {
         return v1;
     }
 
+    /**
+     * Returns the v2.
+     *
+     * @return the v2
+     */
     public V2 v2() {
         return v2;
     }

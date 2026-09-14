@@ -58,8 +58,17 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public class CollapseBuilder implements Writeable, ToXContentObject {
+    /**
+     * The FIELD_FIELD constant.
+     */
     public static final ParseField FIELD_FIELD = new ParseField("field");
+    /**
+     * The INNER_HITS_FIELD constant.
+     */
     public static final ParseField INNER_HITS_FIELD = new ParseField("inner_hits");
+    /**
+     * The MAX_CONCURRENT_GROUP_REQUESTS_FIELD constant.
+     */
     public static final ParseField MAX_CONCURRENT_GROUP_REQUESTS_FIELD = new ParseField("max_concurrent_group_searches");
     private static final ObjectParser<CollapseBuilder, Void> PARSER = new ObjectParser<>("collapse", CollapseBuilder::new);
 
@@ -100,6 +109,12 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         this.field = field;
     }
 
+    /**
+     * Creates a new CollapseBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CollapseBuilder(StreamInput in) throws IOException {
         this.field = in.readString();
         this.maxConcurrentGroupRequests = in.readVInt();
@@ -113,6 +128,12 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         out.writeList(innerHits);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static CollapseBuilder fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }
@@ -126,16 +147,34 @@ public class CollapseBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
+    /**
+     * Sets the inner hits.
+     *
+     * @param innerHit the inner hit
+     * @return this instance
+     */
     public CollapseBuilder setInnerHits(InnerHitBuilder innerHit) {
         this.innerHits = Collections.singletonList(innerHit);
         return this;
     }
 
+    /**
+     * Sets the inner hits.
+     *
+     * @param innerHits the inner hits
+     * @return this instance
+     */
     public CollapseBuilder setInnerHits(List<InnerHitBuilder> innerHits) {
         this.innerHits = innerHits;
         return this;
     }
 
+    /**
+     * Sets the max concurrent group requests.
+     *
+     * @param num the num
+     * @return this instance
+     */
     public CollapseBuilder setMaxConcurrentGroupRequests(int num) {
         if (num < 1) {
             throw new IllegalArgumentException("maxConcurrentGroupRequests` must be positive");

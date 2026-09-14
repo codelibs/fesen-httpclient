@@ -55,8 +55,19 @@ import java.io.OutputStream;
 @PublicApi(since = "2.10.0")
 public interface Compressor {
 
+    /**
+     * Returns the compressed flag.
+     *
+     * @param bytes the bytes
+     * @return the compressed flag
+     */
     boolean isCompressed(BytesReference bytes);
 
+    /**
+     * Returns the header length.
+     *
+     * @return the header length
+     */
     int headerLength();
 
     /**
@@ -64,6 +75,10 @@ public interface Compressor {
      * Closing the returned {@link InputStream} will close the provided stream input.
      * Note: The returned stream may only be used on the thread that created it as it might use thread-local resources and must be safely
      * closed after use
+     *
+     * @param in the input to read from
+     * @return the thread local input stream
+     * @throws IOException if an I/O error occurs
      */
     InputStream threadLocalInputStream(InputStream in) throws IOException;
 
@@ -72,6 +87,10 @@ public interface Compressor {
      * Closing the returned {@link OutputStream} will close the provided output stream.
      * Note: The returned stream may only be used on the thread that created it as it might use thread-local resources and must be safely
      * closed after use
+     *
+     * @param out the output to write to
+     * @return the thread local output stream
+     * @throws IOException if an I/O error occurs
      */
     OutputStream threadLocalOutputStream(OutputStream out) throws IOException;
 
@@ -80,6 +99,7 @@ public interface Compressor {
      *
      * @param bytesReference bytes to decompress
      * @return decompressed bytes
+     * @throws IOException if an I/O error occurs
      */
     BytesReference uncompress(BytesReference bytesReference) throws IOException;
 
@@ -88,6 +108,7 @@ public interface Compressor {
      *
      * @param bytesReference bytes to compress
      * @return compressed bytes
+     * @throws IOException if an I/O error occurs
      */
     BytesReference compress(BytesReference bytesReference) throws IOException;
 }

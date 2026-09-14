@@ -55,12 +55,20 @@ import static org.codelibs.fesen.opensearch.index.query.SpanQueryBuilder.SpanQue
  * @opensearch.internal
  */
 public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_or";
 
     private static final ParseField CLAUSES_FIELD = new ParseField("clauses");
 
     private final List<SpanQueryBuilder> clauses = new ArrayList<>();
 
+    /**
+     * Creates a new SpanOrQueryBuilder.
+     *
+     * @param initialClause the initial clause
+     */
     public SpanOrQueryBuilder(SpanQueryBuilder initialClause) {
         if (initialClause == null) {
             throw new IllegalArgumentException("[" + NAME + "] must include at least one clause");
@@ -70,6 +78,9 @@ public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanOrQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -85,6 +96,9 @@ public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder>
 
     /**
      * Add a span clause to the current list of clauses
+     *
+     * @param clause the clause
+     * @return this instance
      */
     public SpanOrQueryBuilder addClause(SpanQueryBuilder clause) {
         if (clause == null) {
@@ -95,6 +109,8 @@ public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder>
     }
 
     /**
+     * Returns the clauses.
+     *
      * @return the {@link SpanQueryBuilder} clauses that were set for this query
      */
     public List<SpanQueryBuilder> clauses() {
@@ -113,6 +129,13 @@ public class SpanOrQueryBuilder extends AbstractQueryBuilder<SpanOrQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanOrQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
         String queryName = null;

@@ -45,9 +45,15 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 /**
  * Base future class.
  *
+ * @param <V> the value type
  * @opensearch.internal
  */
 public abstract class BaseFuture<V> implements Future<V> {
+    /**
+     * Creates a new BaseFuture.
+     */
+    public BaseFuture() {
+    }
 
 
     /**
@@ -198,6 +204,8 @@ public abstract class BaseFuture<V> implements Future<V> {
      * <p>
      * We don't use the integer argument passed between acquire methods so we
      * pass around a -1 everywhere.
+     *
+     * @param <V> the value type
      */
     static final class Sync<V> extends AbstractQueuedSynchronizer {
         /* Valid states. */

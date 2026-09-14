@@ -66,6 +66,9 @@ public class ClusterSearchShardsRequest extends ClusterManagerNodeReadRequest<Cl
     @Nullable
     private SliceBuilder sliceBuilder;
 
+    /**
+     * Creates a new ClusterSearchShardsRequest.
+     */
     public ClusterSearchShardsRequest() {}
 
     @Override
@@ -123,11 +126,18 @@ public class ClusterSearchShardsRequest extends ClusterManagerNodeReadRequest<Cl
 
     /**
      * A comma separated list of routing values to control the shards the search will be executed on.
+     *
+     * @return the routing
      */
     public String routing() {
         return this.routing;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String preference() {
         return this.preference;
     }

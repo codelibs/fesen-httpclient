@@ -41,6 +41,9 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
     final List<String> dimensionNames;
     // The name of the cache type producing these stats. Returned in API response.
     final String storeName;
+    /**
+     * The STORE_NAME_FIELD constant.
+     */
     public static String STORE_NAME_FIELD = "store_name";
 
     // Values used for serializing/deserializing the tree.
@@ -49,6 +52,12 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
     private static final String SERIALIZATION_BEGIN_NODE = "_";
     private static final String SERIALIZATION_DONE = "end";
 
+    /**
+     * Creates a new ImmutableCacheStatsHolder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ImmutableCacheStatsHolder(StreamInput in) throws IOException {
         this.dimensionNames = List.of(in.readStringArray());
         this.storeName = in.readString();
@@ -117,6 +126,11 @@ public class ImmutableCacheStatsHolder implements Writeable, ToXContent {
         }
     }
 
+    /**
+     * Returns the total stats.
+     *
+     * @return the total stats
+     */
     public ImmutableCacheStats getTotalStats() {
         return statsRoot.getStats();
     }

@@ -43,6 +43,8 @@ public interface XRejectedExecutionHandler extends RejectedExecutionHandler {
 
     /**
      * The number of rejected executions.
+     *
+     * @return the rejected
      */
     long rejected();
 }

@@ -52,18 +52,42 @@ public abstract class ExecutorBuilder<U extends ExecutorBuilder.ExecutorSettings
 
     private final String name;
 
+    /**
+     * Creates a new ExecutorBuilder.
+     *
+     * @param name the name
+     */
     public ExecutorBuilder(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     protected String name() {
         return name;
     }
 
+    /**
+     * Returns the settings key.
+     *
+     * @param prefix the prefix
+     * @param key the key
+     * @return the settings key
+     */
     protected static String settingsKey(final String prefix, final String key) {
         return String.join(".", prefix, key);
     }
 
+    /**
+     * Applies the hard size limit.
+     *
+     * @param settings the settings
+     * @param name the name
+     * @return this instance
+     */
     protected int applyHardSizeLimit(final Settings settings, final String name) {
         if (name.equals("bulk") || name.equals(ThreadPool.Names.WRITE) || name.equals(ThreadPool.Names.SYSTEM_WRITE)) {
             return 1 + OpenSearchExecutors.allocatedProcessors(settings);

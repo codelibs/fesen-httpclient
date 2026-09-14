@@ -34,6 +34,8 @@ import java.lang.annotation.Target;
 public @interface PublicApi {
     /**
      * Version when this API was released
+     *
+     * @return the since
      */
     String since();
 }

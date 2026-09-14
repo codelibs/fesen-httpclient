@@ -47,10 +47,21 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class SettingsException extends OpenSearchException {
 
+    /**
+     * Creates a new SettingsException.
+     *
+     * @param message the message
+     */
     public SettingsException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a new SettingsException.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public SettingsException(String message, Throwable cause) {
         super(message, cause);
     }

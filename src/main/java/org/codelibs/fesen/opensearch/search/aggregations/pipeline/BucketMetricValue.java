@@ -41,5 +41,10 @@ import org.codelibs.fesen.opensearch.search.aggregations.metrics.NumericMetricsA
  */
 public interface BucketMetricValue extends NumericMetricsAggregation.SingleValue {
 
+    /**
+     * Returns the keys.
+     *
+     * @return the keys
+     */
     String[] keys();
 }

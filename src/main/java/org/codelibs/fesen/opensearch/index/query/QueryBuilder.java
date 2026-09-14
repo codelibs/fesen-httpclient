@@ -63,16 +63,23 @@ public interface QueryBuilder extends NamedWriteable, ToXContentObject, Rewritea
      * Implementers should return the concrete type of the
      * {@link QueryBuilder} so that calls can be chained. This is done
      * automatically when extending {@link AbstractQueryBuilder}.
+     *
+     * @param queryName the query name
+     * @return this instance
      */
     QueryBuilder queryName(String queryName);
 
     /**
      * Returns the arbitrary name assigned to the query (see named queries).
+     *
+     * @return this instance
      */
     String queryName();
 
     /**
      * Returns the boost for this query.
+     *
+     * @return this instance
      */
     float boost();
 
@@ -82,11 +89,16 @@ public interface QueryBuilder extends NamedWriteable, ToXContentObject, Rewritea
      * Implementers should return the concrete type of the
      * {@link QueryBuilder} so that calls can be chained. This is done
      * automatically when extending {@link AbstractQueryBuilder}.
+     *
+     * @param boost the boost
+     * @return this instance
      */
     QueryBuilder boost(float boost);
 
     /**
      * Returns the name that identifies uniquely the query
+     *
+     * @return the name
      */
     String getName();
 
@@ -111,6 +123,8 @@ public interface QueryBuilder extends NamedWriteable, ToXContentObject, Rewritea
      * Indicates whether this query benefits from intra-segment search.
      * Override to return {@code true} for compute-heavy queries that parallelize well
      * Default is {@code false} - queries must explicitly opt-in.
+     *
+     * @return the supports intra segment search
      */
     default boolean supportsIntraSegmentSearch() {
         return false;

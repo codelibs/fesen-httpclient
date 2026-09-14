@@ -46,6 +46,11 @@ import java.io.OutputStream;
  * @opensearch.internal
  */
 public abstract class Streams {
+    /**
+     * Creates a new Streams.
+     */
+    public Streams() {
+    }
 
     private static final ThreadLocal<byte[]> buffer = ThreadLocal.withInitial(() -> new byte[8 * 1024]);
 
@@ -81,6 +86,13 @@ public abstract class Streams {
     }
 
     /**
+     * Copies this instance.
+     *
+     * @param in the input to read from
+     * @param out the output to write to
+     * @param close the close
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      * @see #copy(InputStream, OutputStream, byte[], boolean)
      */
     public static long copy(final InputStream in, final OutputStream out, boolean close) throws IOException {
@@ -88,6 +100,12 @@ public abstract class Streams {
     }
 
     /**
+     * Copies this instance.
+     *
+     * @param in the input to read from
+     * @param out the output to write to
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      * @see #copy(InputStream, OutputStream, byte[], boolean)
      */
     public static long copy(final InputStream in, final OutputStream out) throws IOException {

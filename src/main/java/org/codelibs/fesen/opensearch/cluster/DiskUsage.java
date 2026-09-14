@@ -60,6 +60,12 @@ public class DiskUsage implements ToXContentFragment, Writeable {
     /**
      * Create a new DiskUsage, if {@code totalBytes} is 0, {@link #getFreeDiskAsPercentage()}
      * will always return 100.0% free
+     *
+     * @param nodeId the node identifier
+     * @param nodeName the node name
+     * @param path the path
+     * @param totalBytes the total bytes
+     * @param freeBytes the free bytes
      */
     public DiskUsage(String nodeId, String nodeName, String path, long totalBytes, long freeBytes) {
         this.nodeId = nodeId;
@@ -69,6 +75,12 @@ public class DiskUsage implements ToXContentFragment, Writeable {
         this.path = path;
     }
 
+    /**
+     * Creates a new DiskUsage by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DiskUsage(StreamInput in) throws IOException {
         this.nodeId = in.readString();
         this.nodeName = in.readString();
@@ -107,10 +119,20 @@ public class DiskUsage implements ToXContentFragment, Writeable {
         return builder;
     }
 
+    /**
+     * Returns the node name.
+     *
+     * @return the node name
+     */
     public String getNodeName() {
         return nodeName;
     }
 
+    /**
+     * Returns the free disk as percentage.
+     *
+     * @return the free disk as percentage
+     */
     public double getFreeDiskAsPercentage() {
         // We return 100.0% in order to fail "open", in that if we have invalid
         // numbers for the total bytes, it's as if we don't know disk usage.
@@ -120,18 +142,38 @@ public class DiskUsage implements ToXContentFragment, Writeable {
         return 100.0 * ((double) freeBytes / totalBytes);
     }
 
+    /**
+     * Returns the used disk as percentage.
+     *
+     * @return the used disk as percentage
+     */
     public double getUsedDiskAsPercentage() {
         return 100.0 - getFreeDiskAsPercentage();
     }
 
+    /**
+     * Returns the free bytes.
+     *
+     * @return the free bytes
+     */
     public long getFreeBytes() {
         return freeBytes;
     }
 
+    /**
+     * Returns the total bytes.
+     *
+     * @return the total bytes
+     */
     public long getTotalBytes() {
         return totalBytes;
     }
 
+    /**
+     * Returns the used bytes.
+     *
+     * @return the used bytes
+     */
     public long getUsedBytes() {
         return getTotalBytes() - getFreeBytes();
     }

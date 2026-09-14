@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ForceMergeAction extends ActionType<ForceMergeResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ForceMergeAction INSTANCE = new ForceMergeAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/forcemerge";
 
     private ForceMergeAction() {

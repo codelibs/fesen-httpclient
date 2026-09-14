@@ -73,6 +73,12 @@ public class FlushResponse extends BroadcastResponse {
         super(totalShards, successfulShards, failedShards, shardFailures);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static FlushResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

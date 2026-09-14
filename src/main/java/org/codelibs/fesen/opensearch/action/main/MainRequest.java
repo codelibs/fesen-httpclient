@@ -45,6 +45,9 @@ import java.io.IOException;
  */
 public class MainRequest extends ActionRequest {
 
+    /**
+     * Creates a new MainRequest.
+     */
     public MainRequest() {}
 
     @Override

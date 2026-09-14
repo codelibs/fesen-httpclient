@@ -70,9 +70,23 @@ import java.util.function.Function;
  * @opensearch.internal
  */
 public class XContentOpenSearchExtension implements XContentBuilderExtension {
+    /**
+     * Creates a new XContentOpenSearchExtension.
+     */
+    public XContentOpenSearchExtension() {
+    }
 
+    /**
+     * The DEFAULT_FORMATTER constant.
+     */
     public static final DateFormatter DEFAULT_FORMATTER = DateFormatter.forPattern("strict_date_optional_time_nanos");
+    /**
+     * The LOCAL_TIME_FORMATTER constant.
+     */
     public static final DateFormatter LOCAL_TIME_FORMATTER = DateFormatter.forPattern("HH:mm:ss.SSS");
+    /**
+     * The OFFSET_TIME_FORMATTER constant.
+     */
     public static final DateFormatter OFFSET_TIME_FORMATTER = DateFormatter.forPattern("HH:mm:ss.SSSZZZZZ");
 
     @Override

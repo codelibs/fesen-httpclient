@@ -106,15 +106,29 @@ public class MultiGetRequest extends ActionRequest
         private VersionType versionType = VersionType.INTERNAL;
         private FetchSourceContext fetchSourceContext;
 
+        /**
+         * Creates a new Item.
+         */
         public Item() {
 
         }
 
+        /**
+         * Creates a new Item.
+         *
+         * @param index the index
+         * @param id the identifier
+         */
         public Item(String index, String id) {
             this.index = index;
             this.id = id;
         }
 
+        /**
+         * Indexes this instance.
+         *
+         * @return this instance
+         */
         public String index() {
             return this.index;
         }
@@ -129,20 +143,38 @@ public class MultiGetRequest extends ActionRequest
             return GetRequest.INDICES_OPTIONS;
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public String id() {
             return this.id;
         }
 
+        /**
+         * Returns the routing.
+         *
+         * @return the routing
+         */
         public String routing() {
             return this.routing;
         }
 
+        /**
+         * Returns the stored fields.
+         *
+         * @return the stored fields
+         */
         public String[] storedFields() {
             return this.storedFields;
         }
 
         /**
          * Allows setting the {@link FetchSourceContext} for this request, controlling if and how _source should be returned.
+         *
+         * @param fetchSourceContext the fetch source context
+         * @return this instance
          */
         public Item fetchSourceContext(FetchSourceContext fetchSourceContext) {
             this.fetchSourceContext = fetchSourceContext;
@@ -220,8 +252,17 @@ public class MultiGetRequest extends ActionRequest
     boolean refresh;
     List<Item> items = new ArrayList<>();
 
+    /**
+     * Creates a new MultiGetRequest.
+     */
     public MultiGetRequest() {}
 
+    /**
+     * Adds this instance.
+     *
+     * @param item the item
+     * @return this instance
+     */
     public MultiGetRequest add(Item item) {
         items.add(item);
         return this;
@@ -246,10 +287,20 @@ public class MultiGetRequest extends ActionRequest
         return validationException;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String preference() {
         return this.preference;
     }
 
+    /**
+     * Returns the realtime.
+     *
+     * @return the realtime
+     */
     public boolean realtime() {
         return this.realtime;
     }
@@ -260,6 +311,11 @@ public class MultiGetRequest extends ActionRequest
         return this;
     }
 
+    /**
+     * Refreshes this instance.
+     *
+     * @return this instance
+     */
     public boolean refresh() {
         return this.refresh;
     }

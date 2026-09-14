@@ -48,6 +48,12 @@ public class NodesUsageRequestBuilder extends NodesOperationRequestBuilder<
     NodesUsageResponse,
     NodesUsageRequestBuilder> {
 
+    /**
+     * Creates a new NodesUsageRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public NodesUsageRequestBuilder(OpenSearchClient client, ActionType<NodesUsageResponse> action) {
         super(client, action, new NodesUsageRequest());
     }

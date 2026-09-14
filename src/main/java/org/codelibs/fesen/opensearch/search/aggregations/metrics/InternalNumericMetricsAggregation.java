@@ -51,6 +51,9 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
 
     private static final DocValueFormat DEFAULT_FORMAT = DocValueFormat.RAW;
 
+    /**
+     * The format.
+     */
     protected DocValueFormat format = DEFAULT_FORMAT;
 
     /**
@@ -59,6 +62,12 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
      * @opensearch.internal
      */
     public abstract static class SingleValue extends InternalNumericMetricsAggregation implements NumericMetricsAggregation.SingleValue {
+        /**
+         * Creates a new SingleValue.
+         *
+         * @param name the name
+         * @param metadata the metadata
+         */
         protected SingleValue(String name, Map<String, Object> metadata) {
             super(name, metadata);
         }
@@ -100,12 +109,30 @@ public abstract class InternalNumericMetricsAggregation extends InternalAggregat
      * @opensearch.internal
      */
     public abstract static class MultiValue extends InternalNumericMetricsAggregation implements NumericMetricsAggregation.MultiValue {
+        /**
+         * Creates a new MultiValue.
+         *
+         * @param name the name
+         * @param metadata the metadata
+         */
         protected MultiValue(String name, Map<String, Object> metadata) {
             super(name, metadata);
         }
 
+        /**
+         * Returns the value.
+         *
+         * @param name the name
+         * @return the value
+         */
         public abstract double value(String name);
 
+        /**
+         * Returns the value as string.
+         *
+         * @param name the name
+         * @return the value as string
+         */
         public String valueAsString(String name) {
             return format.format(value(name)).toString();
         }

@@ -45,6 +45,7 @@ import java.util.Objects;
 /**
  * Base implementation of a {@link PipelineAggregationBuilder}.
  *
+ * @param <PAB> the pab type
  * @opensearch.internal
  */
 public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPipelineAggregationBuilder<PAB>> extends
@@ -55,9 +56,22 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
      */
     public static final ParseField BUCKETS_PATH_FIELD = new ParseField("buckets_path");
 
+    /**
+     * The type.
+     */
     protected final String type;
+    /**
+     * The metadata.
+     */
     protected Map<String, Object> metadata;
 
+    /**
+     * Creates a new AbstractPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param type the type
+     * @param bucketsPaths the buckets paths
+     */
     protected AbstractPipelineAggregationBuilder(String name, String type, String[] bucketsPaths) {
         super(name, bucketsPaths);
         if (type == null) {
@@ -68,6 +82,10 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @param type the type
+     * @throws IOException if an I/O error occurs
      */
     protected AbstractPipelineAggregationBuilder(StreamInput in, String type) throws IOException {
         this(in.readString(), type, in.readStringArray());
@@ -82,8 +100,19 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public String type() {
         return type;
     }
@@ -120,6 +149,8 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
     }
 
     /**
+     * Returns the override buckets path.
+     *
      * @return <code>true</code> if the {@link AbstractPipelineAggregationBuilder}
      *         overrides the XContent rendering of the bucketPath option.
      */
@@ -127,6 +158,14 @@ public abstract class AbstractPipelineAggregationBuilder<PAB extends AbstractPip
         return false;
     }
 
+    /**
+     * Returns the internal XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the internal XContent
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder internalXContent(XContentBuilder builder, Params params) throws IOException;
 
     @Override

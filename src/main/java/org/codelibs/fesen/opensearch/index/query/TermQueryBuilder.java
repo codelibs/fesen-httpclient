@@ -52,7 +52,13 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "term";
+    /**
+     * The DEFAULT_CASE_INSENSITIVITY constant.
+     */
     public static final boolean DEFAULT_CASE_INSENSITIVITY = false;
     private static final ParseField CASE_INSENSITIVE_FIELD = new ParseField("case_insensitive");
 
@@ -61,52 +67,108 @@ public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> {
     private static final ParseField TERM_FIELD = new ParseField("term");
     private static final ParseField VALUE_FIELD = new ParseField("value");
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, String) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, String)
+     */
     public TermQueryBuilder(String fieldName, String value) {
         super(fieldName, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, int) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, int)
+     */
     public TermQueryBuilder(String fieldName, int value) {
         super(fieldName, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, long) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, long)
+     */
     public TermQueryBuilder(String fieldName, long value) {
         super(fieldName, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, float) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, float)
+     */
     public TermQueryBuilder(String fieldName, float value) {
         super(fieldName, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, double) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, double)
+     */
     public TermQueryBuilder(String fieldName, double value) {
         super(fieldName, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, boolean) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, boolean)
+     */
     public TermQueryBuilder(String fieldName, boolean value) {
         super(fieldName, (Object) value);
     }
 
-    /** @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, Object) */
+    /**
+     * Creates a new TermQueryBuilder.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @see BaseTermQueryBuilder#BaseTermQueryBuilder(String, Object)
+     */
     public TermQueryBuilder(String fieldName, Object value) {
         super(fieldName, value);
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @param caseInsensitive the case insensitive
+     * @return the case insensitive
+     */
     public TermQueryBuilder caseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
         return this;
     }
 
+    /**
+     * Returns the case insensitive.
+     *
+     * @return the case insensitive
+     */
     public boolean caseInsensitive() {
         return this.caseInsensitive;
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TermQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -119,6 +181,13 @@ public class TermQueryBuilder extends BaseTermQueryBuilder<TermQueryBuilder> {
         out.writeBoolean(caseInsensitive);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static TermQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String queryName = null;
         String fieldName = null;

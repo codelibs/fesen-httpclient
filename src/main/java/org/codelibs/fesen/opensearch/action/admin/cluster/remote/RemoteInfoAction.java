@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public final class RemoteInfoAction extends ActionType<RemoteInfoResponse> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/remote/info";
+    /**
+     * The INSTANCE constant.
+     */
     public static final RemoteInfoAction INSTANCE = new RemoteInfoAction();
 
     private RemoteInfoAction() {

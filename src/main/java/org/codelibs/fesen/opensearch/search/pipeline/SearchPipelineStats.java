@@ -44,6 +44,16 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
     private FactoryDetailStats systemGeneratedFactoryStats;
     private PipelineDetailStats systemGeneratedProcessorStats;
 
+    /**
+     * Creates a new SearchPipelineStats.
+     *
+     * @param totalRequestStats the total request stats
+     * @param totalResponseStats the total response stats
+     * @param perPipelineStats the per pipeline stats
+     * @param perPipelineProcessorStats the per pipeline processor stats
+     * @param systemGeneratedFactoryStats the system generated factory stats
+     * @param systemGeneratedProcessorStats the system generated processor stats
+     */
     public SearchPipelineStats(
         OperationStats totalRequestStats,
         OperationStats totalResponseStats,
@@ -60,6 +70,12 @@ public class SearchPipelineStats implements Writeable, ToXContentFragment {
         this.systemGeneratedProcessorStats = systemGeneratedProcessorStats;
     }
 
+    /**
+     * Creates a new SearchPipelineStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchPipelineStats(StreamInput in) throws IOException {
         this.totalRequestStats = new OperationStats(in);
         this.totalResponseStats = new OperationStats(in);

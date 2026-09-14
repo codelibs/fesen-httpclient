@@ -70,10 +70,18 @@ public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQu
         IndicesRequest.Replaceable,
         ToXContentObject {
 
+    /**
+     * Creates a new DeleteByQueryRequest.
+     */
     public DeleteByQueryRequest() {
         this(new SearchRequest());
     }
 
+    /**
+     * Creates a new DeleteByQueryRequest.
+     *
+     * @param indices the indices
+     */
     public DeleteByQueryRequest(String... indices) {
         this(new SearchRequest(indices));
     }
@@ -92,6 +100,9 @@ public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQu
 
     /**
      * Set the query for selective delete
+     *
+     * @param query the query
+     * @return this instance
      */
     public DeleteByQueryRequest setQuery(QueryBuilder query) {
         if (query != null) {
@@ -102,6 +113,9 @@ public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQu
 
     /**
      * Set routing limiting the process to the shards that match that routing value
+     *
+     * @param routing the routing value
+     * @return this instance
      */
     public DeleteByQueryRequest setRouting(String routing) {
         if (routing != null) {
@@ -112,6 +126,8 @@ public class DeleteByQueryRequest extends AbstractBulkByScrollRequest<DeleteByQu
 
     /**
      * Gets the routing value used for this request
+     *
+     * @return the routing
      */
     public String getRouting() {
         return getSearchRequest().routing();

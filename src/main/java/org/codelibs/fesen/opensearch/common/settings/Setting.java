@@ -102,6 +102,7 @@ import java.util.stream.Stream;
  * }
  * </pre>
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -188,10 +189,22 @@ public class Setting<T> implements ToXContentObject {
     }
 
     private final Key key;
+    /**
+     * The default value.
+     */
     protected final Function<Settings, String> defaultValue;
+    /**
+     * The fallback setting.
+     */
     @Nullable
     protected final Setting<T> fallbackSetting;
+    /**
+     * The parser.
+     */
     protected final Function<String, T> parser;
+    /**
+     * The validator.
+     */
     protected final Validator<T> validator;
     private final EnumSet<Property> properties;
 
@@ -338,6 +351,7 @@ public class Setting<T> implements ToXContentObject {
      * <b>Note: this method should not be used to retrieve a value from a {@link Settings} object.
      * Use {@link #get(Settings)} instead</b>
      *
+     * @return the key
      * @see #isGroupSetting()
      */
     public final String getKey() {
@@ -346,6 +360,8 @@ public class Setting<T> implements ToXContentObject {
 
     /**
      * Returns <code>true</code> if this setting must be filtered, otherwise <code>false</code>
+     *
+     * @return the filtered flag
      */
     public boolean isFiltered() {
         return properties.contains(Property.Filtered);
@@ -353,6 +369,8 @@ public class Setting<T> implements ToXContentObject {
 
     /**
      * Returns <code>true</code> if this setting is deprecated, otherwise <code>false</code>
+     *
+     * @return the deprecated flag
      */
     public boolean isDeprecated() {
         return properties.contains(Property.Deprecated);
@@ -374,6 +392,7 @@ public class Setting<T> implements ToXContentObject {
     /**
      * Returns the default value string representation for this setting.
      * @param settings a settings object for settings that has a default value depending on another setting if available
+     * @return the default raw
      */
     public String getDefaultRaw(Settings settings) {
         return defaultValue.apply(settings);
@@ -382,6 +401,7 @@ public class Setting<T> implements ToXContentObject {
     /**
      * Returns the default value for this setting.
      * @param settings a settings object for settings that has a default value depending on another setting if available
+     * @return the default
      */
     public T getDefault(Settings settings) {
         return parser.apply(getDefaultRaw(settings));
@@ -404,6 +424,9 @@ public class Setting<T> implements ToXContentObject {
     /**
      * Returns the settings value. If the setting is not present in the given settings object the default value is returned
      * instead.
+     *
+     * @param settings the settings
+     * @return the value
      */
     public T get(Settings settings) {
         return get(settings, true);
@@ -518,6 +541,8 @@ public class Setting<T> implements ToXContentObject {
     /**
      * Returns <code>true</code> iff the given key matches the settings key or if this setting is a group setting if the
      * given key is part of the settings group.
+     * @param toTest the to test
+     * @return this instance
      * @see #isGroupSetting()
      */
     public final boolean match(String toTest) {
@@ -540,6 +565,12 @@ public class Setting<T> implements ToXContentObject {
         return Strings.toString(MediaTypeRegistry.JSON, this, true, true);
     }
 
+    /**
+     * Returns the concrete setting.
+     *
+     * @param key the key
+     * @return the concrete setting
+     */
     public Setting<T> getConcreteSetting(String key) {
         // we use startsWith here since the key might be foo.bar.0 if it's an array
         assert key.startsWith(this.getKey()) : "was " + key + " expected: " + getKey();
@@ -578,6 +609,9 @@ public class Setting<T> implements ToXContentObject {
     /**
      * Returns a set of settings that are required at validation time. Unless all of the dependencies are present in the settings
      * object validation of setting must fail.
+     *
+     * @param key the key
+     * @return the settings dependencies
      */
     public Set<SettingDependency> getSettingsDependencies(final String key) {
         return Collections.emptySet();
@@ -599,6 +633,7 @@ public class Setting<T> implements ToXContentObject {
     /**
      * An affix setting
      *
+     * @param <T> the element type
      * @opensearch.api
      */
     @PublicApi(since = "1.0.0")
@@ -607,6 +642,14 @@ public class Setting<T> implements ToXContentObject {
         private final BiFunction<String, String, Setting<T>> delegateFactory;
         private final Set<AffixSettingDependency> dependencies;
 
+        /**
+         * Creates a new AffixSetting.
+         *
+         * @param key the key
+         * @param delegate the delegate
+         * @param delegateFactory the delegate factory
+         * @param dependencies the dependencies
+         */
         public AffixSetting(
             AffixKey key,
             Setting<T> delegate,
@@ -681,6 +724,9 @@ public class Setting<T> implements ToXContentObject {
 
         /**
          * Get a setting with the given namespace filled in for prefix and suffix.
+         *
+         * @param namespace the namespace
+         * @return the concrete setting for namespace
          */
         public Setting<T> getConcreteSettingForNamespace(String namespace) {
             if (namespace == null) {
@@ -697,6 +743,9 @@ public class Setting<T> implements ToXContentObject {
 
         /**
          * Returns distinct namespaces for the given settings
+         *
+         * @param settings the settings
+         * @return the namespaces
          */
         public Set<String> getNamespaces(Settings settings) {
             return settings.keySet().stream().filter(this::match).map(key::getNamespace).collect(Collectors.toSet());
@@ -704,6 +753,9 @@ public class Setting<T> implements ToXContentObject {
 
         /**
          * Returns a map of all namespaces to its values give the provided settings
+         *
+         * @param settings the settings
+         * @return the as map
          */
         public Map<String, T> getAsMap(Settings settings) {
             Map<String, T> map = new HashMap<>();
@@ -841,6 +893,14 @@ public class Setting<T> implements ToXContentObject {
 
     }
 
+    /**
+     * Returns the version setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param properties the properties
+     * @return the version setting
+     */
     public static Setting<Version> versionSetting(final String key, final Version defaultValue, Property... properties) {
         return new Setting<>(key, s -> Integer.toString(defaultValue.id), s -> Version.fromId(Integer.parseInt(s)), properties);
     }
@@ -870,14 +930,41 @@ public class Setting<T> implements ToXContentObject {
 
     // Integer
 
+    /**
+     * Parses the int.
+     *
+     * @param s the s
+     * @param minValue the min value
+     * @param key the key
+     * @return this instance
+     */
     public static int parseInt(String s, int minValue, String key) {
         return parseInt(s, minValue, Integer.MAX_VALUE, key);
     }
 
+    /**
+     * Parses the int.
+     *
+     * @param s the s
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param key the key
+     * @return this instance
+     */
     public static int parseInt(String s, int minValue, int maxValue, String key) {
         return parseInt(s, minValue, maxValue, key, false);
     }
 
+    /**
+     * Parses the int.
+     *
+     * @param s the s
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param key the key
+     * @param isFiltered the is filtered
+     * @return this instance
+     */
     public static int parseInt(String s, int minValue, int maxValue, String key, boolean isFiltered) {
         int value = Integer.parseInt(s);
         if (value < minValue) {
@@ -893,18 +980,56 @@ public class Setting<T> implements ToXContentObject {
 
     // Setting<Integer> with defaultValue
 
+    /**
+     * Returns the int setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param properties the properties
+     * @return the int setting
+     */
     public static Setting<Integer> intSetting(String key, int defaultValue, Property... properties) {
         return intSetting(key, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, properties);
     }
 
+    /**
+     * Returns the int setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param properties the properties
+     * @return the int setting
+     */
     public static Setting<Integer> intSetting(String key, int defaultValue, int minValue, Property... properties) {
         return intSetting(key, defaultValue, minValue, Integer.MAX_VALUE, properties);
     }
 
+    /**
+     * Returns the int setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param properties the properties
+     * @return the int setting
+     */
     public static Setting<Integer> intSetting(String key, int defaultValue, int minValue, int maxValue, Property... properties) {
         return intSetting(key, defaultValue, minValue, maxValue, v -> {}, properties);
     }
 
+    /**
+     * Returns the int setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the int setting
+     */
     public static Setting<Integer> intSetting(
         String key,
         int defaultValue,
@@ -932,6 +1057,14 @@ public class Setting<T> implements ToXContentObject {
         private int maxValue;
         private boolean isFiltered;
 
+        /**
+         * Creates a new IntegerParser.
+         *
+         * @param minValue the min value
+         * @param maxValue the max value
+         * @param key the key
+         * @param isFiltered the is filtered
+         */
         public IntegerParser(int minValue, int maxValue, String key, boolean isFiltered) {
             this.minValue = minValue;
             this.maxValue = maxValue;
@@ -969,6 +1102,16 @@ public class Setting<T> implements ToXContentObject {
 
     // Setting<Integer> with fallback
 
+    /**
+     * Returns the int setting.
+     *
+     * @param key the key
+     * @param fallbackSetting the fallback setting
+     * @param minValue the min value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the int setting
+     */
     public static Setting<Integer> intSetting(
         String key,
         Setting<Integer> fallbackSetting,
@@ -979,6 +1122,17 @@ public class Setting<T> implements ToXContentObject {
         return intSetting(key, fallbackSetting, minValue, Integer.MAX_VALUE, validator, properties);
     }
 
+    /**
+     * Returns the int setting.
+     *
+     * @param key the key
+     * @param fallbackSetting the fallback setting
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the int setting
+     */
     public static Setting<Integer> intSetting(
         String key,
         Setting<Integer> fallbackSetting,
@@ -1014,14 +1168,44 @@ public class Setting<T> implements ToXContentObject {
 
     // Setting<Long> with defaultValue
 
+    /**
+     * Returns the long setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param properties the properties
+     * @return the long setting
+     */
     public static Setting<Long> longSetting(String key, long defaultValue, long minValue, Property... properties) {
         return longSetting(key, defaultValue, minValue, Long.MAX_VALUE, properties);
     }
 
+    /**
+     * Returns the long setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param properties the properties
+     * @return the long setting
+     */
     public static Setting<Long> longSetting(String key, long defaultValue, long minValue, long maxValue, Property... properties) {
         return longSetting(key, defaultValue, minValue, maxValue, v -> {}, properties);
     }
 
+    /**
+     * Returns the long setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the long setting
+     */
     public static Setting<Long> longSetting(
         String key,
         long defaultValue,
@@ -1049,6 +1233,14 @@ public class Setting<T> implements ToXContentObject {
         private long maxValue;
         private boolean isFiltered;
 
+        /**
+         * Creates a new LongParser.
+         *
+         * @param minValue the min value
+         * @param maxValue the max value
+         * @param key the key
+         * @param isFiltered the is filtered
+         */
         public LongParser(long minValue, long maxValue, String key, boolean isFiltered) {
             this.minValue = minValue;
             this.maxValue = maxValue;
@@ -1103,14 +1295,44 @@ public class Setting<T> implements ToXContentObject {
 
     // Setting<Double> with defaultValue
 
+    /**
+     * Returns the double setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param properties the properties
+     * @return the double setting
+     */
     public static Setting<Double> doubleSetting(String key, double defaultValue, double minValue, Property... properties) {
         return doubleSetting(key, defaultValue, minValue, Double.MAX_VALUE, properties);
     }
 
+    /**
+     * Returns the double setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param properties the properties
+     * @return the double setting
+     */
     public static Setting<Double> doubleSetting(String key, double defaultValue, double minValue, double maxValue, Property... properties) {
         return doubleSetting(key, defaultValue, minValue, maxValue, v -> {}, properties);
     }
 
+    /**
+     * Returns the double setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the double setting
+     */
     public static Setting<Double> doubleSetting(
         String key,
         double defaultValue,
@@ -1138,6 +1360,14 @@ public class Setting<T> implements ToXContentObject {
         private String key;
         private boolean isFiltered;
 
+        /**
+         * Creates a new DoubleParser.
+         *
+         * @param minValue the min value
+         * @param maxValue the max value
+         * @param key the key
+         * @param isFiltered the is filtered
+         */
         public DoubleParser(double minValue, double maxValue, String key, boolean isFiltered) {
             this.minValue = minValue;
             this.maxValue = maxValue;
@@ -1177,14 +1407,38 @@ public class Setting<T> implements ToXContentObject {
 
     /// simpleString
 
+    /**
+     * Returns the simple string.
+     *
+     * @param key the key
+     * @param properties the properties
+     * @return the simple string
+     */
     public static Setting<String> simpleString(String key, Property... properties) {
         return new Setting<>(key, s -> "", Function.identity(), properties);
     }
 
+    /**
+     * Returns the simple string.
+     *
+     * @param key the key
+     * @param validator the validator
+     * @param properties the properties
+     * @return the simple string
+     */
     public static Setting<String> simpleString(String key, Validator<String> validator, Property... properties) {
         return new Setting<>(new SimpleKey(key), null, s -> "", Function.identity(), validator, properties);
     }
 
+    /**
+     * Returns the simple string.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the simple string
+     */
     public static Setting<String> simpleString(String key, String defaultValue, Validator<String> validator, Property... properties) {
         validator.validate(defaultValue);
         return new Setting<>(new SimpleKey(key), null, s -> defaultValue, Function.identity(), validator, properties);
@@ -1202,14 +1456,39 @@ public class Setting<T> implements ToXContentObject {
         return new Setting<>(key, s -> defaultValue, Function.identity(), properties);
     }
 
+    /**
+     * Returns the bool setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param properties the properties
+     * @return the bool setting
+     */
     public static Setting<Boolean> boolSetting(String key, boolean defaultValue, Property... properties) {
         return new Setting<>(key, (s) -> Boolean.toString(defaultValue), b -> parseBoolean(b, key, isFiltered(properties)), properties);
     }
 
+    /**
+     * Returns the bool setting.
+     *
+     * @param key the key
+     * @param fallbackSetting the fallback setting
+     * @param properties the properties
+     * @return the bool setting
+     */
     public static Setting<Boolean> boolSetting(String key, Setting<Boolean> fallbackSetting, Property... properties) {
         return new Setting<>(key, fallbackSetting, b -> parseBoolean(b, key, isFiltered(properties)), properties);
     }
 
+    /**
+     * Returns the bool setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param validator the validator
+     * @param properties the properties
+     * @return the bool setting
+     */
     public static Setting<Boolean> boolSetting(String key, boolean defaultValue, Validator<Boolean> validator, Property... properties) {
         return new Setting<>(key, Boolean.toString(defaultValue), b -> parseBoolean(b, key, isFiltered(properties)), validator, properties);
     }
@@ -1226,10 +1505,26 @@ public class Setting<T> implements ToXContentObject {
         }
     }
 
+    /**
+     * Returns the byte size setting.
+     *
+     * @param key the key
+     * @param value the value
+     * @param properties the properties
+     * @return the byte size setting
+     */
     public static Setting<ByteSizeValue> byteSizeSetting(String key, ByteSizeValue value, Property... properties) {
         return byteSizeSetting(key, (s) -> value.getBytes() + ByteSizeUnit.BYTES.getSuffix(), properties);
     }
 
+    /**
+     * Returns the byte size setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param properties the properties
+     * @return the byte size setting
+     */
     public static Setting<ByteSizeValue> byteSizeSetting(String key, Function<Settings, String> defaultValue, Property... properties) {
         return new Setting<>(key, defaultValue, new ByteSizeValueParser(key), properties);
     }
@@ -1243,12 +1538,24 @@ public class Setting<T> implements ToXContentObject {
         private ByteSizeValue maxValue;
         private String key;
 
+        /**
+         * Creates a new ByteSizeValueParser.
+         *
+         * @param minValue the min value
+         * @param maxValue the max value
+         * @param key the key
+         */
         public ByteSizeValueParser(ByteSizeValue minValue, ByteSizeValue maxValue, String key) {
             this.minValue = minValue;
             this.maxValue = maxValue;
             this.key = key;
         }
 
+        /**
+         * Creates a new ByteSizeValueParser.
+         *
+         * @param key the key
+         */
         public ByteSizeValueParser(String key) {
             this(new ByteSizeValue(-1), new ByteSizeValue(Long.MAX_VALUE), key);
         }
@@ -1277,6 +1584,15 @@ public class Setting<T> implements ToXContentObject {
         }
     }
 
+    /**
+     * Parses the byte size.
+     *
+     * @param s the s
+     * @param minValue the min value
+     * @param maxValue the max value
+     * @param key the key
+     * @return this instance
+     */
     public static ByteSizeValue parseByteSize(String s, ByteSizeValue minValue, ByteSizeValue maxValue, String key) {
         ByteSizeValue value = ByteSizeValue.parseBytesSizeValue(s, key);
         if (value.getBytes() < minValue.getBytes()) {
@@ -1324,10 +1640,21 @@ public class Setting<T> implements ToXContentObject {
         private String key;
         private boolean useNativeMemory;
 
+        /**
+         * Creates a new MemorySizeValueParser.
+         *
+         * @param key the key
+         */
         public MemorySizeValueParser(String key) {
             this(key, false);
         }
 
+        /**
+         * Creates a new MemorySizeValueParser.
+         *
+         * @param key the key
+         * @param useNativeMemory the use native memory
+         */
         public MemorySizeValueParser(String key, boolean useNativeMemory) {
             this.key = key;
             this.useNativeMemory = useNativeMemory;
@@ -1358,6 +1685,18 @@ public class Setting<T> implements ToXContentObject {
         }
     }
 
+    /**
+     * Lists the setting.
+     *
+     * @param <T> the element type
+     * @param key the key
+     * @param fallbackSetting the fallback setting
+     * @param singleValueParser the single value parser
+     * @param defaultStringValue the default string value
+     * @param validator the validator
+     * @param properties the properties
+     * @return this instance
+     */
     public static <T> Setting<List<T>> listSetting(
         final String key,
         final @Nullable Setting<List<T>> fallbackSetting,
@@ -1495,6 +1834,13 @@ public class Setting<T> implements ToXContentObject {
         private TimeValue minValue;
         private boolean isFiltered;
 
+        /**
+         * Creates a new MinTimeValueParser.
+         *
+         * @param key the key
+         * @param minValue the min value
+         * @param isFiltered the is filtered
+         */
         public MinTimeValueParser(String key, TimeValue minValue, boolean isFiltered) {
             this.key = key;
             this.minValue = minValue;
@@ -1525,6 +1871,15 @@ public class Setting<T> implements ToXContentObject {
         }
     }
 
+    /**
+     * Returns the time setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param properties the properties
+     * @return the time setting
+     */
     public static Setting<TimeValue> timeSetting(
         final String key,
         Function<Settings, TimeValue> defaultValue,
@@ -1597,14 +1952,39 @@ public class Setting<T> implements ToXContentObject {
         };
     }
 
+    /**
+     * Returns the time setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param minValue the min value
+     * @param properties the properties
+     * @return the time setting
+     */
     public static Setting<TimeValue> timeSetting(String key, TimeValue defaultValue, TimeValue minValue, Property... properties) {
         return timeSetting(key, (s) -> defaultValue, minValue, properties);
     }
 
+    /**
+     * Returns the time setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param properties the properties
+     * @return the time setting
+     */
     public static Setting<TimeValue> timeSetting(String key, TimeValue defaultValue, Property... properties) {
         return new Setting<>(key, (s) -> defaultValue.getStringRep(), (s) -> TimeValue.parseTimeValue(s, key), properties);
     }
 
+    /**
+     * Returns the positive time setting.
+     *
+     * @param key the key
+     * @param defaultValue the default value
+     * @param properties the properties
+     * @return the positive time setting
+     */
     public static Setting<TimeValue> positiveTimeSetting(String key, TimeValue defaultValue, Property... properties) {
         return timeSetting(key, defaultValue, TimeValue.timeValueMillis(0), properties);
     }
@@ -1626,6 +2006,11 @@ public class Setting<T> implements ToXContentObject {
      * This setting type allows to validate settings that have the same type and a common prefix. For instance feature.${type}=[true|false]
      * can easily be added with this setting. Yet, prefix key settings don't support updaters out of the box unless
      * {@link #getConcreteSetting(String)} is used to pull the updater.
+     *
+     * @param <T> the element type
+     * @param prefix the prefix
+     * @param delegateFactory the delegate factory
+     * @return the prefix key setting
      */
     public static <T> AffixSetting<T> prefixKeySetting(String prefix, Function<String, Setting<T>> delegateFactory) {
         BiFunction<String, String, Setting<T>> delegateFactoryWithNamespace = (ns, k) -> delegateFactory.apply(k);
@@ -1648,6 +2033,12 @@ public class Setting<T> implements ToXContentObject {
      */
     @PublicApi(since = "1.0.0")
     public interface Key {
+        /**
+         * Matches this instance.
+         *
+         * @param key the key
+         * @return this instance
+         */
         boolean match(String key);
     }
 
@@ -1658,8 +2049,16 @@ public class Setting<T> implements ToXContentObject {
      */
     @PublicApi(since = "1.0.0")
     public static class SimpleKey implements Key {
+        /**
+         * The key.
+         */
         protected final String key;
 
+        /**
+         * Creates a new SimpleKey.
+         *
+         * @param key the key
+         */
         public SimpleKey(String key) {
             this.key = key;
         }
@@ -1694,6 +2093,11 @@ public class Setting<T> implements ToXContentObject {
      * @opensearch.internal
      */
     public static final class GroupKey extends SimpleKey {
+        /**
+         * Creates a new GroupKey.
+         *
+         * @param key the key
+         */
         public GroupKey(String key) {
             super(key);
             if (key.endsWith(".") == false) {
@@ -1715,6 +2119,11 @@ public class Setting<T> implements ToXContentObject {
     public static final class ListKey extends SimpleKey {
         private final Pattern pattern;
 
+        /**
+         * Creates a new ListKey.
+         *
+         * @param key the key
+         */
         public ListKey(String key) {
             super(key);
             this.pattern = Pattern.compile(Pattern.quote(key) + "(\\.\\d+)?");
@@ -1787,6 +2196,12 @@ public class Setting<T> implements ToXContentObject {
             return matcher.group(2);
         }
 
+        /**
+         * Returns this instance as concrete key.
+         *
+         * @param missingPart the missing part
+         * @return the concrete key
+         */
         public SimpleKey toConcreteKey(String missingPart) {
             StringBuilder key = new StringBuilder();
             if (prefix != null) {

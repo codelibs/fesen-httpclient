@@ -46,7 +46,15 @@ import java.util.stream.Collectors;
  * @opensearch.internal
  */
 public class NodeRoleSettings {
+    /**
+     * Creates a new NodeRoleSettings.
+     */
+    public NodeRoleSettings() {
+    }
 
+    /**
+     * The NODE_ROLES_SETTING constant.
+     */
     public static final Setting<List<DiscoveryNodeRole>> NODE_ROLES_SETTING = Setting.listSetting(
         "node.roles",
         null,

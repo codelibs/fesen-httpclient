@@ -24,6 +24,9 @@ import java.util.List;
  * behave as "no usage".
  */
 public final class NativeMemoryUsageCalculator extends ResourceUsageCalculator {
+    /**
+     * The INSTANCE constant.
+     */
     public static final NativeMemoryUsageCalculator INSTANCE = new NativeMemoryUsageCalculator();
 
     private NativeMemoryUsageCalculator() {}

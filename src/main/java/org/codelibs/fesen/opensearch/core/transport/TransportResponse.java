@@ -56,6 +56,9 @@ public abstract class TransportResponse implements Writeable {
      * Constructs a new transport response with the data from the {@link StreamInput}. This is
      * currently a no-op. However, this exists to allow extenders to call <code>super(in)</code>
      * so that reading can mirror writing where we often call <code>super.writeTo(out)</code>.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TransportResponse(StreamInput in) throws IOException {}
 }

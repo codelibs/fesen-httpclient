@@ -55,11 +55,29 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public final class Fuzziness implements ToXContentFragment, Writeable {
 
+    /**
+     * The X_FIELD_NAME constant.
+     */
     public static final String X_FIELD_NAME = "fuzziness";
+    /**
+     * The ZERO constant.
+     */
     public static final Fuzziness ZERO = new Fuzziness(0);
+    /**
+     * The ONE constant.
+     */
     public static final Fuzziness ONE = new Fuzziness(1);
+    /**
+     * The TWO constant.
+     */
     public static final Fuzziness TWO = new Fuzziness(2);
+    /**
+     * The AUTO constant.
+     */
     public static final Fuzziness AUTO = new Fuzziness("AUTO");
+    /**
+     * The FIELD constant.
+     */
     public static final ParseField FIELD = new ParseField(X_FIELD_NAME);
     private static final int DEFAULT_LOW_DISTANCE = 3;
     private static final int DEFAULT_HIGH_DISTANCE = 6;
@@ -95,6 +113,9 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public Fuzziness(StreamInput in) throws IOException {
         fuzziness = in.readString();
@@ -123,11 +144,20 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
      * Creates a {@link Fuzziness} instance from an edit distance. The value must be one of {@code [0, 1, 2]}
      *
      * Note: Using this method only makes sense if the field you are applying Fuzziness to is some sort of string.
+     *
+     * @param edits the edits
+     * @return the new edits
      */
     public static Fuzziness fromEdits(int edits) {
         return new Fuzziness(edits);
     }
 
+    /**
+     * Builds this instance.
+     *
+     * @param fuzziness the fuzziness
+     * @return the new instance
+     */
     public static Fuzziness build(Object fuzziness) {
         if (fuzziness instanceof Fuzziness) {
             return (Fuzziness) fuzziness;
@@ -157,6 +187,13 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
         }
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static Fuzziness parse(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         switch (token) {
@@ -207,10 +244,21 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
         return builder;
     }
 
+    /**
+     * Returns this instance as distance.
+     *
+     * @return the distance
+     */
     public int asDistance() {
         return asDistance(null);
     }
 
+    /**
+     * Returns this instance as distance.
+     *
+     * @param text the text
+     * @return the distance
+     */
     public int asDistance(String text) {
         if (this.equals(AUTO) || isAutoWithCustomValues()) { // AUTO
             final int len = termLen(text);
@@ -225,6 +273,11 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
         return Math.min(2, (int) asFloat());
     }
 
+    /**
+     * Returns this instance as float.
+     *
+     * @return the float
+     */
     public float asFloat() {
         if (this.equals(AUTO) || isAutoWithCustomValues()) {
             return 1f;
@@ -236,6 +289,11 @@ public final class Fuzziness implements ToXContentFragment, Writeable {
         return text == null ? 5 : text.codePointCount(0, text.length()); // 5 avg term length in english
     }
 
+    /**
+     * Returns this instance as string.
+     *
+     * @return the string
+     */
     public String asString() {
         if (isAutoWithCustomValues()) {
             return fuzziness + ":" + lowDistance + "," + highDistance;

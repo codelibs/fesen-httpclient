@@ -50,13 +50,35 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public enum GeoValidationMethod implements Writeable {
+    /**
+     * The COERCE value.
+     */
     COERCE,
+    /**
+     * The IGNORE_MALFORMED value.
+     */
     IGNORE_MALFORMED,
+    /**
+     * The STRICT value.
+     */
     STRICT;
 
+    /**
+     * The DEFAULT constant.
+     */
     public static final GeoValidationMethod DEFAULT = STRICT;
+    /**
+     * The DEFAULT_LENIENT_PARSING constant.
+     */
     public static final boolean DEFAULT_LENIENT_PARSING = (DEFAULT != STRICT);
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static GeoValidationMethod readFromStream(StreamInput in) throws IOException {
         return GeoValidationMethod.values()[in.readVInt()];
     }
@@ -66,6 +88,12 @@ public enum GeoValidationMethod implements Writeable {
         out.writeVInt(this.ordinal());
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param op the op
+     * @return the new string
+     */
     public static GeoValidationMethod fromString(String op) {
         for (GeoValidationMethod method : GeoValidationMethod.values()) {
             if (method.name().equalsIgnoreCase(op)) {
@@ -77,12 +105,22 @@ public enum GeoValidationMethod implements Writeable {
         );
     }
 
-    /** Returns whether or not to skip bounding box validation. */
+    /**
+     * Returns whether or not to skip bounding box validation.
+     *
+     * @param method the method
+     * @return the ignore malformed flag
+     */
     public static boolean isIgnoreMalformed(GeoValidationMethod method) {
         return (method == GeoValidationMethod.IGNORE_MALFORMED || method == GeoValidationMethod.COERCE);
     }
 
-    /** Returns whether or not to try and fix broken/wrapping bounding boxes. */
+    /**
+     * Returns whether or not to try and fix broken/wrapping bounding boxes.
+     *
+     * @param method the method
+     * @return the coerce flag
+     */
     public static boolean isCoerce(GeoValidationMethod method) {
         return method == GeoValidationMethod.COERCE;
     }

@@ -40,6 +40,8 @@ public interface Max extends NumericMetricsAggregation.SingleValue {
 
     /**
      * The maximum.
+     *
+     * @return the value
      */
     double getValue();
 }

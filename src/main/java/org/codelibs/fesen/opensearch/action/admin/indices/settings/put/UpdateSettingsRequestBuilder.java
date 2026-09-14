@@ -53,12 +53,22 @@ public class UpdateSettingsRequestBuilder extends AcknowledgedRequestBuilder<
     AcknowledgedResponse,
     UpdateSettingsRequestBuilder> {
 
+    /**
+     * Creates a new UpdateSettingsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param indices the indices
+     */
     public UpdateSettingsRequestBuilder(OpenSearchClient client, UpdateSettingsAction action, String... indices) {
         super(client, action, new UpdateSettingsRequest(indices));
     }
 
     /**
      * Sets the indices the update settings will execute on
+     *
+     * @param indices the indices
+     * @return this instance
      */
     public UpdateSettingsRequestBuilder setIndices(String... indices) {
         request.indices(indices);
@@ -67,6 +77,9 @@ public class UpdateSettingsRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings to be updated
+     *
+     * @param settings the settings
+     * @return this instance
      */
     public UpdateSettingsRequestBuilder setSettings(Settings.Builder settings) {
         request.settings(settings);

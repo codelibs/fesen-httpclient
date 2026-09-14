@@ -54,6 +54,11 @@ public class XContentSubParser implements XContentParser {
     private int level;
     private boolean closed;
 
+    /**
+     * Creates a new XContentSubParser.
+     *
+     * @param parser the parser
+     */
     public XContentSubParser(XContentParser parser) {
         this.parser = parser;
         if (parser.currentToken() != Token.START_OBJECT && parser.currentToken() != Token.START_ARRAY) {

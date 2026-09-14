@@ -28,12 +28,25 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
     private final ConsumerStats consumerStats;
     private final PipelineStats pipelineStats;
 
+    /**
+     * Creates a new PollingIngestStats.
+     *
+     * @param messageProcessorStats the message processor stats
+     * @param consumerStats the consumer stats
+     * @param pipelineStats the pipeline stats
+     */
     public PollingIngestStats(MessageProcessorStats messageProcessorStats, ConsumerStats consumerStats, PipelineStats pipelineStats) {
         this.messageProcessorStats = messageProcessorStats;
         this.consumerStats = consumerStats;
         this.pipelineStats = pipelineStats;
     }
 
+    /**
+     * Creates a new PollingIngestStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PollingIngestStats(StreamInput in) throws IOException {
         long totalProcessedCount = in.readLong();
         long totalInvalidMessageCount = in.readLong();
@@ -152,6 +165,13 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
 
     /**
      * Stats for message processor
+     *
+     * @param totalProcessedCount the total processed count
+     * @param totalInvalidMessageCount the total invalid message count
+     * @param totalVersionConflictsCount the total version conflicts count
+     * @param totalFailedCount the total failed count
+     * @param totalFailuresDroppedCount the total failures dropped count
+     * @param totalProcessorThreadInterruptCount the total processor thread interrupt count
      */
     @PublicApi(since = "3.6.0")
     public record MessageProcessorStats(long totalProcessedCount, long totalInvalidMessageCount, long totalVersionConflictsCount,
@@ -162,6 +182,14 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
      * Stats for consumer (poller).
      *
      * totalDuplicateMessageSkippedCount has been deprecated as of version 3.4  and will be removed in a future version.
+     *
+     * @param totalPolledCount the total polled count
+     * @param lagInMillis the lag in milliseconds
+     * @param totalConsumerErrorCount the total consumer error count
+     * @param totalPollerMessageFailureCount the total poller message failure count
+     * @param totalPollerMessageDroppedCount the total poller message dropped count
+     * @param totalDuplicateMessageSkippedCount the total duplicate message skipped count
+     * @param pointerBasedLag the pointer based lag
      */
     @PublicApi(since = "3.6.0")
     public record ConsumerStats(long totalPolledCount, long lagInMillis, long totalConsumerErrorCount, long totalPollerMessageFailureCount,
@@ -170,6 +198,11 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
 
     /**
      * Stats for pipeline execution in pull-based ingestion.
+     *
+     * @param totalExecutionCount the total execution count
+     * @param totalExecutionTimeInMillis the total execution time in milliseconds
+     * @param totalFailedCount the total failed count
+     * @param totalDroppedCount the total dropped count
      */
     @PublicApi(since = "3.7.0")
     public record PipelineStats(long totalExecutionCount, long totalExecutionTimeInMillis, long totalFailedCount, long totalDroppedCount) {
@@ -198,64 +231,135 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
         private long pipelineFailedCount;
         private long pipelineDroppedCount;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Sets the total processed count.
+         *
+         * @param totalProcessedCount the total processed count
+         * @return this instance
+         */
         public Builder setTotalProcessedCount(long totalProcessedCount) {
             this.totalProcessedCount = totalProcessedCount;
             return this;
         }
 
+        /**
+         * Sets the total polled count.
+         *
+         * @param totalPolledCount the total polled count
+         * @return this instance
+         */
         public Builder setTotalPolledCount(long totalPolledCount) {
             this.totalPolledCount = totalPolledCount;
             return this;
         }
 
+        /**
+         * Sets the total invalid message count.
+         *
+         * @param totalInvalidMessageCount the total invalid message count
+         * @return this instance
+         */
         public Builder setTotalInvalidMessageCount(long totalInvalidMessageCount) {
             this.totalInvalidMessageCount = totalInvalidMessageCount;
             return this;
         }
 
+        /**
+         * Sets the total processor version conflicts count.
+         *
+         * @param totalVersionConflictsCount the total version conflicts count
+         * @return this instance
+         */
         public Builder setTotalProcessorVersionConflictsCount(long totalVersionConflictsCount) {
             this.totalVersionConflictsCount = totalVersionConflictsCount;
             return this;
         }
 
+        /**
+         * Sets the total processor failed count.
+         *
+         * @param totalFailedCount the total failed count
+         * @return this instance
+         */
         public Builder setTotalProcessorFailedCount(long totalFailedCount) {
             this.totalFailedCount = totalFailedCount;
             return this;
         }
 
+        /**
+         * Sets the total processor failures dropped count.
+         *
+         * @param totalFailuresDroppedCount the total failures dropped count
+         * @return this instance
+         */
         public Builder setTotalProcessorFailuresDroppedCount(long totalFailuresDroppedCount) {
             this.totalFailuresDroppedCount = totalFailuresDroppedCount;
             return this;
         }
 
+        /**
+         * Sets the total processor thread interrupt count.
+         *
+         * @param totalProcessorThreadInterruptCount the total processor thread interrupt count
+         * @return this instance
+         */
         public Builder setTotalProcessorThreadInterruptCount(long totalProcessorThreadInterruptCount) {
             this.totalProcessorThreadInterruptCount = totalProcessorThreadInterruptCount;
             return this;
         }
 
+        /**
+         * Sets the lag in milliseconds.
+         *
+         * @param lagInMillis the lag in milliseconds
+         * @return this instance
+         */
         public Builder setLagInMillis(long lagInMillis) {
             this.lagInMillis = lagInMillis;
             return this;
         }
 
+        /**
+         * Sets the total consumer error count.
+         *
+         * @param totalConsumerErrorCount the total consumer error count
+         * @return this instance
+         */
         public Builder setTotalConsumerErrorCount(long totalConsumerErrorCount) {
             this.totalConsumerErrorCount = totalConsumerErrorCount;
             return this;
         }
 
+        /**
+         * Sets the total poller message failure count.
+         *
+         * @param totalPollerMessageFailureCount the total poller message failure count
+         * @return this instance
+         */
         public Builder setTotalPollerMessageFailureCount(long totalPollerMessageFailureCount) {
             this.totalPollerMessageFailureCount = totalPollerMessageFailureCount;
             return this;
         }
 
+        /**
+         * Sets the total poller message dropped count.
+         *
+         * @param totalPollerMessageDroppedCount the total poller message dropped count
+         * @return this instance
+         */
         public Builder setTotalPollerMessageDroppedCount(long totalPollerMessageDroppedCount) {
             this.totalPollerMessageDroppedCount = totalPollerMessageDroppedCount;
             return this;
         }
 
         /**
+         * @param totalDuplicateMessageSkippedCount the total duplicate message skipped count
+         * @return this instance
          * @deprecated As of 3.4, this field is no longer used and will be removed in a future version.
          */
         @Deprecated(since = "3.4", forRemoval = true)
@@ -264,11 +368,23 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
             return this;
         }
 
+        /**
+         * Sets the pointer based lag.
+         *
+         * @param pointerBasedLag the pointer based lag
+         * @return this instance
+         */
         public Builder setPointerBasedLag(long pointerBasedLag) {
             this.pointerBasedLag = pointerBasedLag;
             return this;
         }
 
+        /**
+         * Sets the pipeline stats.
+         *
+         * @param stats the stats
+         * @return this instance
+         */
         public Builder setPipelineStats(PipelineStats stats) {
             this.pipelineExecutionCount = stats.totalExecutionCount();
             this.pipelineExecutionTimeInMillis = stats.totalExecutionTimeInMillis();
@@ -277,6 +393,11 @@ public class PollingIngestStats implements Writeable, ToXContentFragment {
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public PollingIngestStats build() {
             MessageProcessorStats messageProcessorStats = new MessageProcessorStats(
                 totalProcessedCount,

@@ -153,6 +153,7 @@ public class ShardId implements Comparable<ShardId>, ToXContentFragment, Writeab
      *
      * @param shardIdString the string representation of the shard id
      *                      (Expect a string of format "[indexName][shardId]" (square brackets included))
+     * @return the new string
      */
     public static ShardId fromString(String shardIdString) {
         int splitPosition = shardIdString.indexOf("][");

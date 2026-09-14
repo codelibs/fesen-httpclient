@@ -59,12 +59,20 @@ public enum Releasables {
         }
     }
 
-    /** Release the provided {@link Releasable}s. */
+    /**
+     * Release the provided {@link Releasable}s.
+     *
+     * @param releasables the releasables
+     */
     public static void close(Iterable<? extends Releasable> releasables) {
         close(releasables, false);
     }
 
-    /** Release the provided {@link Releasable}. */
+    /**
+     * Release the provided {@link Releasable}.
+     *
+     * @param releasable the releasable
+     */
     public static void close(@Nullable Releasable releasable) {
         try {
             IOUtils.close(releasable);
@@ -73,17 +81,29 @@ public enum Releasables {
         }
     }
 
-    /** Release the provided {@link Releasable}s. */
+    /**
+     * Release the provided {@link Releasable}s.
+     *
+     * @param releasables the releasables
+     */
     public static void close(Releasable... releasables) {
         close(Arrays.asList(releasables));
     }
 
-    /** Release the provided {@link Releasable}s, ignoring exceptions. */
+    /**
+     * Release the provided {@link Releasable}s, ignoring exceptions.
+     *
+     * @param releasables the releasables
+     */
     public static void closeWhileHandlingException(Iterable<? extends Releasable> releasables) {
         close(releasables, true);
     }
 
-    /** Release the provided {@link Releasable}s, ignoring exceptions. */
+    /**
+     * Release the provided {@link Releasable}s, ignoring exceptions.
+     *
+     * @param releasables the releasables
+     */
     public static void closeWhileHandlingException(Releasable... releasables) {
         closeWhileHandlingException(Arrays.asList(releasables));
     }

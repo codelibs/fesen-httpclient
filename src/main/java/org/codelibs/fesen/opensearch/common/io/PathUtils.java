@@ -70,6 +70,10 @@ public final class PathUtils {
      * <p>
      * Remember: this should almost never be used. Usually resolve
      * a path against an existing one!
+     *
+     * @param first the first
+     * @param more the more
+     * @return the value
      */
     public static Path get(String first, String... more) {
         return DEFAULT.getPath(first, more);

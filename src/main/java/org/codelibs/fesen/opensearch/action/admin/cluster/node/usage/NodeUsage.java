@@ -54,6 +54,12 @@ public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
     private final Map<String, Long> restUsage;
     private final Map<String, Object> aggregationUsage;
 
+    /**
+     * Creates a new NodeUsage by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     @SuppressWarnings("unchecked")
     public NodeUsage(StreamInput in) throws IOException {
         super(in);
@@ -64,6 +70,8 @@ public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
     }
 
     /**
+     * Creates a new NodeUsage.
+     *
      * @param node
      *            the node these statistics were collected from
      * @param timestamp
@@ -74,6 +82,7 @@ public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
      * @param restUsage
      *            a map containing the counts of the number of times each REST
      *            endpoint has been called
+     * @param aggregationUsage the aggregation usage
      */
     public NodeUsage(
         DiscoveryNode node,
@@ -90,6 +99,8 @@ public class NodeUsage extends BaseNodeResponse implements ToXContentFragment {
     }
 
     /**
+     * Returns the timestamp.
+     *
      * @return the timestamp for when these statistics were collected
      */
     public long getTimestamp() {

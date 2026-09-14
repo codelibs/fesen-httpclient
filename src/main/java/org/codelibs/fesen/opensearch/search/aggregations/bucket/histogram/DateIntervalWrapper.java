@@ -80,12 +80,34 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
      * @opensearch.internal
      */
     public enum IntervalTypeEnum implements Writeable {
+        /**
+         * The NONE value.
+         */
         NONE,
+        /**
+         * The FIXED value.
+         */
         FIXED,
+        /**
+         * The CALENDAR value.
+         */
         CALENDAR,
+        /**
+         * The LEGACY_INTERVAL value.
+         */
         LEGACY_INTERVAL,
+        /**
+         * The LEGACY_DATE_HISTO value.
+         */
         LEGACY_DATE_HISTO;
 
+        /**
+         * Creates an instance from stream.
+         *
+         * @param in the input to read from
+         * @return the new stream
+         * @throws IOException if an I/O error occurs
+         */
         public static IntervalTypeEnum fromStream(StreamInput in) throws IOException {
             return in.readEnum(IntervalTypeEnum.class);
         }
@@ -99,6 +121,12 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
     private DateHistogramInterval dateHistogramInterval;
     private IntervalTypeEnum intervalType = IntervalTypeEnum.NONE;
 
+    /**
+     * Performs the declare interval fields step.
+     *
+     * @param <T> the element type
+     * @param parser the parser
+     */
     public static <T extends DateIntervalConsumer> void declareIntervalFields(ObjectParser<T, String> parser) {
 
         // NOTE: this field is deprecated and will be removed
@@ -131,18 +159,36 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
         );
     }
 
+    /**
+     * Creates a new DateIntervalWrapper.
+     */
     public DateIntervalWrapper() {}
 
+    /**
+     * Creates a new DateIntervalWrapper by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DateIntervalWrapper(StreamInput in) throws IOException {
         dateHistogramInterval = in.readOptionalWriteable(DateHistogramInterval::new);
         intervalType = IntervalTypeEnum.fromStream(in);
     }
 
+    /**
+     * Returns the interval type.
+     *
+     * @return the interval type
+     */
     public IntervalTypeEnum getIntervalType() {
         return intervalType;
     }
 
-    /** Get the current interval in milliseconds that is set on this builder. */
+    /**
+     * Get the current interval in milliseconds that is set on this builder.
+     *
+     * @return the interval
+     */
     @Deprecated
     public long interval() {
         DEPRECATION_LOGGER.deprecate("date-histogram-interval", DEPRECATION_TEXT);
@@ -156,6 +202,7 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
      *  If both {@link #interval()} and {@link #dateHistogramInterval()} are set, then the
      *  {@link #dateHistogramInterval()} wins.
      *
+     * @param interval the interval
      *  @deprecated use {@link DateHistogramAggregationBuilder#fixedInterval(DateHistogramInterval)}
      *              or {@link DateHistogramAggregationBuilder#calendarInterval(DateHistogramInterval)} instead
      *  @since 7.2.0
@@ -170,7 +217,11 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
         this.dateHistogramInterval = new DateHistogramInterval(interval + "ms");
     }
 
-    /** Get the current date interval that is set on this builder. */
+    /**
+     * Get the current date interval that is set on this builder.
+     *
+     * @return the date histogram interval
+     */
     @Deprecated
     public DateHistogramInterval dateHistogramInterval() {
         DEPRECATION_LOGGER.deprecate("date-histogram-interval", DEPRECATION_TEXT);
@@ -184,6 +235,7 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
      *  If both {@link #interval()} and {@link #dateHistogramInterval()} are set, then the
      *  {@link #dateHistogramInterval()} wins.
      *
+     * @param dateHistogramInterval the date histogram interval
      *  @deprecated use {@link DateIntervalWrapper#fixedInterval(DateHistogramInterval)}
      *              or {@link DateIntervalWrapper#calendarInterval(DateHistogramInterval)} instead
      *  @since 7.2.0
@@ -201,6 +253,8 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
     /**
      * Returns the interval as a calendar interval.  Throws an exception if the value cannot be converted
      * into a calendar interval
+     *
+     * @return the as calendar interval
      */
     public DateHistogramInterval getAsCalendarInterval() {
         if (intervalType.equals(IntervalTypeEnum.CALENDAR) || tryIntervalAsCalendarUnit() != null) {
@@ -231,6 +285,8 @@ public class DateIntervalWrapper implements ToXContentFragment, Writeable {
     /**
      * Returns the interval as a Fixed interval. Throws an exception if the value cannot be converted
      * into a fixed interval
+     *
+     * @return the as fixed interval
      */
     public DateHistogramInterval getAsFixedInterval() {
         if (intervalType.equals(IntervalTypeEnum.FIXED) || tryIntervalAsFixedUnit() != null) {

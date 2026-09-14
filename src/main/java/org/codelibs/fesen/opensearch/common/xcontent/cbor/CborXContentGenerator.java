@@ -40,8 +40,19 @@ import java.util.Set;
 
 import tools.jackson.core.JsonGenerator;
 
+/**
+ * The CborXContentGenerator class.
+ */
 public class CborXContentGenerator extends JsonXContentGenerator {
 
+    /**
+     * Creates a new CborXContentGenerator.
+     *
+     * @param jsonGenerator the JSON generator
+     * @param os the OS
+     * @param includes the includes
+     * @param excludes the excludes
+     */
     public CborXContentGenerator(JsonGenerator jsonGenerator, OutputStream os, Set<String> includes, Set<String> excludes) {
         super(jsonGenerator, os, includes, excludes);
     }

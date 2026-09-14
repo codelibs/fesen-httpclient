@@ -50,22 +50,37 @@ import java.nio.charset.StandardCharsets;
 @PublicApi(since = "1.0.0")
 public final class Text implements Comparable<Text>, ToXContentFragment {
 
+    /**
+     * The EMPTY_ARRAY constant.
+     */
     public static final Text[] EMPTY_ARRAY = new Text[0];
 
     private BytesReference bytes;
     private String text;
     private int hash;
 
+    /**
+     * Creates a new Text.
+     *
+     * @param bytes the bytes
+     */
     public Text(BytesReference bytes) {
         this.bytes = bytes;
     }
 
+    /**
+     * Creates a new Text.
+     *
+     * @param text the text
+     */
     public Text(String text) {
         this.text = text;
     }
 
     /**
      * Whether a {@link BytesReference} view of the data is already materialized.
+     *
+     * @return the bytes flag
      */
     public boolean hasBytes() {
         return bytes != null;
@@ -73,6 +88,8 @@ public final class Text implements Comparable<Text>, ToXContentFragment {
 
     /**
      * Returns a {@link BytesReference} view of the data.
+     *
+     * @return the bytes
      */
     public BytesReference bytes() {
         if (bytes == null) {
@@ -83,6 +100,8 @@ public final class Text implements Comparable<Text>, ToXContentFragment {
 
     /**
      * Whether a {@link String} view of the data is already materialized.
+     *
+     * @return the string flag
      */
     public boolean hasString() {
         return text != null;
@@ -90,6 +109,8 @@ public final class Text implements Comparable<Text>, ToXContentFragment {
 
     /**
      * Returns a {@link String} view of the data.
+     *
+     * @return the string
      */
     public String string() {
         return text == null ? bytes.utf8ToString() : text;

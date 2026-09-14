@@ -43,6 +43,12 @@ public class TaskThreadUsage implements Writeable, ToXContentFragment {
     private final int threadExecutions;
     private final int activeThreads;
 
+    /**
+     * Creates a new TaskThreadUsage.
+     *
+     * @param threadExecutions the thread executions
+     * @param activeThreads the active threads
+     */
     public TaskThreadUsage(int threadExecutions, int activeThreads) {
         this.threadExecutions = threadExecutions;
         this.activeThreads = activeThreads;
@@ -50,6 +56,10 @@ public class TaskThreadUsage implements Writeable, ToXContentFragment {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
      */
     public static TaskThreadUsage readFromStream(StreamInput in) throws IOException {
         return new TaskThreadUsage(in.readInt(), in.readInt());
@@ -62,6 +72,9 @@ public class TaskThreadUsage implements Writeable, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<TaskThreadUsage, Void> PARSER = new ConstructingObjectParser<>(
         "task_thread_executions",
         a -> new TaskThreadUsage((int) a[0], (int) a[1])
@@ -72,6 +85,12 @@ public class TaskThreadUsage implements Writeable, ToXContentFragment {
         PARSER.declareInt(constructorArg(), ACTIVE_THREAD_COUNT);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static TaskThreadUsage fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

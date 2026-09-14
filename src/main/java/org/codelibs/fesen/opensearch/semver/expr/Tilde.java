@@ -14,6 +14,11 @@ import org.codelibs.fesen.opensearch.Version;
  * Expression to evaluate version compatibility allowing patch version variability.
  */
 public class Tilde implements Expression {
+    /**
+     * Creates a new Tilde.
+     */
+    public Tilde() {
+    }
 
     /**
      * Checks if the given version is compatible with a range version allowing for patch version variability.

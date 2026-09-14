@@ -51,6 +51,9 @@ public class ProcessorInfo implements Writeable, ToXContentObject, Comparable<Pr
 
     /**
      * Read from a stream.
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
      */
     public ProcessorInfo(StreamInput input) throws IOException {
         type = input.readString();

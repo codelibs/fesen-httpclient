@@ -63,6 +63,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public final class SearchHits implements Writeable, ToXContentFragment, Iterable<SearchHit> {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final SearchHit[] EMPTY = new SearchHit[0];
 
     private final SearchHit[] hits;
@@ -94,10 +97,27 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
         return new SearchHits(EMPTY, withTotalHits ? new TotalHits(0, TotalHits.Relation.EQUAL_TO) : null, 0);
     }
 
+    /**
+     * Creates a new SearchHits.
+     *
+     * @param hits the hits
+     * @param totalHits the total hits
+     * @param maxScore the max score
+     */
     public SearchHits(SearchHit[] hits, @Nullable TotalHits totalHits, float maxScore) {
         this(hits, totalHits, maxScore, null, null, null);
     }
 
+    /**
+     * Creates a new SearchHits.
+     *
+     * @param hits the hits
+     * @param totalHits the total hits
+     * @param maxScore the max score
+     * @param sortFields the sort fields
+     * @param collapseField the collapse field
+     * @param collapseValues the collapse values
+     */
     public SearchHits(
         SearchHit[] hits,
         @Nullable TotalHits totalHits,
@@ -114,6 +134,12 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
         this.collapseValues = collapseValues;
     }
 
+    /**
+     * Creates a new SearchHits by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchHits(StreamInput in) throws IOException {
         if (in.readBoolean()) {
             totalHits = Lucene.readTotalHits(in);
@@ -158,6 +184,8 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
     /**
      * The total number of hits for the query or null if the tracking of total hits
      * is disabled in the request.
+     *
+     * @return the total hits
      */
     @Nullable
     public TotalHits getTotalHits() {
@@ -166,6 +194,8 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
 
     /**
      * The hits of the search request (based on the search type, and from / size provided).
+     *
+     * @return the hits
      */
     public SearchHit[] getHits() {
         return this.hits;
@@ -182,8 +212,23 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
      * @opensearch.internal
      */
     public static final class Fields {
+        /**
+         * Creates a new Fields.
+         */
+        public Fields() {
+        }
+
+        /**
+         * The HITS constant.
+         */
         public static final String HITS = "hits";
+        /**
+         * The TOTAL constant.
+         */
         public static final String TOTAL = "total";
+        /**
+         * The MAX_SCORE constant.
+         */
         public static final String MAX_SCORE = "max_score";
     }
 
@@ -215,6 +260,13 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SearchHits fromXContent(XContentParser parser) throws IOException {
         if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
             parser.nextToken();
@@ -285,6 +337,13 @@ public final class SearchHits implements Writeable, ToXContentFragment, Iterable
         );
     }
 
+    /**
+     * Parses the total hits fragment.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static TotalHits parseTotalHitsFragment(XContentParser parser) throws IOException {
         long value = -1;
         Relation relation = null;

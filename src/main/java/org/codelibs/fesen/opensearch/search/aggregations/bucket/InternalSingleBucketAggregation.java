@@ -65,6 +65,7 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
      * @param name          The aggregation name.
      * @param docCount      The document count in the single bucket.
      * @param aggregations  The already built sub-aggregations that are associated with the bucket.
+     * @param metadata the metadata
      */
     protected InternalSingleBucketAggregation(String name, long docCount, InternalAggregations aggregations, Map<String, Object> metadata) {
         super(name, metadata);
@@ -102,6 +103,11 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
 
     /**
      * Create a <b>new</b> empty sub aggregation. This must be a new instance on each call.
+     *
+     * @param name the name
+     * @param docCount the doc count
+     * @param subAggregations the sub aggregations
+     * @return the new aggregation
      */
     protected abstract InternalSingleBucketAggregation newAggregation(String name, long docCount, InternalAggregations subAggregations);
 

@@ -62,10 +62,21 @@ public class RestoreSnapshotResponse extends ActionResponse implements ToXConten
     @Nullable
     private final RestoreInfo restoreInfo;
 
+    /**
+     * Creates a new RestoreSnapshotResponse.
+     *
+     * @param restoreInfo the restore info
+     */
     public RestoreSnapshotResponse(@Nullable RestoreInfo restoreInfo) {
         this.restoreInfo = restoreInfo;
     }
 
+    /**
+     * Creates a new RestoreSnapshotResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RestoreSnapshotResponse(StreamInput in) throws IOException {
         super(in);
         restoreInfo = RestoreInfo.readOptionalRestoreInfo(in);
@@ -98,6 +109,9 @@ public class RestoreSnapshotResponse extends ActionResponse implements ToXConten
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<RestoreSnapshotResponse, Void> PARSER = new ConstructingObjectParser<>(
         "restore_snapshot",
         true,
@@ -118,6 +132,13 @@ public class RestoreSnapshotResponse extends ActionResponse implements ToXConten
         PARSER.declareBoolean(optionalConstructorArg(), new ParseField("accepted"));
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static RestoreSnapshotResponse fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

@@ -21,6 +21,9 @@ public class Range implements Expression {
     private final boolean includeLower;
     private final boolean includeUpper;
 
+    /**
+     * Creates a new Range.
+     */
     public Range() {
         this.lowerBound = Version.fromString("0.0.0");  // Minimum version
         this.upperBound = Version.fromString("99.99.99"); // Maximum version
@@ -28,6 +31,14 @@ public class Range implements Expression {
         this.includeUpper = true;
     }
 
+    /**
+     * Creates a new Range.
+     *
+     * @param lowerBound the lower bound
+     * @param upperBound the upper bound
+     * @param includeLower the include lower
+     * @param includeUpper the include upper
+     */
     public Range(Version lowerBound, Version upperBound, boolean includeLower, boolean includeUpper) {
         if (lowerBound == null) {
             throw new IllegalArgumentException("Lower bound cannot be null");
@@ -70,18 +81,38 @@ public class Range implements Expression {
         return Objects.hash(lowerBound, upperBound, includeLower, includeUpper);
     }
 
+    /**
+     * Returns the include lower flag.
+     *
+     * @return the include lower flag
+     */
     public boolean isIncludeLower() {
         return includeLower;
     }
 
+    /**
+     * Returns the include upper flag.
+     *
+     * @return the include upper flag
+     */
     public boolean isIncludeUpper() {
         return includeUpper;
     }
 
+    /**
+     * Returns the lower bound.
+     *
+     * @return the lower bound
+     */
     public Version getLowerBound() {
         return lowerBound;
     }
 
+    /**
+     * Returns the upper bound.
+     *
+     * @return the upper bound
+     */
     public Version getUpperBound() {
         return upperBound;
     }

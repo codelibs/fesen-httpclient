@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class NodesHotThreadsAction extends ActionType<NodesHotThreadsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final NodesHotThreadsAction INSTANCE = new NodesHotThreadsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/nodes/hot_threads";
 
     private NodesHotThreadsAction() {

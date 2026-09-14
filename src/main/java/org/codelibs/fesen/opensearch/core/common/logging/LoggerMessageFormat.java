@@ -52,11 +52,23 @@ import java.util.Set;
  * @opensearch.internal
  */
 public class LoggerMessageFormat {
+    /**
+     * Creates a new LoggerMessageFormat.
+     */
+    public LoggerMessageFormat() {
+    }
 
     static final char DELIM_START = '{';
     static final String DELIM_STR = "{}";
     private static final char ESCAPE_CHAR = '\\';
 
+    /**
+     * Formats this instance.
+     *
+     * @param messagePattern the message pattern
+     * @param argArray the arg array
+     * @return this instance
+     */
     public static String format(final String messagePattern, final Object... argArray) {
         return format(null, messagePattern, argArray);
     }

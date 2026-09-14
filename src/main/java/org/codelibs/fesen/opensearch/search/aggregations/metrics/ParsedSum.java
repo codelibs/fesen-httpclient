@@ -44,6 +44,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedSum extends ParsedSingleValueNumericMetricsAggregation implements Sum {
+    /**
+     * Creates a new ParsedSum.
+     */
+    public ParsedSum() {
+    }
 
     @Override
     public double getValue() {
@@ -70,6 +75,13 @@ public class ParsedSum extends ParsedSingleValueNumericMetricsAggregation implem
         declareSingleValueFields(PARSER, Double.NEGATIVE_INFINITY);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedSum fromXContent(XContentParser parser, final String name) {
         ParsedSum sum = PARSER.apply(parser, null);
         sum.setName(name);

@@ -40,7 +40,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * @opensearch.internal
  */
 public class ReindexAction extends ActionType<BulkByScrollResponse> {
+    /**
+     * The INSTANCE constant.
+     */
     public static final ReindexAction INSTANCE = new ReindexAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/write/reindex";
 
     private ReindexAction() {

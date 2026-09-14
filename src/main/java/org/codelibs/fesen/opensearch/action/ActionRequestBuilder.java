@@ -43,14 +43,32 @@ import java.util.Objects;
 /**
  * Base Action Request Builder
  *
+ * @param <Request> the request type
+ * @param <Response> the response type
  * @opensearch.api
  */
 public abstract class ActionRequestBuilder<Request extends ActionRequest, Response extends ActionResponse> {
 
+    /**
+     * The action.
+     */
     protected final ActionType<Response> action;
+    /**
+     * The request.
+     */
     protected final Request request;
+    /**
+     * The client.
+     */
     protected final OpenSearchClient client;
 
+    /**
+     * Creates a new ActionRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param request the request
+     */
     protected ActionRequestBuilder(OpenSearchClient client, ActionType<Response> action, Request request) {
         Objects.requireNonNull(action, "action must not be null");
         this.action = action;
@@ -58,16 +76,28 @@ public abstract class ActionRequestBuilder<Request extends ActionRequest, Respon
         this.client = client;
     }
 
+    /**
+     * Returns the request.
+     *
+     * @return the request
+     */
     public Request request() {
         return this.request;
     }
 
+    /**
+     * Executes this instance.
+     *
+     * @return this instance
+     */
     public ActionFuture<Response> execute() {
         return client.execute(action, request);
     }
 
     /**
      * Short version of execute().actionGet().
+     *
+     * @return the value
      */
     public Response get() {
         return execute().actionGet();
@@ -75,6 +105,9 @@ public abstract class ActionRequestBuilder<Request extends ActionRequest, Respon
 
     /**
      * Short version of execute().actionGet().
+     *
+     * @param timeout the timeout
+     * @return the value
      */
     public Response get(TimeValue timeout) {
         return execute().actionGet(timeout);
@@ -82,11 +115,19 @@ public abstract class ActionRequestBuilder<Request extends ActionRequest, Respon
 
     /**
      * Short version of execute().actionGet().
+     *
+     * @param timeout the timeout
+     * @return the value
      */
     public Response get(String timeout) {
         return execute().actionGet(timeout);
     }
 
+    /**
+     * Executes this instance.
+     *
+     * @param listener the listener
+     */
     public void execute(ActionListener<Response> listener) {
         client.execute(action, request, listener);
     }

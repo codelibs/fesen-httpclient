@@ -49,33 +49,53 @@ import java.util.function.BiConsumer;
 public interface QueryRewriteContext {
     /**
      * The registry used to build new {@link XContentParser}s. Contains registered named parsers needed to parse the query.
+     *
+     * @return the XContent registry
      */
     NamedXContentRegistry getXContentRegistry();
 
     /**
      * Returns the time in milliseconds that is shared across all resources involved. Even across shards and nodes.
+     *
+     * @return the now in milliseconds
      */
     long nowInMillis();
 
+    /**
+     * Returns the writeable registry.
+     *
+     * @return the writeable registry
+     */
     NamedWriteableRegistry getWriteableRegistry();
 
     /**
      * Registers an async action that must be executed before the next rewrite round in order to make progress.
      * This should be used if a rewriteabel needs to fetch some external resources in order to be executed ie. a document
      * from an index.
+     *
+     * @param asyncAction the async action
      */
     void registerAsyncAction(BiConsumer<Client, ActionListener<?>> asyncAction);
 
     /**
      * Returns <code>true</code> if there are any registered async actions.
+     *
+     * @return the async actions flag
      */
     boolean hasAsyncActions();
 
     /**
      * Executes all registered async actions and notifies the listener once it's done. The value that is passed to the listener is always
      * <code>null</code>. The list of registered actions is cleared once this method returns.
+     *
+     * @param listener the listener
      */
     void executeAsyncActions(ActionListener listener);
 
+    /**
+     * Validates this instance.
+     *
+     * @return this instance
+     */
     boolean validate();
 }

@@ -52,16 +52,34 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public class MaxAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, MaxAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "max";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<MaxAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, MaxAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new MaxAggregationBuilder.
+     *
+     * @param name the name
+     */
     public MaxAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MaxAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected MaxAggregationBuilder(
         MaxAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

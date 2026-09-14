@@ -55,12 +55,25 @@ public class DiscoveryStats implements Writeable, ToXContentFragment {
     private final PublishClusterStateStats publishStats;
     private final ClusterStateStats clusterStateStats;
 
+    /**
+     * Creates a new DiscoveryStats.
+     *
+     * @param queueStats the queue stats
+     * @param publishStats the publish stats
+     * @param clusterStateStats the cluster state stats
+     */
     public DiscoveryStats(PendingClusterStateStats queueStats, PublishClusterStateStats publishStats, ClusterStateStats clusterStateStats) {
         this.queueStats = queueStats;
         this.publishStats = publishStats;
         this.clusterStateStats = clusterStateStats;
     }
 
+    /**
+     * Creates a new DiscoveryStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DiscoveryStats(StreamInput in) throws IOException {
         queueStats = in.readOptionalWriteable(PendingClusterStateStats::new);
         publishStats = in.readOptionalWriteable(PublishClusterStateStats::new);

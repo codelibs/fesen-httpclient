@@ -47,6 +47,11 @@ import java.util.concurrent.TimeoutException;
  * @opensearch.internal
  */
 public class FutureUtils {
+    /**
+     * Creates a new FutureUtils.
+     */
+    public FutureUtils() {
+    }
 
     /**
      * Cancel execution of this future without interrupting a running thread. See {@link Future#cancel(boolean)} for details.
@@ -102,6 +107,12 @@ public class FutureUtils {
         }
     }
 
+    /**
+     * Returns the rethrow execution exception.
+     *
+     * @param e the exception
+     * @return the rethrow execution exception
+     */
     public static RuntimeException rethrowExecutionException(ExecutionException e) {
         if (e.getCause() instanceof RuntimeException) {
             return (RuntimeException) e.getCause();

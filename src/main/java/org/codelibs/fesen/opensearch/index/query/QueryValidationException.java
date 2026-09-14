@@ -42,6 +42,11 @@ import java.util.List;
  * @opensearch.internal
  */
 public class QueryValidationException extends ValidationException {
+    /**
+     * Creates a new QueryValidationException.
+     */
+    public QueryValidationException() {
+    }
 
     /**
      * Helper method than can be used to add error messages to an existing {@link QueryValidationException}.

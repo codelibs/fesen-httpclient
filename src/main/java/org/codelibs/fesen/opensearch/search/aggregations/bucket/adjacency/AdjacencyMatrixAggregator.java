@@ -69,11 +69,20 @@ public final class AdjacencyMatrixAggregator {
         private final String key;
         private final QueryBuilder filter;
 
+        /**
+         * The PARSER constant.
+         */
         public static final NamedObjectParser<KeyedFilter, String> PARSER = (
             XContentParser p,
             String aggName,
             String name) -> new KeyedFilter(name, parseInnerQueryBuilder(p));
 
+        /**
+         * Creates a new KeyedFilter.
+         *
+         * @param key the key
+         * @param filter the filter
+         */
         public KeyedFilter(String key, QueryBuilder filter) {
             if (key == null) {
                 throw new IllegalArgumentException("[key] must not be null");
@@ -91,10 +100,20 @@ public final class AdjacencyMatrixAggregator {
             out.writeNamedWriteable(filter);
         }
 
+        /**
+         * Returns the key.
+         *
+         * @return the key
+         */
         public String key() {
             return key;
         }
 
+        /**
+         * Filters this instance.
+         *
+         * @return this instance
+         */
         public QueryBuilder filter() {
             return filter;
         }

@@ -60,12 +60,20 @@ public class GetTaskRequest extends ActionRequest {
      */
     public GetTaskRequest() {}
 
+    /**
+     * Returns the task identifier.
+     *
+     * @return the task identifier
+     */
     public TaskId getTaskId() {
         return taskId;
     }
 
     /**
      * Set the TaskId to look up. Required.
+     *
+     * @param taskId the task identifier
+     * @return this instance
      */
     public GetTaskRequest setTaskId(TaskId taskId) {
         this.taskId = taskId;
@@ -74,6 +82,8 @@ public class GetTaskRequest extends ActionRequest {
 
     /**
      * Should this request wait for all found tasks to complete?
+     *
+     * @return the wait for completion
      */
     public boolean getWaitForCompletion() {
         return waitForCompletion;
@@ -81,6 +91,8 @@ public class GetTaskRequest extends ActionRequest {
 
     /**
      * Timeout to wait for any async actions this request must take. It must take anywhere from 0 to 2.
+     *
+     * @return the timeout
      */
     public TimeValue getTimeout() {
         return timeout;

@@ -42,7 +42,13 @@ import org.codelibs.fesen.opensearch.action.support.clustermanager.AcknowledgedR
  */
 public class DeleteStoredScriptAction extends ActionType<AcknowledgedResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeleteStoredScriptAction INSTANCE = new DeleteStoredScriptAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/script/delete";
 
     private DeleteStoredScriptAction() {

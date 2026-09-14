@@ -65,9 +65,19 @@ import java.util.Objects;
  */
 @SuppressWarnings("unchecked")
 public class XContentHelper {
+    /**
+     * Creates a new XContentHelper.
+     */
+    public XContentHelper() {
+    }
 
     /**
      * Creates a parser based on the bytes provided
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param bytes the bytes
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      * @deprecated use {@link #createParser(NamedXContentRegistry, DeprecationHandler, BytesReference, MediaType)}
      * to avoid content type auto-detection
      */
@@ -98,6 +108,13 @@ public class XContentHelper {
 
     /**
      * Creates a parser for the bytes using the supplied content-type
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param bytes the bytes
+     * @param mediaType the media type
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      */
     public static XContentParser createParser(
         NamedXContentRegistry xContentRegistry,
@@ -130,6 +147,9 @@ public class XContentHelper {
 
     /**
      * Converts the given bytes into a map that is optionally ordered.
+     * @param bytes the bytes
+     * @param ordered the ordered
+     * @return this instance
      * @deprecated this method relies on auto-detection of content type. Use {@link #convertToMap(BytesReference, boolean, MediaType)}
      *             instead with the proper {@link XContentType}
      */
@@ -142,6 +162,10 @@ public class XContentHelper {
     /**
      * Converts the given bytes into a map that is optionally ordered. The provided {@link XContentType} must be non-null.
      *
+     * @param bytes the bytes
+     * @param ordered the ordered
+     * @param xContentType the content type
+     * @return this instance
      * @deprecated use {@link #convertToMap(BytesReference, boolean, MediaType)} instead
      */
     @Deprecated
@@ -156,6 +180,11 @@ public class XContentHelper {
 
     /**
      * Converts the given bytes into a map that is optionally ordered. The provided {@link XContentType} must be non-null.
+     *
+     * @param bytes the bytes
+     * @param ordered the ordered
+     * @param mediaType the media type
+     * @return this instance
      */
     public static Tuple<? extends MediaType, Map<String, Object>> convertToMap(BytesReference bytes, boolean ordered, MediaType mediaType)
         throws OpenSearchParseException {
@@ -190,6 +219,11 @@ public class XContentHelper {
     /**
      * Convert a string in some {@link XContent} format to a {@link Map}. Throws an {@link OpenSearchParseException} if there is any
      * error. Note that unlike {@link #convertToMap(BytesReference, boolean)}, this doesn't automatically uncompress the input.
+     *
+     * @param xContent the XContent
+     * @param input the input
+     * @param ordered the ordered
+     * @return this instance
      */
     public static Map<String, Object> convertToMap(XContent xContent, InputStream input, boolean ordered) throws OpenSearchParseException {
         // It is safe to use EMPTY here because this never uses namedObject
@@ -209,6 +243,13 @@ public class XContentHelper {
     /**
      * Convert a byte array in some {@link XContent} format to a {@link Map}. Throws an {@link OpenSearchParseException} if there is any
      * error. Note that unlike {@link #convertToMap(BytesReference, boolean)}, this doesn't automatically uncompress the input.
+     *
+     * @param xContent the XContent
+     * @param bytes the bytes
+     * @param offset the offset
+     * @param length the length
+     * @param ordered the ordered
+     * @return this instance
      */
     public static Map<String, Object> convertToMap(XContent xContent, byte[] bytes, int offset, int length, boolean ordered)
         throws OpenSearchParseException {
@@ -228,22 +269,55 @@ public class XContentHelper {
         }
     }
 
+    /**
+     * Converts the to JSON.
+     *
+     * @param bytes the bytes
+     * @param reformatJson the reformat JSON
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     @Deprecated
     public static String convertToJson(BytesReference bytes, boolean reformatJson) throws IOException {
         return convertToJson(bytes, reformatJson, false);
     }
 
+    /**
+     * Converts the to JSON.
+     *
+     * @param bytes the bytes
+     * @param reformatJson the reformat JSON
+     * @param prettyPrint the pretty print
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     @Deprecated
     public static String convertToJson(BytesReference bytes, boolean reformatJson, boolean prettyPrint) throws IOException {
         return convertToJson(bytes, reformatJson, prettyPrint, MediaTypeRegistry.xContent(bytes.toBytesRef().bytes));
     }
 
+    /**
+     * Converts the to JSON.
+     *
+     * @param bytes the bytes
+     * @param reformatJson the reformat JSON
+     * @param mediaType the media type
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static String convertToJson(BytesReference bytes, boolean reformatJson, MediaType mediaType) throws IOException {
         return convertToJson(bytes, reformatJson, false, mediaType);
     }
 
     /**
      * Converts the given {@link MediaType} to a json string
+     *
+     * @param bytes the bytes
+     * @param reformatJson the reformat JSON
+     * @param prettyPrint the pretty print
+     * @param mediaType the media type
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static String convertToJson(BytesReference bytes, boolean reformatJson, boolean prettyPrint, MediaType mediaType)
         throws IOException {
@@ -290,6 +364,11 @@ public class XContentHelper {
     /**
      * Writes a "raw" (bytes) field, handling cases where the bytes are compressed, and tries to optimize writing using
      * {@link XContentBuilder#rawField(String, InputStream)}.
+     * @param field the field
+     * @param source the source
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
      * @deprecated use {@code #writeRawField(String, BytesReference, XContentType, XContentBuilder, Params)} to avoid content type
      * auto-detection
      */

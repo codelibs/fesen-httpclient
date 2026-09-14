@@ -17,7 +17,17 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  */
 @PublicApi(since = "2.2.0")
 public interface ReplicationState {
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     ReplicationLuceneIndex getIndex();
 
+    /**
+     * Returns the timer.
+     *
+     * @return the timer
+     */
     ReplicationTimer getTimer();
 }

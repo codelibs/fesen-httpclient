@@ -215,6 +215,11 @@ public class JvmInfo implements ReportingService.Info {
         }
     }
 
+    /**
+     * Returns the JVM info.
+     *
+     * @return the JVM info
+     */
     public static JvmInfo jvmInfo() {
         return INSTANCE;
     }
@@ -293,6 +298,12 @@ public class JvmInfo implements ReportingService.Info {
         this.g1RegionSize = g1RegionSize;
     }
 
+    /**
+     * Creates a new JvmInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public JvmInfo(StreamInput in) throws IOException {
         pid = in.readLong();
         version = in.readString();
@@ -350,34 +361,74 @@ public class JvmInfo implements ReportingService.Info {
         out.writeString(useCompressedOops);
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public String version() {
         return this.version;
     }
 
+    /**
+     * Returns the vm name.
+     *
+     * @return the vm name
+     */
     public String getVmName() {
         return this.vmName;
     }
 
+    /**
+     * Returns the vm version.
+     *
+     * @return the vm version
+     */
     public String getVmVersion() {
         return this.vmVersion;
     }
 
+    /**
+     * Returns the vm vendor.
+     *
+     * @return the vm vendor
+     */
     public String getVmVendor() {
         return this.vmVendor;
     }
 
+    /**
+     * Returns the bundled jdk.
+     *
+     * @return the bundled jdk
+     */
     public boolean getBundledJdk() {
         return bundledJdk;
     }
 
+    /**
+     * Returns the using bundled jdk.
+     *
+     * @return the using bundled jdk
+     */
     public Boolean getUsingBundledJdk() {
         return usingBundledJdk;
     }
 
+    /**
+     * Returns the mem.
+     *
+     * @return the mem
+     */
     public Mem getMem() {
         return this.mem;
     }
 
+    /**
+     * Returns the configured max heap size.
+     *
+     * @return the configured max heap size
+     */
     public long getConfiguredMaxHeapSize() {
         return configuredMaxHeapSize;
     }
@@ -455,6 +506,15 @@ public class JvmInfo implements ReportingService.Info {
         private final long nonHeapMax;
         private final long directMemoryMax;
 
+        /**
+         * Creates a new Mem.
+         *
+         * @param heapInit the heap init
+         * @param heapMax the heap max
+         * @param nonHeapInit the non heap init
+         * @param nonHeapMax the non heap max
+         * @param directMemoryMax the direct memory max
+         */
         public Mem(long heapInit, long heapMax, long nonHeapInit, long nonHeapMax, long directMemoryMax) {
             this.heapInit = heapInit;
             this.heapMax = heapMax;
@@ -463,6 +523,12 @@ public class JvmInfo implements ReportingService.Info {
             this.directMemoryMax = directMemoryMax;
         }
 
+        /**
+         * Creates a new Mem by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Mem(StreamInput in) throws IOException {
             this.heapInit = in.readVLong();
             this.heapMax = in.readVLong();
@@ -480,6 +546,11 @@ public class JvmInfo implements ReportingService.Info {
             out.writeVLong(directMemoryMax);
         }
 
+        /**
+         * Returns the heap max.
+         *
+         * @return the heap max
+         */
         public ByteSizeValue getHeapMax() {
             return new ByteSizeValue(heapMax);
         }

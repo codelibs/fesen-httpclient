@@ -38,6 +38,16 @@ public class NodeResourceUsageStats implements Writeable, ToXContentFragment {
     double nativeMemoryUtilizationPercent;
     private IoUsageStats ioUsageStats;
 
+    /**
+     * Creates a new NodeResourceUsageStats.
+     *
+     * @param nodeId the node identifier
+     * @param timestamp the timestamp
+     * @param memoryUtilizationPercent the memory utilization percent
+     * @param cpuUtilizationPercent the CPU utilization percent
+     * @param ioUsageStats the I/O usage stats
+     * @param nativeMemoryUtilizationPercent the native memory utilization percent
+     */
     public NodeResourceUsageStats(
         String nodeId,
         long timestamp,
@@ -54,6 +64,12 @@ public class NodeResourceUsageStats implements Writeable, ToXContentFragment {
         this.nativeMemoryUtilizationPercent = nativeMemoryUtilizationPercent;
     }
 
+    /**
+     * Creates a new NodeResourceUsageStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodeResourceUsageStats(StreamInput in) throws IOException {
         this.nodeId = in.readString();
         this.timestamp = in.readLong();
@@ -101,18 +117,38 @@ public class NodeResourceUsageStats implements Writeable, ToXContentFragment {
         return sb.toString();
     }
 
+    /**
+     * Returns the memory utilization percent.
+     *
+     * @return the memory utilization percent
+     */
     public double getMemoryUtilizationPercent() {
         return memoryUtilizationPercent;
     }
 
+    /**
+     * Returns the CPU utilization percent.
+     *
+     * @return the CPU utilization percent
+     */
     public double getCpuUtilizationPercent() {
         return cpuUtilizationPercent;
     }
 
+    /**
+     * Returns the I/O usage stats.
+     *
+     * @return the I/O usage stats
+     */
     public IoUsageStats getIoUsageStats() {
         return ioUsageStats;
     }
 
+    /**
+     * Returns the native memory utilization percent.
+     *
+     * @return the native memory utilization percent
+     */
     public double getNativeMemoryUtilizationPercent() {
         return nativeMemoryUtilizationPercent;
     }

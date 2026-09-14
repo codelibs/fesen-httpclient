@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClusterAllocationExplainAction extends ActionType<ClusterAllocationExplainResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClusterAllocationExplainAction INSTANCE = new ClusterAllocationExplainAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/allocation/explain";
 
     private ClusterAllocationExplainAction() {

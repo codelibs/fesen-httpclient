@@ -48,12 +48,16 @@ public interface IndicesRequest {
 
     /**
      * Returns the array of indices that the action relates to
+     *
+     * @return the indices
      */
     String[] indices();
 
     /**
      * Returns the indices options used to resolve indices. They tell for instance whether a single index is
      * accepted, whether an empty array will be converted to _all, and how wildcards will be expanded if needed.
+     *
+     * @return the indices options
      */
     IndicesOptions indicesOptions();
 
@@ -61,6 +65,8 @@ public interface IndicesRequest {
      * Determines whether the request should be applied to data streams. When {@code false}, none of the names or
      * wildcard expressions in {@link #indices} should be applied to or expanded to any data streams. All layers
      * involved in the request's fulfillment including security, name resolution, etc., should respect this flag.
+     *
+     * @return this instance
      */
     default boolean includeDataStreams() {
         return false;
@@ -74,6 +80,9 @@ public interface IndicesRequest {
     interface Replaceable extends IndicesRequest {
         /**
          * Sets the indices that the action relates to.
+         *
+         * @param indices the indices
+         * @return the indices
          */
         IndicesRequest indices(String... indices);
     }

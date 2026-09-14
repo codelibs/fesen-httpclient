@@ -73,6 +73,12 @@ public class ShardStats implements Writeable, ToXContentFragment {
     private String statePath;
     private boolean isCustomDataPath;
 
+    /**
+     * Creates a new ShardStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ShardStats(StreamInput in) throws IOException {
         shardRouting = new ShardRouting(in);
         commonStats = new CommonStats(in);
@@ -89,11 +95,18 @@ public class ShardStats implements Writeable, ToXContentFragment {
 
     /**
      * The shard routing information (cluster wide shard state).
+     *
+     * @return the shard routing
      */
     public ShardRouting getShardRouting() {
         return this.shardRouting;
     }
 
+    /**
+     * Returns the stats.
+     *
+     * @return the stats
+     */
     public CommonStats getStats() {
         return this.commonStats;
     }

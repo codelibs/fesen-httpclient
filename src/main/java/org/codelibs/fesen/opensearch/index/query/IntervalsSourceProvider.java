@@ -72,7 +72,17 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  * @opensearch.internal
  */
 public abstract class IntervalsSourceProvider implements NamedWriteable, ToXContentFragment {
+    /**
+     * Creates a new IntervalsSourceProvider.
+     */
+    public IntervalsSourceProvider() {
+    }
 
+    /**
+     * Performs the extract fields step.
+     *
+     * @param fields the fields
+     */
     public abstract void extractFields(Set<String> fields);
 
     @Override
@@ -81,6 +91,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
     @Override
     public abstract boolean equals(Object other);
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static IntervalsSourceProvider fromXContent(XContentParser parser) throws IOException {
         assert parser.currentToken() == XContentParser.Token.FIELD_NAME;
         switch (parser.currentName()) {
@@ -123,6 +140,9 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Match extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "match";
 
         private final String query;
@@ -132,6 +152,16 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         private final IntervalFilter filter;
         private final String useField;
 
+        /**
+         * Creates a new Match.
+         *
+         * @param query the query
+         * @param maxGaps the max gaps
+         * @param mode the mode
+         * @param analyzer the analyzer
+         * @param filter the filter
+         * @param useField the use field
+         */
         public Match(String query, int maxGaps, IntervalMode mode, String analyzer, IntervalFilter filter, String useField) {
             this.query = query;
             this.maxGaps = maxGaps;
@@ -230,6 +260,12 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareString(optionalConstructorArg(), new ParseField("use_field"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         */
         public static Match fromXContent(XContentParser parser) {
             return PARSER.apply(parser, null);
         }
@@ -242,11 +278,20 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Disjunction extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "any_of";
 
         private final List<IntervalsSourceProvider> subSources;
         private final IntervalFilter filter;
 
+        /**
+         * Creates a new Disjunction.
+         *
+         * @param subSources the sub sources
+         * @param filter the filter
+         */
         public Disjunction(List<IntervalsSourceProvider> subSources, IntervalFilter filter) {
             this.subSources = subSources;
             this.filter = filter;
@@ -314,6 +359,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareObject(optionalConstructorArg(), (p, c) -> IntervalFilter.fromXContent(p), new ParseField("filter"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Disjunction fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
@@ -326,6 +378,9 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Combine extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "all_of";
 
         private final List<IntervalsSourceProvider> subSources;
@@ -333,6 +388,14 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         private final int maxGaps;
         private final IntervalFilter filter;
 
+        /**
+         * Creates a new Combine.
+         *
+         * @param subSources the sub sources
+         * @param mode the mode
+         * @param maxGaps the max gaps
+         * @param filter the filter
+         */
         public Combine(List<IntervalsSourceProvider> subSources, IntervalMode mode, int maxGaps, IntervalFilter filter) {
             this.subSources = subSources;
             this.mode = mode;
@@ -425,6 +488,12 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareObject(optionalConstructorArg(), (p, c) -> IntervalFilter.fromXContent(p), new ParseField("filter"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         */
         public static Combine fromXContent(XContentParser parser) {
             return PARSER.apply(parser, null);
         }
@@ -437,12 +506,22 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Prefix extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "prefix";
 
         private final String prefix;
         private final String analyzer;
         private final String useField;
 
+        /**
+         * Creates a new Prefix.
+         *
+         * @param prefix the prefix
+         * @param analyzer the analyzer
+         * @param useField the use field
+         */
         public Prefix(String prefix, String analyzer, String useField) {
             this.prefix = prefix;
             this.analyzer = analyzer;
@@ -509,6 +588,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareString(optionalConstructorArg(), new ParseField("use_field"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Prefix fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
@@ -521,7 +607,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Regexp extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "regexp";
+        /**
+         * The DEFAULT_FLAGS_VALUE constant.
+         */
         public static final int DEFAULT_FLAGS_VALUE = RegexpFlag.ALL.value();
 
         private final String pattern;
@@ -535,6 +627,12 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
          * <p>
          * {@code flags} is Lucene's <a href="https://github.com/apache/lucene/blob/main/lucene/core/src/java/org/apache/lucene/util/automaton/RegExp.java#L391-L411">syntax flags</a>
          * and {@code caseInsensitive} enables Lucene's only <a href="https://github.com/apache/lucene/blob/main/lucene/core/src/java/org/apache/lucene/util/automaton/RegExp.java#L416">matching flag</a>.
+         *
+         * @param pattern the pattern
+         * @param flags the flags
+         * @param useField the use field
+         * @param maxExpansions the max expansions
+         * @param caseInsensitive the case insensitive
          */
         public Regexp(String pattern, int flags, String useField, Integer maxExpansions, boolean caseInsensitive) {
             this.pattern = pattern;
@@ -627,6 +725,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareBoolean(optionalConstructorArg(), new ParseField("case_insensitive"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Regexp fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
@@ -639,6 +744,9 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Wildcard extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "wildcard";
 
         private final String pattern;
@@ -646,6 +754,14 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         private final String useField;
         private final Integer maxExpansions;
 
+        /**
+         * Creates a new Wildcard.
+         *
+         * @param pattern the pattern
+         * @param analyzer the analyzer
+         * @param useField the use field
+         * @param maxExpansions the max expansions
+         */
         public Wildcard(String pattern, String analyzer, String useField, Integer maxExpansions) {
             this.pattern = pattern;
             this.analyzer = analyzer;
@@ -720,6 +836,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareInt(optionalConstructorArg(), new ParseField("max_expansions"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Wildcard fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
@@ -732,6 +855,9 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class Fuzzy extends IntervalsSourceProvider {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "fuzzy";
 
         private final String term;
@@ -741,6 +867,16 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
         private final String analyzer;
         private final String useField;
 
+        /**
+         * Creates a new Fuzzy.
+         *
+         * @param term the term
+         * @param prefixLength the prefix length
+         * @param transpositions the transpositions
+         * @param fuzziness the fuzziness
+         * @param analyzer the analyzer
+         * @param useField the use field
+         */
         public Fuzzy(String term, int prefixLength, boolean transpositions, Fuzziness fuzziness, String analyzer, String useField) {
             this.term = term;
             this.prefixLength = prefixLength;
@@ -825,6 +961,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             PARSER.declareString(optionalConstructorArg(), new ParseField("use_field"));
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static Fuzzy fromXContent(XContentParser parser) throws IOException {
             return PARSER.parse(parser, null);
         }
@@ -837,12 +980,21 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
      */
     public static class IntervalFilter implements ToXContentObject, Writeable {
 
+        /**
+         * The NAME constant.
+         */
         public static final String NAME = "filter";
 
         private final String type;
         private final IntervalsSourceProvider filter;
         private final Script script;
 
+        /**
+         * Creates a new IntervalFilter.
+         *
+         * @param filter the filter
+         * @param type the type
+         */
         public IntervalFilter(IntervalsSourceProvider filter, String type) {
             this.filter = filter;
             this.type = type.toLowerCase(Locale.ROOT);
@@ -894,6 +1046,13 @@ public abstract class IntervalsSourceProvider implements NamedWriteable, ToXCont
             return builder;
         }
 
+        /**
+         * Parses an instance from the given parser.
+         *
+         * @param parser the parser
+         * @return the new XContent
+         * @throws IOException if an I/O error occurs
+         */
         public static IntervalFilter fromXContent(XContentParser parser) throws IOException {
             if (parser.nextToken() != XContentParser.Token.FIELD_NAME) {
                 throw new ParsingException(parser.getTokenLocation(), "Expected [FIELD_NAME] but got [" + parser.currentToken() + "]");

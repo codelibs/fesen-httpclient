@@ -42,7 +42,11 @@ import org.codelibs.fesen.opensearch.common.lease.Releasable;
  */
 public interface BigArray extends Releasable, Accountable {
 
-    /** Return the length of this array. */
+    /**
+     * Return the length of this array.
+     *
+     * @return the number of elements
+     */
     long size();
 
 }

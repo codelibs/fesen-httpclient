@@ -47,12 +47,21 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class MatchAllQueryBuilder extends AbstractQueryBuilder<MatchAllQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "match_all";
 
+    /**
+     * Creates a new MatchAllQueryBuilder.
+     */
     public MatchAllQueryBuilder() {}
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MatchAllQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -76,6 +85,12 @@ public class MatchAllQueryBuilder extends AbstractQueryBuilder<MatchAllQueryBuil
         declareStandardFields(PARSER);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static MatchAllQueryBuilder fromXContent(XContentParser parser) {
         try {
             return PARSER.apply(parser, null);

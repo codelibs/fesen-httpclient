@@ -52,6 +52,9 @@ import static org.codelibs.fesen.opensearch.index.query.SpanQueryBuilder.SpanQue
  * @opensearch.internal
  */
 public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBuilder> implements SpanQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "span_first";
 
     private static final ParseField MATCH_FIELD = new ParseField("match");
@@ -81,6 +84,9 @@ public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBu
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public SpanFirstQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -95,6 +101,8 @@ public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBu
     }
 
     /**
+     * Returns the inner query.
+     *
      * @return the inner {@link SpanQueryBuilder} defined in this query
      */
     public SpanQueryBuilder innerQuery() {
@@ -102,6 +110,8 @@ public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBu
     }
 
     /**
+     * Returns the end.
+     *
      * @return maximum end position of the matching inner span query
      */
     public int end() {
@@ -118,6 +128,13 @@ public class SpanFirstQueryBuilder extends AbstractQueryBuilder<SpanFirstQueryBu
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SpanFirstQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
 

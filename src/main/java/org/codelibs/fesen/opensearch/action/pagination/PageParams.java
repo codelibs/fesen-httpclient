@@ -23,12 +23,22 @@ import java.util.Objects;
 @PublicApi(since = "2.18.0")
 public class PageParams implements Writeable {
 
+    /**
+     * The PARAM_ASC_SORT_VALUE constant.
+     */
     public static final String PARAM_ASC_SORT_VALUE = "asc";
 
     private final String requestedTokenStr;
     private final String sort;
     private final int size;
 
+    /**
+     * Creates a new PageParams.
+     *
+     * @param requestedToken the requested token
+     * @param sort the sort
+     * @param size the size
+     */
     public PageParams(String requestedToken, String sort, int size) {
         this.requestedTokenStr = requestedToken;
         this.sort = sort;

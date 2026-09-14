@@ -53,6 +53,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "dis_max";
 
     /** Default multiplication factor for breaking ties in document scores.*/
@@ -65,10 +68,16 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
 
     private float tieBreaker = DEFAULT_TIE_BREAKER;
 
+    /**
+     * Creates a new DisMaxQueryBuilder.
+     */
     public DisMaxQueryBuilder() {}
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public DisMaxQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -84,6 +93,9 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
 
     /**
      * Add a sub-query to this disjunction.
+     *
+     * @param queryBuilder the query builder
+     * @return this instance
      */
     public DisMaxQueryBuilder add(QueryBuilder queryBuilder) {
         if (queryBuilder == null) {
@@ -94,6 +106,8 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
     }
 
     /**
+     * Returns the inner queries.
+     *
      * @return an immutable list copy of the current sub-queries of this disjunction
      */
     public List<QueryBuilder> innerQueries() {
@@ -105,6 +119,9 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
      * and added into the final score.  If non-zero, the value should be small, on the order of 0.1, which says that
      * 10 occurrences of word in a lower-scored field that is also in a higher scored field is just as good as a unique
      * word in the lower scored field (i.e., one that is not in any higher scored field.
+     *
+     * @param tieBreaker the tie breaker
+     * @return the tie breaker
      */
     public DisMaxQueryBuilder tieBreaker(float tieBreaker) {
         this.tieBreaker = tieBreaker;
@@ -112,6 +129,8 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
     }
 
     /**
+     * Returns the tie breaker.
+     *
      * @return the tie breaker score
      * @see DisMaxQueryBuilder#tieBreaker(float)
      */
@@ -132,6 +151,13 @@ public class DisMaxQueryBuilder extends AbstractQueryBuilder<DisMaxQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static DisMaxQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
         float tieBreaker = DisMaxQueryBuilder.DEFAULT_TIE_BREAKER;

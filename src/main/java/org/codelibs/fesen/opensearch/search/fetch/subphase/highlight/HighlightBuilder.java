@@ -101,10 +101,20 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
     private boolean useExplicitFieldOrder = false;
 
+    /**
+     * Creates a new HighlightBuilder.
+     */
     public HighlightBuilder() {
         fields = new ArrayList<>();
     }
 
+    /**
+     * Creates a new HighlightBuilder.
+     *
+     * @param template the template
+     * @param highlightQuery the highlight query
+     * @param fields the fields
+     */
     public HighlightBuilder(HighlightBuilder template, QueryBuilder highlightQuery, List<Field> fields) {
         super(template, highlightQuery);
         this.encoder = template.encoder;
@@ -114,6 +124,9 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public HighlightBuilder(StreamInput in) throws IOException {
         super(in);
@@ -130,6 +143,12 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         out.writeList(fields);
     }
 
+    /**
+     * Returns the field.
+     *
+     * @param field the field
+     * @return the field
+     */
     public HighlightBuilder field(Field field) {
         fields.add(field);
         return this;
@@ -139,6 +158,11 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         this.fields.addAll(fields);
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public List<Field> fields() {
         return this.fields;
     }
@@ -148,6 +172,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
      * are {@code styled} and {@code default}.
      *
      * @param schemaName The tag scheme name
+     * @return the tags schema
      */
     public HighlightBuilder tagsSchema(String schemaName) {
         switch (schemaName) {
@@ -170,6 +195,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
      * are {@code html} and {@code default}.
      *
      * @param encoder name
+     * @return the encoder
      */
     public HighlightBuilder encoder(String encoder) {
         this.encoder = encoder;
@@ -178,6 +204,7 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
     /**
      * Send the fields to be highlighted using a syntax that is specific about the order in which they should be highlighted.
+     * @param useExplicitFieldOrder the use explicit field order
      * @return this for chaining
      */
     public HighlightBuilder useExplicitFieldOrder(boolean useExplicitFieldOrder) {
@@ -207,6 +234,12 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
         PARSER = setupParser(parser);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param p the p
+     * @return the new XContent
+     */
     public static HighlightBuilder fromXContent(XContentParser p) {
         return PARSER.apply(p, new HighlightBuilder());
     }
@@ -301,6 +334,11 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
         String[] matchedFields;
 
+        /**
+         * Creates a new Field.
+         *
+         * @param name the name
+         */
         public Field(String name) {
             this.name = name;
         }
@@ -314,6 +352,9 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public Field(StreamInput in) throws IOException {
             super(in);
@@ -330,6 +371,12 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
             out.writeOptionalStringArray(matchedFields);
         }
 
+        /**
+         * Returns the fragment offset.
+         *
+         * @param fragmentOffset the fragment offset
+         * @return the fragment offset
+         */
         public Field fragmentOffset(int fragmentOffset) {
             this.fragmentOffset = fragmentOffset;
             return this;
@@ -339,6 +386,9 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
          * Set the matched fields to highlight against this field data.  Default to null, meaning just
          * the named field.  If you provide a list of fields here then don't forget to include name as
          * it is not automatically included.
+         *
+         * @param matchedFields the matched fields
+         * @return the matched fields
          */
         public Field matchedFields(String... matchedFields) {
             this.matchedFields = matchedFields;
@@ -391,9 +441,22 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
      */
     @PublicApi(since = "1.0.0")
     public enum Order implements Writeable {
+        /**
+         * The NONE value.
+         */
         NONE,
+        /**
+         * The SCORE value.
+         */
         SCORE;
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static Order readFromStream(StreamInput in) throws IOException {
             return in.readEnum(Order.class);
         }
@@ -403,6 +466,12 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
             out.writeEnum(this);
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param order the order
+         * @return the new string
+         */
         public static Order fromString(String order) {
             if (order.toUpperCase(Locale.ROOT).equals(SCORE.name())) {
                 return Order.SCORE;
@@ -423,10 +492,26 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
      */
     @PublicApi(since = "1.0.0")
     public enum BoundaryScannerType implements Writeable {
+        /**
+         * The CHARS value.
+         */
         CHARS,
+        /**
+         * The WORD value.
+         */
         WORD,
+        /**
+         * The SENTENCE value.
+         */
         SENTENCE;
 
+        /**
+         * Reads the from stream.
+         *
+         * @param in the input to read from
+         * @return the from stream
+         * @throws IOException if an I/O error occurs
+         */
         public static BoundaryScannerType readFromStream(StreamInput in) throws IOException {
             return in.readEnum(BoundaryScannerType.class);
         }
@@ -436,6 +521,12 @@ public class HighlightBuilder extends AbstractHighlighterBuilder<HighlightBuilde
             out.writeEnum(this);
         }
 
+        /**
+         * Creates an instance from string.
+         *
+         * @param boundaryScannerType the boundary scanner type
+         * @return the new string
+         */
         public static BoundaryScannerType fromString(String boundaryScannerType) {
             return valueOf(boundaryScannerType.toUpperCase(Locale.ROOT));
         }

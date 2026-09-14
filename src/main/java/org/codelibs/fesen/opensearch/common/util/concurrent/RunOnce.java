@@ -44,6 +44,11 @@ public class RunOnce implements Runnable {
     private final Runnable delegate;
     private final AtomicBoolean hasRun;
 
+    /**
+     * Creates a new RunOnce.
+     *
+     * @param delegate the delegate
+     */
     public RunOnce(final Runnable delegate) {
         this.delegate = Objects.requireNonNull(delegate);
         this.hasRun = new AtomicBoolean(false);
@@ -58,6 +63,8 @@ public class RunOnce implements Runnable {
 
     /**
      * {@code true} if the {@link RunOnce} has been executed once.
+     *
+     * @return the run flag
      */
     public boolean hasRun() {
         return hasRun.get();

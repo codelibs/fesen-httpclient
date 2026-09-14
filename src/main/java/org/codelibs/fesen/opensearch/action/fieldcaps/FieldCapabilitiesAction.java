@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class FieldCapabilitiesAction extends ActionType<FieldCapabilitiesResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final FieldCapabilitiesAction INSTANCE = new FieldCapabilitiesAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/field_caps";
 
     private FieldCapabilitiesAction() {

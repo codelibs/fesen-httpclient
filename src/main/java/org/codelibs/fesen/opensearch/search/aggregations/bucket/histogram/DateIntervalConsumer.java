@@ -38,22 +38,57 @@ package org.codelibs.fesen.opensearch.search.aggregations.bucket.histogram;
  * Provides definitions for the new fixed and calendar intervals, and deprecated
  * defintions for the old interval/dateHisto interval parameters
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public interface DateIntervalConsumer<T> {
+    /**
+     * Returns the interval.
+     *
+     * @param interval the interval
+     * @return the interval
+     */
     @Deprecated
     T interval(long interval);
 
+    /**
+     * Returns the date histogram interval.
+     *
+     * @param dateHistogramInterval the date histogram interval
+     * @return the date histogram interval
+     */
     @Deprecated
     T dateHistogramInterval(DateHistogramInterval dateHistogramInterval);
 
+    /**
+     * Returns the calendar interval.
+     *
+     * @param interval the interval
+     * @return the calendar interval
+     */
     T calendarInterval(DateHistogramInterval interval);
 
+    /**
+     * Returns the fixed interval.
+     *
+     * @param interval the interval
+     * @return the fixed interval
+     */
     T fixedInterval(DateHistogramInterval interval);
 
+    /**
+     * Returns the interval.
+     *
+     * @return the interval
+     */
     @Deprecated
     long interval();
 
+    /**
+     * Returns the date histogram interval.
+     *
+     * @return the date histogram interval
+     */
     @Deprecated
     DateHistogramInterval dateHistogramInterval();
 }

@@ -47,6 +47,11 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class ParsedAdjacencyMatrix extends ParsedMultiBucketAggregation<ParsedAdjacencyMatrix.ParsedBucket> implements AdjacencyMatrix {
+    /**
+     * Creates a new ParsedAdjacencyMatrix.
+     */
+    public ParsedAdjacencyMatrix() {
+    }
 
     private Map<String, ParsedBucket> bucketMap;
 
@@ -84,6 +89,14 @@ public class ParsedAdjacencyMatrix extends ParsedMultiBucketAggregation<ParsedAd
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedAdjacencyMatrix fromXContent(XContentParser parser, String name) throws IOException {
         ParsedAdjacencyMatrix aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -96,6 +109,11 @@ public class ParsedAdjacencyMatrix extends ParsedMultiBucketAggregation<ParsedAd
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements AdjacencyMatrix.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private String key;
 

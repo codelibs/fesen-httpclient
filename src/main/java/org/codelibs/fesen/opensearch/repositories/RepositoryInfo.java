@@ -52,10 +52,25 @@ import java.util.Objects;
  */
 @PublicApi(since = "1.0.0")
 public final class RepositoryInfo implements Writeable, ToXContentFragment {
+    /**
+     * The name.
+     */
     public final String name;
+    /**
+     * The type.
+     */
     public final String type;
+    /**
+     * The location.
+     */
     public final Map<String, String> location;
 
+    /**
+     * Creates a new RepositoryInfo by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RepositoryInfo(StreamInput in) throws IOException {
         this.name = in.readString();
         this.type = in.readString();

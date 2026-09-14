@@ -55,11 +55,26 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
 @PublicApi(since = "1.0.0")
 public enum ValueType implements Writeable {
 
+    /**
+     * The STRING value.
+     */
     STRING((byte) 1, "string", "string", CoreValuesSourceType.BYTES, DocValueFormat.RAW),
 
+    /**
+     * The LONG value.
+     */
     LONG((byte) 2, "byte|short|integer|long", "long", CoreValuesSourceType.NUMERIC, DocValueFormat.RAW),
+    /**
+     * The DOUBLE value.
+     */
     DOUBLE((byte) 3, "float|double", "double", CoreValuesSourceType.NUMERIC, DocValueFormat.RAW),
+    /**
+     * The NUMBER value.
+     */
     NUMBER((byte) 4, "number", "number", CoreValuesSourceType.NUMERIC, DocValueFormat.RAW),
+    /**
+     * Creates a new DATE.
+     */
     DATE(
         (byte) 5,
         "date",
@@ -67,12 +82,30 @@ public enum ValueType implements Writeable {
         CoreValuesSourceType.DATE,
         new DocValueFormat.DateTime(DateFieldMapper.getDefaultDateTimeFormatter(), ZoneOffset.UTC, DateFieldMapper.Resolution.MILLISECONDS)
     ),
+    /**
+     * The IP value.
+     */
     IP((byte) 6, "ip", "ip", CoreValuesSourceType.IP, DocValueFormat.IP),
     // TODO: what is the difference between "number" and "numeric"?
+    /**
+     * The NUMERIC value.
+     */
     NUMERIC((byte) 7, "numeric", "numeric", CoreValuesSourceType.NUMERIC, DocValueFormat.RAW),
+    /**
+     * The GEOPOINT value.
+     */
     GEOPOINT((byte) 8, "geo_point", "geo_point", CoreValuesSourceType.GEOPOINT, DocValueFormat.GEOHASH),
+    /**
+     * The BOOLEAN value.
+     */
     BOOLEAN((byte) 9, "boolean", "boolean", CoreValuesSourceType.BOOLEAN, DocValueFormat.BOOLEAN),
+    /**
+     * The RANGE value.
+     */
     RANGE((byte) 10, "range", "range", CoreValuesSourceType.RANGE, DocValueFormat.RAW),
+    /**
+     * Creates a new UNSIGNED_LONG.
+     */
     UNSIGNED_LONG((byte) 11, "unsigned_long", "unsigned_long", CoreValuesSourceType.NUMERIC, DocValueFormat.UNSIGNED_LONG),;
 
     final String description;
@@ -81,6 +114,9 @@ public enum ValueType implements Writeable {
     private final byte id;
     private String preferredName;
 
+    /**
+     * The VALUE_TYPE constant.
+     */
     public static final ParseField VALUE_TYPE = new ParseField("value_type", "valueType");
 
     ValueType(byte id, String description, String preferredName, ValuesSourceType valuesSourceType, DocValueFormat defaultFormat) {
@@ -91,6 +127,11 @@ public enum ValueType implements Writeable {
         this.defaultFormat = defaultFormat;
     }
 
+    /**
+     * Returns the preferred name.
+     *
+     * @return the preferred name
+     */
     public String getPreferredName() {
         return preferredName;
     }
@@ -124,10 +165,22 @@ public enum ValueType implements Writeable {
         return this.equals(valueType);
     }
 
+    /**
+     * Returns the not a flag.
+     *
+     * @param valueType the value type
+     * @return the not a flag
+     */
     public boolean isNotA(ValueType valueType) {
         return !isA(valueType);
     }
 
+    /**
+     * Returns the lenient parse.
+     *
+     * @param type the type
+     * @return the lenient parse
+     */
     public static ValueType lenientParse(String type) {
         switch (type) {
             case "string":
@@ -161,6 +214,13 @@ public enum ValueType implements Writeable {
         return description;
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static ValueType readFromStream(StreamInput in) throws IOException {
         byte id = in.readByte();
         for (ValueType valueType : values()) {

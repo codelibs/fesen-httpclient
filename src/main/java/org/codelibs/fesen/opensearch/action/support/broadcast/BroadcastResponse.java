@@ -56,6 +56,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.ConstructingObjectPars
  */
 public class BroadcastResponse extends ActionResponse implements ToXContentObject {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final DefaultShardOperationFailedException[] EMPTY = new DefaultShardOperationFailedException[0];
 
     private static final ParseField _SHARDS_FIELD = new ParseField("_shards");
@@ -69,6 +72,12 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
     private int failedShards;
     private DefaultShardOperationFailedException[] shardFailures = EMPTY;
 
+    /**
+     * Performs the declare broadcast fields step.
+     *
+     * @param <T> the element type
+     * @param PARSER the parser
+     */
     protected static <T extends BroadcastResponse> void declareBroadcastFields(ConstructingObjectParser<T, Void> PARSER) {
         ConstructingObjectParser<BroadcastResponse, Void> shardsParser = new ConstructingObjectParser<>(
             "_shards",
@@ -86,8 +95,17 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
         PARSER.declareObject(constructorArg(), shardsParser, _SHARDS_FIELD);
     }
 
+    /**
+     * Creates a new BroadcastResponse.
+     */
     public BroadcastResponse() {}
 
+    /**
+     * Creates a new BroadcastResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BroadcastResponse(StreamInput in) throws IOException {
         totalShards = in.readVInt();
         successfulShards = in.readVInt();
@@ -101,6 +119,14 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
         }
     }
 
+    /**
+     * Creates a new BroadcastResponse.
+     *
+     * @param totalShards the total shards
+     * @param successfulShards the successful shards
+     * @param failedShards the failed shards
+     * @param shardFailures the shard failures
+     */
     public BroadcastResponse(
         int totalShards,
         int successfulShards,
@@ -119,6 +145,8 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
 
     /**
      * The total shards this request ran against.
+     *
+     * @return the total shards
      */
     public int getTotalShards() {
         return totalShards;
@@ -126,6 +154,8 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
 
     /**
      * The successful shards this request was executed on.
+     *
+     * @return the successful shards
      */
     public int getSuccessfulShards() {
         return successfulShards;
@@ -133,6 +163,8 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
 
     /**
      * The failed shards this request was executed on.
+     *
+     * @return the failed shards
      */
     public int getFailedShards() {
         return failedShards;
@@ -140,6 +172,8 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
 
     /**
      * The REST status that should be used for the response
+     *
+     * @return the status
      */
     public RestStatus getStatus() {
         if (failedShards > 0) {
@@ -151,6 +185,8 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
 
     /**
      * The list of shard failures exception.
+     *
+     * @return the shard failures
      */
     public DefaultShardOperationFailedException[] getShardFailures() {
         return shardFailures;
@@ -178,6 +214,10 @@ public class BroadcastResponse extends ActionResponse implements ToXContentObjec
 
     /**
      * Override in subclass to add custom fields following the common `_shards` field
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
      */
     protected void addCustomXContentFields(XContentBuilder builder, Params params) throws IOException {}
 }

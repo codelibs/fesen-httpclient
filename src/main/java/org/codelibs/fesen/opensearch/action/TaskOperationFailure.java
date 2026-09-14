@@ -86,6 +86,13 @@ public final class TaskOperationFailure implements Writeable, ToXContentFragment
         PARSER.declareObject(constructorArg(), (parser, c) -> OpenSearchException.fromXContent(parser), new ParseField(REASON));
     }
 
+    /**
+     * Creates a new TaskOperationFailure.
+     *
+     * @param nodeId the node identifier
+     * @param taskId the task identifier
+     * @param e the exception
+     */
     public TaskOperationFailure(String nodeId, long taskId, Exception e) {
         this.nodeId = nodeId;
         this.taskId = taskId;
@@ -95,6 +102,9 @@ public final class TaskOperationFailure implements Writeable, ToXContentFragment
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TaskOperationFailure(StreamInput in) throws IOException {
         nodeId = in.readString();
@@ -111,14 +121,29 @@ public final class TaskOperationFailure implements Writeable, ToXContentFragment
         RestStatus.writeTo(out, status);
     }
 
+    /**
+     * Returns the node identifier.
+     *
+     * @return the node identifier
+     */
     public String getNodeId() {
         return this.nodeId;
     }
 
+    /**
+     * Returns the task identifier.
+     *
+     * @return the task identifier
+     */
     public long getTaskId() {
         return this.taskId;
     }
 
+    /**
+     * Returns the cause.
+     *
+     * @return the cause
+     */
     public Exception getCause() {
         return reason;
     }
@@ -128,6 +153,12 @@ public final class TaskOperationFailure implements Writeable, ToXContentFragment
         return "[" + nodeId + "][" + taskId + "] failed, reason [" + reason + "]";
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static TaskOperationFailure fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

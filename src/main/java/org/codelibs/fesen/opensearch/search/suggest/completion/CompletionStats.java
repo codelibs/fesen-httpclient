@@ -60,6 +60,9 @@ public class CompletionStats implements Writeable, ToXContentFragment {
     @Nullable
     private FieldMemoryStats fields;
 
+    /**
+     * Creates a new CompletionStats.
+     */
     public CompletionStats() {}
 
     /**
@@ -72,6 +75,12 @@ public class CompletionStats implements Writeable, ToXContentFragment {
         this.fields = builder.fields;
     }
 
+    /**
+     * Creates a new CompletionStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CompletionStats(StreamInput in) throws IOException {
         sizeInBytes = in.readVLong();
         fields = in.readOptionalWriteable(FieldMemoryStats::new);
@@ -80,6 +89,9 @@ public class CompletionStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link CompletionStats.Builder} instead.
+     *
+     * @param size the size
+     * @param fields the fields
      */
     @Deprecated
     public CompletionStats(long size, @Nullable FieldMemoryStats fields) {
@@ -87,10 +99,20 @@ public class CompletionStats implements Writeable, ToXContentFragment {
         this.fields = fields;
     }
 
+    /**
+     * Returns the size in bytes.
+     *
+     * @return the size in bytes
+     */
     public long getSizeInBytes() {
         return sizeInBytes;
     }
 
+    /**
+     * Returns the size.
+     *
+     * @return the size
+     */
     public ByteSizeValue getSize() {
         return new ByteSizeValue(sizeInBytes);
     }
@@ -103,13 +125,28 @@ public class CompletionStats implements Writeable, ToXContentFragment {
         private long sizeInBytes = 0;
         private FieldMemoryStats fields = null;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the size in bytes.
+         *
+         * @param bytes the bytes
+         * @return the size in bytes
+         */
         public Builder sizeInBytes(long bytes) {
             this.sizeInBytes = bytes;
             return this;
         }
 
+        /**
+         * Returns the field memory stats.
+         *
+         * @param fields the fields
+         * @return the field memory stats
+         */
         public Builder fieldMemoryStats(FieldMemoryStats fields) {
             this.fields = fields;
             return this;
@@ -141,6 +178,11 @@ public class CompletionStats implements Writeable, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param completion the completion
+     */
     public void add(CompletionStats completion) {
         if (completion == null) {
             return;

@@ -44,19 +44,30 @@ import org.codelibs.fesen.opensearch.core.common.breaker.CircuitBreaker;
  */
 @PublicApi(since = "1.0.0")
 public abstract class CircuitBreakerService extends AbstractLifecycleComponent {
+    /**
+     * Creates a new CircuitBreakerService.
+     */
     protected CircuitBreakerService() {}
 
     /**
+     * Returns the breaker.
+     *
+     * @param name the name
      * @return the breaker that can be used to register estimates against
      */
     public abstract CircuitBreaker getBreaker(String name);
 
     /**
+     * Returns the stats.
+     *
      * @return stats about all breakers
      */
     public abstract AllCircuitBreakerStats stats();
 
     /**
+     * Returns the stats.
+     *
+     * @param name the name
      * @return stats about a specific breaker
      */
     public abstract CircuitBreakerStats stats(String name);

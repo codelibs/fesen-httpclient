@@ -50,6 +50,9 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 @PublicApi(since = "1.0.0")
 public class GetStoredScriptRequest extends ClusterManagerNodeReadRequest<GetStoredScriptRequest> {
 
+    /**
+     * The identifier.
+     */
     protected String id;
 
     GetStoredScriptRequest() {
@@ -75,10 +78,21 @@ public class GetStoredScriptRequest extends ClusterManagerNodeReadRequest<GetSto
         return validationException;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @param id the identifier
+     * @return the identifier
+     */
     public GetStoredScriptRequest id(String id) {
         this.id = id;
 

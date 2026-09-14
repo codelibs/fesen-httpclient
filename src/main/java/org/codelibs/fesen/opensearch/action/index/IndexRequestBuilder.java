@@ -55,10 +55,23 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
     implements
         WriteRequestBuilder<IndexRequestBuilder> {
 
+    /**
+     * Creates a new IndexRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public IndexRequestBuilder(OpenSearchClient client, IndexAction action) {
         super(client, action, new IndexRequest());
     }
 
+    /**
+     * Creates a new IndexRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     */
     public IndexRequestBuilder(OpenSearchClient client, IndexAction action, @Nullable String index) {
         super(client, action, new IndexRequest(index));
     }
@@ -66,6 +79,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
     /**
      * Sets the id to index the document under. Optional, and if not set, one will be automatically
      * generated.
+     *
+     * @param id the identifier
+     * @return this instance
      */
     public IndexRequestBuilder setId(String id) {
         request.id(id);
@@ -76,6 +92,7 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      * Index the Map as a JSON.
      *
      * @param source The map to index
+     * @return this instance
      */
     public IndexRequestBuilder setSource(Map<String, ?> source) {
         request.source(source);
@@ -86,6 +103,8 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      * Index the Map as the provided content type.
      *
      * @param source The map to index
+     * @param contentType the content type
+     * @return this instance
      */
     public IndexRequestBuilder setSource(Map<String, ?> source, MediaType contentType) {
         request.source(source, contentType);
@@ -97,6 +116,10 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      * <p>
      * Note, its preferable to either set it using {@link #setSource(XContentBuilder)}
      * or using the {@code #setSource(byte[], MediaType)}.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return this instance
      */
     public IndexRequestBuilder setSource(String source, MediaType mediaType) {
         request.source(source, mediaType);
@@ -105,6 +128,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
 
     /**
      * Sets the content source to index.
+     *
+     * @param sourceBuilder the source builder
+     * @return this instance
      */
     public IndexRequestBuilder setSource(XContentBuilder sourceBuilder) {
         request.source(sourceBuilder);
@@ -118,6 +144,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      * number. Also the first argument in each pair (the field name) must have a
      * valid String representation.</b>
      * </p>
+     *
+     * @param source the source
+     * @return this instance
      */
     public IndexRequestBuilder setSource(Object... source) {
         request.source(source);
@@ -126,6 +155,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
 
     /**
      * Sets the type of operation to perform.
+     *
+     * @param opType the op type
+     * @return this instance
      */
     public IndexRequestBuilder setOpType(DocWriteRequest.OpType opType) {
         request.opType(opType);
@@ -134,6 +166,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
 
     /**
      * Set to {@code true} to force this index to use {@link org.codelibs.fesen.opensearch.action.index.IndexRequest.OpType#CREATE}.
+     *
+     * @param create the create
+     * @return this instance
      */
     public IndexRequestBuilder setCreate(boolean create) {
         request.create(create);
@@ -146,6 +181,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      *
      * If the document last modification was assigned a different sequence number a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @param seqNo the seq no
+     * @return this instance
      */
     public IndexRequestBuilder setIfSeqNo(long seqNo) {
         request.setIfSeqNo(seqNo);
@@ -158,6 +196,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
      *
      * If the document last modification was assigned a different term a
      * {@link org.codelibs.fesen.opensearch.index.engine.VersionConflictEngineException} will be thrown.
+     *
+     * @param term the term
+     * @return this instance
      */
     public IndexRequestBuilder setIfPrimaryTerm(long term) {
         request.setIfPrimaryTerm(term);
@@ -166,6 +207,9 @@ public class IndexRequestBuilder extends ReplicationRequestBuilder<IndexRequest,
 
     /**
      * Sets the ingest pipeline to be executed before indexing the document
+     *
+     * @param pipeline the pipeline
+     * @return this instance
      */
     public IndexRequestBuilder setPipeline(String pipeline) {
         request.setPipeline(pipeline);

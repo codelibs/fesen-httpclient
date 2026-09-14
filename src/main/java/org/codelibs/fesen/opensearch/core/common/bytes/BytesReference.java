@@ -59,6 +59,9 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
     /**
      * Convert an {@link XContentBuilder} into a BytesReference. This method closes the builder,
      * so no further fields may be added.
+     *
+     * @param xContentBuilder the XContent builder
+     * @return the bytes
      */
     static BytesReference bytes(XContentBuilder xContentBuilder) {
         xContentBuilder.close();
@@ -72,6 +75,9 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
     /**
      * Returns a compact array from the given BytesReference. The returned array won't be copied unless necessary. If you need
      * to modify the returned array use {@code BytesRef.deepCopyOf(reference.toBytesRef()} instead
+     *
+     * @param reference the reference
+     * @return the bytes
      */
     static byte[] toBytes(BytesReference reference) {
         final BytesRef bytesRef = reference.toBytesRef();
@@ -84,6 +90,10 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
     /**
      * Returns BytesReference either wrapping the provided {@link ByteArray} or in case the has a backing raw byte array one that wraps
      * that backing array directly.
+     *
+     * @param byteArray the byte array
+     * @param length the length
+     * @return the new byte array
      */
     static BytesReference fromByteArray(ByteArray byteArray, int length) {
         if (length == 0) {
@@ -97,11 +107,17 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
 
     /**
      * Returns the byte at the specified index. Need to be between 0 and length.
+     *
+     * @param index the index
+     * @return the value
      */
     byte get(int index);
 
     /**
      * Returns the integer read from the 4 bytes (big endian) starting at the given index.
+     *
+     * @param index the index
+     * @return the int
      */
     default int getInt(int index) {
         return ((get(index) & 0xFF) << 24) | ((get(index + 1) & 0xFF) << 16) | ((get(index + 2) & 0xFF) << 8) | (get(index + 3) & 0xFF);
@@ -117,42 +133,61 @@ public interface BytesReference extends Comparable<BytesReference>, ToXContentFr
 
     /**
      * The length.
+     *
+     * @return the length
      */
     int length();
 
     /**
      * Slice the bytes from the {@code from} index up to {@code length}.
+     *
+     * @param from the offset
+     * @param length the length
+     * @return the slice
      */
     BytesReference slice(int from, int length);
 
     /**
      * The amount of memory used by this BytesReference
+     *
+     * @return the ram bytes used
      */
     long ramBytesUsed();
 
     /**
      * A stream input of the bytes.
+     *
+     * @return the stream input
+     * @throws IOException if an I/O error occurs
      */
     StreamInput streamInput() throws IOException;
 
     /**
      * Writes the bytes directly to the output stream.
+     *
+     * @param os the OS
+     * @throws IOException if an I/O error occurs
      */
     void writeTo(OutputStream os) throws IOException;
 
     /**
      * Interprets the referenced bytes as UTF8 bytes, returning the resulting string
+     *
+     * @return the utf8 to string
      */
     String utf8ToString();
 
     /**
      * Converts to Lucene BytesRef.
+     *
+     * @return the bytes ref
      */
     BytesRef toBytesRef();
 
     /**
      * Returns a BytesRefIterator for this BytesReference. This method allows
      * access to the internal pages of this reference without copying them. Use with care!
+     * @return an iterator over the elements of this instance
      * @see BytesRefIterator
      */
     BytesRefIterator iterator();

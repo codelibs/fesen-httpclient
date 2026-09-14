@@ -80,15 +80,32 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
         final String nodeId;
         String name;
 
+        /**
+         * Creates a new NodeView.
+         *
+         * @param nodeId the node identifier
+         */
         public NodeView(String nodeId) {
             this.nodeId = nodeId;
         }
 
+        /**
+         * Creates a new NodeView.
+         *
+         * @param nodeId the node identifier
+         * @param name the name
+         */
         public NodeView(String nodeId, String name) {
             this(nodeId);
             this.name = name;
         }
 
+        /**
+         * Creates a new NodeView by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public NodeView(StreamInput in) throws IOException {
             this(in.readString(), in.readString());
         }
@@ -141,8 +158,17 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
         PARSER.declareNamedObjects(VerifyRepositoryResponse::setNodes, NodeView.PARSER, new ParseField("nodes"));
     }
 
+    /**
+     * Creates a new VerifyRepositoryResponse.
+     */
     public VerifyRepositoryResponse() {}
 
+    /**
+     * Creates a new VerifyRepositoryResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public VerifyRepositoryResponse(StreamInput in) throws IOException {
         super(in);
         this.nodes = in.readList(NodeView::new);
@@ -153,10 +179,20 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
         out.writeList(nodes);
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public List<NodeView> getNodes() {
         return nodes;
     }
 
+    /**
+     * Sets the nodes.
+     *
+     * @param nodes the nodes
+     */
     protected void setNodes(List<NodeView> nodes) {
         this.nodes = nodes;
     }
@@ -177,6 +213,12 @@ public class VerifyRepositoryResponse extends ActionResponse implements ToXConte
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static VerifyRepositoryResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

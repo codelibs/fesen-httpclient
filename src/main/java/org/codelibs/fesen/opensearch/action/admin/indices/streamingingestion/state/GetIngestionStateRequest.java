@@ -37,7 +37,13 @@ import static org.codelibs.fesen.opensearch.action.pagination.PageParams.PARAM_A
  */
 @PublicApi(since = "3.6.0")
 public class GetIngestionStateRequest extends BroadcastRequest<GetIngestionStateRequest> {
+    /**
+     * The DEFAULT_PAGE_SIZE constant.
+     */
     public static final int DEFAULT_PAGE_SIZE = 1000;
+    /**
+     * The DEFAULT_SORT_VALUE constant.
+     */
     public static final String DEFAULT_SORT_VALUE = PARAM_ASC_SORT_VALUE;
 
     private int[] shards;
@@ -46,6 +52,11 @@ public class GetIngestionStateRequest extends BroadcastRequest<GetIngestionState
     // holds the <index,shard> pairs to consider when using pagination
     private List<IndexShardPair> indexShardPairsList;
 
+    /**
+     * Creates a new GetIngestionStateRequest.
+     *
+     * @param indices the indices
+     */
     public GetIngestionStateRequest(String[] indices) {
         super();
         this.indices = indices;
@@ -73,6 +84,11 @@ public class GetIngestionStateRequest extends BroadcastRequest<GetIngestionState
         out.writeList(indexShardPairsList);
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @return the shards
+     */
     public int[] getShards() {
         return shards;
     }

@@ -44,9 +44,15 @@ import java.io.IOException;
  * Abstract diffable object with simple diffs implementation that sends the entire object if object has changed or
  * nothing is object remained the same. Comparing to AbstractDiffable, this class also works with NamedWriteables
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public abstract class AbstractNamedDiffable<T extends NamedDiffable<T>> implements Diffable<T>, NamedWriteable {
+    /**
+     * Creates a new AbstractNamedDiffable.
+     */
+    public AbstractNamedDiffable() {
+    }
 
     @Override
     public Diff<T> diff(T previousState) {
@@ -57,6 +63,16 @@ public abstract class AbstractNamedDiffable<T extends NamedDiffable<T>> implemen
         }
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param <T> the element type
+     * @param tClass the t class
+     * @param name the name
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static <T extends NamedDiffable<T>> NamedDiff<T> readDiffFrom(Class<? extends T> tClass, String name, StreamInput in)
         throws IOException {
         return new CompleteNamedDiff<>(tClass, name, in);
@@ -145,6 +161,11 @@ public abstract class AbstractNamedDiffable<T extends NamedDiffable<T>> implemen
         }
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     @SuppressWarnings("unchecked")
     public T get() {
         return (T) this;

@@ -59,20 +59,41 @@ import static org.codelibs.fesen.opensearch.index.query.AbstractQueryBuilder.par
 /**
  * Base class for sort object builders
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWriteable, ToXContentObject, Rewriteable<SortBuilder<?>> {
+    /**
+     * Creates a new SortBuilder.
+     */
+    public SortBuilder() {
+    }
 
+    /**
+     * The order.
+     */
     protected SortOrder order = SortOrder.ASC;
 
     // parse fields common to more than one SortBuilder
+    /**
+     * The ORDER_FIELD constant.
+     */
     public static final ParseField ORDER_FIELD = new ParseField("order");
+    /**
+     * The NESTED_FILTER_FIELD constant.
+     */
     public static final ParseField NESTED_FILTER_FIELD = new ParseField("nested_filter");
+    /**
+     * The NESTED_PATH_FIELD constant.
+     */
     public static final ParseField NESTED_PATH_FIELD = new ParseField("nested_path");
 
     /**
      * Set the order of sorting.
+     *
+     * @param order the order
+     * @return the order
      */
     @SuppressWarnings("unchecked")
     public T order(SortOrder order) {
@@ -83,11 +104,20 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
 
     /**
      * Return the {@link SortOrder} used for this {@link SortBuilder}.
+     *
+     * @return the order
      */
     public SortOrder order() {
         return this.order;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static List<SortBuilder<?>> fromXContent(XContentParser parser) throws IOException {
         List<SortBuilder<?>> sortFields = new ArrayList<>(2);
         XContentParser.Token token = parser.currentToken();
@@ -146,6 +176,12 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
         }
     }
 
+    /**
+     * Parses the nested filter.
+     *
+     * @param parser the parser
+     * @return this instance
+     */
     protected static QueryBuilder parseNestedFilter(XContentParser parser) {
         try {
             return parseInnerQueryBuilder(parser);

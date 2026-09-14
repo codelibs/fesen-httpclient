@@ -54,10 +54,22 @@ public class PutMappingRequestBuilder extends AcknowledgedRequestBuilder<
     AcknowledgedResponse,
     PutMappingRequestBuilder> {
 
+    /**
+     * Creates a new PutMappingRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public PutMappingRequestBuilder(OpenSearchClient client, PutMappingAction action) {
         super(client, action, new PutMappingRequest());
     }
 
+    /**
+     * Sets the indices.
+     *
+     * @param indices the indices
+     * @return this instance
+     */
     public PutMappingRequestBuilder setIndices(String... indices) {
         request.indices(indices);
         return this;
@@ -65,6 +77,9 @@ public class PutMappingRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The mapping source definition.
+     *
+     * @param mappingBuilder the mapping builder
+     * @return this instance
      */
     public PutMappingRequestBuilder setSource(XContentBuilder mappingBuilder) {
         request.source(mappingBuilder);
@@ -73,6 +88,10 @@ public class PutMappingRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The mapping source definition.
+     *
+     * @param mappingSource the mapping source
+     * @param mediaType the media type
+     * @return this instance
      */
     public PutMappingRequestBuilder setSource(String mappingSource, MediaType mediaType) {
         request.source(mappingSource, mediaType);

@@ -38,27 +38,50 @@ package org.codelibs.fesen.opensearch.common.lifecycle;
  * @opensearch.internal
  */
 public abstract class LifecycleListener {
+    /**
+     * Creates a new LifecycleListener.
+     */
+    public LifecycleListener() {
+    }
 
+    /**
+     * Performs the before start step.
+     */
     public void beforeStart() {
 
     }
 
+    /**
+     * Performs the after start step.
+     */
     public void afterStart() {
 
     }
 
+    /**
+     * Performs the before stop step.
+     */
     public void beforeStop() {
 
     }
 
+    /**
+     * Performs the after stop step.
+     */
     public void afterStop() {
 
     }
 
+    /**
+     * Performs the before close step.
+     */
     public void beforeClose() {
 
     }
 
+    /**
+     * Performs the after close step.
+     */
     public void afterClose() {
 
     }

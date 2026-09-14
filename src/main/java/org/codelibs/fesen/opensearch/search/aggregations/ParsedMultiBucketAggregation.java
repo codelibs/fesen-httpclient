@@ -50,13 +50,25 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 /**
  * A multi-bucket agg that has been parsed
  *
+ * @param <B> the builder type
  * @opensearch.internal
  */
 public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAggregation.Bucket> extends ParsedAggregation
     implements
         MultiBucketsAggregation {
+            /**
+             * Creates a new ParsedMultiBucketAggregation.
+             */
+            public ParsedMultiBucketAggregation() {
+            }
 
+    /**
+     * The buckets.
+     */
     protected final List<B> buckets = new ArrayList<>();
+    /**
+     * The keyed.
+     */
     protected boolean keyed = false;
 
     @Override
@@ -77,6 +89,13 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
         return builder;
     }
 
+    /**
+     * Performs the declare multi bucket aggregation fields step.
+     *
+     * @param objectParser the object parser
+     * @param bucketParser the bucket parser
+     * @param keyedBucketParser the keyed bucket parser
+     */
     protected static void declareMultiBucketAggregationFields(
         final ObjectParser<? extends ParsedMultiBucketAggregation, Void> objectParser,
         final CheckedFunction<XContentParser, ParsedBucket, IOException> bucketParser,
@@ -105,12 +124,22 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
      * @opensearch.internal
      */
     public abstract static class ParsedBucket implements MultiBucketsAggregation.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private Aggregations aggregations;
         private String keyAsString;
         private long docCount;
         private boolean keyed;
 
+        /**
+         * Sets the key as string.
+         *
+         * @param keyAsString the key as string
+         */
         protected void setKeyAsString(String keyAsString) {
             this.keyAsString = keyAsString;
         }
@@ -120,6 +149,11 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
             return keyAsString;
         }
 
+        /**
+         * Sets the doc count.
+         *
+         * @param docCount the doc count
+         */
         protected void setDocCount(long docCount) {
             this.docCount = docCount;
         }
@@ -129,14 +163,29 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
             return docCount;
         }
 
+        /**
+         * Sets the keyed.
+         *
+         * @param keyed the keyed
+         */
         public void setKeyed(boolean keyed) {
             this.keyed = keyed;
         }
 
+        /**
+         * Returns the keyed flag.
+         *
+         * @return the keyed flag
+         */
         protected boolean isKeyed() {
             return keyed;
         }
 
+        /**
+         * Sets the aggregations.
+         *
+         * @param aggregations the aggregations
+         */
         protected void setAggregations(Aggregations aggregations) {
             this.aggregations = aggregations;
         }
@@ -166,10 +215,28 @@ public abstract class ParsedMultiBucketAggregation<B extends ParsedMultiBucketAg
             return builder;
         }
 
+        /**
+         * Returns the key to XContent.
+         *
+         * @param builder the content builder
+         * @return the key to XContent
+         * @throws IOException if an I/O error occurs
+         */
         protected XContentBuilder keyToXContent(XContentBuilder builder) throws IOException {
             return builder.field(CommonFields.KEY.getPreferredName(), getKey());
         }
 
+        /**
+         * Parses the XContent.
+         *
+         * @param <B> the builder type
+         * @param parser the parser
+         * @param keyed the keyed
+         * @param bucketSupplier the bucket supplier
+         * @param keyConsumer the key consumer
+         * @return this instance
+         * @throws IOException if an I/O error occurs
+         */
         protected static <B extends ParsedBucket> B parseXContent(
             final XContentParser parser,
             final boolean keyed,

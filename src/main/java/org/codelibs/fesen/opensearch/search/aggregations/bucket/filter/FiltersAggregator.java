@@ -75,6 +75,12 @@ public final class FiltersAggregator {
         private final String key;
         private final QueryBuilder filter;
 
+        /**
+         * Creates a new KeyedFilter.
+         *
+         * @param key the key
+         * @param filter the filter
+         */
         public KeyedFilter(String key, QueryBuilder filter) {
             if (key == null) {
                 throw new IllegalArgumentException("[key] must not be null");
@@ -92,10 +98,20 @@ public final class FiltersAggregator {
             out.writeNamedWriteable(filter);
         }
 
+        /**
+         * Returns the key.
+         *
+         * @return the key
+         */
         public String key() {
             return key;
         }
 
+        /**
+         * Filters this instance.
+         *
+         * @return this instance
+         */
         public QueryBuilder filter() {
             return filter;
         }

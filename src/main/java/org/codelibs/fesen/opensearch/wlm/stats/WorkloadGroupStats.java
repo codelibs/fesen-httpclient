@@ -40,6 +40,12 @@ import java.util.Objects;
 public class WorkloadGroupStats implements ToXContentObject, Writeable {
     private final Map<String, WorkloadGroupStatsHolder> stats;
 
+    /**
+     * Creates a new WorkloadGroupStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public WorkloadGroupStats(StreamInput in) throws IOException {
         stats = in.readMap(StreamInput::readString, WorkloadGroupStatsHolder::new);
     }
@@ -83,9 +89,21 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
      * the instance will only be created on demand through stats api
      */
     public static class WorkloadGroupStatsHolder implements ToXContentObject, Writeable {
+        /**
+         * The COMPLETIONS constant.
+         */
         public static final String COMPLETIONS = "total_completions";
+        /**
+         * The REJECTIONS constant.
+         */
         public static final String REJECTIONS = "total_rejections";
+        /**
+         * The TOTAL_CANCELLATIONS constant.
+         */
         public static final String TOTAL_CANCELLATIONS = "total_cancellations";
+        /**
+         * The FAILURES constant.
+         */
         public static final String FAILURES = "failures";
         private long completions;
         private long rejections;
@@ -94,8 +112,17 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
         private Map<ResourceType, ResourceStats> resourceStats;
 
         // this is needed to support the factory method
+        /**
+         * Creates a new WorkloadGroupStatsHolder.
+         */
         public WorkloadGroupStatsHolder() {}
 
+        /**
+         * Creates a new WorkloadGroupStatsHolder by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public WorkloadGroupStatsHolder(StreamInput in) throws IOException {
             this.completions = in.readVLong();
             this.rejections = in.readVLong();
@@ -163,14 +190,32 @@ public class WorkloadGroupStats implements ToXContentObject, Writeable {
      * point in time resource level stats holder
      */
     public static class ResourceStats implements ToXContentObject, Writeable {
+        /**
+         * The CURRENT_USAGE constant.
+         */
         public static final String CURRENT_USAGE = "current_usage";
+        /**
+         * The CANCELLATIONS constant.
+         */
         public static final String CANCELLATIONS = "cancellations";
+        /**
+         * The REJECTIONS constant.
+         */
         public static final String REJECTIONS = "rejections";
+        /**
+         * The PRECISION constant.
+         */
         public static final double PRECISION = 1e-9;
         private final double currentUsage;
         private final long cancellations;
         private final long rejections;
 
+        /**
+         * Creates a new ResourceStats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public ResourceStats(StreamInput in) throws IOException {
             this.currentUsage = in.readDouble();
             this.cancellations = in.readVLong();

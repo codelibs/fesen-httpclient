@@ -53,7 +53,11 @@ public final class XContentParserUtils {
 
     /**
      * Makes sure that current token is of type {@link Token#FIELD_NAME} and the field name is equal to the provided one
+     * @param parser the parser
+     * @param token the token
+     * @param fieldName the field name
      * @throws ParsingException if the token is not of type {@link Token#FIELD_NAME} or is not equal to the given field name
+     * @throws IOException if an I/O error occurs
      */
     public static void ensureFieldName(XContentParser parser, Token token, String fieldName) throws IOException {
         ensureExpectedToken(Token.FIELD_NAME, token, parser);
@@ -65,6 +69,10 @@ public final class XContentParserUtils {
     }
 
     /**
+     * Performs the throw unknown field step.
+     *
+     * @param field the field
+     * @param location the location
      * @throws ParsingException with a "unknown field found" reason
      */
     public static void throwUnknownField(String field, XContentLocation location) {
@@ -73,6 +81,10 @@ public final class XContentParserUtils {
     }
 
     /**
+     * Performs the throw unknown token step.
+     *
+     * @param token the token
+     * @param location the location
      * @throws ParsingException with a "unknown token found" reason
      */
     public static void throwUnknownToken(Token token, XContentLocation location) {
@@ -83,6 +95,9 @@ public final class XContentParserUtils {
     /**
      * Makes sure that provided token is of the expected type
      *
+     * @param expected the expected
+     * @param actual the actual
+     * @param parser the parser
      * @throws ParsingException if the token is not equal to the expected type
      */
     public static void ensureExpectedToken(Token expected, Token actual, XContentParser parser) {
@@ -111,7 +126,10 @@ public final class XContentParserUtils {
      *    <li>{@link Token#START_ARRAY}: {@link XContentParser#listOrderedMap()} ()}</li>
      * </ul>
      *
+     * @param parser the parser
+     * @return this instance
      * @throws ParsingException if the token is none of the allowed values
+     * @throws IOException if an I/O error occurs
      */
     public static Object parseFieldsValue(XContentParser parser) throws IOException {
         Token token = parser.currentToken();

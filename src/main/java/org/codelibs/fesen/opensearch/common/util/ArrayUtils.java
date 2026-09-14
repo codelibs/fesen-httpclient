@@ -46,6 +46,10 @@ public class ArrayUtils {
 
     /**
      * Concatenates 2 arrays
+     *
+     * @param one the one
+     * @param other the other instance
+     * @return the concat
      */
     public static String[] concat(String[] one, String[] other) {
         return concat(one, other, String.class);
@@ -53,6 +57,12 @@ public class ArrayUtils {
 
     /**
      * Concatenates 2 arrays
+     *
+     * @param <T> the element type
+     * @param one the one
+     * @param other the other instance
+     * @param clazz the class
+     * @return the concat
      */
     public static <T> T[] concat(T[] one, T[] other, Class<T> clazz) {
         T[] target = (T[]) Array.newInstance(clazz, one.length + other.length);

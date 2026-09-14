@@ -44,6 +44,11 @@ public class RemoteStoreStats implements Writeable, ToXContentFragment {
         this.shardRouting = new ShardRouting(in);
     }
 
+    /**
+     * Returns the shard routing.
+     *
+     * @return the shard routing
+     */
     public ShardRouting getShardRouting() {
         return shardRouting;
     }
@@ -226,6 +231,12 @@ public class RemoteStoreStats implements Writeable, ToXContentFragment {
      */
     public static final class UploadStatsFields {
         /**
+         * Creates a new UploadStatsFields.
+         */
+        public UploadStatsFields() {
+        }
+
+        /**
          * Lag in terms of bytes b/w local and remote store
          */
         static final String BYTES_LAG = "bytes_lag";
@@ -352,15 +363,42 @@ public class RemoteStoreStats implements Writeable, ToXContentFragment {
      * Reusable sub fields for {@link UploadStatsFields} and {@link DownloadStatsFields}
      */
     public static final class SubFields {
+        /**
+         * Creates a new SubFields.
+         */
+        public SubFields() {
+        }
+
+        /**
+         * The STARTED constant.
+         */
         public static final String STARTED = "started";
+        /**
+         * The SUCCEEDED constant.
+         */
         public static final String SUCCEEDED = "succeeded";
+        /**
+         * The FAILED constant.
+         */
         public static final String FAILED = "failed";
 
+        /**
+         * The STARTED_BYTES constant.
+         */
         public static final String STARTED_BYTES = "started_bytes";
+        /**
+         * The SUCCEEDED_BYTES constant.
+         */
         public static final String SUCCEEDED_BYTES = "succeeded_bytes";
+        /**
+         * The FAILED_BYTES constant.
+         */
         public static final String FAILED_BYTES = "failed_bytes";
 
         static final String DOWNLOAD = "download";
+        /**
+         * The UPLOAD constant.
+         */
         public static final String UPLOAD = "upload";
 
         /**

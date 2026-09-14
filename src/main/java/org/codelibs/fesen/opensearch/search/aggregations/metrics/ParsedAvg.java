@@ -44,6 +44,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedAvg extends ParsedSingleValueNumericMetricsAggregation implements Avg {
+    /**
+     * Creates a new ParsedAvg.
+     */
+    public ParsedAvg() {
+    }
 
     @Override
     public double getValue() {
@@ -73,6 +78,13 @@ public class ParsedAvg extends ParsedSingleValueNumericMetricsAggregation implem
         declareSingleValueFields(PARSER, Double.POSITIVE_INFINITY);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     */
     public static ParsedAvg fromXContent(XContentParser parser, final String name) {
         ParsedAvg avg = PARSER.apply(parser, null);
         avg.setName(name);

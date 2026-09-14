@@ -112,6 +112,11 @@ public class SearchStats implements Writeable, ToXContentFragment {
 
         Map<String, PhaseStatsLongHolder> requestStatsHolder = new HashMap<>();
 
+        /**
+         * Returns the request stats holder.
+         *
+         * @return the request stats holder
+         */
         public Map<String, PhaseStatsLongHolder> getRequestStatsHolder() {
             return requestStatsHolder;
         }
@@ -216,6 +221,27 @@ public class SearchStats implements Writeable, ToXContentFragment {
         /**
          * This constructor will be deprecated in 4.0
          * Use Builder to create Stats object
+         *
+         * @param queryCount the query count
+         * @param queryTimeInMillis the query time in milliseconds
+         * @param queryCurrent the query current
+         * @param concurrentQueryCount the concurrent query count
+         * @param concurrentQueryTimeInMillis the concurrent query time in milliseconds
+         * @param concurrentQueryCurrent the concurrent query current
+         * @param queryConcurrency the query concurrency
+         * @param fetchCount the fetch count
+         * @param fetchTimeInMillis the fetch time in milliseconds
+         * @param fetchCurrent the fetch current
+         * @param scrollCount the scroll count
+         * @param scrollTimeInMillis the scroll time in milliseconds
+         * @param scrollCurrent the scroll current
+         * @param pitCount the pit count
+         * @param pitTimeInMillis the pit time in milliseconds
+         * @param pitCurrent the pit current
+         * @param suggestCount the suggest count
+         * @param suggestTimeInMillis the suggest time in milliseconds
+         * @param suggestCurrent the suggest current
+         * @param searchIdleReactivateCount the search idle reactivate count
          */
         @Deprecated
         public Stats(
@@ -319,6 +345,11 @@ public class SearchStats implements Writeable, ToXContentFragment {
             }
         }
 
+        /**
+         * Adds this instance.
+         *
+         * @param stats the stats
+         */
         public void add(Stats stats) {
             queryCount += stats.queryCount;
             queryTimeInMillis += stats.queryTimeInMillis;
@@ -354,14 +385,29 @@ public class SearchStats implements Writeable, ToXContentFragment {
             starTreeQueryFailed += stats.starTreeQueryFailed;
         }
 
+        /**
+         * Returns the query time.
+         *
+         * @return the query time
+         */
         public TimeValue getQueryTime() {
             return new TimeValue(queryTimeInMillis);
         }
 
+        /**
+         * Returns the concurrent query time.
+         *
+         * @return the concurrent query time
+         */
         public TimeValue getConcurrentQueryTime() {
             return new TimeValue(concurrentQueryTimeInMillis);
         }
 
+        /**
+         * Returns the concurrent avg slice count.
+         *
+         * @return the concurrent avg slice count
+         */
         public double getConcurrentAvgSliceCount() {
             if (concurrentQueryCount == 0) {
                 return 0;
@@ -370,34 +416,76 @@ public class SearchStats implements Writeable, ToXContentFragment {
             }
         }
 
+        /**
+         * Returns the fetch time.
+         *
+         * @return the fetch time
+         */
         public TimeValue getFetchTime() {
             return new TimeValue(fetchTimeInMillis);
         }
 
+        /**
+         * Returns the scroll time.
+         *
+         * @return the scroll time
+         */
         public TimeValue getScrollTime() {
             return new TimeValue(scrollTimeInMillis);
         }
 
+        /**
+         * Returns the pit time.
+         *
+         * @return the pit time
+         */
         public TimeValue getPitTime() {
             return new TimeValue(pitTimeInMillis);
         }
 
+        /**
+         * Returns the suggest time.
+         *
+         * @return the suggest time
+         */
         public TimeValue getSuggestTime() {
             return new TimeValue(suggestTimeInMillis);
         }
 
+        /**
+         * Returns the star tree query time.
+         *
+         * @return the star tree query time
+         */
         public TimeValue getStarTreeQueryTime() {
             return new TimeValue(starTreeQueryTimeInMillis);
         }
 
+        /**
+         * Returns the star tree query current.
+         *
+         * @return the star tree query current
+         */
         public long getStarTreeQueryCurrent() {
             return starTreeQueryCurrent;
         }
 
+        /**
+         * Returns the star tree query failed.
+         *
+         * @return the star tree query failed
+         */
         public long getStarTreeQueryFailed() {
             return starTreeQueryFailed;
         }
 
+        /**
+         * Reads the stats.
+         *
+         * @param in the input to read from
+         * @return the stats
+         * @throws IOException if an I/O error occurs
+         */
         public static Stats readStats(StreamInput in) throws IOException {
             return new Stats(in);
         }
@@ -565,128 +653,281 @@ public class SearchStats implements Writeable, ToXContentFragment {
             @Nullable
             private RequestStatsLongHolder requestStatsLongHolder = null;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Queries the count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder queryCount(long count) {
                 this.queryCount = count;
                 return this;
             }
 
+            /**
+             * Queries the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder queryTimeInMillis(long time) {
                 this.queryTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Queries the current.
+             *
+             * @param current the current
+             * @return this instance
+             */
             public Builder queryCurrent(long current) {
                 this.queryCurrent = current;
                 return this;
             }
 
+            /**
+             * Queries the failed.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder queryFailed(long count) {
                 this.queryFailedCount = count;
                 return this;
             }
 
+            /**
+             * Returns the concurrent query count.
+             *
+             * @param count the count
+             * @return the concurrent query count
+             */
             public Builder concurrentQueryCount(long count) {
                 this.concurrentQueryCount = count;
                 return this;
             }
 
+            /**
+             * Returns the concurrent query time in milliseconds.
+             *
+             * @param time the time
+             * @return the concurrent query time in milliseconds
+             */
             public Builder concurrentQueryTimeInMillis(long time) {
                 this.concurrentQueryTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Returns the concurrent query current.
+             *
+             * @param current the current
+             * @return the concurrent query current
+             */
             public Builder concurrentQueryCurrent(long current) {
                 this.concurrentQueryCurrent = current;
                 return this;
             }
 
+            /**
+             * Queries the concurrency.
+             *
+             * @param concurrency the concurrency
+             * @return this instance
+             */
             public Builder queryConcurrency(long concurrency) {
                 this.queryConcurrency = concurrency;
                 return this;
             }
 
+            /**
+             * Fetches the count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder fetchCount(long count) {
                 this.fetchCount = count;
                 return this;
             }
 
+            /**
+             * Fetches the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder fetchTimeInMillis(long time) {
                 this.fetchTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Fetches the current.
+             *
+             * @param current the current
+             * @return this instance
+             */
             public Builder fetchCurrent(long current) {
                 this.fetchCurrent = current;
                 return this;
             }
 
+            /**
+             * Scrolls the count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder scrollCount(long count) {
                 this.scrollCount = count;
                 return this;
             }
 
+            /**
+             * Scrolls the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder scrollTimeInMillis(long time) {
                 this.scrollTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Scrolls the current.
+             *
+             * @param current the current
+             * @return this instance
+             */
             public Builder scrollCurrent(long current) {
                 this.scrollCurrent = current;
                 return this;
             }
 
+            /**
+             * Suggests the count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder suggestCount(long count) {
                 this.suggestCount = count;
                 return this;
             }
 
+            /**
+             * Suggests the time in milliseconds.
+             *
+             * @param time the time
+             * @return this instance
+             */
             public Builder suggestTimeInMillis(long time) {
                 this.suggestTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Suggests the current.
+             *
+             * @param current the current
+             * @return this instance
+             */
             public Builder suggestCurrent(long current) {
                 this.suggestCurrent = current;
                 return this;
             }
 
+            /**
+             * Returns the pit count.
+             *
+             * @param count the count
+             * @return the pit count
+             */
             public Builder pitCount(long count) {
                 this.pitCount = count;
                 return this;
             }
 
+            /**
+             * Returns the pit time in milliseconds.
+             *
+             * @param time the time
+             * @return the pit time in milliseconds
+             */
             public Builder pitTimeInMillis(long time) {
                 this.pitTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Returns the pit current.
+             *
+             * @param current the current
+             * @return the pit current
+             */
             public Builder pitCurrent(long current) {
                 this.pitCurrent = current;
                 return this;
             }
 
+            /**
+             * Searches the idle reactivate count.
+             *
+             * @param count the count
+             * @return this instance
+             */
             public Builder searchIdleReactivateCount(long count) {
                 this.searchIdleReactivateCount = count;
                 return this;
             }
 
+            /**
+             * Returns the star tree query count.
+             *
+             * @param count the count
+             * @return the star tree query count
+             */
             public Builder starTreeQueryCount(long count) {
                 this.starTreeQueryCount = count;
                 return this;
             }
 
+            /**
+             * Returns the star tree query time in milliseconds.
+             *
+             * @param time the time
+             * @return the star tree query time in milliseconds
+             */
             public Builder starTreeQueryTimeInMillis(long time) {
                 this.starTreeQueryTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Returns the star tree query current.
+             *
+             * @param current the current
+             * @return the star tree query current
+             */
             public Builder starTreeQueryCurrent(long current) {
                 this.starTreeQueryCurrent = current;
                 return this;
             }
 
+            /**
+             * Returns the star tree query failed.
+             *
+             * @param count the count
+             * @return the star tree query failed
+             */
             public Builder starTreeQueryFailed(long count) {
                 this.starTreeQueryFailed = count;
                 return this;
@@ -708,16 +949,32 @@ public class SearchStats implements Writeable, ToXContentFragment {
     @Nullable
     private Map<String, Stats> groupStats;
 
+    /**
+     * Creates a new SearchStats.
+     */
     public SearchStats() {
         totalStats = new Stats();
     }
 
+    /**
+     * Creates a new SearchStats.
+     *
+     * @param totalStats the total stats
+     * @param openContexts the open contexts
+     * @param groupStats the group stats
+     */
     public SearchStats(Stats totalStats, long openContexts, @Nullable Map<String, Stats> groupStats) {
         this.totalStats = totalStats;
         this.openContexts = openContexts;
         this.groupStats = groupStats;
     }
 
+    /**
+     * Creates a new SearchStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchStats(StreamInput in) throws IOException {
         totalStats = Stats.readStats(in);
         openContexts = in.readVLong();
@@ -726,6 +983,11 @@ public class SearchStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param searchStats the search stats
+     */
     public void add(SearchStats searchStats) {
         if (searchStats == null) {
             return;
@@ -743,6 +1005,11 @@ public class SearchStats implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Adds the totals.
+     *
+     * @param searchStats the search stats
+     */
     public void addTotals(SearchStats searchStats) {
         if (searchStats == null) {
             return;

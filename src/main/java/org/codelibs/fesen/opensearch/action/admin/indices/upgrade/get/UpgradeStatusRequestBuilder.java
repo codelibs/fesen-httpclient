@@ -47,6 +47,12 @@ public class UpgradeStatusRequestBuilder extends BroadcastOperationRequestBuilde
     UpgradeStatusResponse,
     UpgradeStatusRequestBuilder> {
 
+    /**
+     * Creates a new UpgradeStatusRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public UpgradeStatusRequestBuilder(OpenSearchClient client, UpgradeStatusAction action) {
         super(client, action, new UpgradeStatusRequest());
     }

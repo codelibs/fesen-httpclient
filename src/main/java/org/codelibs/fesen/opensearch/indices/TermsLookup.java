@@ -65,6 +65,14 @@ public class TermsLookup implements Writeable, ToXContentFragment {
     private String routing;
     private QueryBuilder query;
 
+    /**
+     * Creates a new TermsLookup.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @param path the path
+     * @param query the query
+     */
     public TermsLookup(String index, String id, String path, QueryBuilder query) {
         if (index == null) {
             throw new IllegalArgumentException("[" + TermsQueryBuilder.NAME + "] index cannot be null or empty for TermsLookup");
@@ -88,16 +96,29 @@ public class TermsLookup implements Writeable, ToXContentFragment {
         this.query = query;
     }
 
+    /**
+     * Indexes this instance.
+     *
+     * @return this instance
+     */
     public String index() {
         return index;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String id() {
         return id;
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public TermsLookup(StreamInput in) throws IOException {
         if (in.getVersion().before(Version.V_2_0_0)) {
@@ -132,14 +153,30 @@ public class TermsLookup implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Returns the path.
+     *
+     * @return the path
+     */
     public String path() {
         return path;
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @return the routing
+     */
     public String routing() {
         return routing;
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @param routing the routing value
+     * @return the routing
+     */
     public TermsLookup routing(String routing) {
         this.routing = routing;
         return this;
@@ -147,15 +184,31 @@ public class TermsLookup implements Writeable, ToXContentFragment {
 
     private boolean store;
 
+    /**
+     * Stores this instance.
+     *
+     * @return this instance
+     */
     public boolean store() {
         return store;
     }
 
+    /**
+     * Stores this instance.
+     *
+     * @param store the store
+     * @return this instance
+     */
     public TermsLookup store(boolean store) {
         this.store = store;
         return this;
     }
 
+    /**
+     * Queries this instance.
+     *
+     * @return this instance
+     */
     public QueryBuilder query() {
         return query;
     }
@@ -192,6 +245,13 @@ public class TermsLookup implements Writeable, ToXContentFragment {
         PARSER.declareBoolean(TermsLookup::store, new ParseField("store")); // Optional
     }
 
+    /**
+     * Parses the terms lookup.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static TermsLookup parseTermsLookup(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }

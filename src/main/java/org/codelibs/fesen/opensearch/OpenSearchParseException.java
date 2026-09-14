@@ -46,14 +46,33 @@ import java.io.IOException;
 @PublicApi(since = "1.0.0")
 public class OpenSearchParseException extends OpenSearchException {
 
+    /**
+     * Creates a new OpenSearchParseException.
+     *
+     * @param msg the msg
+     * @param args the args
+     */
     public OpenSearchParseException(String msg, Object... args) {
         super(msg, args);
     }
 
+    /**
+     * Creates a new OpenSearchParseException.
+     *
+     * @param msg the msg
+     * @param cause the cause
+     * @param args the args
+     */
     public OpenSearchParseException(String msg, Throwable cause, Object... args) {
         super(msg, cause, args);
     }
 
+    /**
+     * Creates a new OpenSearchParseException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public OpenSearchParseException(StreamInput in) throws IOException {
         super(in);
     }

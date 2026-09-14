@@ -52,16 +52,34 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public class StatsAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, StatsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "stats";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<StatsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, StatsAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new StatsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public StatsAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new StatsAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected StatsAggregationBuilder(
         StatsAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

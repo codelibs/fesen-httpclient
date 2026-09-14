@@ -30,21 +30,42 @@ import java.util.Objects;
  */
 @PublicApi(since = "2.15.0")
 public class TemplatesMetadata extends AbstractDiffable<TemplatesMetadata> implements ToXContentFragment, VerifiableWriteable {
+    /**
+     * The EMPTY_METADATA constant.
+     */
     public static TemplatesMetadata EMPTY_METADATA = builder().build();
     private final Map<String, IndexTemplateMetadata> templates;
 
+    /**
+     * Creates a new TemplatesMetadata.
+     */
     public TemplatesMetadata() {
         this(Collections.emptyMap());
     }
 
+    /**
+     * Creates a new TemplatesMetadata.
+     *
+     * @param templates the templates
+     */
     public TemplatesMetadata(Map<String, IndexTemplateMetadata> templates) {
         this.templates = Collections.unmodifiableMap(templates);
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Returns the templates.
+     *
+     * @return the templates
+     */
     public Map<String, IndexTemplateMetadata> getTemplates() {
         return this.templates;
     }
@@ -97,14 +118,30 @@ public class TemplatesMetadata extends AbstractDiffable<TemplatesMetadata> imple
     public static class Builder {
         private final Map<String, IndexTemplateMetadata> templates;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {
             this.templates = new HashMap<String, IndexTemplateMetadata>();
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public TemplatesMetadata build() {
             return new TemplatesMetadata(templates);
         }
 
+        /**
+         * Writes this instance to the given content builder.
+         *
+         * @param templatesMetadata the templates metadata
+         * @param builder the content builder
+         * @param params the serialization parameters
+         * @throws IOException if an I/O error occurs
+         */
         public static void toXContent(TemplatesMetadata templatesMetadata, XContentBuilder builder, Params params) throws IOException {
             for (IndexTemplateMetadata cursor : templatesMetadata.getTemplates().values()) {
                 IndexTemplateMetadata.Builder.toXContentWithTypes(cursor, builder, params);

@@ -48,6 +48,11 @@ public class SimulatePipelineRequestBuilder extends ActionRequestBuilder<Simulat
 
     /**
      * Create a new builder for {@link SimulatePipelineRequest}s
+     *
+     * @param client the client
+     * @param action the action
+     * @param source the source
+     * @param mediaType the media type
      */
     public SimulatePipelineRequestBuilder(
         OpenSearchClient client,

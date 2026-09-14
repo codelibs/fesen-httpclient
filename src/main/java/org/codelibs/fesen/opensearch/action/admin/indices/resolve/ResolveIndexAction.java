@@ -61,7 +61,13 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ResolveIndexAction INSTANCE = new ResolveIndexAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/resolve/index";
 
     private ResolveIndexAction() {
@@ -76,15 +82,29 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
     @PublicApi(since = "1.0.0")
     public static class Request extends ActionRequest implements IndicesRequest.Replaceable {
 
+        /**
+         * The DEFAULT_INDICES_OPTIONS constant.
+         */
         public static final IndicesOptions DEFAULT_INDICES_OPTIONS = IndicesOptions.strictExpandOpen();
 
         private String[] names;
         private IndicesOptions indicesOptions = DEFAULT_INDICES_OPTIONS;
 
+        /**
+         * Creates a new Request.
+         *
+         * @param names the names
+         */
         public Request(String[] names) {
             this.names = names;
         }
 
+        /**
+         * Creates a new Request.
+         *
+         * @param names the names
+         * @param indicesOptions the indices options
+         */
         public Request(String[] names, IndicesOptions indicesOptions) {
             this.names = names;
             this.indicesOptions = indicesOptions;
@@ -154,10 +174,20 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             this.name = name;
         }
 
+        /**
+         * Sets the name.
+         *
+         * @param name the name
+         */
         protected void setName(String name) {
             this.name = name;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
@@ -186,14 +216,29 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             this.dataStream = in.readOptionalString();
         }
 
+        /**
+         * Returns the aliases.
+         *
+         * @return the aliases
+         */
         public String[] getAliases() {
             return aliases;
         }
 
+        /**
+         * Returns the attributes.
+         *
+         * @return the attributes
+         */
         public String[] getAttributes() {
             return attributes;
         }
 
+        /**
+         * Returns the data stream.
+         *
+         * @return the data stream
+         */
         public String getDataStream() {
             return dataStream;
         }
@@ -258,6 +303,11 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             this.indices = in.readStringArray();
         }
 
+        /**
+         * Returns the indices.
+         *
+         * @return the indices
+         */
         public String[] getIndices() {
             return indices;
         }
@@ -315,10 +365,20 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
             this.timestampField = in.readString();
         }
 
+        /**
+         * Returns the backing indices.
+         *
+         * @return the backing indices
+         */
         public String[] getBackingIndices() {
             return backingIndices;
         }
 
+        /**
+         * Returns the timestamp field.
+         *
+         * @return the timestamp field
+         */
         public String getTimestampField() {
             return timestampField;
         }
@@ -374,20 +434,41 @@ public class ResolveIndexAction extends ActionType<ResolveIndexAction.Response> 
         private final List<ResolvedAlias> aliases;
         private final List<ResolvedDataStream> dataStreams;
 
+        /**
+         * Creates a new Response by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Response(StreamInput in) throws IOException {
             this.indices = in.readList(ResolvedIndex::new);
             this.aliases = in.readList(ResolvedAlias::new);
             this.dataStreams = in.readList(ResolvedDataStream::new);
         }
 
+        /**
+         * Returns the indices.
+         *
+         * @return the indices
+         */
         public List<ResolvedIndex> getIndices() {
             return indices;
         }
 
+        /**
+         * Returns the aliases.
+         *
+         * @return the aliases
+         */
         public List<ResolvedAlias> getAliases() {
             return aliases;
         }
 
+        /**
+         * Returns the data streams.
+         *
+         * @return the data streams
+         */
         public List<ResolvedDataStream> getDataStreams() {
             return dataStreams;
         }

@@ -45,19 +45,38 @@ public final class CompressorRegistry {
 
     /**
      * Returns the default compressor
+     *
+     * @return the default compressor
      */
     public static Compressor defaultCompressor() {
         return registeredCompressors.get("DEFLATE");
     }
 
+    /**
+     * Returns the none.
+     *
+     * @return the none
+     */
     public static Compressor none() {
         return registeredCompressors.get(NoneCompressor.NAME);
     }
 
+    /**
+     * Returns the compressed flag.
+     *
+     * @param bytes the bytes
+     * @return the compressed flag
+     */
     public static boolean isCompressed(BytesReference bytes) {
         return compressor(bytes) != null;
     }
 
+    /**
+     * Returns the compressor.
+     *
+     * @param bytes the bytes
+     * @return the compressor
+     */
     @Nullable
     public static Compressor compressor(final BytesReference bytes) {
         for (Compressor compressor : registeredCompressors.values()) {
@@ -77,7 +96,13 @@ public final class CompressorRegistry {
         return null;
     }
 
-    /** Decompress the provided {@link BytesReference}. */
+    /**
+     * Decompress the provided {@link BytesReference}.
+     *
+     * @param bytes the bytes
+     * @return the uncompress
+     * @throws IOException if an I/O error occurs
+     */
     public static BytesReference uncompress(BytesReference bytes) throws IOException {
         Compressor compressor = compressor(bytes);
         if (compressor == null) {
@@ -88,6 +113,10 @@ public final class CompressorRegistry {
 
     /**
      * Uncompress the provided data, data can be detected as compressed using {@link #isCompressed(BytesReference)}.
+     *
+     * @param bytes the bytes
+     * @return the uncompress if needed
+     * @throws IOException if an I/O error occurs
      */
     public static BytesReference uncompressIfNeeded(BytesReference bytes) throws IOException {
         Compressor compressor = compressor(Objects.requireNonNull(bytes, "the BytesReference must not be null"));
@@ -98,6 +127,8 @@ public final class CompressorRegistry {
      * Returns the registered compressors as an Immutable collection
      * <p>
      * note: used for testing
+     *
+     * @return the registered compressors
      */
     public static Map<String, Compressor> registeredCompressors() {
         // no destructive danger as backing map is immutable

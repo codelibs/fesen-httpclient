@@ -86,10 +86,25 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
      */
     @PublicApi(since = "1.0.0")
     public enum Result implements Writeable {
+        /**
+         * The CREATED value.
+         */
         CREATED(0),
+        /**
+         * The UPDATED value.
+         */
         UPDATED(1),
+        /**
+         * The DELETED value.
+         */
         DELETED(2),
+        /**
+         * The NOT_FOUND value.
+         */
         NOT_FOUND(3),
+        /**
+         * The NOOP value.
+         */
         NOOP(4);
 
         private final byte op;
@@ -100,10 +115,22 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
             this.lowercase = this.name().toLowerCase(Locale.ROOT);
         }
 
+        /**
+         * Returns the lowercase.
+         *
+         * @return the lowercase
+         */
         public String getLowercase() {
             return lowercase;
         }
 
+        /**
+         * Reads this instance from the given input.
+         *
+         * @param in the input to read from
+         * @return the from
+         * @throws IOException if an I/O error occurs
+         */
         public static Result readFrom(StreamInput in) throws IOException {
             Byte opcode = in.readByte();
             switch (opcode) {
@@ -134,8 +161,21 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
     private final long seqNo;
     private final long primaryTerm;
     private boolean forcedRefresh;
+    /**
+     * The result.
+     */
     protected final Result result;
 
+    /**
+     * Creates a new DocWriteResponse.
+     *
+     * @param shardId the shard identifier
+     * @param id the identifier
+     * @param seqNo the seq no
+     * @param primaryTerm the primary term
+     * @param version the version
+     * @param result the result
+     */
     public DocWriteResponse(ShardId shardId, String id, long seqNo, long primaryTerm, long version, Result result) {
         this.shardId = Objects.requireNonNull(shardId);
         this.id = Objects.requireNonNull(id);
@@ -146,6 +186,13 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
     }
 
     // needed for deserialization
+    /**
+     * Creates a new DocWriteResponse.
+     *
+     * @param shardId the shard identifier
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     protected DocWriteResponse(ShardId shardId, StreamInput in) throws IOException {
         super(in);
         this.shardId = shardId;
@@ -164,6 +211,9 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
     /**
      * Needed for deserialization of single item requests in {@link org.codelibs.fesen.opensearch.action.index.IndexAction} and BwC
      * deserialization path
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     protected DocWriteResponse(StreamInput in) throws IOException {
         super(in);
@@ -182,6 +232,8 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
 
     /**
      * The change that occurred to the document.
+     *
+     * @return the result
      */
     public Result getResult() {
         return result;
@@ -189,6 +241,8 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
 
     /**
      * The index the document was changed in.
+     *
+     * @return the index
      */
     public String getIndex() {
         return this.shardId.getIndexName();
@@ -196,6 +250,8 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
 
     /**
      * The id of the document changed.
+     *
+     * @return the identifier
      */
     public String getId() {
         return this.id;
@@ -203,6 +259,8 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
 
     /**
      * Returns the current version of the doc.
+     *
+     * @return the version
      */
     public long getVersion() {
         return this.version;
@@ -211,6 +269,8 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
     /**
      * Returns the sequence number assigned for this change. Returns {@link SequenceNumbers#UNASSIGNED_SEQ_NO} if the operation
      * wasn't performed (i.e., an update operation that resulted in a NOOP).
+     *
+     * @return the seq no
      */
     public long getSeqNo() {
         return seqNo;
@@ -236,6 +296,12 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
         return getShardInfo().status();
     }
 
+    /**
+     * Writes the thin.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public void writeThin(StreamOutput out) throws IOException {
         super.writeTo(out);
         writeWithoutShardId(out);
@@ -268,6 +334,14 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
         return builder;
     }
 
+    /**
+     * Returns the inner to XContent.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the inner to XContent
+     * @throws IOException if an I/O error occurs
+     */
     public XContentBuilder innerToXContent(XContentBuilder builder, Params params) throws IOException {
         ReplicationResponse.ShardInfo shardInfo = getShardInfo();
         builder.field(_INDEX, shardId.getIndexName());
@@ -289,6 +363,10 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
      * This method is intended to be called by subclasses and must be called multiple times to parse all the information concerning
      * {@link DocWriteResponse} objects. It always parses the current token, updates the given parsing context accordingly
      * if needed and then immediately returns.
+     *
+     * @param parser the parser
+     * @param context the context
+     * @throws IOException if an I/O error occurs
      */
     protected static void parseInnerToXContent(XContentParser parser, Builder context) throws IOException {
         XContentParser.Token token = parser.currentToken();
@@ -339,56 +417,140 @@ public abstract class DocWriteResponse extends ReplicationResponse implements Wr
      * @opensearch.internal
      */
     public abstract static class Builder {
+        /**
+         * Creates a new Builder.
+         */
+        public Builder() {
+        }
 
+        /**
+         * The shard identifier.
+         */
         protected ShardId shardId = null;
+        /**
+         * The identifier.
+         */
         protected String id = null;
+        /**
+         * The version.
+         */
         protected Long version = null;
+        /**
+         * The result.
+         */
         protected Result result = null;
+        /**
+         * The forced refresh.
+         */
         protected boolean forcedRefresh;
+        /**
+         * The shard info.
+         */
         protected ShardInfo shardInfo = null;
+        /**
+         * The seq no.
+         */
         protected long seqNo = UNASSIGNED_SEQ_NO;
+        /**
+         * The primary term.
+         */
         protected long primaryTerm = UNASSIGNED_PRIMARY_TERM;
 
+        /**
+         * Returns the shard identifier.
+         *
+         * @return the shard identifier
+         */
         public ShardId getShardId() {
             return shardId;
         }
 
+        /**
+         * Sets the shard identifier.
+         *
+         * @param shardId the shard identifier
+         */
         public void setShardId(ShardId shardId) {
             this.shardId = shardId;
         }
 
+        /**
+         * Returns the identifier.
+         *
+         * @return the identifier
+         */
         public String getId() {
             return id;
         }
 
+        /**
+         * Sets the identifier.
+         *
+         * @param id the identifier
+         */
         public void setId(String id) {
             this.id = id;
         }
 
+        /**
+         * Sets the version.
+         *
+         * @param version the version
+         */
         public void setVersion(Long version) {
             this.version = version;
         }
 
+        /**
+         * Sets the result.
+         *
+         * @param result the result
+         */
         public void setResult(Result result) {
             this.result = result;
         }
 
+        /**
+         * Sets the forced refresh.
+         *
+         * @param forcedRefresh the forced refresh
+         */
         public void setForcedRefresh(boolean forcedRefresh) {
             this.forcedRefresh = forcedRefresh;
         }
 
+        /**
+         * Sets the shard info.
+         *
+         * @param shardInfo the shard info
+         */
         public void setShardInfo(ShardInfo shardInfo) {
             this.shardInfo = shardInfo;
         }
 
+        /**
+         * Sets the seq no.
+         *
+         * @param seqNo the seq no
+         */
         public void setSeqNo(long seqNo) {
             this.seqNo = seqNo;
         }
 
+        /**
+         * Sets the primary term.
+         *
+         * @param primaryTerm the primary term
+         */
         public void setPrimaryTerm(long primaryTerm) {
             this.primaryTerm = primaryTerm;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public abstract DocWriteResponse build();
     }
 }

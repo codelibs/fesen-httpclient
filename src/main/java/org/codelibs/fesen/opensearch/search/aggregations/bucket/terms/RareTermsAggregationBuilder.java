@@ -53,11 +53,17 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<RareTermsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "rare_terms";
     private static final ParseField MAX_DOC_COUNT_FIELD_NAME = new ParseField("max_doc_count");
     private static final ParseField PRECISION = new ParseField("precision");
 
     private static final int MAX_MAX_DOC_COUNT = 100;
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<RareTermsAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         RareTermsAggregationBuilder::new
@@ -87,6 +93,11 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
     private int maxDocCount = 1;
     private double precision = 0.001;
 
+    /**
+     * Creates a new RareTermsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public RareTermsAggregationBuilder(String name) {
         super(name);
     }
@@ -124,6 +135,9 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
     /**
      * Set the maximum document count terms should have in order to appear in
      * the response.
+     *
+     * @param maxDocCount the max doc count
+     * @return the max doc count
      */
     public RareTermsAggregationBuilder maxDocCount(long maxDocCount) {
         if (maxDocCount <= 0) {
@@ -149,6 +163,9 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     /**
      * Set terms to include and exclude from the aggregation results
+     *
+     * @param includeExclude the include exclude
+     * @return this instance
      */
     public RareTermsAggregationBuilder includeExclude(IncludeExclude includeExclude) {
         this.includeExclude = includeExclude;
@@ -157,6 +174,8 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     /**
      * Get terms to include and exclude from the aggregation results
+     *
+     * @return this instance
      */
     public IncludeExclude includeExclude() {
         return includeExclude;
@@ -164,6 +183,8 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
 
     /**
      * Get the current false positive rate for individual cuckoo filters.
+     *
+     * @return the precision
      */
     public double getPrecision() {
         return precision;
@@ -176,6 +197,8 @@ public class RareTermsAggregationBuilder extends ValuesSourceAggregationBuilder<
      * <p>
      * This value does, however, affect the overall space usage of the filter.  Coarser precisions provide
      * more compact filters.  The default is 0.01
+     *
+     * @param precision the precision
      */
     public void setPrecision(double precision) {
         if (precision < 0.00001) {

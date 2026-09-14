@@ -73,10 +73,25 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token.E
 @PublicApi(since = "1.0.0")
 public final class InnerHitBuilder implements Writeable, ToXContentObject {
 
+    /**
+     * The NAME_FIELD constant.
+     */
     public static final ParseField NAME_FIELD = new ParseField("name");
+    /**
+     * The IGNORE_UNMAPPED constant.
+     */
     public static final ParseField IGNORE_UNMAPPED = new ParseField("ignore_unmapped");
+    /**
+     * The DEFAULT_INNER_HIT_QUERY constant.
+     */
     public static final QueryBuilder DEFAULT_INNER_HIT_QUERY = new MatchAllQueryBuilder();
+    /**
+     * The COLLAPSE_FIELD constant.
+     */
     public static final ParseField COLLAPSE_FIELD = new ParseField("collapse");
+    /**
+     * The FIELD_FIELD constant.
+     */
     public static final ParseField FIELD_FIELD = new ParseField("field");
 
     private static final ObjectParser<InnerHitBuilder, Void> PARSER = new ObjectParser<>("inner_hits", InnerHitBuilder::new);
@@ -172,12 +187,18 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     private List<FieldAndFormat> fetchFields;
     private CollapseBuilder innerCollapseBuilder = null;
 
+    /**
+     * Creates a new InnerHitBuilder.
+     */
     public InnerHitBuilder() {
         this.name = null;
     }
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public InnerHitBuilder(StreamInput in) throws IOException {
         name = in.readOptionalString();
@@ -254,16 +275,34 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         }
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the name
+     * @return this instance
+     */
     public InnerHitBuilder setName(String name) {
         this.name = Objects.requireNonNull(name);
         return this;
     }
 
+    /**
+     * Sets the ignore unmapped.
+     *
+     * @param value the value
+     * @return this instance
+     */
     public InnerHitBuilder setIgnoreUnmapped(boolean value) {
         this.ignoreUnmapped = value;
         return this;
     }
 
+    /**
+     * Sets the from.
+     *
+     * @param from the offset
+     * @return this instance
+     */
     public InnerHitBuilder setFrom(int from) {
         if (from < 0) {
             throw new IllegalArgumentException("illegal from value, at least 0 or higher");
@@ -272,6 +311,12 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
+    /**
+     * Sets the size.
+     *
+     * @param size the size
+     * @return this instance
+     */
     public InnerHitBuilder setSize(int size) {
         if (size < 0) {
             throw new IllegalArgumentException("illegal size value, at least 0 or higher");
@@ -280,21 +325,45 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
+    /**
+     * Sets the explain.
+     *
+     * @param explain the explain
+     * @return this instance
+     */
     public InnerHitBuilder setExplain(boolean explain) {
         this.explain = explain;
         return this;
     }
 
+    /**
+     * Sets the version.
+     *
+     * @param version the version
+     * @return this instance
+     */
     public InnerHitBuilder setVersion(boolean version) {
         this.version = version;
         return this;
     }
 
+    /**
+     * Sets the seq no and primary term.
+     *
+     * @param seqNoAndPrimaryTerm the seq no and primary term
+     * @return this instance
+     */
     public InnerHitBuilder setSeqNoAndPrimaryTerm(boolean seqNoAndPrimaryTerm) {
         this.seqNoAndPrimaryTerm = seqNoAndPrimaryTerm;
         return this;
     }
 
+    /**
+     * Sets the track scores.
+     *
+     * @param trackScores the track scores
+     * @return this instance
+     */
     public InnerHitBuilder setTrackScores(boolean trackScores) {
         this.trackScores = trackScores;
         return this;
@@ -303,6 +372,9 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
     /**
      * Sets the stored fields to load and return.
      * If none are specified, the source of the document will be returned.
+     *
+     * @param fieldNames the field names
+     * @return this instance
      */
     public InnerHitBuilder setStoredFieldNames(List<String> fieldNames) {
         if (storedFieldsContext == null) {
@@ -315,6 +387,9 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
 
     /**
      * Sets the stored fields to load from the docvalue and return.
+     *
+     * @param docValueFields the doc value fields
+     * @return this instance
      */
     public InnerHitBuilder setDocValueFields(List<FieldAndFormat> docValueFields) {
         this.docValueFields = docValueFields;
@@ -323,27 +398,54 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
 
     /**
      * Sets the stored fields to load and return as part of the search request.
+     *
+     * @param fetchFields the fetch fields
+     * @return this instance
      */
     public InnerHitBuilder setFetchFields(List<FieldAndFormat> fetchFields) {
         this.fetchFields = fetchFields;
         return this;
     }
 
+    /**
+     * Sets the script fields.
+     *
+     * @param scriptFields the script fields
+     * @return this instance
+     */
     public InnerHitBuilder setScriptFields(Set<ScriptField> scriptFields) {
         this.scriptFields = scriptFields;
         return this;
     }
 
+    /**
+     * Sets the fetch source context.
+     *
+     * @param fetchSourceContext the fetch source context
+     * @return this instance
+     */
     public InnerHitBuilder setFetchSourceContext(FetchSourceContext fetchSourceContext) {
         this.fetchSourceContext = fetchSourceContext;
         return this;
     }
 
+    /**
+     * Sets the sorts.
+     *
+     * @param sorts the sorts
+     * @return this instance
+     */
     public InnerHitBuilder setSorts(List<SortBuilder<?>> sorts) {
         this.sorts = sorts;
         return this;
     }
 
+    /**
+     * Adds the sort.
+     *
+     * @param sort the sort
+     * @return this instance
+     */
     public InnerHitBuilder addSort(SortBuilder<?> sort) {
         if (sorts == null) {
             sorts = new ArrayList<>();
@@ -352,11 +454,23 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         return this;
     }
 
+    /**
+     * Sets the highlight builder.
+     *
+     * @param highlightBuilder the highlight builder
+     * @return this instance
+     */
     public InnerHitBuilder setHighlightBuilder(HighlightBuilder highlightBuilder) {
         this.highlightBuilder = highlightBuilder;
         return this;
     }
 
+    /**
+     * Sets the inner collapse.
+     *
+     * @param innerCollapseBuilder the inner collapse builder
+     * @return this instance
+     */
     public InnerHitBuilder setInnerCollapse(CollapseBuilder innerCollapseBuilder) {
         this.innerCollapseBuilder = innerCollapseBuilder;
         return this;
@@ -466,6 +580,13 @@ public final class InnerHitBuilder implements Writeable, ToXContentObject {
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static InnerHitBuilder fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, new InnerHitBuilder(), null);
     }

@@ -50,6 +50,12 @@ public class MultiGetItemResponse implements Writeable {
     private final GetResponse response;
     private final MultiGetResponse.Failure failure;
 
+    /**
+     * Creates a new MultiGetItemResponse.
+     *
+     * @param response the response
+     * @param failure the failure
+     */
     public MultiGetItemResponse(GetResponse response, MultiGetResponse.Failure failure) {
         this.response = response;
         this.failure = failure;
@@ -67,6 +73,8 @@ public class MultiGetItemResponse implements Writeable {
 
     /**
      * Is this a failed execution?
+     *
+     * @return the failed flag
      */
     public boolean isFailed() {
         return failure != null;
@@ -74,6 +82,8 @@ public class MultiGetItemResponse implements Writeable {
 
     /**
      * The actual get response, {@code null} if its a failure.
+     *
+     * @return the response
      */
     public GetResponse getResponse() {
         return this.response;
@@ -81,6 +91,8 @@ public class MultiGetItemResponse implements Writeable {
 
     /**
      * The failure if relevant.
+     *
+     * @return the failure
      */
     public MultiGetResponse.Failure getFailure() {
         return this.failure;

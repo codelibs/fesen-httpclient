@@ -82,10 +82,20 @@ public enum MissingOrder implements Writeable {
         }
     };
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "missing_order";
 
     private static int MISSING_ORDER_UNKNOWN = Integer.MIN_VALUE;
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static MissingOrder readFromStream(StreamInput in) throws IOException {
         return in.readEnum(MissingOrder.class);
     }
@@ -95,13 +105,33 @@ public enum MissingOrder implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Returns the default flag.
+     *
+     * @param order the order
+     * @return the default flag
+     */
     public static boolean isDefault(MissingOrder order) {
         return order == DEFAULT;
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param order the order
+     * @return the new string
+     */
     public static MissingOrder fromString(String order) {
         return valueOf(order.toUpperCase(Locale.ROOT));
     }
 
+    /**
+     * Compares this instance.
+     *
+     * @param leftIsMissing the left is missing
+     * @param rightIsMissing the right is missing
+     * @param reverseMul the reverse mul
+     * @return this instance
+     */
     public abstract int compare(Provider<Boolean> leftIsMissing, Provider<Boolean> rightIsMissing, int reverseMul);
 }

@@ -51,6 +51,9 @@ import java.util.function.Supplier;
  * @opensearch.internal
  */
 public class LoggingDeprecationHandler implements DeprecationHandler {
+    /**
+     * The INSTANCE constant.
+     */
     public static final LoggingDeprecationHandler INSTANCE = new LoggingDeprecationHandler();
     /**
      * The logger to which to send deprecation messages.

@@ -52,6 +52,9 @@ public class VerifyRepositoryRequest extends AcknowledgedRequest<VerifyRepositor
 
     private String name;
 
+    /**
+     * Creates a new VerifyRepositoryRequest.
+     */
     public VerifyRepositoryRequest() {}
 
     /**

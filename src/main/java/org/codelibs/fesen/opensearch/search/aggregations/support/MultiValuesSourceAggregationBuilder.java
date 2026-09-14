@@ -54,6 +54,7 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * <p>
  * A limitation of this class is that all the ValuesSource's being refereenced must be of the same type.
  *
+ * @param <AB> the aggregation builder type
  * @opensearch.internal
  */
 public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValuesSourceAggregationBuilder<AB>> extends
@@ -62,15 +63,28 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
     /**
      * Base leaf only class
      *
+     * @param <AB> the aggregation builder type
      * @opensearch.internal
      */
     public abstract static class LeafOnly<AB extends MultiValuesSourceAggregationBuilder<AB>> extends MultiValuesSourceAggregationBuilder<
         AB> {
 
+        /**
+         * Creates a new LeafOnly.
+         *
+         * @param name the name
+         */
         protected LeafOnly(String name) {
             super(name);
         }
 
+        /**
+         * Creates a new LeafOnly.
+         *
+         * @param clone the clone
+         * @param factoriesBuilder the factories builder
+         * @param metadata the metadata
+         */
         protected LeafOnly(LeafOnly<AB> clone, Builder factoriesBuilder, Map<String, Object> metadata) {
             super(clone, factoriesBuilder, metadata);
             if (factoriesBuilder.count() > 0) {
@@ -92,10 +106,22 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
     private ValueType userValueTypeHint = null;
     private String format = null;
 
+    /**
+     * Creates a new MultiValuesSourceAggregationBuilder.
+     *
+     * @param name the name
+     */
     protected MultiValuesSourceAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MultiValuesSourceAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected MultiValuesSourceAggregationBuilder(
         MultiValuesSourceAggregationBuilder<AB> clone,
         Builder factoriesBuilder,
@@ -128,9 +154,19 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
 
     /**
      * Write subclass' state to the stream
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
      */
     protected abstract void innerWriteTo(StreamOutput out) throws IOException;
 
+    /**
+     * Returns the field.
+     *
+     * @param propertyName the property name
+     * @param config the config
+     * @return the field
+     */
     @SuppressWarnings("unchecked")
     protected AB field(String propertyName, MultiValuesSourceFieldConfig config) {
         if (config == null) {
@@ -142,6 +178,9 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
 
     /**
      * Sets the {@link ValueType} for the value produced by this aggregation
+     *
+     * @param valueType the value type
+     * @return the user value type hint
      */
     @SuppressWarnings("unchecked")
     public AB userValueTypeHint(ValueType valueType) {
@@ -154,6 +193,9 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
 
     /**
      * Sets the format to use for the output of the aggregation.
+     *
+     * @param format the format
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public AB format(String format) {
@@ -207,6 +249,14 @@ public abstract class MultiValuesSourceAggregationBuilder<AB extends MultiValues
         return builder;
     }
 
+    /**
+     * Returns the XContent body.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent body
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract XContentBuilder doXContentBody(XContentBuilder builder, Params params) throws IOException;
 
     @Override

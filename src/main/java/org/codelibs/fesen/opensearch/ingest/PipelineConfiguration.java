@@ -103,16 +103,33 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
     private final BytesReference config;
     private final MediaType mediaType;
 
+    /**
+     * Creates a new PipelineConfiguration.
+     *
+     * @param id the identifier
+     * @param config the config
+     * @param mediaType the media type
+     */
     public PipelineConfiguration(String id, BytesReference config, MediaType mediaType) {
         this.id = Objects.requireNonNull(id);
         this.config = Objects.requireNonNull(config);
         this.mediaType = Objects.requireNonNull(mediaType);
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the config as map.
+     *
+     * @return the config as map
+     */
     public Map<String, Object> getConfigAsMap() {
         return XContentHelper.convertToMap(config, true, mediaType).v2();
     }
@@ -126,6 +143,13 @@ public final class PipelineConfiguration extends AbstractDiffable<PipelineConfig
         return builder;
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static PipelineConfiguration readFrom(StreamInput in) throws IOException {
         return new PipelineConfiguration(
             in.readString(),

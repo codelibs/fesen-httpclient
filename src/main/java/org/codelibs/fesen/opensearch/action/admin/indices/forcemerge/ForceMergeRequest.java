@@ -65,9 +65,27 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
      * @opensearch.internal
      */
     public static final class Defaults {
+        /**
+         * Creates a new Defaults.
+         */
+        public Defaults() {
+        }
+
+        /**
+         * The MAX_NUM_SEGMENTS constant.
+         */
         public static final int MAX_NUM_SEGMENTS = -1;
+        /**
+         * The ONLY_EXPUNGE_DELETES constant.
+         */
         public static final boolean ONLY_EXPUNGE_DELETES = false;
+        /**
+         * The FLUSH constant.
+         */
         public static final boolean FLUSH = true;
+        /**
+         * The PRIMARY_ONLY constant.
+         */
         public static final boolean PRIMARY_ONLY = false;
     }
 
@@ -99,6 +117,8 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
     /**
      * Will merge the index down to &lt;= maxNumSegments. By default, will cause the merge
      * process to merge down to half the configured number of segments.
+     *
+     * @return the max num segments
      */
     public int maxNumSegments() {
         return maxNumSegments;
@@ -107,6 +127,8 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
     /**
      * Should the merge only expunge deletes from the index, without full merging.
      * Defaults to full merging ({@code false}).
+     *
+     * @return the only expunge deletes
      */
     public boolean onlyExpungeDeletes() {
         return onlyExpungeDeletes;
@@ -114,6 +136,8 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
     /**
      * Should flush be performed after the merge. Defaults to {@code true}.
+     *
+     * @return this instance
      */
     public boolean flush() {
         return flush;
@@ -121,6 +145,8 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
     /**
      * Should force merge only performed on primary shards. Defaults to {@code false}.
+     *
+     * @return the primary only
      */
     public boolean primaryOnly() {
         return primaryOnly;
@@ -128,6 +154,9 @@ public class ForceMergeRequest extends BroadcastRequest<ForceMergeRequest> {
 
     /**
      * Should force merge only performed on primary shards. Defaults to {@code false}.
+     *
+     * @param primaryOnly the primary only
+     * @return the primary only
      */
     public ForceMergeRequest primaryOnly(boolean primaryOnly) {
         this.primaryOnly = primaryOnly;

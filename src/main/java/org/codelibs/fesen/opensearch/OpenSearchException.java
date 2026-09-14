@@ -75,6 +75,9 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public class OpenSearchException extends RuntimeException implements Writeable, ToXContentFragment {
 
+    /**
+     * The UNKNOWN_VERSION_ADDED constant.
+     */
     protected static final Version UNKNOWN_VERSION_ADDED = Version.fromId(0);
 
     /**
@@ -89,6 +92,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * internal only and not available as a URL parameter. Use the {@code error_trace} parameter instead.
      */
     public static final String REST_EXCEPTION_SKIP_STACK_TRACE = "rest.exception.stacktrace.skip";
+    /**
+     * The REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT constant.
+     */
     public static final boolean REST_EXCEPTION_SKIP_STACK_TRACE_DEFAULT = true;
     private static final boolean REST_EXCEPTION_SKIP_CAUSE_DEFAULT = false;
     private static final String RESOURCE_METADATA_TYPE_KEY = "opensearch.resource.type";
@@ -96,18 +102,30 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     private static final String INDEX_METADATA_KEY = "opensearch.index";
     private static final String INDEX_METADATA_KEY_UUID = "opensearch.index_uuid";
     private static final String SHARD_METADATA_KEY = "opensearch.shard";
+    /**
+     * The OPENSEARCH_PREFIX_KEY constant.
+     */
     public static final String OPENSEARCH_PREFIX_KEY = "opensearch.";
 
     private static final String TYPE = "type";
     private static final String REASON = "reason";
     private static final String CAUSED_BY = "caused_by";
     private static final ParseField SUPPRESSED = new ParseField("suppressed");
+    /**
+     * The STACK_TRACE constant.
+     */
     public static final String STACK_TRACE = "stack_trace";
     private static final String HEADER = "header";
     private static final String ERROR = "error";
     private static final String ROOT_CAUSE = "root_cause";
 
+    /**
+     * The metadata.
+     */
     protected final Map<String, List<String>> metadata = new HashMap<>();
+    /**
+     * The headers.
+     */
     protected final Map<String, List<String>> headers = new HashMap<>();
 
     static {
@@ -163,6 +181,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Construct a <code>OpenSearchException</code> with the specified cause exception.
+     *
+     * @param cause the cause
      */
     public OpenSearchException(Throwable cause) {
         super(cause);
@@ -196,6 +216,12 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         super(LoggerMessageFormat.format(msg, args), cause);
     }
 
+    /**
+     * Creates a new OpenSearchException by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public OpenSearchException(StreamInput in) throws IOException {
         this(in.readOptionalString(), in.readException());
         readStackTrace(this, in);
@@ -215,6 +241,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Adds a new piece of metadata with the given key.
      * If the provided key is already present, the corresponding metadata will be replaced
+     *
+     * @param key the key
+     * @param values the values
      */
     public void addMetadata(String key, String... values) {
         addMetadata(key, Arrays.asList(values));
@@ -223,6 +252,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Adds a new piece of metadata with the given key.
      * If the provided key is already present, the corresponding metadata will be replaced
+     *
+     * @param key the key
+     * @param values the values
      */
     public void addMetadata(String key, List<String> values) {
         // we need to enforce this otherwise bw comp doesn't work properly, as "opensearch."
@@ -235,6 +267,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns a set of all metadata keys on this exception
+     *
+     * @return the metadata keys
      */
     public Set<String> getMetadataKeys() {
         return metadata.keySet();
@@ -243,6 +277,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Returns the list of metadata values for the given key or {@code null} if no metadata for the
      * given key exists.
+     *
+     * @param key the key
+     * @return the metadata
      */
     public List<String> getMetadata(String key) {
         return metadata.get(key);
@@ -250,6 +287,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns the map of metadata keys and values.
+     *
+     * @return the metadata
      */
     public Map<String, List<String>> getMetadata() {
         return metadata;
@@ -258,6 +297,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Adds a new header with the given key.
      * This method will replace existing header if a header with the same key already exists
+     *
+     * @param key the key
+     * @param value the value
      */
     public void addHeader(String key, List<String> value) {
         // we need to enforce this otherwise bw comp doesn't work properly, as "opensearch."
@@ -271,6 +313,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Adds a new header with the given key.
      * This method will replace existing header if a header with the same key already exists
+     *
+     * @param key the key
+     * @param value the value
      */
     public void addHeader(String key, String... value) {
         addHeader(key, Arrays.asList(value));
@@ -278,6 +323,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns a set of all header keys on this exception
+     *
+     * @return the header keys
      */
     public Set<String> getHeaderKeys() {
         return headers.keySet();
@@ -286,6 +333,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Returns the list of header values for the given key or {@code null} if no header for the
      * given key exists.
+     *
+     * @param key the key
+     * @return the header
      */
     public List<String> getHeader(String key) {
         return headers.get(key);
@@ -293,6 +343,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns the map of header keys and values.
+     *
+     * @return the headers
      */
     public Map<String, List<String>> getHeaders() {
         return headers;
@@ -300,6 +352,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns the rest status code associated with this exception.
+     *
+     * @return the status
      */
     public RestStatus status() {
         Throwable cause = unwrapCause();
@@ -314,6 +368,7 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * Unwraps the actual cause from the exception for cases when the exception is a
      * {@link OpenSearchWrapperException}.
      *
+     * @return this instance
      * @see ExceptionsHelper#unwrapCause(Throwable)
      */
     public Throwable unwrapCause() {
@@ -323,6 +378,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Return the detail message, including the message from the nested exception
      * if there is one.
+     *
+     * @return the detailed message
      */
     public String getDetailedMessage() {
         if (getCause() != null) {
@@ -341,6 +398,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Retrieve the innermost cause of this exception, if none, returns the current exception.
+     *
+     * @return the root cause
      */
     public Throwable getRootCause() {
         Throwable rootCause = this;
@@ -352,6 +411,15 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return rootCause;
     }
 
+    /**
+     * Reads the exception.
+     *
+     * @param <T> the element type
+     * @param input the input
+     * @param id the identifier
+     * @return the exception
+     * @throws IOException if an I/O error occurs
+     */
     @SuppressWarnings("unchecked")
     public static <T extends StreamInput> OpenSearchException readException(T input, int id) throws IOException {
         CheckedFunction<T, ? extends OpenSearchException, IOException> opensearchException = (CheckedFunction<
@@ -366,6 +434,10 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns <code>true</code> iff the given class is a registered for an exception to be read.
+     *
+     * @param exception the exception
+     * @param version the version
+     * @return the registered flag
      */
     public static boolean isRegistered(final Class<? extends Throwable> exception, Version version) {
         return OpenSearchExceptionHandleRegistry.isRegistered(exception, version);
@@ -377,6 +449,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns the serialization id the given exception.
+     *
+     * @param exception the exception
+     * @return the identifier
      */
     public static int getId(final Class<? extends OpenSearchException> exception) {
         return OpenSearchExceptionHandleRegistry.getId(exception);
@@ -392,6 +467,19 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return builder;
     }
 
+    /**
+     * Performs the inner to XContent step.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @param throwable the throwable
+     * @param type the type
+     * @param message the message
+     * @param headers the headers
+     * @param metadata the metadata
+     * @param cause the cause
+     * @throws IOException if an I/O error occurs
+     */
     protected static void innerToXContent(
         XContentBuilder builder,
         ToXContent.Params params,
@@ -446,6 +534,14 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         }
     }
 
+    /**
+     * Performs the header to XContent step.
+     *
+     * @param builder the content builder
+     * @param key the key
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     protected static void headerToXContent(XContentBuilder builder, String key, List<String> values) throws IOException {
         if (values != null && values.isEmpty() == false) {
             if (values.size() == 1) {
@@ -462,6 +558,10 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Renders additional per exception information into the XContent
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
      */
     protected void metadataToXContent(XContentBuilder builder, Params params) throws IOException {}
 
@@ -471,6 +571,10 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * the type, the reason and the cause of the exception. It also recursively parses the
      * tree structure of the cause, returning it as a tree structure of {@link OpenSearchException}
      * instances.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
      */
     public static OpenSearchException fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.nextToken();
@@ -478,6 +582,14 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return innerFromXContent(parser, false);
     }
 
+    /**
+     * Returns the inner from XContent.
+     *
+     * @param parser the parser
+     * @param parseRootCauses the parse root causes
+     * @return the inner from XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static OpenSearchException innerFromXContent(XContentParser parser, boolean parseRootCauses) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.FIELD_NAME, token, parser);
@@ -597,6 +709,11 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * <p>
      * This method is usually used when the {@link Throwable} is rendered as a part of another XContent object, and its result can
      * be parsed back using the {@code OpenSearchException.fromXContent(XContentParser)} method.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @param t the t
+     * @throws IOException if an I/O error occurs
      */
     public static void generateThrowableXContent(XContentBuilder builder, ToXContent.Params params, Throwable t) throws IOException {
         t = ExceptionsHelper.unwrapCause(t);
@@ -616,6 +733,12 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * <p>
      * This method is usually used when the {@link Exception} is rendered as a full XContent object, and its output can be parsed
      * by the {@code #OpenSearchException.failureFromXContent(XContentParser)} method.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @param e the exception
+     * @param detailed the detailed
+     * @throws IOException if an I/O error occurs
      */
     public static void generateFailureXContent(XContentBuilder builder, ToXContent.Params params, @Nullable Exception e, boolean detailed)
         throws IOException {
@@ -650,6 +773,10 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Parses the output of {@link #generateFailureXContent(XContentBuilder, Params, Exception, boolean)}
+     *
+     * @param parser the parser
+     * @return the failure from XContent
+     * @throws IOException if an I/O error occurs
      */
     public static OpenSearchException failureFromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
@@ -670,6 +797,8 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Returns the root cause of this exception or multiple if different shards caused different exceptions
+     *
+     * @return the guess root causes
      */
     public OpenSearchException[] guessRootCauses() {
         final Throwable cause = getCause();
@@ -683,6 +812,9 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * Returns the root cause of this exception or multiple if different shards caused different exceptions.
      * If the given exception is not an instance of {@link OpenSearchException} an empty array
      * is returned.
+     *
+     * @param t the t
+     * @return the guess root causes
      */
     public static OpenSearchException[] guessRootCauses(Throwable t) {
         Throwable ex = ExceptionsHelper.unwrapCause(t);
@@ -714,12 +846,20 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         } };
     }
 
+    /**
+     * Returns the exception name.
+     *
+     * @return the exception name
+     */
     protected String getExceptionName() {
         return getExceptionName(this);
     }
 
     /**
      * Returns an underscore case name for the given exception. This method strips {@code OpenSearch} prefixes from exception names.
+     *
+     * @param ex the ex
+     * @return the exception name
      */
     public static String getExceptionName(Throwable ex) {
         String simpleName = getExceptionSimpleClassName(ex);
@@ -730,6 +870,12 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return toUnderscoreCase(simpleName);
     }
 
+    /**
+     * Returns the exception simple class name.
+     *
+     * @param ex the ex
+     * @return the exception simple class name
+     */
     public static String getExceptionSimpleClassName(final Throwable ex) {
         String simpleName = ex.getClass().getSimpleName();
         if (Strings.isEmpty(simpleName)) {
@@ -765,6 +911,12 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
     /**
      * Deserializes stacktrace elements as well as suppressed exceptions from the given output stream and
      * adds it to the given exception.
+     *
+     * @param <T> the element type
+     * @param throwable the throwable
+     * @param in the input to read from
+     * @return the stack trace
+     * @throws IOException if an I/O error occurs
      */
     public static <T extends Throwable> T readStackTrace(T throwable, StreamInput in) throws IOException {
         throwable.setStackTrace(in.readArray(i -> {
@@ -784,6 +936,14 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
 
     /**
      * Serializes the given exceptions stacktrace elements as well as it's suppressed exceptions to the given output stream.
+     *
+     * @param <S> the source type
+     * @param <T> the element type
+     * @param throwable the throwable
+     * @param out the output to write to
+     * @param exceptionWriter the exception writer
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static <S extends StreamOutput, T extends Throwable> T writeStackTraces(
         T throwable,
@@ -800,16 +960,32 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return throwable;
     }
 
+    /**
+     * Sets the resources.
+     *
+     * @param type the type
+     * @param id the identifier
+     */
     public void setResources(String type, String... id) {
         assert type != null;
         addMetadata(RESOURCE_METADATA_ID_KEY, id);
         addMetadata(RESOURCE_METADATA_TYPE_KEY, type);
     }
 
+    /**
+     * Returns the resource identifier.
+     *
+     * @return the resource identifier
+     */
     public List<String> getResourceId() {
         return getMetadata(RESOURCE_METADATA_ID_KEY);
     }
 
+    /**
+     * Returns the resource type.
+     *
+     * @return the resource type
+     */
     public String getResourceType() {
         List<String> header = getMetadata(RESOURCE_METADATA_TYPE_KEY);
         if (header != null && header.isEmpty() == false) {
@@ -879,6 +1055,11 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return ts;
     }
 
+    /**
+     * Returns the index.
+     *
+     * @return the index
+     */
     public Index getIndex() {
         List<String> index = getMetadata(INDEX_METADATA_KEY);
         if (index != null && index.isEmpty() == false) {
@@ -889,6 +1070,11 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return null;
     }
 
+    /**
+     * Sets the index.
+     *
+     * @param index the index
+     */
     public void setIndex(Index index) {
         if (index != null) {
             addMetadata(INDEX_METADATA_KEY, index.getName());
@@ -896,12 +1082,22 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         }
     }
 
+    /**
+     * Sets the index.
+     *
+     * @param index the index
+     */
     public void setIndex(String index) {
         if (index != null) {
             setIndex(new Index(index, Strings.UNKNOWN_UUID_VALUE));
         }
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         List<String> shard = getMetadata(SHARD_METADATA_KEY);
         if (shard != null && shard.isEmpty() == false) {
@@ -910,6 +1106,11 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
         return null;
     }
 
+    /**
+     * Sets the shard.
+     *
+     * @param shardId the shard identifier
+     */
     public void setShard(ShardId shardId) {
         if (shardId != null) {
             setIndex(shardId.getIndex());
@@ -952,6 +1153,12 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
      * @opensearch.internal
      */
     public static class OpenSearchExceptionHandleRegistry {
+        /**
+         * Creates a new OpenSearchExceptionHandleRegistry.
+         */
+        public OpenSearchExceptionHandleRegistry() {
+        }
+
         /** Registry mapping from unique Ordinal to the Exception Constructor */
         private static final Map<
             Integer,
@@ -961,33 +1168,61 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
             Class<? extends OpenSearchException>,
             OpenSearchExceptionHandle> CLASS_TO_OPENSEARCH_EXCEPTION_HANDLE_REGISTRY = new ConcurrentHashMap<>();
 
-        /** returns the Exception constructor function from a given ordinal */
+        /**
+         * returns the Exception constructor function from a given ordinal
+         *
+         * @param id the identifier
+         * @return the supplier
+         */
         public static CheckedFunction<StreamInput, ? extends OpenSearchException, IOException> getSupplier(final int id) {
             return ID_TO_SUPPLIER_REGISTRY.get(id);
         }
 
-        /** registers the Exception handler */
+        /**
+         * registers the Exception handler
+         *
+         * @param handle the handle
+         */
         public static void registerExceptionHandle(final OpenSearchExceptionHandle handle) {
             ID_TO_SUPPLIER_REGISTRY.put(handle.id, handle.constructor);
             CLASS_TO_OPENSEARCH_EXCEPTION_HANDLE_REGISTRY.put(handle.exceptionClass, handle);
         }
 
-        /** Gets the unique ordinal id of the Exception from the given class */
+        /**
+         * Gets the unique ordinal id of the Exception from the given class
+         *
+         * @param exception the exception
+         * @return the identifier
+         */
         public static int getId(final Class<? extends OpenSearchException> exception) {
             return CLASS_TO_OPENSEARCH_EXCEPTION_HANDLE_REGISTRY.get(exception).id;
         }
 
-        /** returns a set of ids */
+        /**
+         * returns a set of ids
+         *
+         * @return the identifiers
+         */
         public static Set<Integer> ids() {
             return ID_TO_SUPPLIER_REGISTRY.keySet();
         }
 
-        /** returns a collection of handles */
+        /**
+         * returns a collection of handles
+         *
+         * @return the handles
+         */
         public static Collection<OpenSearchExceptionHandle> handles() {
             return CLASS_TO_OPENSEARCH_EXCEPTION_HANDLE_REGISTRY.values();
         }
 
-        /** checks that the exception class is registered */
+        /**
+         * checks that the exception class is registered
+         *
+         * @param exception the exception
+         * @param version the version
+         * @return the registered flag
+         */
         public static boolean isRegistered(final Class<? extends Throwable> exception, final Version version) {
             OpenSearchExceptionHandle openSearchExceptionHandle = CLASS_TO_OPENSEARCH_EXCEPTION_HANDLE_REGISTRY.get(exception);
             if (openSearchExceptionHandle != null) {
@@ -996,7 +1231,11 @@ public class OpenSearchException extends RuntimeException implements Writeable, 
             return false;
         }
 
-        /** returns a set of registered exception classes */
+        /**
+         * returns a set of registered exception classes
+         *
+         * @return the registered keys
+         */
         public static Set<Class<? extends OpenSearchException>> getRegisteredKeys() { // for testing
             return CLASS_TO_OPENSEARCH_EXCEPTION_HANDLE_REGISTRY.keySet();
         }

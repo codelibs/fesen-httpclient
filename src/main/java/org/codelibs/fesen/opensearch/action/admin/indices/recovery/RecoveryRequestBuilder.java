@@ -46,6 +46,9 @@ public class RecoveryRequestBuilder extends BroadcastOperationRequestBuilder<Rec
 
     /**
      * Constructs a new recovery information request builder.
+     *
+     * @param client the client
+     * @param action the action
      */
     public RecoveryRequestBuilder(OpenSearchClient client, RecoveryAction action) {
         super(client, action, new RecoveryRequest());

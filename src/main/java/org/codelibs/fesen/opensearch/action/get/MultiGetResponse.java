@@ -82,6 +82,13 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         private final String id;
         private final Exception exception;
 
+        /**
+         * Creates a new Failure.
+         *
+         * @param index the index
+         * @param id the identifier
+         * @param exception the exception
+         */
         public Failure(String index, String id, Exception exception) {
             this.index = index;
             this.id = id;
@@ -120,6 +127,11 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
 
     private final MultiGetItemResponse[] responses;
 
+    /**
+     * Creates a new MultiGetResponse.
+     *
+     * @param responses the responses
+     */
     public MultiGetResponse(MultiGetItemResponse[] responses) {
         this.responses = responses;
     }
@@ -129,6 +141,11 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         responses = in.readArray(MultiGetItemResponse::new, MultiGetItemResponse[]::new);
     }
 
+    /**
+     * Returns the responses.
+     *
+     * @return the responses
+     */
     public MultiGetItemResponse[] getResponses() {
         return this.responses;
     }
@@ -156,6 +173,13 @@ public class MultiGetResponse extends ActionResponse implements Iterable<MultiGe
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MultiGetResponse fromXContent(XContentParser parser) throws IOException {
         String currentFieldName = null;
         List<MultiGetItemResponse> items = new ArrayList<>();

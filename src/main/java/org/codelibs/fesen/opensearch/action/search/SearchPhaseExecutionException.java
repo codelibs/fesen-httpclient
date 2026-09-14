@@ -52,13 +52,34 @@ import java.util.List;
  * @opensearch.internal
  */
 public class SearchPhaseExecutionException extends OpenSearchException {
+    /**
+     * The phase name.
+     */
     private final String phaseName;
+    /**
+     * The shard failures.
+     */
     private final ShardSearchFailure[] shardFailures;
 
+    /**
+     * Creates a new SearchPhaseExecutionException.
+     *
+     * @param phaseName the phase name
+     * @param msg the msg
+     * @param shardFailures the shard failures
+     */
     public SearchPhaseExecutionException(String phaseName, String msg, ShardSearchFailure[] shardFailures) {
         this(phaseName, msg, null, shardFailures);
     }
 
+    /**
+     * Creates a new SearchPhaseExecutionException.
+     *
+     * @param phaseName the phase name
+     * @param msg the msg
+     * @param cause the cause
+     * @param shardFailures the shard failures
+     */
     public SearchPhaseExecutionException(String phaseName, String msg, Throwable cause, ShardSearchFailure[] shardFailures) {
         super(msg, getEffectiveCause(cause, shardFailures));
         this.phaseName = phaseName;

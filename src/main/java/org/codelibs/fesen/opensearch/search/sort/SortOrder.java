@@ -87,6 +87,13 @@ public enum SortOrder implements Writeable {
         }
     };
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static SortOrder readFromStream(StreamInput in) throws IOException {
         return in.readEnum(SortOrder.class);
     }
@@ -96,17 +103,29 @@ public enum SortOrder implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Creates an instance from string.
+     *
+     * @param op the op
+     * @return the new string
+     */
     public static SortOrder fromString(String op) {
         return valueOf(op.toUpperCase(Locale.ROOT));
     }
 
     /**
      * -1 if the sort is reversed from the standard comparators, 1 otherwise.
+     *
+     * @return this instance
      */
     public abstract int reverseMul();
 
     /**
      * Wrap a comparator in one for this direction.
+     *
+     * @param <T> the element type
+     * @param delegate the delegate
+     * @return this instance
      */
     public abstract <T> Comparator<T> wrap(Comparator<T> delegate);
 }

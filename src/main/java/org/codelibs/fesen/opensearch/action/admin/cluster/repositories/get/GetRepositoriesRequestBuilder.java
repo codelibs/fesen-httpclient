@@ -50,6 +50,10 @@ public class GetRepositoriesRequestBuilder extends ClusterManagerNodeReadOperati
 
     /**
      * Creates new get repository request builder
+     *
+     * @param client the client
+     * @param action the action
+     * @param repositories the repositories
      */
     public GetRepositoriesRequestBuilder(OpenSearchClient client, GetRepositoriesAction action, String... repositories) {
         super(client, action, new GetRepositoriesRequest(repositories));

@@ -57,8 +57,17 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParserUtils.en
 @PublicApi(since = "1.0.0")
 public final class QueryProfileShardResult implements Writeable, ToXContentObject {
 
+    /**
+     * The COLLECTOR constant.
+     */
     public static final String COLLECTOR = "collector";
+    /**
+     * The REWRITE_TIME constant.
+     */
     public static final String REWRITE_TIME = "rewrite_time";
+    /**
+     * The QUERY_ARRAY constant.
+     */
     public static final String QUERY_ARRAY = "query";
 
     private final List<ProfileResult> queryProfileResults;
@@ -67,6 +76,13 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
 
     private final long rewriteTime;
 
+    /**
+     * Creates a new QueryProfileShardResult.
+     *
+     * @param queryProfileResults the query profile results
+     * @param rewriteTime the rewrite time
+     * @param profileCollector the profile collector
+     */
     public QueryProfileShardResult(List<ProfileResult> queryProfileResults, long rewriteTime, CollectorResult profileCollector) {
         assert (profileCollector != null);
         this.queryProfileResults = queryProfileResults;
@@ -76,6 +92,9 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public QueryProfileShardResult(StreamInput in) throws IOException {
         int profileSize = in.readVInt();
@@ -114,6 +133,13 @@ public final class QueryProfileShardResult implements Writeable, ToXContentObjec
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static QueryProfileShardResult fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);

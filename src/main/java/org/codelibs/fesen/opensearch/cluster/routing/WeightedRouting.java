@@ -30,20 +30,39 @@ public class WeightedRouting implements Writeable {
     private final Map<String, Double> weights;
     private final int hashCode;
 
+    /**
+     * Creates a new WeightedRouting.
+     */
     public WeightedRouting() {
         this("", new HashMap<>(3));
     }
 
+    /**
+     * Creates a new WeightedRouting.
+     *
+     * @param attributeName the attribute name
+     * @param weights the weights
+     */
     public WeightedRouting(String attributeName, Map<String, Double> weights) {
         this.attributeName = attributeName;
         this.weights = Collections.unmodifiableMap(weights);
         this.hashCode = Objects.hash(this.attributeName, this.weights);
     }
 
+    /**
+     * Creates a new WeightedRouting.
+     *
+     * @param weightedRouting the weighted routing
+     */
     public WeightedRouting(WeightedRouting weightedRouting) {
         this(weightedRouting.attributeName(), weightedRouting.weights);
     }
 
+    /**
+     * Returns the set flag.
+     *
+     * @return the set flag
+     */
     public boolean isSet() {
         return this.attributeName != null && !this.attributeName.isEmpty() && this.weights != null && !this.weights.isEmpty();
     }
@@ -74,10 +93,20 @@ public class WeightedRouting implements Writeable {
         return "WeightedRouting{" + attributeName + "}{" + weights().toString() + "}";
     }
 
+    /**
+     * Returns the weights.
+     *
+     * @return the weights
+     */
     public Map<String, Double> weights() {
         return this.weights;
     }
 
+    /**
+     * Returns the attribute name.
+     *
+     * @return the attribute name
+     */
     public String attributeName() {
         return this.attributeName;
     }

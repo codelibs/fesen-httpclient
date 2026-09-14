@@ -87,6 +87,9 @@ import static org.codelibs.fesen.opensearch.common.xcontent.XContentFactory.json
  * @opensearch.internal
  */
 public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "more_like_this";
     static final String TYPES_DEPRECATION_MESSAGE = "[types removal] Types are deprecated in [more_like_this] "
         + "queries. The type should no longer be specified in the [like] and [unlike] sections.";
@@ -94,17 +97,44 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /* The six defaults below were read from XMoreLikeThis, a 23 KB Lucene
      * more-like-this implementation that computes interesting terms from an index. A client
      * only serialises the parameters; the values are inlined so the builder does not carry it. */
+    /**
+     * The DEFAULT_MAX_QUERY_TERMS constant.
+     */
     public static final int DEFAULT_MAX_QUERY_TERMS = 25;
+    /**
+     * The DEFAULT_MIN_TERM_FREQ constant.
+     */
     public static final int DEFAULT_MIN_TERM_FREQ = 2;
+    /**
+     * The DEFAULT_MIN_DOC_FREQ constant.
+     */
     public static final int DEFAULT_MIN_DOC_FREQ = 5;
+    /**
+     * The DEFAULT_MAX_DOC_FREQ constant.
+     */
     public static final int DEFAULT_MAX_DOC_FREQ = Integer.MAX_VALUE;
+    /**
+     * The DEFAULT_MIN_WORD_LENGTH constant.
+     */
     public static final int DEFAULT_MIN_WORD_LENGTH = 0;
+    /**
+     * The DEFAULT_MAX_WORD_LENGTH constant.
+     */
     public static final int DEFAULT_MAX_WORD_LENGTH = 0;
     /** Was MoreLikeThisQuery.DEFAULT_MINIMUM_SHOULD_MATCH; inlined so the builder does not
      *  drag in the node-side Lucene query it only borrowed a default from. */
     public static final String DEFAULT_MINIMUM_SHOULD_MATCH = "30%";
+    /**
+     * The DEFAULT_BOOST_TERMS constant.
+     */
     public static final float DEFAULT_BOOST_TERMS = 0;  // no boost terms
+    /**
+     * The DEFAULT_INCLUDE constant.
+     */
     public static final boolean DEFAULT_INCLUDE = false;
+    /**
+     * The DEFAULT_FAIL_ON_UNSUPPORTED_FIELDS constant.
+     */
     public static final boolean DEFAULT_FAIL_ON_UNSUPPORTED_FIELDS = true;
 
     private static final ParseField FIELDS = new ParseField("fields");
@@ -125,6 +155,9 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
 
     private static final ParseField INDEX = new ParseField("_index");
     private static final ParseField ID = new ParseField("_id");
+    /**
+     * The DOC constant.
+     */
     public static final ParseField DOC = new ParseField("doc");
     private static final ParseField PER_FIELD_ANALYZER = new ParseField("per_field_analyzer");
     private static final ParseField ROUTING = new ParseField("routing");
@@ -162,6 +195,9 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
      * @opensearch.internal
      */
     public static final class Item implements ToXContentObject, Writeable {
+        /**
+         * The EMPTY_ARRAY constant.
+         */
         public static final Item[] EMPTY_ARRAY = new Item[0];
 
         private String index;
@@ -174,6 +210,9 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         private long version = Versions.MATCH_ANY;
         private VersionType versionType = VersionType.INTERNAL;
 
+        /**
+         * Creates a new Item.
+         */
         public Item() {}
 
         /**
@@ -227,6 +266,12 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
             versionType.writeTo(out);
         }
 
+        /**
+         * Returns the fields.
+         *
+         * @param fields the fields
+         * @return the fields
+         */
         public Item fields(String... fields) {
             this.fields = fields;
             return this;
@@ -234,6 +279,9 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
 
         /**
          * Sets the analyzer(s) to use at any given field.
+         *
+         * @param perFieldAnalyzer the per field analyzer
+         * @return the per field analyzer
          */
         public Item perFieldAnalyzer(Map<String, String> perFieldAnalyzer) {
             this.perFieldAnalyzer = perFieldAnalyzer;
@@ -264,6 +312,11 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
 
         /**
          * Parses and returns the given item.
+         *
+         * @param parser the parser
+         * @param item the item
+         * @return this instance
+         * @throws IOException if an I/O error occurs
          */
         public static Item parse(XContentParser parser, Item item) throws IOException {
             XContentParser.Token token;
@@ -409,6 +462,9 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MoreLikeThisQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -452,38 +508,69 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         out.writeBoolean(failOnUnsupportedField);
     }
 
+    /**
+     * Returns the fields.
+     *
+     * @return the fields
+     */
     public String[] fields() {
         return this.fields;
     }
 
+    /**
+     * Returns the like texts.
+     *
+     * @return the like texts
+     */
     public String[] likeTexts() {
         return likeTexts;
     }
 
+    /**
+     * Returns the like items.
+     *
+     * @return the like items
+     */
     public Item[] likeItems() {
         return likeItems;
     }
 
     /**
      * Sets the text from which the terms should not be selected from.
+     *
+     * @param unlikeTexts the unlike texts
+     * @return the unlike
      */
     public MoreLikeThisQueryBuilder unlike(String[] unlikeTexts) {
         this.unlikeTexts = Optional.ofNullable(unlikeTexts).orElse(Strings.EMPTY_ARRAY);
         return this;
     }
 
+    /**
+     * Returns the unlike texts.
+     *
+     * @return the unlike texts
+     */
     public String[] unlikeTexts() {
         return unlikeTexts;
     }
 
     /**
      * Sets the documents from which the terms should not be selected from.
+     *
+     * @param unlikeItems the unlike items
+     * @return the unlike
      */
     public MoreLikeThisQueryBuilder unlike(Item[] unlikeItems) {
         this.unlikeItems = Optional.ofNullable(unlikeItems).orElse(new Item[0]);
         return this;
     }
 
+    /**
+     * Returns the unlike items.
+     *
+     * @return the unlike items
+     */
     public Item[] unlikeItems() {
         return unlikeItems;
     }
@@ -491,6 +578,9 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /**
      * Sets the maximum number of query terms that will be included in any generated query.
      * Defaults to {@code 25}.
+     *
+     * @param maxQueryTerms the max query terms
+     * @return the max query terms
      */
     public MoreLikeThisQueryBuilder maxQueryTerms(int maxQueryTerms) {
         if (maxQueryTerms <= 0) {
@@ -500,6 +590,11 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         return this;
     }
 
+    /**
+     * Returns the max query terms.
+     *
+     * @return the max query terms
+     */
     public int maxQueryTerms() {
         return maxQueryTerms;
     }
@@ -507,12 +602,20 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /**
      * The frequency below which terms will be ignored in the source doc. The default
      * frequency is {@code 2}.
+     *
+     * @param minTermFreq the min term freq
+     * @return the min term freq
      */
     public MoreLikeThisQueryBuilder minTermFreq(int minTermFreq) {
         this.minTermFreq = minTermFreq;
         return this;
     }
 
+    /**
+     * Returns the min term freq.
+     *
+     * @return the min term freq
+     */
     public int minTermFreq() {
         return minTermFreq;
     }
@@ -520,12 +623,20 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /**
      * Sets the frequency at which words will be ignored which do not occur in at least this
      * many docs. Defaults to {@code 5}.
+     *
+     * @param minDocFreq the min doc freq
+     * @return the min doc freq
      */
     public MoreLikeThisQueryBuilder minDocFreq(int minDocFreq) {
         this.minDocFreq = minDocFreq;
         return this;
     }
 
+    /**
+     * Returns the min doc freq.
+     *
+     * @return the min doc freq
+     */
     public int minDocFreq() {
         return minDocFreq;
     }
@@ -533,12 +644,20 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /**
      * Set the maximum frequency in which words may still appear. Words that appear
      * in more than this many docs will be ignored. Defaults to unbounded.
+     *
+     * @param maxDocFreq the max doc freq
+     * @return the max doc freq
      */
     public MoreLikeThisQueryBuilder maxDocFreq(int maxDocFreq) {
         this.maxDocFreq = maxDocFreq;
         return this;
     }
 
+    /**
+     * Returns the max doc freq.
+     *
+     * @return the max doc freq
+     */
     public int maxDocFreq() {
         return maxDocFreq;
     }
@@ -546,12 +665,20 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /**
      * Sets the minimum word length below which words will be ignored. Defaults
      * to {@code 0}.
+     *
+     * @param minWordLength the min word length
+     * @return the min word length
      */
     public MoreLikeThisQueryBuilder minWordLength(int minWordLength) {
         this.minWordLength = minWordLength;
         return this;
     }
 
+    /**
+     * Returns the min word length.
+     *
+     * @return the min word length
+     */
     public int minWordLength() {
         return minWordLength;
     }
@@ -559,12 +686,20 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
     /**
      * Sets the maximum word length above which words will be ignored. Defaults to
      * unbounded ({@code 0}).
+     *
+     * @param maxWordLength the max word length
+     * @return the max word length
      */
     public MoreLikeThisQueryBuilder maxWordLength(int maxWordLength) {
         this.maxWordLength = maxWordLength;
         return this;
     }
 
+    /**
+     * Returns the max word length.
+     *
+     * @return the max word length
+     */
     public int maxWordLength() {
         return maxWordLength;
     }
@@ -575,12 +710,21 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
      * Any word in this set is considered "uninteresting" and ignored. Even if your Analyzer allows stopwords, you
      * might want to tell the MoreLikeThis code to ignore them, as for the purposes of document similarity it seems
      * reasonable to assume that "a stop word is never interesting".
+     *
+     * @param stopWords the stop words
+     * @return this instance
      */
     public MoreLikeThisQueryBuilder stopWords(String... stopWords) {
         this.stopWords = stopWords;
         return this;
     }
 
+    /**
+     * Stops the words.
+     *
+     * @param stopWords the stop words
+     * @return this instance
+     */
     public MoreLikeThisQueryBuilder stopWords(List<String> stopWords) {
         if (stopWords == null) {
             throw new IllegalArgumentException("requires stopwords to be non-null");
@@ -589,18 +733,31 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         return this;
     }
 
+    /**
+     * Stops the words.
+     *
+     * @return this instance
+     */
     public String[] stopWords() {
         return stopWords;
     }
 
     /**
      * The analyzer that will be used to analyze the text. Defaults to the analyzer associated with the field.
+     *
+     * @param analyzer the analyzer
+     * @return the analyzer
      */
     public MoreLikeThisQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
+    /**
+     * Returns the analyzer.
+     *
+     * @return the analyzer
+     */
     public String analyzer() {
         return analyzer;
     }
@@ -609,6 +766,8 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
      * Number of terms that must match the generated query expressed in the
      * common syntax for minimum should match. Defaults to {@code 30%}.
      *
+     * @param minimumShouldMatch the minimum should match
+     * @return the minimum should match
      * @see    org.codelibs.fesen.opensearch.common.lucene.search.Queries#calculateMinShouldMatch(int, String)
      */
     public MoreLikeThisQueryBuilder minimumShouldMatch(String minimumShouldMatch) {
@@ -619,42 +778,71 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         return this;
     }
 
+    /**
+     * Returns the minimum should match.
+     *
+     * @return the minimum should match
+     */
     public String minimumShouldMatch() {
         return minimumShouldMatch;
     }
 
     /**
      * Sets the boost factor to use when boosting terms. Defaults to {@code 0} (deactivated).
+     *
+     * @param boostTerms the boost terms
+     * @return this instance
      */
     public MoreLikeThisQueryBuilder boostTerms(float boostTerms) {
         this.boostTerms = boostTerms;
         return this;
     }
 
+    /**
+     * Boosts the terms.
+     *
+     * @return this instance
+     */
     public float boostTerms() {
         return boostTerms;
     }
 
     /**
      * Whether to include the input documents. Defaults to {@code false}
+     *
+     * @param include the include
+     * @return this instance
      */
     public MoreLikeThisQueryBuilder include(boolean include) {
         this.include = include;
         return this;
     }
 
+    /**
+     * Includes this instance.
+     *
+     * @return this instance
+     */
     public boolean include() {
         return include;
     }
 
     /**
      * Whether to fail or return no result when this query is run against a field which is not supported such as binary/numeric fields.
+     *
+     * @param fail the fail
+     * @return this instance
      */
     public MoreLikeThisQueryBuilder failOnUnsupportedField(boolean fail) {
         this.failOnUnsupportedField = fail;
         return this;
     }
 
+    /**
+     * Fails the on unsupported field.
+     *
+     * @return this instance
+     */
     public boolean failOnUnsupportedField() {
         return failOnUnsupportedField;
     }
@@ -687,6 +875,13 @@ public class MoreLikeThisQueryBuilder extends AbstractQueryBuilder<MoreLikeThisQ
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MoreLikeThisQueryBuilder fromXContent(XContentParser parser) throws IOException {
         // document inputs
         List<String> fields = null;

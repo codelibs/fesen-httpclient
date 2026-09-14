@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClearIndicesCacheAction extends ActionType<ClearIndicesCacheResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClearIndicesCacheAction INSTANCE = new ClearIndicesCacheAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:admin/cache/clear";
 
     private ClearIndicesCacheAction() {

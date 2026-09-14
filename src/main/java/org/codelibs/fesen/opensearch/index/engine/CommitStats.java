@@ -69,6 +69,13 @@ public final class CommitStats implements Writeable, ToXContentFragment {
         numDocs = in.readInt();
     }
 
+    /**
+     * Reads the optional commit stats from.
+     *
+     * @param in the input to read from
+     * @return the optional commit stats from
+     * @throws IOException if an I/O error occurs
+     */
     public static CommitStats readOptionalCommitStatsFrom(StreamInput in) throws IOException {
         return in.readOptionalWriteable(CommitStats::new);
     }

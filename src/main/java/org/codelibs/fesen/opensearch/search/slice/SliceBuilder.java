@@ -69,8 +69,17 @@ import java.util.Set;
  */
 @PublicApi(since = "1.0.0")
 public class SliceBuilder implements Writeable, ToXContentObject {
+    /**
+     * The FIELD_FIELD constant.
+     */
     public static final ParseField FIELD_FIELD = new ParseField("field");
+    /**
+     * The ID_FIELD constant.
+     */
     public static final ParseField ID_FIELD = new ParseField("id");
+    /**
+     * The MAX_FIELD constant.
+     */
     public static final ParseField MAX_FIELD = new ParseField("max");
     private static final ObjectParser<SliceBuilder, Void> PARSER = new ObjectParser<>("slice", SliceBuilder::new);
 
@@ -90,6 +99,7 @@ public class SliceBuilder implements Writeable, ToXContentObject {
     private SliceBuilder() {}
 
     /**
+     * Creates a new SliceBuilder.
      *
      * @param field The name of the field
      * @param id The id of the slice
@@ -101,6 +111,12 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         setMax(max);
     }
 
+    /**
+     * Creates a new SliceBuilder by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SliceBuilder(StreamInput in) throws IOException {
         this.field = in.readString();
         this.id = in.readVInt();
@@ -158,6 +174,13 @@ public class SliceBuilder implements Writeable, ToXContentObject {
         builder.field(MAX_FIELD.getPreferredName(), max);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SliceBuilder fromXContent(XContentParser parser) throws IOException {
         SliceBuilder builder = PARSER.parse(parser, new SliceBuilder(), null);
         return builder;

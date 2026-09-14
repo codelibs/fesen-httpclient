@@ -24,6 +24,12 @@ public class RemoteStoreMetadataRequestBuilder extends BroadcastOperationRequest
     RemoteStoreMetadataResponse,
     RemoteStoreMetadataRequestBuilder> {
 
+    /**
+     * Creates a new RemoteStoreMetadataRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public RemoteStoreMetadataRequestBuilder(OpenSearchClient client, RemoteStoreMetadataAction action) {
         super(client, action, new RemoteStoreMetadataRequest());
     }

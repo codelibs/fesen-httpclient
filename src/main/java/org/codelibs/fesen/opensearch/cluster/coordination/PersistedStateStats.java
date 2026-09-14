@@ -51,6 +51,12 @@ public class PersistedStateStats implements Writeable, ToXContentObject {
         }
     }
 
+    /**
+     * Creates a new PersistedStateStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PersistedStateStats(StreamInput in) throws IOException {
         this.statsName = in.readString();
         this.successCount = new AtomicLong(in.readVLong());
@@ -80,14 +86,29 @@ public class PersistedStateStats implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * Returns the total time in milliseconds.
+     *
+     * @return the total time in milliseconds
+     */
     public long getTotalTimeInMillis() {
         return totalTimeInMillis.get();
     }
 
+    /**
+     * Returns the failed count.
+     *
+     * @return the failed count
+     */
     public long getFailedCount() {
         return failedCount.get();
     }
 
+    /**
+     * Returns the success count.
+     *
+     * @return the success count
+     */
     public long getSuccessCount() {
         return successCount.get();
     }

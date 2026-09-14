@@ -40,12 +40,18 @@ import java.io.IOException;
 /**
  * Value Serializer for named diffables
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public class NamedDiffableValueSerializer<T extends NamedDiffable<T>> extends DiffableUtils.DiffableValueSerializer<String, T> {
 
     private final Class<T> tClass;
 
+    /**
+     * Creates a new NamedDiffableValueSerializer.
+     *
+     * @param tClass the t class
+     */
     public NamedDiffableValueSerializer(Class<T> tClass) {
         this.tClass = tClass;
     }

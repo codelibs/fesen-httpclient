@@ -52,10 +52,18 @@ import static org.codelibs.fesen.opensearch.common.xcontent.XContentHelper.conve
  * @opensearch.internal
  */
 public class RawTaskStatus implements Task.Status {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "raw";
 
     private final BytesReference status;
 
+    /**
+     * Creates a new RawTaskStatus.
+     *
+     * @param status the status
+     */
     public RawTaskStatus(BytesReference status) {
         this.status = requireNonNull(status, "status may not be null");
     }
@@ -84,6 +92,8 @@ public class RawTaskStatus implements Task.Status {
 
     /**
      * Convert the from XContent to a Map for easy reading.
+     *
+     * @return the map
      */
     public Map<String, Object> toMap() {
         return convertToMap(status, false).v2();

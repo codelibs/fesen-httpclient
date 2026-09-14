@@ -52,10 +52,20 @@ public class StandardValidator implements GeometryValidator {
 
     private final boolean ignoreZValue;
 
+    /**
+     * Creates a new StandardValidator.
+     *
+     * @param ignoreZValue the ignore z value
+     */
     public StandardValidator(boolean ignoreZValue) {
         this.ignoreZValue = ignoreZValue;
     }
 
+    /**
+     * Checks the z.
+     *
+     * @param zValue the z value
+     */
     protected void checkZ(double zValue) {
         if (ignoreZValue == false && Double.isNaN(zValue) == false) {
             throw new IllegalArgumentException(

@@ -64,12 +64,21 @@ import java.util.List;
 @PublicApi(since = "1.0.0")
 public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, SearchResponse> {
 
+    /**
+     * Creates a new SearchRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public SearchRequestBuilder(OpenSearchClient client, SearchAction action) {
         super(client, action, new SearchRequest());
     }
 
     /**
      * Sets the indices the search will be executed on.
+     *
+     * @param indices the indices
+     * @return this instance
      */
     public SearchRequestBuilder setIndices(String... indices) {
         request.indices(indices);
@@ -80,6 +89,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      * The a string representation search type to execute, defaults to {@link SearchType#DEFAULT}. Can be
      * one of "dfs_query_then_fetch"/"dfsQueryThenFetch", "dfs_query_and_fetch"/"dfsQueryAndFetch",
      * "query_then_fetch"/"queryThenFetch", and "query_and_fetch"/"queryAndFetch".
+     *
+     * @param searchType the search type
+     * @return this instance
      */
     public SearchRequestBuilder setSearchType(String searchType) {
         request.searchType(searchType);
@@ -88,6 +100,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * If set, will enable scrolling of the search request for the specified timeout.
+     *
+     * @param keepAlive the keep alive
+     * @return this instance
      */
     public SearchRequestBuilder setScroll(TimeValue keepAlive) {
         request.scroll(keepAlive);
@@ -96,6 +111,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * An optional timeout to control how long search is allowed to take.
+     *
+     * @param timeout the timeout
+     * @return this instance
      */
     public SearchRequestBuilder setTimeout(TimeValue timeout) {
         sourceBuilder().timeout(timeout);
@@ -105,6 +123,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * An optional document count, upon collecting which the search
      * query will early terminate
+     *
+     * @param terminateAfter the terminate after
+     * @return this instance
      */
     public SearchRequestBuilder setTerminateAfter(int terminateAfter) {
         sourceBuilder().terminateAfter(terminateAfter);
@@ -113,6 +134,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * A comma separated list of routing values to control the shards the search will be executed on.
+     *
+     * @param routing the routing value
+     * @return this instance
      */
     public SearchRequestBuilder setRouting(String routing) {
         request.routing(routing);
@@ -124,6 +148,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
      * or a custom value, which guarantees that the same order
      * will be used across different requests.
+     *
+     * @param preference the preference
+     * @return this instance
      */
     public SearchRequestBuilder setPreference(String preference) {
         request.preference(preference);
@@ -133,6 +160,8 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * Constructs a new search source builder with a search query.
      *
+     * @param queryBuilder the query builder
+     * @return this instance
      * @see org.codelibs.fesen.opensearch.index.query.QueryBuilders
      */
     public SearchRequestBuilder setQuery(QueryBuilder queryBuilder) {
@@ -142,6 +171,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * Sets the minimum score below which docs will be filtered out.
+     *
+     * @param minScore the min score
+     * @return this instance
      */
     public SearchRequestBuilder setMinScore(float minScore) {
         sourceBuilder().minScore(minScore);
@@ -150,6 +182,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * From index to start the search from. Defaults to {@code 0}.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public SearchRequestBuilder setFrom(int from) {
         sourceBuilder().from(from);
@@ -158,6 +193,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * The number of search hits to return. Defaults to {@code 10}.
+     *
+     * @param size the size
+     * @return this instance
      */
     public SearchRequestBuilder setSize(int size) {
         sourceBuilder().size(size);
@@ -167,6 +205,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with an
      * explanation of the hit (ranking).
+     *
+     * @param explain the explain
+     * @return this instance
      */
     public SearchRequestBuilder setExplain(boolean explain) {
         sourceBuilder().explain(explain);
@@ -176,6 +217,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with its
      * version.
+     *
+     * @param version the version
+     * @return this instance
      */
     public SearchRequestBuilder setVersion(boolean version) {
         sourceBuilder().version(version);
@@ -185,6 +229,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * Should each {@link org.codelibs.fesen.opensearch.search.SearchHit} be returned with the
      * sequence number and primary term of the last modification of the document.
+     *
+     * @param seqNoAndPrimaryTerm the seq no and primary term
+     * @return the seq no and primary term
      */
     public SearchRequestBuilder seqNoAndPrimaryTerm(boolean seqNoAndPrimaryTerm) {
         sourceBuilder().seqNoAndPrimaryTerm(seqNoAndPrimaryTerm);
@@ -193,6 +240,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * Indicates whether the response should contain the stored _source for every hit
+     *
+     * @param fetch the fetch
+     * @return this instance
      */
     public SearchRequestBuilder setFetchSource(boolean fetch) {
         sourceBuilder().fetchSource(fetch);
@@ -205,6 +255,7 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      *
      * @param includes An optional list of include (optionally wildcarded) pattern to filter the returned _source
      * @param excludes An optional list of exclude (optionally wildcarded) pattern to filter the returned _source
+     * @return this instance
      */
     public SearchRequestBuilder setFetchSource(@Nullable String[] includes, @Nullable String[] excludes) {
         sourceBuilder().fetchSource(includes, excludes);
@@ -216,6 +267,7 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      *
      * @param field The name of the field
      * @param order The sort ordering
+     * @return this instance
      */
     public SearchRequestBuilder addSort(String field, SortOrder order) {
         sourceBuilder().sort(field, order);
@@ -225,6 +277,8 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * Adds a generic sort builder.
      *
+     * @param sort the sort
+     * @return this instance
      * @see org.codelibs.fesen.opensearch.search.sort.SortBuilders
      */
     public SearchRequestBuilder addSort(SortBuilder<?> sort) {
@@ -235,6 +289,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
     /**
      * Set the sort values that indicates which docs this request should "search after".
      *
+     * @param values the values
+     *
+     * @return this instance
      */
     public SearchRequestBuilder searchAfter(Object[] values) {
         sourceBuilder().searchAfter(values);
@@ -245,6 +302,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
      * Indicates if the total hit count for the query should be tracked. Requests will count total hit count accurately
      * up to 10,000 by default, see {@link #setTrackTotalHitsUpTo(int)} to change this value or set to true/false to always/never
      * count accurately.
+     *
+     * @param trackTotalHits the track total hits
+     * @return this instance
      */
     public SearchRequestBuilder setTrackTotalHits(boolean trackTotalHits) {
         sourceBuilder().trackTotalHits(trackTotalHits);
@@ -253,6 +313,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * Indicates the total hit count that should be tracked accurately or null if the value is unset. Defaults to 10,000.
+     *
+     * @param trackTotalHitsUpTo the track total hits up to
+     * @return this instance
      */
     public SearchRequestBuilder setTrackTotalHitsUpTo(int trackTotalHitsUpTo) {
         sourceBuilder().trackTotalHitsUpTo(trackTotalHitsUpTo);
@@ -261,12 +324,21 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * Adds an aggregation to the search operation.
+     *
+     * @param aggregation the aggregation
+     * @return this instance
      */
     public SearchRequestBuilder addAggregation(AggregationBuilder aggregation) {
         sourceBuilder().aggregation(aggregation);
         return this;
     }
 
+    /**
+     * Returns the highlighter.
+     *
+     * @param highlightBuilder the highlight builder
+     * @return the highlighter
+     */
     public SearchRequestBuilder highlighter(HighlightBuilder highlightBuilder) {
         sourceBuilder().highlighter(highlightBuilder);
         return this;
@@ -296,6 +368,12 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
         return this;
     }
 
+    /**
+     * Sets the collapse.
+     *
+     * @param collapse the collapse
+     * @return this instance
+     */
     public SearchRequestBuilder setCollapse(CollapseBuilder collapse) {
         sourceBuilder().collapse(collapse);
         return this;
@@ -303,6 +381,9 @@ public class SearchRequestBuilder extends ActionRequestBuilder<SearchRequest, Se
 
     /**
      * If specified, OpenSearch will execute this search request using reader contexts from that point in time.
+     *
+     * @param pointInTimeBuilder the point in time builder
+     * @return this instance
      */
     public SearchRequestBuilder setPointInTime(PointInTimeBuilder pointInTimeBuilder) {
         sourceBuilder().pointInTimeBuilder(pointInTimeBuilder);

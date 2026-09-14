@@ -105,14 +105,23 @@ import java.util.Map;
  */
 public class Lucene {
 
+    /**
+     * The EMPTY_SCORE_DOCS constant.
+     */
     public static final ScoreDoc[] EMPTY_SCORE_DOCS = new ScoreDoc[0];
 
+    /**
+     * The EMPTY_TOP_DOCS constant.
+     */
     public static final TopDocs EMPTY_TOP_DOCS = new TopDocs(new TotalHits(0, TotalHits.Relation.EQUAL_TO), EMPTY_SCORE_DOCS);
 
     private Lucene() {}
 
     /**
      * Returns the number of documents in the index referenced by this {@link SegmentInfos}
+     *
+     * @param info the info
+     * @return the num docs
      */
     public static int getNumDocs(SegmentInfos info) {
         int numDocs = 0;
@@ -122,12 +131,26 @@ public class Lucene {
         return numDocs;
     }
 
+    /**
+     * Reads the total hits.
+     *
+     * @param in the input to read from
+     * @return the total hits
+     * @throws IOException if an I/O error occurs
+     */
     public static TotalHits readTotalHits(StreamInput in) throws IOException {
         long totalHits = in.readVLong();
         TotalHits.Relation totalHitsRelation = in.readEnum(TotalHits.Relation.class);
         return new TotalHits(totalHits, totalHitsRelation);
     }
 
+    /**
+     * Reads the sort value.
+     *
+     * @param in the input to read from
+     * @return the sort value
+     * @throws IOException if an I/O error occurs
+     */
     public static Comparable readSortValue(StreamInput in) throws IOException {
         return readTypedValue(in);
     }
@@ -159,6 +182,13 @@ public class Lucene {
 
     private static final Class<?> GEO_DISTANCE_SORT_TYPE_CLASS = LatLonDocValuesField.newDistanceSort("some_geo_field", 0, 0).getClass();
 
+    /**
+     * Writes the total hits.
+     *
+     * @param out the output to write to
+     * @param totalHits the total hits
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeTotalHits(StreamOutput out, TotalHits totalHits) throws IOException {
         out.writeVLong(totalHits.value());
         out.writeEnum(totalHits.relation());
@@ -189,6 +219,13 @@ public class Lucene {
         }
     }
 
+    /**
+     * Writes the sort value.
+     *
+     * @param out the output to write to
+     * @param field the field
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeSortValue(StreamOutput out, Object field) throws IOException {
         if (field == null) {
             out.writeByte((byte) 0);
@@ -232,10 +269,24 @@ public class Lucene {
     }
 
     // LUCENE 4 UPGRADE: We might want to maintain our own ordinal, instead of Lucene's ordinal
+    /**
+     * Reads the sort type.
+     *
+     * @param in the input to read from
+     * @return the sort type
+     * @throws IOException if an I/O error occurs
+     */
     public static SortField.Type readSortType(StreamInput in) throws IOException {
         return SortField.Type.values()[in.readVInt()];
     }
 
+    /**
+     * Reads the sort field.
+     *
+     * @param in the input to read from
+     * @return the sort field
+     * @throws IOException if an I/O error occurs
+     */
     public static SortField readSortField(StreamInput in) throws IOException {
         String field = null;
         if (in.readBoolean()) {
@@ -251,10 +302,24 @@ public class Lucene {
         return sortField;
     }
 
+    /**
+     * Writes the sort type.
+     *
+     * @param out the output to write to
+     * @param sortType the sort type
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeSortType(StreamOutput out, SortField.Type sortType) throws IOException {
         out.writeVInt(sortType.ordinal());
     }
 
+    /**
+     * Writes the sort field.
+     *
+     * @param out the output to write to
+     * @param sortField the sort field
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeSortField(StreamOutput out, SortField sortField) throws IOException {
         if (sortField.getClass() == GEO_DISTANCE_SORT_TYPE_CLASS) {
             // for geo sorting, we replace the SortField with a SortField that assumes a double field.
@@ -308,6 +373,13 @@ public class Lucene {
         }
     }
 
+    /**
+     * Reads the explanation.
+     *
+     * @param in the input to read from
+     * @return the explanation
+     * @throws IOException if an I/O error occurs
+     */
     public static Explanation readExplanation(StreamInput in) throws IOException {
         boolean match = in.readBoolean();
         String description = in.readString();
@@ -335,6 +407,13 @@ public class Lucene {
         }
     }
 
+    /**
+     * Writes the explanation.
+     *
+     * @param out the output to write to
+     * @param explanation the explanation
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeExplanation(StreamOutput out, Explanation explanation) throws IOException {
         out.writeBoolean(explanation.isMatch());
         out.writeString(explanation.getDescription());
@@ -350,6 +429,10 @@ public class Lucene {
 
     /**
      * Parses the version string lenient and returns the default value if the given string is null or empty
+     *
+     * @param toParse the to parse
+     * @param defaultValue the default value
+     * @return this instance
      */
     public static Version parseVersionLenient(String toParse, Version defaultValue) {
         return LenientParser.parse(toParse, defaultValue);

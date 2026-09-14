@@ -57,6 +57,15 @@ public class UpgradeRequest extends BroadcastRequest<UpgradeRequest> {
      * @opensearch.internal
      */
     public static final class Defaults {
+        /**
+         * Creates a new Defaults.
+         */
+        public Defaults() {
+        }
+
+        /**
+         * The UPGRADE_ONLY_ANCIENT_SEGMENTS constant.
+         */
         public static final boolean UPGRADE_ONLY_ANCIENT_SEGMENTS = false;
     }
 
@@ -80,6 +89,8 @@ public class UpgradeRequest extends BroadcastRequest<UpgradeRequest> {
     /**
      * Should the upgrade only the ancient (older major version of Lucene) segments?
      * Defaults to {@code false}.
+     *
+     * @return the upgrade only ancient segments
      */
     public boolean upgradeOnlyAncientSegments() {
         return upgradeOnlyAncientSegments;

@@ -44,6 +44,7 @@ import java.io.IOException;
 /**
  * Base request class for bulk indexing by scroll
  *
+ * @param <Self> the self type
  * @opensearch.internal
  */
 public abstract class AbstractBulkIndexByScrollRequest<Self extends AbstractBulkIndexByScrollRequest<Self>> extends
@@ -66,6 +67,8 @@ public abstract class AbstractBulkIndexByScrollRequest<Self extends AbstractBulk
 
     /**
      * Script to modify the documents before they are processed.
+     *
+     * @return the script
      */
     public Script getScript() {
         return script;
@@ -73,6 +76,9 @@ public abstract class AbstractBulkIndexByScrollRequest<Self extends AbstractBulk
 
     /**
      * Script to modify the documents before they are processed.
+     *
+     * @param script the script
+     * @return this instance
      */
     public Self setScript(@Nullable Script script) {
         this.script = script;

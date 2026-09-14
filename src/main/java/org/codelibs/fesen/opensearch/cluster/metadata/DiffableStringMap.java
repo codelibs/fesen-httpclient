@@ -56,16 +56,31 @@ import java.util.Set;
 @PublicApi(since = "1.0.0")
 public class DiffableStringMap extends AbstractMap<String, String> implements Diffable<DiffableStringMap> {
 
+    /**
+     * The EMPTY constant.
+     */
     public static final DiffableStringMap EMPTY = new DiffableStringMap(Collections.emptyMap());
 
     private final Map<String, String> innerMap;
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     @SuppressWarnings("unchecked")
     public static DiffableStringMap readFrom(StreamInput in) throws IOException {
         final Map<String, String> map = (Map) in.readMap();
         return map.isEmpty() ? EMPTY : new DiffableStringMap(map);
     }
 
+    /**
+     * Creates a new DiffableStringMap.
+     *
+     * @param map the map
+     */
     public DiffableStringMap(final Map<String, String> map) {
         this.innerMap = Collections.unmodifiableMap(map);
     }
@@ -86,6 +101,13 @@ public class DiffableStringMap extends AbstractMap<String, String> implements Di
         return new DiffableStringMapDiff(previousState, this);
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<DiffableStringMap> readDiffFrom(StreamInput in) throws IOException {
         return new DiffableStringMapDiff(in);
     }
@@ -97,6 +119,9 @@ public class DiffableStringMap extends AbstractMap<String, String> implements Di
      */
     public static class DiffableStringMapDiff implements Diff<DiffableStringMap> {
 
+        /**
+         * The EMPTY constant.
+         */
         public static final DiffableStringMapDiff EMPTY = new DiffableStringMapDiff(DiffableStringMap.EMPTY, DiffableStringMap.EMPTY);
 
         private final List<String> deletes;
@@ -128,14 +153,29 @@ public class DiffableStringMap extends AbstractMap<String, String> implements Di
             upserts = in.readMap(StreamInput::readString, StreamInput::readString);
         }
 
+        /**
+         * Returns the deletes.
+         *
+         * @return the deletes
+         */
         public List<String> getDeletes() {
             return deletes;
         }
 
+        /**
+         * Returns the diffs.
+         *
+         * @return the diffs
+         */
         public Map<String, Diff<String>> getDiffs() {
             return Collections.emptyMap();
         }
 
+        /**
+         * Returns the upserts.
+         *
+         * @return the upserts
+         */
         public Map<String, String> getUpserts() {
             return upserts;
         }

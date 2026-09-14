@@ -61,6 +61,9 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationBuilder<SignificantTermsAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "significant_terms";
     static final ParseField BACKGROUND_FILTER = new ParseField("background_filter");
     static final ParseField HEURISTIC = new ParseField("significance_heuristic");
@@ -113,6 +116,14 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
         );
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static SignificantTermsAggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         return PARSER.parse(parser, new SignificantTermsAggregationBuilder(aggregationName), null);
     }
@@ -123,10 +134,22 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
     private TermsAggregator.BucketCountThresholds bucketCountThresholds = new BucketCountThresholds(DEFAULT_BUCKET_COUNT_THRESHOLDS);
     private SignificanceHeuristic significanceHeuristic = DEFAULT_SIGNIFICANCE_HEURISTIC;
 
+    /**
+     * Creates a new SignificantTermsAggregationBuilder.
+     *
+     * @param name the name
+     */
     public SignificantTermsAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new SignificantTermsAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected SignificantTermsAggregationBuilder(
         SignificantTermsAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -176,14 +199,30 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
         return true;
     }
 
+    /**
+     * Returns the bucket count thresholds.
+     *
+     * @return the bucket count thresholds
+     */
     protected TermsAggregator.BucketCountThresholds getBucketCountThresholds() {
         return new TermsAggregator.BucketCountThresholds(bucketCountThresholds);
     }
 
+    /**
+     * Buckets the count thresholds.
+     *
+     * @return this instance
+     */
     public TermsAggregator.BucketCountThresholds bucketCountThresholds() {
         return bucketCountThresholds;
     }
 
+    /**
+     * Buckets the count thresholds.
+     *
+     * @param bucketCountThresholds the bucket count thresholds
+     * @return this instance
+     */
     public SignificantTermsAggregationBuilder bucketCountThresholds(TermsAggregator.BucketCountThresholds bucketCountThresholds) {
         if (bucketCountThresholds == null) {
             throw new IllegalArgumentException("[bucketCountThresholds] must not be null: [" + name + "]");
@@ -195,6 +234,9 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
     /**
      * Sets the size - indicating how many term buckets should be returned
      * (defaults to 10)
+     *
+     * @param size the size
+     * @return the number of elements
      */
     public SignificantTermsAggregationBuilder size(int size) {
         if (size <= 0) {
@@ -209,6 +251,9 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
      * will return to the coordinating node (the node that coordinates the
      * search execution). The higher the shard size is, the more accurate the
      * results are.
+     *
+     * @param shardSize the shard size
+     * @return the shard size
      */
     public SignificantTermsAggregationBuilder shardSize(int shardSize) {
         if (shardSize <= 0) {
@@ -221,6 +266,9 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
     /**
      * Set the minimum document count terms should have in order to appear in
      * the response.
+     *
+     * @param minDocCount the min doc count
+     * @return the min doc count
      */
     public SignificantTermsAggregationBuilder minDocCount(long minDocCount) {
         if (minDocCount < 0) {
@@ -235,6 +283,9 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
     /**
      * Set the minimum document count terms should have on the shard in order to
      * appear in the response.
+     *
+     * @param shardMinDocCount the shard min doc count
+     * @return the shard min doc count
      */
     public SignificantTermsAggregationBuilder shardMinDocCount(long shardMinDocCount) {
         if (shardMinDocCount < 0) {
@@ -248,6 +299,9 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
 
     /**
      * Expert: sets an execution hint to the aggregation.
+     *
+     * @param executionHint the execution hint
+     * @return the execution hint
      */
     public SignificantTermsAggregationBuilder executionHint(String executionHint) {
         this.executionHint = executionHint;
@@ -256,11 +310,19 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
 
     /**
      * Expert: gets an execution hint to the aggregation.
+     *
+     * @return the execution hint
      */
     public String executionHint() {
         return executionHint;
     }
 
+    /**
+     * Returns the background filter.
+     *
+     * @param backgroundFilter the background filter
+     * @return the background filter
+     */
     public SignificantTermsAggregationBuilder backgroundFilter(QueryBuilder backgroundFilter) {
         if (backgroundFilter == null) {
             throw new IllegalArgumentException("[backgroundFilter] must not be null: [" + name + "]");
@@ -269,12 +331,20 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
         return this;
     }
 
+    /**
+     * Returns the background filter.
+     *
+     * @return the background filter
+     */
     public QueryBuilder backgroundFilter() {
         return filterBuilder;
     }
 
     /**
      * Set terms to include and exclude from the aggregation results
+     *
+     * @param includeExclude the include exclude
+     * @return this instance
      */
     public SignificantTermsAggregationBuilder includeExclude(IncludeExclude includeExclude) {
         this.includeExclude = includeExclude;
@@ -283,11 +353,19 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
 
     /**
      * Get terms to include and exclude from the aggregation results
+     *
+     * @return this instance
      */
     public IncludeExclude includeExclude() {
         return includeExclude;
     }
 
+    /**
+     * Returns the significance heuristic.
+     *
+     * @param significanceHeuristic the significance heuristic
+     * @return the significance heuristic
+     */
     public SignificantTermsAggregationBuilder significanceHeuristic(SignificanceHeuristic significanceHeuristic) {
         if (significanceHeuristic == null) {
             throw new IllegalArgumentException("[significanceHeuristic] must not be null: [" + name + "]");
@@ -296,6 +374,11 @@ public class SignificantTermsAggregationBuilder extends ValuesSourceAggregationB
         return this;
     }
 
+    /**
+     * Returns the significance heuristic.
+     *
+     * @return the significance heuristic
+     */
     public SignificanceHeuristic significanceHeuristic() {
         return significanceHeuristic;
     }

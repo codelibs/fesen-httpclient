@@ -84,6 +84,8 @@ import static org.codelibs.fesen.opensearch.core.xcontent.XContentParser.Token.V
  * It's highly recommended to use the high level declare methods like {@link #declareString(BiConsumer, ParseField)} instead of
  * {@link #declareField} which can be used to implement exceptional parsing operations not covered by the high level methods.
  *
+ * @param <Value> the value type
+ * @param <Context> the context type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -97,6 +99,12 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
 
     /**
      * Adapts an array (or varags) setter into a list setter.
+     *
+     * @param <Value> the value type
+     * @param <ElementValue> the element value type
+     * @param c the c
+     * @param consumer the consumer
+     * @return the new list
      */
     public static <Value, ElementValue> BiConsumer<Value, List<ElementValue>> fromList(
         Class<ElementValue> c,
@@ -132,8 +140,17 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
 
     /**
      * Defines how to consume a parsed undefined field
+     *
+     * @param <Value> the value type
      */
     public interface UnknownFieldConsumer<Value> {
+        /**
+         * Accepts the given input.
+         *
+         * @param target the target
+         * @param field the field
+         * @param value the value
+         */
         void accept(Value target, String field, Object value);
     }
 
@@ -213,6 +230,9 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
      * @param name the parsers name, used to reference the parser in exceptions and messages.
      * @param valueBuilder A function that creates a new Value from the parse Context. Used
      *                     when the parser is used as an inner object parser.
+     * @param <Value> the value type
+     * @param <Context> the context type
+     * @return the new builder
      */
     public static <Value, Context> ObjectParser<Value, Context> fromBuilder(String name, Function<Context, Value> valueBuilder) {
         requireNonNull(valueBuilder, "Use the single argument ctor instead");
@@ -393,12 +413,29 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
     /**
      * Main parser interface
      *
+     * @param <Value> the value type
+     * @param <Context> the context type
      * @opensearch.internal
      */
     public interface Parser<Value, Context> {
+        /**
+         * Parses this instance.
+         *
+         * @param parser the parser
+         * @param value the value
+         * @param context the context
+         * @throws IOException if an I/O error occurs
+         */
         void parse(XContentParser parser, Value value, Context context) throws IOException;
     }
 
+    /**
+     * Performs the declare field step.
+     *
+     * @param p the p
+     * @param parseField the parse field
+     * @param type the type
+     */
     public void declareField(Parser<Value, Context> p, ParseField parseField, ValueType type) {
         if (parseField == null) {
             throw new IllegalArgumentException("[parseField] is required");
@@ -532,9 +569,21 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
     /**
      * Functional interface for instantiating and parsing named objects. See ObjectParserTests#NamedObject for the canonical way to
      * implement this for objects that themselves have a parser.
+     *
+     * @param <T> the element type
+     * @param <Context> the context type
      */
     @FunctionalInterface
     public interface NamedObjectParser<T, Context> {
+        /**
+         * Parses this instance.
+         *
+         * @param p the p
+         * @param c the c
+         * @param name the name
+         * @return this instance
+         * @throws IOException if an I/O error occurs
+         */
         T parse(XContentParser p, Context c, String name) throws IOException;
     }
 
@@ -681,35 +730,125 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
      * @opensearch.internal
      */
     public enum ValueType {
+        /**
+         * The STRING value.
+         */
         STRING(VALUE_STRING),
+        /**
+         * The STRING_OR_NULL value.
+         */
         STRING_OR_NULL(VALUE_STRING, VALUE_NULL),
+        /**
+         * The FLOAT value.
+         */
         FLOAT(VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The FLOAT_OR_NULL value.
+         */
         FLOAT_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        /**
+         * The DOUBLE value.
+         */
         DOUBLE(VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The DOUBLE_OR_NULL value.
+         */
         DOUBLE_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        /**
+         * The LONG value.
+         */
         LONG(VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The LONG_OR_NULL value.
+         */
         LONG_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        /**
+         * The INT value.
+         */
         INT(VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The INT_OR_NULL value.
+         */
         INT_OR_NULL(VALUE_NUMBER, VALUE_STRING, VALUE_NULL),
+        /**
+         * The BOOLEAN value.
+         */
         BOOLEAN(VALUE_BOOLEAN, VALUE_STRING),
+        /**
+         * The STRING_ARRAY value.
+         */
         STRING_ARRAY(START_ARRAY, VALUE_STRING),
+        /**
+         * The FLOAT_ARRAY value.
+         */
         FLOAT_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The DOUBLE_ARRAY value.
+         */
         DOUBLE_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The LONG_ARRAY value.
+         */
         LONG_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The INT_ARRAY value.
+         */
         INT_ARRAY(START_ARRAY, VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The BOOLEAN_ARRAY value.
+         */
         BOOLEAN_ARRAY(START_ARRAY, VALUE_BOOLEAN),
+        /**
+         * The OBJECT value.
+         */
         OBJECT(START_OBJECT),
+        /**
+         * The OBJECT_OR_NULL value.
+         */
         OBJECT_OR_NULL(START_OBJECT, VALUE_NULL),
+        /**
+         * The OBJECT_ARRAY value.
+         */
         OBJECT_ARRAY(START_OBJECT, START_ARRAY),
+        /**
+         * The OBJECT_ARRAY_OR_NULL value.
+         */
         OBJECT_ARRAY_OR_NULL(START_OBJECT, START_ARRAY, VALUE_NULL),
+        /**
+         * The OBJECT_OR_BOOLEAN value.
+         */
         OBJECT_OR_BOOLEAN(START_OBJECT, VALUE_BOOLEAN),
+        /**
+         * The OBJECT_OR_STRING value.
+         */
         OBJECT_OR_STRING(START_OBJECT, VALUE_STRING),
+        /**
+         * The OBJECT_OR_LONG value.
+         */
         OBJECT_OR_LONG(START_OBJECT, VALUE_NUMBER),
+        /**
+         * The OBJECT_ARRAY_BOOLEAN_OR_STRING value.
+         */
         OBJECT_ARRAY_BOOLEAN_OR_STRING(START_OBJECT, START_ARRAY, VALUE_BOOLEAN, VALUE_STRING),
+        /**
+         * The OBJECT_ARRAY_OR_STRING value.
+         */
         OBJECT_ARRAY_OR_STRING(START_OBJECT, START_ARRAY, VALUE_STRING),
+        /**
+         * The OBJECT_ARRAY_STRING_OR_NUMBER value.
+         */
         OBJECT_ARRAY_STRING_OR_NUMBER(START_OBJECT, START_ARRAY, VALUE_STRING, VALUE_NUMBER),
+        /**
+         * The VALUE value.
+         */
         VALUE(VALUE_BOOLEAN, VALUE_NULL, VALUE_EMBEDDED_OBJECT, VALUE_NUMBER, VALUE_STRING),
+        /**
+         * The VALUE_OBJECT_ARRAY value.
+         */
         VALUE_OBJECT_ARRAY(VALUE_BOOLEAN, VALUE_NULL, VALUE_EMBEDDED_OBJECT, VALUE_NUMBER, VALUE_STRING, START_OBJECT, START_ARRAY),
+        /**
+         * The VALUE_ARRAY value.
+         */
         VALUE_ARRAY(VALUE_BOOLEAN, VALUE_NULL, VALUE_NUMBER, VALUE_STRING, START_ARRAY);
 
         private final EnumSet<XContentParser.Token> tokens;
@@ -718,6 +857,11 @@ public final class ObjectParser<Value, Context> extends AbstractObjectParser<Val
             this.tokens = EnumSet.of(first, rest);
         }
 
+        /**
+         * Returns the supported tokens.
+         *
+         * @return the supported tokens
+         */
         public EnumSet<XContentParser.Token> supportedTokens() {
             return this.tokens;
         }

@@ -17,7 +17,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetIngestionStateAction extends ActionType<GetIngestionStateResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetIngestionStateAction INSTANCE = new GetIngestionStateAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/ingestion/state";
 
     private GetIngestionStateAction() {

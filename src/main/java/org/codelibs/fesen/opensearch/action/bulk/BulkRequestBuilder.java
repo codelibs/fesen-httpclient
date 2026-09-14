@@ -58,10 +58,23 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkResponse> implements WriteRequestBuilder<BulkRequestBuilder> {
 
+    /**
+     * Creates a new BulkRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param globalIndex the global index
+     */
     public BulkRequestBuilder(OpenSearchClient client, BulkAction action, @Nullable String globalIndex) {
         super(client, action, new BulkRequest(globalIndex));
     }
 
+    /**
+     * Creates a new BulkRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public BulkRequestBuilder(OpenSearchClient client, BulkAction action) {
         super(client, action, new BulkRequest());
     }
@@ -69,6 +82,9 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
     /**
      * Adds an {@link IndexRequest} to the list of actions to execute. Follows the same behavior of {@link IndexRequest}
      * (for example, if no id is provided, one will be generated, or usage of the create flag).
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequestBuilder add(IndexRequestBuilder request) {
         super.request.add(request.request());
@@ -77,6 +93,9 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
 
     /**
      * Adds an {@link DeleteRequest} to the list of actions to execute.
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequestBuilder add(DeleteRequest request) {
         super.request.add(request);
@@ -85,6 +104,9 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
 
     /**
      * Adds an {@link DeleteRequest} to the list of actions to execute.
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequestBuilder add(DeleteRequestBuilder request) {
         super.request.add(request.request());
@@ -93,6 +115,9 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
 
     /**
      * Adds an {@link UpdateRequest} to the list of actions to execute.
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequestBuilder add(UpdateRequest request) {
         super.request.add(request);
@@ -101,6 +126,9 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
 
     /**
      * Adds an {@link UpdateRequest} to the list of actions to execute.
+     *
+     * @param request the request
+     * @return this instance
      */
     public BulkRequestBuilder add(UpdateRequestBuilder request) {
         super.request.add(request.request());
@@ -109,6 +137,8 @@ public class BulkRequestBuilder extends ActionRequestBuilder<BulkRequest, BulkRe
 
     /**
      * The number of actions currently in the bulk.
+     *
+     * @return the number of actions
      */
     public int numberOfActions() {
         return request.numberOfActions();

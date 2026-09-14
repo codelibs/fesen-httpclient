@@ -60,10 +60,23 @@ public class CancelTasksResponse extends ListTasksResponse {
         CancelTasksResponse::new
     );
 
+    /**
+     * Creates a new CancelTasksResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CancelTasksResponse(StreamInput in) throws IOException {
         super(in);
     }
 
+    /**
+     * Creates a new CancelTasksResponse.
+     *
+     * @param tasks the tasks
+     * @param taskFailures the task failures
+     * @param nodeFailures the node failures
+     */
     public CancelTasksResponse(
         List<TaskInfo> tasks,
         List<TaskOperationFailure> taskFailures,
@@ -77,6 +90,12 @@ public class CancelTasksResponse extends ListTasksResponse {
         return super.toXContent(builder, params);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static CancelTasksResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

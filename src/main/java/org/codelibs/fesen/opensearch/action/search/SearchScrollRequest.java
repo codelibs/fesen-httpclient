@@ -60,8 +60,16 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
     private String scrollId;
     private Scroll scroll;
 
+    /**
+     * Creates a new SearchScrollRequest.
+     */
     public SearchScrollRequest() {}
 
+    /**
+     * Creates a new SearchScrollRequest.
+     *
+     * @param scrollId the scroll identifier
+     */
     public SearchScrollRequest(String scrollId) {
         this.scrollId = scrollId;
     }
@@ -84,6 +92,8 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
 
     /**
      * The scroll id used to scroll the search.
+     *
+     * @return this instance
      */
     public String scrollId() {
         return scrollId;
@@ -91,6 +101,8 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
 
     /**
      * If set, will enable scrolling of the search request.
+     *
+     * @return this instance
      */
     public Scroll scroll() {
         return scroll;
@@ -98,6 +110,9 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
 
     /**
      * If set, will enable scrolling of the search request.
+     *
+     * @param scroll the scroll
+     * @return this instance
      */
     public SearchScrollRequest scroll(Scroll scroll) {
         this.scroll = scroll;
@@ -106,6 +121,9 @@ public class SearchScrollRequest extends ActionRequest implements ToXContentObje
 
     /**
      * If set, will enable scrolling of the search request for the specified timeout.
+     *
+     * @param keepAlive the keep alive
+     * @return this instance
      */
     public SearchScrollRequest scroll(TimeValue keepAlive) {
         return scroll(new Scroll(keepAlive));

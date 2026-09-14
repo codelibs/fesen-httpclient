@@ -16,7 +16,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * @opensearch.internal
  */
 public class SegmentReplicationStatsAction extends ActionType<SegmentReplicationStatsResponse> {
+    /**
+     * The INSTANCE constant.
+     */
     public static final SegmentReplicationStatsAction INSTANCE = new SegmentReplicationStatsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:monitor/segment_replication";
 
     private SegmentReplicationStatsAction() {

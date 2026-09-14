@@ -87,6 +87,9 @@ public final class IndexGraveyard implements Metadata.Custom {
         Setting.Property.NodeScope
     );
 
+    /**
+     * The TYPE constant.
+     */
     public static final String TYPE = "index-graveyard";
     private static final ParseField TOMBSTONES_FIELD = new ParseField("tombstones");
     private static final ObjectParser<List<Tombstone>, Void> GRAVEYARD_PARSER;
@@ -124,6 +127,8 @@ public final class IndexGraveyard implements Metadata.Custom {
 
     /**
      * Get the current unmodifiable index tombstone list.
+     *
+     * @return the tombstones
      */
     public List<Tombstone> getTombstones() {
         return tombstones;
@@ -153,6 +158,11 @@ public final class IndexGraveyard implements Metadata.Custom {
         return new IndexGraveyardDiff((IndexGraveyard) previous, this);
     }
 
+    /**
+     * Returns the builder.
+     *
+     * @return the builder
+     */
     public static IndexGraveyard.Builder builder() {
         return new IndexGraveyard.Builder();
     }
@@ -174,6 +184,8 @@ public final class IndexGraveyard implements Metadata.Custom {
 
         /**
          * A copy of the current tombstones in the builder.
+         *
+         * @return the tombstones
          */
         public List<Tombstone> tombstones() {
             return Collections.unmodifiableList(tombstones);
@@ -203,10 +215,21 @@ public final class IndexGraveyard implements Metadata.Custom {
             return count;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IndexGraveyard build() {
             return build(Settings.EMPTY);
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @param settings the settings
+         * @return the new instance
+         */
         public IndexGraveyard build(final Settings settings) {
             // first, purge the necessary amount of entries
             numPurged = purge(SETTING_MAX_TOMBSTONES.get(settings));
@@ -282,12 +305,20 @@ public final class IndexGraveyard implements Metadata.Custom {
             return new IndexGraveyard.Builder().addBuiltTombstones(newTombstones).build();
         }
 
-        /** The index tombstones that were added between two states */
+        /**
+         * The index tombstones that were added between two states
+         *
+         * @return the added
+         */
         public List<Tombstone> getAdded() {
             return added;
         }
 
-        /** The number of index tombstones that were removed between two states */
+        /**
+         * The number of index tombstones that were removed between two states
+         *
+         * @return the removed count
+         */
         public int getRemovedCount() {
             return removedCount;
         }

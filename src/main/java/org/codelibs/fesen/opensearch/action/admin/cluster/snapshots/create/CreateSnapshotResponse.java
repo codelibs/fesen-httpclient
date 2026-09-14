@@ -76,6 +76,12 @@ public class CreateSnapshotResponse extends ActionResponse implements ToXContent
 
     CreateSnapshotResponse() {}
 
+    /**
+     * Creates a new CreateSnapshotResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public CreateSnapshotResponse(StreamInput in) throws IOException {
         super(in);
         snapshotInfo = in.readOptionalWriteable(SnapshotInfo::new);
@@ -112,6 +118,12 @@ public class CreateSnapshotResponse extends ActionResponse implements ToXContent
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static CreateSnapshotResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

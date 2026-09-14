@@ -63,6 +63,9 @@ import java.util.stream.Collectors;
  */
 public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implements Custom {
 
+    /**
+     * The TYPE constant.
+     */
     public static final String TYPE = "repositories";
 
     /**
@@ -70,6 +73,9 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
      * in {@link org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRepositoriesResponse}.
      */
     public static final String HIDE_GENERATIONS_PARAM = "hide_generations";
+    /**
+     * The HIDE_SYSTEM_REPOSITORY_SETTING constant.
+     */
     public static final String HIDE_SYSTEM_REPOSITORY_SETTING = "hide_system_repository_setting";
 
     /**
@@ -147,6 +153,12 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
         return TYPE;
     }
 
+    /**
+     * Creates a new RepositoriesMetadata by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public RepositoriesMetadata(StreamInput in) throws IOException {
         this.repositories = in.readList(RepositoryMetadata::new);
     }
@@ -159,6 +171,13 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
         out.writeList(repositories);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static RepositoriesMetadata fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token;
         List<RepositoryMetadata> repository = new ArrayList<>();
@@ -249,6 +268,7 @@ public class RepositoriesMetadata extends AbstractNamedDiffable<Custom> implemen
      * @param repository repository metadata
      * @param builder    XContent builder
      * @param params     serialization parameters
+     * @throws IOException if an I/O error occurs
      */
     public static void toXContent(RepositoryMetadata repository, XContentBuilder builder, ToXContent.Params params) throws IOException {
         builder.startObject(repository.name());

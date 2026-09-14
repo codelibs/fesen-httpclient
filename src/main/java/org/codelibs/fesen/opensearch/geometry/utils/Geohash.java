@@ -112,7 +112,12 @@ public class Geohash {
     // no instance:
     private Geohash() {}
 
-    /** Returns a {@link Point} instance from a geohash string */
+    /**
+     * Returns a {@link Point} instance from a geohash string
+     *
+     * @param geohash the geohash
+     * @return the point
+     */
     public static Point toPoint(final String geohash) throws IllegalArgumentException {
         final long hash = mortonEncode(geohash);
         return new Point(decodeLongitude(hash), decodeLatitude(hash));
@@ -153,6 +158,9 @@ public class Geohash {
 
     /**
      * Encode to a geohash string from the geohash based long format
+     *
+     * @param geoHashLong the geo hash long
+     * @return the string encode
      */
     public static final String stringEncode(long geoHashLong) {
         int level = (int) geoHashLong & 15;
@@ -186,6 +194,9 @@ public class Geohash {
 
     /**
      * Encode to a morton long value from a given geohash string
+     *
+     * @param hash the hash
+     * @return the morton encode
      */
     public static long mortonEncode(final String hash) {
         if (hash.isEmpty()) {
@@ -208,12 +219,22 @@ public class Geohash {
         return BitUtil.flipFlop(l);
     }
 
-    /** decode longitude value from morton encoded geo point */
+    /**
+     * decode longitude value from morton encoded geo point
+     *
+     * @param hash the hash
+     * @return this instance
+     */
     public static double decodeLongitude(final long hash) {
         return unscaleLon(BitUtil.deinterleave(hash));
     }
 
-    /** decode latitude value from morton encoded geo point */
+    /**
+     * decode latitude value from morton encoded geo point
+     *
+     * @param hash the hash
+     * @return this instance
+     */
     public static double decodeLatitude(final long hash) {
         return unscaleLat(BitUtil.deinterleave(hash >>> 1));
     }

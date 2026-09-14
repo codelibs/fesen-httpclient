@@ -25,6 +25,13 @@ public class ThreadResourceInfo {
     private final ResourceStatsType statsType;
     private final ResourceUsageInfo resourceUsageInfo;
 
+    /**
+     * Creates a new ThreadResourceInfo.
+     *
+     * @param threadId the thread identifier
+     * @param statsType the stats type
+     * @param resourceUsageMetrics the resource usage metrics
+     */
     public ThreadResourceInfo(long threadId, ResourceStatsType statsType, ResourceUsageMetric... resourceUsageMetrics) {
         this.threadId = threadId;
         this.statsType = statsType;
@@ -33,27 +40,54 @@ public class ThreadResourceInfo {
 
     /**
      * Updates thread's resource consumption information.
+     *
+     * @param resourceUsageMetrics the resource usage metrics
      */
     public void recordResourceUsageMetrics(ResourceUsageMetric... resourceUsageMetrics) {
         resourceUsageInfo.recordResourceUsageMetrics(resourceUsageMetrics);
     }
 
+    /**
+     * Sets the active.
+     *
+     * @param isActive the is active
+     */
     public void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
+    /**
+     * Returns the active flag.
+     *
+     * @return the active flag
+     */
     public boolean isActive() {
         return isActive;
     }
 
+    /**
+     * Returns the stats type.
+     *
+     * @return the stats type
+     */
     public ResourceStatsType getStatsType() {
         return statsType;
     }
 
+    /**
+     * Returns the thread identifier.
+     *
+     * @return the thread identifier
+     */
     public long getThreadId() {
         return threadId;
     }
 
+    /**
+     * Returns the resource usage info.
+     *
+     * @return the resource usage info
+     */
     public ResourceUsageInfo getResourceUsageInfo() {
         return resourceUsageInfo;
     }

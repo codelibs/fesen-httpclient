@@ -62,12 +62,21 @@ import java.util.function.Function;
  * @opensearch.internal
  */
 public class XContentMapValues {
+    /**
+     * Creates a new XContentMapValues.
+     */
+    public XContentMapValues() {
+    }
 
     private static final String TRANSFORMER_TRIE_LEAF_KEY = "$transformer";
 
     /**
      * Extracts raw values (string, int, and so on) based on the path provided returning all of them
      * as a single list.
+     *
+     * @param path the path
+     * @param map the map
+     * @return the extract raw values
      */
     public static List<Object> extractRawValues(String path, Map<String, Object> map) {
         List<Object> values = new ArrayList<>();
@@ -274,10 +283,23 @@ public class XContentMapValues {
         return filtered;
     }
 
+    /**
+     * Returns the node boolean value.
+     *
+     * @param node the node
+     * @return the node boolean value
+     */
     public static boolean nodeBooleanValue(Object node) {
         return Booleans.parseBoolean(node.toString());
     }
 
+    /**
+     * Returns the node map value.
+     *
+     * @param node the node
+     * @param desc the desc
+     * @return the node map value
+     */
     public static Map<String, Object> nodeMapValue(Object node, String desc) {
         if (node instanceof Map) {
             return (Map<String, Object>) node;

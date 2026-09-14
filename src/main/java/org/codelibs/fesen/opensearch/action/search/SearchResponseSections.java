@@ -65,18 +65,64 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public class SearchResponseSections implements ToXContentFragment {
 
+    /**
+     * The EXT_FIELD constant.
+     */
     public static final ParseField EXT_FIELD = new ParseField("ext");
+    /**
+     * The PROCESSOR_RESULT_FIELD constant.
+     */
     public static final ParseField PROCESSOR_RESULT_FIELD = new ParseField("processor_results");
+    /**
+     * The hits.
+     */
     protected final SearchHits hits;
+    /**
+     * The aggregations.
+     */
     protected final Aggregations aggregations;
+    /**
+     * The suggest.
+     */
     protected final Suggest suggest;
+    /**
+     * The profile results.
+     */
     protected final SearchProfileShardResults profileResults;
+    /**
+     * The timed out.
+     */
     protected final boolean timedOut;
+    /**
+     * The terminated early.
+     */
     protected final Boolean terminatedEarly;
+    /**
+     * The num reduce phases.
+     */
     protected final int numReducePhases;
+    /**
+     * The search ext builders.
+     */
     protected final List<SearchExtBuilder> searchExtBuilders = new ArrayList<>();
+    /**
+     * The processor result.
+     */
     protected final List<ProcessorExecutionDetail> processorResult = new ArrayList<>();
 
+    /**
+     * Creates a new SearchResponseSections.
+     *
+     * @param hits the hits
+     * @param aggregations the aggregations
+     * @param suggest the suggest
+     * @param timedOut the timed out
+     * @param terminatedEarly the terminated early
+     * @param profileResults the profile results
+     * @param numReducePhases the num reduce phases
+     * @param searchExtBuilders the search ext builders
+     * @param processorResult the processor result
+     */
     public SearchResponseSections(
         SearchHits hits,
         Aggregations aggregations,
@@ -99,24 +145,46 @@ public class SearchResponseSections implements ToXContentFragment {
         this.searchExtBuilders.addAll(Objects.requireNonNull(searchExtBuilders, "searchExtBuilders must not be null"));
     }
 
+    /**
+     * Returns the timed out.
+     *
+     * @return the timed out
+     */
     public final boolean timedOut() {
         return this.timedOut;
     }
 
+    /**
+     * Returns the terminated early.
+     *
+     * @return the terminated early
+     */
     public final Boolean terminatedEarly() {
         return this.terminatedEarly;
     }
 
+    /**
+     * Returns the hits.
+     *
+     * @return the hits
+     */
     public final SearchHits hits() {
         return hits;
     }
 
+    /**
+     * Returns the aggregations.
+     *
+     * @return the aggregations
+     */
     public final Aggregations aggregations() {
         return aggregations;
     }
 
     /**
      * Returns the number of reduce phases applied to obtain this search response
+     *
+     * @return the num reduce phases
      */
     public final int getNumReducePhases() {
         return numReducePhases;
@@ -148,6 +216,12 @@ public class SearchResponseSections implements ToXContentFragment {
         return builder;
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected void writeTo(StreamOutput out) throws IOException {
         throw new UnsupportedOperationException();
     }

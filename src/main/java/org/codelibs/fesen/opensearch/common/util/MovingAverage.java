@@ -21,6 +21,11 @@ public class MovingAverage {
     private volatile long sum = 0;
     private volatile double average = 0;
 
+    /**
+     * Creates a new MovingAverage.
+     *
+     * @param windowSize the window size
+     */
     public MovingAverage(int windowSize) {
         checkWindowSize(windowSize);
         this.windowSize = windowSize;
@@ -60,6 +65,9 @@ public class MovingAverage {
 
     /**
      * Records a new observation and evicts the n-th last observation.
+     *
+     * @param value the value
+     * @return the long
      */
     public synchronized double record(long value) {
         long delta = value - observations[(int) (count % observations.length)];
@@ -71,10 +79,20 @@ public class MovingAverage {
         return average;
     }
 
+    /**
+     * Returns the average.
+     *
+     * @return the average
+     */
     public double getAverage() {
         return average;
     }
 
+    /**
+     * Returns the ready flag.
+     *
+     * @return the ready flag
+     */
     public boolean isReady() {
         return count >= windowSize;
     }

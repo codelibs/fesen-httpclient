@@ -58,16 +58,32 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
     CreateIndexResponse,
     CreateIndexRequestBuilder> {
 
+    /**
+     * Creates a new CreateIndexRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public CreateIndexRequestBuilder(OpenSearchClient client, CreateIndexAction action) {
         super(client, action, new CreateIndexRequest());
     }
 
+    /**
+     * Creates a new CreateIndexRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param index the index
+     */
     public CreateIndexRequestBuilder(OpenSearchClient client, CreateIndexAction action, String index) {
         super(client, action, new CreateIndexRequest(index));
     }
 
     /**
      * Sets the name of the index to be created
+     *
+     * @param index the index
+     * @return this instance
      */
     public CreateIndexRequestBuilder setIndex(String index) {
         request.index(index);
@@ -76,6 +92,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The settings to create the index with.
+     *
+     * @param settings the settings
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSettings(Settings settings) {
         request.settings(settings);
@@ -84,6 +103,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The settings to create the index with.
+     *
+     * @param settings the settings
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSettings(Settings.Builder settings) {
         request.settings(settings);
@@ -92,6 +114,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Allows to set the settings using a json builder.
+     *
+     * @param builder the content builder
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSettings(XContentBuilder builder) {
         request.settings(builder);
@@ -100,6 +125,10 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The settings to create the index with (either json or yaml format)
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSettings(String source, MediaType mediaType) {
         request.settings(source, mediaType);
@@ -108,6 +137,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The settings to create the index with (either json/yaml/properties format)
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSettings(Map<String, ?> source) {
         request.settings(source);
@@ -118,6 +150,7 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * Adds mapping that will be added when the index gets created.
      *
      * @param source The mapping source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setMapping(String source) {
         request.mapping(source);
@@ -128,6 +161,7 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * Adds mapping that will be added when the index gets created.
      *
      * @param source The mapping source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setMapping(XContentBuilder source) {
         request.mapping(source);
@@ -138,6 +172,7 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * Adds mapping that will be added when the index gets created.
      *
      * @param source The mapping source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setMapping(Map<String, Object> source) {
         request.mapping(source);
@@ -147,6 +182,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
     /**
      * A specialized simplified mapping source method, takes the form of simple properties definition:
      * ("field1", "type=string,store=true").
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setMapping(String... source) {
         request.simpleMapping(source);
@@ -155,6 +193,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * The cause for this index creation.
+     *
+     * @param cause the cause
+     * @return this instance
      */
     public CreateIndexRequestBuilder setCause(String cause) {
         request.cause(cause);
@@ -163,6 +204,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setAliases(Map<String, ?> source) {
         request.aliases(source);
@@ -171,6 +215,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setAliases(String source) {
         request.aliases(source);
@@ -179,6 +226,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setAliases(XContentBuilder source) {
         request.aliases(source);
@@ -187,6 +237,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the aliases that will be associated with the index when it gets created
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setAliases(BytesReference source) {
         request.aliases(source);
@@ -195,6 +248,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Adds an alias that will be associated with the index when it gets created
+     *
+     * @param alias the alias
+     * @return this instance
      */
     public CreateIndexRequestBuilder addAlias(Alias alias) {
         request.alias(alias);
@@ -203,6 +259,10 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSource(String source, MediaType mediaType) {
         request.source(source, mediaType);
@@ -211,6 +271,10 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSource(BytesReference source, MediaType mediaType) {
         request.source(source, mediaType);
@@ -219,6 +283,10 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param mediaType the media type
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSource(byte[] source, MediaType mediaType) {
         request.source(source, mediaType);
@@ -227,6 +295,12 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @param offset the offset
+     * @param length the length
+     * @param xContentType the content type
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSource(byte[] source, int offset, int length, XContentType xContentType) {
         request.source(source, offset, length, xContentType);
@@ -235,6 +309,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSource(Map<String, ?> source) {
         request.source(source, LoggingDeprecationHandler.INSTANCE);
@@ -243,6 +320,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
 
     /**
      * Sets the settings and mappings as a single source.
+     *
+     * @param source the source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setSource(XContentBuilder source) {
         request.source(source);
@@ -262,6 +342,7 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * determine if the requisite shard copies were all started before returning or timing out.
      *
      * @param waitForActiveShards number of active shard copies to wait on
+     * @return this instance
      */
     public CreateIndexRequestBuilder setWaitForActiveShards(ActiveShardCount waitForActiveShards) {
         request.waitForActiveShards(waitForActiveShards);
@@ -272,6 +353,9 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * A shortcut for {@link #setWaitForActiveShards(ActiveShardCount)} where the numerical
      * shard count is passed in, instead of having to first call {@link ActiveShardCount#from(int)}
      * to get the ActiveShardCount.
+     *
+     * @param waitForActiveShards the wait for active shards
+     * @return this instance
      */
     public CreateIndexRequestBuilder setWaitForActiveShards(final int waitForActiveShards) {
         return setWaitForActiveShards(ActiveShardCount.from(waitForActiveShards));
@@ -281,6 +365,7 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * Adds context that will be added when the index gets created.
      *
      * @param source The mapping source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setContext(Map<String, ?> source) {
         request.context(source);
@@ -291,6 +376,7 @@ public class CreateIndexRequestBuilder extends AcknowledgedRequestBuilder<
      * Adds context that will be added when the index gets created.
      *
      * @param source The context source
+     * @return this instance
      */
     public CreateIndexRequestBuilder setContext(Context source) {
         request.context(source);

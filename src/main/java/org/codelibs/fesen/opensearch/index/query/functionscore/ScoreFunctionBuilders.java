@@ -44,27 +44,69 @@ import static java.util.Collections.emptyMap;
  * @opensearch.internal
  */
 public class ScoreFunctionBuilders {
+    /**
+     * Creates a new ScoreFunctionBuilders.
+     */
+    public ScoreFunctionBuilders() {
+    }
 
+    /**
+     * Returns the random function.
+     *
+     * @return the random function
+     */
     public static RandomScoreFunctionBuilder randomFunction() {
         return randomFunction(null);
     }
 
+    /**
+     * Returns the weight factor function.
+     *
+     * @param weight the weight
+     * @return the weight factor function
+     */
     public static WeightBuilder weightFactorFunction(float weight) {
         return weightFactorFunction(weight, null);
     }
 
+    /**
+     * Returns the field value factor function.
+     *
+     * @param fieldName the field name
+     * @return the field value factor function
+     */
     public static FieldValueFactorFunctionBuilder fieldValueFactorFunction(String fieldName) {
         return fieldValueFactorFunction(fieldName, null);
     }
 
+    /**
+     * Returns the random function.
+     *
+     * @param functionName the function name
+     * @return the random function
+     */
     public static RandomScoreFunctionBuilder randomFunction(@Nullable String functionName) {
         return new RandomScoreFunctionBuilder(functionName);
     }
 
+    /**
+     * Returns the weight factor function.
+     *
+     * @param weight the weight
+     * @param functionName the function name
+     * @return the weight factor function
+     */
     public static WeightBuilder weightFactorFunction(float weight, @Nullable String functionName) {
         return (WeightBuilder) (new WeightBuilder(functionName).setWeight(weight));
     }
 
+    /**
+     * Returns the field value factor function.
+     *
+     * @param fieldName the field name
+     * @param functionName the function name
+     * @return the field value factor function
+     */
     public static FieldValueFactorFunctionBuilder fieldValueFactorFunction(String fieldName, @Nullable String functionName) {
         return new FieldValueFactorFunctionBuilder(fieldName, functionName);
     }

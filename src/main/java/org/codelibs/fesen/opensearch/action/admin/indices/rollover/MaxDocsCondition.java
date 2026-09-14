@@ -46,8 +46,16 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class MaxDocsCondition extends Condition<Long> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "max_docs";
 
+    /**
+     * Creates a new MaxDocsCondition.
+     *
+     * @param value the value
+     */
     public MaxDocsCondition(Long value) {
         super(NAME);
         this.value = value;

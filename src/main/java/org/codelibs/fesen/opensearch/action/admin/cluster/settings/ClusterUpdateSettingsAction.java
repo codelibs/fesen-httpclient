@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class ClusterUpdateSettingsAction extends ActionType<ClusterUpdateSettingsResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final ClusterUpdateSettingsAction INSTANCE = new ClusterUpdateSettingsAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/settings/update";
 
     private ClusterUpdateSettingsAction() {

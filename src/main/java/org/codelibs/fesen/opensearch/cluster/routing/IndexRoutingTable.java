@@ -124,6 +124,11 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
         return shards.values().iterator();
     }
 
+    /**
+     * Returns the shards.
+     *
+     * @return the shards
+     */
     public Map<Integer, IndexShardRoutingTable> shards() {
         return shards;
     }
@@ -153,6 +158,13 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
         return "IndexRoutingTable{" + "shards=" + shards + ", index=" + index + '}';
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static IndexRoutingTable readFrom(StreamInput in) throws IOException {
         Index index = new Index(in);
         Builder builder = new Builder(index);
@@ -165,6 +177,13 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
         return builder.build();
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<IndexRoutingTable> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(IndexRoutingTable::readFrom, in);
     }
@@ -194,6 +213,11 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
         private final Index index;
         private final Map<Integer, IndexShardRoutingTable> shards = new HashMap<>();
 
+        /**
+         * Creates a new Builder.
+         *
+         * @param index the index
+         */
         public Builder(Index index) {
             this.index = index;
         }
@@ -204,6 +228,9 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
 
         /**
          * Initializes a new empty index, with an option to control if its from an API or not.
+         *
+         * @param indexShard the index shard
+         * @return this instance
          */
 
         public Builder addIndexShard(IndexShardRoutingTable indexShard) {
@@ -211,11 +238,21 @@ public class IndexRoutingTable extends AbstractDiffable<IndexRoutingTable>
             return this;
         }
 
+        /**
+         * Builds this instance.
+         *
+         * @return the new instance
+         */
         public IndexRoutingTable build() {
             return new IndexRoutingTable(index, shards);
         }
     }
 
+    /**
+     * Returns the pretty print.
+     *
+     * @return the pretty print
+     */
     public String prettyPrint() {
         StringBuilder sb = new StringBuilder("-- index [" + index + "]\n");
 

@@ -50,12 +50,19 @@ import static org.codelibs.fesen.opensearch.action.ValidateActions.addValidation
 /**
  * A base class for task requests
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends ActionRequest {
 
+    /**
+     * The ALL_ACTIONS constant.
+     */
     public static final String[] ALL_ACTIONS = Strings.EMPTY_ARRAY;
 
+    /**
+     * The ALL_NODES constant.
+     */
     public static final String[] ALL_NODES = Strings.EMPTY_ARRAY;
 
     private String[] nodes = ALL_NODES;
@@ -70,6 +77,9 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
 
     // NOTE: This constructor is only needed, because the setters in this class,
     // otherwise it can be removed and above fields can be made final.
+    /**
+     * Creates a new BaseTasksRequest.
+     */
     public BaseTasksRequest() {}
 
     @Override
@@ -93,15 +103,28 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
 
     /**
      * Return the list of action masks for the actions that should be returned
+     *
+     * @return the actions
      */
     public String[] getActions() {
         return actions;
     }
 
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
     public final String[] getNodes() {
         return nodes;
     }
 
+    /**
+     * Sets the nodes.
+     *
+     * @param nodes the nodes
+     * @return this instance
+     */
     @SuppressWarnings("unchecked")
     public final Request setNodes(String... nodes) {
         this.nodes = nodes;
@@ -112,6 +135,8 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
      * Returns the id of the task that should be processed.
      * <p>
      * By default tasks with any ids are returned.
+     *
+     * @return the task identifier
      */
     public TaskId getTaskId() {
         return taskId;
@@ -119,11 +144,19 @@ public class BaseTasksRequest<Request extends BaseTasksRequest<Request>> extends
 
     /**
      * Returns the parent task id that tasks should be filtered by
+     *
+     * @return the parent task identifier
      */
     public TaskId getParentTaskId() {
         return parentTaskId;
     }
 
+    /**
+     * Matches this instance.
+     *
+     * @param task the task
+     * @return this instance
+     */
     public boolean match(Task task) {
         if (CollectionUtils.isEmpty(getActions()) == false && Regex.simpleMatch(getActions(), task.getAction()) == false) {
             return false;

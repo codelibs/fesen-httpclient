@@ -57,10 +57,22 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationBuilder.LeafOnly<WeightedAvgAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "weighted_avg";
+    /**
+     * The VALUE_FIELD constant.
+     */
     public static final ParseField VALUE_FIELD = new ParseField("value");
+    /**
+     * The WEIGHT_FIELD constant.
+     */
     public static final ParseField WEIGHT_FIELD = new ParseField("weight");
 
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<WeightedAvgAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         WeightedAvgAggregationBuilder::new
@@ -71,20 +83,44 @@ public class WeightedAvgAggregationBuilder extends MultiValuesSourceAggregationB
         MultiValuesSourceParseHelper.declareField(WEIGHT_FIELD.getPreferredName(), PARSER, true, false, false);
     }
 
+    /**
+     * Creates a new WeightedAvgAggregationBuilder.
+     *
+     * @param name the name
+     */
     public WeightedAvgAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new WeightedAvgAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     public WeightedAvgAggregationBuilder(WeightedAvgAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
     }
 
+    /**
+     * Returns the value.
+     *
+     * @param valueConfig the value config
+     * @return the value
+     */
     public WeightedAvgAggregationBuilder value(MultiValuesSourceFieldConfig valueConfig) {
         valueConfig = Objects.requireNonNull(valueConfig, "Configuration for field [" + VALUE_FIELD + "] cannot be null");
         field(VALUE_FIELD.getPreferredName(), valueConfig);
         return this;
     }
 
+    /**
+     * Returns the weight.
+     *
+     * @param weightConfig the weight config
+     * @return the weight
+     */
     public WeightedAvgAggregationBuilder weight(MultiValuesSourceFieldConfig weightConfig) {
         weightConfig = Objects.requireNonNull(weightConfig, "Configuration for field [" + WEIGHT_FIELD + "] cannot be null");
         field(WEIGHT_FIELD.getPreferredName(), weightConfig);

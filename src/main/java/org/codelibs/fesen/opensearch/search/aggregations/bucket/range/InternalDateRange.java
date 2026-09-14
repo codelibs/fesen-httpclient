@@ -49,6 +49,9 @@ import java.util.Map;
  * @opensearch.internal
  */
 public class InternalDateRange extends InternalRange<InternalDateRange.Bucket, InternalDateRange> {
+    /**
+     * The FACTORY constant.
+     */
     public static final Factory FACTORY = new Factory();
 
     /**
@@ -58,6 +61,17 @@ public class InternalDateRange extends InternalRange<InternalDateRange.Bucket, I
      */
     public static class Bucket extends InternalRange.Bucket {
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param keyed the keyed
+         * @param formatter the formatter
+         */
         public Bucket(
             String key,
             double from,
@@ -70,6 +84,17 @@ public class InternalDateRange extends InternalRange<InternalDateRange.Bucket, I
             super(key, from, to, docCount, InternalAggregations.from(aggregations), keyed, formatter);
         }
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param keyed the keyed
+         * @param formatter the formatter
+         */
         public Bucket(
             String key,
             double from,
@@ -124,6 +149,12 @@ public class InternalDateRange extends InternalRange<InternalDateRange.Bucket, I
      * @opensearch.internal
      */
     public static class Factory extends InternalRange.Factory<InternalDateRange.Bucket, InternalDateRange> {
+        /**
+         * Creates a new Factory.
+         */
+        public Factory() {
+        }
+
         @Override
         public ValueType getValueType() {
             return ValueType.DATE;

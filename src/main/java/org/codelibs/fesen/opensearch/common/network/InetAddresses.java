@@ -45,13 +45,31 @@ import java.util.Locale;
  * @opensearch.internal
  */
 public class InetAddresses {
+    /**
+     * Creates a new InetAddresses.
+     */
+    public InetAddresses() {
+    }
+
     private static int IPV4_PART_COUNT = 4;
     private static int IPV6_PART_COUNT = 8;
 
+    /**
+     * Returns the inet address flag.
+     *
+     * @param ipString the IP string
+     * @return the inet address flag
+     */
     public static boolean isInetAddress(String ipString) {
         return ipStringToBytes(ipString) != null;
     }
 
+    /**
+     * Returns the IP string to bytes.
+     *
+     * @param ipString the IP string
+     * @return the IP string to bytes
+     */
     public static byte[] ipStringToBytes(String ipString) {
         // Make a first pass to categorize the characters in this string.
         boolean hasColon = false;
@@ -387,6 +405,8 @@ public class InetAddresses {
 
     /**
      * Parse an IP address and its prefix length using the CIDR notation.
+     * @param maskedAddress the masked address
+     * @return this instance
      * @throws IllegalArgumentException if the string is not formatted as {@code ip_address/prefix_length}
      * @throws IllegalArgumentException if the IP address is an IPv6-mapped ipv4 address
      * @throws IllegalArgumentException if the prefix length is not in 0-32 for IPv4 addresses and 0-128 for IPv6 addresses

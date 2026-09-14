@@ -62,16 +62,36 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
     private static final String SEARCHES_FIELD = "searches";
     private static final String ID_FIELD = "id";
     private static final String SHARDS_FIELD = "shards";
+    /**
+     * The PROFILE_FIELD constant.
+     */
     public static final String PROFILE_FIELD = "profile";
+    /**
+     * The INBOUND_NETWORK_FIELD constant.
+     */
     public static final String INBOUND_NETWORK_FIELD = "inbound_network_time_in_millis";
+    /**
+     * The OUTBOUND_NETWORK_FIELD constant.
+     */
     public static final String OUTBOUND_NETWORK_FIELD = "outbound_network_time_in_millis";
 
     private Map<String, ProfileShardResult> shardResults;
 
+    /**
+     * Creates a new SearchProfileShardResults.
+     *
+     * @param shardResults the shard results
+     */
     public SearchProfileShardResults(Map<String, ProfileShardResult> shardResults) {
         this.shardResults = Collections.unmodifiableMap(shardResults);
     }
 
+    /**
+     * Creates a new SearchProfileShardResults by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchProfileShardResults(StreamInput in) throws IOException {
         int size = in.readInt();
         shardResults = new HashMap<>(size);
@@ -118,6 +138,13 @@ public final class SearchProfileShardResults implements Writeable, ToXContentFra
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static SearchProfileShardResults fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);

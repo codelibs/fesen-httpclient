@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class GetStoredScriptAction extends ActionType<GetStoredScriptResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final GetStoredScriptAction INSTANCE = new GetStoredScriptAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/script/get";
 
     private GetStoredScriptAction() {

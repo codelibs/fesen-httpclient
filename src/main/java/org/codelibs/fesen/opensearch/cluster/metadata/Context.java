@@ -32,12 +32,18 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
     private static final ParseField VERSION = new ParseField("version");
     private static final ParseField PARAMS = new ParseField("params");
 
+    /**
+     * The LATEST_VERSION constant.
+     */
     public static final String LATEST_VERSION = "_latest";
 
     private String name;
     private String version = LATEST_VERSION;
     private Map<String, Object> params;
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<Context, Void> PARSER = new ConstructingObjectParser<>(
         "index_template",
         false,
@@ -50,6 +56,13 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
         PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> p.map(), PARAMS);
     }
 
+    /**
+     * Creates a new Context.
+     *
+     * @param name the name
+     * @param version the version
+     * @param params the serialization parameters
+     */
     public Context(String name, String version, Map<String, Object> params) {
         this.name = name;
         if (version != null) {
@@ -58,6 +71,12 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
         this.params = params;
     }
 
+    /**
+     * Creates a new Context by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public Context(StreamInput in) throws IOException {
         this.name = in.readString();
         this.version = in.readOptionalString();
@@ -83,6 +102,12 @@ public class Context extends AbstractDiffable<Context> implements ToXContentObje
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static Context fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

@@ -172,6 +172,14 @@ public class FieldCapabilities implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param name the name
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static FieldCapabilities fromXContent(String name, XContentParser parser) throws IOException {
         return PARSER.parse(parser, name);
     }
@@ -208,6 +216,8 @@ public class FieldCapabilities implements Writeable, ToXContentObject {
 
     /**
      * The name of the field.
+     *
+     * @return the name
      */
     public String getName() {
         return name;
@@ -216,6 +226,8 @@ public class FieldCapabilities implements Writeable, ToXContentObject {
     /**
      * The list of indices where this field name is defined as {@code type},
      * or null if all indices have the same {@code type} for the field.
+     *
+     * @return the indices
      */
     public String[] indices() {
         return indices;

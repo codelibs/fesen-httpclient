@@ -60,6 +60,9 @@ public class SnapshotsStatusRequest extends ClusterManagerNodeRequest<SnapshotsS
 
     private boolean ignoreUnavailable;
 
+    /**
+     * Creates a new SnapshotsStatusRequest.
+     */
     public SnapshotsStatusRequest() {}
 
     @Override
@@ -130,6 +133,7 @@ public class SnapshotsStatusRequest extends ClusterManagerNodeRequest<SnapshotsS
     /**
      * Sets the list of snapshots to be returned
      *
+     * @param snapshots the snapshots
      * @return this request
      */
     public SnapshotsStatusRequest snapshots(String[] snapshots) {

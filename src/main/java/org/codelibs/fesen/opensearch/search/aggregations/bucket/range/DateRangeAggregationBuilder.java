@@ -50,7 +50,13 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeAggregationBuilder, RangeAggregator.Range> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "date_range";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<DateRangeAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(
         NAME,
         DateRangeAggregationBuilder::new
@@ -66,10 +72,22 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
         }, (p, c) -> RangeAggregator.Range.PARSER.parse(p, null), RangeAggregator.RANGES_FIELD);
     }
 
+    /**
+     * Creates a new DateRangeAggregationBuilder.
+     *
+     * @param name the name
+     */
     public DateRangeAggregationBuilder(String name) {
         super(name, InternalDateRange.FACTORY);
     }
 
+    /**
+     * Creates a new DateRangeAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected DateRangeAggregationBuilder(
         DateRangeAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,
@@ -102,6 +120,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the lower bound on the dates, inclusive
      * @param to
      *            the upper bound on the dates, exclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addRange(String key, String from, String to) {
         addRange(new RangeAggregator.Range(key, from, to));
@@ -111,6 +130,10 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addRange(String, String, String)} but the key will be
      * automatically generated based on <code>from</code> and <code>to</code>.
+     *
+     * @param from the offset
+     * @param to the target
+     * @return this instance
      */
     public DateRangeAggregationBuilder addRange(String from, String to) {
         return addRange(null, from, to);
@@ -123,6 +146,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the key to use for this range in the response
      * @param to
      *            the upper bound on the dates, exclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedTo(String key, String to) {
         addRange(new RangeAggregator.Range(key, null, to));
@@ -132,6 +156,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addUnboundedTo(String, String)} but the key will be
      * computed automatically.
+     *
+     * @param to the target
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedTo(String to) {
         return addUnboundedTo(null, to);
@@ -144,6 +171,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the key to use for this range in the response
      * @param from
      *            the lower bound on the distances, inclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedFrom(String key, String from) {
         addRange(new RangeAggregator.Range(key, from, null));
@@ -153,6 +181,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addUnboundedFrom(String, String)} but the key will be
      * computed automatically.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedFrom(String from) {
         return addUnboundedFrom(null, from);
@@ -167,6 +198,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the lower bound on the dates, inclusive
      * @param to
      *            the upper bound on the dates, exclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addRange(String key, double from, double to) {
         addRange(new RangeAggregator.Range(key, from, to));
@@ -176,6 +208,10 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addRange(String, double, double)} but the key will be
      * automatically generated based on <code>from</code> and <code>to</code>.
+     *
+     * @param from the offset
+     * @param to the target
+     * @return this instance
      */
     public DateRangeAggregationBuilder addRange(double from, double to) {
         return addRange(null, from, to);
@@ -188,6 +224,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the key to use for this range in the response
      * @param to
      *            the upper bound on the dates, exclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedTo(String key, double to) {
         addRange(new RangeAggregator.Range(key, null, to));
@@ -197,6 +234,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addUnboundedTo(String, double)} but the key will be
      * computed automatically.
+     *
+     * @param to the target
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedTo(double to) {
         return addUnboundedTo(null, to);
@@ -209,6 +249,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the key to use for this range in the response
      * @param from
      *            the lower bound on the distances, inclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedFrom(String key, double from) {
         addRange(new RangeAggregator.Range(key, from, null));
@@ -218,6 +259,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addUnboundedFrom(String, double)} but the key will be
      * computed automatically.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedFrom(double from) {
         return addUnboundedFrom(null, from);
@@ -232,6 +276,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the lower bound on the dates, inclusive
      * @param to
      *            the upper bound on the dates, exclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addRange(String key, ZonedDateTime from, ZonedDateTime to) {
         addRange(new RangeAggregator.Range(key, convertDateTime(from), convertDateTime(to)));
@@ -249,6 +294,10 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addRange(String, ZonedDateTime, ZonedDateTime)} but the key will be
      * automatically generated based on <code>from</code> and <code>to</code>.
+     *
+     * @param from the offset
+     * @param to the target
+     * @return this instance
      */
     public DateRangeAggregationBuilder addRange(ZonedDateTime from, ZonedDateTime to) {
         return addRange(null, from, to);
@@ -261,6 +310,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the key to use for this range in the response
      * @param to
      *            the upper bound on the dates, exclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedTo(String key, ZonedDateTime to) {
         addRange(new RangeAggregator.Range(key, null, convertDateTime(to)));
@@ -270,6 +320,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addUnboundedTo(String, ZonedDateTime)} but the key will be
      * computed automatically.
+     *
+     * @param to the target
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedTo(ZonedDateTime to) {
         return addUnboundedTo(null, to);
@@ -282,6 +335,7 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
      *            the key to use for this range in the response
      * @param from
      *            the lower bound on the distances, inclusive
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedFrom(String key, ZonedDateTime from) {
         addRange(new RangeAggregator.Range(key, convertDateTime(from), null));
@@ -291,6 +345,9 @@ public class DateRangeAggregationBuilder extends AbstractRangeBuilder<DateRangeA
     /**
      * Same as {@link #addUnboundedFrom(String, ZonedDateTime)} but the key will be
      * computed automatically.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public DateRangeAggregationBuilder addUnboundedFrom(ZonedDateTime from) {
         return addUnboundedFrom(null, from);

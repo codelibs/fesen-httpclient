@@ -317,6 +317,10 @@ public final class Script implements ToXContentObject, Writeable {
     /**
      * Convenience method to call {@link Script#parse(XContentParser, String)}
      * using the default scripting language.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public static Script parse(XContentParser parser) throws IOException {
         return parse(parser, DEFAULT_SCRIPT_LANG);
@@ -391,6 +395,7 @@ public final class Script implements ToXContentObject, Writeable {
      *                     related to stored queries using previously default languages.
      *
      * @return             The parsed {@link Script}.
+     * @throws IOException if an I/O error occurs
      */
     public static Script parse(XContentParser parser, String defaultLang) throws IOException {
         Objects.requireNonNull(defaultLang);
@@ -475,6 +480,9 @@ public final class Script implements ToXContentObject, Writeable {
 
     /**
      * Creates a {@link Script} read from an input stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public Script(StreamInput in) throws IOException {
         this.type = ScriptType.readFrom(in);
@@ -586,6 +594,8 @@ public final class Script implements ToXContentObject, Writeable {
     }
 
     /**
+     * Returns the identifier or code.
+     *
      * @return The id for this {@link Script} if the {@link ScriptType} is {@link ScriptType#STORED}.
      *         The code for this {@link Script} if the {@link ScriptType} is {@link ScriptType#INLINE}.
      */

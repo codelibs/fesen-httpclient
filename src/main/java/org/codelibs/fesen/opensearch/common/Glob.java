@@ -38,6 +38,11 @@ package org.codelibs.fesen.opensearch.common;
  * @opensearch.api
  */
 public class Glob {
+    /**
+     * Creates a new Glob.
+     */
+    public Glob() {
+    }
 
     /**
      * Match a String against the given pattern, supporting the following simple

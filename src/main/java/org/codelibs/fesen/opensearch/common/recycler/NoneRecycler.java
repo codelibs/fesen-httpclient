@@ -35,10 +35,16 @@ package org.codelibs.fesen.opensearch.common.recycler;
 /**
  * No value recycler
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public class NoneRecycler<T> extends AbstractRecycler<T> {
 
+    /**
+     * Creates a new NoneRecycler.
+     *
+     * @param c the c
+     */
     public NoneRecycler(C<T> c) {
         super(c);
     }
@@ -51,6 +57,7 @@ public class NoneRecycler<T> extends AbstractRecycler<T> {
     /**
      * Generic no value recycler
      *
+     * @param <T> the element type
      * @opensearch.internal
      */
     public static class NV<T> implements Recycler.V<T> {

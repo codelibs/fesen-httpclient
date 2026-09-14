@@ -83,10 +83,15 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
     private VersionType versionType = VersionType.INTERNAL;
     private long version = Versions.MATCH_ANY;
 
+    /**
+     * Creates a new GetRequest.
+     */
     public GetRequest() {}
 
     /**
      * Constructs a new get request against the specified index. The {@link #id(String)} must also be set.
+     *
+     * @param index the index
      */
     public GetRequest(String index) {
         super(index);
@@ -120,6 +125,9 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
 
     /**
      * Sets the id of the document to fetch.
+     *
+     * @param id the identifier
+     * @return the identifier
      */
     public GetRequest id(String id) {
         this.id = id;
@@ -129,6 +137,9 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
     /**
      * Controls the shard routing of the request. Using this value to hash the shard
      * and not the id.
+     *
+     * @param routing the routing value
+     * @return the routing
      */
     public GetRequest routing(String routing) {
         this.routing = routing;
@@ -140,6 +151,9 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
      * {@code _local} to prefer local shards, {@code _primary} to execute only on primary shards,
      * or a custom value, which guarantees that the same order
      * will be used across different requests.
+     *
+     * @param preference the preference
+     * @return the preference
      */
     public GetRequest preference(String preference) {
         this.preference = preference;
@@ -156,22 +170,40 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
         return id;
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @return the routing
+     */
     public String routing() {
         return this.routing;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String preference() {
         return this.preference;
     }
 
     /**
      * Allows setting the {@link FetchSourceContext} for this request, controlling if and how _source should be returned.
+     *
+     * @param context the context
+     * @return this instance
      */
     public GetRequest fetchSourceContext(FetchSourceContext context) {
         this.fetchSourceContext = context;
         return this;
     }
 
+    /**
+     * Fetches the source context.
+     *
+     * @return this instance
+     */
     public FetchSourceContext fetchSourceContext() {
         return fetchSourceContext;
     }
@@ -179,6 +211,9 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
     /**
      * Explicitly specify the stored fields that will be returned. By default, the {@code _source}
      * field will be returned.
+     *
+     * @param fields the fields
+     * @return the stored fields
      */
     public GetRequest storedFields(String... fields) {
         this.storedFields = fields;
@@ -188,15 +223,27 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
     /**
      * Explicitly specify the stored fields that will be returned. By default, the {@code _source}
      * field will be returned.
+     *
+     * @return the stored fields
      */
     public String[] storedFields() {
         return this.storedFields;
     }
 
+    /**
+     * Refreshes this instance.
+     *
+     * @return this instance
+     */
     public boolean refresh() {
         return this.refresh;
     }
 
+    /**
+     * Returns the realtime.
+     *
+     * @return the realtime
+     */
     public boolean realtime() {
         return this.realtime;
     }
@@ -210,11 +257,18 @@ public class GetRequest extends SingleShardRequest<GetRequest> implements Realti
     /**
      * Sets the version, which will cause the get operation to only be performed if a matching
      * version exists and no changes happened on the doc since then.
+     *
+     * @return the version
      */
     public long version() {
         return version;
     }
 
+    /**
+     * Returns the version type.
+     *
+     * @return the version type
+     */
     public VersionType versionType() {
         return this.versionType;
     }

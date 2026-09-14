@@ -66,21 +66,54 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScoreQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "function_score";
 
     // For better readability of error message
     static final String MISPLACED_FUNCTION_MESSAGE_PREFIX = "you can either define [functions] array or a single function, not both. ";
 
+    /**
+     * The WEIGHT_FIELD constant.
+     */
     public static final ParseField WEIGHT_FIELD = new ParseField("weight");
+    /**
+     * The QUERY_FIELD constant.
+     */
     public static final ParseField QUERY_FIELD = new ParseField("query");
+    /**
+     * The FILTER_FIELD constant.
+     */
     public static final ParseField FILTER_FIELD = new ParseField("filter");
+    /**
+     * The FUNCTIONS_FIELD constant.
+     */
     public static final ParseField FUNCTIONS_FIELD = new ParseField("functions");
+    /**
+     * The SCORE_MODE_FIELD constant.
+     */
     public static final ParseField SCORE_MODE_FIELD = new ParseField("score_mode");
+    /**
+     * The BOOST_MODE_FIELD constant.
+     */
     public static final ParseField BOOST_MODE_FIELD = new ParseField("boost_mode");
+    /**
+     * The MAX_BOOST_FIELD constant.
+     */
     public static final ParseField MAX_BOOST_FIELD = new ParseField("max_boost");
+    /**
+     * The MIN_SCORE_FIELD constant.
+     */
     public static final ParseField MIN_SCORE_FIELD = new ParseField("min_score");
 
+    /**
+     * The DEFAULT_BOOST_MODE constant.
+     */
     public static final CombineFunction DEFAULT_BOOST_MODE = CombineFunction.MULTIPLY;
+    /**
+     * The DEFAULT_SCORE_MODE constant.
+     */
     public static final FunctionScoreQuery.ScoreMode DEFAULT_SCORE_MODE = FunctionScoreQuery.ScoreMode.MULTIPLY;
 
     private final QueryBuilder query;
@@ -179,6 +212,9 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public FunctionScoreQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -202,6 +238,8 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Returns the query that defines which documents the function_score query will be executed on.
+     *
+     * @return this instance
      */
     public QueryBuilder query() {
         return this.query;
@@ -209,6 +247,8 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Returns the filters and functions
+     *
+     * @return this instance
      */
     public FilterFunctionBuilder[] filterFunctionBuilders() {
         return this.filterFunctionBuilders;
@@ -216,6 +256,8 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Score mode defines how results of individual score functions will be aggregated.
+     * @param scoreMode the score mode
+     * @return this instance
      * @see FunctionScoreQuery.ScoreMode
      */
     public FunctionScoreQueryBuilder scoreMode(FunctionScoreQuery.ScoreMode scoreMode) {
@@ -228,6 +270,7 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Returns the score mode, meaning how results of individual score functions will be aggregated.
+     * @return this instance
      * @see FunctionScoreQuery.ScoreMode
      */
     public FunctionScoreQuery.ScoreMode scoreMode() {
@@ -236,6 +279,8 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Boost mode defines how the combined result of score functions will influence the final score together with the sub query score.
+     * @param combineFunction the combine function
+     * @return this instance
      * @see CombineFunction
      */
     public FunctionScoreQueryBuilder boostMode(CombineFunction combineFunction) {
@@ -250,6 +295,7 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
      * Returns the boost mode, meaning how the combined result of score functions will influence the final score together with the sub query
      * score.
      *
+     * @return this instance
      * @see CombineFunction
      */
     public CombineFunction boostMode() {
@@ -258,6 +304,9 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Sets the maximum boost that will be applied by function score.
+     *
+     * @param maxBoost the max boost
+     * @return the max boost
      */
     public FunctionScoreQueryBuilder maxBoost(float maxBoost) {
         this.maxBoost = maxBoost;
@@ -266,6 +315,8 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
     /**
      * Returns the maximum boost that will be applied by function score.
+     *
+     * @return the max boost
      */
     public float maxBoost() {
         return this.maxBoost;
@@ -296,11 +347,22 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
         builder.endObject();
     }
 
+    /**
+     * Sets the min score.
+     *
+     * @param minScore the min score
+     * @return this instance
+     */
     public FunctionScoreQueryBuilder setMinScore(float minScore) {
         this.minScore = minScore;
         return this;
     }
 
+    /**
+     * Returns the min score.
+     *
+     * @return the min score
+     */
     public Float getMinScore() {
         return this.minScore;
     }
@@ -342,10 +404,21 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
         private final QueryBuilder filter;
         private final ScoreFunctionBuilder<?> scoreFunction;
 
+        /**
+         * Creates a new FilterFunctionBuilder.
+         *
+         * @param scoreFunctionBuilder the score function builder
+         */
         public FilterFunctionBuilder(ScoreFunctionBuilder<?> scoreFunctionBuilder) {
             this(new MatchAllQueryBuilder(), scoreFunctionBuilder);
         }
 
+        /**
+         * Creates a new FilterFunctionBuilder.
+         *
+         * @param filter the filter
+         * @param scoreFunction the score function
+         */
         public FilterFunctionBuilder(QueryBuilder filter, ScoreFunctionBuilder<?> scoreFunction) {
             if (filter == null) {
                 throw new IllegalArgumentException("function_score: filter must not be null");
@@ -359,6 +432,9 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
          */
         public FilterFunctionBuilder(StreamInput in) throws IOException {
             filter = in.readNamedWriteable(QueryBuilder.class);
@@ -398,6 +474,13 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
             return Objects.equals(this.filter, that.filter) && Objects.equals(this.scoreFunction, that.scoreFunction);
         }
 
+        /**
+         * Rewrites this instance.
+         *
+         * @param context the context
+         * @return this instance
+         * @throws IOException if an I/O error occurs
+         */
         public FilterFunctionBuilder rewrite(QueryRewriteContext context) throws IOException {
             QueryBuilder rewrite = filter.rewrite(context);
             if (rewrite != filter) {
@@ -432,6 +515,13 @@ public class FunctionScoreQueryBuilder extends AbstractQueryBuilder<FunctionScor
         return this;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static FunctionScoreQueryBuilder fromXContent(XContentParser parser) throws IOException {
         QueryBuilder query = null;
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;

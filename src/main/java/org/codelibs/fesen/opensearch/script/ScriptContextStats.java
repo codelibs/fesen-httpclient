@@ -54,6 +54,12 @@ public class ScriptContextStats implements Writeable, ToXContentFragment, Compar
     private final long cacheEvictions;
     private final long compilationLimitTriggered;
 
+    /**
+     * Creates a new ScriptContextStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ScriptContextStats(StreamInput in) throws IOException {
         context = in.readString();
         compilations = in.readVLong();
@@ -69,18 +75,38 @@ public class ScriptContextStats implements Writeable, ToXContentFragment, Compar
         out.writeVLong(compilationLimitTriggered);
     }
 
+    /**
+     * Returns the context.
+     *
+     * @return the context
+     */
     public String getContext() {
         return context;
     }
 
+    /**
+     * Returns the compilations.
+     *
+     * @return the compilations
+     */
     public long getCompilations() {
         return compilations;
     }
 
+    /**
+     * Returns the cache evictions.
+     *
+     * @return the cache evictions
+     */
     public long getCacheEvictions() {
         return cacheEvictions;
     }
 
+    /**
+     * Returns the compilation limit triggered.
+     *
+     * @return the compilation limit triggered
+     */
     public long getCompilationLimitTriggered() {
         return compilationLimitTriggered;
     }

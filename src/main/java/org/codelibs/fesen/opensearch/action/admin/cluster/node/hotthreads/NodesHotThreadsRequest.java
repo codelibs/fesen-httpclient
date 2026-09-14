@@ -58,47 +58,98 @@ public class NodesHotThreadsRequest extends BaseNodesRequest<NodesHotThreadsRequ
     /**
      * Get hot threads from nodes based on the nodes ids specified. If none are passed, hot
      * threads for all nodes is used.
+     *
+     * @param nodesIds the nodes identifiers
      */
     public NodesHotThreadsRequest(String... nodesIds) {
         super(nodesIds);
     }
 
+    /**
+     * Returns the threads.
+     *
+     * @return the threads
+     */
     public int threads() {
         return this.threads;
     }
 
+    /**
+     * Returns the threads.
+     *
+     * @param threads the threads
+     * @return the threads
+     */
     public NodesHotThreadsRequest threads(int threads) {
         this.threads = threads;
         return this;
     }
 
+    /**
+     * Returns the ignore idle threads.
+     *
+     * @return the ignore idle threads
+     */
     public boolean ignoreIdleThreads() {
         return this.ignoreIdleThreads;
     }
 
+    /**
+     * Returns the ignore idle threads.
+     *
+     * @param ignoreIdleThreads the ignore idle threads
+     * @return the ignore idle threads
+     */
     public NodesHotThreadsRequest ignoreIdleThreads(boolean ignoreIdleThreads) {
         this.ignoreIdleThreads = ignoreIdleThreads;
         return this;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @param type the type
+     * @return the type
+     */
     public NodesHotThreadsRequest type(String type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
     public String type() {
         return this.type;
     }
 
+    /**
+     * Returns the interval.
+     *
+     * @param interval the interval
+     * @return the interval
+     */
     public NodesHotThreadsRequest interval(TimeValue interval) {
         this.interval = interval;
         return this;
     }
 
+    /**
+     * Returns the interval.
+     *
+     * @return the interval
+     */
     public TimeValue interval() {
         return this.interval;
     }
 
+    /**
+     * Returns the snapshots.
+     *
+     * @return the snapshots
+     */
     public int snapshots() {
         return this.snapshots;
     }

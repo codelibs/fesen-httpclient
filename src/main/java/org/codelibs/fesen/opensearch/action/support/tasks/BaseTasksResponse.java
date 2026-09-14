@@ -57,17 +57,35 @@ import static java.util.stream.Collectors.toList;
  * @opensearch.internal
  */
 public class BaseTasksResponse extends ActionResponse {
+    /**
+     * The TASK_FAILURES constant.
+     */
     protected static final String TASK_FAILURES = "task_failures";
+    /**
+     * The NODE_FAILURES constant.
+     */
     protected static final String NODE_FAILURES = "node_failures";
 
     private List<TaskOperationFailure> taskFailures;
     private List<OpenSearchException> nodeFailures;
 
+    /**
+     * Creates a new BaseTasksResponse.
+     *
+     * @param taskFailures the task failures
+     * @param nodeFailures the node failures
+     */
     public BaseTasksResponse(List<TaskOperationFailure> taskFailures, List<? extends OpenSearchException> nodeFailures) {
         this.taskFailures = taskFailures == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(taskFailures));
         this.nodeFailures = nodeFailures == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(nodeFailures));
     }
 
+    /**
+     * Creates a new BaseTasksResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public BaseTasksResponse(StreamInput in) throws IOException {
         super(in);
         int size = in.readVInt();
@@ -98,6 +116,8 @@ public class BaseTasksResponse extends ActionResponse {
 
     /**
      * The list of task failures exception.
+     *
+     * @return the task failures
      */
     public List<TaskOperationFailure> getTaskFailures() {
         return taskFailures;
@@ -105,11 +125,20 @@ public class BaseTasksResponse extends ActionResponse {
 
     /**
      * The list of node failures exception.
+     *
+     * @return the node failures
      */
     public List<OpenSearchException> getNodeFailures() {
         return nodeFailures;
     }
 
+    /**
+     * Returns this instance as XContent common.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected void toXContentCommon(XContentBuilder builder, ToXContent.Params params) throws IOException {
         if (getTaskFailures() != null && getTaskFailures().size() > 0) {
             builder.startArray(TASK_FAILURES);

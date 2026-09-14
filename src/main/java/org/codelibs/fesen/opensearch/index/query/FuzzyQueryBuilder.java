@@ -52,6 +52,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> implements MultiTermQueryBuilder {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "fuzzy";
 
     /** Default maximum edit distance. Defaults to AUTO. */
@@ -167,6 +170,9 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public FuzzyQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -195,51 +201,111 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
         return this.fieldName;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public Object value() {
         return maybeConvertToString(this.value);
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @param fuzziness the fuzziness
+     * @return the fuzziness
+     */
     public FuzzyQueryBuilder fuzziness(Fuzziness fuzziness) {
         this.fuzziness = (fuzziness == null) ? DEFAULT_FUZZINESS : fuzziness;
         return this;
     }
 
+    /**
+     * Returns the fuzziness.
+     *
+     * @return the fuzziness
+     */
     public Fuzziness fuzziness() {
         return this.fuzziness;
     }
 
+    /**
+     * Returns the prefix length.
+     *
+     * @param prefixLength the prefix length
+     * @return the prefix length
+     */
     public FuzzyQueryBuilder prefixLength(int prefixLength) {
         this.prefixLength = prefixLength;
         return this;
     }
 
+    /**
+     * Returns the prefix length.
+     *
+     * @return the prefix length
+     */
     public int prefixLength() {
         return this.prefixLength;
     }
 
+    /**
+     * Returns the max expansions.
+     *
+     * @param maxExpansions the max expansions
+     * @return the max expansions
+     */
     public FuzzyQueryBuilder maxExpansions(int maxExpansions) {
         this.maxExpansions = maxExpansions;
         return this;
     }
 
+    /**
+     * Returns the max expansions.
+     *
+     * @return the max expansions
+     */
     public int maxExpansions() {
         return this.maxExpansions;
     }
 
+    /**
+     * Returns the transpositions.
+     *
+     * @param transpositions the transpositions
+     * @return the transpositions
+     */
     public FuzzyQueryBuilder transpositions(boolean transpositions) {
         this.transpositions = transpositions;
         return this;
     }
 
+    /**
+     * Returns the transpositions.
+     *
+     * @return the transpositions
+     */
     public boolean transpositions() {
         return this.transpositions;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @param rewrite the rewrite
+     * @return this instance
+     */
     public FuzzyQueryBuilder rewrite(String rewrite) {
         this.rewrite = rewrite;
         return this;
     }
 
+    /**
+     * Rewrites this instance.
+     *
+     * @return this instance
+     */
     public String rewrite() {
         return this.rewrite;
     }
@@ -261,6 +327,13 @@ public class FuzzyQueryBuilder extends AbstractQueryBuilder<FuzzyQueryBuilder> i
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static FuzzyQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         Object value = null;

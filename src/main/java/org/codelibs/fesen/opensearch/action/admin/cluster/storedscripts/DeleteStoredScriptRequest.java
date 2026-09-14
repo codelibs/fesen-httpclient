@@ -69,10 +69,21 @@ public class DeleteStoredScriptRequest extends AcknowledgedRequest<DeleteStoredS
         return validationException;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @param id the identifier
+     * @return the identifier
+     */
     public DeleteStoredScriptRequest id(String id) {
         this.id = id;
 

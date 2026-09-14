@@ -37,10 +37,16 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
 /**
  * A {@link Runnable}-like interface which allows throwing checked exceptions.
  *
+ * @param <E> the element type
  * @opensearch.api
  */
 @PublicApi(since = "3.2.0")
 @FunctionalInterface
 public interface CheckedRunnable<E extends Exception> {
+    /**
+     * Runs this instance.
+     *
+     * @throws E if an e failure occurs
+     */
     void run() throws E;
 }

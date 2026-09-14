@@ -96,6 +96,12 @@ public final class MoveDecision extends AbstractAllocationDecision {
         this.currentNodeRanking = currentNodeRanking;
     }
 
+    /**
+     * Creates a new MoveDecision by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public MoveDecision(StreamInput in) throws IOException {
         super(in);
         allocationDecision = in.readOptionalWriteable(AllocationDecision::readFrom);
@@ -122,6 +128,8 @@ public final class MoveDecision extends AbstractAllocationDecision {
      * Returns {@code true} if the shard cannot remain on its current node and can be moved,
      * returns {@code false} otherwise.  If {@link #isDecisionTaken()} returns {@code false},
      * then invoking this method will throw an {@code IllegalStateException}.
+     *
+     * @return this instance
      */
     public boolean forceMove() {
         checkDecisionState();
@@ -131,6 +139,8 @@ public final class MoveDecision extends AbstractAllocationDecision {
     /**
      * Returns {@code true} if the shard can remain on its current node, returns {@code false} otherwise.
      * If {@link #isDecisionTaken()} returns {@code false}, then invoking this method will throw an {@code IllegalStateException}.
+     *
+     * @return the remain flag
      */
     public boolean canRemain() {
         checkDecisionState();
@@ -143,6 +153,8 @@ public final class MoveDecision extends AbstractAllocationDecision {
      * ranking will only return a meaningful positive integer if {@code #getClusterRebalanceDecision()} returns
      * a non-null value; otherwise, 0 will be returned.  If {@link #isDecisionTaken()} returns
      * {@code false}, then invoking this method will throw an {@code IllegalStateException}.
+     *
+     * @return the current node ranking
      */
     public int getCurrentNodeRanking() {
         checkDecisionState();

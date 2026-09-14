@@ -56,6 +56,10 @@ public final class FileSystemUtils {
 
     /**
      * Returns an InputStream the given url if the url has a protocol of 'file' or 'jar', no host, and no port.
+     *
+     * @param url the URL
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     @SuppressForbidden(reason = "Will only open url streams for local files")
     public static InputStream openFileURLStream(URL url) throws IOException {

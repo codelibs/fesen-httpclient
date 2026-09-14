@@ -51,6 +51,9 @@ import java.util.function.Predicate;
 @PublicApi(since = "1.0.0")
 public class ClusterName implements Writeable {
 
+    /**
+     * The CLUSTER_NAME_SETTING constant.
+     */
     public static final Setting<ClusterName> CLUSTER_NAME_SETTING = new Setting<>("cluster.name", "opensearch", (s) -> {
         if (s.isEmpty()) {
             throw new IllegalArgumentException("[cluster.name] must not be empty");
@@ -61,18 +64,37 @@ public class ClusterName implements Writeable {
         return new ClusterName(s);
     }, Setting.Property.NodeScope);
 
+    /**
+     * The DEFAULT constant.
+     */
     public static final ClusterName DEFAULT = CLUSTER_NAME_SETTING.getDefault(Settings.EMPTY);
 
     private final String value;
 
+    /**
+     * Creates a new ClusterName by reading it from the given input.
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterName(StreamInput input) throws IOException {
         this(input.readString());
     }
 
+    /**
+     * Creates a new ClusterName.
+     *
+     * @param value the value
+     */
     public ClusterName(String value) {
         this.value = value.intern();
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public String value() {
         return this.value;
     }

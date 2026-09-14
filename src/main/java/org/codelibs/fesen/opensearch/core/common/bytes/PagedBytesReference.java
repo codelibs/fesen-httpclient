@@ -46,6 +46,9 @@ import java.io.IOException;
  */
 public class PagedBytesReference extends AbstractBytesReference {
 
+    /**
+     * The PAGE_SIZE_IN_BYTES constant.
+     */
     public static final int PAGE_SIZE_IN_BYTES = 1 << 14;
 
     private final ByteArray byteArray;

@@ -47,5 +47,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
 @PublicApi(since = "1.0.0")
 public @interface SuppressForbidden {
+    /**
+     * Returns the reason.
+     *
+     * @return the reason
+     */
     String reason();
 }

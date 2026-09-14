@@ -43,12 +43,33 @@ import java.util.List;
  */
 public interface Histogram extends MultiBucketsAggregation {
 
+    /**
+     * The interval field.
+     */
     ParseField INTERVAL_FIELD = new ParseField("interval");
+    /**
+     * The offset field.
+     */
     ParseField OFFSET_FIELD = new ParseField("offset");
+    /**
+     * The order field.
+     */
     ParseField ORDER_FIELD = new ParseField("order");
+    /**
+     * The keyed field.
+     */
     ParseField KEYED_FIELD = new ParseField("keyed");
+    /**
+     * The min doc count field.
+     */
     ParseField MIN_DOC_COUNT_FIELD = new ParseField("min_doc_count");
+    /**
+     * The extended bounds field.
+     */
     ParseField EXTENDED_BOUNDS_FIELD = new ParseField("extended_bounds");
+    /**
+     * The hard bounds field.
+     */
     ParseField HARD_BOUNDS_FIELD = new ParseField("hard_bounds");
 
     /**

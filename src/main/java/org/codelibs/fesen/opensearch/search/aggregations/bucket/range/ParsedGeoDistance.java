@@ -43,6 +43,11 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class ParsedGeoDistance extends ParsedRange {
+    /**
+     * Creates a new ParsedGeoDistance.
+     */
+    public ParsedGeoDistance() {
+    }
 
     @Override
     public String getType() {
@@ -62,6 +67,14 @@ public class ParsedGeoDistance extends ParsedRange {
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedGeoDistance fromXContent(XContentParser parser, String name) throws IOException {
         ParsedGeoDistance aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -74,6 +87,11 @@ public class ParsedGeoDistance extends ParsedRange {
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedRange.ParsedBucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         static ParsedBucket fromXContent(final XContentParser parser, final boolean keyed) throws IOException {
             return parseRangeBucketXContent(parser, ParsedBucket::new, keyed);

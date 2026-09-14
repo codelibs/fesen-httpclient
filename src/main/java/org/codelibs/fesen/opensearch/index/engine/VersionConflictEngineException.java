@@ -45,6 +45,16 @@ import java.io.IOException;
  */
 public class VersionConflictEngineException extends EngineException {
 
+    /**
+     * Creates a new VersionConflictEngineException.
+     *
+     * @param shardId the shard identifier
+     * @param id the identifier
+     * @param compareAndWriteSeqNo the compare and write seq no
+     * @param compareAndWriteTerm the compare and write term
+     * @param currentSeqNo the current seq no
+     * @param currentTerm the current term
+     */
     public VersionConflictEngineException(
         ShardId shardId,
         String id,
@@ -67,10 +77,25 @@ public class VersionConflictEngineException extends EngineException {
         );
     }
 
+    /**
+     * Creates a new VersionConflictEngineException.
+     *
+     * @param shardId the shard identifier
+     * @param id the identifier
+     * @param explanation the explanation
+     */
     public VersionConflictEngineException(ShardId shardId, String id, String explanation) {
         this(shardId, "[{}]: version conflict, {}", null, id, explanation);
     }
 
+    /**
+     * Creates a new VersionConflictEngineException.
+     *
+     * @param shardId the shard identifier
+     * @param msg the msg
+     * @param cause the cause
+     * @param params the serialization parameters
+     */
     public VersionConflictEngineException(ShardId shardId, String msg, Throwable cause, Object... params) {
         super(shardId, msg, cause, params);
     }

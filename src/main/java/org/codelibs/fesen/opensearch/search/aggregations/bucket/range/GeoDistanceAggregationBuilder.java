@@ -66,6 +66,9 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.CoreValuesSourc
  * @opensearch.internal
  */
 public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilder<GeoDistanceAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "geo_distance";
     static final ParseField ORIGIN_FIELD = new ParseField("origin", "center", "point", "por");
     static final ParseField UNIT_FIELD = new ParseField("unit");
@@ -106,6 +109,14 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         );
     }
 
+    /**
+     * Parses this instance.
+     *
+     * @param aggregationName the aggregation name
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static AggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
         GeoDistanceAggregationBuilder builder = PARSER.parse(parser, new GeoDistanceAggregationBuilder(aggregationName), null);
         if (builder.origin() == null) {
@@ -120,6 +131,13 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
      * @opensearch.internal
      */
     public static class Range extends RangeAggregator.Range {
+        /**
+         * Creates a new Range.
+         *
+         * @param key the key
+         * @param from the offset
+         * @param to the target
+         */
         public Range(String key, Double from, Double to) {
             super(key(key, from, to), from == null ? 0 : from, to);
         }
@@ -249,6 +267,12 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
     private GeoDistance distanceType = GeoDistance.ARC;
     private boolean keyed = false;
 
+    /**
+     * Creates a new GeoDistanceAggregationBuilder.
+     *
+     * @param name the name
+     * @param origin the origin
+     */
     public GeoDistanceAggregationBuilder(String name, GeoPoint origin) {
         this(name, origin, InternalGeoDistance.FACTORY);
         if (origin == null) {
@@ -270,6 +294,13 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         this(name, null, InternalGeoDistance.FACTORY);
     }
 
+    /**
+     * Creates a new GeoDistanceAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected GeoDistanceAggregationBuilder(GeoDistanceAggregationBuilder clone, Builder factoriesBuilder, Map<String, Object> metadata) {
         super(clone, factoriesBuilder, metadata);
         this.origin = clone.origin;
@@ -296,6 +327,8 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
 
     /**
      * Return the {@link GeoPoint} that is used for distance computations.
+     *
+     * @return the origin
      */
     public GeoPoint origin() {
         return origin;
@@ -314,6 +347,12 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         unit.writeTo(out);
     }
 
+    /**
+     * Adds the range.
+     *
+     * @param range the range
+     * @return this instance
+     */
     public GeoDistanceAggregationBuilder addRange(Range range) {
         if (range == null) {
             throw new IllegalArgumentException("[range] must not be null: [" + name + "]");
@@ -331,6 +370,7 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
      *            the lower bound on the distances, inclusive
      * @param to
      *            the upper bound on the distances, exclusive
+     * @return this instance
      */
     public GeoDistanceAggregationBuilder addRange(String key, double from, double to) {
         ranges.add(new Range(key, from, to));
@@ -341,6 +381,10 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
      * Same as {@link #addRange(String, double, double)} but the key will be
      * automatically generated based on <code>from</code> and
      * <code>to</code>.
+     *
+     * @param from the offset
+     * @param to the target
+     * @return this instance
      */
     public GeoDistanceAggregationBuilder addRange(double from, double to) {
         return addRange(null, from, to);
@@ -353,6 +397,7 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
      *            the key to use for this range in the response
      * @param to
      *            the upper bound on the distances, exclusive
+     * @return this instance
      */
     public GeoDistanceAggregationBuilder addUnboundedTo(String key, double to) {
         ranges.add(new Range(key, null, to));
@@ -362,6 +407,9 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
     /**
      * Same as {@link #addUnboundedTo(String, double)} but the key will be
      * computed automatically.
+     *
+     * @param to the target
+     * @return this instance
      */
     public GeoDistanceAggregationBuilder addUnboundedTo(double to) {
         return addUnboundedTo(null, to);
@@ -374,6 +422,7 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
      *            the key to use for this range in the response
      * @param from
      *            the lower bound on the distances, inclusive
+     * @return this instance
      */
     public GeoDistanceAggregationBuilder addUnboundedFrom(String key, double from) {
         addRange(new Range(key, from, null));
@@ -383,11 +432,19 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
     /**
      * Same as {@link #addUnboundedFrom(String, double)} but the key will be
      * computed automatically.
+     *
+     * @param from the offset
+     * @return this instance
      */
     public GeoDistanceAggregationBuilder addUnboundedFrom(double from) {
         return addUnboundedFrom(null, from);
     }
 
+    /**
+     * Returns the range.
+     *
+     * @return the range
+     */
     public List<Range> range() {
         return ranges;
     }
@@ -397,6 +454,12 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         return NAME;
     }
 
+    /**
+     * Returns the unit.
+     *
+     * @param unit the unit
+     * @return the unit
+     */
     public GeoDistanceAggregationBuilder unit(DistanceUnit unit) {
         if (unit == null) {
             throw new IllegalArgumentException("[unit] must not be null: [" + name + "]");
@@ -405,10 +468,21 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         return this;
     }
 
+    /**
+     * Returns the unit.
+     *
+     * @return the unit
+     */
     public DistanceUnit unit() {
         return unit;
     }
 
+    /**
+     * Returns the distance type.
+     *
+     * @param distanceType the distance type
+     * @return the distance type
+     */
     public GeoDistanceAggregationBuilder distanceType(GeoDistance distanceType) {
         if (distanceType == null) {
             throw new IllegalArgumentException("[distanceType] must not be null: [" + name + "]");
@@ -417,15 +491,31 @@ public class GeoDistanceAggregationBuilder extends ValuesSourceAggregationBuilde
         return this;
     }
 
+    /**
+     * Returns the distance type.
+     *
+     * @return the distance type
+     */
     public GeoDistance distanceType() {
         return distanceType;
     }
 
+    /**
+     * Returns the keyed.
+     *
+     * @param keyed the keyed
+     * @return the keyed
+     */
     public GeoDistanceAggregationBuilder keyed(boolean keyed) {
         this.keyed = keyed;
         return this;
     }
 
+    /**
+     * Returns the keyed.
+     *
+     * @return the keyed
+     */
     public boolean keyed() {
         return keyed;
     }

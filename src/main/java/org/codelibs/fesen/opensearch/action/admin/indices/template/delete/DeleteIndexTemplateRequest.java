@@ -51,10 +51,15 @@ public class DeleteIndexTemplateRequest extends ClusterManagerNodeRequest<Delete
 
     private String name;
 
+    /**
+     * Creates a new DeleteIndexTemplateRequest.
+     */
     public DeleteIndexTemplateRequest() {}
 
     /**
      * Constructs a new delete index request for the specified name.
+     *
+     * @param name the name
      */
     public DeleteIndexTemplateRequest(String name) {
         this.name = name;
@@ -71,6 +76,8 @@ public class DeleteIndexTemplateRequest extends ClusterManagerNodeRequest<Delete
 
     /**
      * The index template name to delete.
+     *
+     * @return the name
      */
     public String name() {
         return name;

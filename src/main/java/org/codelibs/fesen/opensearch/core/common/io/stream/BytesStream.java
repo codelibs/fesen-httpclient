@@ -40,6 +40,16 @@ import org.codelibs.fesen.opensearch.core.common.bytes.BytesReference;
  * @opensearch.internal
  */
 public abstract class BytesStream extends StreamOutput {
+    /**
+     * Creates a new BytesStream.
+     */
+    public BytesStream() {
+    }
 
+    /**
+     * Returns the bytes.
+     *
+     * @return the bytes
+     */
     public abstract BytesReference bytes();
 }

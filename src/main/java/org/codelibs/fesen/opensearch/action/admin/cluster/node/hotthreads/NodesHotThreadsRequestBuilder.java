@@ -48,25 +48,55 @@ public class NodesHotThreadsRequestBuilder extends NodesOperationRequestBuilder<
     NodesHotThreadsResponse,
     NodesHotThreadsRequestBuilder> {
 
+    /**
+     * Creates a new NodesHotThreadsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public NodesHotThreadsRequestBuilder(OpenSearchClient client, NodesHotThreadsAction action) {
         super(client, action, new NodesHotThreadsRequest());
     }
 
+    /**
+     * Sets the threads.
+     *
+     * @param threads the threads
+     * @return this instance
+     */
     public NodesHotThreadsRequestBuilder setThreads(int threads) {
         request.threads(threads);
         return this;
     }
 
+    /**
+     * Sets the ignore idle threads.
+     *
+     * @param ignoreIdleThreads the ignore idle threads
+     * @return this instance
+     */
     public NodesHotThreadsRequestBuilder setIgnoreIdleThreads(boolean ignoreIdleThreads) {
         request.ignoreIdleThreads(ignoreIdleThreads);
         return this;
     }
 
+    /**
+     * Sets the type.
+     *
+     * @param type the type
+     * @return this instance
+     */
     public NodesHotThreadsRequestBuilder setType(String type) {
         request.type(type);
         return this;
     }
 
+    /**
+     * Sets the interval.
+     *
+     * @param interval the interval
+     * @return this instance
+     */
     public NodesHotThreadsRequestBuilder setInterval(TimeValue interval) {
         request.interval(interval);
         return this;

@@ -42,17 +42,25 @@ import java.util.List;
 /**
  * A basic interface for rewriteable classes.
  *
+ * @param <T> the element type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
 public interface Rewriteable<T> {
 
+    /**
+     * The max rewrite rounds.
+     */
     int MAX_REWRITE_ROUNDS = 16;
 
     /**
      * Rewrites this instance based on the provided context. The returned
      * objects will be the same instance as this if no changes during the
      * rewrite were applied.
+     *
+     * @param ctx the ctx
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     T rewrite(QueryRewriteContext ctx) throws IOException;
 
@@ -62,6 +70,8 @@ public interface Rewriteable<T> {
      * rewrites the rewriteable until it doesn't change anymore.
      * @param original the original rewriteable to rewrite
      * @param context the rewrite context to use
+     * @param <T> the element type
+     * @return this instance
      * @throws IOException if an {@link IOException} occurs
      */
     static <T extends Rewriteable<T>> T rewrite(T original, QueryRewriteContext context) throws IOException {
@@ -77,6 +87,8 @@ public interface Rewriteable<T> {
      * @param context the rewrite context to use
      * @param assertNoAsyncTasks if <code>true</code> the rewrite will fail if there are any pending async tasks on the context after the
      *                          rewrite. See {@link QueryRewriteContext#executeAsyncActions(ActionListener)} for details
+     * @param <T> the element type
+     * @return this instance
      * @throws IOException if an {@link IOException} occurs
      */
     static <T extends Rewriteable<T>> T rewrite(T original, QueryRewriteContext context, boolean assertNoAsyncTasks) throws IOException {
@@ -100,6 +112,12 @@ public interface Rewriteable<T> {
 
     /**
      * Rewrites the given rewriteable and fetches pending async tasks for each round before rewriting again.
+     *
+     * @param <T> the element type
+     * @param original the original
+     * @param context the context
+     * @param rewriteResponse the rewrite response
+     * @param iteration the iteration
      */
     static <T extends Rewriteable<T>> void rewriteAndFetch(
         T original,
@@ -139,6 +157,12 @@ public interface Rewriteable<T> {
     /**
      * Rewrites each element of the list until it doesn't change and returns a new list iff there is at least one element of the list that
      * changed during it's rewrite. Otherwise the given list instance is returned unchanged.
+     *
+     * @param <T> the element type
+     * @param rewritables the rewritables
+     * @param context the context
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     static <T extends Rewriteable<T>> List<T> rewrite(List<T> rewritables, QueryRewriteContext context) throws IOException {
         List<T> list = rewritables;

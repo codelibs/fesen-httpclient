@@ -15,7 +15,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class DeletePitAction extends ActionType<DeletePitResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final DeletePitAction INSTANCE = new DeletePitAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/point_in_time/delete";
 
     private DeletePitAction() {

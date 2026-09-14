@@ -48,6 +48,11 @@ import java.util.List;
  * @opensearch.internal
  */
 public class ParsedDateHistogram extends ParsedMultiBucketAggregation<ParsedDateHistogram.ParsedBucket> implements Histogram {
+    /**
+     * Creates a new ParsedDateHistogram.
+     */
+    public ParsedDateHistogram() {
+    }
 
     @Override
     public String getType() {
@@ -72,6 +77,14 @@ public class ParsedDateHistogram extends ParsedMultiBucketAggregation<ParsedDate
         );
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param name the name
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static ParsedDateHistogram fromXContent(XContentParser parser, String name) throws IOException {
         ParsedDateHistogram aggregation = PARSER.parse(parser, null);
         aggregation.setName(name);
@@ -84,6 +97,11 @@ public class ParsedDateHistogram extends ParsedMultiBucketAggregation<ParsedDate
      * @opensearch.internal
      */
     public static class ParsedBucket extends ParsedMultiBucketAggregation.ParsedBucket implements Histogram.Bucket {
+        /**
+         * Creates a new ParsedBucket.
+         */
+        public ParsedBucket() {
+        }
 
         private Long key;
 

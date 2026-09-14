@@ -55,6 +55,11 @@ public class RestoreSnapshotRequestBuilder extends ClusterManagerNodeOperationRe
 
     /**
      * Constructs new restore snapshot request builder with specified repository and snapshot names
+     *
+     * @param client the client
+     * @param action the action
+     * @param repository the repository
+     * @param name the name
      */
     public RestoreSnapshotRequestBuilder(OpenSearchClient client, RestoreSnapshotAction action, String repository, String name) {
         super(client, action, new RestoreSnapshotRequest(repository, name));

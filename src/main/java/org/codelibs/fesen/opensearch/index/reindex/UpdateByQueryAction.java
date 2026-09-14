@@ -40,7 +40,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  * @opensearch.internal
  */
 public class UpdateByQueryAction extends ActionType<BulkByScrollResponse> {
+    /**
+     * The INSTANCE constant.
+     */
     public static final UpdateByQueryAction INSTANCE = new UpdateByQueryAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/write/update/byquery";
 
     private UpdateByQueryAction() {

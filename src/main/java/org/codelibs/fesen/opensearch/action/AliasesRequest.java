@@ -47,11 +47,15 @@ public interface AliasesRequest extends IndicesRequest.Replaceable {
 
     /**
      * Returns the array of aliases that the action relates to
+     *
+     * @return the aliases
      */
     String[] aliases();
 
     /**
      * Returns the aliases as they were originally requested, before any potential name resolution
+     *
+     * @return the original aliases
      */
     String[] getOriginalAliases();
 
@@ -59,11 +63,15 @@ public interface AliasesRequest extends IndicesRequest.Replaceable {
      * Replaces current aliases with the provided aliases.
      * <p>
      * Sometimes aliases expressions need to be resolved to concrete aliases prior to executing the transport action.
+     *
+     * @param aliases the aliases
      */
     void replaceAliases(String... aliases);
 
     /**
      * Returns true if wildcards expressions among aliases should be resolved, false otherwise
+     *
+     * @return this instance
      */
     boolean expandAliasesWildcards();
 }

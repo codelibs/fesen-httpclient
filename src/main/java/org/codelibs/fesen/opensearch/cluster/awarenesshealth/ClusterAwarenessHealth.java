@@ -35,6 +35,12 @@ public class ClusterAwarenessHealth implements Writeable, ToXContentFragment, It
     private static final String AWARENESS_ATTRIBUTE = "awareness_attributes";
     private final Map<String, ClusterAwarenessAttributesHealth> clusterAwarenessAttributesHealthMap;
 
+    /**
+     * Creates a new ClusterAwarenessHealth.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ClusterAwarenessHealth(final StreamInput in) throws IOException {
         int size = in.readVInt();
         if (size > 0) {

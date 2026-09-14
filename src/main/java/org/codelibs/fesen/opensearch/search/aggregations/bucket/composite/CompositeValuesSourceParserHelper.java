@@ -60,9 +60,21 @@ import static org.codelibs.fesen.opensearch.search.aggregations.bucket.composite
  * @opensearch.internal
  */
 public class CompositeValuesSourceParserHelper {
+    /**
+     * Creates a new CompositeValuesSourceParserHelper.
+     */
+    public CompositeValuesSourceParserHelper() {
+    }
 
     private static final int AGGREGATION_TYPE_REFERENCE = Byte.MAX_VALUE;
 
+    /**
+     * Performs the declare values source fields step.
+     *
+     * @param <VB> the vb type
+     * @param <T> the element type
+     * @param objectParser the object parser
+     */
     public static <VB extends CompositeValuesSourceBuilder<VB>, T> void declareValuesSourceFields(
         AbstractObjectParser<VB, T> objectParser
     ) {
@@ -85,6 +97,13 @@ public class CompositeValuesSourceParserHelper {
         objectParser.declareField(VB::order, XContentParser::text, new ParseField("order"), ObjectParser.ValueType.STRING);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param builder the content builder
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeTo(CompositeValuesSourceBuilder<?> builder, StreamOutput out) throws IOException {
         int code = Byte.MIN_VALUE;
         String aggregationType = null;
@@ -119,6 +138,13 @@ public class CompositeValuesSourceParserHelper {
         builder.writeTo(out);
     }
 
+    /**
+     * Reads this instance from the given input.
+     *
+     * @param in the input to read from
+     * @return the from
+     * @throws IOException if an I/O error occurs
+     */
     public static CompositeValuesSourceBuilder<?> readFrom(StreamInput in) throws IOException {
         int code = in.readByte();
         switch (code) {
@@ -142,6 +168,13 @@ public class CompositeValuesSourceParserHelper {
         }
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static CompositeValuesSourceBuilder<?> fromXContent(XContentParser parser) throws IOException {
         XContentParser.Token token = parser.currentToken();
         ensureExpectedToken(XContentParser.Token.START_OBJECT, token, parser);
@@ -177,6 +210,15 @@ public class CompositeValuesSourceParserHelper {
         return builder;
     }
 
+    /**
+     * Writes this instance to the given content builder.
+     *
+     * @param source the source
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static XContentBuilder toXContent(CompositeValuesSourceBuilder<?> source, XContentBuilder builder, Params params)
         throws IOException {
         builder.startObject();

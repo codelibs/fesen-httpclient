@@ -52,16 +52,34 @@ import org.codelibs.fesen.opensearch.search.aggregations.support.ValuesSource;
  * @opensearch.internal
  */
 public class MinAggregationBuilder extends ValuesSourceAggregationBuilder.LeafOnly<ValuesSource.Numeric, MinAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "min";
+    /**
+     * The PARSER constant.
+     */
     public static final ObjectParser<MinAggregationBuilder, String> PARSER = ObjectParser.fromBuilder(NAME, MinAggregationBuilder::new);
     static {
         ValuesSourceAggregationBuilder.declareFields(PARSER, true, true, false);
     }
 
+    /**
+     * Creates a new MinAggregationBuilder.
+     *
+     * @param name the name
+     */
     public MinAggregationBuilder(String name) {
         super(name);
     }
 
+    /**
+     * Creates a new MinAggregationBuilder.
+     *
+     * @param clone the clone
+     * @param factoriesBuilder the factories builder
+     * @param metadata the metadata
+     */
     protected MinAggregationBuilder(
         MinAggregationBuilder clone,
         AggregatorFactories.Builder factoriesBuilder,

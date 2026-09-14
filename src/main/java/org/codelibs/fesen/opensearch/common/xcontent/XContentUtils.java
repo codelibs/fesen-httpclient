@@ -36,12 +36,20 @@ import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 
 import java.io.IOException;
 
+/**
+ * The XContentUtils class.
+ */
 public final class XContentUtils {
 
     private XContentUtils() {}
 
     /**
      * Convert a {@link XContentParser.Token} to a value
+     *
+     * @param parser the parser
+     * @param token the token
+     * @return the value
+     * @throws IOException if an I/O error occurs
      */
     public static Object readValue(XContentParser parser, XContentParser.Token token) throws IOException {
         if (token == XContentParser.Token.VALUE_NULL) {

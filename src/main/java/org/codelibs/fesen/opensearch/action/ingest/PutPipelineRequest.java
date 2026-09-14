@@ -61,6 +61,10 @@ public class PutPipelineRequest extends AcknowledgedRequest<PutPipelineRequest> 
 
     /**
      * Create a new pipeline request with the id and source along with the content type of the source
+     *
+     * @param id the identifier
+     * @param source the source
+     * @param mediaType the media type
      */
     public PutPipelineRequest(String id, BytesReference source, MediaType mediaType) {
         this.id = Objects.requireNonNull(id);
@@ -75,14 +79,29 @@ public class PutPipelineRequest extends AcknowledgedRequest<PutPipelineRequest> 
         return null;
     }
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
     public BytesReference getSource() {
         return source;
     }
 
+    /**
+     * Returns the media type.
+     *
+     * @return the media type
+     */
     public MediaType getMediaType() {
         return mediaType;
     }

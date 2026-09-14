@@ -51,6 +51,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "lterms";
 
     /**
@@ -61,6 +64,16 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
     public static class Bucket extends InternalTerms.Bucket<Bucket> {
         long term;
 
+        /**
+         * Creates a new Bucket.
+         *
+         * @param term the term
+         * @param docCount the doc count
+         * @param aggregations the aggregations
+         * @param showDocCountError the show doc count error
+         * @param docCountError the doc count error
+         * @param format the format
+         */
         public Bucket(
             long term,
             long docCount,
@@ -75,6 +88,11 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
 
         /**
          * Read from a stream.
+         *
+         * @param in the input to read from
+         * @param format the format
+         * @param showDocCountError the show doc count error
+         * @throws IOException if an I/O error occurs
          */
         public Bucket(StreamInput in, DocValueFormat format, boolean showDocCountError) throws IOException {
             super(in, format, showDocCountError);
@@ -138,6 +156,21 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
         }
     }
 
+    /**
+     * Creates a new LongTerms.
+     *
+     * @param name the name
+     * @param reduceOrder the reduce order
+     * @param order the order
+     * @param metadata the metadata
+     * @param format the format
+     * @param shardSize the shard size
+     * @param showTermDocCountError the show term doc count error
+     * @param otherDocCount the other doc count
+     * @param buckets the buckets
+     * @param docCountError the doc count error
+     * @param bucketCountThresholds the bucket count thresholds
+     */
     public LongTerms(
         String name,
         BucketOrder reduceOrder,

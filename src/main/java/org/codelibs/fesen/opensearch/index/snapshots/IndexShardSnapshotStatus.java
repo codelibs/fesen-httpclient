@@ -117,6 +117,16 @@ public class IndexShardSnapshotStatus {
         this.failure = failure;
     }
 
+    /**
+     * Moves the to started.
+     *
+     * @param startTime the start time
+     * @param incrementalFileCount the incremental file count
+     * @param totalFileCount the total file count
+     * @param incrementalSize the incremental size
+     * @param totalSize the total size
+     * @return this instance
+     */
     public synchronized Copy moveToStarted(
         final long startTime,
         final int incrementalFileCount,
@@ -138,6 +148,12 @@ public class IndexShardSnapshotStatus {
         return asCopy();
     }
 
+    /**
+     * Moves the to finalize.
+     *
+     * @param indexVersion the index version
+     * @return this instance
+     */
     public synchronized Copy moveToFinalize(final long indexVersion) {
         if (stage.compareAndSet(Stage.STARTED, Stage.FINALIZE)) {
             this.indexVersion = indexVersion;
@@ -149,6 +165,12 @@ public class IndexShardSnapshotStatus {
         return asCopy();
     }
 
+    /**
+     * Moves the to done.
+     *
+     * @param endTime the end time
+     * @param newGeneration the new generation
+     */
     public synchronized void moveToDone(final long endTime, final String newGeneration) {
         assert newGeneration != null;
         if (stage.compareAndSet(Stage.FINALIZE, Stage.DONE)) {
@@ -161,12 +183,23 @@ public class IndexShardSnapshotStatus {
         }
     }
 
+    /**
+     * Aborts the if not completed.
+     *
+     * @param failure the failure
+     */
     public synchronized void abortIfNotCompleted(final String failure) {
         if (stage.compareAndSet(Stage.INIT, Stage.ABORTED) || stage.compareAndSet(Stage.STARTED, Stage.ABORTED)) {
             this.failure = failure;
         }
     }
 
+    /**
+     * Moves the to failed.
+     *
+     * @param endTime the end time
+     * @param failure the failure
+     */
     public synchronized void moveToFailed(final long endTime, final String failure) {
         if (stage.getAndSet(Stage.FAILURE) != Stage.FAILURE) {
             this.totalTime = Math.max(0L, endTime - startTime);
@@ -174,16 +207,28 @@ public class IndexShardSnapshotStatus {
         }
     }
 
+    /**
+     * Returns the generation.
+     *
+     * @return the generation
+     */
     public String generation() {
         return generation.get();
     }
 
+    /**
+     * Returns the aborted flag.
+     *
+     * @return the aborted flag
+     */
     public boolean isAborted() {
         return stage.get() == Stage.ABORTED;
     }
 
     /**
      * Increments number of processed files
+     *
+     * @param size the size
      */
     public synchronized void addProcessedFile(long size) {
         processedFileCount++;
@@ -212,10 +257,22 @@ public class IndexShardSnapshotStatus {
         );
     }
 
+    /**
+     * Creates a new initializing.
+     *
+     * @param generation the generation
+     * @return the new initializing
+     */
     public static IndexShardSnapshotStatus newInitializing(String generation) {
         return new IndexShardSnapshotStatus(Stage.INIT, 0L, 0L, 0, 0, 0, 0, 0, 0, null, generation);
     }
 
+    /**
+     * Creates a new failed.
+     *
+     * @param failure the failure
+     * @return the new failed
+     */
     public static IndexShardSnapshotStatus newFailed(final String failure) {
         assert failure != null : "expecting non null failure for a failed IndexShardSnapshotStatus";
         if (failure == null) {
@@ -224,6 +281,18 @@ public class IndexShardSnapshotStatus {
         return new IndexShardSnapshotStatus(Stage.FAILURE, 0L, 0L, 0, 0, 0, 0, 0, 0, failure, null);
     }
 
+    /**
+     * Creates a new done.
+     *
+     * @param startTime the start time
+     * @param totalTime the total time
+     * @param incrementalFileCount the incremental file count
+     * @param fileCount the file count
+     * @param incrementalSize the incremental size
+     * @param size the size
+     * @param generation the generation
+     * @return the new done
+     */
     public static IndexShardSnapshotStatus newDone(
         final long startTime,
         final long totalTime,
@@ -269,6 +338,21 @@ public class IndexShardSnapshotStatus {
         private final long indexVersion;
         private final String failure;
 
+        /**
+         * Creates a new Copy.
+         *
+         * @param stage the stage
+         * @param startTime the start time
+         * @param totalTime the total time
+         * @param incrementalFileCount the incremental file count
+         * @param totalFileCount the total file count
+         * @param processedFileCount the processed file count
+         * @param incrementalSize the incremental size
+         * @param totalSize the total size
+         * @param processedSize the processed size
+         * @param indexVersion the index version
+         * @param failure the failure
+         */
         public Copy(
             final Stage stage,
             final long startTime,
@@ -295,46 +379,101 @@ public class IndexShardSnapshotStatus {
             this.failure = failure;
         }
 
+        /**
+         * Returns the stage.
+         *
+         * @return the stage
+         */
         public Stage getStage() {
             return stage;
         }
 
+        /**
+         * Returns the start time.
+         *
+         * @return the start time
+         */
         public long getStartTime() {
             return startTime;
         }
 
+        /**
+         * Returns the total time.
+         *
+         * @return the total time
+         */
         public long getTotalTime() {
             return totalTime;
         }
 
+        /**
+         * Returns the incremental file count.
+         *
+         * @return the incremental file count
+         */
         public int getIncrementalFileCount() {
             return incrementalFileCount;
         }
 
+        /**
+         * Returns the total file count.
+         *
+         * @return the total file count
+         */
         public int getTotalFileCount() {
             return totalFileCount;
         }
 
+        /**
+         * Returns the processed file count.
+         *
+         * @return the processed file count
+         */
         public int getProcessedFileCount() {
             return processedFileCount;
         }
 
+        /**
+         * Returns the incremental size.
+         *
+         * @return the incremental size
+         */
         public long getIncrementalSize() {
             return incrementalSize;
         }
 
+        /**
+         * Returns the total size.
+         *
+         * @return the total size
+         */
         public long getTotalSize() {
             return totalSize;
         }
 
+        /**
+         * Returns the processed size.
+         *
+         * @return the processed size
+         */
         public long getProcessedSize() {
             return processedSize;
         }
 
+        /**
+         * Returns the index version.
+         *
+         * @return the index version
+         */
         public long getIndexVersion() {
             return indexVersion;
         }
 
+        /**
+         * Returns the failure.
+         *
+         * @return the failure
+         */
         public String getFailure() {
             return failure;
         }

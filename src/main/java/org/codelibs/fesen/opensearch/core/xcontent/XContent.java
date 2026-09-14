@@ -50,9 +50,16 @@ import java.util.Set;
 public interface XContent {
     /**
      * The type this content handles and produces.
+     *
+     * @return the media type
      */
     MediaType mediaType();
 
+    /**
+     * Returns the stream separator.
+     *
+     * @return the stream separator
+     */
     byte streamSeparator();
 
     /**
@@ -64,29 +71,57 @@ public interface XContent {
      * @param includes the inclusive filters: only fields and objects that match the inclusive filters will be written to the output.
      * @param excludes the exclusive filters: only fields and objects that don't match the exclusive filters will be written to the output.
      * @param prettyPrint use pretty printer
+     * @return the new generator
+     * @throws IOException if an I/O error occurs
      */
     XContentGenerator createGenerator(OutputStream os, Set<String> includes, Set<String> excludes, boolean prettyPrint) throws IOException;
 
     /**
      * Creates a parser over the provided string content.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param content the content
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      */
     XContentParser createParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, String content)
         throws IOException;
 
     /**
      * Creates a parser over the provided input stream.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param is the is
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      */
     XContentParser createParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, InputStream is)
         throws IOException;
 
     /**
      * Creates a parser over the provided bytes.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param data the data
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      */
     XContentParser createParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, byte[] data)
         throws IOException;
 
     /**
      * Creates a parser over the provided bytes.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param data the data
+     * @param offset the offset
+     * @param length the length
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      */
     XContentParser createParser(
         NamedXContentRegistry xContentRegistry,
@@ -98,6 +133,12 @@ public interface XContent {
 
     /**
      * Creates a parser over the provided reader.
+     *
+     * @param xContentRegistry the XContent registry
+     * @param deprecationHandler the deprecation handler
+     * @param reader the reader
+     * @return the new parser
+     * @throws IOException if an I/O error occurs
      */
     XContentParser createParser(NamedXContentRegistry xContentRegistry, DeprecationHandler deprecationHandler, Reader reader)
         throws IOException;

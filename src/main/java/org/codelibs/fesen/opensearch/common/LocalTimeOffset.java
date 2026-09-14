@@ -69,6 +69,9 @@ public abstract class LocalTimeOffset {
      * Lookup offsets for a provided zone. This <strong>can</strong> fail if
      * there are many transitions and the provided lookup would be very large.
      *
+     * @param zone the zone
+     * @param minUtcMillis the min utc milliseconds
+     * @param maxUtcMillis the max utc milliseconds
      * @return a {@linkplain Lookup} or {@code null} if none could be built
      */
     public static Lookup lookup(ZoneId zone, long minUtcMillis, long maxUtcMillis) {
@@ -104,6 +107,7 @@ public abstract class LocalTimeOffset {
      * Lookup offsets without any known min or max time. This will generally
      * fail if the provided zone isn't fixed.
      *
+     * @param zone the zone
      * @return a lookup function of {@code null} if none could be built
      */
     public static LocalTimeOffset fixedOffset(ZoneId zone) {
@@ -118,6 +122,9 @@ public abstract class LocalTimeOffset {
 
     /**
      * Convert a time in utc into a the local time at this offset.
+     *
+     * @param utcMillis the utc milliseconds
+     * @return the utc to local time
      */
     public final long utcToLocalTime(long utcMillis) {
         return utcMillis + millis;
@@ -130,6 +137,9 @@ public abstract class LocalTimeOffset {
      * using this offset and are instead instead interested in picking an appropriate
      * offset for some local time that they have rounded down. In that case use
      * {@link #localToUtc(long, Strategy)}.
+     *
+     * @param localMillis the local milliseconds
+     * @return the local to utc in this offset
      */
     public final long localToUtcInThisOffset(long localMillis) {
         return localMillis - millis;
@@ -145,6 +155,10 @@ public abstract class LocalTimeOffset {
      * This will not help you if you must convert a local time that you've
      * rounded <strong>up</strong>. For that you are on your own. May God
      * have mercy on your soul.
+     *
+     * @param localMillis the local milliseconds
+     * @param strat the strat
+     * @return the local to utc
      */
     public abstract long localToUtc(long localMillis, Strategy strat);
 
@@ -159,6 +173,8 @@ public abstract class LocalTimeOffset {
          * jumped over it. This happens in many time zones when folks wind
          * their clocks forwards in the spring.
          *
+         * @param localMillis the local milliseconds
+         * @param gap the gap
          * @return the time in utc representing the local time
          */
         long inGap(long localMillis, Gap gap);
@@ -166,6 +182,8 @@ public abstract class LocalTimeOffset {
         /**
          * Handle a local time that happened before the start of a gap.
          *
+         * @param localMillis the local milliseconds
+         * @param gap the gap
          * @return the time in utc representing the local time
          */
         long beforeGap(long localMillis, Gap gap);
@@ -175,6 +193,8 @@ public abstract class LocalTimeOffset {
          * jumped behind it. This happens in many time zones when folks wind
          * their clocks back in the fall.
          *
+         * @param localMillis the local milliseconds
+         * @param overlap the overlap
          * @return the time in utc representing the local time
          */
         long inOverlap(long localMillis, Overlap overlap);
@@ -182,6 +202,8 @@ public abstract class LocalTimeOffset {
         /**
          * Handle a local time that happened before the start of an overlap.
          *
+         * @param localMillis the local milliseconds
+         * @param overlap the overlap
          * @return the time in utc representing the local time
          */
         long beforeOverlap(long localMillis, Overlap overlap);
@@ -189,18 +211,26 @@ public abstract class LocalTimeOffset {
 
     /**
      * Does this offset contain the provided time?
+     *
+     * @param utcMillis the utc milliseconds
+     * @return the contains utc milliseconds
      */
     protected abstract boolean containsUtcMillis(long utcMillis);
 
     /**
      * Find the offset containing the provided time, first checking this
      * offset, then its previous offset, the than one's previous offset, etc.
+     *
+     * @param utcMillis the utc milliseconds
+     * @return the offset containing
      */
     protected abstract LocalTimeOffset offsetContaining(long utcMillis);
 
     /**
      * Does this transition or any previous transitions move back to the
      * previous day? See {@link Lookup#anyMoveBackToPreviousDay()} for rules.
+     *
+     * @return the any move back to previous day
      */
     protected abstract boolean anyMoveBackToPreviousDay();
 
@@ -209,6 +239,12 @@ public abstract class LocalTimeOffset {
         return toString(millis);
     }
 
+    /**
+     * Returns a string representation of this instance.
+     *
+     * @param millis the milliseconds
+     * @return a string representation of this instance
+     */
     protected abstract String toString(long millis);
 
     /**
@@ -218,13 +254,26 @@ public abstract class LocalTimeOffset {
      */
     public abstract static class Lookup {
         /**
+         * Creates a new Lookup.
+         */
+        public Lookup() {
+        }
+
+        /**
          * Lookup the offset at the provided millis in utc.
+         *
+         * @param utcMillis the utc milliseconds
+         * @return the lookup
          */
         public abstract LocalTimeOffset lookup(long utcMillis);
 
         /**
          * If the offset for a range is constant then return it, otherwise
          * return {@code null}.
+         *
+         * @param minUtcMillis the min utc milliseconds
+         * @param maxUtcMillis the max utc milliseconds
+         * @return the fixed in range
          */
         public abstract LocalTimeOffset fixedInRange(long minUtcMillis, long maxUtcMillis);
 
@@ -234,6 +283,8 @@ public abstract class LocalTimeOffset {
          * Note: If an overlap occurs at, say, 1 am and jumps back to
          * <strong>exactly</strong> midnight then it doesn't count because
          * midnight is still counted as being in the "next" day.
+         *
+         * @return the any move back to previous day
          */
         public abstract boolean anyMoveBackToPreviousDay();
 
@@ -300,6 +351,8 @@ public abstract class LocalTimeOffset {
 
         /**
          * The offset before the this one.
+         *
+         * @return the previous
          */
         public LocalTimeOffset previous() {
             return previous;
@@ -320,6 +373,8 @@ public abstract class LocalTimeOffset {
 
         /**
          * The time that this offset started in milliseconds since epoch.
+         *
+         * @return this instance
          */
         public long startUtcMillis() {
             return startUtcMillis;
@@ -355,6 +410,8 @@ public abstract class LocalTimeOffset {
 
         /**
          * The first time that is missing from the local time because of this gap.
+         *
+         * @return the first missing local time
          */
         public long firstMissingLocalTime() {
             return firstMissingLocalTime;
@@ -409,6 +466,8 @@ public abstract class LocalTimeOffset {
 
         /**
          * The first local time after the overlap stops.
+         *
+         * @return the first non overlapping local time
          */
         public long firstNonOverlappingLocalTime() {
             return firstNonOverlappingLocalTime;
@@ -416,6 +475,8 @@ public abstract class LocalTimeOffset {
 
         /**
          * The first local time to be appear twice.
+         *
+         * @return the first overlapping local time
          */
         public long firstOverlappingLocalTime() {
             return firstOverlappingLocalTime;

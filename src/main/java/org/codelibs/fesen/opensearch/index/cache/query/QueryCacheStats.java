@@ -58,6 +58,9 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
     private long cacheCount;
     private long cacheSize;
 
+    /**
+     * Creates a new QueryCacheStats.
+     */
     public QueryCacheStats() {}
 
     /**
@@ -73,6 +76,12 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
         this.cacheSize = builder.cacheSize;
     }
 
+    /**
+     * Creates a new QueryCacheStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public QueryCacheStats(StreamInput in) throws IOException {
         ramBytesUsed = in.readLong();
         hitCount = in.readLong();
@@ -84,6 +93,12 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
     /**
      * This constructor will be deprecated starting in version 3.4.0.
      * Use {@link Builder} instead.
+     *
+     * @param ramBytesUsed the ram bytes used
+     * @param hitCount the hit count
+     * @param missCount the miss count
+     * @param cacheCount the cache count
+     * @param cacheSize the cache size
      */
     @Deprecated
     public QueryCacheStats(long ramBytesUsed, long hitCount, long missCount, long cacheCount, long cacheSize) {
@@ -94,6 +109,11 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
         this.cacheSize = cacheSize;
     }
 
+    /**
+     * Adds this instance.
+     *
+     * @param stats the stats
+     */
     public void add(QueryCacheStats stats) {
         if (stats == null) {
             return;
@@ -105,12 +125,19 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
         cacheSize += stats.cacheSize;
     }
 
+    /**
+     * Returns the memory size.
+     *
+     * @return the memory size
+     */
     public ByteSizeValue getMemorySize() {
         return new ByteSizeValue(ramBytesUsed);
     }
 
     /**
      * The total number of lookups in the cache.
+     *
+     * @return the total count
      */
     public long getTotalCount() {
         return hitCount + missCount;
@@ -118,6 +145,8 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * The number of successful lookups in the cache.
+     *
+     * @return the hit count
      */
     public long getHitCount() {
         return hitCount;
@@ -125,6 +154,8 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * The number of lookups in the cache that failed to retrieve a {@link DocIdSet}.
+     *
+     * @return the miss count
      */
     public long getMissCount() {
         return missCount;
@@ -132,6 +163,8 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * The number of {@link DocIdSet}s that have been cached.
+     *
+     * @return the cache count
      */
     public long getCacheCount() {
         return cacheCount;
@@ -139,6 +172,8 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * The number of {@link DocIdSet}s that are in the cache.
+     *
+     * @return the cache size
      */
     public long getCacheSize() {
         return cacheSize;
@@ -146,6 +181,8 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
 
     /**
      * The number of {@link DocIdSet}s that have been evicted from the cache.
+     *
+     * @return the evictions
      */
     public long getEvictions() {
         return cacheCount - cacheSize;
@@ -162,28 +199,61 @@ public class QueryCacheStats implements Writeable, ToXContentFragment {
         private long cacheCount = 0;
         private long cacheSize = 0;
 
+        /**
+         * Creates a new Builder.
+         */
         public Builder() {}
 
+        /**
+         * Returns the ram bytes used.
+         *
+         * @param used the used
+         * @return the ram bytes used
+         */
         public Builder ramBytesUsed(long used) {
             this.ramBytesUsed = used;
             return this;
         }
 
+        /**
+         * Returns the hit count.
+         *
+         * @param count the count
+         * @return the hit count
+         */
         public Builder hitCount(long count) {
             this.hitCount = count;
             return this;
         }
 
+        /**
+         * Returns the miss count.
+         *
+         * @param count the count
+         * @return the miss count
+         */
         public Builder missCount(long count) {
             this.missCount = count;
             return this;
         }
 
+        /**
+         * Returns the cache count.
+         *
+         * @param count the count
+         * @return the cache count
+         */
         public Builder cacheCount(long count) {
             this.cacheCount = count;
             return this;
         }
 
+        /**
+         * Returns the cache size.
+         *
+         * @param size the size
+         * @return the cache size
+         */
         public Builder cacheSize(long size) {
             this.cacheSize = size;
             return this;

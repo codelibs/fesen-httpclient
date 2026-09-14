@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class MultiGetAction extends ActionType<MultiGetResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final MultiGetAction INSTANCE = new MultiGetAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/read/mget";
 
     private MultiGetAction() {

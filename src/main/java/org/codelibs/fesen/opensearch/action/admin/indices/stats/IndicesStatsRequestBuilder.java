@@ -54,6 +54,12 @@ public class IndicesStatsRequestBuilder extends BroadcastOperationRequestBuilder
     IndicesStatsResponse,
     IndicesStatsRequestBuilder> {
 
+    /**
+     * Creates a new IndicesStatsRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public IndicesStatsRequestBuilder(OpenSearchClient client, IndicesStatsAction action) {
         super(client, action, new IndicesStatsRequest());
     }

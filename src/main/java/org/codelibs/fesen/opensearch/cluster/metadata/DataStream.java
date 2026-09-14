@@ -65,8 +65,17 @@ import java.util.Objects;
 @PublicApi(since = "1.0.0")
 public final class DataStream extends AbstractDiffable<DataStream> implements ToXContentObject {
 
+    /**
+     * The BACKING_INDEX_PREFIX constant.
+     */
     public static final String BACKING_INDEX_PREFIX = ".ds-";
+    /**
+     * The TIMESERIES_FIELDNAME constant.
+     */
     public static final String TIMESERIES_FIELDNAME = "@timestamp";
+    /**
+     * The TIMESERIES_LEAF_SORTER constant.
+     */
     public static final Comparator<LeafReader> TIMESERIES_LEAF_SORTER = Comparator.comparingLong((LeafReader r) -> {
         try {
             PointValues points = r.getPointValues(TIMESERIES_FIELDNAME);
@@ -90,6 +99,14 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
     private final List<Index> indices;
     private final long generation;
 
+    /**
+     * Creates a new DataStream.
+     *
+     * @param name the name
+     * @param timeStampField the time stamp field
+     * @param indices the indices
+     * @param generation the generation
+     */
     public DataStream(String name, TimestampField timeStampField, List<Index> indices, long generation) {
         this.name = name;
         this.timeStampField = timeStampField;
@@ -99,14 +116,29 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         assert indices.get(indices.size() - 1).getName().equals(getDefaultBackingIndexName(name, generation));
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the indices.
+     *
+     * @return the indices
+     */
     public List<Index> getIndices() {
         return indices;
     }
 
+    /**
+     * Returns the generation.
+     *
+     * @return the generation
+     */
     public long getGeneration() {
         return generation;
     }
@@ -126,6 +158,9 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
     /**
      * If {@code indexName} follows the data stream backing-index naming convention {@code .ds-<dataStream>-NNNNNN}
      * (a numeric counter suffix), returns the {@code <dataStream>} portion; otherwise returns {@code null}.
+     *
+     * @param indexName the index name
+     * @return this instance
      */
     public static String parseDataStreamName(String indexName) {
         if (indexName.startsWith(BACKING_INDEX_PREFIX) == false) {
@@ -159,10 +194,23 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         return String.format(Locale.ROOT, BACKING_INDEX_PREFIX + "%s-%06d", dataStreamName, generation);
     }
 
+    /**
+     * Creates a new DataStream by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public DataStream(StreamInput in) throws IOException {
         this(in.readString(), new TimestampField(in), in.readList(Index::new), in.readVLong());
     }
 
+    /**
+     * Reads the diff from.
+     *
+     * @param in the input to read from
+     * @return the diff from
+     * @throws IOException if an I/O error occurs
+     */
     public static Diff<DataStream> readDiffFrom(StreamInput in) throws IOException {
         return readDiffFrom(DataStream::new, in);
     }
@@ -175,9 +223,21 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         out.writeVLong(generation);
     }
 
+    /**
+     * The NAME_FIELD constant.
+     */
     public static final ParseField NAME_FIELD = new ParseField("name");
+    /**
+     * The TIMESTAMP_FIELD_FIELD constant.
+     */
     public static final ParseField TIMESTAMP_FIELD_FIELD = new ParseField("timestamp_field");
+    /**
+     * The INDICES_FIELD constant.
+     */
     public static final ParseField INDICES_FIELD = new ParseField("indices");
+    /**
+     * The GENERATION_FIELD constant.
+     */
     public static final ParseField GENERATION_FIELD = new ParseField("generation");
 
     @SuppressWarnings("unchecked")
@@ -193,6 +253,13 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
         PARSER.declareLong(ConstructingObjectParser.constructorArg(), GENERATION_FIELD);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static DataStream fromXContent(XContentParser parser) throws IOException {
         return PARSER.parse(parser, null);
     }
@@ -234,6 +301,9 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
         static ParseField NAME_FIELD = new ParseField("name");
 
+        /**
+         * The PARSER constant.
+         */
         @SuppressWarnings("unchecked")
         public static final ConstructingObjectParser<TimestampField, Void> PARSER = new ConstructingObjectParser<>(
             "timestamp_field",
@@ -246,10 +316,21 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
 
         private final String name;
 
+        /**
+         * Creates a new TimestampField.
+         *
+         * @param name the name
+         */
         public TimestampField(String name) {
             this.name = name;
         }
 
+        /**
+         * Creates a new TimestampField by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public TimestampField(StreamInput in) throws IOException {
             this.name = in.readString();
         }
@@ -267,6 +348,11 @@ public final class DataStream extends AbstractDiffable<DataStream> implements To
             return builder;
         }
 
+        /**
+         * Returns this instance as map.
+         *
+         * @return the map
+         */
         public Map<String, Object> toMap() {
             return Collections.singletonMap(NAME_FIELD.getPreferredName(), name);
         }

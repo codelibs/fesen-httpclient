@@ -51,42 +51,93 @@ public interface MediaType extends Writeable {
     /**
      * Returns a type part of a MediaType
      * i.e. application for application/json
+     *
+     * @return the type
      */
     String type();
 
     /**
      * Returns a subtype part of a MediaType.
      * i.e. json for application/json
+     *
+     * @return the subtype
      */
     String subtype();
 
     /**
      * Returns a corresponding format for a MediaType. i.e. json for application/json media type
      * Can differ from the MediaType's subtype i.e plain/text has a subtype of text but format is txt
+     *
+     * @return this instance
      */
     String format();
 
     /**
      * returns a string representation of a media type.
+     *
+     * @return the type with subtype
      */
     default String typeWithSubtype() {
         return type() + "/" + subtype();
     }
 
+    /**
+     * Returns the XContent.
+     *
+     * @return the XContent
+     */
     XContent xContent();
 
+    /**
+     * Returns the detected XContent.
+     *
+     * @param bytes the bytes
+     * @param offset the offset
+     * @param length the length
+     * @return the detected XContent
+     */
     boolean detectedXContent(final byte[] bytes, int offset, int length);
 
+    /**
+     * Returns the detected XContent.
+     *
+     * @param content the content
+     * @param length the length
+     * @return the detected XContent
+     */
     boolean detectedXContent(final CharSequence content, final int length);
 
+    /**
+     * Returns the media type.
+     *
+     * @return the media type
+     */
     default String mediaType() {
         return mediaTypeWithoutParameters();
     }
 
+    /**
+     * Returns the media type without parameters.
+     *
+     * @return the media type without parameters
+     */
     String mediaTypeWithoutParameters();
 
+    /**
+     * Returns the content builder.
+     *
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
+     */
     XContentBuilder contentBuilder() throws IOException;
 
+    /**
+     * Returns the content builder.
+     *
+     * @param os the OS
+     * @return the content builder
+     * @throws IOException if an I/O error occurs
+     */
     XContentBuilder contentBuilder(final OutputStream os) throws IOException;
 
     /**
@@ -94,6 +145,9 @@ public interface MediaType extends Writeable {
      * The provided media type can optionally has parameters.
      * This method is suitable for parsing of the {@code Content-Type} and {@code Accept} HTTP headers.
      * This method will return {@code null} if no match is found
+     *
+     * @param mediaTypeHeaderValue the media type header value
+     * @return the new media type
      */
     static MediaType fromMediaType(String mediaTypeHeaderValue) {
         mediaTypeHeaderValue = removeVersionInMediaType(mediaTypeHeaderValue);

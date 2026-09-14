@@ -57,6 +57,11 @@ public class JodaDateMathParser implements DateMathParser {
 
     private final JodaDateFormatter dateTimeFormatter;
 
+    /**
+     * Creates a new JodaDateMathParser.
+     *
+     * @param dateTimeFormatter the date time formatter
+     */
     public JodaDateMathParser(JodaDateFormatter dateTimeFormatter) {
         Objects.requireNonNull(dateTimeFormatter);
         this.dateTimeFormatter = dateTimeFormatter;

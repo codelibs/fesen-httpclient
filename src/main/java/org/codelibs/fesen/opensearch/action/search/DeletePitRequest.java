@@ -39,12 +39,25 @@ public class DeletePitRequest extends ActionRequest implements ToXContentObject 
      */
     private final List<String> pitIds = new ArrayList<>();
 
+    /**
+     * Creates a new DeletePitRequest.
+     *
+     * @param pitIds the pit identifiers
+     */
     public DeletePitRequest(String... pitIds) {
         this.pitIds.addAll(Arrays.asList(pitIds));
     }
 
+    /**
+     * Creates a new DeletePitRequest.
+     */
     public DeletePitRequest() {}
 
+    /**
+     * Returns the pit identifiers.
+     *
+     * @return the pit identifiers
+     */
     public List<String> getPitIds() {
         return pitIds;
     }

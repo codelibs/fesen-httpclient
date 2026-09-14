@@ -40,11 +40,15 @@ public interface RepositoryOperation {
 
     /**
      * Name of the repository affected.
+     *
+     * @return the repository
      */
     String repository();
 
     /**
      * The repository state id at the time the operation began.
+     *
+     * @return the repository state identifier
      */
     long repositoryStateId();
 }

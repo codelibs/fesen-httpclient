@@ -104,6 +104,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     private long version = Versions.MATCH_ANY;
 
+    /**
+     * The preference.
+     */
     protected String preference;
 
     private static final AtomicInteger randomInt = new AtomicInteger(0);
@@ -124,18 +127,53 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
      */
     @PublicApi(since = "1.0.0")
     public static final class FilterSettings {
+        /**
+         * The max num terms.
+         */
         public Integer maxNumTerms;
+        /**
+         * The min term freq.
+         */
         public Integer minTermFreq;
+        /**
+         * The max term freq.
+         */
         public Integer maxTermFreq;
+        /**
+         * The min doc freq.
+         */
         public Integer minDocFreq;
+        /**
+         * The max doc freq.
+         */
         public Integer maxDocFreq;
+        /**
+         * The min word length.
+         */
         public Integer minWordLength;
+        /**
+         * The max word length.
+         */
         public Integer maxWordLength;
 
+        /**
+         * Creates a new FilterSettings.
+         */
         public FilterSettings() {
 
         }
 
+        /**
+         * Creates a new FilterSettings.
+         *
+         * @param maxNumTerms the max num terms
+         * @param minTermFreq the min term freq
+         * @param maxTermFreq the max term freq
+         * @param minDocFreq the min doc freq
+         * @param maxDocFreq the max doc freq
+         * @param minWordLength the min word length
+         * @param maxWordLength the max word length
+         */
         public FilterSettings(
             @Nullable Integer maxNumTerms,
             @Nullable Integer minTermFreq,
@@ -154,6 +192,12 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
             this.maxWordLength = maxWordLength;
         }
 
+        /**
+         * Reads this instance from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public void readFrom(StreamInput in) throws IOException {
             maxNumTerms = in.readOptionalVInt();
             minTermFreq = in.readOptionalVInt();
@@ -164,6 +208,12 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
             maxWordLength = in.readOptionalVInt();
         }
 
+        /**
+         * Writes this instance to the given output.
+         *
+         * @param out the output to write to
+         * @throws IOException if an I/O error occurs
+         */
         public void writeTo(StreamOutput out) throws IOException {
             out.writeOptionalVInt(maxNumTerms);
             out.writeOptionalVInt(minTermFreq);
@@ -177,23 +227,36 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     private EnumSet<Flag> flagsEnum = EnumSet.of(Flag.Positions, Flag.Offsets, Flag.Payloads, Flag.FieldStatistics);
 
+    /**
+     * Creates a new TermVectorsRequest.
+     */
     public TermVectorsRequest() {}
 
     /**
      * Constructs a new term vector request for a document that will be fetch
      * from the provided index. Use {@link #id(String)} to specify the document to load.
+     *
+     * @param index the index
+     * @param id the identifier
      */
     public TermVectorsRequest(String index, String id) {
         super(index);
         this.id = id;
     }
 
+    /**
+     * Returns the flags.
+     *
+     * @return the flags
+     */
     public EnumSet<Flag> getFlags() {
         return flagsEnum;
     }
 
     /**
      * Returns the id of document the term vector is requested for.
+     *
+     * @return the identifier
      */
     public String id() {
         return id;
@@ -201,6 +264,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Sets the id of document the term vector is requested for.
+     *
+     * @param id the identifier
+     * @return the identifier
      */
     public TermVectorsRequest id(String id) {
         this.id = id;
@@ -209,6 +275,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Returns the artificial document from which term vectors are requested for.
+     *
+     * @return the doc
      */
     public BytesReference doc() {
         return doc;
@@ -216,6 +284,11 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Sets an artificial document from which term vectors are requested for.
+     *
+     * @param doc the doc
+     * @param generateRandomId the generate random identifier
+     * @param mediaType the media type
+     * @return the doc
      */
     public TermVectorsRequest doc(BytesReference doc, boolean generateRandomId, MediaType mediaType) {
         // assign a random id to this artificial document, for routing
@@ -228,17 +301,30 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
+     * Returns the routing.
+     *
      * @return The routing for this request.
      */
     public String routing() {
         return routing;
     }
 
+    /**
+     * Returns the routing.
+     *
+     * @param routing the routing value
+     * @return the routing
+     */
     public TermVectorsRequest routing(String routing) {
         this.routing = routing;
         return this;
     }
 
+    /**
+     * Returns the preference.
+     *
+     * @return the preference
+     */
     public String preference() {
         return this.preference;
     }
@@ -246,6 +332,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     /**
      * Return the start and stop offsets for each term if they were stored or
      * skip offsets.
+     *
+     * @param offsets the offsets
+     * @return the offsets
      */
     public TermVectorsRequest offsets(boolean offsets) {
         setFlag(Flag.Offsets, offsets);
@@ -253,6 +342,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
+     * Returns the offsets.
+     *
      * @return <code>true</code> if term offsets should be returned. Otherwise
      * <code>false</code>
      */
@@ -262,6 +353,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Return the positions for each term if stored or skip.
+     *
+     * @param positions the positions
+     * @return the positions
      */
     public TermVectorsRequest positions(boolean positions) {
         setFlag(Flag.Positions, positions);
@@ -269,6 +363,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
+     * Returns the positions.
+     *
      * @return Returns if the positions for each term should be returned if
      *         stored or skip.
      */
@@ -277,6 +373,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
+     * Returns the payloads.
+     *
      * @return <code>true</code> if term payloads should be returned. Otherwise
      * <code>false</code>
      */
@@ -286,6 +384,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Return the payloads for each term or skip.
+     *
+     * @param payloads the payloads
+     * @return the payloads
      */
     public TermVectorsRequest payloads(boolean payloads) {
         setFlag(Flag.Payloads, payloads);
@@ -293,6 +394,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
+     * Returns the term statistics.
+     *
      * @return <code>true</code> if term statistics should be returned.
      * Otherwise <code>false</code>
      */
@@ -302,6 +405,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Return the term statistics for each term in the shard or skip.
+     *
+     * @param termStatistics the term statistics
+     * @return the term statistics
      */
     public TermVectorsRequest termStatistics(boolean termStatistics) {
         setFlag(Flag.TermStatistics, termStatistics);
@@ -309,6 +415,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     }
 
     /**
+     * Returns the field statistics.
+     *
      * @return <code>true</code> if field statistics should be returned.
      * Otherwise <code>false</code>
      */
@@ -318,6 +426,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Return the field statistics for each term in the shard or skip.
+     *
+     * @param fieldStatistics the field statistics
+     * @return the field statistics
      */
     public TermVectorsRequest fieldStatistics(boolean fieldStatistics) {
         setFlag(Flag.FieldStatistics, fieldStatistics);
@@ -327,6 +438,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     /**
      * Return only term vectors for special selected fields. Returns for term
      * vectors for all fields if selectedFields == null
+     *
+     * @return the selected fields
      */
     public Set<String> selectedFields() {
         return selectedFields;
@@ -335,6 +448,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     /**
      * Return only term vectors for special selected fields. Returns the term
      * vectors for all fields if selectedFields == null
+     *
+     * @param fields the fields
+     * @return the selected fields
      */
     public TermVectorsRequest selectedFields(String... fields) {
         selectedFields = fields != null && fields.length != 0 ? Sets.newHashSet(fields) : null;
@@ -343,6 +459,8 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Return whether term vectors should be generated real-time (default to true).
+     *
+     * @return the realtime
      */
     public boolean realtime() {
         return this.realtime;
@@ -356,6 +474,9 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Override the analyzer used at each field when generating term vectors.
+     *
+     * @param perFieldAnalyzer the per field analyzer
+     * @return the per field analyzer
      */
     public TermVectorsRequest perFieldAnalyzer(Map<String, String> perFieldAnalyzer) {
         this.perFieldAnalyzer = perFieldAnalyzer != null && perFieldAnalyzer.size() != 0 ? new HashMap<>(perFieldAnalyzer) : null;
@@ -364,24 +485,48 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
 
     /**
      * Return the settings for filtering out terms.
+     *
+     * @return this instance
      */
     public FilterSettings filterSettings() {
         return this.filterSettings;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long version() {
         return version;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @param version the version
+     * @return the version
+     */
     public TermVectorsRequest version(long version) {
         this.version = version;
         return this;
     }
 
+    /**
+     * Returns the version type.
+     *
+     * @return the version type
+     */
     public VersionType versionType() {
         return versionType;
     }
 
+    /**
+     * Returns the version type.
+     *
+     * @param versionType the version type
+     * @return the version type
+     */
     public TermVectorsRequest versionType(VersionType versionType) {
         this.versionType = versionType;
         return this;
@@ -457,13 +602,34 @@ public class TermVectorsRequest extends SingleShardRequest<TermVectorsRequest> i
     public enum Flag {
         // Do not change the order of these flags we use
         // the ordinal for encoding! Only append to the end!
+        /**
+         * The Positions value.
+         */
         Positions,
+        /**
+         * The Offsets value.
+         */
         Offsets,
+        /**
+         * The Payloads value.
+         */
         Payloads,
+        /**
+         * The FieldStatistics value.
+         */
         FieldStatistics,
+        /**
+         * The term statistics.
+         */
         TermStatistics
     }
 
+    /**
+     * Reads the per field analyzer.
+     *
+     * @param map the map
+     * @return the per field analyzer
+     */
     public static Map<String, String> readPerFieldAnalyzer(Map<String, Object> map) {
         Map<String, String> mapStrStr = new HashMap<>();
         for (Map.Entry<String, Object> e : map.entrySet()) {

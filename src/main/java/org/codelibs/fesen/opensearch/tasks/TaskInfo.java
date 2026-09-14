@@ -97,6 +97,23 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
 
     private final TaskResourceStats resourceStats;
 
+    /**
+     * Creates a new TaskInfo.
+     *
+     * @param taskId the task identifier
+     * @param type the type
+     * @param action the action
+     * @param description the description
+     * @param status the status
+     * @param startTime the start time
+     * @param runningTimeNanos the running time nanoseconds
+     * @param cancellable the cancellable
+     * @param cancelled the cancelled
+     * @param parentTaskId the parent task identifier
+     * @param headers the headers
+     * @param resourceStats the resource stats
+     * @param cancellationStartTime the cancellation start time
+     */
     public TaskInfo(
         TaskId taskId,
         String type,
@@ -132,6 +149,9 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     @SuppressWarnings("unchecked")
     public TaskInfo(StreamInput in) throws IOException {
@@ -188,6 +208,11 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
         }
     }
 
+    /**
+     * Returns the task identifier.
+     *
+     * @return the task identifier
+     */
     public TaskId getTaskId() {
         return taskId;
     }
@@ -230,6 +255,9 @@ public final class TaskInfo implements Writeable, ToXContentFragment {
         return builder;
     }
 
+    /**
+     * The PARSER constant.
+     */
     public static final ConstructingObjectParser<TaskInfo, Void> PARSER = new ConstructingObjectParser<>("task_info", true, a -> {
         int i = 0;
         TaskId id = new TaskId((String) a[i++], (Long) a[i++]);

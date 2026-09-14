@@ -68,6 +68,9 @@ public class DirectoryFileTransferTracker {
 
     private final int DIRECTORY_FILES_TRANSFER_DEFAULT_WINDOW_SIZE = 20;
 
+    /**
+     * Creates a new DirectoryFileTransferTracker.
+     */
     public DirectoryFileTransferTracker() {
         transferredBytesMovingAverageReference = new AtomicReference<>(new MovingAverage(DIRECTORY_FILES_TRANSFER_DEFAULT_WINDOW_SIZE));
         transferredBytesPerSecMovingAverageReference = new AtomicReference<>(
@@ -82,13 +85,37 @@ public class DirectoryFileTransferTracker {
      */
     @PublicApi(since = "2.10.0")
     public static class Stats implements Writeable {
+        /**
+         * The transferred bytes started.
+         */
         public final long transferredBytesStarted;
+        /**
+         * The transferred bytes failed.
+         */
         public final long transferredBytesFailed;
+        /**
+         * The transferred bytes succeeded.
+         */
         public final long transferredBytesSucceeded;
+        /**
+         * The last transfer timestamp milliseconds.
+         */
         public final long lastTransferTimestampMs;
+        /**
+         * The total transfer time in milliseconds.
+         */
         public final long totalTransferTimeInMs;
+        /**
+         * The transferred bytes moving average.
+         */
         public final double transferredBytesMovingAverage;
+        /**
+         * The last successful transfer in bytes.
+         */
         public final long lastSuccessfulTransferInBytes;
+        /**
+         * The transferred bytes per sec moving average.
+         */
         public final double transferredBytesPerSecMovingAverage;
 
         /**
@@ -107,6 +134,12 @@ public class DirectoryFileTransferTracker {
             this.transferredBytesPerSecMovingAverage = builder.transferredBytesPerSecMovingAverage;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             this.transferredBytesStarted = in.readLong();
             this.transferredBytesFailed = in.readLong();
@@ -132,43 +165,94 @@ public class DirectoryFileTransferTracker {
             private long lastSuccessfulTransferInBytes = 0;
             private double transferredBytesPerSecMovingAverage = 0;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Returns the transferred bytes started.
+             *
+             * @param started the started
+             * @return the transferred bytes started
+             */
             public Builder transferredBytesStarted(long started) {
                 this.transferredBytesStarted = started;
                 return this;
             }
 
+            /**
+             * Returns the transferred bytes failed.
+             *
+             * @param failed the failed
+             * @return the transferred bytes failed
+             */
             public Builder transferredBytesFailed(long failed) {
                 this.transferredBytesFailed = failed;
                 return this;
             }
 
+            /**
+             * Returns the transferred bytes succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the transferred bytes succeeded
+             */
             public Builder transferredBytesSucceeded(long succeeded) {
                 this.transferredBytesSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the last transfer timestamp milliseconds.
+             *
+             * @param timestamp the timestamp
+             * @return the last transfer timestamp milliseconds
+             */
             public Builder lastTransferTimestampMs(long timestamp) {
                 this.lastTransferTimestampMs = timestamp;
                 return this;
             }
 
+            /**
+             * Returns the total transfer time in milliseconds.
+             *
+             * @param time the time
+             * @return the total transfer time in milliseconds
+             */
             public Builder totalTransferTimeInMs(long time) {
                 this.totalTransferTimeInMs = time;
                 return this;
             }
 
+            /**
+             * Returns the transferred bytes moving average.
+             *
+             * @param average the average
+             * @return the transferred bytes moving average
+             */
             public Builder transferredBytesMovingAverage(double average) {
                 this.transferredBytesMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the last successful transfer in bytes.
+             *
+             * @param bytes the bytes
+             * @return the last successful transfer in bytes
+             */
             public Builder lastSuccessfulTransferInBytes(long bytes) {
                 this.lastSuccessfulTransferInBytes = bytes;
                 return this;
             }
 
+            /**
+             * Returns the transferred bytes per sec moving average.
+             *
+             * @param average the average
+             * @return the transferred bytes per sec moving average
+             */
             public Builder transferredBytesPerSecMovingAverage(double average) {
                 this.transferredBytesPerSecMovingAverage = average;
                 return this;

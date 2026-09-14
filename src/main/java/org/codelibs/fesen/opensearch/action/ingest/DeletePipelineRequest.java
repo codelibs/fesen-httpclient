@@ -51,6 +51,11 @@ public class DeletePipelineRequest extends AcknowledgedRequest<DeletePipelineReq
 
     private String id;
 
+    /**
+     * Creates a new DeletePipelineRequest.
+     *
+     * @param id the identifier
+     */
     public DeletePipelineRequest(String id) {
         if (id == null) {
             throw new IllegalArgumentException("id is missing");
@@ -60,6 +65,11 @@ public class DeletePipelineRequest extends AcknowledgedRequest<DeletePipelineReq
 
     DeletePipelineRequest() {}
 
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
     public String getId() {
         return id;
     }

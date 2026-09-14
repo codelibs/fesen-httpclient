@@ -47,10 +47,14 @@ import java.io.IOException;
 /**
  * Single shard request.
  *
+ * @param <Request> the request type
  * @opensearch.internal
  */
 public abstract class SingleShardRequest<Request extends SingleShardRequest<Request>> extends ActionRequest implements IndicesRequest {
 
+    /**
+     * The INDICES_OPTIONS constant.
+     */
     public static final IndicesOptions INDICES_OPTIONS = IndicesOptions.strictSingleIndexNoExpandForbidClosed();
 
     /**
@@ -63,13 +67,23 @@ public abstract class SingleShardRequest<Request extends SingleShardRequest<Requ
     protected String index;
     ShardId internalShardId;
 
+    /**
+     * Creates a new SingleShardRequest.
+     */
     public SingleShardRequest() {}
 
+    /**
+     * Creates a new SingleShardRequest.
+     *
+     * @param index the index
+     */
     protected SingleShardRequest(String index) {
         this.index = index;
     }
 
     /**
+     * Validates the non null index.
+     *
      * @return a validation exception if the index property hasn't been set
      */
     protected ActionRequestValidationException validateNonNullIndex() {
@@ -81,6 +95,8 @@ public abstract class SingleShardRequest<Request extends SingleShardRequest<Requ
     }
 
     /**
+     * Indexes this instance.
+     *
      * @return The concrete index this request is targeted for or <code>null</code> if index is optional.
      *         Whether index property is optional depends on the concrete implementation. If index property
      *         is required the concrete implementation should use {@link #validateNonNullIndex()} to check
@@ -93,6 +109,9 @@ public abstract class SingleShardRequest<Request extends SingleShardRequest<Requ
 
     /**
      * Sets the index.
+     *
+     * @param index the index
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public final Request index(String index) {

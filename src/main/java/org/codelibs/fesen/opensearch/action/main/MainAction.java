@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class MainAction extends ActionType<MainResponse> {
 
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:monitor/main";
+    /**
+     * The INSTANCE constant.
+     */
     public static final MainAction INSTANCE = new MainAction();
 
     private MainAction() {

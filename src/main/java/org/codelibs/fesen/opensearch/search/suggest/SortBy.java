@@ -56,10 +56,23 @@ public enum SortBy implements Writeable {
         out.writeEnum(this);
     }
 
+    /**
+     * Reads the from stream.
+     *
+     * @param in the input to read from
+     * @return the from stream
+     * @throws IOException if an I/O error occurs
+     */
     public static SortBy readFromStream(final StreamInput in) throws IOException {
         return in.readEnum(SortBy.class);
     }
 
+    /**
+     * Resolves this instance.
+     *
+     * @param str the str
+     * @return this instance
+     */
     public static SortBy resolve(final String str) {
         Objects.requireNonNull(str, "Input string is null");
         return valueOf(str.toUpperCase(Locale.ROOT));

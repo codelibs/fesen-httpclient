@@ -24,18 +24,38 @@ public class SystemTemplateMetadata {
 
     private static final String DELIMITER = "@";
 
+    /**
+     * The COMPONENT_TEMPLATE_TYPE constant.
+     */
     public static final String COMPONENT_TEMPLATE_TYPE = "@abc_template";
 
+    /**
+     * Creates a new SystemTemplateMetadata.
+     *
+     * @param version the version
+     * @param type the type
+     * @param name the name
+     */
     public SystemTemplateMetadata(long version, String type, String name) {
         this.version = version;
         this.type = type;
         this.name = name;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
     public long version() {
         return version;
     }

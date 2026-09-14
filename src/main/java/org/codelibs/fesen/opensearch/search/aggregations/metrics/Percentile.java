@@ -44,15 +44,31 @@ public class Percentile {
     private final double percent;
     private final double value;
 
+    /**
+     * Creates a new Percentile.
+     *
+     * @param percent the percent
+     * @param value the value
+     */
     public Percentile(double percent, double value) {
         this.percent = percent;
         this.value = value;
     }
 
+    /**
+     * Returns the percent.
+     *
+     * @return the percent
+     */
     public double getPercent() {
         return percent;
     }
 
+    /**
+     * Returns the value.
+     *
+     * @return the value
+     */
     public double getValue() {
         return value;
     }

@@ -39,15 +39,24 @@ package org.codelibs.fesen.opensearch.search.aggregations.metrics;
  */
 public interface PercentileRanks extends NumericMetricsAggregation.MultiValue, Iterable<Percentile> {
 
+    /**
+     * The type name.
+     */
     String TYPE_NAME = "percentile_ranks";
 
     /**
      * Return the percentile for the given value.
+     *
+     * @param value the value
+     * @return the percent
      */
     double percent(double value);
 
     /**
      * Return the percentile for the given value as a String.
+     *
+     * @param value the value
+     * @return the percent as string
      */
     String percentAsString(double value);
 }

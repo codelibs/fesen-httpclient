@@ -43,6 +43,13 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class GetAliasesRequestBuilder extends BaseAliasesRequestBuilder<GetAliasesResponse, GetAliasesRequestBuilder> {
 
+    /**
+     * Creates a new GetAliasesRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     * @param aliases the aliases
+     */
     public GetAliasesRequestBuilder(OpenSearchClient client, GetAliasesAction action, String... aliases) {
         super(client, action, aliases);
     }

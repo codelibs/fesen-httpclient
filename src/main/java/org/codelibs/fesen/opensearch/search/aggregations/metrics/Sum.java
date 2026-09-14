@@ -40,6 +40,8 @@ public interface Sum extends NumericMetricsAggregation.SingleValue {
 
     /**
      * The sum.
+     *
+     * @return the value
      */
     double getValue();
 }

@@ -44,6 +44,12 @@ import org.codelibs.fesen.opensearch.transport.client.OpenSearchClient;
 @PublicApi(since = "1.0.0")
 public class ListTasksRequestBuilder extends TasksRequestBuilder<ListTasksRequest, ListTasksResponse, ListTasksRequestBuilder> {
 
+    /**
+     * Creates a new ListTasksRequestBuilder.
+     *
+     * @param client the client
+     * @param action the action
+     */
     public ListTasksRequestBuilder(OpenSearchClient client, ListTasksAction action) {
         super(client, action, new ListTasksRequest());
     }

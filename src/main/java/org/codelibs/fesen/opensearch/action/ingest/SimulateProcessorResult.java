@@ -105,6 +105,9 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         IF_CONDITION_PARSER.declareBoolean(optionalConstructorArg(), new ParseField(RESULT_FIELD));
     }
 
+    /**
+     * The PARSER constant.
+     */
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<SimulateProcessorResult, Void> PARSER = new ConstructingObjectParser<>(
         "simulate_processor_result",
@@ -139,6 +142,16 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         PARSER.declareObject(optionalConstructorArg(), (p, c) -> OpenSearchException.fromXContent(p), new ParseField("error"));
     }
 
+    /**
+     * Creates a new SimulateProcessorResult.
+     *
+     * @param type the type
+     * @param processorTag the processor tag
+     * @param description the description
+     * @param ingestDocument the ingest document
+     * @param failure the failure
+     * @param conditionalWithResult the conditional with result
+     */
     public SimulateProcessorResult(
         String type,
         String processorTag,
@@ -227,6 +240,12 @@ public class SimulateProcessorResult implements Writeable, ToXContentObject {
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static SimulateProcessorResult fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

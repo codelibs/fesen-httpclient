@@ -51,6 +51,7 @@ import java.util.Objects;
 /**
  * The abstract base builder for instances of {@link RescorerBuilder}.
  *
+ * @param <RB> the rb type
  * @opensearch.api
  */
 @PublicApi(since = "1.0.0")
@@ -60,6 +61,9 @@ public abstract class RescorerBuilder<RB extends RescorerBuilder<RB>>
         ToXContentObject,
         Rewriteable<RescorerBuilder<RB>> {
 
+    /**
+     * The window size.
+     */
     protected Integer windowSize;
 
     private static final ParseField WINDOW_SIZE_FIELD = new ParseField("window_size");
@@ -75,18 +79,42 @@ public abstract class RescorerBuilder<RB extends RescorerBuilder<RB>>
         doWriteTo(out);
     }
 
+    /**
+     * Writes this instance to the given output.
+     *
+     * @param out the output to write to
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doWriteTo(StreamOutput out) throws IOException;
 
+    /**
+     * Returns the window size.
+     *
+     * @param windowSize the window size
+     * @return the window size
+     */
     @SuppressWarnings("unchecked")
     public RB windowSize(int windowSize) {
         this.windowSize = windowSize;
         return (RB) this;
     }
 
+    /**
+     * Returns the window size.
+     *
+     * @return the window size
+     */
     public Integer windowSize() {
         return windowSize;
     }
 
+    /**
+     * Parses the from XContent.
+     *
+     * @param parser the parser
+     * @return this instance
+     * @throws IOException if an I/O error occurs
+     */
     public static RescorerBuilder<?> parseFromXContent(XContentParser parser) throws IOException {
         String fieldName = null;
         RescorerBuilder<?> rescorer = null;
@@ -127,6 +155,13 @@ public abstract class RescorerBuilder<RB extends RescorerBuilder<RB>>
         return builder;
     }
 
+    /**
+     * Performs the XContent step.
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void doXContent(XContentBuilder builder, Params params) throws IOException;
 
     @Override

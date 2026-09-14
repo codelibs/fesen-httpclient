@@ -81,6 +81,9 @@ public final class GeoTileUtils {
      * Since shapes are encoded, their boundaries are to be compared to against the encoded/decoded values of <code>LATITUDE_MASK</code>
      */
     public static final double NORMALIZED_LATITUDE_MASK = GeoEncodingUtils.decodeLatitude(GeoEncodingUtils.encodeLatitude(LATITUDE_MASK));
+    /**
+     * The NORMALIZED_NEGATIVE_LATITUDE_MASK constant.
+     */
     public static final double NORMALIZED_NEGATIVE_LATITUDE_MASK = GeoEncodingUtils.decodeLatitude(
         GeoEncodingUtils.encodeLatitude(-LATITUDE_MASK)
     );
@@ -97,6 +100,9 @@ public final class GeoTileUtils {
 
     /**
      * Assert the precision value is within the allowed range, and return it if ok, or throw.
+     *
+     * @param precision the precision
+     * @return this instance
      */
     public static int checkPrecisionRange(int precision) {
         if (precision < 0 || precision > MAX_ZOOM) {
@@ -119,6 +125,9 @@ public final class GeoTileUtils {
 
     /**
      * Encode to a geotile string from the geotile based long format
+     *
+     * @param hash the hash
+     * @return the string encode
      */
     public static String stringEncode(long hash) {
         int[] res = parseHash(hash);

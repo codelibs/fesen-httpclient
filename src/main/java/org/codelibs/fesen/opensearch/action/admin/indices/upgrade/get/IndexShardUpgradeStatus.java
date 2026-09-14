@@ -55,6 +55,11 @@ public class IndexShardUpgradeStatus implements Iterable<ShardUpgradeStatus> {
         this.shards = shards;
     }
 
+    /**
+     * Returns the shard identifier.
+     *
+     * @return the shard identifier
+     */
     public ShardId getShardId() {
         return this.shardId;
     }
@@ -64,6 +69,11 @@ public class IndexShardUpgradeStatus implements Iterable<ShardUpgradeStatus> {
         return Arrays.stream(shards).iterator();
     }
 
+    /**
+     * Returns the total bytes.
+     *
+     * @return the total bytes
+     */
     public long getTotalBytes() {
         long totalBytes = 0;
         for (ShardUpgradeStatus indexShardUpgradeStatus : shards) {
@@ -72,6 +82,11 @@ public class IndexShardUpgradeStatus implements Iterable<ShardUpgradeStatus> {
         return totalBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes.
+     *
+     * @return the to upgrade bytes
+     */
     public long getToUpgradeBytes() {
         long upgradeBytes = 0;
         for (ShardUpgradeStatus indexShardUpgradeStatus : shards) {
@@ -80,6 +95,11 @@ public class IndexShardUpgradeStatus implements Iterable<ShardUpgradeStatus> {
         return upgradeBytes;
     }
 
+    /**
+     * Returns the to upgrade bytes ancient.
+     *
+     * @return the to upgrade bytes ancient
+     */
     public long getToUpgradeBytesAncient() {
         long upgradeBytesAncient = 0;
         for (ShardUpgradeStatus indexShardUpgradeStatus : shards) {

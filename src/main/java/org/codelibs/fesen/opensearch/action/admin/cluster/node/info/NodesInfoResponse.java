@@ -65,10 +65,23 @@ import java.util.Map;
 @PublicApi(since = "1.0.0")
 public class NodesInfoResponse extends BaseNodesResponse<NodeInfo> implements ToXContentFragment {
 
+    /**
+     * Creates a new NodesInfoResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public NodesInfoResponse(StreamInput in) throws IOException {
         super(in);
     }
 
+    /**
+     * Creates a new NodesInfoResponse.
+     *
+     * @param clusterName the cluster name
+     * @param nodes the nodes
+     * @param failures the failures
+     */
     public NodesInfoResponse(ClusterName clusterName, List<NodeInfo> nodes, List<FailedNodeException> failures) {
         super(clusterName, nodes, failures);
     }

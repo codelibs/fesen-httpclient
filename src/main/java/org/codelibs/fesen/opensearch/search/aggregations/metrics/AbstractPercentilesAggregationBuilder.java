@@ -55,17 +55,37 @@ import java.util.function.Supplier;
  * It provides a set of common fields/functionality for setting the available algorithms (TDigest and HDRHistogram),
  * as well as algorithm-specific settings via a {@link PercentilesConfig} object
  *
+ * @param <T> the element type
  * @opensearch.internal
  */
 public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPercentilesAggregationBuilder<T>> extends
     ValuesSourceAggregationBuilder.LeafOnly<ValuesSource, T> {
 
+    /**
+     * The KEYED_FIELD constant.
+     */
     public static final ParseField KEYED_FIELD = new ParseField("keyed");
+    /**
+     * The keyed.
+     */
     protected boolean keyed = true;
+    /**
+     * The values.
+     */
     protected double[] values;
     private PercentilesConfig percentilesConfig;
     private ParseField valuesField;
 
+    /**
+     * Creates a new parser.
+     *
+     * @param <T> the element type
+     * @param aggName the agg name
+     * @param ctor the ctor
+     * @param defaultConfig the default config
+     * @param valuesField the values field
+     * @return the new parser
+     */
     public static <T extends AbstractPercentilesAggregationBuilder<T>> ConstructingObjectParser<T, String> createParser(
         String aggName,
         TriFunction<String, double[], PercentilesConfig, T> ctor,
@@ -182,6 +202,9 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
 
     /**
      * Set whether the XContent response should be keyed
+     *
+     * @param keyed the keyed
+     * @return the keyed
      */
     public T keyed(boolean keyed) {
         this.keyed = keyed;
@@ -190,6 +213,8 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
 
     /**
      * Get whether the XContent response should be keyed
+     *
+     * @return the keyed
      */
     public boolean keyed() {
         return keyed;
@@ -201,6 +226,9 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
      * <p>
      * Deprecated: set numberOfSignificantValueDigits by configuring a {@link PercentilesConfig.Hdr} instead
      * and set via {@link PercentilesAggregationBuilder#percentilesConfig(PercentilesConfig)}
+     *
+     * @param numberOfSignificantValueDigits the number of significant value digits
+     * @return the number of significant value digits
      */
     @Deprecated
     public T numberOfSignificantValueDigits(int numberOfSignificantValueDigits) {
@@ -221,6 +249,8 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
      * <p>
      * Deprecated: get numberOfSignificantValueDigits by inspecting the {@link PercentilesConfig} returned from
      * {@link PercentilesAggregationBuilder#percentilesConfig()} instead
+     *
+     * @return the number of significant value digits
      */
     @Deprecated
     public int numberOfSignificantValueDigits() {
@@ -236,6 +266,9 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
      * <p>
      * Deprecated: set compression by configuring a {@link PercentilesConfig.TDigest} instead
      * and set via {@link PercentilesAggregationBuilder#percentilesConfig(PercentilesConfig)}
+     *
+     * @param compression the compression
+     * @return the compression
      */
     @Deprecated
     public T compression(double compression) {
@@ -253,6 +286,8 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
      * <p>
      * Deprecated: get compression by inspecting the {@link PercentilesConfig} returned from
      * {@link PercentilesAggregationBuilder#percentilesConfig()} instead
+     *
+     * @return the compression
      */
     @Deprecated
     public double compression() {
@@ -265,6 +300,9 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
     /**
      * Deprecated: set method by configuring a {@link PercentilesConfig} instead
      * and set via {@link PercentilesAggregationBuilder#percentilesConfig(PercentilesConfig)}
+     *
+     * @param method the method
+     * @return the method
      */
     @Deprecated
     public T method(PercentilesMethod method) {
@@ -293,6 +331,8 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
     /**
      * Deprecated: get method by inspecting the {@link PercentilesConfig} returned from
      * {@link PercentilesAggregationBuilder#percentilesConfig()} instead
+     *
+     * @return the method
      */
     @Nullable
     @Deprecated
@@ -302,6 +342,8 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
 
     /**
      * Returns how the percentiles algorithm has been configured, or null if it has not been configured yet
+     *
+     * @return the percentiles config
      */
     @Nullable
     public PercentilesConfig percentilesConfig() {
@@ -310,6 +352,9 @@ public abstract class AbstractPercentilesAggregationBuilder<T extends AbstractPe
 
     /**
      * Sets how the percentiles algorithm should be configured
+     *
+     * @param percentilesConfig the percentiles config
+     * @return the percentiles config
      */
     public T percentilesConfig(PercentilesConfig percentilesConfig) {
         this.percentilesConfig = percentilesConfig;

@@ -41,9 +41,18 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class SimulatePipelineAction extends ActionType<SimulatePipelineResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final SimulatePipelineAction INSTANCE = new SimulatePipelineAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "cluster:admin/ingest/pipeline/simulate";
 
+    /**
+     * Creates a new SimulatePipelineAction.
+     */
     public SimulatePipelineAction() {
         super(NAME, SimulatePipelineResponse::new);
     }

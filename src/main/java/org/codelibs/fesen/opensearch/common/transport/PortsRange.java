@@ -45,14 +45,29 @@ public class PortsRange {
 
     private final String portRange;
 
+    /**
+     * Creates a new PortsRange.
+     *
+     * @param portRange the port range
+     */
     public PortsRange(String portRange) {
         this.portRange = portRange;
     }
 
+    /**
+     * Returns the port range string.
+     *
+     * @return the port range string
+     */
     public String getPortRangeString() {
         return portRange;
     }
 
+    /**
+     * Returns the ports.
+     *
+     * @return the ports
+     */
     public int[] ports() throws NumberFormatException {
         final List<Integer> ports = new ArrayList<>();
         iterate(portNumber -> {
@@ -62,6 +77,12 @@ public class PortsRange {
         return ports.stream().mapToInt(Integer::intValue).toArray();
     }
 
+    /**
+     * Iterates this instance.
+     *
+     * @param callback the callback
+     * @return this instance
+     */
     public boolean iterate(PortCallback callback) throws NumberFormatException {
         StringTokenizer st = new StringTokenizer(portRange, ",");
         boolean success = false;
@@ -97,6 +118,12 @@ public class PortsRange {
      * @opensearch.internal
      */
     public interface PortCallback {
+        /**
+         * Handles the port number event.
+         *
+         * @param portNumber the port number
+         * @return the on port number
+         */
         boolean onPortNumber(int portNumber);
     }
 

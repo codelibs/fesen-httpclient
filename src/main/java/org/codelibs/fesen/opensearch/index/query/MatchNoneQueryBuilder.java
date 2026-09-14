@@ -46,12 +46,21 @@ import java.io.IOException;
  * @opensearch.internal
  */
 public class MatchNoneQueryBuilder extends AbstractQueryBuilder<MatchNoneQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "match_none";
 
+    /**
+     * Creates a new MatchNoneQueryBuilder.
+     */
     public MatchNoneQueryBuilder() {}
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public MatchNoneQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -69,6 +78,13 @@ public class MatchNoneQueryBuilder extends AbstractQueryBuilder<MatchNoneQueryBu
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static MatchNoneQueryBuilder fromXContent(XContentParser parser) throws IOException {
         String currentFieldName = null;
         XContentParser.Token token;

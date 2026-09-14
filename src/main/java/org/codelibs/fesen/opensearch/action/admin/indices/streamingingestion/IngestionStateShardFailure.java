@@ -24,6 +24,9 @@ import java.util.Map;
 /**
  * Indicates ingestion failures at index and shard level.
  *
+ * @param index the index
+ * @param shard the shard
+ * @param errorMessage the error message
  * @opensearch.api
  */
 @PublicApi(since = "3.6.0")
@@ -32,6 +35,12 @@ public record IngestionStateShardFailure(String index, int shard, String errorMe
     private static final String SHARD = "shard";
     private static final String ERROR = "error";
 
+    /**
+     * Creates a new IngestionStateShardFailure by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public IngestionStateShardFailure(StreamInput in) throws IOException {
         this(in.readString(), in.readVInt(), in.readString());
     }
@@ -53,6 +62,9 @@ public record IngestionStateShardFailure(String index, int shard, String errorMe
 
     /**
      * Groups provided shard ingestion state failures by index name.
+     *
+     * @param shardFailures the shard failures
+     * @return the group shard failures by index
      */
     public static Map<String, List<IngestionStateShardFailure>> groupShardFailuresByIndex(IngestionStateShardFailure[] shardFailures) {
         Map<String, List<IngestionStateShardFailure>> shardFailuresByIndex = new HashMap<>();

@@ -46,6 +46,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @opensearch.internal
  */
 public class DeprecatedMessage extends OpenSearchLogMessage {
+    /**
+     * The X_OPAQUE_ID_FIELD_NAME constant.
+     */
     public static final String X_OPAQUE_ID_FIELD_NAME = "x-opaque-id";
 
     // Arbitrary maximum size, should be much larger than unique number of
@@ -53,8 +56,19 @@ public class DeprecatedMessage extends OpenSearchLogMessage {
     static final int MAX_DEDUPE_CACHE_ENTRIES = 16_384;
 
     private static final Set<String> keyDedupeCache = ConcurrentHashMap.newKeySet();
+    /**
+     * The key with x opaque identifier.
+     */
     private final String keyWithXOpaqueId;
 
+    /**
+     * Creates a new DeprecatedMessage.
+     *
+     * @param key the key
+     * @param xOpaqueId the x opaque identifier
+     * @param messagePattern the message pattern
+     * @param args the args
+     */
     public DeprecatedMessage(String key, String xOpaqueId, String messagePattern, Object... args) {
         super(fieldMap(key, xOpaqueId), messagePattern, args);
         this.keyWithXOpaqueId = key + xOpaqueId;
@@ -71,6 +85,11 @@ public class DeprecatedMessage extends OpenSearchLogMessage {
         return builder.immutableMap();
     }
 
+    /**
+     * Returns the already logged flag.
+     *
+     * @return the already logged flag
+     */
     public boolean isAlreadyLogged() {
         if (keyDedupeCache.contains(keyWithXOpaqueId)) {
             return true;

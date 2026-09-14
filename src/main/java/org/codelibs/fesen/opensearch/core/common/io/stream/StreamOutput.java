@@ -102,6 +102,11 @@ import java.util.function.IntFunction;
  */
 @PublicApi(since = "1.0.0")
 public abstract class StreamOutput extends OutputStream {
+    /**
+     * Creates a new StreamOutput.
+     */
+    public StreamOutput() {
+    }
 
     private static final int MAX_NESTED_EXCEPTION_LEVEL = 100;
 
@@ -110,6 +115,8 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * The version of the node on the other side of this stream.
+     *
+     * @return the version
      */
     public Version getVersion() {
         return this.version;
@@ -117,6 +124,8 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Set the version of the node on the other side of this stream.
+     *
+     * @param version the version
      */
     public void setVersion(Version version) {
         this.version = version;
@@ -143,20 +152,40 @@ public abstract class StreamOutput extends OutputStream {
         this.features = Collections.unmodifiableSet(new HashSet<>(features));
     }
 
+    /**
+     * Returns the features.
+     *
+     * @return the features
+     */
     public Set<String> getFeatures() {
         return this.features;
     }
 
+    /**
+     * Returns the position.
+     *
+     * @return the position
+     * @throws IOException if an I/O error occurs
+     */
     public long position() throws IOException {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Seeks this instance.
+     *
+     * @param position the position
+     * @throws IOException if an I/O error occurs
+     */
     public void seek(long position) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Writes a single byte.
+     *
+     * @param b the b
+     * @throws IOException if an I/O error occurs
      */
     public abstract void writeByte(byte b) throws IOException;
 
@@ -164,6 +193,7 @@ public abstract class StreamOutput extends OutputStream {
      * Writes an array of bytes.
      *
      * @param b the bytes to write
+     * @throws IOException if an I/O error occurs
      */
     public void writeBytes(byte[] b) throws IOException {
         writeBytes(b, 0, b.length);
@@ -174,6 +204,7 @@ public abstract class StreamOutput extends OutputStream {
      *
      * @param b      the bytes to write
      * @param length the number of bytes to write
+     * @throws IOException if an I/O error occurs
      */
     public void writeBytes(byte[] b, int length) throws IOException {
         writeBytes(b, 0, length);
@@ -185,6 +216,7 @@ public abstract class StreamOutput extends OutputStream {
      * @param b      the bytes to write
      * @param offset the offset in the byte array
      * @param length the number of bytes to write
+     * @throws IOException if an I/O error occurs
      */
     public abstract void writeBytes(byte[] b, int offset, int length) throws IOException;
 
@@ -192,6 +224,7 @@ public abstract class StreamOutput extends OutputStream {
      * Writes an array of bytes.
      *
      * @param b the bytes to write
+     * @throws IOException if an I/O error occurs
      */
     public void writeByteArray(byte[] b) throws IOException {
         writeVInt(b.length);
@@ -200,6 +233,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes the bytes reference, including a length header.
+     *
+     * @param bytes the bytes
+     * @throws IOException if an I/O error occurs
      */
     public void writeBytesReference(@Nullable BytesReference bytes) throws IOException {
         if (bytes == null) {
@@ -213,6 +249,9 @@ public abstract class StreamOutput extends OutputStream {
     /**
      * Writes an optional bytes reference including a length header. Use this if you need to differentiate between null and empty bytes
      * references. Use {@link #writeBytesReference(BytesReference)} and {@link StreamInput#readBytesReference()} if you do not.
+     *
+     * @param bytes the bytes
+     * @throws IOException if an I/O error occurs
      */
     public void writeOptionalBytesReference(@Nullable BytesReference bytes) throws IOException {
         if (bytes == null) {
@@ -223,6 +262,12 @@ public abstract class StreamOutput extends OutputStream {
         bytes.writeTo(this);
     }
 
+    /**
+     * Writes the bytes ref.
+     *
+     * @param bytes the bytes
+     * @throws IOException if an I/O error occurs
+     */
     public void writeBytesRef(BytesRef bytes) throws IOException {
         if (bytes == null) {
             writeVInt(0);
@@ -234,6 +279,12 @@ public abstract class StreamOutput extends OutputStream {
 
     private static final ThreadLocal<byte[]> scratch = ThreadLocal.withInitial(() -> new byte[1024]);
 
+    /**
+     * Writes the short.
+     *
+     * @param v the v
+     * @throws IOException if an I/O error occurs
+     */
     public final void writeShort(short v) throws IOException {
         final byte[] buffer = scratch.get();
         buffer[0] = (byte) (v >> 8);
@@ -243,6 +294,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes an int as four bytes.
+     *
+     * @param i the i
+     * @throws IOException if an I/O error occurs
      */
     public void writeInt(int i) throws IOException {
         final byte[] buffer = scratch.get();
@@ -258,6 +312,9 @@ public abstract class StreamOutput extends OutputStream {
      * five bytes.  Smaller values take fewer bytes.  Negative numbers
      * will always use all 5 bytes and are therefore better serialized
      * using {@link #writeInt}
+     *
+     * @param i the i
+     * @throws IOException if an I/O error occurs
      */
     public void writeVInt(int i) throws IOException {
         /*
@@ -286,6 +343,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes a long as eight bytes.
+     *
+     * @param i the i
+     * @throws IOException if an I/O error occurs
      */
     public void writeLong(long i) throws IOException {
         final byte[] buffer = scratch.get();
@@ -304,6 +364,9 @@ public abstract class StreamOutput extends OutputStream {
      * Writes a non-negative long in a variable-length format. Writes between one and ten bytes. Smaller values take fewer bytes. Negative
      * numbers use ten bytes and trip assertions (if running in tests) so prefer {@link #writeLong(long)} or {@link #writeZLong(long)} for
      * negative numbers.
+     *
+     * @param i the i
+     * @throws IOException if an I/O error occurs
      */
     public void writeVLong(long i) throws IOException {
         if (i < 0) {
@@ -312,6 +375,12 @@ public abstract class StreamOutput extends OutputStream {
         writeVLongNoCheck(i);
     }
 
+    /**
+     * Writes the optional v long.
+     *
+     * @param l the l
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalVLong(@Nullable Long l) throws IOException {
         if (l == null) {
             writeBoolean(false);
@@ -324,6 +393,9 @@ public abstract class StreamOutput extends OutputStream {
     /**
      * Writes a long in a variable-length format without first checking if it is negative. Package private for testing. Use
      * {@link #writeVLong(long)} instead.
+     *
+     * @param i the i
+     * @throws IOException if an I/O error occurs
      */
     public void writeVLongNoCheck(long i) throws IOException {
         final byte[] buffer = scratch.get();
@@ -342,6 +414,9 @@ public abstract class StreamOutput extends OutputStream {
      * e.g., 0 -;&gt; 0, -1 -;&gt; 1, 1 -;&gt; 2, ..., Long.MIN_VALUE -;&gt; -1, Long.MAX_VALUE -;&gt; -2
      * Numbers with small absolute value will have a small encoding
      * If the numbers are known to be non-negative, use {@link #writeVLong(long)}
+     *
+     * @param i the i
+     * @throws IOException if an I/O error occurs
      */
     public void writeZLong(long i) throws IOException {
         final byte[] buffer = scratch.get();
@@ -356,6 +431,12 @@ public abstract class StreamOutput extends OutputStream {
         writeBytes(buffer, 0, index);
     }
 
+    /**
+     * Writes the optional long.
+     *
+     * @param l the l
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalLong(@Nullable Long l) throws IOException {
         if (l == null) {
             writeBoolean(false);
@@ -365,6 +446,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the optional string.
+     *
+     * @param str the str
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalString(@Nullable String str) throws IOException {
         if (str == null) {
             writeBoolean(false);
@@ -374,6 +461,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the optional secure string.
+     *
+     * @param secureStr the secure str
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalSecureString(@Nullable SecureString secureStr) throws IOException {
         if (secureStr == null) {
             writeOptionalBytesReference(null);
@@ -389,6 +482,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes an optional {@link Integer}.
+     *
+     * @param integer the integer
+     * @throws IOException if an I/O error occurs
      */
     public void writeOptionalInt(@Nullable Integer integer) throws IOException {
         if (integer == null) {
@@ -399,6 +495,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the optional v int.
+     *
+     * @param integer the integer
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalVInt(@Nullable Integer integer) throws IOException {
         if (integer == null) {
             writeBoolean(false);
@@ -408,6 +510,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the optional float.
+     *
+     * @param floatValue the float value
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalFloat(@Nullable Float floatValue) throws IOException {
         if (floatValue == null) {
             writeBoolean(false);
@@ -417,6 +525,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the optional text.
+     *
+     * @param text the text
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalText(@Nullable Text text) throws IOException {
         if (text == null) {
             writeInt(-1);
@@ -427,6 +541,12 @@ public abstract class StreamOutput extends OutputStream {
 
     private final BytesRefBuilder spare = new BytesRefBuilder();
 
+    /**
+     * Writes the text.
+     *
+     * @param text the text
+     * @throws IOException if an I/O error occurs
+     */
     public void writeText(Text text) throws IOException {
         if (!text.hasBytes()) {
             final String string = text.string();
@@ -440,6 +560,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the string.
+     *
+     * @param str the str
+     * @throws IOException if an I/O error occurs
+     */
     public void writeString(String str) throws IOException {
         final int charCount = str.length();
         byte[] buffer = scratch.get();
@@ -468,6 +594,12 @@ public abstract class StreamOutput extends OutputStream {
         writeBytes(buffer, offset);
     }
 
+    /**
+     * Writes the secure string.
+     *
+     * @param secureStr the secure str
+     * @throws IOException if an I/O error occurs
+     */
     public void writeSecureString(SecureString secureStr) throws IOException {
         final byte[] secureStrBytes = CharArrays.toUtf8Bytes(secureStr.getChars());
         try {
@@ -477,14 +609,32 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the float.
+     *
+     * @param v the v
+     * @throws IOException if an I/O error occurs
+     */
     public void writeFloat(float v) throws IOException {
         writeInt(Float.floatToIntBits(v));
     }
 
+    /**
+     * Writes the double.
+     *
+     * @param v the v
+     * @throws IOException if an I/O error occurs
+     */
     public void writeDouble(double v) throws IOException {
         writeLong(Double.doubleToLongBits(v));
     }
 
+    /**
+     * Writes the optional double.
+     *
+     * @param v the v
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalDouble(@Nullable Double v) throws IOException {
         if (v == null) {
             writeBoolean(false);
@@ -494,6 +644,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the big integer.
+     *
+     * @param v the v
+     * @throws IOException if an I/O error occurs
+     */
     public final void writeBigInteger(BigInteger v) throws IOException {
         writeString(v.toString());
     }
@@ -504,11 +660,20 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes a boolean.
+     *
+     * @param b the b
+     * @throws IOException if an I/O error occurs
      */
     public void writeBoolean(boolean b) throws IOException {
         writeByte(b ? ONE : ZERO);
     }
 
+    /**
+     * Writes the optional boolean.
+     *
+     * @param b the b
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalBoolean(@Nullable Boolean b) throws IOException {
         if (b == null) {
             writeByte(TWO);
@@ -529,6 +694,11 @@ public abstract class StreamOutput extends OutputStream {
     @Override
     public abstract void close() throws IOException;
 
+    /**
+     * Resets this instance.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     public abstract void reset() throws IOException;
 
     @Override
@@ -541,6 +711,12 @@ public abstract class StreamOutput extends OutputStream {
         writeBytes(b, off, len);
     }
 
+    /**
+     * Writes the string array.
+     *
+     * @param array the array
+     * @throws IOException if an I/O error occurs
+     */
     public void writeStringArray(String[] array) throws IOException {
         writeVInt(array.length);
         for (String s : array) {
@@ -550,6 +726,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes a string array, for nullable string, writes it as 0 (empty string).
+     *
+     * @param array the array
+     * @throws IOException if an I/O error occurs
      */
     public void writeStringArrayNullable(@Nullable String[] array) throws IOException {
         if (array == null) {
@@ -564,6 +743,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes a string array, for nullable string, writes false.
+     *
+     * @param array the array
+     * @throws IOException if an I/O error occurs
      */
     public void writeOptionalStringArray(@Nullable String[] array) throws IOException {
         if (array == null) {
@@ -574,6 +756,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the map.
+     *
+     * @param map the map
+     * @throws IOException if an I/O error occurs
+     */
     public void writeMap(@Nullable Map<String, Object> map) throws IOException {
         writeGenericValue(map);
     }
@@ -583,6 +771,9 @@ public abstract class StreamOutput extends OutputStream {
      * to make sure every map generated bytes order are same.
      * This method is compatible with {@code StreamInput.readMap} and {@code StreamInput.readGenericValue}
      * This method only will handle the map keys order, not maps contained within the map
+     *
+     * @param map the map
+     * @throws IOException if an I/O error occurs
      */
     public void writeMapWithConsistentOrder(@Nullable Map<String, ? extends Object> map) throws IOException {
         if (map == null) {
@@ -612,6 +803,10 @@ public abstract class StreamOutput extends OutputStream {
      *
      * @param keyWriter The key writer
      * @param valueWriter The value writer
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map the map
+     * @throws IOException if an I/O error occurs
      */
     public final <K, V> void writeMapOfLists(final Map<K, List<V>> map, final Writer<K> keyWriter, final Writer<V> valueWriter)
         throws IOException {
@@ -632,6 +827,10 @@ public abstract class StreamOutput extends OutputStream {
      *
      * @param keyWriter The key writer
      * @param valueWriter The value writer
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map the map
+     * @throws IOException if an I/O error occurs
      */
     public <K, V> void writeMap(final Map<K, V> map, final Writer<K> keyWriter, final Writer<V> valueWriter) throws IOException {
         writeVInt(map.size());
@@ -643,6 +842,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes an {@link Instant} to the stream with nanosecond resolution
+     *
+     * @param instant the instant
+     * @throws IOException if an I/O error occurs
      */
     public final void writeInstant(Instant instant) throws IOException {
         writeLong(instant.getEpochSecond());
@@ -651,6 +853,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes an {@link Instant} to the stream, which could possibly be null
+     *
+     * @param instant the instant
+     * @throws IOException if an I/O error occurs
      */
     public final void writeOptionalInstant(@Nullable Instant instant) throws IOException {
         if (instant == null) {
@@ -815,6 +1020,10 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Returns the registered writer for the given class type.
+     *
+     * @param <W> the w type
+     * @param type the type
+     * @return the writer
      */
     @SuppressWarnings("unchecked")
     public static <W extends Writer<?>> W getWriter(Class<?> type) {
@@ -835,6 +1044,9 @@ public abstract class StreamOutput extends OutputStream {
      * different key-value orders, they will maybe have different stream order.
      * If want to keep stream out map and stream in map have the same stream order when stream,
      * can use {@code writeMapWithConsistentOrder}
+     *
+     * @param value the value
+     * @throws IOException if an I/O error occurs
      */
     public void writeGenericValue(@Nullable Object value) throws IOException {
         if (value == null) {
@@ -846,6 +1058,11 @@ public abstract class StreamOutput extends OutputStream {
         writer.write(this, value);
     }
 
+    /**
+     * Checks the writeable.
+     *
+     * @param value the value
+     */
     public static void checkWriteable(@Nullable Object value) throws IllegalArgumentException {
         if (value == null) {
             return;
@@ -881,6 +1098,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the int array.
+     *
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     public void writeIntArray(int[] values) throws IOException {
         writeVInt(values.length);
         for (int value : values) {
@@ -888,6 +1111,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the v int array.
+     *
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     public void writeVIntArray(int[] values) throws IOException {
         writeVInt(values.length);
         for (int value : values) {
@@ -895,6 +1124,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the long array.
+     *
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     public void writeLongArray(long[] values) throws IOException {
         writeVInt(values.length);
         for (long value : values) {
@@ -902,6 +1137,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the v long array.
+     *
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     public void writeVLongArray(long[] values) throws IOException {
         writeVInt(values.length);
         for (long value : values) {
@@ -909,6 +1150,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the float array.
+     *
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     public void writeFloatArray(float[] values) throws IOException {
         writeVInt(values.length);
         for (float value : values) {
@@ -916,6 +1163,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the double array.
+     *
+     * @param values the values
+     * @throws IOException if an I/O error occurs
+     */
     public void writeDoubleArray(double[] values) throws IOException {
         writeVInt(values.length);
         for (double value : values) {
@@ -943,6 +1196,11 @@ public abstract class StreamOutput extends OutputStream {
     /**
      * Same as {@link #writeArray(Writer, Object[])} but the provided array may be null. An additional boolean value is
      * serialized to indicate whether the array was null or not.
+     *
+     * @param <T> the element type
+     * @param writer the writer
+     * @param array the array
+     * @throws IOException if an I/O error occurs
      */
     public <T> void writeOptionalArray(final Writer<T> writer, final @Nullable T[] array) throws IOException {
         if (array == null) {
@@ -957,6 +1215,10 @@ public abstract class StreamOutput extends OutputStream {
      * Writes the specified array of {@link Writeable}s. This method can be seen as
      * writer version of {@link StreamInput#readArray(Writeable.Reader, IntFunction)}. The length of array encoded as a variable-length
      * integer is first written to the stream, and then the elements of the array are written to the stream.
+     *
+     * @param <T> the element type
+     * @param array the array
+     * @throws IOException if an I/O error occurs
      */
     public <T extends Writeable> void writeArray(T[] array) throws IOException {
         writeArray((out, value) -> value.writeTo(out), array);
@@ -965,15 +1227,33 @@ public abstract class StreamOutput extends OutputStream {
     /**
      * Same as {@link #writeArray(Writeable[])} but the provided array may be null. An additional boolean value is
      * serialized to indicate whether the array was null or not.
+     *
+     * @param <T> the element type
+     * @param array the array
+     * @throws IOException if an I/O error occurs
      */
     public <T extends Writeable> void writeOptionalArray(@Nullable T[] array) throws IOException {
         writeOptionalArray((out, value) -> value.writeTo(out), array);
     }
 
+    /**
+     * Writes the optional writeable.
+     *
+     * @param writeable the writeable
+     * @throws IOException if an I/O error occurs
+     */
     public void writeOptionalWriteable(@Nullable Writeable writeable) throws IOException {
         writeOptionalWriteable((out, writable) -> writable.writeTo(out), writeable);
     }
 
+    /**
+     * Writes the optional writeable.
+     *
+     * @param <T> the element type
+     * @param writer the writer
+     * @param writeable the writeable
+     * @throws IOException if an I/O error occurs
+     */
     public <T extends Writeable> void writeOptionalWriteable(final Writer<T> writer, @Nullable T writeable) throws IOException {
         if (writeable != null) {
             writeBoolean(true);
@@ -983,6 +1263,12 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
+    /**
+     * Writes the exception.
+     *
+     * @param throwable the throwable
+     * @throws IOException if an I/O error occurs
+     */
     public void writeException(Throwable throwable) throws IOException {
         writeException(throwable, throwable, 0);
     }
@@ -1107,16 +1393,32 @@ public abstract class StreamOutput extends OutputStream {
         }
     }
 
-    /** Writes the OpenSearch {@link Version} to the output stream */
+    /**
+     * Writes the OpenSearch {@link Version} to the output stream
+     *
+     * @param version the version
+     * @throws IOException if an I/O error occurs
+     */
     public void writeVersion(final Version version) throws IOException {
         writeVInt(version.id);
     }
 
+    /**
+     * Writes the semver range.
+     *
+     * @param range the range
+     * @throws IOException if an I/O error occurs
+     */
     public void writeSemverRange(final SemverRange range) throws IOException {
         writeString(range.toString());
     }
 
-    /** Writes the OpenSearch {@link Build} informn to the output stream */
+    /**
+     * Writes the OpenSearch {@link Build} informn to the output stream
+     *
+     * @param build the build
+     * @throws IOException if an I/O error occurs
+     */
     public void writeBuild(final Build build) throws IOException {
         // the following is new for opensearch: we write the distribution name to support any "forks" of the code
         writeString(build.getDistribution());
@@ -1129,12 +1431,21 @@ public abstract class StreamOutput extends OutputStream {
         writeString(build.getQualifiedVersion());
     }
 
+    /**
+     * Fails the on too many nested exceptions.
+     *
+     * @param throwable the throwable
+     * @return this instance
+     */
     protected boolean failOnTooManyNestedExceptions(Throwable throwable) {
         throw new AssertionError("too many nested exceptions", throwable);
     }
 
     /**
      * Writes a {@link NamedWriteable} to the current stream, by first writing its name and then the object itself
+     *
+     * @param namedWriteable the named writeable
+     * @throws IOException if an I/O error occurs
      */
     public void writeNamedWriteable(NamedWriteable namedWriteable) throws IOException {
         writeString(namedWriteable.getWriteableName());
@@ -1143,6 +1454,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Write an optional {@link NamedWriteable} to the stream.
+     *
+     * @param namedWriteable the named writeable
+     * @throws IOException if an I/O error occurs
      */
     public void writeOptionalNamedWriteable(@Nullable NamedWriteable namedWriteable) throws IOException {
         if (namedWriteable == null) {
@@ -1155,6 +1469,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Write a {@linkplain ZoneId} to the stream.
+     *
+     * @param timeZone the time zone
+     * @throws IOException if an I/O error occurs
      */
     public void writeZoneId(ZoneId timeZone) throws IOException {
         writeString(timeZone.getId());
@@ -1162,6 +1479,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Write an optional {@linkplain ZoneId} to the stream.
+     *
+     * @param timeZone the time zone
+     * @throws IOException if an I/O error occurs
      */
     public void writeOptionalZoneId(@Nullable ZoneId timeZone) throws IOException {
         if (timeZone == null) {
@@ -1185,6 +1505,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes a list of {@link Writeable} objects
+     *
+     * @param list the list
+     * @throws IOException if an I/O error occurs
      */
     public void writeList(List<? extends Writeable> list) throws IOException {
         writeCollection(list);
@@ -1194,6 +1517,8 @@ public abstract class StreamOutput extends OutputStream {
      * Writes a collection of objects via a {@link Writer}.
      *
      * @param collection the collection of objects
+     * @param <T> the element type
+     * @param writer the writer
      * @throws IOException if an I/O exception occurs writing the collection
      */
     public <T> void writeCollection(final Collection<T> collection, final Writer<T> writer) throws IOException {
@@ -1232,6 +1557,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes a list of {@link NamedWriteable} objects.
+     *
+     * @param list the list
+     * @throws IOException if an I/O error occurs
      */
     public void writeNamedWriteableList(List<? extends NamedWriteable> list) throws IOException {
         writeVInt(list.size());
@@ -1242,6 +1570,10 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes an enum with type E based on its ordinal value
+     *
+     * @param <E> the element type
+     * @param enumValue the enum value
+     * @throws IOException if an I/O error occurs
      */
     public <E extends Enum<E>> void writeEnum(E enumValue) throws IOException {
         writeVInt(enumValue.ordinal());
@@ -1249,6 +1581,10 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Writes an EnumSet with type E that by serialized it based on it's ordinal value
+     *
+     * @param <E> the element type
+     * @param enumSet the enum set
+     * @throws IOException if an I/O error occurs
      */
     public <E extends Enum<E>> void writeEnumSet(EnumSet<E> enumSet) throws IOException {
         writeVInt(enumSet.size());
@@ -1260,6 +1596,10 @@ public abstract class StreamOutput extends OutputStream {
     /**
      * Writes an optional EnumSet with type E that serializes each enum based on its ordinal value
      * For null or empty enum set, writes false;
+     *
+     * @param <E> the element type
+     * @param enumSet the enum set
+     * @throws IOException if an I/O error occurs
      */
     public <E extends Enum<E>> void writeOptionalEnumSet(@Nullable EnumSet<E> enumSet) throws IOException {
         if (enumSet != null && enumSet.size() > 0) {
@@ -1272,6 +1612,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Write a {@link TimeValue} to the stream
+     *
+     * @param timeValue the time value
+     * @throws IOException if an I/O error occurs
      */
     public void writeTimeValue(TimeValue timeValue) throws IOException {
         writeZLong(timeValue.duration());
@@ -1280,6 +1623,9 @@ public abstract class StreamOutput extends OutputStream {
 
     /**
      * Write an optional {@link TimeValue} to the stream.
+     *
+     * @param timeValue the time value
+     * @throws IOException if an I/O error occurs
      */
     public void writeOptionalTimeValue(@Nullable TimeValue timeValue) throws IOException {
         if (timeValue == null) {

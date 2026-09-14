@@ -52,8 +52,16 @@ public class GetIndexTemplatesRequest extends ClusterManagerNodeReadRequest<GetI
 
     private String[] names;
 
+    /**
+     * Creates a new GetIndexTemplatesRequest.
+     */
     public GetIndexTemplatesRequest() {}
 
+    /**
+     * Creates a new GetIndexTemplatesRequest.
+     *
+     * @param names the names
+     */
     public GetIndexTemplatesRequest(String... names) {
         this.names = names;
     }
@@ -81,6 +89,8 @@ public class GetIndexTemplatesRequest extends ClusterManagerNodeReadRequest<GetI
 
     /**
      * The names of the index templates.
+     *
+     * @return the names
      */
     public String[] names() {
         return this.names;

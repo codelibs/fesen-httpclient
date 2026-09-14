@@ -36,6 +36,14 @@ public class SearchTaskStats implements ToXContentObject, Writeable {
     private final long completionCount;
     private final Map<TaskResourceUsageTrackerType, TaskResourceUsageTracker.Stats> resourceUsageTrackerStats;
 
+    /**
+     * Creates a new SearchTaskStats.
+     *
+     * @param cancellationCount the cancellation count
+     * @param limitReachedCount the limit reached count
+     * @param completionCount the completion count
+     * @param resourceUsageTrackerStats the resource usage tracker stats
+     */
     public SearchTaskStats(
         long cancellationCount,
         long limitReachedCount,
@@ -48,6 +56,12 @@ public class SearchTaskStats implements ToXContentObject, Writeable {
         this.resourceUsageTrackerStats = resourceUsageTrackerStats;
     }
 
+    /**
+     * Creates a new SearchTaskStats by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public SearchTaskStats(StreamInput in) throws IOException {
         this.cancellationCount = in.readVLong();
         this.limitReachedCount = in.readVLong();

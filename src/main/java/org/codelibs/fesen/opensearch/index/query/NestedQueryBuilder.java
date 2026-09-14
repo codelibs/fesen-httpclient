@@ -67,6 +67,9 @@ import java.util.Objects;
  * @opensearch.internal
  */
 public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "nested";
     /**
      * The default value for ignore_unmapped.
@@ -85,10 +88,25 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
     private InnerHitBuilder innerHitBuilder;
     private boolean ignoreUnmapped = DEFAULT_IGNORE_UNMAPPED;
 
+    /**
+     * Creates a new NestedQueryBuilder.
+     *
+     * @param path the path
+     * @param query the query
+     * @param scoreMode the score mode
+     */
     public NestedQueryBuilder(String path, QueryBuilder query, ScoreMode scoreMode) {
         this(path, query, scoreMode, null);
     }
 
+    /**
+     * Creates a new NestedQueryBuilder.
+     *
+     * @param path the path
+     * @param query the query
+     * @param scoreMode the score mode
+     * @param innerHitBuilder the inner hit builder
+     */
     public NestedQueryBuilder(String path, QueryBuilder query, ScoreMode scoreMode, InnerHitBuilder innerHitBuilder) {
         this.path = requireValue(path, "[" + NAME + "] requires 'path' field");
         this.query = requireValue(query, "[" + NAME + "] requires 'query' field");
@@ -98,6 +116,9 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public NestedQueryBuilder(StreamInput in) throws IOException {
         super(in);
@@ -119,6 +140,8 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
 
     /**
      * Returns path of the nested query.
+     *
+     * @return the path
      */
     public String path() {
         return path;
@@ -126,6 +149,8 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
 
     /**
      * Returns the nested query to execute.
+     *
+     * @return this instance
      */
     public QueryBuilder query() {
         return query;
@@ -133,12 +158,20 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
 
     /**
      * Returns inner hit definition in the scope of this query and reusing the defined type and query.
+     *
+     * @return the inner hit
      */
 
     public InnerHitBuilder innerHit() {
         return innerHitBuilder;
     }
 
+    /**
+     * Returns the inner hit.
+     *
+     * @param innerHitBuilder the inner hit builder
+     * @return the inner hit
+     */
     public NestedQueryBuilder innerHit(InnerHitBuilder innerHitBuilder) {
         this.innerHitBuilder = innerHitBuilder;
         innerHitBuilder.setIgnoreUnmapped(ignoreUnmapped);
@@ -147,6 +180,8 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
 
     /**
      * Returns how the scores from the matching child documents are mapped into the nested parent document.
+     *
+     * @return this instance
      */
     public ScoreMode scoreMode() {
         return scoreMode;
@@ -156,6 +191,9 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
      * Sets whether the query builder should ignore unmapped paths (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the path is unmapped.
+     *
+     * @param ignoreUnmapped the ignore unmapped
+     * @return the ignore unmapped
      */
     public NestedQueryBuilder ignoreUnmapped(boolean ignoreUnmapped) {
         this.ignoreUnmapped = ignoreUnmapped;
@@ -169,6 +207,8 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
      * Gets whether the query builder will ignore unmapped fields (and run a
      * {@link MatchNoDocsQuery} in place of this query) or throw an exception if
      * the path is unmapped.
+     *
+     * @return the ignore unmapped
      */
     public boolean ignoreUnmapped() {
         return ignoreUnmapped;
@@ -191,6 +231,13 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
         builder.endObject();
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static NestedQueryBuilder fromXContent(XContentParser parser) throws IOException {
         float boost = AbstractQueryBuilder.DEFAULT_BOOST;
         ScoreMode scoreMode = ScoreMode.Avg;
@@ -234,6 +281,12 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
         return queryBuilder;
     }
 
+    /**
+     * Parses the score mode.
+     *
+     * @param scoreModeString the score mode string
+     * @return this instance
+     */
     public static ScoreMode parseScoreMode(String scoreModeString) {
         if ("none".equals(scoreModeString)) {
             return ScoreMode.None;
@@ -249,6 +302,12 @@ public class NestedQueryBuilder extends AbstractQueryBuilder<NestedQueryBuilder>
         throw new IllegalArgumentException("No score mode for child query [" + scoreModeString + "] found");
     }
 
+    /**
+     * Scores the mode as string.
+     *
+     * @param scoreMode the score mode
+     * @return this instance
+     */
     public static String scoreModeAsString(ScoreMode scoreMode) {
         if (scoreMode == ScoreMode.Total) {
             // Lucene uses 'total' but 'sum' is more consistent with other opensearch APIs

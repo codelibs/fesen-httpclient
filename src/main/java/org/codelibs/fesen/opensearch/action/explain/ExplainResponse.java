@@ -77,22 +77,52 @@ public class ExplainResponse extends ActionResponse implements StatusToXContentO
     private Explanation explanation;
     private GetResult getResult;
 
+    /**
+     * Creates a new ExplainResponse.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @param exists the exists
+     */
     public ExplainResponse(String index, String id, boolean exists) {
         this.index = index;
         this.id = id;
         this.exists = exists;
     }
 
+    /**
+     * Creates a new ExplainResponse.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @param exists the exists
+     * @param explanation the explanation
+     */
     public ExplainResponse(String index, String id, boolean exists, Explanation explanation) {
         this(index, id, exists);
         this.explanation = explanation;
     }
 
+    /**
+     * Creates a new ExplainResponse.
+     *
+     * @param index the index
+     * @param id the identifier
+     * @param exists the exists
+     * @param explanation the explanation
+     * @param getResult the get result
+     */
     public ExplainResponse(String index, String id, boolean exists, Explanation explanation, GetResult getResult) {
         this(index, id, exists, explanation);
         this.getResult = getResult;
     }
 
+    /**
+     * Creates a new ExplainResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ExplainResponse(StreamInput in) throws IOException {
         super(in);
         index = in.readString();
@@ -109,10 +139,20 @@ public class ExplainResponse extends ActionResponse implements StatusToXContentO
         }
     }
 
+    /**
+     * Returns the match flag.
+     *
+     * @return the match flag
+     */
     public boolean isMatch() {
         return explanation != null && explanation.isMatch();
     }
 
+    /**
+     * Returns the explanation flag.
+     *
+     * @return the explanation flag
+     */
     public boolean hasExplanation() {
         return explanation != null;
     }
@@ -171,6 +211,13 @@ public class ExplainResponse extends ActionResponse implements StatusToXContentO
         PARSER.declareObject(ConstructingObjectParser.optionalConstructorArg(), (p, c) -> GetResult.fromXContentEmbedded(p), GET);
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @param exists the exists
+     * @return the new XContent
+     */
     public static ExplainResponse fromXContent(XContentParser parser, boolean exists) {
         return PARSER.apply(parser, exists);
     }

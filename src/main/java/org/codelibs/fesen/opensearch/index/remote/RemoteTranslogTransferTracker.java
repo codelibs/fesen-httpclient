@@ -85,6 +85,12 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
      */
     private final Object downloadTimeMsMutex;
 
+    /**
+     * Creates a new RemoteTranslogTransferTracker.
+     *
+     * @param shardId the shard identifier
+     * @param movingAverageWindowSize the moving average window size
+     */
     public RemoteTranslogTransferTracker(ShardId shardId, int movingAverageWindowSize) {
         super(shardId, movingAverageWindowSize);
 
@@ -292,6 +298,12 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
             this.downloadTimeMovingAverage = builder.downloadTimeMovingAverage;
         }
 
+        /**
+         * Creates a new Stats by reading it from the given input.
+         *
+         * @param in the input to read from
+         * @throws IOException if an I/O error occurs
+         */
         public Stats(StreamInput in) throws IOException {
             this.shardId = new ShardId(in);
 
@@ -341,98 +353,215 @@ public class RemoteTranslogTransferTracker extends RemoteTransferTracker {
             private double downloadBytesPerSecMovingAverage = 0;
             private double downloadTimeMovingAverage = 0;
 
+            /**
+             * Creates a new Builder.
+             */
             public Builder() {}
 
+            /**
+             * Returns the shard identifier.
+             *
+             * @param shardId the shard identifier
+             * @return the shard identifier
+             */
             public Builder shardId(ShardId shardId) {
                 this.shardId = shardId;
                 return this;
             }
 
+            /**
+             * Returns the last successful upload timestamp.
+             *
+             * @param timestamp the timestamp
+             * @return the last successful upload timestamp
+             */
             public Builder lastSuccessfulUploadTimestamp(long timestamp) {
                 this.lastSuccessfulUploadTimestamp = timestamp;
                 return this;
             }
 
+            /**
+             * Returns the total uploads started.
+             *
+             * @param started the started
+             * @return the total uploads started
+             */
             public Builder totalUploadsStarted(long started) {
                 this.totalUploadsStarted = started;
                 return this;
             }
 
+            /**
+             * Returns the total uploads succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the total uploads succeeded
+             */
             public Builder totalUploadsSucceeded(long succeeded) {
                 this.totalUploadsSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the total uploads failed.
+             *
+             * @param failed the failed
+             * @return the total uploads failed
+             */
             public Builder totalUploadsFailed(long failed) {
                 this.totalUploadsFailed = failed;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes started.
+             *
+             * @param started the started
+             * @return the upload bytes started
+             */
             public Builder uploadBytesStarted(long started) {
                 this.uploadBytesStarted = started;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the upload bytes succeeded
+             */
             public Builder uploadBytesSucceeded(long succeeded) {
                 this.uploadBytesSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes failed.
+             *
+             * @param failed the failed
+             * @return the upload bytes failed
+             */
             public Builder uploadBytesFailed(long failed) {
                 this.uploadBytesFailed = failed;
                 return this;
             }
 
+            /**
+             * Returns the total upload time in milliseconds.
+             *
+             * @param time the time
+             * @return the total upload time in milliseconds
+             */
             public Builder totalUploadTimeInMillis(long time) {
                 this.totalUploadTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes moving average.
+             *
+             * @param average the average
+             * @return the upload bytes moving average
+             */
             public Builder uploadBytesMovingAverage(double average) {
                 this.uploadBytesMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the upload bytes per sec moving average.
+             *
+             * @param average the average
+             * @return the upload bytes per sec moving average
+             */
             public Builder uploadBytesPerSecMovingAverage(double average) {
                 this.uploadBytesPerSecMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the upload time moving average.
+             *
+             * @param average the average
+             * @return the upload time moving average
+             */
             public Builder uploadTimeMovingAverage(double average) {
                 this.uploadTimeMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the last successful download timestamp.
+             *
+             * @param timestamp the timestamp
+             * @return the last successful download timestamp
+             */
             public Builder lastSuccessfulDownloadTimestamp(long timestamp) {
                 this.lastSuccessfulDownloadTimestamp = timestamp;
                 return this;
             }
 
+            /**
+             * Returns the total downloads succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the total downloads succeeded
+             */
             public Builder totalDownloadsSucceeded(long succeeded) {
                 this.totalDownloadsSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the download bytes succeeded.
+             *
+             * @param succeeded the succeeded
+             * @return the download bytes succeeded
+             */
             public Builder downloadBytesSucceeded(long succeeded) {
                 this.downloadBytesSucceeded = succeeded;
                 return this;
             }
 
+            /**
+             * Returns the total download time in milliseconds.
+             *
+             * @param time the time
+             * @return the total download time in milliseconds
+             */
             public Builder totalDownloadTimeInMillis(long time) {
                 this.totalDownloadTimeInMillis = time;
                 return this;
             }
 
+            /**
+             * Returns the download bytes moving average.
+             *
+             * @param average the average
+             * @return the download bytes moving average
+             */
             public Builder downloadBytesMovingAverage(double average) {
                 this.downloadBytesMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the download bytes per sec moving average.
+             *
+             * @param average the average
+             * @return the download bytes per sec moving average
+             */
             public Builder downloadBytesPerSecMovingAverage(double average) {
                 this.downloadBytesPerSecMovingAverage = average;
                 return this;
             }
 
+            /**
+             * Returns the download time moving average.
+             *
+             * @param average the average
+             * @return the download time moving average
+             */
             public Builder downloadTimeMovingAverage(double average) {
                 this.downloadTimeMovingAverage = average;
                 return this;

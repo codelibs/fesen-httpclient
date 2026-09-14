@@ -17,7 +17,13 @@ import org.codelibs.fesen.opensearch.common.annotation.PublicApi;
  */
 @PublicApi(since = "2.1.0")
 public enum ResourceStats {
+    /**
+     * The CPU value.
+     */
     CPU("cpu_time_in_nanos"),
+    /**
+     * The MEMORY value.
+     */
     MEMORY("memory_in_bytes");
 
     private final String statsName;

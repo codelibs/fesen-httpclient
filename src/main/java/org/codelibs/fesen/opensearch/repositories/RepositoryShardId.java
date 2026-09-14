@@ -52,6 +52,12 @@ public final class RepositoryShardId implements Writeable {
 
     private final int shard;
 
+    /**
+     * Creates a new RepositoryShardId.
+     *
+     * @param index the index
+     * @param shard the shard
+     */
     public RepositoryShardId(IndexId index, int shard) {
         assert index != null;
         this.index = index;

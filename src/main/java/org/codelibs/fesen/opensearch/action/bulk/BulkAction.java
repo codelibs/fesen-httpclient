@@ -41,7 +41,13 @@ import org.codelibs.fesen.opensearch.action.ActionType;
  */
 public class BulkAction extends ActionType<BulkResponse> {
 
+    /**
+     * The INSTANCE constant.
+     */
     public static final BulkAction INSTANCE = new BulkAction();
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "indices:data/write/bulk";
 
     private BulkAction() {

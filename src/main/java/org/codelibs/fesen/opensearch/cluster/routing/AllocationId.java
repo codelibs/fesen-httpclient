@@ -146,6 +146,9 @@ public class AllocationId implements ToXContentObject, Writeable {
     /**
      * Creates a new allocation id for the target initializing shard that is the result
      * of a relocation.
+     *
+     * @param allocationId the allocation identifier
+     * @return the new target relocation
      */
     public static AllocationId newTargetRelocation(AllocationId allocationId) {
         assert allocationId.getRelocationId() != null;
@@ -155,6 +158,8 @@ public class AllocationId implements ToXContentObject, Writeable {
     /**
      * The allocation id uniquely identifying an allocation, note, if it is relocation
      * the {@link #getRelocationId()} need to be taken into account as well.
+     *
+     * @return the identifier
      */
     public String getId() {
         return id;
@@ -162,6 +167,8 @@ public class AllocationId implements ToXContentObject, Writeable {
 
     /**
      * The transient relocation id holding the unique id that is used for relocation.
+     *
+     * @return the relocation identifier
      */
     public String getRelocationId() {
         return relocationId;

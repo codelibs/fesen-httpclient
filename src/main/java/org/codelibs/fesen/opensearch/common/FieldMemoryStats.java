@@ -57,6 +57,8 @@ public final class FieldMemoryStats implements Writeable, Iterable<Map.Entry<Str
 
     /**
      * Creates a new FieldMemoryStats instance
+     *
+     * @param stats the stats
      */
     public FieldMemoryStats(Map<String, Long> stats) {
         this.stats = Objects.requireNonNull(stats, "status must be non-null");
@@ -65,6 +67,9 @@ public final class FieldMemoryStats implements Writeable, Iterable<Map.Entry<Str
 
     /**
      * Creates a new FieldMemoryStats instance from a stream
+     *
+     * @param input the input
+     * @throws IOException if an I/O error occurs
      */
     public FieldMemoryStats(StreamInput input) throws IOException {
         stats = input.readMap(StreamInput::readString, StreamInput::readVLong);
@@ -72,6 +77,8 @@ public final class FieldMemoryStats implements Writeable, Iterable<Map.Entry<Str
 
     /**
      * Adds / merges the given field memory stats into this stats instance
+     *
+     * @param fieldMemoryStats the field memory stats
      */
     public void add(FieldMemoryStats fieldMemoryStats) {
         for (final var entry : fieldMemoryStats.stats.entrySet()) {
@@ -90,6 +97,7 @@ public final class FieldMemoryStats implements Writeable, Iterable<Map.Entry<Str
      * @param key the top level key for this stats object
      * @param rawKey the raw byte key for each of the fields byte sizes
      * @param readableKey the readable key for each of the fields byte sizes
+     * @throws IOException if an I/O error occurs
      */
     public void toXContent(XContentBuilder builder, String key, String rawKey, String readableKey) throws IOException {
         builder.startObject(key);
@@ -103,6 +111,8 @@ public final class FieldMemoryStats implements Writeable, Iterable<Map.Entry<Str
 
     /**
      * Creates a deep copy of this stats instance
+     *
+     * @return this instance
      */
     public FieldMemoryStats copy() {
         return new FieldMemoryStats(new HashMap<>(stats));

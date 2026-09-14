@@ -94,6 +94,9 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
 
     /**
      * Construct with bounds.
+     *
+     * @param min the min
+     * @param max the max
      */
     public DoubleBounds(Double min, Double max) {
         if (min != null && Double.isFinite(min) == false) {
@@ -111,6 +114,9 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
 
     /**
      * Read from a stream.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
      */
     public DoubleBounds(StreamInput in) throws IOException {
         min = in.readOptionalDouble();
@@ -153,6 +159,9 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
 
     /**
      * returns bounds min if it is defined or POSITIVE_INFINITY otherwise
+     *
+     * @param bounds the bounds
+     * @return the effective min
      */
     public static double getEffectiveMin(DoubleBounds bounds) {
         return bounds == null || bounds.min == null ? Double.POSITIVE_INFINITY : bounds.min;
@@ -160,6 +169,9 @@ public class DoubleBounds implements ToXContentFragment, Writeable {
 
     /**
      * returns bounds max if it is defined or NEGATIVE_INFINITY otherwise
+     *
+     * @param bounds the bounds
+     * @return the effective max
      */
     public static Double getEffectiveMax(DoubleBounds bounds) {
         return bounds == null || bounds.max == null ? Double.NEGATIVE_INFINITY : bounds.max;

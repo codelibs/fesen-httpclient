@@ -54,17 +54,30 @@ public class PendingClusterTasksResponse extends ActionResponse implements Itera
 
     private final List<PendingClusterTask> pendingTasks;
 
+    /**
+     * Creates a new PendingClusterTasksResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public PendingClusterTasksResponse(StreamInput in) throws IOException {
         super(in);
         pendingTasks = in.readList(PendingClusterTask::new);
     }
 
+    /**
+     * Returns the pending tasks.
+     *
+     * @return the pending tasks
+     */
     public List<PendingClusterTask> pendingTasks() {
         return pendingTasks;
     }
 
     /**
      * The pending cluster tasks
+     *
+     * @return the pending tasks
      */
     public List<PendingClusterTask> getPendingTasks() {
         return pendingTasks();

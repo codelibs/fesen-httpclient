@@ -44,12 +44,21 @@ import static java.util.Arrays.stream;
 @PublicApi(since = "2.13.0")
 public class SemverRange implements ToXContentFragment {
 
+    /**
+     * The RANGE_PATTERN constant.
+     */
     public static final Pattern RANGE_PATTERN = Pattern.compile("([\\[\\(])([\\d.]+)\\s*,\\s*([\\d.]+)([\\]\\)])");
 
     private final Version rangeVersion;
     private final RangeOperator rangeOperator;
     private final Expression expression;
 
+    /**
+     * Creates a new SemverRange.
+     *
+     * @param rangeVersion the range version
+     * @param rangeOperator the range operator
+     */
     public SemverRange(final Version rangeVersion, final RangeOperator rangeOperator) {
         this.rangeVersion = rangeVersion;
         this.rangeOperator = rangeOperator;
@@ -87,6 +96,13 @@ public class SemverRange implements ToXContentFragment {
         return new SemverRange(Version.fromString(version), rangeOperator);
     }
 
+    /**
+     * Creates a new SemverRange.
+     *
+     * @param rangeVersion the range version
+     * @param operator the operator
+     * @param customExpression the custom expression
+     */
     public SemverRange(Version rangeVersion, RangeOperator operator, Expression customExpression) {
         this.rangeVersion = rangeVersion;
         this.rangeOperator = operator;
@@ -145,10 +161,25 @@ public class SemverRange implements ToXContentFragment {
      * A range operator.
      */
     public enum RangeOperator {
+        /**
+         * The EQ value.
+         */
         EQ("=", new Equal()),
+        /**
+         * The TILDE value.
+         */
         TILDE("~", new Tilde()),
+        /**
+         * The CARET value.
+         */
         CARET("^", new Caret()),
+        /**
+         * The RANGE value.
+         */
         RANGE("range", new Range()),
+        /**
+         * The DEFAULT value.
+         */
         DEFAULT("", new Equal());
 
         private final String operator;
@@ -181,6 +212,12 @@ public class SemverRange implements ToXContentFragment {
             return operator;
         }
 
+        /**
+         * Creates an instance from range.
+         *
+         * @param range the range
+         * @return the new range
+         */
         public static RangeOperator fromRange(final String range) {
             Optional<RangeOperator> rangeOperator = stream(values()).filter(
                 operator -> operator != DEFAULT && range.startsWith(operator.asString())

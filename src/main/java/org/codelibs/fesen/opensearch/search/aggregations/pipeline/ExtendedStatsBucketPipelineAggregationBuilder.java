@@ -47,10 +47,19 @@ import java.util.Objects;
  */
 public class ExtendedStatsBucketPipelineAggregationBuilder extends BucketMetricsPipelineAggregationBuilder<
     ExtendedStatsBucketPipelineAggregationBuilder> {
+    /**
+     * The NAME constant.
+     */
     public static final String NAME = "extended_stats_bucket";
 
     private double sigma = 2.0;
 
+    /**
+     * Creates a new ExtendedStatsBucketPipelineAggregationBuilder.
+     *
+     * @param name the name
+     * @param bucketsPath the buckets path
+     */
     public ExtendedStatsBucketPipelineAggregationBuilder(String name, String bucketsPath) {
         super(name, NAME, new String[] { bucketsPath });
     }
@@ -63,6 +72,9 @@ public class ExtendedStatsBucketPipelineAggregationBuilder extends BucketMetrics
     /**
      * Set the value of sigma to use when calculating the standard deviation
      * bounds
+     *
+     * @param sigma the sigma
+     * @return the sigma
      */
     public ExtendedStatsBucketPipelineAggregationBuilder sigma(double sigma) {
         if (sigma < 0.0) {
@@ -75,6 +87,8 @@ public class ExtendedStatsBucketPipelineAggregationBuilder extends BucketMetrics
     /**
      * Get the value of sigma to use when calculating the standard deviation
      * bounds
+     *
+     * @return the sigma
      */
     public double sigma() {
         return sigma;

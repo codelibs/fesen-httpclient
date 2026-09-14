@@ -73,6 +73,13 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
 
     private final List<TaskInfo> tasks;
 
+    /**
+     * Creates a new ListTasksResponse.
+     *
+     * @param tasks the tasks
+     * @param taskFailures the task failures
+     * @param nodeFailures the node failures
+     */
     public ListTasksResponse(
         List<TaskInfo> tasks,
         List<TaskOperationFailure> taskFailures,
@@ -82,6 +89,12 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
         this.tasks = tasks == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(tasks));
     }
 
+    /**
+     * Creates a new ListTasksResponse by reading it from the given input.
+     *
+     * @param in the input to read from
+     * @throws IOException if an I/O error occurs
+     */
     public ListTasksResponse(StreamInput in) throws IOException {
         super(in);
         tasks = Collections.unmodifiableList(in.readList(TaskInfo::new));
@@ -93,6 +106,14 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
         out.writeList(tasks);
     }
 
+    /**
+     * Returns the setup parser.
+     *
+     * @param <T> the element type
+     * @param name the name
+     * @param ctor the ctor
+     * @return the setup parser
+     */
     protected static <T> ConstructingObjectParser<T, Void> setupParser(
         String name,
         TriFunction<List<TaskInfo>, List<TaskOperationFailure>, List<OpenSearchException>, T> ctor
@@ -120,6 +141,8 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
 
     /**
      * Get the tasks found by this request.
+     *
+     * @return the tasks
      */
     public List<TaskInfo> getTasks() {
         return tasks;
@@ -127,6 +150,11 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
 
     /**
      * Presents a flat list of tasks
+     *
+     * @param builder the content builder
+     * @param params the serialization parameters
+     * @return the XContent grouped by none
+     * @throws IOException if an I/O error occurs
      */
     public XContentBuilder toXContentGroupedByNone(XContentBuilder builder, Params params) throws IOException {
         toXContentCommon(builder, params);
@@ -148,6 +176,12 @@ public class ListTasksResponse extends BaseTasksResponse implements ToXContentOb
         return builder;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     */
     public static ListTasksResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
     }

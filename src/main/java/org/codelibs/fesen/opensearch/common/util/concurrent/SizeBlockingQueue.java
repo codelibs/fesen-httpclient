@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Mainly makes sense to use with blocking queues that are unbounded to provide the ability to do
  * capacity verification.
  *
+ * @param <E> the element type
  * @opensearch.internal
  */
 public class SizeBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E> {
@@ -53,6 +54,12 @@ public class SizeBlockingQueue<E> extends AbstractQueue<E> implements BlockingQu
 
     private final AtomicInteger size = new AtomicInteger();
 
+    /**
+     * Creates a new SizeBlockingQueue.
+     *
+     * @param queue the queue
+     * @param capacity the capacity
+     */
     public SizeBlockingQueue(BlockingQueue<E> queue, int capacity) {
         assert capacity >= 0;
         this.queue = queue;
@@ -64,6 +71,11 @@ public class SizeBlockingQueue<E> extends AbstractQueue<E> implements BlockingQu
         return size.get();
     }
 
+    /**
+     * Returns the capacity.
+     *
+     * @return the capacity
+     */
     public int capacity() {
         return this.capacity;
     }
@@ -130,6 +142,9 @@ public class SizeBlockingQueue<E> extends AbstractQueue<E> implements BlockingQu
 
     /**
      * Forces adding an element to the queue, without doing size checks.
+     *
+     * @param e the exception
+     * @throws InterruptedException if the current thread is interrupted while waiting
      */
     public void forcePut(E e) throws InterruptedException {
         size.incrementAndGet();

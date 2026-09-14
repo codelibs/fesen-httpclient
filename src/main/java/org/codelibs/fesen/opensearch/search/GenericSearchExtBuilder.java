@@ -25,6 +25,9 @@ import java.util.Objects;
  */
 public final class GenericSearchExtBuilder extends SearchExtBuilder {
 
+    /**
+     * The EXT_BUILDER_NAME constant.
+     */
     public final static ParseField EXT_BUILDER_NAME = new ParseField("generic_ext");
 
     private final Object genericObj;
@@ -59,11 +62,24 @@ public final class GenericSearchExtBuilder extends SearchExtBuilder {
         }
     }
 
+    /**
+     * Creates a new GenericSearchExtBuilder.
+     *
+     * @param genericObj the generic obj
+     * @param valueType the value type
+     */
     public GenericSearchExtBuilder(Object genericObj, ValueType valueType) {
         this.genericObj = genericObj;
         this.valueType = valueType;
     }
 
+    /**
+     * Parses an instance from the given parser.
+     *
+     * @param parser the parser
+     * @return the new XContent
+     * @throws IOException if an I/O error occurs
+     */
     public static GenericSearchExtBuilder fromXContent(XContentParser parser) throws IOException {
         // Look at the parser's next token.
         // If it's START_OBJECT, parse as map, if it's START_ARRAY, parse as list, else
