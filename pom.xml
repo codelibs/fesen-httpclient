@@ -54,6 +54,10 @@
 						<encoding>UTF-8</encoding>
 						<docencoding>UTF-8</docencoding>
 						<charset>UTF-8</charset>
+						<!-- The imported OpenSearch tree documents itself only partially, which is upstream's
+						     business, not a defect here. Check syntax, HTML, accessibility and references -
+						     the groups that catch real breakage - and leave completeness alone. -->
+						<doclint>all,-missing</doclint>
 						<!-- Block tags the forked OpenSearch sources carry; javadoc rejects them unless declared. -->
 						<tags>
 							<tag>
