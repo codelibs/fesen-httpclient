@@ -271,18 +271,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-grouping</artifactId>
-			<version>${lucene.version}</version>
-			<exclusions>
-				<!-- Every Lucene module this fork needs is declared explicitly, as OpenSearch does. -->
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-highlighter</artifactId>
 			<version>${lucene.version}</version>
 			<exclusions>
@@ -320,18 +308,6 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
-			<version>${lucene.version}</version>
-			<exclusions>
-				<!-- Every Lucene module this fork needs is declared explicitly, as OpenSearch does. -->
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-spatial-extras</artifactId>
 			<version>${lucene.version}</version>
 			<exclusions>
 				<!-- Every Lucene module this fork needs is declared explicitly, as OpenSearch does. -->

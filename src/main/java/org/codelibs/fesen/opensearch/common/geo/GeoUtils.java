@@ -32,8 +32,6 @@
 
 package org.codelibs.fesen.opensearch.common.geo;
 
-import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
-import org.apache.lucene.spatial.prefix.tree.QuadPrefixTree;
 import org.apache.lucene.util.SloppyMath;
 import org.codelibs.fesen.opensearch.OpenSearchParseException;
 import org.codelibs.fesen.opensearch.common.unit.DistanceUnit;
