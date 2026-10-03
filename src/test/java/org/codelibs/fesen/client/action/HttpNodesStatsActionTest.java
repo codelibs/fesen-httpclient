@@ -37,6 +37,7 @@ import org.codelibs.fesen.client.HttpClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.codelibs.fesen.opensearch.action.ActionConcurrencyLimiterStats;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodeStats;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
@@ -45,6 +46,8 @@ import org.codelibs.fesen.opensearch.common.settings.Settings;
 import org.codelibs.fesen.opensearch.common.xcontent.json.JsonXContent;
 import org.codelibs.fesen.opensearch.core.xcontent.DeprecationHandler;
 import org.codelibs.fesen.opensearch.core.xcontent.NamedXContentRegistry;
+import org.codelibs.fesen.opensearch.core.xcontent.ToXContent;
+import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
 import org.codelibs.fesen.opensearch.plugin.stats.NativeAllocatorPoolStats;
 import org.codelibs.fesen.opensearch.plugins.BlockCacheStats;
@@ -290,6 +293,88 @@ class HttpNodesStatsActionTest {
             final NodeStats nodeStats = callParseNodeStats(parser, "node1");
             assertNotNull(nodeStats);
             assertEquals("test-node", nodeStats.getNode().getName());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_withConcurrencyLimiters() throws Exception {
+        final String json = "{" + "\"name\":\"test-node\"," + "\"timestamp\":1234567890," + "\"concurrency_limiters\":{"
+                + "\"search\":{\"action_name\":\"indices:data/read/search\",\"mode\":\"enforced\",\"algorithm\":\"gradient\","
+                + "\"current_limit\":20,\"in_flight\":3,\"total_rejected\":7,\"last_rtt_millis\":15,\"rtt_no_load_millis\":9},"
+                + "\"bulk\":{\"action_name\":\"indices:data/write/bulk\",\"mode\":\"monitor_only\",\"algorithm\":\"vegas\","
+                + "\"current_limit\":50,\"in_flight\":0,\"total_rejected\":0,\"unknown\":{\"nested\":[1,2]}}" + "},"
+                + "\"transport_address\":\"127.0.0.1:9300\"" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            final NodeStats nodeStats = callParseNodeStats(parser, "node1");
+            assertEquals("test-node", nodeStats.getNode().getName());
+            final ActionConcurrencyLimiterStats stats = nodeStats.getConcurrencyLimiterStats();
+            assertNotNull(stats);
+            assertEquals(2, stats.getSnapshots().size());
+            final ActionConcurrencyLimiterStats.ActionLimiterSnapshot search = stats.getSnapshots().get(0);
+            assertEquals("search", search.getAlias());
+            assertEquals("indices:data/read/search", search.getActionName());
+            assertEquals("enforced", search.getMode());
+            assertEquals("gradient", search.getAlgorithm());
+            assertEquals(20, search.getCurrentLimit());
+            assertEquals(3, search.getInFlight());
+            assertEquals(7L, search.getTotalRejected());
+            assertEquals(15L, search.getLastRttMillis());
+            assertEquals(9L, search.getRttNoLoadMillis());
+            final ActionConcurrencyLimiterStats.ActionLimiterSnapshot bulk = stats.getSnapshots().get(1);
+            assertEquals("bulk", bulk.getAlias());
+            assertEquals(50, bulk.getCurrentLimit());
+            // The server omits both round-trip times while they are unavailable; the sentinel is -1.
+            assertEquals(-1L, bulk.getLastRttMillis());
+            assertEquals(-1L, bulk.getRttNoLoadMillis());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseNodeStats_withoutConcurrencyLimiters() throws Exception {
+        final String json =
+                "{" + "\"name\":\"test-node\"," + "\"timestamp\":1234567890," + "\"transport_address\":\"127.0.0.1:9300\"" + "}";
+        try (final XContentParser parser = createParser(json)) {
+            parser.nextToken();
+            assertNull(callParseNodeStats(parser, "node1").getConcurrencyLimiterStats());
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void test_parseConcurrencyLimiters_roundTripsServerRendering() throws Exception {
+        final ActionConcurrencyLimiterStats expected = new ActionConcurrencyLimiterStats(List.of(
+                new ActionConcurrencyLimiterStats.ActionLimiterSnapshot("search", "indices:data/read/search", "enforced", "gradient", 20, 3,
+                        7L, 15L, 9L),
+                new ActionConcurrencyLimiterStats.ActionLimiterSnapshot("bulk", "indices:data/write/bulk", "monitor_only", "vegas", 50, 0,
+                        0L, -1L, -1L)));
+        final XContentBuilder builder = JsonXContent.contentBuilder().startObject();
+        expected.toXContent(builder, ToXContent.EMPTY_PARAMS);
+        builder.endObject();
+        try (final XContentParser parser = createParser(builder.toString())) {
+            // createParser has already advanced to the outer START_OBJECT
+            parser.nextToken(); // FIELD_NAME concurrency_limiters
+            parser.nextToken(); // START_OBJECT
+            parser.nextToken(); // first alias
+            final Method m = HttpNodesStatsAction.class.getDeclaredMethod("parseConcurrencyLimiterStats", XContentParser.class);
+            m.setAccessible(true);
+            final ActionConcurrencyLimiterStats actual = (ActionConcurrencyLimiterStats) m.invoke(action, parser);
+            assertEquals(2, actual.getSnapshots().size());
+            for (int i = 0; i < 2; i++) {
+                final ActionConcurrencyLimiterStats.ActionLimiterSnapshot e = expected.getSnapshots().get(i);
+                final ActionConcurrencyLimiterStats.ActionLimiterSnapshot a = actual.getSnapshots().get(i);
+                assertEquals(e.getAlias(), a.getAlias());
+                assertEquals(e.getActionName(), a.getActionName());
+                assertEquals(e.getMode(), a.getMode());
+                assertEquals(e.getAlgorithm(), a.getAlgorithm());
+                assertEquals(e.getCurrentLimit(), a.getCurrentLimit());
+                assertEquals(e.getInFlight(), a.getInFlight());
+                assertEquals(e.getTotalRejected(), a.getTotalRejected());
+                assertEquals(e.getLastRttMillis(), a.getLastRttMillis());
+                assertEquals(e.getRttNoLoadMillis(), a.getRttNoLoadMillis());
+            }
         }
     }
 

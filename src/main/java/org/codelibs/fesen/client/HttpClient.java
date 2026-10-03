@@ -68,6 +68,7 @@ import org.codelibs.fesen.client.action.HttpDeletePitAction;
 import org.codelibs.fesen.client.action.HttpDeleteRepositoryAction;
 import org.codelibs.fesen.client.action.HttpDeleteSnapshotAction;
 import org.codelibs.fesen.client.action.HttpDeleteStoredScriptAction;
+import org.codelibs.fesen.client.action.HttpDeleteTaskAction;
 import org.codelibs.fesen.client.action.HttpExplainAction;
 import org.codelibs.fesen.client.action.HttpFieldCapabilitiesAction;
 import org.codelibs.fesen.client.action.HttpFlushAction;
@@ -167,6 +168,8 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsR
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
@@ -1057,6 +1060,11 @@ public class HttpClient extends HttpAbstractClient {
             new HttpWlmStatsAction(this, WlmStatsAction.INSTANCE).execute((WlmStatsRequest) request, actionListener);
         });
 
+        actions.put(DeleteTaskAction.INSTANCE, (request, listener) -> {
+            @SuppressWarnings("unchecked")
+            final ActionListener<AcknowledgedResponse> actionListener = (ActionListener<AcknowledgedResponse>) listener;
+            new HttpDeleteTaskAction(this, DeleteTaskAction.INSTANCE).execute((DeleteTaskRequest) request, actionListener);
+        });
         actions.put(GetTaskAction.INSTANCE, (request, listener) -> {
             @SuppressWarnings("unchecked")
             final ActionListener<GetTaskResponse> actionListener = (ActionListener<GetTaskResponse>) listener;

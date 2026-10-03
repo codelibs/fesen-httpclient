@@ -32,6 +32,7 @@ import org.codelibs.curl.CurlRequest;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fesen.client.io.stream.ByteArrayStreamOutput;
 import org.codelibs.fesen.opensearch.Version;
+import org.codelibs.fesen.opensearch.action.ActionConcurrencyLimiterStats;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodeStats;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsRequest;
@@ -258,6 +259,7 @@ public class HttpNodesStatsAction extends HttpAction {
         NodeCacheStats nodeCacheStats = null;
         RemoteStoreNodeStats remoteStoreNodeStats = null;
         NativeAllocatorPoolStats nativeAllocatorStats = null;
+        ActionConcurrencyLimiterStats concurrencyLimiterStats = null;
         long totalEstimatedNativeBytes = -1L;
         final Map<String, String> attributes = new HashMap<>();
         XContentParser.Token token;
@@ -375,6 +377,8 @@ public class HttpNodesStatsAction extends HttpAction {
                     consumeObject(parser);
                 } else if ("remote_store".equals(fieldName)) {
                     remoteStoreNodeStats = parseRemoteStoreNodeStats(parser);
+                } else if ("concurrency_limiters".equals(fieldName)) {
+                    concurrencyLimiterStats = parseConcurrencyLimiterStats(parser);
                 } else {
                     consumeObject(parser);
                 }
@@ -438,6 +442,7 @@ public class HttpNodesStatsAction extends HttpAction {
                 nodeCacheStats, //
                 remoteStoreNodeStats, //
                 nativeAllocatorStats, //
+                concurrencyLimiterStats, //
                 totalEstimatedNativeBytes);
     }
 
@@ -1484,6 +1489,84 @@ public class HttpNodesStatsAction extends HttpAction {
             out.writeLong(lastSuccessfulFetchOfPinnedTimestamps);
             return new RemoteStoreNodeStats(out.toStreamInput());
         }
+    }
+
+    /**
+     * Parses the {@code concurrency_limiters} object, which holds one snapshot per action alias.
+     *
+     * @param parser the content parser
+     * @return the concurrency limiter statistics
+     * @throws IOException if parsing fails
+     */
+    protected ActionConcurrencyLimiterStats parseConcurrencyLimiterStats(final XContentParser parser) throws IOException {
+        final List<ActionConcurrencyLimiterStats.ActionLimiterSnapshot> snapshots = new ArrayList<>();
+        String alias = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                alias = parser.currentName();
+            } else if (token == XContentParser.Token.START_OBJECT) {
+                parser.nextToken();
+                snapshots.add(parseActionLimiterSnapshot(parser, alias));
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return new ActionConcurrencyLimiterStats(snapshots);
+    }
+
+    /**
+     * Parses the snapshot of a single action limiter. The round-trip times are left at {@code -1}
+     * when the response omits them, which is how the server reports that they are unavailable.
+     *
+     * @param parser the content parser
+     * @param alias the action alias the snapshot is keyed by
+     * @return the limiter snapshot
+     * @throws IOException if parsing fails
+     */
+    protected ActionConcurrencyLimiterStats.ActionLimiterSnapshot parseActionLimiterSnapshot(final XContentParser parser,
+            final String alias) throws IOException {
+        String actionName = null;
+        String mode = null;
+        String algorithm = null;
+        int currentLimit = 0;
+        int inFlight = 0;
+        long totalRejected = 0;
+        long lastRttMillis = -1L;
+        long rttNoLoadMillis = -1L;
+        String fieldName = null;
+        XContentParser.Token token;
+        while ((token = parser.currentToken()) != XContentParser.Token.END_OBJECT) {
+            if (token == XContentParser.Token.FIELD_NAME) {
+                fieldName = parser.currentName();
+            } else if (token == XContentParser.Token.VALUE_STRING) {
+                if ("action_name".equals(fieldName)) {
+                    actionName = parser.text();
+                } else if ("mode".equals(fieldName)) {
+                    mode = parser.text();
+                } else if ("algorithm".equals(fieldName)) {
+                    algorithm = parser.text();
+                }
+            } else if (token == XContentParser.Token.VALUE_NUMBER) {
+                if ("current_limit".equals(fieldName)) {
+                    currentLimit = parser.intValue();
+                } else if ("in_flight".equals(fieldName)) {
+                    inFlight = parser.intValue();
+                } else if ("total_rejected".equals(fieldName)) {
+                    totalRejected = parser.longValue();
+                } else if ("last_rtt_millis".equals(fieldName)) {
+                    lastRttMillis = parser.longValue();
+                } else if ("rtt_no_load_millis".equals(fieldName)) {
+                    rttNoLoadMillis = parser.longValue();
+                }
+            } else {
+                skipNestedValue(parser);
+            }
+            parser.nextToken();
+        }
+        return new ActionConcurrencyLimiterStats.ActionLimiterSnapshot(alias, actionName, mode, algorithm, currentLimit, inFlight,
+                totalRejected, lastRttMillis, rttNoLoadMillis);
     }
 
     /**

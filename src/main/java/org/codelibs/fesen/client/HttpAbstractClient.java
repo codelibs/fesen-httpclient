@@ -76,6 +76,9 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.Canc
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequestBuilder;
@@ -934,6 +937,26 @@ public abstract class HttpAbstractClient implements Client {
         @Override
         public GetTaskRequestBuilder prepareGetTask(final TaskId taskId) {
             return new GetTaskRequestBuilder(this, GetTaskAction.INSTANCE).setTaskId(taskId);
+        }
+
+        @Override
+        public ActionFuture<AcknowledgedResponse> deleteTask(final DeleteTaskRequest request) {
+            return execute(DeleteTaskAction.INSTANCE, request);
+        }
+
+        @Override
+        public void deleteTask(final DeleteTaskRequest request, final ActionListener<AcknowledgedResponse> listener) {
+            execute(DeleteTaskAction.INSTANCE, request, listener);
+        }
+
+        @Override
+        public DeleteTaskRequestBuilder prepareDeleteTask(final String taskId) {
+            return prepareDeleteTask(new TaskId(taskId));
+        }
+
+        @Override
+        public DeleteTaskRequestBuilder prepareDeleteTask(final TaskId taskId) {
+            return new DeleteTaskRequestBuilder(this, DeleteTaskAction.INSTANCE).setTaskId(taskId);
         }
 
         @Override

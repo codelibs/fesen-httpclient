@@ -18,6 +18,7 @@ package org.codelibs.fesen.client;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.codelibs.fesen.opensearch.core.action.ActionListener.wrap;
@@ -129,7 +130,7 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearch3ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch3ClientTest.class.getName());
 
-    static final String version = "3.8.0";
+    static final String version = "3.9.0";
 
     static final String imageTag = "public.ecr.aws/opensearchproject/opensearch:" + version;
 
@@ -2778,6 +2779,42 @@ class OpenSearch3ClientTest {
             // resource_not_found_exception). This is expected and acceptable, not a failure.
             assertNotNull(e);
         }
+    }
+
+    @Test
+    void test_delete_task() throws Exception {
+        // A task started with wait_for_completion=false leaves its result in the .tasks index, which
+        // is the only thing the delete task API removes.
+        final String srcIndex = "test_delete_task_src";
+        client.admin().indices().prepareCreate(srcIndex).execute().actionGet();
+        client.prepareIndex().setIndex(srcIndex).setId("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
+                .setSource("{\"text\":\"test\"}", XContentType.JSON).execute().actionGet();
+
+        final String url = "http://" + server.getHost() + ":" + server.getFirstMappedPort();
+        final String started;
+        try (CurlResponse response = Curl.post(url + "/_reindex?wait_for_completion=false").header("Content-Type", "application/json")
+                .body("{\"source\":{\"index\":\"" + srcIndex + "\"},\"dest\":{\"index\":\"test_delete_task_dest\"}}").execute()) {
+            started = response.getContentAsString();
+        }
+        final java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\"task\"\\s*:\\s*\"([^\"]+)\"").matcher(started);
+        assertTrue(matcher.find(), started);
+        final TaskId taskId = new TaskId(matcher.group(1));
+
+        // Wait for the task to finish so that its result is stored.
+        boolean completed = false;
+        for (int i = 0; i < 50 && !completed; i++) {
+            completed =
+                    client.admin().cluster().prepareGetTask(taskId).execute().actionGet().getTask().getResponseAsMap().isEmpty() == false;
+            if (!completed) {
+                Thread.sleep(200L);
+            }
+        }
+        assertTrue(completed);
+
+        assertTrue(client.admin().cluster().prepareDeleteTask(taskId.toString()).execute().actionGet().isAcknowledged());
+
+        // The stored result is gone.
+        assertThrows(OpenSearchException.class, () -> client.admin().cluster().prepareGetTask(taskId).execute().actionGet());
     }
 
     @Test
