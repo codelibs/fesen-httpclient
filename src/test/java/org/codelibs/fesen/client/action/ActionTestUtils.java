@@ -175,6 +175,23 @@ final class ActionTestUtils {
         }
     }
 
+    /**
+     * Returns the HTTP method of the given curl request, read reflectively from the
+     * protected {@code method} field.
+     *
+     * @param request the curl request to inspect
+     * @return the HTTP method name
+     */
+    static String method(final CurlRequest request) {
+        try {
+            final Field field = CurlRequest.class.getDeclaredField("method");
+            field.setAccessible(true);
+            return String.valueOf(field.get(request));
+        } catch (final ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static String decode(final String value) {
         return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }

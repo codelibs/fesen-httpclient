@@ -5,7 +5,7 @@
 	<artifactId>fesen-httpclient</artifactId>
 	<packaging>jar</packaging>
 	<name>fesen-httpclient</name>
-	<version>3.8.1-SNAPSHOT</version>
+	<version>3.9.0-SNAPSHOT</version>
 	<description>HTTP client for OpenSearch</description>
 	<url>https://github.com/codelibs/fesen-httpclient</url>
 	<inceptionYear>2012</inceptionYear>
@@ -38,9 +38,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.release>21</maven.compiler.release>
-		<lucene.version>10.5.0</lucene.version>
-		<jackson.version>3.2.1</jackson.version>
-		<log4j.version>2.25.4</log4j.version>
+		<lucene.version>10.5.1</lucene.version>
+		<jackson.version>3.2.2</jackson.version>
+		<log4j.version>2.25.5</log4j.version>
 		<junit.jupiter.version>5.12.2</junit.jupiter.version>
 		<testcontainers.version>1.21.4</testcontainers.version>
 	</properties>

@@ -50,6 +50,8 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.node.stats.NodesStatsR
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.cancel.CancelTasksResponse;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.delete.DeleteTaskRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskRequestBuilder;
 import org.codelibs.fesen.opensearch.action.admin.cluster.node.tasks.get.GetTaskResponse;
@@ -461,6 +463,38 @@ public interface ClusterAdminClient extends OpenSearchClient {
      * @return the prepare get task
      */
     GetTaskRequestBuilder prepareGetTask(TaskId taskId);
+
+    /**
+     * Delete a stored completed task result.
+     *
+     * @param request the request
+     * @return The result future
+     */
+    ActionFuture<AcknowledgedResponse> deleteTask(DeleteTaskRequest request);
+
+    /**
+     * Delete a stored completed task result.
+     *
+     * @param request the request
+     * @param listener A listener to be notified with the result
+     */
+    void deleteTask(DeleteTaskRequest request, ActionListener<AcknowledgedResponse> listener);
+
+    /**
+     * Delete a stored completed task result by id.
+     *
+     * @param taskId the id of the task whose stored result is deleted
+     * @return the request builder
+     */
+    DeleteTaskRequestBuilder prepareDeleteTask(String taskId);
+
+    /**
+     * Delete a stored completed task result by id.
+     *
+     * @param taskId the id of the task whose stored result is deleted
+     * @return the request builder
+     */
+    DeleteTaskRequestBuilder prepareDeleteTask(TaskId taskId);
 
     /**
      * Cancel tasks

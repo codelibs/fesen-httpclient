@@ -43,6 +43,7 @@ import org.codelibs.fesen.opensearch.core.xcontent.ObjectParser;
 import org.codelibs.fesen.opensearch.core.xcontent.ToXContentFragment;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentBuilder;
 import org.codelibs.fesen.opensearch.core.xcontent.XContentParser;
+import org.codelibs.fesen.opensearch.index.query.RegexpQueryBuilder;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -105,6 +106,31 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
         this.fuzzyPrefixLength = fuzzyPrefixLength;
         this.unicodeAware = unicodeAware;
         this.maxDeterminizedStates = maxDeterminizedStates;
+    }
+
+    /**
+     * Validates {@code max_determinized_states} against the shared ceiling and returns it. An
+     * unbounded value disables Lucene's determinize safeguard and lets a crafted expansion exhaust the
+     * heap before Lucene throws its own complexity exception. See CVE-2026-63136 and
+     * {@link RegexpQueryBuilder#MAX_DETERMINIZE_WORK_LIMIT}.
+     *
+     * @param maxDeterminizedStates the value to validate
+     * @return the validated value
+     */
+    private static int validateMaxDeterminizedStates(int maxDeterminizedStates) {
+        if (maxDeterminizedStates < 0) {
+            throw new IllegalArgumentException("maxDeterminizedStates must not be negative");
+        }
+        if (maxDeterminizedStates > RegexpQueryBuilder.MAX_DETERMINIZE_WORK_LIMIT) {
+            throw new IllegalArgumentException(
+                "maxDeterminizedStates cannot exceed ["
+                    + RegexpQueryBuilder.MAX_DETERMINIZE_WORK_LIMIT
+                    + "] but was ["
+                    + maxDeterminizedStates
+                    + "]"
+            );
+        }
+        return maxDeterminizedStates;
     }
 
     @Override
@@ -253,10 +279,7 @@ public class FuzzyOptions implements ToXContentFragment, Writeable {
          * @return this instance
          */
         public Builder setMaxDeterminizedStates(int maxDeterminizedStates) {
-            if (maxDeterminizedStates < 0) {
-                throw new IllegalArgumentException("maxDeterminizedStates must not be negative");
-            }
-            this.maxDeterminizedStates = maxDeterminizedStates;
+            this.maxDeterminizedStates = validateMaxDeterminizedStates(maxDeterminizedStates);
             return this;
         }
 

@@ -71,7 +71,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -254,7 +253,11 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         /**
          * The FORK_JOIN value.
          */
-        FORK_JOIN("fork_join");
+        FORK_JOIN("fork_join"),
+        /**
+         * The VIRTUAL value.
+         */
+        VIRTUAL("virtual");
 
         private final String type;
 
@@ -757,7 +760,10 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         public final Info info;
 
         ExecutorHolder(ExecutorService executor, Info info) {
-            assert executor instanceof OpenSearchThreadPoolExecutor || executor == DIRECT_EXECUTOR || executor instanceof ForkJoinPool;
+            assert executor instanceof OpenSearchThreadPoolExecutor
+                || executor == DIRECT_EXECUTOR
+                || executor instanceof ForkJoinPool
+                || info.type == ThreadPoolType.VIRTUAL;
             this.executor = executor;
             this.info = info;
         }
@@ -865,12 +871,15 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
         public void writeTo(StreamOutput out) throws IOException {
             out.writeString(name);
             if (type == ThreadPoolType.RESIZABLE && out.getVersion().before(Version.V_3_0_0)) {
-                // Opensearch on older version doesn't know about "resizable" thread pool. Convert RESIZABLE to FIXED
+                // OpenSearch on older version doesn't know about "resizable" thread pool. Convert RESIZABLE to FIXED
                 // to avoid serialization/de-serization issue between nodes with different OpenSearch version
                 out.writeString(ThreadPoolType.FIXED.getType());
             } else if (type == ThreadPoolType.FORK_JOIN && out.getVersion().before(Version.V_3_4_0)) {
-                // Opensearch on older version doesn't know about "fork_join" thread pool. Convert FORK_JOIN to FIXED
+                // OpenSearch on older version doesn't know about "fork_join" thread pool. Convert FORK_JOIN to FIXED
                 out.writeString(ThreadPoolType.FIXED.getType());
+            } else if (type == ThreadPoolType.VIRTUAL && out.getVersion().before(Version.V_3_8_0)) {
+                // VIRTUAL introduced in 3.8, convert to SCALING for bwc
+                out.writeString(ThreadPoolType.SCALING.getType());
             } else {
                 out.writeString(type.getType());
             }
@@ -947,6 +956,8 @@ public class ThreadPool implements ReportingService<ThreadPoolInfo>, Scheduler {
                 }
             } else if (type == ThreadPoolType.FORK_JOIN) {
                 builder.field("parallelism", max);
+            } else if (type == ThreadPoolType.VIRTUAL) {
+                // an unbounded virtual thread-per-task pool has no size, keep alive, or queue to report
             } else {
                 assert max != -1;
                 builder.field("size", max);

@@ -277,7 +277,11 @@ public class NodesStatsRequest extends BaseNodesRequest<NodesStatsRequest> {
         /**
          * The NATIVE_MEMORY value.
          */
-        NATIVE_MEMORY("native_memory");
+        NATIVE_MEMORY("native_memory"),
+        /**
+         * The CONCURRENCY_LIMITER value.
+         */
+        CONCURRENCY_LIMITER("concurrency_limiter");
 
         private String metricName;
 
