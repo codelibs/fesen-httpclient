@@ -118,6 +118,30 @@ public class EngineInfo {
     }
 
     /**
+     * Returns whether the engine is OpenSearch and its version is at least the given major and minor version.
+     *
+     * @param major the major version
+     * @param minor the minor version
+     * @return true if the engine is OpenSearch {@code major.minor} or later, false otherwise (including an unparsable version)
+     */
+    public boolean isOpenSearchAtLeast(final int major, final int minor) {
+        if (!distribution.startsWith("opensearch")) {
+            return false;
+        }
+        final String[] parts = number.split("[.\\-]");
+        if (parts.length < 2) {
+            return false;
+        }
+        try {
+            final int actualMajor = Integer.parseInt(parts[0]);
+            final int actualMinor = Integer.parseInt(parts[1]);
+            return actualMajor > major || (actualMajor == major && actualMinor >= minor);
+        } catch (final NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * The type of the backend search engine, identified by its distribution
      * and major version.
      */

@@ -45,10 +45,15 @@ public class HttpGetViewAction extends HttpAction {
     /**
      * Executes the get view request and notifies the listener with the response.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on OpenSearch 3.10 or later, which removed the Views API.
+     *
      * @param request the get view request
      * @param listener the listener to notify with the response or a failure
      */
     public void execute(final GetViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
+        if (rejectRemovedViews(listener)) {
+            return;
+        }
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final GetViewAction.Response getViewResponse = GetViewAction.Response.fromXContent(parser);

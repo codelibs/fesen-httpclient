@@ -69,8 +69,21 @@ final class ActionTestUtils {
         return CLIENTS.computeIfAbsent(engineType, ActionTestUtils::createClient);
     }
 
+    /**
+     * Returns an {@link HttpClient} that reports OpenSearch with the given version number.
+     *
+     * @param number the OpenSearch version number, e.g. {@code 3.10.0}
+     * @return the test HTTP client
+     */
+    static HttpClient openSearchClient(final String number) {
+        return createClient(new EngineInfo(Map.of("version", Map.of("number", number, "distribution", "opensearch"))));
+    }
+
     private static HttpClient createClient(final EngineType engineType) {
-        final EngineInfo engineInfo = stubEngineInfo(engineType);
+        return createClient(stubEngineInfo(engineType));
+    }
+
+    private static HttpClient createClient(final EngineInfo engineInfo) {
         final Settings settings = Settings.builder().putList("http.hosts", "localhost:9200").build();
         return new HttpClient(settings, null) {
             @Override

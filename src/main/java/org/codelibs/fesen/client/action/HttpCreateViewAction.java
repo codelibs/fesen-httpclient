@@ -50,10 +50,15 @@ public class HttpCreateViewAction extends HttpAction {
     /**
      * Executes the create view request asynchronously.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on OpenSearch 3.10 or later, which removed the Views API.
+     *
      * @param request the create view request
      * @param listener the listener notified with the response or a failure
      */
     public void execute(final CreateViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
+        if (rejectRemovedViews(listener)) {
+            return;
+        }
         final String source = buildRequestBody(request);
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {

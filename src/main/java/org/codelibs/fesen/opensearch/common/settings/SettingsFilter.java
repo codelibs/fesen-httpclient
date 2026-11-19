@@ -84,6 +84,22 @@ public final class SettingsFilter {
     }
 
     /**
+     * Whether {@code key} is hidden by one of the patterns: a literal pattern hides exactly that key, a wildcard pattern every
+     * key it matches. This is the per-key rule applied when filtering a whole settings object.
+     *
+     * @param key the settings key
+     * @return true if the key is hidden by one of the patterns
+     */
+    public boolean isFiltered(String key) {
+        for (String pattern : patterns) {
+            if (Regex.isSimpleMatchPattern(pattern) ? Regex.simpleMatch(pattern, key) : pattern.equals(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Filters the settings.
      *
      * @param params the serialization parameters

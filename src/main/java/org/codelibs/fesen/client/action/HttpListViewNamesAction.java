@@ -47,10 +47,15 @@ public class HttpListViewNamesAction extends HttpAction {
     /**
      * Executes the list view names request and notifies the listener with the response.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on OpenSearch 3.10 or later, which removed the Views API.
+     *
      * @param request the list view names request
      * @param listener the listener to notify with the response or failure
      */
     public void execute(final ListViewNamesAction.Request request, final ActionListener<ListViewNamesAction.Response> listener) {
+        if (rejectRemovedViews(listener)) {
+            return;
+        }
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final List<String> viewNames = parseViewNames(parser);
