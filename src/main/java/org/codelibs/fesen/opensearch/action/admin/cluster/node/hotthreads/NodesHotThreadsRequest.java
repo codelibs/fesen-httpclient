@@ -154,6 +154,17 @@ public class NodesHotThreadsRequest extends BaseNodesRequest<NodesHotThreadsRequ
         return this.snapshots;
     }
 
+    /**
+     * Sets the snapshots.
+     *
+     * @param snapshots the snapshots
+     * @return this instance
+     */
+    public NodesHotThreadsRequest snapshots(int snapshots) {
+        this.snapshots = snapshots;
+        return this;
+    }
+
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         super.writeTo(out);

@@ -45,10 +45,15 @@ public class HttpDeleteViewAction extends HttpAction {
     /**
      * Executes the delete view request asynchronously and notifies the listener with the result.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on OpenSearch 3.10 or later, which removed the Views API.
+     *
      * @param request the delete view request
      * @param listener the listener to notify with the acknowledged response or a failure
      */
     public void execute(final DeleteViewAction.Request request, final ActionListener<AcknowledgedResponse> listener) {
+        if (rejectRemovedViews(listener)) {
+            return;
+        }
         getCurlRequest(request).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final AcknowledgedResponse deleteViewResponse = AcknowledgedResponse.fromXContent(parser);

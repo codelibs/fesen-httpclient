@@ -130,7 +130,7 @@ import org.testcontainers.utility.DockerImageName;
 class OpenSearch3ClientTest {
     static final Logger logger = Logger.getLogger(OpenSearch3ClientTest.class.getName());
 
-    static final String version = "3.9.0";
+    static final String version = "3.10.0";
 
     static final String imageTag = "public.ecr.aws/opensearchproject/opensearch:" + version;
 
@@ -2952,5 +2952,13 @@ class OpenSearch3ClientTest {
         final EngineInfo engineInfo = client.getEngineInfo();
         assertNotNull(engineInfo);
         assertEquals(EngineInfo.EngineType.OPENSEARCH3, engineInfo.getType());
+    }
+
+    @Test
+    void test_views_removed() throws Exception {
+        // The Views API was removed in OpenSearch 3.10, so the client must fail fast instead of sending the request.
+        assertTrue(client.getEngineInfo().isOpenSearchAtLeast(3, 10));
+        assertThrows(UnsupportedOperationException.class, () -> client.admin().indices()
+                .getView(new org.codelibs.fesen.opensearch.action.admin.indices.view.GetViewAction.Request("v")).actionGet());
     }
 }

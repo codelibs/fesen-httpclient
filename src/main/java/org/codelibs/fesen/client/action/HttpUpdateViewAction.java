@@ -52,10 +52,15 @@ public class HttpUpdateViewAction extends HttpAction {
     /**
      * Executes the update view request and notifies the listener with the response.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on OpenSearch 3.10 or later, which removed the Views API.
+     *
      * @param request the view request containing the view definition to update
      * @param listener the listener notified with the response or a failure
      */
     public void execute(final CreateViewAction.Request request, final ActionListener<GetViewAction.Response> listener) {
+        if (rejectRemovedViews(listener)) {
+            return;
+        }
         final String source = buildRequestBody(request);
         getCurlRequest(request).body(source).execute(response -> {
             try (final XContentParser parser = createParser(response)) {

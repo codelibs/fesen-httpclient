@@ -298,6 +298,21 @@ public class HttpAction {
     }
 
     /**
+     * Fails the listener with an {@link UnsupportedOperationException} when the backend is OpenSearch 3.10 or later,
+     * which removed the Views APIs.
+     *
+     * @param listener the listener to fail
+     * @return true if the listener was failed and the caller must not send the request
+     */
+    protected boolean rejectRemovedViews(final ActionListener<?> listener) {
+        if (client.getEngineInfo().isOpenSearchAtLeast(3, 10)) {
+            listener.onFailure(new UnsupportedOperationException("The Views API was removed in OpenSearch 3.10.0"));
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Serializes an {@link ActiveShardCount} to its {@code wait_for_active_shards} query-parameter form:
      * {@code "all"} for {@link ActiveShardCount#ALL}, otherwise the numeric value (e.g. {@code "0"} for NONE, {@code "2"} for a count).
      *

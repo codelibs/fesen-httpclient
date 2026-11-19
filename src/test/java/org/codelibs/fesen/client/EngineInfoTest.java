@@ -206,4 +206,17 @@ class EngineInfoTest {
         assertEquals("opensearch", engineInfo.getDistribution());
         assertEquals(EngineType.UNKNOWN, engineInfo.getType());
     }
+
+    @Test
+    void test_isOpenSearchAtLeast() {
+        final java.util.function.BiFunction<String, String, EngineInfo> info = (distribution,
+                number) -> new EngineInfo(java.util.Map.of("version", java.util.Map.of("number", number, "distribution", distribution)));
+        org.junit.jupiter.api.Assertions.assertTrue(info.apply("opensearch", "3.10.0").isOpenSearchAtLeast(3, 10));
+        org.junit.jupiter.api.Assertions.assertTrue(info.apply("opensearch", "3.10.0-SNAPSHOT").isOpenSearchAtLeast(3, 10));
+        org.junit.jupiter.api.Assertions.assertTrue(info.apply("opensearch", "4.0.0").isOpenSearchAtLeast(3, 10));
+        org.junit.jupiter.api.Assertions.assertFalse(info.apply("opensearch", "3.9.0").isOpenSearchAtLeast(3, 10));
+        org.junit.jupiter.api.Assertions.assertFalse(info.apply("opensearch", "2.19.7").isOpenSearchAtLeast(3, 10));
+        org.junit.jupiter.api.Assertions.assertFalse(info.apply("elasticsearch", "8.11.0").isOpenSearchAtLeast(3, 10));
+        org.junit.jupiter.api.Assertions.assertFalse(info.apply("opensearch", "unknown").isOpenSearchAtLeast(3, 10));
+    }
 }

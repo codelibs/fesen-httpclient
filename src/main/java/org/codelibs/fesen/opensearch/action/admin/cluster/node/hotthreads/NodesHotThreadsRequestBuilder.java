@@ -70,6 +70,17 @@ public class NodesHotThreadsRequestBuilder extends NodesOperationRequestBuilder<
     }
 
     /**
+     * Sets the snapshots.
+     *
+     * @param snapshots the snapshots
+     * @return this instance
+     */
+    public NodesHotThreadsRequestBuilder setSnapshots(int snapshots) {
+        request.snapshots(snapshots);
+        return this;
+    }
+
+    /**
      * Sets the ignore idle threads.
      *
      * @param ignoreIdleThreads the ignore idle threads

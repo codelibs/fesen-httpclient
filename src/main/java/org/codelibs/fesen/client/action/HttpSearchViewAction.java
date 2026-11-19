@@ -53,10 +53,15 @@ public class HttpSearchViewAction extends HttpAction {
     /**
      * Executes the search view request and notifies the listener with the response.
      *
+     * <p>Fails the listener with an {@link UnsupportedOperationException} on OpenSearch 3.10 or later, which removed the Views API.
+     *
      * @param request the search view request
      * @param listener the listener to be notified with the search response or a failure
      */
     public void execute(final SearchViewAction.Request request, final ActionListener<SearchResponse> listener) {
+        if (rejectRemovedViews(listener)) {
+            return;
+        }
         getCurlRequest(request).body(getQuerySource(request)).execute(response -> {
             try (final XContentParser parser = createParser(response)) {
                 final SearchResponse searchResponse = SearchResponse.fromXContent(parser);

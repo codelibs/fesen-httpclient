@@ -33,6 +33,7 @@
 package org.codelibs.fesen.opensearch.common.xcontent.yaml;
 
 import org.codelibs.fesen.opensearch.common.xcontent.XContentConstraints;
+import org.codelibs.fesen.opensearch.common.xcontent.XContentRecyclerPools;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
 import org.codelibs.fesen.opensearch.common.xcontent.XObjectReadContext;
 import org.codelibs.fesen.opensearch.common.xcontent.XObjectWriteContext;
@@ -117,6 +118,7 @@ public class YamlXContent implements XContent, XContentConstraints {
                 .build()
         );
         builder.configure(StreamReadFeature.USE_FAST_DOUBLE_PARSER, true);
+        builder.recyclerPool(XContentRecyclerPools.recyclerPool());
 
         yamlFactory = new YAMLFactory(builder) {
             @Override
