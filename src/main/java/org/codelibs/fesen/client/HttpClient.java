@@ -55,6 +55,7 @@ import org.codelibs.fesen.client.action.HttpClearScrollAction;
 import org.codelibs.fesen.client.action.HttpCloseIndexAction;
 import org.codelibs.fesen.client.action.HttpClusterHealthAction;
 import org.codelibs.fesen.client.action.HttpClusterRerouteAction;
+import org.codelibs.fesen.client.action.HttpClusterDescribeSettingsAction;
 import org.codelibs.fesen.client.action.HttpClusterUpdateSettingsAction;
 import org.codelibs.fesen.client.action.HttpCreateIndexAction;
 import org.codelibs.fesen.client.action.HttpCreatePitAction;
@@ -203,6 +204,9 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.Ve
 import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsRequest;
 import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
@@ -816,6 +820,14 @@ public class HttpClient extends HttpAbstractClient {
             final ActionListener<ClusterUpdateSettingsResponse> actionListener = (ActionListener<ClusterUpdateSettingsResponse>) listener;
             new HttpClusterUpdateSettingsAction(this, ClusterUpdateSettingsAction.INSTANCE).execute((ClusterUpdateSettingsRequest) request,
                     actionListener);
+        });
+        actions.put(ClusterDescribeSettingsAction.INSTANCE, (request, listener) -> {
+            // org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsAction
+            @SuppressWarnings("unchecked")
+            final ActionListener<ClusterDescribeSettingsResponse> actionListener =
+                    (ActionListener<ClusterDescribeSettingsResponse>) listener;
+            new HttpClusterDescribeSettingsAction(this, ClusterDescribeSettingsAction.INSTANCE)
+                    .execute((ClusterDescribeSettingsRequest) request, actionListener);
         });
         actions.put(ClusterHealthAction.INSTANCE, (request, listener) -> {
             // org.codelibs.fesen.action.admin.cluster.health.ClusterHealthAction
