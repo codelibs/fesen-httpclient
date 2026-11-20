@@ -57,6 +57,9 @@ import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.get.GetRe
 import org.codelibs.fesen.opensearch.action.admin.cluster.repositories.verify.VerifyRepositoryResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteAction;
 import org.codelibs.fesen.opensearch.action.admin.cluster.reroute.ClusterRerouteRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsAction;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsRequest;
+import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterDescribeSettingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.settings.ClusterUpdateSettingsResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.codelibs.fesen.opensearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
@@ -1020,6 +1023,16 @@ class OpenSearch3ClientTest {
                     client.admin().cluster().prepareUpdateSettings().setTransientSettings(transientSettings).execute().actionGet();
             assertTrue(clusterUpdateSettingsResponse.isAcknowledged());
         }
+    }
+
+    @Test
+    void test_cluster_describe_settings() throws Exception {
+        final String key = RecoverySettings.INDICES_RECOVERY_MAX_BYTES_PER_SEC_SETTING.getKey();
+        final ClusterDescribeSettingsResponse response = client.execute(ClusterDescribeSettingsAction.INSTANCE,
+                new ClusterDescribeSettingsRequest(key, "cluster.routing.allocation.awareness.*")).actionGet();
+        assertTrue(response.settings().containsKey(key));
+        assertTrue(response.settings().get(key).dynamic());
+        assertTrue(response.settings().size() > 1);
     }
 
     @Test
