@@ -82,7 +82,7 @@ public class HttpClusterRerouteAction extends HttpAction {
             curlRequest.param("retry_failed", Boolean.toString(request.isRetryFailed()));
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

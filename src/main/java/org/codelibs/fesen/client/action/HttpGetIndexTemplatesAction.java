@@ -76,7 +76,7 @@ public class HttpGetIndexTemplatesAction extends HttpAction {
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_template/" + UrlUtils.joinAndEncode(",", request.names()));
         curlRequest.param("local", Boolean.toString(request.local()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

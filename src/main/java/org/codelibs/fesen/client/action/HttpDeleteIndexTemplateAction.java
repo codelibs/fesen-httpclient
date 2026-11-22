@@ -70,7 +70,7 @@ public class HttpDeleteIndexTemplateAction extends HttpAction {
         // RestDeleteIndexTemplatesAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_template/" + UrlUtils.encode(request.name()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

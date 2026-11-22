@@ -75,7 +75,8 @@ class HttpResizeActionTest {
         final Map<String, String> params = ActionTestUtils.params(clientAction.getCurlRequest(resizeRequest(ResizeType.CLONE)));
         // ResizeRequest inherits non-null defaults for both, so the action always emits them.
         assertTrue(params.containsKey("timeout"));
-        assertTrue(params.containsKey("master_timeout"));
+        assertTrue(params.containsKey("cluster_manager_timeout"));
+        assertFalse(params.containsKey("master_timeout"));
     }
 
     @Test

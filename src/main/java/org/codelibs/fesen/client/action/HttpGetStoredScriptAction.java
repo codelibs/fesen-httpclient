@@ -71,7 +71,7 @@ public class HttpGetStoredScriptAction extends HttpAction {
         // RestGetStoredScriptAction
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_scripts/" + UrlUtils.encode(request.id()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

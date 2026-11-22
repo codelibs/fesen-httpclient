@@ -164,7 +164,7 @@ public class HttpCreateIndexAction extends HttpAction {
             curlRequest.param("timeout", request.timeout().toString());
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         if (!ActiveShardCount.DEFAULT.equals(request.waitForActiveShards())) {
             curlRequest.param("wait_for_active_shards", getActiveShardsCountString(request.waitForActiveShards()));

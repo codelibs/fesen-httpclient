@@ -70,7 +70,7 @@ public class HttpDeleteRepositoryAction extends HttpAction {
         // RestVerifyRepositoryAction
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, "/_snapshot/" + UrlUtils.encode(request.name()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         if (request.timeout() != null) {
             curlRequest.param("timeout", request.timeout().toString());

@@ -71,7 +71,7 @@ public class HttpGetRepositoriesAction extends HttpAction {
         final CurlRequest curlRequest = client.getCurlRequest(GET, "/_snapshot");
         curlRequest.param("local", Boolean.toString(request.local()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         if (request.repositories() != null) {
             curlRequest.param("repository", String.join(",", request.repositories()));

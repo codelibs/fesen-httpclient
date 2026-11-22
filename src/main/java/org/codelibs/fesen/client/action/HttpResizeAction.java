@@ -101,7 +101,7 @@ public class HttpResizeAction extends HttpAction {
             curlRequest.param("timeout", request.timeout().toString());
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         final ActiveShardCount waitForActiveShards = request.getTargetIndexRequest().waitForActiveShards();
         if (!ActiveShardCount.DEFAULT.equals(waitForActiveShards)) {

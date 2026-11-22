@@ -80,7 +80,7 @@ public class HttpDeleteSnapshotAction extends HttpAction {
         }
         final CurlRequest curlRequest = client.getCurlRequest(DELETE, pathBuf.toString());
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }
