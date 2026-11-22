@@ -92,7 +92,7 @@ public class HttpRestoreSnapshotAction extends HttpAction {
         pathBuf.append('/').append("_restore");
         final CurlRequest curlRequest = client.getCurlRequest(POST, pathBuf.toString());
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         if (request.waitForCompletion()) {
             curlRequest.param("wait_for_completion", Boolean.toString(request.waitForCompletion()));

@@ -84,7 +84,7 @@ public class HttpGetSnapshotsAction extends HttpAction {
         curlRequest.param("ignore_unavailable", String.valueOf(request.ignoreUnavailable()));
         curlRequest.param("verbose", String.valueOf(request.verbose()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

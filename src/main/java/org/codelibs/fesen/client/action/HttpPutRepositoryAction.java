@@ -85,7 +85,7 @@ public class HttpPutRepositoryAction extends HttpAction {
         final CurlRequest curlRequest = client.getCurlRequest(PUT, "/_snapshot/" + UrlUtils.encode(request.name()));
         curlRequest.param("verify", Boolean.toString(request.verify()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         if (request.timeout() != null) {
             curlRequest.param("timeout", request.timeout().toString());

@@ -80,7 +80,7 @@ public class HttpIndicesAliasesAction extends HttpAction {
             curlRequest.param("timeout", request.timeout().toString());
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         String source = null;
         try (final XContentBuilder builder = XContentFactory.jsonBuilder()) {

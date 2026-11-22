@@ -91,7 +91,7 @@ public class HttpCreateSnapshotAction extends HttpAction {
         }
         final CurlRequest curlRequest = client.getCurlRequest(POST, pathBuf.toString());
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         curlRequest.param("wait_for_completion", String.valueOf(request.waitForCompletion()));
         return curlRequest;

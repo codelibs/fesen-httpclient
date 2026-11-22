@@ -170,7 +170,7 @@ public class HttpClusterStateAction extends HttpAction {
             curlRequest.param("wait_for_timeout", request.waitForTimeout().toString());
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

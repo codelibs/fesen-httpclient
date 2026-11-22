@@ -28,6 +28,7 @@ import org.codelibs.fesen.opensearch.OpenSearchException;
 import org.codelibs.fesen.opensearch.OpenSearchStatusException;
 import org.codelibs.fesen.opensearch.action.support.ActiveShardCount;
 import org.codelibs.fesen.opensearch.action.support.IndicesOptions;
+import org.codelibs.fesen.opensearch.common.unit.TimeValue;
 import org.codelibs.fesen.opensearch.common.xcontent.LoggingDeprecationHandler;
 import org.codelibs.fesen.opensearch.common.xcontent.XContentType;
 import org.codelibs.fesen.opensearch.core.ParseField;
@@ -295,6 +296,19 @@ public class HttpAction {
         } catch (final IOException e) {
             throw new OpenSearchException("Failed to parse a request.", e);
         }
+    }
+
+    /**
+     * Sets the timeout for waiting on the cluster manager. OpenSearch 2.0 renamed the {@code master_timeout} parameter to
+     * {@code cluster_manager_timeout} and logs a deprecation for the old name on every version since, so OpenSearch 2.0 and
+     * later get the new name. Elasticsearch and OpenSearch 1.x know only {@code master_timeout}.
+     *
+     * @param curlRequest the request to set the parameter on
+     * @param timeout the timeout of the request
+     */
+    protected void setClusterManagerTimeout(final CurlRequest curlRequest, final TimeValue timeout) {
+        curlRequest.param(client.getEngineInfo().isOpenSearchAtLeast(2, 0) ? "cluster_manager_timeout" : "master_timeout",
+                timeout.toString());
     }
 
     /**

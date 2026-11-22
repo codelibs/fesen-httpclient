@@ -83,7 +83,7 @@ public class HttpPutStoredScriptAction extends HttpAction {
             curlRequest.param("timeout", request.timeout().toString());
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         return curlRequest;
     }

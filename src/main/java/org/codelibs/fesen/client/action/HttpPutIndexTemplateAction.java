@@ -86,7 +86,7 @@ public class HttpPutIndexTemplateAction extends HttpAction {
         curlRequest.param("order", Integer.toString(request.order()));
         curlRequest.param("create", Boolean.toString(request.create()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         if (request.cause() != null) {
             curlRequest.param("cause", "");

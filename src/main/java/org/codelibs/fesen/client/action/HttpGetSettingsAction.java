@@ -75,7 +75,7 @@ public class HttpGetSettingsAction extends HttpAction {
         curlRequest.param("include_defaults", Boolean.toString(request.includeDefaults()));
         curlRequest.param("local", Boolean.toString(request.local()));
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         appendIndicesOptions(curlRequest, request.indicesOptions());
         return curlRequest;

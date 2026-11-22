@@ -86,7 +86,7 @@ public class HttpUpdateSettingsAction extends HttpAction {
             curlRequest.param("timeout", request.timeout().toString());
         }
         if (request.masterNodeTimeout() != null) {
-            curlRequest.param("master_timeout", request.masterNodeTimeout().toString());
+            setClusterManagerTimeout(curlRequest, request.masterNodeTimeout());
         }
         curlRequest.param("preserve_existing", Boolean.toString(request.isPreserveExisting()));
         appendIndicesOptions(curlRequest, request.indicesOptions());
